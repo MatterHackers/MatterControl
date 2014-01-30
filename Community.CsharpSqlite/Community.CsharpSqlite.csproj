@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F1653F20-D47D-4F29-8C55-3C835542AF5F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Community.CsharpSqlite</RootNamespace>
+    <AssemblyName>Community.CsharpSqlite</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <ReleaseVersion>0.8.2</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;SQLITE_DEBUG TRUE WIN32 _MSC_VER NO_TCL SQLITE_ASCII SQLITE_DISABLE_LFS SQLITE_HAS_CODEC SQLITE_MEM_POOL SQLITE_MUTEX_W32 SQLITE_THREADSAFE SQLITE_OMIT_AUTHORIZATION SQLITE_OMIT_DEPRECATED SQLITE_OMIT_GET_TABLE SQLITE_OMIT_INCRBLOB SQLITE_OMIT_LOOKASIDE SQLITE_OMIT_SHARED_CACHE SQLITE_OMIT_UTF16 SQLITE_OMIT_WAL SQLITE_OS_WIN SQLITE_SYSTEM_MALLOC  VDBE_PROFILE_OFF </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRUE WIN32 _MSC_VER NDEBUG NO_TCL SQLITE_ASCII SQLITE_DISABLE_LFS SQLITE_ENABLE_OVERSIZE_CELL_CHECK SQLITE_MUTEX_OMIT SQLITE_OMIT_AUTHORIZATION SQLITE_OMIT_DEPRECATED SQLITE_OMIT_GET_TABLE SQLITE_OMIT_INCRBLOB SQLITE_OMIT_LOOKASIDE SQLITE_OMIT_SHARED_CACHE SQLITE_OMIT_UTF16 SQLITE_OMIT_WAL SQLITE_OS_WIN SQLITE_SYSTEM_MALLOC VDBE_PROFILE_OFF </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>True</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;SQLITE_DEBUG TRUE WIN32 _MSC_VER NO_TCL SQLITE_ASCII SQLITE_DISABLE_LFS SQLITE_HAS_CODEC SQLITE_MEM_POOL SQLITE_MUTEX_W32 SQLITE_THREADSAFE SQLITE_OMIT_AUTHORIZATION SQLITE_OMIT_DEPRECATED SQLITE_OMIT_GET_TABLE SQLITE_OMIT_INCRBLOB SQLITE_OMIT_LOOKASIDE SQLITE_OMIT_SHARED_CACHE SQLITE_OMIT_UTF16 SQLITE_OMIT_WAL SQLITE_OS_WIN SQLITE_SYSTEM_MALLOC  VDBE_PROFILE_OFF </DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRUE WIN32 _MSC_VER NDEBUG NO_TCL SQLITE_ASCII SQLITE_DISABLE_LFS SQLITE_ENABLE_OVERSIZE_CELL_CHECK SQLITE_MUTEX_OMIT SQLITE_OMIT_AUTHORIZATION SQLITE_OMIT_DEPRECATED SQLITE_OMIT_GET_TABLE SQLITE_OMIT_INCRBLOB SQLITE_OMIT_LOOKASIDE SQLITE_OMIT_SHARED_CACHE SQLITE_OMIT_UTF16 SQLITE_OMIT_WAL SQLITE_OS_WIN SQLITE_SYSTEM_MALLOC VDBE_PROFILE_OFF </DefineConstants>
+    <Optimize>True</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\alter_c.cs">
+    </Compile>
+    <Compile Include="src\analyze_c.cs">
+    </Compile>
+    <Compile Include="src\attach_c.cs">
+    </Compile>
+    <Compile Include="src\auth_c.cs">
+    </Compile>
+    <Compile Include="src\backup_c.cs">
+    </Compile>
+    <Compile Include="src\bitvec_c.cs">
+    </Compile>
+    <Compile Include="src\btmutex_c.cs">
+    </Compile>
+    <Compile Include="src\BtreeInt_h.cs">
+    </Compile>
+    <Compile Include="src\btree_c.cs">
+    </Compile>
+    <Compile Include="src\Btree_h.cs">
+    </Compile>
+    <Compile Include="src\build_c.cs">
+    </Compile>
+    <Compile Include="src\callback_c.cs">
+    </Compile>
+    <Compile Include="src\complete_c.cs">
+    </Compile>
+    <Compile Include="src\crypto.cs" />
+    <Compile Include="src\ctime_c.cs" />
+    <Compile Include="src\date_c.cs">
+    </Compile>
+    <Compile Include="src\Delegates.cs" />
+    <Compile Include="src\delete_c.cs">
+    </Compile>
+    <Compile Include="src\expr_c.cs">
+    </Compile>
+    <Compile Include="src\fault_c.cs">
+    </Compile>
+    <Compile Include="src\fkey_c.cs" />
+    <Compile Include="src\func_c.cs">
+    </Compile>
+    <Compile Include="src\global_c.cs">
+    </Compile>
+    <Compile Include="src\hash_c.cs">
+    </Compile>
+    <Compile Include="src\Hash_h.cs">
+    </Compile>
+    <Compile Include="src\hwtime_c.cs">
+    </Compile>
+    <Compile Include="src\insert_c.cs">
+    </Compile>
+    <Compile Include="src\journal_c.cs">
+    </Compile>
+    <Compile Include="src\keywordhash_h.cs">
+    </Compile>
+    <Compile Include="src\legacy_c.cs">
+    </Compile>
+    <Compile Include="src\loadext_c.cs">
+    </Compile>
+    <Compile Include="src\main_c.cs">
+    </Compile>
+    <Compile Include="src\malloc_c.cs">
+    </Compile>
+    <Compile Include="src\memjournal_c.cs">
+    </Compile>
+    <Compile Include="src\mem_Pool.cs" />
+    <Compile Include="src\mutex_c.cs">
+    </Compile>
+    <Compile Include="src\mutex_h.cs">
+    </Compile>
+    <Compile Include="src\mutex_noop_c.cs">
+    </Compile>
+    <Compile Include="src\mutex_w32.cs">
+    </Compile>
+    <Compile Include="src\notify_c.cs">
+    </Compile>
+    <Compile Include="src\opcodes_c.cs">
+    </Compile>
+    <Compile Include="src\opcodes_h.cs">
+    </Compile>
+    <Compile Include="src\os_c.cs">
+    </Compile>
+    <Compile Include="src\os_common_h.cs">
+    </Compile>
+    <Compile Include="src\os_h.cs">
+    </Compile>
+    <Compile Include="src\os_win_c.cs">
+    </Compile>
+    <Compile Include="src\pager_c.cs">
+    </Compile>
+    <Compile Include="src\pager_h.cs">
+    </Compile>
+    <Compile Include="src\parse_c.cs">
+    </Compile>
+    <Compile Include="src\parse_h.cs">
+    </Compile>
+    <Compile Include="src\pcache1_c.cs">
+    </Compile>
+    <Compile Include="src\pcache_c.cs">
+    </Compile>
+    <Compile Include="src\pcache_h.cs">
+    </Compile>
+    <Compile Include="src\pragma_c.cs">
+    </Compile>
+    <Compile Include="src\prepare_c.cs">
+    </Compile>
+    <Compile Include="src\printf_c.cs">
+    </Compile>
+    <Compile Include="src\random_c.cs">
+    </Compile>
+    <Compile Include="src\resolve_c.cs">
+    </Compile>
+    <Compile Include="src\rowset_c.cs">
+    </Compile>
+    <Compile Include="src\select_c.cs">
+    </Compile>
+    <Compile Include="src\sqlite3_h.cs">
+    </Compile>
+    <Compile Include="src\sqliteInt_h.cs">
+    </Compile>
+    <Compile Include="src\sqliteLimit_h.cs">
+    </Compile>
+    <Compile Include="src\status_c.cs">
+    </Compile>
+    <Compile Include="src\table_c.cs">
+    </Compile>
+    <Compile Include="src\tokenize_c.cs">
+    </Compile>
+    <Compile Include="src\trigger_c.cs">
+    </Compile>
+    <Compile Include="src\update_c.cs">
+    </Compile>
+    <Compile Include="src\utf_c.cs">
+    </Compile>
+    <Compile Include="src\util_c.cs">
+    </Compile>
+    <Compile Include="src\vacuum_c.cs">
+    </Compile>
+    <Compile Include="src\vdbeapi_c.cs">
+    </Compile>
+    <Compile Include="src\vdbeaux_c.cs">
+    </Compile>
+    <Compile Include="src\vdbeblob_c.cs">
+    </Compile>
+    <Compile Include="src\VdbeInt_h.cs">
+    </Compile>
+    <Compile Include="src\vdbemem_c.cs">
+    </Compile>
+    <Compile Include="src\vdbetrace_c.cs" />
+    <Compile Include="src\vdbe_c.cs">
+    </Compile>
+    <Compile Include="src\Vdbe_h.cs">
+    </Compile>
+    <Compile Include="src\vtab_c.cs">
+    </Compile>
+    <Compile Include="src\walker_c.cs">
+    </Compile>
+    <Compile Include="src\wal_c.cs" />
+    <Compile Include="src\wal_h.cs" />
+    <Compile Include="src\where_c.cs">
+    </Compile>
+    <Compile Include="src\_Custom.cs">
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.VisualBasic.PowerPacks.10.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft Visual Basic PowerPacks 10.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

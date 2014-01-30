@@ -1,0 +1,237 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using MatterHackers.Agg;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.Font;
+using MatterHackers.VectorMath;
+
+using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.DataStorage;
+
+namespace MatterHackers.MatterControl
+{
+
+    public class ActiveTheme
+    {
+        static ActiveTheme globalInstance;
+        private Theme loadedTheme;
+        private List<Theme> availableThemes;
+        private int defaultThemeIndex = 1;
+        private int activeThemeIndex = -1;
+
+        public RootedObjectEventHandler ThemeChanged = new RootedObjectEventHandler();
+
+        public List<Theme> AvailableThemes
+        {
+            get
+            {
+                if (this.availableThemes == null)
+                {
+                    this.availableThemes = getAvailableThemes();
+                }
+                return availableThemes;
+            }
+        }
+
+        public RGBA_Bytes TransparentDarkOverlay
+        {
+            get
+            {
+                return new RGBA_Bytes(0,0,0,50);
+            }
+        }
+
+        public RGBA_Bytes TransparentLightOverlay
+        {
+            get
+            {
+                return new RGBA_Bytes(255,255,255,50);
+            }
+        }
+
+        public RGBA_Bytes TabLabelSelected
+        {
+            get
+            {
+                return loadedTheme.tabLabelSelectedColor;
+            }
+        }
+
+        public RGBA_Bytes TabLabelUnselected
+        {
+            get
+            {
+                return loadedTheme.tabLabelUnselectedColor;
+            }
+        }
+
+
+        public RGBA_Bytes PrimaryBackgroundColor
+        {
+            get
+            {
+                return loadedTheme.primaryBackgroundColor;
+            }
+        }
+
+        public RGBA_Bytes SecondaryBackgroundColor
+        {
+            get
+            {
+                return loadedTheme.secondaryBackgroundColor;
+            }
+        }
+
+        public RGBA_Bytes PrimaryTextColor
+        {
+            get
+            {
+                return loadedTheme.primaryTextColor;
+            }
+        }
+
+        public RGBA_Bytes PrimaryAccentColor
+        {
+            get
+            {
+                return loadedTheme.primaryAccentColor;
+            }
+        }
+
+
+        public RGBA_Bytes SecondaryAccentColor
+        {
+            get
+            {
+                return loadedTheme.secondaryAccentColor;
+            }
+        }
+
+        private void OnThemeChanged(EventArgs e)
+        {
+            ThemeChanged.CallEvents(this, e);
+        }
+
+        public ActiveTheme()
+        {
+            //Load the default theme by index
+            if (UserSettings.Instance.get("ActiveThemeIndex") == null)
+            {
+                UserSettings.Instance.set("ActiveThemeIndex", defaultThemeIndex.ToString());
+            }
+
+            int themeIndex;
+            try
+            {
+                themeIndex = Convert.ToInt32(UserSettings.Instance.get("ActiveThemeIndex"));
+            }
+            catch
+            {
+                themeIndex = defaultThemeIndex;
+            }
+
+            LoadThemeSettings(themeIndex);
+        }
+
+        public static ActiveTheme Instance
+        {
+            get
+            {
+                if (globalInstance == null)
+                {
+                    globalInstance = new ActiveTheme();
+                }
+                return globalInstance;
+            }
+        }
+
+        public void LoadThemeSettings(int index)
+        {
+            //Validate new theme selection and change theme
+            if (index > -1 && index < AvailableThemes.Count)
+            {
+                if (activeThemeIndex != index)
+                {
+                    this.loadedTheme = this.AvailableThemes[index];
+                    this.activeThemeIndex = index;
+                    OnThemeChanged(null);
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid theme selection");
+            }
+        }
+
+
+        private List<Theme> getAvailableThemes()
+        {
+            //Generate a list of available theme definitions
+            List<Theme> themeList = new List<Theme>();
+            themeList.Add(new Theme("Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190)));
+
+            themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204)));
+            
+			themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32)));
+			themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255)));
+			themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76)));
+            themeList.Add(new Theme("Purple", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229)));
+			themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77)));
+			themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203)));
+			themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114)));
+			themeList.Add(new Theme("Pink", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188,0,200)));
+			return themeList;
+        }
+    }
+
+    public class Theme
+    {
+        public RGBA_Bytes primaryAccentColor;
+        public RGBA_Bytes secondaryAccentColor;
+        public RGBA_Bytes primaryTextColor;
+        public RGBA_Bytes secondaryTextColor;
+        public RGBA_Bytes primaryBackgroundColor;
+        public RGBA_Bytes secondaryBackgroundColor;
+        public RGBA_Bytes tabLabelSelectedColor;
+        public RGBA_Bytes tabLabelUnselectedColor;
+        public string name;
+
+        public Theme(string name, RGBA_Bytes primary, RGBA_Bytes secondary, bool darkTheme = true)
+        {
+            this.name = name;
+
+            if (darkTheme)
+            {
+                this.primaryAccentColor = primary;
+                this.secondaryAccentColor = secondary;
+                
+                this.primaryBackgroundColor = new RGBA_Bytes(68, 68, 68);
+                this.secondaryBackgroundColor = new RGBA_Bytes(51, 51, 51);
+                this.tabLabelSelectedColor = new RGBA_Bytes(255, 255, 255);
+                this.tabLabelUnselectedColor = new RGBA_Bytes(200, 200, 200);
+                this.primaryTextColor = new RGBA_Bytes(255, 255, 255);
+
+            }
+            else
+            {
+                this.primaryAccentColor = secondary;
+                this.secondaryAccentColor = primary;
+                
+                this.primaryBackgroundColor = new RGBA_Bytes(169, 169, 169);
+                this.secondaryBackgroundColor = new RGBA_Bytes(208, 208, 208);
+                this.tabLabelSelectedColor = new RGBA_Bytes(255, 255, 255);
+                this.tabLabelUnselectedColor = new RGBA_Bytes(200, 200, 200);
+                this.primaryTextColor = new RGBA_Bytes(255, 255, 255);
+            }
+        }
+    }
+}
+
+

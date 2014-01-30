@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" ActiveRuntime="Mono 2.10.6" />
+  <MonoDevelop.Ide.Workbench>
+    <Files>
+      <File FileName="MatterControlApplication.cs" Line="164" Column="10" />
+      <File FileName="..\agg-sharp\OpenGlGui\TrackballTumbleWidget.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0B8D6F56-BD7F-4426-B858-D9292B084656}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MatterHackers.MatterControl</RootNamespace>
+    <AssemblyName>MatterControl</AssemblyName>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <NoStdLib>False</NoStdLib>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <ReleaseVersion>0.8.2</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>application.ico</ApplicationIcon>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="ActionBar\ActionBarBaseControls.cs" />
+    <Compile Include="ActionBar\ActionBarPlus.cs" />
+    <Compile Include="ActionBar\HelpTextWidget.cs" />
+    <Compile Include="ActionBar\PrintActionRow.cs" />
+    <Compile Include="ActionBar\PrinterActionRow.cs" />
+    <Compile Include="ActionBar\PrintStatusRow.cs" />
+    <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
+    <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
+    <Compile Include="CustomWidgets\PerformanceFeedbackWindow.cs" />
+    <Compile Include="FieldValidation.cs" />
+    <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
+    <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
+    <Compile Include="PartPreviewWindow\PartPreviewBaseWidget.cs" />
+    <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
+    <Compile Include="PartPreviewWindow\ProgressControl.cs" />
+    <Compile Include="PartPreviewWindow\View3DTransfromPart.cs" />
+    <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrinterControls\SDCardManager.cs" />
+    <Compile Include="PrinterControls\MacroControls.cs" />
+    <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
+    <Compile Include="PrinterControls\EditMacrosWindow.cs" />
+    <Compile Include="PrintLibrary\PluginChooserWindow.cs" />
+    <Compile Include="PrintLibrary\ExportLibraryItemWindow.cs" />
+    <Compile Include="PrintLibrary\RegisteredCreatort.cs" />
+    <Compile Include="PrintQueue\ExportToSdCardProcess.cs" />
+    <Compile Include="ToolsPage\ToolsListControl.cs" />
+    <Compile Include="ToolsPage\ToolsListItem.cs" />
+    <Compile Include="ToolsPage\ToolsWidget.cs" />
+    <Compile Include="WidescreenPanel.cs" />
+    <Compile Include="PrintLevelWizard.cs" />
+    <Compile Include="ContactForm.cs" />
+    <Compile Include="CustomWidgets\ClickWidget.cs" />
+    <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
+    <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
+    <Compile Include="ControlElements\ImageButtonFactory.cs" />
+    <Compile Include="ControlElements\LinkButtonFactory.cs" />
+    <Compile Include="CustomWidgets\PrintProgressBarWidget.cs" />
+    <Compile Include="CustomWidgets\ExportToSdCardFeedbackWindow.cs" />
+    <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
+    <Compile Include="CustomWidgets\StyledDropDownList.cs" />
+    <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
+    <Compile Include="ControlElements\ThemeFactory.cs" />
+    <Compile Include="CustomWidgets\WizardControl.cs" />
+    <Compile Include="DataStorage\GenerateSampleData.cs" />
+    <Compile Include="DataStorage\SQLiteCommon.cs" />
+    <Compile Include="DataStorage\SQLiteWin32.cs" />
+    <Compile Include="DataStorage\Datastore.cs" />
+    <Compile Include="DataStorage\SQLiteUnix.cs" />
+    <Compile Include="DataStorage\SQLiteAsync.cs" />
+    <Compile Include="MainSlidePanel.cs" />
+    <Compile Include="ManifestFileHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ControlElements\MHTextEditWidget.cs" />
+    <Compile Include="PartPreviewWindow\GcodeViewBasic.cs" />
+    <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
+    <Compile Include="PartsSheet.cs" />
+    <Compile Include="JsonResponseDictionary.cs" />
+    <Compile Include="OrthographicZProjection.cs" />
+    <Compile Include="PrinterCommunication.cs" />
+    <Compile Include="PrinterControls\PrintLeveling.cs" />
+    <Compile Include="PrinterControls\OutputScrollWindow.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\ChooseConnectionWidget.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\SetupStepConfigureConnection.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortTwo.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortOne.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\SetupStepMakeModelName.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\SetupStepBaudRate.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\SetupStepInstallDriver.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\ConnectionWindow.cs" />
+    <Compile Include="PrinterControls\ManualPrinterControls.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\AddConnectionWidget.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\PrinterListItems.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\SetupConnectionWidgetBase.cs" />
+    <Compile Include="PrinterControls\TemperatureIndicator.cs" />
+    <Compile Include="PrinterControls\XYZJogControls.cs" />
+    <Compile Include="PrintLibrary\PrintLibraryListControl.cs" />
+    <Compile Include="PrintLibrary\PrintLibraryListItem.cs" />
+    <Compile Include="PrintLibrary\PrintLibraryWidget.cs" />
+    <Compile Include="PrintQueue\ExportToFolderProcess.cs" />
+    <Compile Include="CustomWidgets\PartThumbnailWidget.cs" />
+    <Compile Include="PrintQueue\PrintItemWrapper.cs" />
+    <Compile Include="PrintQueue\PrintQueueItem.cs" />
+    <Compile Include="MatterControlApplication.cs" />
+    <Compile Include="PrintQueue\PrintQueueControl.cs" />
+    <Compile Include="PrintQueue\PrintQueueMenu.cs" />
+    <Compile Include="ProjectFileHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestManager.cs" />
+    <Compile Include="PrintQueue\QueueControlsWidget.cs" />
+    <Compile Include="SettingsManagement\ApplicationSettings.cs" />
+    <Compile Include="SettingsManagement\UserSettings.cs" />
+    <Compile Include="SliceConfiguration\ActiveSliceSettings.cs" />
+    <Compile Include="SliceConfiguration\SettingsControlBar.cs" />
+    <Compile Include="SliceConfiguration\CuraEnginMappings.cs" />
+    <Compile Include="SliceConfiguration\SliceSettingsLayerSelector.cs" />
+    <Compile Include="SliceConfiguration\SliceSettingsWidget.cs" />
+    <Compile Include="SliceConfiguration\SliceSettingsOrganizer.cs" />
+    <Compile Include="SliceConfiguration\SlicingQueue.cs" />
+    <Compile Include="TupleList.cs" />
+    <Compile Include="FrostedSerial\FrostedSerialPort.cs" />
+    <Compile Include="FrostedSerial\FrostedSerialStream.cs" />
+    <Compile Include="FrostedSerial\IFrostedSerialStream.cs" />
+    <Compile Include="FrostedSerial\WinSerialStream.cs" />
+    <Compile Include="VersionManagement\WebRequestHandler.cs" />
+    <Compile Include="VersionManagement\VersionFileHandler.cs" />
+    <Compile Include="AboutPage.cs" />
+    <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
+    <Compile Include="ControlElements\TextImageButtonFactory.cs" />
+    <Compile Include="FrostedSerial\TermiosH.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp">
+      <HintPath>PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Community.CsharpSqlite.SQLiteClient">
+      <HintPath>Community.CsharpSqlite.SQLiteClient.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Posix" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\agg-sharp\AggTests\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>..\agg-sharp\PlatformWin32\OpenTK.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="application.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\agg-sharp\clipper_library\clipper_library.csproj">
+      <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
+      <Name>clipper_library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\Csg\Csg.csproj">
+      <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
+      <Name>Csg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\Gui\Gui.csproj">
+      <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
+      <Name>Gui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\ImageProcessing\ImageProcessing.csproj">
+      <Project>{036BCCBA-52D8-457C-84AE-8821F209FE4A}</Project>
+      <Name>ImageProcessing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\MarchingSquares\MarchingSquares.csproj">
+      <Project>{DF6845CD-64C6-4263-8357-DA8066855739}</Project>
+      <Name>MarchingSquares</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\RayTracer\RayTracer.csproj">
+      <Project>{1E01ABE0-B494-4FE4-B0D6-540133286887}</Project>
+      <Name>RayTracer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\VectorMath\VectorMath.csproj">
+      <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
+      <Name>VectorMath</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
+      <Project>{F67AE800-B0C7-42A8-836F-597B4E74591C}</Project>
+      <Name>GCodeVisualizer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
+      <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
+      <Name>SerialPortCommunication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
+      <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
+      <Name>WindowsFileDialogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
+      <Project>{F1653F20-D47D-4F29-8C55-3C835542AF5F}</Project>
+      <Name>Community.CsharpSqlite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
+      <Project>{A737BC76-165B-46C6-82B7-8871C7C92942}</Project>
+      <Name>MeshViewer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\Tesselate\Tesselate.csproj">
+      <Project>{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}</Project>
+      <Name>Tesselate</Name>
+    </ProjectReference>
+    <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
+      <Project>{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}</Project>
+      <Name>InfInstaller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\OpenGlGui\OpenGlGui.csproj">
+      <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
+      <Name>OpenGlGui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
+      <Project>{545B6912-77FF-4B34-BA76-6C3D6A32BE6A}</Project>
+      <Name>RenderOpenGl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\PolygonMesh\PolygonMesh.csproj">
+      <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
+      <Name>PolygonMesh</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\PlatformWin32\PlatformWin32.csproj">
+      <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
+      <Name>PlatformWin32</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\agg\Agg.csproj">
+      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
+      <Name>Agg</Name>
+    </ProjectReference>
+    <ProjectReference Include="Localizations\Localizations.csproj">
+      <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
+      <Name>Localizations</Name>
+    </ProjectReference>
+    <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj">
+      <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
+      <Name>MatterControlPluginSystem</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
