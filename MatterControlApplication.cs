@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            //GCodeForPerformanceTest();
+            //WriteTestGCodeFile();
             if (File.Exists("RunUnitTests.txt"))
             {
                 GuiHalWidget.SetClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
@@ -118,6 +118,43 @@ namespace MatterHackers.MatterControl
             ShowAsSystemWindow();
         }
 
+        private static void WriteMove(StringBuilder gcodeStringBuilder, Vector2 center)
+        {
+            gcodeStringBuilder.AppendLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
+        }
+        
+        public static void WriteTestGCodeFile()
+        {
+            StringBuilder gcodeStringBuilder = new StringBuilder();
+
+            int loops = 5;
+            int steps = 200;
+            double radius = 40;
+            Vector2 center = new Vector2(50, 50);
+
+            gcodeStringBuilder.AppendLine("G28 ; home all axes");
+            gcodeStringBuilder.AppendLine("G90 ; use absolute coordinates");
+            gcodeStringBuilder.AppendLine("G21 ; set units to millimeters");
+            gcodeStringBuilder.AppendLine("G92 E0");
+            gcodeStringBuilder.AppendLine("G1 F7800.000");
+            gcodeStringBuilder.AppendLine("G1 Z" + (30).ToString());
+            WriteMove(gcodeStringBuilder, center);
+
+            for (int loop = 0; loop < loops; loop++)
+            {
+                for (int step = 0; step < steps; step++)
+                {
+                    Vector2 nextPosition = new Vector2(radius, 0);
+                    nextPosition.Rotate(MathHelper.Tau / steps * step);
+                    WriteMove(gcodeStringBuilder, center + nextPosition);
+                }
+            }
+
+            gcodeStringBuilder.AppendLine("M84     ; disable motors");
+
+            System.IO.File.WriteAllText("PerformanceTest.gcode", gcodeStringBuilder.ToString());
+        }
+        
         void CheckOnPrinter(object state)
         {
             PrinterCommunication.Instance.OnIdle();
@@ -249,11 +286,6 @@ namespace MatterHackers.MatterControl
                 Invalidate();
             }
             base.OnMouseMove(mouseEvent);
-        }
-
-        private static void WriteMove(StringBuilder gcodeStringBuilder, Vector2 center)
-        {
-            gcodeStringBuilder.AppendLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
         }
 
         [STAThread]
