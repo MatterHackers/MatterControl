@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         public PluginChooserWindow()
             : base(360, 300)
         {
-            Title = "Installed Plugins";
+			Title = new LocalizedString("Installed Plugins").Translated;
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -70,7 +71,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                TextWidget elementHeader = new TextWidget(string.Format("Select a Design Tool:"), pointSize: 14);
+				string elementHeaderLbl = new LocalizedString ("Select a Design Tool:").Translated;
+				TextWidget elementHeader = new TextWidget(string.Format(elementHeaderLbl), pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -145,7 +147,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             //ShowAsSystemWindow();
 
-            Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel");
+			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
             cancelPresetsButton.Click += (sender, e) => { Close(); };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();

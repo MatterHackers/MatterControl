@@ -56,12 +56,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerMessageOne.HAnchor = HAnchor.ParentLeftRight;
             printerMessageOne.Margin = elementMargin;
 
-			TextWidget printerMessageTwo = new TextWidget(new LocalizedString("1.) Disconnect printer (if currently connected).").Translated, 0, 0, 12);
+			string printerMessageTwoTxt = new LocalizedString("Disconnect printer").Translated;
+			string printerMessageTwoTxtEnd = new LocalizedString("if currently connected").Translated;
+			string printerMessageTwoTxtFull = string.Format ("1.) {0} ({1}).", printerMessageTwoTxt, printerMessageTwoTxtEnd);
+			TextWidget printerMessageTwo = new TextWidget(printerMessageTwoTxtFull, 0, 0, 12);
             printerMessageTwo.TextColor = RGBA_Bytes.White;
             printerMessageTwo.HAnchor = HAnchor.ParentLeftRight;
             printerMessageTwo.Margin = elementMargin;
 
-			TextWidget printerMessageThree = new TextWidget(new LocalizedString("2.) Press 'Continue'.").Translated, 0, 0, 12);
+			string printerMessageThreeTxt = new LocalizedString("Press").Translated;
+			string printerMessageThreeTxtEnd = new LocalizedString ("Continue").Translated;
+			string printerMessageThreeFull = string.Format ("2.) {0} '{1}'.", printerMessageThreeTxt, printerMessageThreeTxtEnd);
+			TextWidget printerMessageThree = new TextWidget(printerMessageThreeFull, 0, 0, 12);
             printerMessageThree.TextColor = RGBA_Bytes.White;
             printerMessageThree.HAnchor = HAnchor.ParentLeftRight;
             printerMessageThree.Margin = elementMargin;

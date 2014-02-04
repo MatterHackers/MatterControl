@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 
             public UiState(SliceSettingsWidget settingsToCopy)
             {
-                showHelp = settingsToCopy.ShowingHelp;
+				showHelp = settingsToCopy.ShowingHelp;
                 userLevel = settingsToCopy.UserLevel;
                 settingsToCopy.CurrentlyActiveCategory(out selectedCategory.index, out selectedCategory.name);
                 settingsToCopy.CurrentlyActiveGroup(out selectedGroup.index, out selectedGroup.name);
@@ -103,10 +103,10 @@ namespace MatterHackers.MatterControl
         {
             int minSettingNameWidth = 220;
 
-            showHelpBox = new CheckBox("Show Help");
-            showHelpBox.Checked = uiState.showHelp;
+			showHelpBox = new CheckBox(new LocalizedString("Show Help").Translated);
+			showHelpBox.Checked = uiState.showHelp;
 
-            showAllDetails = new CheckBox("Show All Settings");
+			showAllDetails = new CheckBox(new LocalizedString("Show All Settings").Translated);
             showAllDetails.Checked = uiState.userLevel == "Advanced";
 
             FlowLayoutWidget pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: Agg.UI.VAnchor.ParentTop);
@@ -140,7 +140,8 @@ namespace MatterHackers.MatterControl
             for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
             {
                 OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
-                TabPage categoryPage = new TabPage(category.Name);
+				string categoryPageLbl = new LocalizedString (category.Name).Translated;
+				TabPage categoryPage = new TabPage(categoryPageLbl);
                 SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, 16,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
                 categoryPage.AnchorAll();
@@ -205,7 +206,7 @@ namespace MatterHackers.MatterControl
                 showHelpBox.Cursor = Cursors.Hand;
                 showHelpBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(RebuildSlicerSettings);
 
-                categoryTabs.TabBar.AddChild(showHelpBox);
+				categoryTabs.TabBar.AddChild(showHelpBox);
             }
 
             pageTopToBottomLayout.AddChild(categoryTabs);
@@ -286,7 +287,8 @@ namespace MatterHackers.MatterControl
             foreach (OrganizerGroup group in category.GroupsList)
             {
                 tabIndexForItem = 0;
-                TabPage groupTabPage = new TabPage(group.Name);
+				string groupTabLbl = new LocalizedString (group.Name).Translated;
+				TabPage groupTabPage = new TabPage(groupTabLbl);
                 SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, 14,
                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
 
@@ -319,7 +321,8 @@ namespace MatterHackers.MatterControl
                     if (addedSettingToSubGroup)
                     {
                         needToAddSubGroup = true;
-                        GroupBox groupBox = new GroupBox(subGroup.Name);
+						string groupBoxLbl = new LocalizedString (subGroup.Name).Translated;
+						GroupBox groupBox = new GroupBox (groupBoxLbl);
                         groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.AddChild(topToBottomSettings);
@@ -360,6 +363,7 @@ namespace MatterHackers.MatterControl
             allText.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 
             double helpPointSize = 10;
+
             string[] wrappedText = TypeFacePrinter.WrapText(settingInfo.HelpText, textRegionWidth - allText.Padding.Width, helpPointSize);
             foreach(string line in wrappedText)
             {
@@ -449,6 +453,7 @@ namespace MatterHackers.MatterControl
                 {
                     string convertedNewLines = settingData.PresentationName.Replace("\\n ", "\n");
                     convertedNewLines = convertedNewLines.Replace("\\n", "\n");
+					convertedNewLines = new LocalizedString (convertedNewLines).Translated;
                     TextWidget settingName = new TextWidget(convertedNewLines);
                     settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     settingName.Width = minSettingNameWidth;
