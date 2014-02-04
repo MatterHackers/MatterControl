@@ -13,6 +13,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl
             this.SlicerConfigName = slicerConfigName;
             this.PresentationName = presentationName;
             this.DataEditType = dataEditType;
-            this.HelpText = helpText;
+			this.HelpText = new LocalizedString(helpText).Translated;
         }
     }
 
@@ -192,10 +193,10 @@ namespace MatterHackers.MatterControl
                 return instance;
             }
         }
-
+		   
         SliceSettingsOrganizer()
         {
-            string layouts = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Layouts.txt");
+			string layouts = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Layouts.txt");
             string properties = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Properties.txt");
 
             LoadAndParseSettingsFiles(properties, layouts);
@@ -259,7 +260,7 @@ namespace MatterHackers.MatterControl
             sw.Close();
         }
 
-        void LoadAndParseSettingsFiles(string properties, string layouts)
+		void LoadAndParseSettingsFiles(string properties, string layout)
         {
             {
                 string propertiesFileContents = "";
@@ -282,14 +283,14 @@ namespace MatterHackers.MatterControl
             }
 
             {
-                string layoutFileContents = "";
-                using (FileStream fileStream = new FileStream(layouts, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+				string layoutFileContents = "";
+				using (FileStream fileStream = new FileStream(layout, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     using (StreamReader layoutReader = new StreamReader(fileStream))
                     {
                         layoutFileContents = layoutReader.ReadToEnd();
                     }
-                }
+				}
 
                 OrganizerUserLevel userLevelToAddTo = null;
                 OrganizerCategory categoryToAddTo = null;

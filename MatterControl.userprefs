@@ -1,9 +1,18 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" ActiveRuntime="Mono 2.10.6" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="SliceConfiguration\SliceSettingsWidget.cs">
     <Files>
-      <File FileName="MatterControlApplication.cs" Line="164" Column="10" />
+      <File FileName="MatterControlApplication.cs" Line="1" Column="1" />
       <File FileName="..\agg-sharp\OpenGlGui\TrackballTumbleWidget.cs" Line="1" Column="1" />
+      <File FileName="Localizations\LocalizedString.cs" Line="1" Column="1" />
+      <File FileName="MainSlidePanel.cs" Line="1" Column="1" />
+      <File FileName="WidescreenPanel.cs" Line="1" Column="1" />
+      <File FileName="SliceConfiguration\SettingsControlBar.cs" Line="34" Column="10" />
+      <File FileName="SliceConfiguration\ActiveSliceSettings.cs" Line="514" Column="109" />
+      <File FileName="SliceConfiguration\SliceSettingsLayerSelector.cs" Line="1" Column="1" />
+      <File FileName="SliceConfiguration\SliceSettingsOrganizer.cs" Line="286" Column="36" />
+      <File FileName="SliceConfiguration\SliceSettingsWidget.cs" Line="449" Column="118" />
+      <File FileName="PartPreviewWindow\GcodeViewBasic.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
