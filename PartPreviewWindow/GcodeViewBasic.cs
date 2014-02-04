@@ -46,6 +46,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -100,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonBottomPanel.Padding = new BorderDouble(3, 3);
             buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            generateGCodeButton = textImageButtonFactory.Generate("Generate");
+			generateGCodeButton = textImageButtonFactory.Generate(new LocalizedString("Generate").Translated);
             generateGCodeButton.Click += new ButtonBase.ButtonEventHandler(generateButton_Click);
             buttonBottomPanel.AddChild(generateGCodeButton);
 
@@ -108,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerSelectionButtonsPannel.HAnchor = HAnchor.ParentLeftRight;
             layerSelectionButtonsPannel.Padding = new BorderDouble(0);
 
-            closeButton = textImageButtonFactory.Generate("Close");
+			closeButton = textImageButtonFactory.Generate(new LocalizedString("Close").Translated);
 
             layerSelectionButtonsPannel.AddChild(closeButton);
 
@@ -117,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
-            string startingMessage = "Loading GCode...";
+			string startingMessage = new LocalizedString("Loading GCode...").Translated;
             if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
             {
                 gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
@@ -133,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
                 else
                 {
-                    startingMessage = "Press 'generate' to view layers";
+					startingMessage = "Press 'generate' to view layers";
                 }
 
                 if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
@@ -361,7 +362,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
             layerInfoContainer.Padding = new BorderDouble(5);
 
-            layerInfoContainer.AddChild(new TextWidget("Layer Number:", textColor: RGBA_Bytes.White));
+			layerInfoContainer.AddChild(new TextWidget("Layer Number:", textColor: RGBA_Bytes.White));
             layerInfoContainer.AddChild(new TextWidget("Layer Height:", textColor: RGBA_Bytes.White));
             layerInfoContainer.AddChild(new TextWidget("Num GCodes:", textColor: RGBA_Bytes.White));
             layerInfoContainer.AddChild(new TextWidget("Filament Used:", textColor: RGBA_Bytes.White));

@@ -11,6 +11,7 @@ using Newtonsoft.Json.Utilities;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -51,7 +52,11 @@ namespace MatterHackers.MatterControl
             settingsStatusLabelContainer.VAnchor |= VAnchor.ParentTop;
             settingsStatusLabelContainer.Margin = new BorderDouble(0);
             {
-                TextWidget settingsStatusLabel = new TextWidget(string.Format("Active Settings:"), pointSize: 10);
+				string activeSettingsLabelText = new LocalizedString ("Active Settings:").Translated;
+				string activeSettingsLabelTextFull = string.Format ("{0}:", activeSettingsLabelText);
+
+
+				TextWidget settingsStatusLabel = new TextWidget(string.Format(activeSettingsLabelTextFull), pointSize: 10);
                 settingsStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
                 settingsStatusDescription = new TextWidget("", pointSize: 14);
@@ -70,19 +75,19 @@ namespace MatterHackers.MatterControl
                 settingsStatusLabelContainer.AddChild(unsavedChangesIndicator);
             }
 
-            saveButton = textImageButtonFactory.Generate("Save");
+			saveButton = textImageButtonFactory.Generate(new LocalizedString("Save").Translated);
             saveButton.VAnchor = VAnchor.ParentTop;
             saveButton.Visible = false;
             saveButton.Margin = new BorderDouble(0, 0, 0, 10);
             saveButton.Click += new ButtonBase.ButtonEventHandler(saveButton_Click);
 
-            revertbutton = textImageButtonFactory.Generate("Revert");
+			revertbutton = textImageButtonFactory.Generate(new LocalizedString("Revert").Translated);
             revertbutton.VAnchor = VAnchor.ParentTop;
             revertbutton.Visible = false;
             revertbutton.Margin = new BorderDouble(0,0,0,10);
             revertbutton.Click += new ButtonBase.ButtonEventHandler(revertbutton_Click);
 
-            SliceOptionsMenuDropList = new DropDownMenu("Options   ");
+			SliceOptionsMenuDropList = new DropDownMenu(new LocalizedString("Options   ").Translated);
             SliceOptionsMenuDropList.Margin = new BorderDouble(top: 11);
             SliceOptionsMenuDropList.VAnchor |= VAnchor.ParentTop;
             SliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
@@ -97,7 +102,9 @@ namespace MatterHackers.MatterControl
             sliceEngineContainer.Margin = new BorderDouble(0,0,10,0);
             sliceEngineContainer.VAnchor |= VAnchor.ParentTop;
             {
-                TextWidget sliceEngineLabel = new TextWidget(string.Format("Slice Engine:"), pointSize: 10);
+				string sliceEngineLabelText = new LocalizedString ("Slice Engine").Translated;
+				string sliceEngineLabelTextFull = string.Format ("{0}:", sliceEngineLabelText);
+				TextWidget sliceEngineLabel = new TextWidget(string.Format(sliceEngineLabelTextFull), pointSize: 10);
                 sliceEngineLabel.Margin = new BorderDouble(0);
                 sliceEngineLabel.HAnchor = HAnchor.ParentLeft;
                 sliceEngineLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -204,7 +211,7 @@ namespace MatterHackers.MatterControl
             //Set the name and callback function of the menu items
             slicerOptionsMenuItems = new TupleList<string, Func<bool>> 
             {
-                {"Import", ImportQueueMenu_Click},
+				{"Import", ImportQueueMenu_Click},
                 {"Export", ExportQueueMenu_Click},
             };
 

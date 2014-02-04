@@ -38,16 +38,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             contentRow.AddChild(printerComPortContainer);
             {
                 //Construct buttons
-                nextButton = textImageButtonFactory.Generate("Done");
+				nextButton = textImageButtonFactory.Generate(new LocalizedString("Done").Translated);
                 nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
                 nextButton.Visible = false;
 
-                connectButton = textImageButtonFactory.Generate("Connect");
+				connectButton = textImageButtonFactory.Generate(new LocalizedString("Connect").Translated);
                 connectButton.Click += new ButtonBase.ButtonEventHandler(ConnectButton_Click);
 
                 PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
-                refreshButton = textImageButtonFactory.Generate("Refresh");
+				refreshButton = textImageButtonFactory.Generate(new LocalizedString("Refresh").Translated);
                 refreshButton.Click += new ButtonBase.ButtonEventHandler(RefreshButton_Click);
 
                 GuiWidget hSpacer = new GuiWidget();
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             printerComPortHelpLink.Visible = false;
             printerComPortError.TextColor = RGBA_Bytes.Red;            
-            printerComPortError.Text = "Uh-oh! Could not connect to printer.";
+			printerComPortError.Text = new LocalizedString("Uh-oh! Could not connect to printer.").Translated;
             connectButton.Visible = true;
             nextButton.Visible = false;
         }
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             printerComPortHelpLink.Visible = false;
             printerComPortError.TextColor = RGBA_Bytes.White;
-            printerComPortError.Text = "Connection succeeded!";
+			printerComPortError.Text = new LocalizedString("Connection succeeded!").Translated;
             nextButton.Visible = true;
             connectButton.Visible = false;
         }
@@ -264,7 +264,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 this.ActivePrinter.Commit();
                 printerComPortHelpLink.Visible = false;
                 printerComPortError.TextColor = RGBA_Bytes.White;
-                printerComPortError.Text = "Attempting to connect...";
+				string printerComPortErrorLbl = new LocalizedString("Attempting to connect").Translated;
+				string printerComPortErrorLblFull = string.Format("{0}...",printerComPortErrorLbl);
+				printerComPortError.Text = printerComPortErrorLblFull;
                 PrinterCommunication.Instance.ActivePrinter = this.ActivePrinter;
                 PrinterCommunication.Instance.ConnectToActivePrinter();
                 connectButton.Visible = false;
@@ -293,7 +295,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     return button.PortValue;
                 }
             }
-            throw new Exception("Could not find a selected button.");
+			throw new Exception(new LocalizedString("Could not find a selected button.").Translated);
         }
     }
 }
