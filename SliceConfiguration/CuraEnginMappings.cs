@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
             new MapItem("insetCount", "perimeters"),
 
             new MapItem("skirtLineCount", "skirts"),
-            new MapItem("skirtMinLenght", "min_skirt_length"),
+            new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
             new ScaledSingleNumber("skirtDistance", "skirt_distance", 1000),
 
             new MapItem("fanSpeedMin", "max_fan_speed"),
@@ -402,6 +402,28 @@ enableOozeShield = 0;
         public MapEndGCode(string cura, string slicer)
             : base(cura, slicer)
         {
+        }
+    }
+
+    public class SkirtLengthMaping : MapItem
+    {
+        public SkirtLengthMaping(string curaKey, string defaultKey)
+            : base(curaKey, defaultKey)
+        {
+        }
+
+        public override string CuraValue
+        {
+            get
+            {
+                double lengthToExtrudeMm = double.Parse(base.CuraValue);
+                // we need to convert mm of filament to mm of extrusion path
+                double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FillamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
+                double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
+                double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
+                
+                return (lineLength * 1000).ToString();
+            }
         }
     }
 
