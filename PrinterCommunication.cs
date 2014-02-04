@@ -139,6 +139,8 @@ namespace MatterHackers.MatterControl
         public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, Printing, Paused, FinishedPrint, Disconnecting, ConnectionLost };
         CommunicationStates communicationState = CommunicationStates.Disconnected;
 
+        bool ForceImmediateWrites = false;
+
         public CommunicationStates CommunicationState
         {
             get
@@ -1494,17 +1496,27 @@ namespace MatterHackers.MatterControl
             {
                 // Get the temperature during print.
                 if (printerCommandQueueIndex > 0
-                    && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count
-                    && loadedGCode.GCodeCommandQueue[printerCommandQueueIndex].Line != lineToWrite)
+                    && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count -1)
                 {
-                    loadedGCode.GCodeCommandQueue.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.GCodeCommandQueue[printerCommandQueueIndex]));
+                    if (loadedGCode.GCodeCommandQueue[printerCommandQueueIndex+1].Line != lineToWrite)
+                    {
+                        loadedGCode.GCodeCommandQueue.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.GCodeCommandQueue[printerCommandQueueIndex]));
+                    }
                 }
             }
             else
             {
-                if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
+                // sometimes we need to send code without buffering (like when we are closing the program).
+                if (ForceImmediateWrites)
                 {
-                    LinesToWriteQueue.Add(lineToWrite);
+                    WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
+                }
+                else
+                {
+                    if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
+                    {
+                        LinesToWriteQueue.Add(lineToWrite);
+                    }
                 }
             }
         }
@@ -1574,10 +1586,16 @@ namespace MatterHackers.MatterControl
         {
             if (PrinterIsConnected)
             {
+                // Make sure we send this without waiting for the printer to respond. We want to try and turn off the heaters.
+                // It may be possible in the future to make this go into the printer queue for assured sending but it means
+                // the program has to be smart about closing an able to wait until the printer has agreed that it shut off
+                // the motors and heaters (a good idea ane something for the future).
+                ForceImmediateWrites = true;
                 ReleaseMotors();
                 TargetExtruderTemperature = 0;
                 TargetBedTemperature = 0;
                 FanSpeed = 0;
+                ForceImmediateWrites = false;
 
                 CommunicationState = CommunicationStates.Disconnecting;
                 if (readFromPrinterThread != null)
@@ -1608,10 +1626,13 @@ namespace MatterHackers.MatterControl
             timeSinceLastWrite.Restart();
             if (PrinterIsConnected)
             {
-                bool forceResendInCaseOfOKError = false;
+                //bool forceResendInCaseOfOKError = false;
                 // wait until the printer responds from the last command with an ok OR we waited to long
-                while (PrinterIsPrinting && timeHaveBeenWaitingForOK.IsRunning && !forceResendInCaseOfOKError)
+                while (PrinterIsPrinting && timeHaveBeenWaitingForOK.IsRunning)// && !forceResendInCaseOfOKError)
                 {
+#if false 
+                    // this is a bunch of code to try and make sure the printer does not stop on transmission errors.
+                    // It is not working and is currently disabled. It would be great to debug this and get it working. Lars.
                     // It has been more than 5 seconds since the printer responded anything 
                     // and it was not ok, and it's been more than 10 second since we sent the command
                     if (timeSinceLastReadAnything.Elapsed.Seconds > 5 && timeSinceLastWrite.Elapsed.Seconds > 10)
@@ -1621,10 +1642,9 @@ namespace MatterHackers.MatterControl
                         {
                             // the last instruction was a move
                             PrinterMachineInstruction lastInstruction = loadedGCode.GCodeCommandQueue[printerCommandQueueIndex - 1];
-                            bool isMove = lastInstruction.Line.StartsWith("G1") || lastInstruction.Line.StartsWith("G0");
-                            if (isMove && firstLineToResendIndex == allCheckSumLinesSent.Count)
+                            if (firstLineToResendIndex == allCheckSumLinesSent.Count)
                             {
-                                // Basically we got some response but it did not contain on OK.
+                                // Basically we got some response but it did not contain an OK.
                                 // The theory is that we may have recieved a transmission error (like 'OP' rather than 'OK')
                                 // and in that event we don't want the print to just stop and wait forever.
                                 forceResendInCaseOfOKError = true;
@@ -1632,6 +1652,13 @@ namespace MatterHackers.MatterControl
                             }
                         }
                     }
+
+                    bool printerWantsResend = firstLineToResendIndex < allCheckSumLinesSent.Count;
+                    if (printerWantsResend)
+                    {
+                        forceResendInCaseOfOKError = true;
+                    }
+#endif
 
                     // we are waiting for ok so wait some time
                     System.Threading.Thread.Sleep(1);
