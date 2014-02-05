@@ -53,6 +53,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.VersionManagement;
 using MatterHackers.MatterControl.PluginSystem;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -63,11 +64,13 @@ namespace MatterHackers.MatterControl
 {
     public class MatterControlApplication : SystemWindow
     {
+        string[] commandLineArgs = null;
         bool firstDraw = true;
 
-        public MatterControlApplication(double width, double height)
+        public MatterControlApplication(string[] commandLineArgs, double width, double height)
             : base(width, height)
         {
+            this.commandLineArgs = commandLineArgs;
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             //WriteTestGCodeFile();
@@ -276,6 +279,13 @@ namespace MatterHackers.MatterControl
             {
                 Parent.MinimumSize = new Vector2(590, 540);
                 firstDraw = false;
+                foreach (string arg in commandLineArgs)
+                {
+                    if (Path.GetExtension(arg).ToUpper() == ".STL")
+                    {
+                        new PartPreviewMainWindow(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
+                    }
+                }
             }
         }
 
@@ -289,7 +299,7 @@ namespace MatterHackers.MatterControl
         }
 
         [STAThread]
-        public static void Main(string[] args)
+        public static void Main(string[] commandLineArgs)
         {
             Datastore.Instance.Initialize();
 
@@ -304,7 +314,7 @@ namespace MatterHackers.MatterControl
                 height = int.Parse(sizes[1]);
             }
             //MessageBox.ShowMessageBox(timerInfo, "Timing", MessageBox.MessageType.OK);
-            new MatterControlApplication(width, height);
+            new MatterControlApplication(commandLineArgs, width, height);
         }
 
         public override void OnClosed(EventArgs e)
