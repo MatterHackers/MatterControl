@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnMouseUp(mouseEvent);
         }
 
-        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume)
+        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape)
         {
             MeshExtraData = new List<PlatingMeshData>();
             MeshExtraData.Add(new PlatingMeshData());
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             GuiWidget viewArea = new GuiWidget();
             viewArea.AnchorAll();
             {
-                meshViewerWidget = new MeshViewerWidget(viewerVolume, 1);
+                meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape);
                 SetMeshViewerDisplayTheme();
                 meshViewerWidget.AnchorAll();
             }

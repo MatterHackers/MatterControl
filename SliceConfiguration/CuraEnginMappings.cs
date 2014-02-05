@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl
 
             new NotPassedItem("", "temperature"),
             new NotPassedItem("", "bed_temperature"),
+            new NotPassedItem("", "bed_shape"),
 
             new MapItem("insetCount", "perimeters"),
 

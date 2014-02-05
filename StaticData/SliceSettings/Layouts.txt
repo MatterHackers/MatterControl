@@ -179,6 +179,7 @@ Advanced
         print_center
         build_height
         z_offset
+        bed_shape
       Firmware
         gcode_flavor
         use_relative_e_distances

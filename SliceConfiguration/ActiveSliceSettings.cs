@@ -195,11 +195,30 @@ namespace MatterHackers.MatterControl
         {
             return BedSize;
         }
+
         public Vector2 BedSize
         {
             get
             {
                 return GetActiveVector2("bed_size");
+            }
+        }
+
+        public MeshVisualizer.MeshViewerWidget.BedShape BedShape
+        {
+            get
+            {
+                switch(GetActiveValue("bed_shape"))
+                {
+                    case "rectangular":
+                        return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
+
+                    case "circular":
+                        return MeshVisualizer.MeshViewerWidget.BedShape.Circular;
+
+                    default:
+                        throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetActiveValue("bed_shape")));
+                }
             }
         }
 
