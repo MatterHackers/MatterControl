@@ -264,7 +264,12 @@ namespace MatterHackers.MatterControl
 #if false
             if (timingWindow == null)
             {
-                timingWindow = new PerformanceFeedbackWindow();
+            string staticDataPath = ApplicationDataStorage.Instance.ApplicationStaticDataPath;
+            string fontPath = Path.Combine(staticDataPath, "Fonts", "LiberationMono.svg");
+            TypeFace boldTypeFace = TypeFace.LoadSVG(fontPath);
+            typeFaceToUse = new StyledTypeFace(boldTypeFace, 12);
+
+            timingWindow = new PerformanceFeedbackWindow();
             }
             {
                 if (totalDrawTime.Elapsed.TotalSeconds > .05)

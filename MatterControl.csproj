@@ -74,7 +74,6 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
-    <Compile Include="CustomWidgets\PerformanceFeedbackWindow.cs" />
     <Compile Include="FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
