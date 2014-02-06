@@ -11,6 +11,7 @@ using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -47,7 +48,9 @@ namespace MatterHackers.MatterControl
         public void QueuePartForSlicing(PrintItemWrapper itemToQueue)
         {
             itemToQueue.DoneSlicing = false;
-            itemToQueue.OnSlicingOutputMessage(new StringEventArgs("Preparing to slice model..."));
+			string preparingToSliceModelTxt = new LocalizedString("Preparing to slice model").Translated;
+			string peparingToSliceModelFull = string.Format ("{0}...", preparingToSliceModelTxt);
+			itemToQueue.OnSlicingOutputMessage(new StringEventArgs(peparingToSliceModelFull));
             using (TimedLock.Lock(listOfSlicingItems, "QueuePartForSlicing"))
             {
                 //Add to thumbnail generation queue

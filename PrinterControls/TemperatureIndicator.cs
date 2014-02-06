@@ -1,4 +1,4 @@
-﻿﻿﻿/*
+﻿﻿/*
 Copyright (c) 2013, Lars Brubaker
 All rights reserved.
 
@@ -404,7 +404,7 @@ namespace MatterHackers.MatterControl
     public class ExtruderTemperatureControlWidget : TemperatureControlBase
     {
         public ExtruderTemperatureControlWidget()
-            : base("Extruder Temperature Override", "Extruder Temperature Settings")
+			: base("Extruder Temperature Override", "Extruder Temperature Settings")
         {   
             AddHandlers();
         }

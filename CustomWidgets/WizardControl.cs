@@ -5,6 +5,7 @@ using System.Text;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -56,13 +57,13 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget buttonBar = new FlowLayoutWidget();
 
             textImageButtonFactory.FixedWidth = 60;
-            backButton = textImageButtonFactory.Generate("Back", centerText: true);
+			backButton = textImageButtonFactory.Generate(new LocalizedString("Back").Translated, centerText: true);
             backButton.Click += new ButtonBase.ButtonEventHandler(back_Click);
 
-            nextButton = textImageButtonFactory.Generate("Next", centerText: true);
+			nextButton = textImageButtonFactory.Generate(new LocalizedString("Next").Translated, centerText: true);
             nextButton.Click += new ButtonBase.ButtonEventHandler(next_Click);
 
-            doneButton = textImageButtonFactory.Generate("Done", centerText: true);
+			doneButton = textImageButtonFactory.Generate(new LocalizedString("Done").Translated, centerText: true);
             doneButton.Click += new ButtonBase.ButtonEventHandler(done_Click);
 
             textImageButtonFactory.FixedWidth = 0;
