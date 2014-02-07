@@ -64,7 +64,9 @@ namespace MatterHackers.MatterControl
                 settingsStatusDescription.AutoExpandBoundsToText = true;
                 settingsStatusDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-                unsavedChangesIndicator = new TextWidget("(unsaved changes)", pointSize: 10);
+				string unsavedChangesTxtBeg = new  LocalizedString("unsaved changes").Translated;
+				string unsavedChangesTxtFull = string.Format ("({0})", unsavedChangesTxtBeg);
+				unsavedChangesIndicator = new TextWidget(unsavedChangesTxtFull, pointSize: 10);
                 unsavedChangesIndicator.AutoExpandBoundsToText = true;
                 unsavedChangesIndicator.Visible = false;
                 unsavedChangesIndicator.Margin = new BorderDouble(left: 4);
@@ -212,7 +214,7 @@ namespace MatterHackers.MatterControl
             slicerOptionsMenuItems = new TupleList<string, Func<bool>> 
             {
 				{"Import", ImportQueueMenu_Click},
-                {"Export", ExportQueueMenu_Click},
+				{"Export", ExportQueueMenu_Click},
             };
 
             //Add the menu items to the menu itself

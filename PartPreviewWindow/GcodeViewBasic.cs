@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
                 else
                 {
-					startingMessage = "Press 'generate' to view layers";
+					startingMessage = new LocalizedString("Press 'generate' to view layers").Translated;
                 }
 
                 if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-                expandModelOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Model", "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandModelOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Model").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandModelOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandModelOptions);
                 expandModelOptions.Checked = true;
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 //modelOptionsContainer.Visible = false;
                 buttonRightPanel.AddChild(modelOptionsContainer);
 
-                expandLayerOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Layer", "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandLayerOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Layer").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandLayerOptions.Margin = new BorderDouble(bottom: 2);
                 //buttonRightPanel.AddChild(expandLayerOptions);
 
@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 layerOptionsContainer.Visible = false;
                 buttonRightPanel.AddChild(layerOptionsContainer);
 
-                expandDisplayOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Display", "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandDisplayOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Display").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandDisplayOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandDisplayOptions);
                 expandDisplayOptions.Checked = true;

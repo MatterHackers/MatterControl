@@ -17,7 +17,9 @@ namespace MatterHackers.MatterControl
 
         public PrinterChooser(string selectedMake = null)
         {
-			ManufacturerDropList = new StyledDropDownList(new LocalizedString("- Select Make -").Translated);            
+			string defaultManufacturerLbl = new LocalizedString ("Select Make").Translated;
+			string defaultManufacturerLblFull = string.Format ("- {0} -", defaultManufacturerLbl);
+			ManufacturerDropList = new StyledDropDownList(defaultManufacturerLblFull);            
             bool addOther = false;
             string pathToWhitelist = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "PrinterSettingsWhitelist.txt");
             string[] folderWhitelist = File.ReadAllLines(pathToWhitelist);
@@ -80,7 +82,9 @@ namespace MatterHackers.MatterControl
 
         public ModelChooser(string manufacturer)
         {
-			ModelDropList = new StyledDropDownList(new LocalizedString("- Select Model -").Translated);
+			string defaultModelDropDownLbl = new LocalizedString("Select Model").Translated;
+			string defaultModelDropDownLblFull = string.Format("- {0} -", defaultModelDropDownLbl);
+			ModelDropList = new StyledDropDownList(defaultModelDropDownLblFull);
             string pathToModels = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", manufacturer);
             if (Directory.Exists(pathToModels))
             {
