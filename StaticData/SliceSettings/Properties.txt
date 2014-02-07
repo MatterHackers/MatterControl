@@ -94,6 +94,7 @@ start_gcode|Start G-Code|MULTI_LINE_TEXT||This gcode will be inserted into the o
 start_perimeters_at_concave_points|Start At Concave Points|CHECK_BOX||Make sure the first point on a perimeter is a concave point.
 start_perimeters_at_non_overhang|Start At Non Overhang|CHECK_BOX||Make sure the first point on a perimeter is not an overhang.
 support_material_angle|Pattern Angle|POSITVE_DOUBLE|degrees|The starting angle of the supports.
+support_material_create_internal_support|Internal Support|CHECK_BOX||Create support where needed on internal features.
 support_material_enforce_layers|Enforce Support For First|INT|layers|Generate support material everywhere not touching the bed for n layers, regardless of angle.
 support_material_extruder|Support Material Extruder|INT||The index of the extruder to use for support material.
 support_material_extrusion_width|Support Material|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.

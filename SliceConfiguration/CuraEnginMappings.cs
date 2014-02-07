@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
             new ScaledSingleNumber("supportLineDistance", "support_material_spacing", 1000),
             new SupportMatterial("supportAngle", "support_material"),
             new NotPassedItem("", "support_material_threshold"),
-            //new ScaledSingleNumber(supportEverywhere);
+            new MapItem("supportEverywhere", "support_material_create_internal_support"),
             new ScaledSingleNumber("supportXYDistance", "support_material_xy_distance", 1000),
             new ScaledSingleNumber("supportZDistance", "support_material_z_distance", 1000),
 

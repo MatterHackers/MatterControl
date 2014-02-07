@@ -111,6 +111,7 @@ Advanced
         support_material_interface_spacing
         support_material_xy_distance
         support_material_z_distance
+        support_material_create_internal_support
     Notes
       Notes
         notes

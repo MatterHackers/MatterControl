@@ -1385,9 +1385,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
 
-                // we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
-                PushMeshDataToAsynchLists(true);
-
                 BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
                 mergeAndSavePartsBackgroundWorker.WorkerReportsProgress = true;
 
@@ -1401,6 +1398,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            // we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
+            PushMeshDataToAsynchLists(true);
+
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
             try
