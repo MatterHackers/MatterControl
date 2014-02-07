@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
             settingsStatusLabelContainer.VAnchor |= VAnchor.ParentTop;
             settingsStatusLabelContainer.Margin = new BorderDouble(0);
             {
-				string activeSettingsLabelText = new LocalizedString ("Active Settings:").Translated;
+				string activeSettingsLabelText = new LocalizedString ("Active Settings").Translated;
 				string activeSettingsLabelTextFull = string.Format ("{0}:", activeSettingsLabelText);
 
 

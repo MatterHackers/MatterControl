@@ -89,16 +89,36 @@ namespace MatterHackers.MatterControl
         {
             Vector2 bedSize = ActiveSliceSettings.Instance.BedSize;
             Vector2 printCenter = ActiveSliceSettings.Instance.PrintCenter;
-            switch (index)
+
+            switch (BedShape)
             {
-                case 0:
-                    return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
-                case 1:
-                    return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
-                case 2:
-                    return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+                case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
+                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+                    switch (index)
+                    {
+                        case 0:
+                            return firstPosition;
+                        case 1:
+                            return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
+                        case 2:
+                            return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
+                        default:
+                            throw new IndexOutOfRangeException();
+                    }
+
+                case MeshVisualizer.MeshViewerWidget.BedShape.Rectangular:
                 default:
-                    throw new IndexOutOfRangeException();
+                    switch (index)
+                    {
+                        case 0:
+                            return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+                        case 1:
+                            return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+                        case 2:
+                            return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+                        default:
+                            throw new IndexOutOfRangeException();
+                    }
             }
         }
 
