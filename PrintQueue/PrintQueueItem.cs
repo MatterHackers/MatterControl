@@ -370,8 +370,11 @@ namespace MatterHackers.MatterControl.PrintQueue
                     string end = maxLengthName.Substring(maxLengthName.Length - amountRemaining, amountRemaining);
                     maxLengthName = start + end;
                 }
-                string message = String.Format("Oops! Could not find this file:\n'{0}'\n\nWould you like to remove it from the queue?", maxLengthName);
-                if (StyledMessageBox.ShowMessageBox(message, "Item not found", StyledMessageBox.MessageType.YES_NO))
+				string notFoundMessage = new LocalizedString("Oops! Could not find this file").Translated;
+				string notFoundMessageEnd = new LocalizedString("Would you like to remove it from the queue").Translated;
+				string message = String.Format("{0}:\n'{1}'\n\n{2}?",notFoundMessage, maxLengthName,notFoundMessageEnd);
+				string titleLbl = new LocalizedString("Item not Found").Translated;
+					if (StyledMessageBox.ShowMessageBox(message, titleLbl, StyledMessageBox.MessageType.YES_NO))
                 {
                     PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.GetIndex(printItem));
                 }
