@@ -99,6 +99,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void exportGCode_Click(object sender, MouseEventArgs mouseEvent)
         {
+            UiThread.RunOnIdle(DoExportGCode_Click);
+        }
+
+        void DoExportGCode_Click(object state)
+        {
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
             saveParams.Title = "MatterControl: Export File";
             saveParams.ActionButtonLabel = "Export";
@@ -165,6 +170,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
         }
 
         void exportSTL_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            UiThread.RunOnIdle(DoExportSTL_Click);
+        }
+
+        void DoExportSTL_Click(object state)
         {
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");
             saveParams.Title = "MatterControl: Export File";
