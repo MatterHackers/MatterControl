@@ -125,7 +125,6 @@
     <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
     <Compile Include="PartsSheet.cs" />
     <Compile Include="JsonResponseDictionary.cs" />
-    <Compile Include="OrthographicZProjection.cs" />
     <Compile Include="PrinterCommunication.cs" />
     <Compile Include="PrinterControls\PrintLeveling.cs" />
     <Compile Include="PrinterControls\OutputScrollWindow.cs" />

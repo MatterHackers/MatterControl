@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl
                     Stroke rectOutline = new Stroke(rect, strokeWidth);
                     partGraphics2D.Render(rectOutline, RGBA_Bytes.DarkGray);
 
-                    PolygonMesh.Processors.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
+                    PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
                     partGraphics2D.Render(typeFacePrinter, RGBA_Bytes.Black);
 
                     partImagesToPrint.Add(new PartImage(imageOfPart));
