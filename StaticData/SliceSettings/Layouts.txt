@@ -164,6 +164,7 @@ Advanced
       Enable
         fan_always_on
         cooling
+        cool_extruder_lift
       Fan Speed
         min_fan_speed
         max_fan_speed

@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
             new MapItem("upSkinCount", "top_solid_layers"),
 
             new FanTranslator("fanFullOnLayerNr", "disable_fan_first_layers"),
+            new MapItem("coolHeadLift", "cool_extruder_lift"),
 
             new ScaledSingleNumber("retractionAmount", "retract_length", 1000),
             new MapItem("retractionSpeed", "retract_speed"),
@@ -102,7 +103,6 @@ namespace MatterHackers.MatterControl
             SETTING(raftInterfaceLinewidth);
 
             SETTING(minimalFeedrate);
-            SETTING(coolHeadLift);
 
 fanFullOnLayerNr = 2;
 
