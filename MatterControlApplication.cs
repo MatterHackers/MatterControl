@@ -67,10 +67,10 @@ namespace MatterHackers.MatterControl
         string[] commandLineArgs = null;
         bool firstDraw = true;
 
-        public MatterControlApplication(string[] commandLineArgs, double width, double height)
+        public MatterControlApplication(double width, double height)
             : base(width, height)
         {
-            this.commandLineArgs = commandLineArgs;
+            this.commandLineArgs = Environment.GetCommandLineArgs();;
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             //WriteTestGCodeFile();
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl
         }
 
         [STAThread]
-        public static void Main(string[] commandLineArgs)
+        public static void Main()
         {
             Datastore.Instance.Initialize();
 
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl
                 height = int.Parse(sizes[1]);
             }
             //MessageBox.ShowMessageBox(timerInfo, "Timing", MessageBox.MessageType.OK);
-            new MatterControlApplication(commandLineArgs, width, height);
+            new MatterControlApplication(width, height);
         }
 
         public override void OnClosed(EventArgs e)
