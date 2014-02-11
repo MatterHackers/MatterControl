@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl
                             double maxSize = Math.Max(aabb.XSize, aabb.YSize);
                             double scale = thumbnailWidget.image.Width / (maxSize * 1.2);
                             RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
-                            PolygonMesh.Processors.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
+                            PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
                                 new Vector2((thumbnailWidget.image.Width / scale - bounds2D.Width) / 2 - bounds2D.Left,
                                     (thumbnailWidget.image.Height / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
                                 scale,

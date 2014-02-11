@@ -53,6 +53,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.VersionManagement;
 using MatterHackers.MatterControl.PluginSystem;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -63,14 +64,16 @@ namespace MatterHackers.MatterControl
 {
     public class MatterControlApplication : SystemWindow
     {
+        string[] commandLineArgs = null;
         bool firstDraw = true;
 
         public MatterControlApplication(double width, double height)
             : base(width, height)
         {
+            this.commandLineArgs = Environment.GetCommandLineArgs();;
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            //GCodeForPerformanceTest();
+            //WriteTestGCodeFile();
             if (File.Exists("RunUnitTests.txt"))
             {
                 GuiHalWidget.SetClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
@@ -118,6 +121,43 @@ namespace MatterHackers.MatterControl
             ShowAsSystemWindow();
         }
 
+        private static void WriteMove(StringBuilder gcodeStringBuilder, Vector2 center)
+        {
+            gcodeStringBuilder.AppendLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
+        }
+        
+        public static void WriteTestGCodeFile()
+        {
+            StringBuilder gcodeStringBuilder = new StringBuilder();
+
+            int loops = 5;
+            int steps = 200;
+            double radius = 40;
+            Vector2 center = new Vector2(50, 50);
+
+            gcodeStringBuilder.AppendLine("G28 ; home all axes");
+            gcodeStringBuilder.AppendLine("G90 ; use absolute coordinates");
+            gcodeStringBuilder.AppendLine("G21 ; set units to millimeters");
+            gcodeStringBuilder.AppendLine("G92 E0");
+            gcodeStringBuilder.AppendLine("G1 F7800.000");
+            gcodeStringBuilder.AppendLine("G1 Z" + (30).ToString());
+            WriteMove(gcodeStringBuilder, center);
+
+            for (int loop = 0; loop < loops; loop++)
+            {
+                for (int step = 0; step < steps; step++)
+                {
+                    Vector2 nextPosition = new Vector2(radius, 0);
+                    nextPosition.Rotate(MathHelper.Tau / steps * step);
+                    WriteMove(gcodeStringBuilder, center + nextPosition);
+                }
+            }
+
+            gcodeStringBuilder.AppendLine("M84     ; disable motors");
+
+            System.IO.File.WriteAllText("PerformanceTest.gcode", gcodeStringBuilder.ToString());
+        }
+        
         void CheckOnPrinter(object state)
         {
             PrinterCommunication.Instance.OnIdle();
@@ -224,7 +264,12 @@ namespace MatterHackers.MatterControl
 #if false
             if (timingWindow == null)
             {
-                timingWindow = new PerformanceFeedbackWindow();
+            string staticDataPath = ApplicationDataStorage.Instance.ApplicationStaticDataPath;
+            string fontPath = Path.Combine(staticDataPath, "Fonts", "LiberationMono.svg");
+            TypeFace boldTypeFace = TypeFace.LoadSVG(fontPath);
+            typeFaceToUse = new StyledTypeFace(boldTypeFace, 12);
+
+            timingWindow = new PerformanceFeedbackWindow();
             }
             {
                 if (totalDrawTime.Elapsed.TotalSeconds > .05)
@@ -239,6 +284,13 @@ namespace MatterHackers.MatterControl
             {
                 Parent.MinimumSize = new Vector2(590, 540);
                 firstDraw = false;
+                foreach (string arg in commandLineArgs)
+                {
+                    if (Path.GetExtension(arg).ToUpper() == ".STL")
+                    {
+                        new PartPreviewMainWindow(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
+                    }
+                }
             }
         }
 
@@ -251,13 +303,8 @@ namespace MatterHackers.MatterControl
             base.OnMouseMove(mouseEvent);
         }
 
-        private static void WriteMove(StringBuilder gcodeStringBuilder, Vector2 center)
-        {
-            gcodeStringBuilder.AppendLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
-        }
-
         [STAThread]
-        public static void Main(string[] args)
+        public static void Main()
         {
             Datastore.Instance.Initialize();
 

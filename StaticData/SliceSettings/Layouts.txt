@@ -111,6 +111,7 @@ Advanced
         support_material_interface_spacing
         support_material_xy_distance
         support_material_z_distance
+        support_material_create_internal_support
     Notes
       Notes
         notes
@@ -163,6 +164,7 @@ Advanced
       Enable
         fan_always_on
         cooling
+        cool_extruder_lift
       Fan Speed
         min_fan_speed
         max_fan_speed
@@ -179,6 +181,7 @@ Advanced
         print_center
         build_height
         z_offset
+        bed_shape
       Firmware
         gcode_flavor
         use_relative_e_distances

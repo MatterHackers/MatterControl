@@ -71,7 +71,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-				string elementHeaderLbl = new LocalizedString ("Select a Design Tool:").Translated;
+				string elementHeaderLblBeg = new LocalizedString("Select a Design Tool").Translated;
+				string elementHeaderLblFull = string.Format("{0}:", elementHeaderLblBeg);
+				string elementHeaderLbl = elementHeaderLblFull;
 				TextWidget elementHeader = new TextWidget(string.Format(elementHeaderLbl), pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;

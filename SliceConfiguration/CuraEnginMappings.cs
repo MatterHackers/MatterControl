@@ -36,11 +36,12 @@ namespace MatterHackers.MatterControl
 
             new NotPassedItem("", "temperature"),
             new NotPassedItem("", "bed_temperature"),
+            new NotPassedItem("", "bed_shape"),
 
             new MapItem("insetCount", "perimeters"),
 
             new MapItem("skirtLineCount", "skirts"),
-            new MapItem("skirtMinLenght", "min_skirt_length"),
+            new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
             new ScaledSingleNumber("skirtDistance", "skirt_distance", 1000),
 
             new MapItem("fanSpeedMin", "max_fan_speed"),
@@ -50,6 +51,7 @@ namespace MatterHackers.MatterControl
             new MapItem("upSkinCount", "top_solid_layers"),
 
             new FanTranslator("fanFullOnLayerNr", "disable_fan_first_layers"),
+            new MapItem("coolHeadLift", "cool_extruder_lift"),
 
             new ScaledSingleNumber("retractionAmount", "retract_length", 1000),
             new MapItem("retractionSpeed", "retract_speed"),
@@ -68,7 +70,7 @@ namespace MatterHackers.MatterControl
             new ScaledSingleNumber("supportLineDistance", "support_material_spacing", 1000),
             new SupportMatterial("supportAngle", "support_material"),
             new NotPassedItem("", "support_material_threshold"),
-            //new ScaledSingleNumber(supportEverywhere);
+            new MapItem("supportEverywhere", "support_material_create_internal_support"),
             new ScaledSingleNumber("supportXYDistance", "support_material_xy_distance", 1000),
             new ScaledSingleNumber("supportZDistance", "support_material_z_distance", 1000),
 
@@ -101,7 +103,6 @@ namespace MatterHackers.MatterControl
             SETTING(raftInterfaceLinewidth);
 
             SETTING(minimalFeedrate);
-            SETTING(coolHeadLift);
 
 fanFullOnLayerNr = 2;
 
@@ -402,6 +403,28 @@ enableOozeShield = 0;
         public MapEndGCode(string cura, string slicer)
             : base(cura, slicer)
         {
+        }
+    }
+
+    public class SkirtLengthMaping : MapItem
+    {
+        public SkirtLengthMaping(string curaKey, string defaultKey)
+            : base(curaKey, defaultKey)
+        {
+        }
+
+        public override string CuraValue
+        {
+            get
+            {
+                double lengthToExtrudeMm = double.Parse(base.CuraValue);
+                // we need to convert mm of filament to mm of extrusion path
+                double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FillamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
+                double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
+                double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
+                
+                return (lineLength * 1000).ToString();
+            }
         }
     }
 

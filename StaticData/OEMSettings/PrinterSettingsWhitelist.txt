@@ -5,4 +5,4 @@ SeeMeCNC
 Printrbot
 Deezmaker
 Blue Eagle Labs
-Robo 3D
+RoBo 3D

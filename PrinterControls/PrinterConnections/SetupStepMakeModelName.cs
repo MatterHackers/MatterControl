@@ -77,7 +77,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			TextWidget printerNameLabel = new TextWidget(new LocalizedString("Printer Name:").Translated, 0, 0, 12);
+			string printerNameLabelTxt = new LocalizedString("Printer Name").Translated;
+			string printerNameLabelTxtFull = string.Format ("{0}:", printerNameLabelTxt);
+			TextWidget printerNameLabel = new TextWidget(printerNameLabelTxtFull, 0, 0, 12);
             printerNameLabel.TextColor = this.defaultTextColor;
             printerNameLabel.HAnchor = HAnchor.ParentLeftRight;
             printerNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
@@ -103,7 +105,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			TextWidget printerManufacturerLabel = new TextWidget(new LocalizedString("Select Make:").Translated, 0, 0, 12);
+			string printerManufacturerLabelTxt = new LocalizedString("Select Make").Translated;
+			string printerManufacturerLabelTxtFull = string.Format("{0}:", printerManufacturerLabelTxt);
+			TextWidget printerManufacturerLabel = new TextWidget(printerManufacturerLabelTxtFull, 0, 0, 12);
             printerManufacturerLabel.TextColor = this.defaultTextColor;
             printerManufacturerLabel.HAnchor = HAnchor.ParentLeftRight;
             printerManufacturerLabel.Margin = elementMargin;
@@ -132,7 +136,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			TextWidget printerModelLabel = new TextWidget(new LocalizedString("Select Model:").Translated, 0, 0, 12);
+			string printerModelLabelTxt = new LocalizedString("Select Model").Translated;
+			string printerModelLabelTxtFull = string.Format ("{0}:", printerModelLabelTxt);
+			TextWidget printerModelLabel = new TextWidget(printerModelLabelTxtFull, 0, 0, 12);
             printerModelLabel.TextColor = this.defaultTextColor;
             printerModelLabel.HAnchor = HAnchor.ParentLeftRight;
             printerModelLabel.Margin = elementMargin;
@@ -399,7 +405,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             else
             {
                 this.printerNameError.TextColor = RGBA_Bytes.Red;
-                this.printerNameError.Text = "Printer name cannot be blank";
+				this.printerNameError.Text = "Printer name cannot be blank";
                 this.printerNameError.Visible = true;
                 return false;
             }

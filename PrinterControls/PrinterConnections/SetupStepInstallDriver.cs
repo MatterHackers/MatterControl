@@ -161,7 +161,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             try
             {
-				printerDriverMessage.Text = new LocalizedString("Installing...").Translated;
+				string printerDriverMessageLbl = new LocalizedString("Installing").Translated;
+				string printerDriverMessageLblFull = string.Format("{0}...", printerDriverMessageLbl);
+				printerDriverMessage.Text = printerDriverMessageLblFull;
                 InstallDriver(this.printerDriverFilePath);
                 return true;
             }

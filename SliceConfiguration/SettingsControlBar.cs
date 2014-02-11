@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
             settingsStatusLabelContainer.VAnchor |= VAnchor.ParentTop;
             settingsStatusLabelContainer.Margin = new BorderDouble(0);
             {
-				string activeSettingsLabelText = new LocalizedString ("Active Settings:").Translated;
+				string activeSettingsLabelText = new LocalizedString ("Active Settings").Translated;
 				string activeSettingsLabelTextFull = string.Format ("{0}:", activeSettingsLabelText);
 
 
@@ -64,7 +64,9 @@ namespace MatterHackers.MatterControl
                 settingsStatusDescription.AutoExpandBoundsToText = true;
                 settingsStatusDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-                unsavedChangesIndicator = new TextWidget("(unsaved changes)", pointSize: 10);
+				string unsavedChangesTxtBeg = new  LocalizedString("unsaved changes").Translated;
+				string unsavedChangesTxtFull = string.Format ("({0})", unsavedChangesTxtBeg);
+				unsavedChangesIndicator = new TextWidget(unsavedChangesTxtFull, pointSize: 10);
                 unsavedChangesIndicator.AutoExpandBoundsToText = true;
                 unsavedChangesIndicator.Visible = false;
                 unsavedChangesIndicator.Margin = new BorderDouble(left: 4);
@@ -208,11 +210,15 @@ namespace MatterHackers.MatterControl
 
         void SetMenuItems()
         {
+			string importTxt = new LocalizedString ("Import").Translated;
+			string importTxtFull = string.Format ("{0}", importTxt);
+			string exportTxt = new LocalizedString("Export").Translated;
+			string exportTxtFull = string.Format ("{0}", exportTxt);
             //Set the name and callback function of the menu items
             slicerOptionsMenuItems = new TupleList<string, Func<bool>> 
             {
-				{"Import", ImportQueueMenu_Click},
-                {"Export", ExportQueueMenu_Click},
+				{importTxtFull, ImportQueueMenu_Click},
+				{exportTxtFull, ExportQueueMenu_Click},
             };
 
             //Add the menu items to the menu itself
