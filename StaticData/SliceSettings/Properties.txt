@@ -10,6 +10,7 @@ bridge_speed|Bridges|POSITVE_DOUBLE|mm/s|The speed to move when bridging between
 brim_width|Brim Width|POSITVE_DOUBLE|mm|The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
 build_height|Build Height|POSITVE_DOUBLE|mm|The height of the printable area. If set to 0 the parts height will not be validated.
 complete_objects|Complete Individual Objects|CHECK_BOX||Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
+cool_extruder_lift|Enable Extruder Lift|CHECK_BOX||Moves the extruder up off the part to allow cooling.
 cooling|Enable Auto Cooling|CHECK_BOX||Turns on and off all cooling settings (all settings below this one).
 default_acceleration|Default|POSITVE_DOUBLE|mm/s²|Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
 disable_fan_first_layers|Disable Fan For The First|INT|Layers|The number of layers for which the fan will be forced to remain off.
@@ -94,6 +95,7 @@ start_gcode|Start G-Code|MULTI_LINE_TEXT||This gcode will be inserted into the o
 start_perimeters_at_concave_points|Start At Concave Points|CHECK_BOX||Make sure the first point on a perimeter is a concave point.
 start_perimeters_at_non_overhang|Start At Non Overhang|CHECK_BOX||Make sure the first point on a perimeter is not an overhang.
 support_material_angle|Pattern Angle|POSITVE_DOUBLE|degrees|The starting angle of the supports.
+support_material_create_internal_support|Internal Support|CHECK_BOX||Create support where needed on internal features.
 support_material_enforce_layers|Enforce Support For First|INT|layers|Generate support material everywhere not touching the bed for n layers, regardless of angle.
 support_material_extruder|Support Material Extruder|INT||The index of the extruder to use for support material.
 support_material_extrusion_width|Support Material|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.

@@ -39,7 +39,6 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MarchingSquares;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 
 using ClipperLib;
@@ -67,7 +66,7 @@ namespace MatterHackers.MatterControl
             double scaleFactor = 5;
             ImageBuffer partPlate = new ImageBuffer((int)(buildVolume.x * scaleFactor), (int)(buildVolume.y * scaleFactor), 32, new BlenderBGRA());
             Vector2 renderOffset = new Vector2(buildVolume.x / 2, buildVolume.y / 2) - new Vector2(partBounds.Center.x, partBounds.Center.y);
-            PolygonMesh.Processors.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);
+            PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);
 
             if (backgroundWorker != null)
             {

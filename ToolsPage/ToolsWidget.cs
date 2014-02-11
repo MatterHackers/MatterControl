@@ -14,6 +14,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.ToolsPage
 {
@@ -65,18 +66,18 @@ namespace MatterHackers.MatterControl.ToolsPage
                 buttonPanel.HAnchor = HAnchor.ParentLeftRight;
                 buttonPanel.Padding = new BorderDouble(0, 3);
                 {
-                    Button addToLibrary = textImageButtonFactory.Generate("Import", "icon_import_white_32x32.png");
+					Button addToLibrary = textImageButtonFactory.Generate(new LocalizedString("Import").Translated, "icon_import_white_32x32.png");
                     buttonPanel.AddChild(addToLibrary);
                     addToLibrary.Margin = new BorderDouble(0, 0, 3, 0);
                     addToLibrary.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
 
-                    deleteFromLibraryButton = textImageButtonFactory.Generate("Delete");
+					deleteFromLibraryButton = textImageButtonFactory.Generate(new LocalizedString("Delete").Translated);
                     deleteFromLibraryButton.Margin = new BorderDouble(3, 0);
                     deleteFromLibraryButton.Click += new ButtonBase.ButtonEventHandler(deleteFromQueueButton_Click);
                     deleteFromLibraryButton.Visible = false;
                     buttonPanel.AddChild(deleteFromLibraryButton);
 
-                    addToQueueButton = textImageButtonFactory.Generate("Add to Queue");
+					addToQueueButton = textImageButtonFactory.Generate(new LocalizedString("Add to Queue").Translated);
                     addToQueueButton.Margin = new BorderDouble(3, 0);
                     addToQueueButton.Click += new ButtonBase.ButtonEventHandler(addToQueueButton_Click);
                     addToQueueButton.Visible = false;

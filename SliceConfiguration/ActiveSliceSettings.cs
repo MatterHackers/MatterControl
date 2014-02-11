@@ -89,16 +89,36 @@ namespace MatterHackers.MatterControl
         {
             Vector2 bedSize = ActiveSliceSettings.Instance.BedSize;
             Vector2 printCenter = ActiveSliceSettings.Instance.PrintCenter;
-            switch (index)
+
+            switch (BedShape)
             {
-                case 0:
-                    return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
-                case 1:
-                    return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
-                case 2:
-                    return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+                case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
+                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+                    switch (index)
+                    {
+                        case 0:
+                            return firstPosition;
+                        case 1:
+                            return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
+                        case 2:
+                            return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
+                        default:
+                            throw new IndexOutOfRangeException();
+                    }
+
+                case MeshVisualizer.MeshViewerWidget.BedShape.Rectangular:
                 default:
-                    throw new IndexOutOfRangeException();
+                    switch (index)
+                    {
+                        case 0:
+                            return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+                        case 1:
+                            return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+                        case 2:
+                            return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+                        default:
+                            throw new IndexOutOfRangeException();
+                    }
             }
         }
 
@@ -528,15 +548,15 @@ namespace MatterHackers.MatterControl
             {
                 if (LayerHeight > NozzleDiameter)
                 {
-                    string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.";
+					string error = new LocalizedString("'Layer Height' must be less than or equal to the 'Nozzle Diameter'.").Translated;
                     string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}", LayerHeight, NozzleDiameter);
-					string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'";
+					string location = new LocalizedString("Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'").Translated;
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
                 else if (FirstLayerHeight > NozzleDiameter)
                 {
-                    string error = "First Layer Height' must be less than or equal to the 'Nozzle Diameter'.";
+					string error = new LocalizedString("First Layer Height' must be less than or equal to the 'Nozzle Diameter'.").Translated;
                     string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}", FirstLayerHeight, NozzleDiameter);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'";
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");

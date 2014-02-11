@@ -1,19 +1,10 @@
 ﻿﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json.Utilities;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {

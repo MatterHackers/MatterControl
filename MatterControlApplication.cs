@@ -67,10 +67,10 @@ namespace MatterHackers.MatterControl
         string[] commandLineArgs = null;
         bool firstDraw = true;
 
-        public MatterControlApplication(string[] commandLineArgs, double width, double height)
+        public MatterControlApplication(double width, double height)
             : base(width, height)
         {
-            this.commandLineArgs = commandLineArgs;
+            this.commandLineArgs = Environment.GetCommandLineArgs();;
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             //WriteTestGCodeFile();
@@ -264,7 +264,12 @@ namespace MatterHackers.MatterControl
 #if false
             if (timingWindow == null)
             {
-                timingWindow = new PerformanceFeedbackWindow();
+            string staticDataPath = ApplicationDataStorage.Instance.ApplicationStaticDataPath;
+            string fontPath = Path.Combine(staticDataPath, "Fonts", "LiberationMono.svg");
+            TypeFace boldTypeFace = TypeFace.LoadSVG(fontPath);
+            typeFaceToUse = new StyledTypeFace(boldTypeFace, 12);
+
+            timingWindow = new PerformanceFeedbackWindow();
             }
             {
                 if (totalDrawTime.Elapsed.TotalSeconds > .05)
@@ -299,7 +304,7 @@ namespace MatterHackers.MatterControl
         }
 
         [STAThread]
-        public static void Main(string[] commandLineArgs)
+        public static void Main()
         {
             Datastore.Instance.Initialize();
 
@@ -314,7 +319,7 @@ namespace MatterHackers.MatterControl
                 height = int.Parse(sizes[1]);
             }
             //MessageBox.ShowMessageBox(timerInfo, "Timing", MessageBox.MessageType.OK);
-            new MatterControlApplication(commandLineArgs, width, height);
+            new MatterControlApplication(width, height);
         }
 
         public override void OnClosed(EventArgs e)

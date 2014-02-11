@@ -56,20 +56,37 @@ namespace MatterHackers.MatterControl.ActionBar
 			addButton.tooltipText = new LocalizedString("Add a file to be printed").Translated;
             addButton.Margin = new BorderDouble(0, 6, 6, 3);
 
-            startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton("Start", "icon_play_32x32.png");
-            startButton.tooltipText = "Begin printing the selected item.";
+			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(new LocalizedString("Start").Translated, "icon_play_32x32.png");
+			startButton.tooltipText = new LocalizedString("Begin printing the selected item.").Translated;
             startButton.Margin = new BorderDouble(0, 6, 6, 3);
 
-            skipButton = makeButton("Skip", "Skip the current item and move to the next in queue");
-            removeButton = makeButton("Remove", "Remove current item from queue");
+			string skipButtonTxt = new LocalizedString("Skip").Translated;
+			string skipButtonMessage = new LocalizedString("Skip the current item and move to the next in queue").Translated;
+			skipButton = makeButton(skipButtonTxt, skipButtonMessage);
 
-            pauseButton = makeButton("Pause", "Pause the current print");
-            cancelButton = makeButton("Cancel", "Stop the current print");
+			string removeButtonTxt = new LocalizedString("Remove").Translated;
+			string removeButtonMessage = new LocalizedString("Remove current item from queue").Translated;
+			removeButton = makeButton(removeButtonTxt, removeButtonMessage);
 
-            resumeButton = makeButton("Resume", "Resume the current print");
+			string pauseButtonTxt = new LocalizedString("Pause").Translated;
+			string pauseButtonMessage = new LocalizedString("Pause the current print").Translated;
+			pauseButton = makeButton(pauseButtonTxt, pauseButtonMessage);
 
-            reprintButton = makeButton("Reprint", "Print current item again");
-            doneWithCurrentPartButton = makeButton("Done", "Move to next print in queue");
+			string cancelButtonTxt = new LocalizedString("Cancel").Translated;
+			string cancelButtonMessage = new LocalizedString("Stop the current print").Translated;
+			cancelButton = makeButton(cancelButtonTxt, cancelButtonMessage);
+
+			string resumeButtonTxt = new LocalizedString("Resume").Translated;
+			string resumeButtonMessage = new LocalizedString ("Resume the current print").Translated;
+			resumeButton = makeButton(resumeButtonTxt, resumeButtonMessage);
+
+			string reprintButtonTxt = new LocalizedString("Reprint").Translated;
+			string reprintButtonMessage = new LocalizedString ("Print current item again").Translated;
+			reprintButton = makeButton(reprintButtonTxt, reprintButtonMessage);
+
+			string doneCurrentPartButtonTxt = new LocalizedString ("Done").Translated;
+			string doenCurrentPartButtonMessage = new LocalizedString ("Move to next print in queue").Translated;
+			doneWithCurrentPartButton = makeButton(doneCurrentPartButtonTxt, doenCurrentPartButtonMessage);
 
             this.AddChild(addButton);
             allPrintButtons.Add(addButton);
