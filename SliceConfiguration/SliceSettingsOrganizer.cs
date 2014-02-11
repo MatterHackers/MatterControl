@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 
         public OrganizerSettingsData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
         {
-            this.ExtraSettings = extraSettings;
+			this.ExtraSettings = extraSettings;
             this.SlicerConfigName = slicerConfigName;
             this.PresentationName = presentationName;
             this.DataEditType = dataEditType;
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 
         public OrganizerSubGroup(string groupName)
         {
-            this.name = groupName;
+			this.name = groupName;
         }
     }
 

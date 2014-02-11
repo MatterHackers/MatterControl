@@ -39,6 +39,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.FieldValidation;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -73,7 +74,9 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                TextWidget elementHeader = new TextWidget(string.Format("Edit Macro:"), pointSize: 14);
+				string editMacroLabel = new LocalizedString("Edit Macro").Translated;
+				string editMacroLabelFull = string.Format("{0}:", editMacroLabel);
+				TextWidget elementHeader = new TextWidget(editMacroLabelFull, pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -97,10 +100,10 @@ namespace MatterHackers.MatterControl
             presetsFormContainer.AddChild(createMacroCommandContainer());
 
 
-            Button addMacroButton = textImageButtonFactory.Generate("Save");
+			Button addMacroButton = textImageButtonFactory.Generate(new LocalizedString("Save").Translated);
             addMacroButton.Click += new ButtonBase.ButtonEventHandler(saveMacro_Click);
 
-            Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel");
+			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
             cancelPresetsButton.Click += (sender, e) =>
             {
                 UiThread.RunOnIdle((state) =>
@@ -131,7 +134,9 @@ namespace MatterHackers.MatterControl
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-            TextWidget macroNameLabel = new TextWidget("Macro Name:", 0, 0, 12);
+			string macroNameLabelTxt = new LocalizedString("Macro Name").Translated;
+			string macroNameLabelTxtFull = string.Format("{0}:", macroNameLabelTxt);
+			TextWidget macroNameLabel = new TextWidget( macroNameLabelTxtFull, 0, 0, 12);
             macroNameLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             macroNameLabel.HAnchor = HAnchor.ParentLeftRight;
             macroNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
@@ -139,7 +144,9 @@ namespace MatterHackers.MatterControl
             macroNameInput = new MHTextEditWidget(windowController.ActiveMacro.Name);
             macroNameInput.HAnchor = HAnchor.ParentLeftRight;
 
-            macroNameError = new TextWidget("Give your macro a name.", 0, 0, 10);
+			string giveMacroANameLbl = new LocalizedString("Give your macro a name").Translated;
+			string giveMacroANameLblFull = string.Format ("{0}.", giveMacroANameLbl);
+			macroNameError = new TextWidget(giveMacroANameLblFull, 0, 0, 10);
             macroNameError.TextColor = RGBA_Bytes.White;
             macroNameError.HAnchor = HAnchor.ParentLeftRight;
             macroNameError.Margin = elementMargin;
@@ -157,7 +164,9 @@ namespace MatterHackers.MatterControl
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-            TextWidget macroCommandLabel = new TextWidget("Macro Commands:", 0, 0, 12);
+			string macroCommandLblTxt = new LocalizedString("Macro Commands").Translated;
+			string macroCommandLblTxtFull = string.Format ("{0}:", macroCommandLblTxt);
+			TextWidget macroCommandLabel = new TextWidget(macroCommandLblTxtFull, 0, 0, 12);
             macroCommandLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             macroCommandLabel.HAnchor = HAnchor.ParentLeftRight;
             macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
@@ -165,7 +174,9 @@ namespace MatterHackers.MatterControl
             macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.Value, pixelHeight: 120, multiLine: true);
             macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
 
-            macroCommandError = new TextWidget("This should be in 'Gcode'.", 0, 0, 10);
+			string shouldBeGCodeLbl = new LocalizedString("This should be in 'Gcode'").Translated;
+			string shouldBeGCodeLblFull = string.Format("{0}.", shouldBeGCodeLbl);
+			macroCommandError = new TextWidget(shouldBeGCodeLblFull, 0, 0, 10);
             macroCommandError.TextColor = RGBA_Bytes.White;
             macroCommandError.HAnchor = HAnchor.ParentLeftRight;
             macroCommandError.Margin = elementMargin;
@@ -259,7 +270,9 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                TextWidget elementHeader = new TextWidget(string.Format("Macro Presets:"), pointSize: 14);
+				string macroPresetsLabel = new LocalizedString("Macro Presets").Translated;
+				string macroPresetsLabelFull = string.Format("{0}:", macroPresetsLabel);
+				TextWidget elementHeader = new TextWidget(macroPresetsLabelFull, pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -296,7 +309,7 @@ namespace MatterHackers.MatterControl
                 hSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 macroRow.AddChild(hSpacer);
 
-                Button editLink = linkButtonFactory.Generate("edit");
+				Button editLink = linkButtonFactory.Generate(new LocalizedString("edit").Translated);
                 editLink.Margin = new BorderDouble(right: 5);
                 editLink.Click += (sender, e) =>
                 {
@@ -304,7 +317,7 @@ namespace MatterHackers.MatterControl
                 };
                 macroRow.AddChild(editLink);
 
-                Button removeLink = linkButtonFactory.Generate("remove");
+				Button removeLink = linkButtonFactory.Generate(new LocalizedString("remove").Translated);
                 removeLink.Click += (sender, e) => 
                 {
                     m.Delete();
@@ -318,10 +331,10 @@ namespace MatterHackers.MatterControl
             }
 
 
-            Button addMacroButton = textImageButtonFactory.Generate("Add", "icon_circle_plus.png");
+			Button addMacroButton = textImageButtonFactory.Generate(new LocalizedString("Add").Translated, "icon_circle_plus.png");
             addMacroButton.Click += new ButtonBase.ButtonEventHandler(addMacro_Click);
 
-            Button cancelPresetsButton = textImageButtonFactory.Generate("Close");
+			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Close").Translated);
             cancelPresetsButton.Click += (sender, e) => { this.windowController.Close(); };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -369,7 +382,7 @@ namespace MatterHackers.MatterControl
         public EditMacrosWindow(IEnumerable<DataStorage.CustomCommands> macros, EventHandler functionToCallOnSave)
             : base(360, 420)
         {
-            Title = "Macro Editor";
+			Title = new LocalizedString("Macro Editor").Translated;
             this.functionToCallOnSave = functionToCallOnSave;
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             ChangeToMacroList();

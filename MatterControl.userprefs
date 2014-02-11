@@ -3,23 +3,13 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="PrintLevelWizard.cs">
     <Files>
       <File FileName="MatterControlApplication.cs" Line="1" Column="1" />
-      <File FileName="PrinterControls\PrinterConnections\SetupStepComPortOne.cs" Line="1" Column="1" />
       <File FileName="Localizations\LocalizedString.cs" Line="1" Column="1" />
-      <File FileName="..\agg-sharp\OpenGlGui\MeshViewerWidget.cs" Line="1" Column="1" />
-      <File FileName="c:\Users\Matter Hackers 1\Development\MatterControl\SliceConfiguration\SlicingQueue.cs" Line="1" Column="1" />
-      <File FileName="PrintLevelWizard.cs" Line="343" Column="19" />
-      <File FileName="CustomWidgets\WizardControl.cs" Line="66" Column="87" />
-      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\Gui\GUIWidget.cs" Line="1736" Column="1" />
-      <File FileName="SliceConfiguration\ActiveSliceSettings.cs" Line="434" Column="5" />
-      <File FileName="SliceConfiguration\CuraEnginMappings.cs" Line="447" Column="39" />
-      <File FileName="SliceConfiguration\SliceSettingsLayerSelector.cs" Line="1" Column="1" />
-      <File FileName="SliceConfiguration\SliceSettingsOrganizer.cs" Line="282" Column="18" />
+      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\Gui\GUIWidget.cs" Line="2116" Column="1" />
+      <File FileName="PrintLevelWizard.cs" Line="392" Column="40" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\Matter Hackers 1\Development\mattercontrol\PartPreviewWindow\GcodeViewBasic.cs" line="264" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

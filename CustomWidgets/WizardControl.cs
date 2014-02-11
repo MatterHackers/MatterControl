@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(CloseOnIdle);
         }
 
-        void CloseOnIdle(object state)
+		void CloseOnIdle(object state)
         {
             Close();
         }

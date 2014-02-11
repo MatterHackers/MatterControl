@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -62,7 +63,9 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                TextWidget elementHeader = new TextWidget(string.Format("Temperature Shortcut Presets:"), pointSize: 14);
+				string tempShortcutPresetLbl = new LocalizedString("Temperature Shortcut Presets").Translated;
+				string tempShortcutPresetLblFull = string.Format ("{0}:", tempShortcutPresetLbl);
+				TextWidget elementHeader = new TextWidget(tempShortcutPresetLblFull, pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -108,7 +111,8 @@ namespace MatterHackers.MatterControl
             labelLabelContainer.Height = 16;
             labelLabelContainer.Margin = new BorderDouble(3, 0);
 
-            TextWidget labelLabel = new TextWidget(string.Format("Label"), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
+			string labelLabelTxt = new LocalizedString("Label").Translated;
+			TextWidget labelLabel = new TextWidget(string.Format(labelLabelTxt), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
             labelLabel.HAnchor = HAnchor.ParentLeft;
             labelLabel.VAnchor = VAnchor.ParentCenter;
 
@@ -120,13 +124,13 @@ namespace MatterHackers.MatterControl
             tempLabelContainer.Height = 16;
             tempLabelContainer.Margin = new BorderDouble(3, 0);
 
-            TextWidget tempLabel = new TextWidget(string.Format("Temp (C)"), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
+			TextWidget tempLabel = new TextWidget(string.Format("Temp (C)"), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
             tempLabel.HAnchor = HAnchor.ParentLeft;
             tempLabel.VAnchor = VAnchor.ParentCenter;
 
             tempLabelContainer.AddChild(tempLabel);
 
-            leftRightLabels.AddChild(hLabelSpacer);
+				leftRightLabels.AddChild(hLabelSpacer);
             leftRightLabels.AddChild(labelLabelContainer);
             leftRightLabels.AddChild(tempLabelContainer);
 
@@ -141,7 +145,8 @@ namespace MatterHackers.MatterControl
                 FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
                 leftRightEdit.Padding = new BorderDouble(3);
                 leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-                TextWidget label = new TextWidget(string.Format("Preset {0}.", preset_count), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				string presetLabelTxt = new LocalizedString ("Preset").Translated;
+				TextWidget label = new TextWidget(string.Format("{1} {0}.", preset_count,presetLabelTxt ), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 label.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(label);
 
@@ -176,7 +181,7 @@ namespace MatterHackers.MatterControl
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-                TextWidget maxWidgetLabel = new TextWidget("Max Temp.", textColor: ActiveTheme.Instance.PrimaryTextColor);
+				TextWidget maxWidgetLabel = new TextWidget(new LocalizedString("Max Temp.").Translated, textColor: ActiveTheme.Instance.PrimaryTextColor);
                 maxWidgetLabel.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(maxWidgetLabel);
                 leftRightEdit.AddChild(hSpacer);
@@ -195,10 +200,10 @@ namespace MatterHackers.MatterControl
 
             ShowAsSystemWindow();
 
-            Button savePresetsButton = textImageButtonFactory.Generate("Save");
+			Button savePresetsButton = textImageButtonFactory.Generate(new LocalizedString("Save").Translated);
             savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);
 
-            Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel");
+			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
             cancelPresetsButton.Click += (sender, e) => { CloseOnIdle(); };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();

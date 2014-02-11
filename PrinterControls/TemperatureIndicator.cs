@@ -1,4 +1,4 @@
-﻿﻿/*
+﻿/*
 Copyright (c) 2013, Lars Brubaker
 All rights reserved.
 
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl
             string sliderLabelDefinitions = GetTemperaturePresets();
 
             SortedDictionary<double, string> labels = new SortedDictionary<double, string>() {};
-			labels.Add(0.0,new LocalizedString("OFF").Translated);
+			labels.Add(0.0,"OFF");
 
             string[] labelItems = sliderLabelDefinitions.Split(',');
             for (int i = 0; i < labelItems.Length / 2; i++)

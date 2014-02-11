@@ -116,14 +116,16 @@ namespace MatterHackers.MatterControl.ActionBar
             topRow.Name = "PrintStatusRow.ActivePrinterInfo.TopRow";
             topRow.HAnchor = HAnchor.ParentLeftRight;
 
-			activePrintLabel = getPrintStatusLabel(new LocalizedString("Next Print:").Translated, pointSize: 11);
+			string nextPrintLbl = new LocalizedString("Next Print").Translated;
+			string nextPrintLblFull = string.Format("{0}:", nextPrintLbl);       
+			activePrintLabel = getPrintStatusLabel(nextPrintLblFull, pointSize: 11);
             activePrintLabel.VAnchor = VAnchor.ParentTop;
 
             topRow.AddChild(activePrintLabel);
 
-            activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);
+			activePrintName = getPrintStatusLabel(new LocalizedString("this is the biggest name we will allow").Translated, pointSize: 14);
             activePrintName.AutoExpandBoundsToText = false;
-            activePrintStatus = getPrintStatusLabel("this is the biggest label we will allow - bigger", pointSize: 11);
+			activePrintStatus = getPrintStatusLabel(new LocalizedString("this is the biggest label we will allow - bigger").Translated, pointSize: 11);
             activePrintStatus.AutoExpandBoundsToText = false;
             activePrintStatus.Text = "";
             activePrintStatus.Margin = new BorderDouble(top: 3);
@@ -204,16 +206,20 @@ namespace MatterHackers.MatterControl.ActionBar
                 string timePrintedText;
                 if (hoursPrinted > 0)
                 {
-                    timePrintedText = string.Format("Print Time: {0}:{1:00}:{2:00}",
+					string printTimeLbl = new LocalizedString ("Print Time").Translated;
+					timePrintedText = string.Format("{3}: {0}:{1:00}:{2:00}",
                         hoursPrinted,
                         minutesPrinted,
-                        secondsPrinted);
+						secondsPrinted, 
+						printTimeLbl);
                 }
                 else
                 {
-                    timePrintedText = string.Format("Print Time: {0:00}:{1:00}",
+					string printTimeLbl = new LocalizedString ("Print Time").Translated;
+					timePrintedText = string.Format("{2}: {0:00}:{1:00}",
                         minutesPrinted,
-                        secondsPrinted);
+						secondsPrinted,
+						printTimeLbl);
                 }
 
                 int secondsRemaining = PrinterCommunication.Instance.SecondsRemaining;
@@ -225,16 +231,20 @@ namespace MatterHackers.MatterControl.ActionBar
                 {
                     if (hoursRemaining > 0)
                     {
-                        timeRemainingText = string.Format("Remaining (est): {0}:{1:00}:{2:00}",
+						string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
+						timeRemainingText = string.Format("{3} (est): {0}:{1:00}:{2:00}",
                             hoursRemaining,
                             minutesRemaining,
-                            secondsRemaining);
+							secondsRemaining,
+							timeRemainingLbl);
                     }
                     else
                     {
-                        timeRemainingText = string.Format("Remaining (est): {0:00}:{1:00}",
+						string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
+						timeRemainingText = string.Format("{2} (est): {0:00}:{1:00}",
                             minutesRemaining,
-                            secondsRemaining);
+							secondsRemaining,
+							timeRemainingLbl);
                     }
                 }
                 else if (PrinterCommunication.Instance.PrintIsFinished)
@@ -243,7 +253,9 @@ namespace MatterHackers.MatterControl.ActionBar
                 }
                 else
                 {
-                    timeRemainingText = string.Format("Remaining (est): --:--",
+					string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
+					timeRemainingText = string.Format("{0} (est): --:--",
+						timeRemainingLbl,
                         secondsPrinted / 60,
                         secondsPrinted % 60);
                 }
@@ -256,12 +268,15 @@ namespace MatterHackers.MatterControl.ActionBar
                 //GC.WaitForFullGCComplete();
 
                 string printPercentRemainingText;
-                printPercentRemainingText = string.Format("{0:0.0}% complete", PrinterCommunication.Instance.PercentComplete);
+				string printPercentCompleteTxt = new LocalizedString("complete").Translated;
+				printPercentRemainingText = string.Format("{0:0.0}% {1}", PrinterCommunication.Instance.PercentComplete,printPercentCompleteTxt);
 
                 switch (PrinterCommunication.Instance.CommunicationState)
                 {
-                    case PrinterCommunication.CommunicationStates.PreparingToPrint:
-                        activePrintLabel.Text = "Preparing To Print:";
+				case PrinterCommunication.CommunicationStates.PreparingToPrint:
+						string preparingPrintLbl = new LocalizedString("Preparing To Print").Translated;
+						string preparingPrintLblFull = string.Format("{0}:", preparingPrintLbl);
+						activePrintLabel.Text = preparingPrintLblFull;
                         //ActivePrintStatusText = ""; // set by slicer
                         activePrintInfo.Text = "";
                         break;
@@ -276,14 +291,18 @@ namespace MatterHackers.MatterControl.ActionBar
 
                     case PrinterCommunication.CommunicationStates.Paused:
                         {
-                            activePrintLabel.Text = "Printing Paused:";
+							string activePrintLblTxt = new LocalizedString ("Printing Paused").Translated;
+							string activePrintLblTxtFull = string.Format("{0}:", activePrintLblTxt);
+							activePrintLabel.Text = activePrintLblTxtFull;
                             ActivePrintStatusText = printPercentRemainingText;
                             activePrintInfo.Text = printTimeInfoText;
                         }
                         break;
 
-                    case PrinterCommunication.CommunicationStates.FinishedPrint:
-                        activePrintLabel.Text = "Done Printing:";
+				case PrinterCommunication.CommunicationStates.FinishedPrint:
+					string donePrintingTxt = new LocalizedString ("Done Printing").Translated;
+					string donePrintingTxtFull = string.Format ("{0}:", donePrintingTxt);
+					activePrintLabel.Text = donePrintingTxtFull;
                         ActivePrintStatusText = printPercentRemainingText;
                         activePrintInfo.Text = printTimeInfoText;
                         break;
