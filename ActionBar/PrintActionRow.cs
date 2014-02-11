@@ -25,6 +25,8 @@ namespace MatterHackers.MatterControl.ActionBar
         List<TooltipButton> activePrintButtons = new List<TooltipButton>();
         List<TooltipButton> allPrintButtons = new List<TooltipButton>();
 
+        TooltipButton cancelConnectButton;
+
         TooltipButton addButton;
         
         TooltipButton startButton;
@@ -72,6 +74,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			string pauseButtonMessage = new LocalizedString("Pause the current print").Translated;
 			pauseButton = makeButton(pauseButtonTxt, pauseButtonMessage);
 
+            string cancelCancelButtonTxt = new LocalizedString("Cancel Connect").Translated;
+            string cancelConnectButtonMessage = new LocalizedString("Stop trying to connect to the printer.").Translated;
+            cancelConnectButton = makeButton(cancelCancelButtonTxt, cancelConnectButtonMessage);
+
 			string cancelButtonTxt = new LocalizedString("Cancel").Translated;
 			string cancelButtonMessage = new LocalizedString("Stop the current print").Translated;
 			cancelButton = makeButton(cancelButtonTxt, cancelButtonMessage);
@@ -108,6 +114,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
             this.AddChild(cancelButton);
             allPrintButtons.Add(cancelButton);
+
+            this.AddChild(cancelConnectButton);
+            allPrintButtons.Add(cancelConnectButton);
 
             this.AddChild(reprintButton);
             allPrintButtons.Add(reprintButton);
@@ -389,7 +398,7 @@ namespace MatterHackers.MatterControl.ActionBar
                 switch (PrinterCommunication.Instance.CommunicationState)
                 {
                     case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-                        this.activePrintButtons.Add(cancelButton);
+                        this.activePrintButtons.Add(cancelConnectButton);
                         EnableActiveButtons();
                         break;
 
