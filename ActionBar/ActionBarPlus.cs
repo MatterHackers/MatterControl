@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl
     {
         public ActionBarPlus()
             : base(FlowDirection.TopToBottom)
-        {
+        {            
             this.Create();
         }
 
@@ -42,8 +42,7 @@ namespace MatterHackers.MatterControl
 
             // Add Child Elements
             this.AddChild(new ActionBar.PrinterActionRow());
-            this.AddChild(new PrintStatusRow());
-            this.AddChild(new MessageActionRow());
+            this.AddChild(new PrintStatusRow());            
 
             // Add Handlers
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
@@ -74,7 +73,7 @@ namespace MatterHackers.MatterControl
 
         protected override void Initialize()
         {
-            this.Margin = new BorderDouble(6, 6);
+            this.Margin = new BorderDouble(0,3,0,0);
         }
     }
 }

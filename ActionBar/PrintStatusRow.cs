@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.ActionBar
         }
 
         override protected void AddChildElements()
-        {
+        {            
             activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", new Vector2(115, 115));
             activePrintPreviewImage.VAnchor = VAnchor.ParentTop;
             activePrintPreviewImage.Padding = new BorderDouble(0);
@@ -136,8 +136,9 @@ namespace MatterHackers.MatterControl.ActionBar
             container.AddChild(topRow);
             container.AddChild(activePrintName);
             container.AddChild(activePrintStatus);
-            container.AddChild(activePrintInfo);
+            //container.AddChild(activePrintInfo);
             container.AddChild(printActionRow);
+            container.AddChild(new MessageActionRow());
 
             return container;
         }
@@ -197,62 +198,7 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (PrinterCommunication.Instance.ActivePrintItem != null)
             {
-                int secondsPrinted = PrinterCommunication.Instance.SecondsPrinted;
-                int hoursPrinted = (int)(secondsPrinted / (60 * 60));
-                int minutesPrinted = (int)(secondsPrinted / 60 - hoursPrinted * 60);
-                secondsPrinted = secondsPrinted % 60;
-                string timePrintedText;
-                if (hoursPrinted > 0)
-                {
-                    timePrintedText = string.Format("Print Time: {0}:{1:00}:{2:00}",
-                        hoursPrinted,
-                        minutesPrinted,
-                        secondsPrinted);
-                }
-                else
-                {
-                    timePrintedText = string.Format("Print Time: {0:00}:{1:00}",
-                        minutesPrinted,
-                        secondsPrinted);
-                }
-
-                int secondsRemaining = PrinterCommunication.Instance.SecondsRemaining;
-                int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-                int minutesRemaining = (int)(secondsRemaining / 60 - hoursRemaining * 60);
-                secondsRemaining = secondsRemaining % 60;
-                string timeRemainingText;
-                if (secondsRemaining > 0)
-                {
-                    if (hoursRemaining > 0)
-                    {
-                        timeRemainingText = string.Format("Remaining (est): {0}:{1:00}:{2:00}",
-                            hoursRemaining,
-                            minutesRemaining,
-                            secondsRemaining);
-                    }
-                    else
-                    {
-                        timeRemainingText = string.Format("Remaining (est): {0:00}:{1:00}",
-                            minutesRemaining,
-                            secondsRemaining);
-                    }
-                }
-                else if (PrinterCommunication.Instance.PrintIsFinished)
-                {
-                    timeRemainingText = "";
-                }
-                else
-                {
-                    timeRemainingText = string.Format("Remaining (est): --:--",
-                        secondsPrinted / 60,
-                        secondsPrinted % 60);
-                }
-
-                string printTimeInfoText = timePrintedText;
-                if (timeRemainingText != "")
-                {
-                    printTimeInfoText += ", " + timeRemainingText;
-                }
+                
                 //GC.WaitForFullGCComplete();
 
                 string printPercentRemainingText;
@@ -270,7 +216,6 @@ namespace MatterHackers.MatterControl.ActionBar
                         {
                             activePrintLabel.Text = PrinterCommunication.Instance.PrintingStateString;
                             ActivePrintStatusText = printPercentRemainingText;
-                            activePrintInfo.Text = printTimeInfoText;
                         }
                         break;
 
@@ -278,14 +223,12 @@ namespace MatterHackers.MatterControl.ActionBar
                         {
                             activePrintLabel.Text = "Printing Paused:";
                             ActivePrintStatusText = printPercentRemainingText;
-                            activePrintInfo.Text = printTimeInfoText;
                         }
                         break;
 
                     case PrinterCommunication.CommunicationStates.FinishedPrint:
                         activePrintLabel.Text = "Done Printing:";
                         ActivePrintStatusText = printPercentRemainingText;
-                        activePrintInfo.Text = printTimeInfoText;
                         break;
 
 				default:

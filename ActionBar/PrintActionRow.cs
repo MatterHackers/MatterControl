@@ -51,8 +51,8 @@ namespace MatterHackers.MatterControl.ActionBar
         }
 
         protected override void AddChildElements()
-        {         
-			addButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(new LocalizedString("Add").Translated, "icon_circle_plus.png");
+        {
+            addButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(new LocalizedString("Add").Translated, "icon_circle_plus.png");
 			addButton.tooltipText = new LocalizedString("Add a file to be printed").Translated;
             addButton.Margin = new BorderDouble(0, 6, 6, 3);
 
@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (PrintQueueControl.Instance.Count > 1)
             {
-                PrintQueueControl.Instance.MoveSelectedToBottom();
+                PrintQueueControl.Instance.MoveToNext();
             }
         }
 
