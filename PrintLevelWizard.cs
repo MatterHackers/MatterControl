@@ -374,6 +374,11 @@ namespace MatterHackers.MatterControl
 
         void DoneButton_Click(object sender, MouseEventArgs mouseEvent)
         {
+            UiThread.RunOnIdle(DoDoneButton_Click);
+        }
+
+        void DoDoneButton_Click(object state)
+        {
             Close();
         }
     }
