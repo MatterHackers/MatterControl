@@ -108,6 +108,22 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
+        public void MoveToNext()
+        {
+            if (SelectedIndex >= 0 && SelectedIndex < Count)
+            {
+                if (this.SelectedIndex == Count - 1)
+                {
+                    this.SelectedIndex = 0;
+                }
+                else
+                {
+                    this.SelectedIndex++;
+                }
+                
+            }
+        }
+
         public void MoveSelectedToBottom()
         {
             if (SelectedIndex >= 0 && SelectedIndex < Count)
