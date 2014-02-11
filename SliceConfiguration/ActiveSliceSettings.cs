@@ -509,15 +509,15 @@ namespace MatterHackers.MatterControl
             {
                 if (LayerHeight > NozzleDiameter)
                 {
-                    string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.";
+					string error = new LocalizedString("'Layer Height' must be less than or equal to the 'Nozzle Diameter'.").Translated;
                     string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}", LayerHeight, NozzleDiameter);
-					string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'";
+					string location = new LocalizedString("Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'").Translated;
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
                 else if (FirstLayerHeight > NozzleDiameter)
                 {
-                    string error = "First Layer Height' must be less than or equal to the 'Nozzle Diameter'.";
+					string error = new LocalizedString("First Layer Height' must be less than or equal to the 'Nozzle Diameter'.").Translated;
                     string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}", FirstLayerHeight, NozzleDiameter);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'";
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");

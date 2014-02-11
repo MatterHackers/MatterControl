@@ -342,24 +342,37 @@ namespace MatterHackers.MatterControl
 
             Vector2 probeBackCenter = ActiveSliceSettings.Instance.GetPrintLevelSamplePosition(0);
 
+			string lowPrecisionPositionLbl = new LocalizedString ("Position").Translated;
+			string lowPrecisionLbl = new LocalizedString ("Low Precision").Translated;
 			GetCoarseBedHeight getCourseBedHeight = new GetCoarseBedHeight (printLevelWizard, 
-				new Vector3 (probeBackCenter, 10),
-				string.Format ("{0} Position 1 - Low Precision", Step ()),
+				new Vector3 (probeBackCenter, 10), 
+				string.Format ("{0} {1} 1 - {2}", Step (),lowPrecisionPositionLbl, lowPrecisionLbl),
 				probePositions [0]);
 
 			printLevelWizard.AddPage(getCourseBedHeight);
-            printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} Position 1 - Medium Precision", Step()), probePositions[0]));
-            printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} Position 1 - High Precision", Step()), probePositions[0]));
+			string precisionPositionLbl = new LocalizedString("Position").Translated;
+			string medPrecisionLbl = new LocalizedString("Medium Precision").Translated;
+			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 1 - {2}", Step(), precisionPositionLbl, medPrecisionLbl), probePositions[0]));
+			string highPrecisionLbl = new LocalizedString("High Precision").Translated;
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 1 - {2}", Step(), precisionPositionLbl, highPrecisionLbl), probePositions[0]));
 
             Vector2 probeFrontLeft = ActiveSliceSettings.Instance.GetPrintLevelSamplePosition(1);
-            printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontLeft, 10), string.Format("{0} Position 2 - Low Precision", Step()), probePositions[1]));
-            printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} Position 2 - Medium Precision", Step()), probePositions[1]));
-            printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} Position 2 - High Precision", Step()), probePositions[1]));
+			string positionLblTwo = new LocalizedString("Position").Translated;
+			string lowPrecisionTwoLbl = new LocalizedString("Low Precision").Translated;
+			string medPrecisionTwoLbl = new LocalizedString("Medium Precision").Translated;
+			string highPrecisionTwoLbl = new LocalizedString("High Precision").Translated;
+			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontLeft, 10), string.Format("{0} {1} 2 - {2}", Step(), positionLblTwo, lowPrecisionTwoLbl  ), probePositions[1]));
+			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", Step(), positionLblTwo,medPrecisionTwoLbl), probePositions[1]));
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", Step(), positionLblTwo,highPrecisionTwoLbl), probePositions[1]));
 
             Vector2 probeFrontRight = ActiveSliceSettings.Instance.GetPrintLevelSamplePosition(2);
-            printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontRight, 10), string.Format("{0} Position 3 - Low Precision", Step()), probePositions[2]));
-            printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} Position 3 - Medium Precision", Step()), probePositions[2]));
-            printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} Position 3 - High Precision", Step()), probePositions[2]));
+			string positionLabelThree = new LocalizedString("Position").Translated;
+			string lowPrecisionLblThree = new LocalizedString("Low Precision").Translated;
+			string medPrecisionLblThree = new LocalizedString("Medium Precision").Translated;
+			string highPrecisionLblThree = new LocalizedString("High Precision").Translated;
+			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontRight, 10), string.Format("{0} {1} 3 - {2}", Step(), positionLabelThree, lowPrecisionLblThree), probePositions[2]));
+			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", Step(),positionLabelThree, medPrecisionLblThree ), probePositions[2]));
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", Step(), positionLabelThree, highPrecisionLblThree ), probePositions[2]));
 
             printLevelWizard.AddPage(new LastPageInstructions(doneInstructions, probePositions));
         }

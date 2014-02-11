@@ -419,7 +419,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (Meshes.Count > 0)
             {
-				processingProgressControl.textWidget.Text = new LocalizedString("Making Copy:").Translated;
+				string makingCopyLabel = new LocalizedString("Making Copy").Translated;
+				string makingCopyLabelFull = string.Format ("{0}:", makingCopyLabel);
+				processingProgressControl.textWidget.Text = makingCopyLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
@@ -587,7 +589,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (Meshes.Count > 0)
             {
-                processingProgressControl.textWidget.Text = "Loading Parts:";
+				string loadingPartLabel = new LocalizedString("Loading Parts").Translated;
+				string loadingPartLabelFull = string.Format("{0}:", loadingPartLabel);
+				processingProgressControl.textWidget.Text = loadingPartLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
@@ -938,7 +942,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // put in the part info display
                 if(false)
                 {
-                    CheckBox expandPartInfoOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Part Info", "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					CheckBox expandPartInfoOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Part Info").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandPartInfoOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandPartInfoOptions);
 
@@ -953,7 +957,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     };
 
                     PartInfoOptionContainer.Margin = new BorderDouble(8, 3);
-                    TextWidget sizeInfo = new TextWidget("Size:", textColor: RGBA_Bytes.White);
+					string sizeInfoLbl = new LocalizedString("Size").Translated;
+					string sizeInfoLblFull = string.Format("{0}:", sizeInfoLbl);
+					TextWidget sizeInfo = new TextWidget(sizeInfoLblFull, textColor: RGBA_Bytes.White);
                     PartInfoOptionContainer.AddChild(sizeInfo);
                     TextWidget xSizeInfo = new TextWidget("  x 10.1", pointSize: 10, textColor: RGBA_Bytes.White);
                     xSizeInfo.AutoExpandBoundsToText = true;
@@ -1039,7 +1045,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
             scaleRatioContainer.Padding = new BorderDouble(5);
 
-			TextWidget scaleRatioLabel = new TextWidget(new LocalizedString("Ratio:").Translated, textColor: RGBA_Bytes.White);
+			string scaleRatioLblTxt = new LocalizedString("Ratio").Translated;
+			string scaleRatioLblTxtFull = string.Format("{0}:", scaleRatioLblTxt);
+			TextWidget scaleRatioLabel = new TextWidget(scaleRatioLblTxtFull, textColor: RGBA_Bytes.White);
             scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
             scaleRatioContainer.AddChild(scaleRatioLabel);
 
@@ -1114,7 +1122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(presetScaleMenu);
 
-            applyScaleButton = whiteButtonFactory.Generate("Apply Scale", centerText: true);
+			applyScaleButton = whiteButtonFactory.Generate(new LocalizedString("Apply Scale").Translated, centerText: true);
             applyScaleButton.Visible = false;
             applyScaleButton.Cursor = Cursors.Hand;
             buttonPanel.AddChild(applyScaleButton);
@@ -1178,7 +1186,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             GuiWidget horizontalSpacer = new GuiWidget();
             horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-			TextWidget degreesLabel = new TextWidget(new LocalizedString("Degrees:").Translated, textColor: RGBA_Bytes.White);
+			string degreesLabelTxt = new LocalizedString("Degrees").Translated;
+			string degreesLabelTxtFull = string.Format("{0}:", degreesLabelTxt);
+			TextWidget degreesLabel = new TextWidget(degreesLabelTxt, textColor: RGBA_Bytes.White);
             degreesContainer.AddChild(degreesLabel);
             degreesContainer.AddChild(horizontalSpacer);
 

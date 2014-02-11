@@ -210,11 +210,15 @@ namespace MatterHackers.MatterControl
 
         void SetMenuItems()
         {
+			string importTxt = new LocalizedString ("Import").Translated;
+			string importTxtFull = string.Format ("{0}", importTxt);
+			string exportTxt = new LocalizedString("Export").Translated;
+			string exportTxtFull = string.Format ("{0}", exportTxt);
             //Set the name and callback function of the menu items
             slicerOptionsMenuItems = new TupleList<string, Func<bool>> 
             {
-				{"Import", ImportQueueMenu_Click},
-				{"Export", ExportQueueMenu_Click},
+				{importTxtFull, ImportQueueMenu_Click},
+				{exportTxtFull, ExportQueueMenu_Click},
             };
 
             //Add the menu items to the menu itself

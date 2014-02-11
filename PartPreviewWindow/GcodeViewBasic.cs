@@ -265,8 +265,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             modelInfoContainer.HAnchor = HAnchor.ParentLeftRight;
             modelInfoContainer.Padding = new BorderDouble(5);
 
+			string printTimeLbl = new LocalizedString ("Print Time").Translated;
+			string printTimeLblFull = string.Format ("{0}:", printTimeLbl);
             // put in the print time
-            modelInfoContainer.AddChild(new TextWidget("Print Time:", textColor: RGBA_Bytes.White));
+			modelInfoContainer.AddChild(new TextWidget(printTimeLblFull, textColor: RGBA_Bytes.White));
             {
                 string timeRemainingText = "---";
 
@@ -294,8 +296,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             //modelInfoContainer.AddChild(new TextWidget("Size:", textColor: RGBA_Bytes.White));
             
+			string filamentLengthLbl = new LocalizedString ("Filament Length").Translated;
+			string filamentLengthLblFull = string.Format ("{0}:", filamentLengthLbl);
             // show the filament used
-            modelInfoContainer.AddChild(new TextWidget("Filament Length:", textColor: RGBA_Bytes.White));
+			modelInfoContainer.AddChild(new TextWidget(filamentLengthLblFull, textColor: RGBA_Bytes.White));
             {
                 double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.NozzleDiameter);
 
@@ -305,7 +309,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 modelInfoContainer.AddChild(estimatedPrintTime);
             }
 
-            modelInfoContainer.AddChild(new TextWidget("Filament Volume:", textColor: RGBA_Bytes.White));
+			string filamentVolumeLbl = new LocalizedString ("Filament Volume").Translated;
+			string filamentVolumeLblFull = string.Format("{0}:", filamentVolumeLbl);
+			modelInfoContainer.AddChild(new TextWidget(filamentVolumeLblFull, textColor: RGBA_Bytes.White));
             {
                 var density = 1.0;
                 string filamentType = "PLA";
@@ -326,7 +332,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 modelInfoContainer.AddChild(estimatedPrintTime);
             }
 
-            modelInfoContainer.AddChild(new TextWidget("Weight:", textColor: RGBA_Bytes.White));
+			string weightLbl = new LocalizedString("Weight").Translated;
+			string weightLblFull = string.Format("{0}:", weightLbl);
+			modelInfoContainer.AddChild(new TextWidget(weightLblFull, textColor: RGBA_Bytes.White));
             {
                 var density = 1.0;
                 string filamentType = "PLA";
@@ -386,7 +394,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerInfoContainer.Padding = new BorderDouble(5);
 
             // put in a show grid check box
-            CheckBox showGrid = new CheckBox("Show Grid", textColor: RGBA_Bytes.White);
+			CheckBox showGrid = new CheckBox(new LocalizedString("Show Grid").Translated, textColor: RGBA_Bytes.White);
             showGrid.Checked = gcodeViewWidget.RenderGrid;
             showGrid.CheckedStateChanged += (sender, e) =>
             {
@@ -395,7 +403,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerInfoContainer.AddChild(showGrid);
 
             // put in a show moves checkbox
-            CheckBox showMoves = new CheckBox("Show Moves", textColor: RGBA_Bytes.White);
+			CheckBox showMoves = new CheckBox(new LocalizedString("Show Moves").Translated, textColor: RGBA_Bytes.White);
             showMoves.Checked = gcodeViewWidget.RenderMoves;
             showMoves.CheckedStateChanged += (sender, e) =>
             {
@@ -625,7 +633,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AddChild(editCurrentLayerIndex);
             gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
 
-            setLayerButton = textImageButtonFactory.Generate("Go");
+			setLayerButton = textImageButtonFactory.Generate(new LocalizedString("Go").Translated);
             setLayerButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
             setLayerButton.Click += new Button.ButtonEventHandler(layerCountTextWidget_EditComplete);
             this.AddChild(setLayerButton);
