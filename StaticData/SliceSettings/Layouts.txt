@@ -78,6 +78,7 @@ Advanced
         support_material_speed
         bridge_speed
         gap_fill_speed
+        min_print_speed
       Speed for non Print Moves
         travel_speed
       Modifiers
