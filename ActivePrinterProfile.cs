@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Diagnostics;
+using System.Linq;
 using System.Text;
+using System.IO.Ports;
+using System.Threading;
+using System.Diagnostics;
+using System.Collections;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Globalization;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -17,6 +22,8 @@ namespace MatterHackers.MatterControl
     public class ActivePrinterProfile
     {
         static ActivePrinterProfile globalInstance = null;
+
+        public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 
         // private so that it can only be gotten through the Instance
         ActivePrinterProfile()
@@ -43,9 +50,45 @@ namespace MatterHackers.MatterControl
                 {
                     PrinterCommunication.Instance.Disable();
                     globalInstance = value;
-                    PrinterCommunication.Instance.OnActivePrinterChanged(null);
+                    globalInstance.OnActivePrinterChanged(null);
                 }
             }
+        }
+
+        public void OnActivePrinterChanged(EventArgs e)
+        {
+            ActivePrinterChanged.CallEvents(this, e);
+        }
+
+        public static void CheckForAndDoAutoConnect()
+        {
+            DataStorage.Printer autoConnectProfile = ActivePrinterProfile.GetAutoConnectProfile();
+            if (autoConnectProfile != null)
+            {
+                ActivePrinterProfile.Instance.ActivePrinter = autoConnectProfile;
+                PrinterCommunication.Instance.HaltConnectionThread();
+                PrinterCommunication.Instance.ConnectToActivePrinter();
+            }
+        }
+
+        public static DataStorage.Printer GetAutoConnectProfile()
+        {
+            string query = string.Format("SELECT * FROM Printer;");
+            IEnumerable<Printer> printer_profiles = (IEnumerable<Printer>)Datastore.Instance.dbSQLite.Query<Printer>(query);
+            string[] comportNames = SerialPort.GetPortNames();
+
+            foreach (DataStorage.Printer printer in printer_profiles)
+            {
+                if (printer.AutoConnectFlag)
+                {
+                    bool portIsAvailable = comportNames.Contains(printer.ComPort);
+                    if (portIsAvailable)
+                    {
+                        return printer;
+                    }
+                }
+            }
+            return null;
         }
     }
 }

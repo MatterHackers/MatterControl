@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				string printerErrorMessageLblTwoFull = string.Format("{0}...",printerErrorMessageLblTwo);
 				printerErrorMessage.Text = printerErrorMessageLblTwoFull;
                 this.ActivePrinter.Commit();
-                PrinterCommunication.Instance.ActivePrinter = this.ActivePrinter;
+                ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
                 PrinterCommunication.Instance.ConnectToActivePrinter();
                 connectButton.Visible = false;                
             }     

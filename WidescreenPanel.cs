@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
         public WidescreenPanel()
             : base()
         {
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
             
             // do the front panel stuff
             {

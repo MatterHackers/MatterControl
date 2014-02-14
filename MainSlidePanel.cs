@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
         public MainSlidePanel()
             : base(2)
         {
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
 
             // do the front panel stuff
             {

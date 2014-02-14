@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
 #if false
             SetBedLevelEquation(0, 0, 0);
 #else
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 PrintLeveling.Instance.SetPrintLevelingEquation(
                     PrinterCommunication.Instance.GetPrintLevelingProbePosition(0),
@@ -315,22 +315,22 @@ namespace MatterHackers.MatterControl
 
         public void LoadPrinterConfigurationSettings()
         {
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 DataStorage.SliceSettingsCollection collection;
-                if (PrinterCommunication.Instance.ActivePrinter.DefaultSettingsCollectionId != 0)
+                if (ActivePrinterProfile.Instance.ActivePrinter.DefaultSettingsCollectionId != 0)
                 {
-                    int activePrinterSettingsID = PrinterCommunication.Instance.ActivePrinter.DefaultSettingsCollectionId;
+                    int activePrinterSettingsID = ActivePrinterProfile.Instance.ActivePrinter.DefaultSettingsCollectionId;
                     collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == activePrinterSettingsID).Take(1).FirstOrDefault();                    
                 }
                 else
                 {
                     collection = new DataStorage.SliceSettingsCollection();
-                    collection.Name = PrinterCommunication.Instance.ActivePrinter.Name;
+                    collection.Name = ActivePrinterProfile.Instance.ActivePrinter.Name;
                     collection.Commit();
 
-                    PrinterCommunication.Instance.ActivePrinter.DefaultSettingsCollectionId = collection.Id;
-                    PrinterCommunication.Instance.ActivePrinter.Commit();
+                    ActivePrinterProfile.Instance.ActivePrinter.DefaultSettingsCollectionId = collection.Id;
+                    ActivePrinterProfile.Instance.ActivePrinter.Commit();
                 }
                 SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
                 this.activeSettingsLayers.Add(printerSettingsLayer);

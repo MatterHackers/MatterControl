@@ -35,8 +35,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 
             doLayout();
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(reloadAfterPrinterProfileChanged, ref unregisterEvents);
-
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(reloadAfterPrinterProfileChanged, ref unregisterEvents);
         }
 
         public void doLayout()
@@ -66,7 +65,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 topToBottom.AddChild(exportSTL);
             }
 
-            bool showExportGCodeButton = PrinterCommunication.Instance.ActivePrinter != null || partIsGCode;
+            bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
 
             if (showExportGCodeButton)
             {

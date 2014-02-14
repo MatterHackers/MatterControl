@@ -103,7 +103,6 @@ namespace MatterHackers.MatterControl
 
         public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
 
-        public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
@@ -204,37 +203,6 @@ namespace MatterHackers.MatterControl
         int printerCommandQueueIndex = -1;
 
         Thread sendGCodeToPrinterThread;
-
-        public void Initialize()
-        {
-            DataStorage.Printer autoConnectProfile = GetAutoConnectProfile();
-            if (autoConnectProfile != null)
-            {
-                PrinterCommunication.Instance.ActivePrinter = autoConnectProfile;
-                PrinterCommunication.Instance.HaltConnectionThread();
-                PrinterCommunication.Instance.ConnectToActivePrinter();
-            }
-        }
-
-        private DataStorage.Printer GetAutoConnectProfile()
-        {
-            string query = string.Format("SELECT * FROM Printer;");
-            IEnumerable<Printer> printer_profiles = (IEnumerable<Printer>)Datastore.Instance.dbSQLite.Query<Printer>(query);
-            string[] comportNames = SerialPort.GetPortNames();
-
-            foreach (DataStorage.Printer printer in printer_profiles)
-            {
-                if (printer.AutoConnectFlag)
-                {
-                    bool portIsAvailable = comportNames.Contains(printer.ComPort);
-                    if (portIsAvailable)
-                    {
-                        return printer;
-                    }
-                }
-            }
-            return null;
-        }
 
         public bool DoPrintLeveling
         {
@@ -406,7 +374,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public Printer ActivePrinter
+        private Printer ActivePrinter
         {
             get
             {
@@ -1353,11 +1321,6 @@ namespace MatterHackers.MatterControl
         void OnFanSpeedSet(EventArgs e)
         {
             FanSpeedSet.CallEvents(this, e);
-        }
-
-        public void OnActivePrinterChanged(EventArgs e)
-        {
-            ActivePrinterChanged.CallEvents(this, e);
         }
 
         void OnActivePrintItemChanged(EventArgs e)

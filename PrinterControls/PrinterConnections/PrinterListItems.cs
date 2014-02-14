@@ -56,9 +56,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 availableText = "";
             }
 
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
-                int connectedPrinterHash = PrinterCommunication.Instance.ActivePrinter.GetHashCode();
+                int connectedPrinterHash = ActivePrinterProfile.Instance.ActivePrinter.GetHashCode();
                 int printerOptionHash = printerRecord.GetHashCode();
                 if (connectedPrinterHash == printerOptionHash)
                 {
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             if (this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
             {
                 UiThread.RunOnIdle(CloseOnIdle);
-                PrinterCommunication.Instance.ActivePrinter = this.printerRecord;                
+                ActivePrinterProfile.Instance.ActivePrinter = this.printerRecord;                
             }
         }
 
@@ -172,17 +172,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void RemoveConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
         {
-            
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
-                int connectedPrinterHash = PrinterCommunication.Instance.ActivePrinter.GetHashCode();
+                int connectedPrinterHash = ActivePrinterProfile.Instance.ActivePrinter.GetHashCode();
                 int printerOptionHash = this.printerRecord.GetHashCode();
 
                 //Disconnect printer if the printer being removed is currently connected
                 if (connectedPrinterHash == printerOptionHash)
                 {
                     PrinterCommunication.Instance.Disable();
-                    PrinterCommunication.Instance.ActivePrinter = null;
+                    ActivePrinterProfile.Instance.ActivePrinter = null;
                 }
             }
             this.printerRecord.Delete();

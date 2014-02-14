@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.ActionBar
             //this.AnchorAll();			
             this.AddChild(textContainer);
 
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
             PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
         }
 
@@ -194,9 +194,9 @@ namespace MatterHackers.MatterControl.ActionBar
                 string statusString = new LocalizedString("Status: {0}").Translated;
                 printerStatusText.Text = string.Format(statusString, PrinterCommunication.Instance.PrinterConnectionStatusVerbose);
 			}
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
-                printerNameText.Text = PrinterCommunication.Instance.ActivePrinter.Name;
+                printerNameText.Text = ActivePrinterProfile.Instance.ActivePrinter.Name;
                                
             }
             else

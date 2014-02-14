@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl
         private void AddHandlers()
         {
             PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
 
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl
 
         private void SetVisibleControls()
         {
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 categoryTabs.Visible = true;
                 settingsControlBar.Visible = true;
@@ -678,7 +678,7 @@ namespace MatterHackers.MatterControl
         private void SaveSetting(string slicerConfigName, string value)
         {
             //Hacky solution prevents saves when no printer is loaded
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 SliceSettingsLayerSelector.Instance.SaveSetting(slicerConfigName, value);
             }

@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
             UseOpenGL = true;
             Title = "MatterControl (beta)";
 
-            PrinterCommunication.Instance.Initialize();
+            ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);
 
             ShowAsSystemWindow();

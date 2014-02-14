@@ -259,13 +259,13 @@ namespace MatterHackers.MatterControl
         void SetStatusDisplay()
         {            
             string settingsLayerDescription;
-            if (PrinterCommunication.Instance.ActivePrinter == null)
+            if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
                 settingsLayerDescription = "Default Settings";
             }
             else
             {
-                settingsLayerDescription = PrinterCommunication.Instance.ActivePrinter.Name;
+                settingsLayerDescription = ActivePrinterProfile.Instance.ActivePrinter.Name;
             }
             settingsStatusDescription.Text = string.Format("{0}", settingsLayerDescription);
             

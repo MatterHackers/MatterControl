@@ -214,10 +214,10 @@ namespace MatterHackers.MatterControl
 
         void initMacro()
         {
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 windowController.ActiveMacro = new CustomCommands();
-                windowController.ActiveMacro.PrinterId = PrinterCommunication.Instance.ActivePrinter.Id;
+                windowController.ActiveMacro.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
                 windowController.ActiveMacro.Name = "Home All";
                 windowController.ActiveMacro.Value = "G28 ; Home All Axes";
             }
@@ -356,10 +356,10 @@ namespace MatterHackers.MatterControl
         IEnumerable<DataStorage.CustomCommands> GetMacros()
         {
             IEnumerable<DataStorage.CustomCommands> results = Enumerable.Empty<DataStorage.CustomCommands>();
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 //Retrieve a list of saved printers from the Datastore
-                string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", PrinterCommunication.Instance.ActivePrinter.Id);
+                string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActivePrinterProfile.Instance.ActivePrinter.Id);
                 results = (IEnumerable<DataStorage.CustomCommands>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.CustomCommands>(query);
                 return results;
             }
