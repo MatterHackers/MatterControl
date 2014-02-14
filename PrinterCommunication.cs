@@ -111,7 +111,6 @@ namespace MatterHackers.MatterControl
         public RootedObjectEventHandler ConnectionStateChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
         public RootedObjectEventHandler DestinationChanged = new RootedObjectEventHandler();
-        public RootedObjectEventHandler DoPrintLevelingChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ExtruderTemperatureRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler ExtruderTemperatureSet = new RootedObjectEventHandler();
@@ -203,73 +202,6 @@ namespace MatterHackers.MatterControl
         int printerCommandQueueIndex = -1;
 
         Thread sendGCodeToPrinterThread;
-
-        public bool DoPrintLeveling
-        {
-            get
-            {
-                if (ActivePrinter != null)
-                {
-                    return ActivePrinter.DoPrintLeveling;
-                }
-                return false;
-            }
-
-            set
-            {
-                if (ActivePrinter != null && ActivePrinter.DoPrintLeveling != value)
-                {
-                    ActivePrinter.DoPrintLeveling = value;
-                    DoPrintLevelingChanged.CallEvents(this, null);
-                    ActivePrinter.Commit();
-
-                    if (DoPrintLeveling)
-                    {
-                        PrintLeveling.Instance.SetPrintLevelingEquation(
-                            PrinterCommunication.Instance.GetPrintLevelingProbePosition(0),
-                            PrinterCommunication.Instance.GetPrintLevelingProbePosition(1),
-                            PrinterCommunication.Instance.GetPrintLevelingProbePosition(2),
-                            ActiveSliceSettings.Instance.PrintCenter);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// This function returns one of the three positions that will be probed when setting
-        /// up print leveling.
-        /// </summary>
-        /// <param name="position0To2"></param>
-        /// <returns></returns>
-        public Vector3 GetPrintLevelingProbePosition(int position0To2)
-        {
-            if (ActivePrinter != null)
-            {
-                double[] positions = ActivePrinter.GetPrintLevelingPositions();
-                switch (position0To2)
-                {
-                    case 0:
-                        return new Vector3(positions[0], positions[1], positions[2]);
-                    case 1:
-                        return new Vector3(positions[3], positions[4], positions[5]);
-                    case 2:
-                        return new Vector3(positions[6], positions[7], positions[8]);
-                    default:
-                        throw new Exception("there are only 3 probe positions.");
-                }
-            }
-
-            return Vector3.Zero;
-        }
-
-        public void SetPrintLevelingProbePositions(double[] printLevelingPositions3_xyz)
-        {
-            if (ActivePrinter != null)
-            {
-                ActivePrinter.SetPrintLevelingPositions(printLevelingPositions3_xyz);
-                ActivePrinter.Commit();
-            }
-        }
 
         public bool DtrEnableOnConnect
         {
@@ -748,7 +680,7 @@ namespace MatterHackers.MatterControl
 
         public void HomeWasWritenToPrinter(object sender, EventArgs e)
         {
-            if (DoPrintLeveling)
+            if (ActivePrinter.DoPrintLeveling)
             {
                 ReadPosition();
             }
@@ -1326,7 +1258,7 @@ namespace MatterHackers.MatterControl
                 }
             }
 
-            if (DoPrintLeveling)
+            if (ActivePrinter.DoPrintLeveling)
             {
                 lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent, addLFCR, includeSpaces);
             }

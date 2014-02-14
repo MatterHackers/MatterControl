@@ -138,9 +138,9 @@ namespace MatterHackers.MatterControl
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 PrintLeveling.Instance.SetPrintLevelingEquation(
-                    PrinterCommunication.Instance.GetPrintLevelingProbePosition(0),
-                    PrinterCommunication.Instance.GetPrintLevelingProbePosition(1),
-                    PrinterCommunication.Instance.GetPrintLevelingProbePosition(2),
+                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(0),
+                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(1),
+                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(2),
                     ActiveSliceSettings.Instance.PrintCenter);
             }
 #endif

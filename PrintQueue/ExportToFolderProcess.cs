@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         string outputFileName = Path.ChangeExtension(originalFileName, ".gcode");
                         string outputPathAndName = Path.Combine(exportPath, outputFileName);
 
-                        if (PrinterCommunication.Instance.DoPrintLeveling)
+                        if (ActivePrinterProfile.Instance.DoPrintLeveling)
                         {
                             GCodeFile unleveledGCode = new GCodeFile(savedGcodeFileName);
                             PrintLeveling.Instance.ApplyLeveling(unleveledGCode);

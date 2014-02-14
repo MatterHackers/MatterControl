@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl
 
         private void SaveGCodeToNewLocation(string source, string dest)
         {
-            if (PrinterCommunication.Instance.DoPrintLeveling)
+            if (ActivePrinterProfile.Instance.DoPrintLeveling)
             {
                 GCodeFile unleveledGCode = new GCodeFile(source);
                 PrintLeveling.Instance.ApplyLeveling(unleveledGCode);

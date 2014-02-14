@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         throw new NotImplementedException();
                         //string outputPathAndName = Path.Combine(exportPath, outputFileName);
 
-                        if (PrinterCommunication.Instance.DoPrintLeveling)
+                        if (ActivePrinterProfile.Instance.DoPrintLeveling)
                         {
                             GCodeFile unleveledGCode = new GCodeFile(savedGcodeFileName);
                             PrintLeveling.Instance.ApplyLeveling(unleveledGCode);

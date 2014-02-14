@@ -516,17 +516,17 @@ namespace MatterHackers.MatterControl
                 doLevelingCheckBox.Margin = new BorderDouble(left: 3);
                 doLevelingCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 doLevelingCheckBox.VAnchor = VAnchor.ParentCenter;
-                doLevelingCheckBox.Checked = PrinterCommunication.Instance.DoPrintLeveling;
+                doLevelingCheckBox.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
 
                 buttonBar.AddChild(doLevelingCheckBox);
                 buttonBar.AddChild(runPrintLevelingButton);
                 doLevelingCheckBox.CheckedStateChanged += (sender, e) =>
                 {
-                    PrinterCommunication.Instance.DoPrintLeveling = doLevelingCheckBox.Checked;
+                    ActivePrinterProfile.Instance.DoPrintLeveling = doLevelingCheckBox.Checked;
                 };
-                PrinterCommunication.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+                ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
                 {
-                    doLevelingCheckBox.Checked = PrinterCommunication.Instance.DoPrintLeveling;
+                    doLevelingCheckBox.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
                     if (doLevelingCheckBox.Checked && ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingProbePositions == null)
                     {
                         //OpenPrintLevelWizard();
