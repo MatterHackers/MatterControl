@@ -341,39 +341,6 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public enum SlicingEngine { Slic3r, CuraEngine, MatterSlice };
-        static readonly SlicingEngine defaultEngine = SlicingEngine.Slic3r;
-        public SlicingEngine ActiveSliceEngine
-        {
-            get
-            {
-                if (ActivePrinter != null)
-                {
-                    foreach (SlicingEngine engine in SlicingEngine.GetValues(typeof(SlicingEngine)))
-                    {
-                        if (ActivePrinter.CurrentSlicingEngine == engine.ToString())
-                        {
-                            return engine;
-                        }
-                    }
-
-                    // It is not set in the slice settings, so set it and save it.
-                    ActivePrinter.CurrentSlicingEngine = defaultEngine.ToString();
-                    ActivePrinter.Commit();
-                }
-                return defaultEngine;
-            }
-
-            set
-            {
-                if (ActiveSliceEngine != value)
-                {
-                    ActivePrinter.CurrentSlicingEngine = value.ToString();
-                    ActivePrinter.Commit();
-                }
-            }
-        }
-
         private Printer ActivePrinter
         {
             get

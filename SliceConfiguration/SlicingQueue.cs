@@ -77,9 +77,9 @@ namespace MatterHackers.MatterControl
             switch (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType())
             {
                 case Agg.UI.WindowsFormsAbstract.OSType.Windows:
-                    switch (PrinterCommunication.Instance.ActiveSliceEngine)
+                    switch (ActivePrinterProfile.Instance.ActiveSliceEngine)
                     {
-                        case PrinterCommunication.SlicingEngine.Slic3r:
+                        case ActivePrinterProfile.SlicingEngine.Slic3r:
                             {
                                 string slic3rRelativePath = Path.Combine("..", "Slic3r", "slic3r.exe");
                                 if (!File.Exists(slic3rRelativePath))
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
                                 return System.IO.Path.GetFullPath(slic3rRelativePath);
                             }
 
-                        case PrinterCommunication.SlicingEngine.CuraEngine:
+                        case ActivePrinterProfile.SlicingEngine.CuraEngine:
                             {
                                 string curaEngineRelativePath = Path.Combine("..", "CuraEngine.exe");
                                 if (!File.Exists(curaEngineRelativePath))
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
                                 return System.IO.Path.GetFullPath(curaEngineRelativePath);
                             }
 
-                        case PrinterCommunication.SlicingEngine.MatterSlice:
+                        case ActivePrinterProfile.SlicingEngine.MatterSlice:
                             {
                                 string materSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
                                 return System.IO.Path.GetFullPath(materSliceRelativePath);
@@ -109,23 +109,24 @@ namespace MatterHackers.MatterControl
                             throw new NotImplementedException();
                     }
 
-			case Agg.UI.WindowsFormsAbstract.OSType.Mac:
-				switch (PrinterCommunication.Instance.ActiveSliceEngine) {
-				case PrinterCommunication.SlicingEngine.Slic3r:
-					{
-						//string parentLocation = Directory.GetParent (ApplicationDataStorage.Instance.ApplicationPath).ToString ();
-						string applicationPath = System.IO.Path.Combine (ApplicationDataStorage.Instance.ApplicationPath, "Slic3r.app", "Contents", "MacOS", "slic3r");
-						return applicationPath;
-					}
-				case PrinterCommunication.SlicingEngine.CuraEngine:
-					{
-						string applicationPath = System.IO.Path.Combine (ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
-						return applicationPath;
-					}
+                case Agg.UI.WindowsFormsAbstract.OSType.Mac:
+                    switch (ActivePrinterProfile.Instance.ActiveSliceEngine)
+                    {
+                        case ActivePrinterProfile.SlicingEngine.Slic3r:
+                            {
+                                //string parentLocation = Directory.GetParent (ApplicationDataStorage.Instance.ApplicationPath).ToString ();
+                                string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "Slic3r.app", "Contents", "MacOS", "slic3r");
+                                return applicationPath;
+                            }
+                        case ActivePrinterProfile.SlicingEngine.CuraEngine:
+                            {
+                                string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
+                                return applicationPath;
+                            }
 
-				default:
-					throw new NotImplementedException ();
-				}
+                        default:
+                            throw new NotImplementedException();
+                    }
 
                 default:
                     throw new NotImplementedException();
@@ -152,18 +153,18 @@ namespace MatterHackers.MatterControl
                     {
                         slicerProcess = new Process();
 
-                        switch (PrinterCommunication.Instance.ActiveSliceEngine)
+                        switch (ActivePrinterProfile.Instance.ActiveSliceEngine)
                         {
-                            case PrinterCommunication.SlicingEngine.Slic3r:
+                            case ActivePrinterProfile.SlicingEngine.Slic3r:
                                 slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                 break;
 
-                            case PrinterCommunication.SlicingEngine.CuraEngine:
+                            case ActivePrinterProfile.SlicingEngine.CuraEngine:
                                 slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + CuraEngineMappings.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                 //Debug.Write(slicerProcess.StartInfo.Arguments);
                                 break;
 
-                            case PrinterCommunication.SlicingEngine.MatterSlice:
+                            case ActivePrinterProfile.SlicingEngine.MatterSlice:
                                 slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                 break;
                         }

@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl
                 categoryPage.AddChild(sideTabs);
             }
 
-            if(showAllDetails.Checked && PrinterCommunication.Instance.ActiveSliceEngine == PrinterCommunication.SlicingEngine.Slic3r)
+            if (showAllDetails.Checked && ActivePrinterProfile.Instance.ActiveSliceEngine == ActivePrinterProfile.SlicingEngine.Slic3r)
             {
                 TabPage extraSettingsPage = new TabPage("Other");
                 SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, 16,
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl
 
                     foreach (OrganizerSettingsData settingInfo in subGroup.SettingDataList)
                     {
-                        if (PrinterCommunication.Instance.ActiveSliceEngine == PrinterCommunication.SlicingEngine.Slic3r
+                        if (ActivePrinterProfile.Instance.ActiveSliceEngine == ActivePrinterProfile.SlicingEngine.Slic3r
                             || CuraEngineMappings.MapContains(settingInfo.SlicerConfigName))
                         {
                             addedSettingToSubGroup = true;

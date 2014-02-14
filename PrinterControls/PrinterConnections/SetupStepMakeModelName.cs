@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             string defaultSliceEngine;
             if (settingsDict.TryGetValue("default_slice_engine", out defaultSliceEngine))
             {
-                if (Enum.IsDefined(typeof(PrinterCommunication.SlicingEngine), defaultSliceEngine))
+                if (Enum.IsDefined(typeof(ActivePrinterProfile.SlicingEngine), defaultSliceEngine))
                 {
                     ActivePrinter.CurrentSlicingEngine = defaultSliceEngine;
                 }
