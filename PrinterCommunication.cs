@@ -198,7 +198,6 @@ namespace MatterHackers.MatterControl
         Thread readFromPrinterThread;
         Thread connectThread;
 
-        private Printer activePrinter;
         private PrintItemWrapper activePrintItem;
 
         int lastRemainingSecondsReported = 0;
@@ -411,17 +410,11 @@ namespace MatterHackers.MatterControl
         {
             get
             {
-                return this.activePrinter;
+                return ActivePrinterProfile.Instance.ActivePrinter;
             }
             set
             {
-                if (this.activePrinter != value)
-                {
-                    Disable();
-                    this.activePrinter = value;
-                    this.CommunicationState = CommunicationStates.Disconnected;
-                    OnActivePrinterChanged(null);
-                }
+                ActivePrinterProfile.Instance.ActivePrinter = value;
             }
         }
 
@@ -1362,7 +1355,7 @@ namespace MatterHackers.MatterControl
             FanSpeedSet.CallEvents(this, e);
         }
 
-        void OnActivePrinterChanged(EventArgs e)
+        public void OnActivePrinterChanged(EventArgs e)
         {
             ActivePrinterChanged.CallEvents(this, e);
         }

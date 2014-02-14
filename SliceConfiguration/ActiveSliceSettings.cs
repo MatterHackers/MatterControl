@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl
             SettingsChanged.CallEvents(this, null);
         }
 
+        // private so that it can only be gotten through the Instance
         ActiveSliceSettings()
         {
         }

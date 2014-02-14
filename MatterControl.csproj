@@ -72,6 +72,7 @@
     <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterActionRow.cs" />
     <Compile Include="ActionBar\PrintStatusRow.cs" />
+    <Compile Include="ActivePrinterProfile.cs" />
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="FieldValidation.cs" />
