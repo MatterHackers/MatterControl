@@ -33,7 +33,20 @@ namespace MatterHackers.MatterControl
         {
         }
 
-        public Printer ActivePrinter { get; set; }
+        Printer activePrinter = null;
+        public Printer ActivePrinter 
+        {
+            get { return activePrinter; }
+            set 
+            {
+                if (activePrinter != value)
+                {
+                    PrinterCommunication.Instance.Disable();
+                    activePrinter = value;
+                    globalInstance.OnActivePrinterChanged(null);
+                }
+            } 
+        }
 
         public static ActivePrinterProfile Instance
         {
@@ -45,16 +58,6 @@ namespace MatterHackers.MatterControl
                 }
 
                 return globalInstance;
-            }
-
-            set
-            {
-                if (globalInstance != value)
-                {
-                    PrinterCommunication.Instance.Disable();
-                    globalInstance = value;
-                    globalInstance.OnActivePrinterChanged(null);
-                }
             }
         }
 
