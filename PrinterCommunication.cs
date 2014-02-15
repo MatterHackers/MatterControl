@@ -624,7 +624,7 @@ namespace MatterHackers.MatterControl
             }
             if (temperatureRequestTimer.ElapsedMilliseconds > 2000)
             {
-                if (MonitorPrinterTemperature || PrinterIsPrinting)
+                if (MonitorPrinterTemperature)
                 {
                     QueueLineToPrinter("M105");
                 }
@@ -1234,7 +1234,7 @@ namespace MatterHackers.MatterControl
 
         string ApplyPrintLeveling(string lineBeingSent, bool addLFCR, bool includeSpaces)
         {
-            if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
+            if (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
             {
                 Vector3 newDestination = currentDestination;
                 if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
@@ -1256,11 +1256,11 @@ namespace MatterHackers.MatterControl
                     currentDestination = newDestination;
                     DestinationChanged.CallEvents(this, null);
                 }
-            }
 
-            if (ActivePrinter.DoPrintLeveling)
-            {
-                lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent, addLFCR, includeSpaces);
+                if (ActivePrinter.DoPrintLeveling)
+                {
+                    lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent, addLFCR, includeSpaces);
+                }
             }
 
             return lineBeingSent;
@@ -1353,7 +1353,7 @@ namespace MatterHackers.MatterControl
                 if (printerCommandQueueIndex > 0
                     && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count -1)
                 {
-                    if (loadedGCode.GCodeCommandQueue[printerCommandQueueIndex+1].Line != lineToWrite)
+                    if (!loadedGCode.GCodeCommandQueue[printerCommandQueueIndex+1].Line.Contains(lineToWrite))
                     {
                         loadedGCode.GCodeCommandQueue.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.GCodeCommandQueue[printerCommandQueueIndex]));
                     }
@@ -1396,8 +1396,6 @@ namespace MatterHackers.MatterControl
             {
                 if (serialPort != null && serialPort.IsOpen)
                 {
-                    lineToWrite = ApplyPrintLeveling(lineToWrite, true, true);
-
                     // write data to communication
                     {
                         StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
