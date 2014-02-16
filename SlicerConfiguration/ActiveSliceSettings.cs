@@ -626,12 +626,54 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
-                // TODO: If top_solid_infil_speed is part of the current slice engine then check that it is greater than 0.
+
+                // If the given speed is part of the current slice engine then check that it is greater than 0.
+                if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("first_layer_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("gap_fill_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("infill_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("perimeter_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("retract_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("small_perimeter_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("solid_infill_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("support_material_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("top_solid_infill_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("travel_speed")) return false;                
             }
             catch(Exception e)
             {
                 string stackTraceNoBackslashRs = e.StackTrace.Replace("\r", "");
                 ContactFormWindow.Open("Parse Error while slicing", e.Message + stackTraceNoBackslashRs);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateGoodSpeedSettingGreaterThan0(string speedSetting)
+        {
+            string actualSpeedValueString = GetActiveValue(speedSetting);
+            string speedValueString = actualSpeedValueString;
+            if (speedValueString.EndsWith("%"))
+            {
+                speedValueString = speedValueString.Substring(0, speedValueString.Length - 1);
+            }
+            bool valueWasNumber = true;
+            double speedToCheck;
+            if (!double.TryParse(speedValueString, out speedToCheck))
+            {
+                valueWasNumber = false;
+            }
+
+            if (!valueWasNumber 
+                || (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(speedSetting)
+                && speedToCheck <= 0))
+            {
+                string error = string.Format("The '{0}' must be greater than 0.", SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting).PresentationName);
+                string details = string.Format("It is currently set to {0}.", actualSpeedValueString);
+                string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'";
+                StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                 return false;
             }
 
