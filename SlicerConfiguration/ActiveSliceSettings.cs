@@ -626,6 +626,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
+                // TODO: If top_solid_infil_speed is part of the current slice engine then check that it is greater than 0.
             }
             catch(Exception e)
             {
