@@ -582,9 +582,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void generateButton_Click(object sender, MouseEventArgs mouseEvent)
         {
+            UiThread.RunOnIdle(DoGenerateButton_Click, sender);
+        }
+
+        void DoGenerateButton_Click(object state)
+        {
             if (ActiveSliceSettings.Instance.IsValid())
             {
-                ((Button)sender).Visible = false;
+                ((Button)state).Visible = false;
                 SlicingQueue.Instance.QueuePartForSlicing(printItem);
                 startedSliceFromGenerateButton = true;
             }

@@ -200,6 +200,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public double FillDensity
+        {
+            get
+            {
+                return ParseDouble(GetActiveValue("fill_density"));
+            }
+        }
+
         public double MinFanSpeed
         {
             get
@@ -607,6 +615,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = "The Max Fan Speed can only go as high as 100%.";
                     string details = string.Format("It is currently set to {0}.", MaxFanSpeed);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Fillament' -> 'Cooling' (show all settings)";
+                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    return false;
+                }
+                if (FillDensity < 0 || FillDensity > 1)
+                {
+                    string error = "The Fill Density must be between 0 and 1 inclusive.";
+                    string details = string.Format("It is currently set to {0}.", FillDensity);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'";
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
