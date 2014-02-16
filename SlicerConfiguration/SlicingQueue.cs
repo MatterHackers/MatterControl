@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2014, Lars Brubaker
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +42,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
     public class SlicingQueue
     {
@@ -77,9 +106,9 @@ namespace MatterHackers.MatterControl
             switch (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType())
             {
                 case Agg.UI.WindowsFormsAbstract.OSType.Windows:
-                    switch (ActivePrinterProfile.Instance.ActiveSliceEngine)
+                    switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                     {
-                        case ActivePrinterProfile.SlicingEngine.Slic3r:
+                        case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
                             {
                                 string slic3rRelativePath = Path.Combine("..", "Slic3r", "slic3r.exe");
                                 if (!File.Exists(slic3rRelativePath))
@@ -89,7 +118,7 @@ namespace MatterHackers.MatterControl
                                 return System.IO.Path.GetFullPath(slic3rRelativePath);
                             }
 
-                        case ActivePrinterProfile.SlicingEngine.CuraEngine:
+                        case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
                             {
                                 string curaEngineRelativePath = Path.Combine("..", "CuraEngine.exe");
                                 if (!File.Exists(curaEngineRelativePath))
@@ -99,7 +128,7 @@ namespace MatterHackers.MatterControl
                                 return System.IO.Path.GetFullPath(curaEngineRelativePath);
                             }
 
-                        case ActivePrinterProfile.SlicingEngine.MatterSlice:
+                        case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
                             {
                                 string materSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
                                 return System.IO.Path.GetFullPath(materSliceRelativePath);
@@ -110,15 +139,15 @@ namespace MatterHackers.MatterControl
                     }
 
                 case Agg.UI.WindowsFormsAbstract.OSType.Mac:
-                    switch (ActivePrinterProfile.Instance.ActiveSliceEngine)
+                    switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                     {
-                        case ActivePrinterProfile.SlicingEngine.Slic3r:
+                        case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
                             {
                                 //string parentLocation = Directory.GetParent (ApplicationDataStorage.Instance.ApplicationPath).ToString ();
                                 string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "Slic3r.app", "Contents", "MacOS", "slic3r");
                                 return applicationPath;
                             }
-                        case ActivePrinterProfile.SlicingEngine.CuraEngine:
+                        case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
                             {
                                 string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
                                 return applicationPath;
@@ -153,18 +182,18 @@ namespace MatterHackers.MatterControl
                     {
                         slicerProcess = new Process();
 
-                        switch (ActivePrinterProfile.Instance.ActiveSliceEngine)
+                        switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                         {
-                            case ActivePrinterProfile.SlicingEngine.Slic3r:
+                            case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
                                 slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                 break;
 
-                            case ActivePrinterProfile.SlicingEngine.CuraEngine:
+                            case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
                                 slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + CuraEngineMappings.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                 //Debug.Write(slicerProcess.StartInfo.Arguments);
                                 break;
 
-                            case ActivePrinterProfile.SlicingEngine.MatterSlice:
+                            case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
                                 slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                 break;
                         }

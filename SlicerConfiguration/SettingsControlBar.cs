@@ -13,7 +13,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
     public class SettingsControlBar : FlowLayoutWidget
     {
@@ -135,17 +135,17 @@ namespace MatterHackers.MatterControl
             StyledDropDownList engineMenuDropList = new StyledDropDownList("Engine   ");
             engineMenuDropList.Margin = new BorderDouble(top: 3, left:0);
             {
-                MenuItem slic3rMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngine.Slic3r.ToString());
+                MenuItem slic3rMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.Slic3r.ToString());
                 slic3rMenuItem.Selected += (sender, e) =>
                 {
-                    ActivePrinterProfile.Instance.ActiveSliceEngine = ActivePrinterProfile.SlicingEngine.Slic3r;
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
                     MainSlidePanel.Instance.ReloadBackPanel();
                 };
 
-                MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngine.CuraEngine.ToString());
+                MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.CuraEngine.ToString());
                 curaEnginMenuItem.Selected += (sender, e) =>
                 {
-                    ActivePrinterProfile.Instance.ActiveSliceEngine = ActivePrinterProfile.SlicingEngine.CuraEngine;
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
                     MainSlidePanel.Instance.ReloadBackPanel();
                 };
 
@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl
                 };
 #endif
 
-                engineMenuDropList.SelectedValue = ActivePrinterProfile.Instance.ActiveSliceEngine.ToString();
+                engineMenuDropList.SelectedValue = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
             }
             engineMenuDropList.MinimumSize = new Vector2(engineMenuDropList.LocalBounds.Width, engineMenuDropList.LocalBounds.Height);
             return engineMenuDropList;

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Kevin Pope
+Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

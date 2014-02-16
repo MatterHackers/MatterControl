@@ -9,6 +9,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {

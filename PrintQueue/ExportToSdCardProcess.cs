@@ -5,6 +5,7 @@ using System.IO;
 
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 

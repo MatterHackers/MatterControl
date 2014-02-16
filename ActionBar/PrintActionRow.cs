@@ -14,6 +14,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ActionBar
 {

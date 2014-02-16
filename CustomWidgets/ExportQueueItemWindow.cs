@@ -10,6 +10,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
