@@ -412,6 +412,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
             layerInfoContainer.AddChild(showMoves);
 
+            // put in a show Retractions checkbox
+            CheckBox showRetractions = new CheckBox(new LocalizedString("Show Retractions").Translated, textColor: RGBA_Bytes.White);
+            showRetractions.Checked = gcodeViewWidget.RenderRetractions;
+            showRetractions.CheckedStateChanged += (sender, e) =>
+            {
+                gcodeViewWidget.RenderRetractions = showRetractions.Checked;
+            };
+            layerInfoContainer.AddChild(showRetractions);
+
             //layerInfoContainer.AddChild(new CheckBox("Show Retractions", textColor: RGBA_Bytes.White));
 
             buttonPanel.AddChild(layerInfoContainer);
