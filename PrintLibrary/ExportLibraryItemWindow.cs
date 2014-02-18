@@ -9,11 +9,11 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.GCodeVisualizer;
-<<<<<<< HEAD
+//<<<<<<< HEAD
 using MatterHackers.Localizations;
-=======
+//=======
 using MatterHackers.MatterControl.SlicerConfiguration;
->>>>>>> upstream/development
+//>>>>>>> upstream/development
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {

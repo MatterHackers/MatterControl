@@ -33,7 +33,9 @@ namespace MatterHackers.MatterControl.PrintQueue
         FlowLayoutWidget editControls;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		ExportQueueItemWindow exportingWindow;
+		PartPreviewMainWindow viewingWindow;
 		bool exportingWindowIsOpen = false;
+		bool viewWindowIsOpen = false;
 
 
         public PrintQueueItem(PrintItemWrapper printItem)
@@ -140,7 +142,28 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.exportingWindowIsOpen = false;
 		}
 
-		
+		private void OpenViewWindow()
+		{
+			if (viewWindowIsOpen == false)
+			{
+				viewingWindow = new PartPreviewMainWindow(PrintItemWrapper);
+				this.viewWindowIsOpen = true;
+				viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
+			}
+			else
+			{
+				if(viewingWindow != null) 
+				{
+					viewingWindow.BringToFront();
+				}
+			}
+		}
+
+		void PartPreviewWindow_Closed(object sender, EventArgs e)
+		{
+			this.viewWindowIsOpen = false;
+		}
+
         private void CreateEditControls()
         {
             editControls = new FlowLayoutWidget();
@@ -156,10 +179,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 					Button viewLink = linkButtonFactory.Generate(new LocalizedString("View").Translated);
                     viewLink.Click += (sender, e) =>
                     {
+
                         string pathAndFile = PrintItemWrapper.FileLocation;
                         if (File.Exists(pathAndFile))
                         {
-                            new PartPreviewMainWindow(PrintItemWrapper);
+							OpenViewWindow();
                         }
                         else
                         {

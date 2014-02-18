@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 ﻿/*
 Copyright (c) 2014, Lars Brubaker
 All rights reserved.
@@ -29,7 +29,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
->>>>>>> upstream/development
+//>>>>>>> upstream/development
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
