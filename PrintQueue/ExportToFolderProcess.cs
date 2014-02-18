@@ -7,6 +7,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -147,7 +148,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         string outputFileName = Path.ChangeExtension(originalFileName, ".gcode");
                         string outputPathAndName = Path.Combine(exportPath, outputFileName);
 
-                        if (PrinterCommunication.Instance.DoPrintLeveling)
+                        if (ActivePrinterProfile.Instance.DoPrintLeveling)
                         {
                             GCodeFile unleveledGCode = new GCodeFile(savedGcodeFileName);
                             PrintLeveling.Instance.ApplyLeveling(unleveledGCode);

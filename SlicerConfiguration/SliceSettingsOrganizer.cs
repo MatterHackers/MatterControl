@@ -15,7 +15,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
     public class OrganizerSettingsData
     {

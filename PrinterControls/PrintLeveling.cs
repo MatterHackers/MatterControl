@@ -6,6 +6,7 @@ using System.Text;
 using MatterHackers.VectorMath;
 using MatterHackers.RayTracer;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {

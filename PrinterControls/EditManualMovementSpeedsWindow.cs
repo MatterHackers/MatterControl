@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Kevin Pope
+Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -192,6 +192,11 @@ namespace MatterHackers.MatterControl
         }
 
         void save_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            UiThread.RunOnIdle(DoSave_Click);
+        }
+
+        void DoSave_Click(object state)
         {
             bool first = true;
             StringBuilder settingString = new StringBuilder();

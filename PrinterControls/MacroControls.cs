@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -161,10 +161,10 @@ namespace MatterHackers.MatterControl
         IEnumerable<DataStorage.CustomCommands> GetMacros()
         {
             IEnumerable<DataStorage.CustomCommands> results = Enumerable.Empty<DataStorage.CustomCommands>();
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 //Retrieve a list of saved printers from the Datastore
-                string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", PrinterCommunication.Instance.ActivePrinter.Id);
+                string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActivePrinterProfile.Instance.ActivePrinter.Id);
                 results = (IEnumerable<DataStorage.CustomCommands>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.CustomCommands>(query);
                 return results;
             }

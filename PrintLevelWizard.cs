@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -85,7 +86,7 @@ namespace MatterHackers.MatterControl
 
         public override void PageIsBecomingActive()
         {
-            PrinterCommunication.Instance.DoPrintLeveling = false;
+            ActivePrinterProfile.Instance.DoPrintLeveling = false;
             base.PageIsBecomingActive();
         }
     }
@@ -108,9 +109,9 @@ namespace MatterHackers.MatterControl
                 probePositions[1].position.x, probePositions[1].position.y, probePositions[1].position.z, 
                 probePositions[2].position.x, probePositions[2].position.y, probePositions[2].position.z, 
             };
-            PrinterCommunication.Instance.SetPrintLevelingProbePositions(printLevelPositions3x3);
+            ActivePrinterProfile.Instance.SetPrintLevelingProbePositions(printLevelPositions3x3);
 
-            PrinterCommunication.Instance.DoPrintLeveling = true;
+            ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
         }
     }

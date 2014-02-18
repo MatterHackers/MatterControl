@@ -101,8 +101,8 @@ namespace MatterHackers.MatterControl.ActionBar
         event EventHandler unregisterEvents;
         protected override void AddHandlers()
         {
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(ReloadPrinterSelectionWidget, ref unregisterEvents);
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(ReloadPrinterSelectionWidget, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
             PrinterCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
             if (buttonClicked.Enabled)
             {
-                if (PrinterCommunication.Instance.ActivePrinter == null)
+                if (ActivePrinterProfile.Instance.ActivePrinter == null)
                 {
                     OpenConnectionWindow();
                 }

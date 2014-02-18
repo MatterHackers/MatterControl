@@ -10,6 +10,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -40,8 +41,7 @@ namespace MatterHackers.MatterControl
 
 
             doLayout();
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(reloadAfterPrinterProfileChanged, ref unregisterEvents);
-
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(reloadAfterPrinterProfileChanged, ref unregisterEvents);
         }
 
         public void doLayout()
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
                 topToBottom.AddChild(exportSTL);
             }
 
-            bool showExportGCodeButton = PrinterCommunication.Instance.ActivePrinter != null || partIsGCode;
+            bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
 
             if(showExportGCodeButton)
             {
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl
 
         private void SaveGCodeToNewLocation(string source, string dest)
         {
-            if (PrinterCommunication.Instance.DoPrintLeveling)
+            if (ActivePrinterProfile.Instance.DoPrintLeveling)
             {
                 GCodeFile unleveledGCode = new GCodeFile(source);
                 PrintLeveling.Instance.ApplyLeveling(unleveledGCode);

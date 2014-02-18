@@ -10,6 +10,7 @@ using System.Diagnostics;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -168,10 +169,10 @@ namespace MatterHackers.MatterControl.PrintQueue
                 }
 
                 // check if there is a known line at the end of the file (this will let us know if slicer finished building the file).
-                switch (PrinterCommunication.Instance.ActiveSliceEngine)
+                switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                 {
-                    case PrinterCommunication.SlicingEngine.CuraEngine:
-                    case PrinterCommunication.SlicingEngine.Slic3r:
+                    case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
+                    case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
                         if (gcodeFileContents.Contains("filament used ="))
                         {
                             gCodeFileIsComplete = true;
@@ -193,7 +194,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 return FileLocation;
             }
 
-            string engineString = ((int)PrinterCommunication.Instance.ActiveSliceEngine).ToString();
+            string engineString = ((int)ActivePrinterProfile.Instance.ActiveSliceEngineType).ToString();
 
             string gcodeFileName = this.StlFileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
             string gcodePathAndFileName = Path.Combine(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");

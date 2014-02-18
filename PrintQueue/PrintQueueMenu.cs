@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         bool exportGCodeToFolderButton_Click()
         {
-            if (PrinterCommunication.Instance.ActivePrinter == null)
+            if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
                 UiThread.RunOnIdle(MustSelectPrinterMessage);
             }

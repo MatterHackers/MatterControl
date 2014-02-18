@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
-            PrinterCommunication.Instance.ActivePrinterChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
 
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 
         private string getHelpMessageFromStatus()
         {
-            if (PrinterCommunication.Instance.ActivePrinter == null)
+            if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
 				return new LocalizedString("No printer selected.  Press 'Connect' to choose a printer.").Translated;
             }

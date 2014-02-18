@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.OpenGlGui;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
@@ -411,6 +412,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
             layerInfoContainer.AddChild(showMoves);
 
+            // put in a show Retractions checkbox
+            CheckBox showRetractions = new CheckBox(new LocalizedString("Show Retractions").Translated, textColor: RGBA_Bytes.White);
+            showRetractions.Checked = gcodeViewWidget.RenderRetractions;
+            showRetractions.CheckedStateChanged += (sender, e) =>
+            {
+                gcodeViewWidget.RenderRetractions = showRetractions.Checked;
+            };
+            layerInfoContainer.AddChild(showRetractions);
+
             //layerInfoContainer.AddChild(new CheckBox("Show Retractions", textColor: RGBA_Bytes.White));
 
             buttonPanel.AddChild(layerInfoContainer);
@@ -581,9 +591,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void generateButton_Click(object sender, MouseEventArgs mouseEvent)
         {
+            UiThread.RunOnIdle(DoGenerateButton_Click, sender);
+        }
+
+        void DoGenerateButton_Click(object state)
+        {
             if (ActiveSliceSettings.Instance.IsValid())
             {
-                ((Button)sender).Visible = false;
+                ((Button)state).Visible = false;
                 SlicingQueue.Instance.QueuePartForSlicing(printItem);
                 startedSliceFromGenerateButton = true;
             }

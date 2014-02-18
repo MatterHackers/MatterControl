@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MatterHackers.Localizations;
 
