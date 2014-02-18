@@ -511,7 +511,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 layerSelectionButtonsPannel.AddChild(navigationWidget);
 
 
-                selectLayerSlider = new Slider(new Vector2(), 10, 0, gcodeViewWidget.gCodeView.NumLayers - 1, Orientation.Vertical);
+                selectLayerSlider = new Slider(new Vector2(), 10, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
@@ -719,7 +719,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (gcodeViewWidget.LoadedGCode != null)
             {
-                layerCountTextWidget.Text = string.Format("{0} / {1}", gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.gCodeView.NumLayers.ToString());
+                layerCountTextWidget.Text = string.Format("{0} / {1}", gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.LoadedGCode.NumChangesInZ.ToString());
             }
             base.OnDraw(graphics2D);
         }
