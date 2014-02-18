@@ -9,6 +9,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -27,7 +28,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 partIsGCode = true;
             }
 
-            this.Title = "MatterControl: Export File";
+			string exportLibraryFileTitle = new LocalizedString("MatterControl").Translated;
+			string exportLibraryFileTitleFull = new LocalizedString("Export File").Translated;
+			this.Title = string.Format("{0}: {1}", exportLibraryFileTitle, exportLibraryFileTitleFull);
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             // TODO: Complete member initialization
@@ -47,7 +50,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
             topToBottom.Padding = new BorderDouble(10);
             topToBottom.AnchorAll();
 
-            TextWidget exportLabel = new TextWidget("File export options:");
+			string fileExportLabelTxt = new LocalizedString("File export options").Translated;
+			TextWidget exportLabel = new TextWidget(string.Format("{0}:", fileExportLabelTxt));
             exportLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             topToBottom.AddChild(exportLabel);
 
@@ -60,7 +64,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             if (!partIsGCode)
             {
-                Button exportSTL = textImageButtonFactory.Generate("Export as STL");
+				Button exportSTL = textImageButtonFactory.Generate(new LocalizedString("Export as STL").Translated);
                 exportSTL.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
                 //exportSTL.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 topToBottom.AddChild(exportSTL);
@@ -70,7 +74,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             if (showExportGCodeButton)
             {
-                Button exportGCode = textImageButtonFactory.Generate("Export as GCode");
+				Button exportGCode = textImageButtonFactory.Generate(new LocalizedString("Export as GCode").Translated);
                 //exportGCode.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 exportGCode.Click += new ButtonBase.ButtonEventHandler(exportGCode_Click);
                 topToBottom.AddChild(exportGCode);
@@ -82,14 +86,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             if (!showExportGCodeButton)
             {
-                TextWidget noGCodeMessage = new TextWidget("Note: To enable GCode export, select a printer profile.", textColor: RGBA_Bytes.White, pointSize: 10);
+				string noGCodeMessageText = new LocalizedString("Note").Translated;
+				string noGCodeMessageTextFull = new LocalizedString("To enable GCode export, select a printer profile").Translated;
+				TextWidget noGCodeMessage = new TextWidget(string.Format("{0}: {1}.", noGCodeMessageText, noGCodeMessageTextFull), textColor: RGBA_Bytes.White, pointSize: 10);
                 topToBottom.AddChild(noGCodeMessage);
             }
 
             // TODO: make this work on the mac and then delete this if
             if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Windows)
             {
-                showInFolderAfterSave = new CheckBox("Show file in folder after save", RGBA_Bytes.White, 10);
+				showInFolderAfterSave = new CheckBox(new LocalizedString("Show file in folder after save").Translated, RGBA_Bytes.White, 10);
                 showInFolderAfterSave.Margin = new BorderDouble(top: 10);
                 topToBottom.AddChild(showInFolderAfterSave);
             }
@@ -102,6 +108,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
             UiThread.RunOnIdle(DoExportGCode_Click);
         }
 
+		string GetExtension (string filename)
+		{
+			string extension;
+			int indexOfDot = filename.LastIndexOf(".");
+			if (indexOfDot == -1)
+			{
+				extension = "";			
+			}
+			else
+			{
+				extension = filename.Substring(indexOfDot);
+			}
+			return extension;
+		}
+
         void DoExportGCode_Click(object state)
         {
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
@@ -112,6 +133,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
             if (streamToSaveTo != null)
             {
                 streamToSaveTo.Close();
+
+
+				string filePathToSave = saveParams.FileName;
+				string extension = GetExtension(filePathToSave);
+
+				if(extension == "")
+				{
+					filePathToSave += ".gcode";
+				}
+
                 if (System.IO.Path.GetExtension(printQueueItem.printItem.FileLocation).ToUpper() == ".STL")
                 {
                     pathAndFilenameToSave = saveParams.FileName;
@@ -174,6 +205,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
             UiThread.RunOnIdle(DoExportSTL_Click);
         }
 
+
+		string CheckExtension(string fileName)
+		{
+			string extension;
+			int indexOfDot = fileName.LastIndexOf(".");
+			if (indexOfDot == -1)
+			{
+				extension = "";
+			}
+			else 
+			{
+				extension = fileName.Substring(indexOfDot);
+			}
+			return extension;
+		}
+
         void DoExportSTL_Click(object state)
         {
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");
@@ -181,13 +228,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
             saveParams.ActionButtonLabel = "Export";
 
             System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                Close();
-                File.Copy(printQueueItem.printItem.FileLocation, saveParams.FileName, true);
-                ShowFileIfRequested(saveParams.FileName);
-            }
+			if (streamToSaveTo != null)
+			{
+				streamToSaveTo.Close ();
+				Close ();
+			}
+
+
+			string filePathToSave = saveParams.FileName;
+			string extension = CheckExtension(filePathToSave);
+
+			if(extension == "") 
+			{
+				filePathToSave +=  ".stl";
+			}
+
+			File.Copy(printQueueItem.printItem.FileLocation, filePathToSave, true);
+			ShowFileIfRequested(filePathToSave);
+            
         }
 
         void sliceItem_Done(object sender, EventArgs e)

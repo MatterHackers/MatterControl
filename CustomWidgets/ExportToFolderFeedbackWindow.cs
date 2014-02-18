@@ -5,6 +5,7 @@ using System.Text;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -19,7 +20,9 @@ namespace MatterHackers.MatterControl
             : base(300, 500)
         {
             BackgroundColor = backgroundColor;
-            Title = "MatterControl - Exporting to Folder";
+			string exportingToFolderTitle = new LocalizedString("MatterControl").Translated;
+			string exportingToFolderTitleFull = new LocalizedString("Exporting to Folder").Translated;
+			Title = string.Format("{0} - {1}", exportingToFolderTitle, exportingToFolderTitleFull);
             this.totalParts = totalParts;
 
             feedback.Padding = new BorderDouble(5, 5);

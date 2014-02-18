@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 
             if(showExportGCodeButton)
             {
-                Button exportGCode = textImageButtonFactory.Generate("Export as GCode");
+				Button exportGCode = textImageButtonFactory.Generate(new LocalizedString("Export as GCode").Translated);
                 //exportGCode.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 exportGCode.Click += new ButtonBase.ButtonEventHandler(exportGCode_Click);
                 topToBottom.AddChild(exportGCode);
@@ -115,6 +115,22 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(DoExportGCode_Click);
         }
 
+		string GetExtension (string filename)
+		{
+			string extension; 
+			int indexOfDot = filename.LastIndexOf(".");
+			if (indexOfDot == -1) {
+				extension = "";
+			} 
+			else 
+			{
+				extension = filename.Substring (indexOfDot);
+			}
+
+			return extension;
+		}
+
+
         void DoExportGCode_Click(object state)
         {
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
@@ -122,9 +138,21 @@ namespace MatterHackers.MatterControl
 			saveParams.ActionButtonLabel = "Export";
 
             System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
+			if (streamToSaveTo != null) 
+			{
+				streamToSaveTo.Close ();
+			
+				
+				string filePathToSave = saveParams.FileName;
+				string extension = GetExtension(filePathToSave);
+
+				if(extension == "")
+				{
+					filePathToSave +=  ".gcode";
+				}
+
+
+
                 if (System.IO.Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".STL")
                 {
                     pathAndFilenameToSave = saveParams.FileName;
@@ -187,21 +215,51 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(DoExportSTL_Click);
         }
 
+
+		string CheckExtension(string fileName)
+		{
+			string extension;
+			int indexOfDot = fileName.LastIndexOf(".");
+			if (indexOfDot == -1)
+			{
+				extension = "";
+			}
+			else
+			{
+				extension = fileName.Substring(indexOfDot);
+			}
+			return extension;
+		}
+
         void DoExportSTL_Click(object state)
         {
-            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");  
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
 
             System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                Close();
-                File.Copy(printQueueItem.PrintItemWrapper.FileLocation, saveParams.FileName, true);
-                ShowFileIfRequested(saveParams.FileName);
-            }
+
+			if (streamToSaveTo != null) 
+			{
+				streamToSaveTo.Close ();
+				Close ();
+			}
+				// windows vista +: filePathToSave 'test.stl'
+				// windows xp: filePathToSave 'test'
+			
+			string filePathToSave = saveParams.FileName;
+			string extension = CheckExtension(filePathToSave);
+
+			if (extension == "") 
+			{
+											
+				filePathToSave += ".stl";
+			}
+
+			File.Copy (printQueueItem.PrintItemWrapper.FileLocation, filePathToSave, true);
+			ShowFileIfRequested (filePathToSave);
         }
+
 
         void sliceItem_Done(object sender, EventArgs e)
         {

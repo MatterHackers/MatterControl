@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
         public EditTemperaturePresetsWindow(string windowTitle, string temperatureSettings, EventHandler functionToCallOnSave)
             : base(360, 300)
         {
-            Title = windowTitle;
+			Title = new LocalizedString(windowTitle).Translated;
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();

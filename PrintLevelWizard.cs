@@ -389,10 +389,6 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle (DoDoneButton_Click);
 		}
-		void DoDoneButton_Click(object state)
-        {
-            UiThread.RunOnIdle(DoDoneButton_Click);
-        }
 
         void DoDoneButton_Click(object state)
         {

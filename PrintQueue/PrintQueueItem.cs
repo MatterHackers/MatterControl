@@ -32,6 +32,9 @@ namespace MatterHackers.MatterControl.PrintQueue
         TextWidget partStatus;
         FlowLayoutWidget editControls;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		ExportQueueItemWindow exportingWindow;
+		bool exportingWindowIsOpen = false;
+
 
         public PrintQueueItem(PrintItemWrapper printItem)
         {
@@ -114,6 +117,30 @@ namespace MatterHackers.MatterControl.PrintQueue
             AddHandlers();
         }
 
+		private void OpenExportWindow()
+		{
+			if(exportingWindowIsOpen == false)
+			{
+				exportingWindow = new ExportQueueItemWindow (this);
+				this.exportingWindowIsOpen = true;
+				exportingWindow.Closed += new EventHandler (ExportQueueItemWindow_Closed);
+				exportingWindow.ShowAsSystemWindow();
+			} 
+			else 
+			{
+				if (exportingWindow != null)
+				{
+					exportingWindow.BringToFront ();
+				}
+			}
+		}
+
+		void ExportQueueItemWindow_Closed(object sender, EventArgs e)
+		{
+			this.exportingWindowIsOpen = false;
+		}
+
+		
         private void CreateEditControls()
         {
             editControls = new FlowLayoutWidget();
@@ -165,8 +192,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 					Button exportLink = linkButtonFactory.Generate(new LocalizedString("Export").Translated);
                     exportLink.Click += (sender, e) =>
                     {
-                        ExportQueueItemWindow exportingWindow = new ExportQueueItemWindow(this);
-                        exportingWindow.ShowAsSystemWindow();
+						OpenExportWindow();
+                        
                     };
                     layoutLeftToRight.AddChild(exportLink);
                 }

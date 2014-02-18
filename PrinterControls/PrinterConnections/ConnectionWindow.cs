@@ -24,7 +24,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public ConnectionWindow()
             : base(350, 500)
         {                     
-			Title = new LocalizedString("MatterControl - Connect to Printer").Translated;            
+			string connectToPrinterTitle = new LocalizedString("MatterControl").Translated;
+			string connectToPrinterTitleEnd = new LocalizedString ("Connect to Printer").Translated;
+			Title = string.Format("{0} - {1}",connectToPrinterTitle,connectToPrinterTitleEnd);      
+			      
             if (GetPrinterRecordCount() > 0)
             {
                 ChangeToChoosePrinter();

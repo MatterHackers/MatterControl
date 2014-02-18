@@ -38,7 +38,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <ReleaseVersion>0.8.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -98,7 +97,9 @@
     <Compile Include="WidescreenPanel.cs" />
     <Compile Include="PrintLevelWizard.cs" />
     <Compile Include="ContactForm.cs" />
-    <Compile Include="CustomWidgets\ClickWidget.cs" />
+    <Compile Include="CustomWidgets\ClickWidget.cs">
+      <DependentUpon>ExportQueueItemWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
@@ -307,10 +308,6 @@
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\agg\Agg.csproj">
-      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
-      <Name>Agg</Name>
-    </ProjectReference>
     <ProjectReference Include="Localizations\Localizations.csproj">
       <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
       <Name>Localizations</Name>
@@ -318,6 +315,10 @@
     <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj">
       <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
       <Name>MatterControlPluginSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\Agg\Agg.csproj">
+      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
+      <Name>Agg</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

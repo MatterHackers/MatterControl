@@ -22,6 +22,10 @@ namespace MatterHackers.MatterControl.PrintQueue
         public DropDownMenu MenuDropList;
         private TupleList<string, Func<bool>> menuItems;
 
+
+		ExportToFolderFeedbackWindow exportingWindow;
+		bool exportingWindowIsOpen = false;
+
         public PrintQueueMenu()
         {
 			MenuDropList = new DropDownMenu(new LocalizedString("Queue Options").Translated, Direction.Up);
@@ -98,8 +102,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             if (parts.Count > 0)
             {
                 SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
-				saveParams.ActionButtonLabel = "Save Parts Sheet";
-				saveParams.Title = "MatterControl: Save";
+				saveParams.ActionButtonLabel = new LocalizedString("Save Parts Sheet").Translated;
+				string saveParamsTitleLbl = new LocalizedString("MatterContol").Translated;
+				string saveParamsTitleLblFull = new LocalizedString ("Save").Translated;
+				saveParams.Title = string.Format("{0}: {1}",saveParamsTitleLbl,saveParamsTitleLblFull);
 
                 System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
                 if (streamToSaveTo != null)
@@ -136,10 +142,35 @@ namespace MatterHackers.MatterControl.PrintQueue
             return true;
         }
 
-        private static void SelectLocationToExportGCode(object state)
+
+		private void OpenExportWindow(List<PrintItem> parts)
+		{
+			if (this.exportingWindowIsOpen == false) 
+			{
+				exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts [0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
+				this.exportingWindowIsOpen = true;
+				exportingWindow.Closed += new EventHandler(ExportToFolderFeedbackWindow_Closed);
+			}
+			else 
+			{
+				if (exportingWindow != null) 
+				{
+					exportingWindow.BringToFront();
+				}
+			}
+		}
+
+
+		void ExportToFolderFeedbackWindow_Closed(object sender, EventArgs e)
+		{
+			this.exportingWindowIsOpen = false;
+		}
+
+
+		private void SelectLocationToExportGCode(object state)
         {
             SelectFolderDialogParams selectParams = new SelectFolderDialogParams("Select Location To Save Files");
-            selectParams.ActionButtonLabel = "Export";
+			selectParams.ActionButtonLabel = new LocalizedString("Export").Translated;
             selectParams.Title = "MatterControl: Select A Folder";
 
             string path = FileDialog.SelectFolderDialog(ref selectParams);
@@ -148,10 +179,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                 List<PrintItem> parts = PrintQueueControl.Instance.CreateReadOnlyPartList();
                 if (parts.Count > 0)
                 {
-                    ExportToFolderFeedbackWindow exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-                    exportingWindow.ShowAsSystemWindow();
-
-                    ExportToFolderProcess exportToFolderProcess = new ExportToFolderProcess(parts, path);
+					OpenExportWindow (parts);
+					ExportToFolderProcess exportToFolderProcess = new ExportToFolderProcess(parts, path);
                     exportToFolderProcess.StartingNextPart += exportingWindow.StartingNextPart;
                     exportToFolderProcess.UpdatePartStatus += exportingWindow.UpdatePartStatus;
                     exportToFolderProcess.DoneSaving += exportingWindow.DoneSaving;

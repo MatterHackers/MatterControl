@@ -1178,7 +1178,7 @@ namespace MatterHackers.MatterControl
 
                 //Create and start connection thread
                 connectThread = new Thread(Connect_Thread);
-                connectThread.Name = "Connect To Printer";
+				connectThread.Name = "Connect To Printer";
                 connectThread.IsBackground = true;
                 connectThread.Start();
             }

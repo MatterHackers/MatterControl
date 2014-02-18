@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
         {
-            string queueString = new LocalizedString("Queue ({0})").Translated;
+			string queueString = "Queue ({0})";
             QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
         }
 
