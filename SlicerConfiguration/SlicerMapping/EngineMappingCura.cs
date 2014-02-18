@@ -104,6 +104,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new ScaledSingleNumber("retractionAmount", "retract_length", 1000),
             new MapItem("retractionSpeed", "retract_speed"),
             new ScaledSingleNumber("retractionMinimalDistance", "retract_before_travel", 1000),
+            new ScaledSingleNumber("minimalExtrusionBeforeRetraction", "min_extrusion_before_retract", 1000),
 
             new MapItem("spiralizeMode", "spiral_vase"),
 
@@ -138,7 +139,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             SETTING(supportExtruder);
 
             SETTING(retractionAmountExtruderSwitch);
-            SETTING(minimalExtrusionBeforeRetraction);
             SETTING(enableCombing);
             SETTING(multiVolumeOverlap);
             SETTING(objectSink);

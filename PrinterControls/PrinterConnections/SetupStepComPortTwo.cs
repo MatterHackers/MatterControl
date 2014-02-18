@@ -211,6 +211,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void NextButton_Click(object sender, MouseEventArgs mouseEvent)
         {
+            UiThread.RunOnIdle(DoNextButton_Click);
+        }
+
+        void DoNextButton_Click(object state)
+        {
             Parent.Close();
         }
     }

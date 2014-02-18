@@ -213,6 +213,7 @@ Advanced
         retract_restart_extra
         retract_before_travel
         retract_layer_change
+        min_extrusion_before_retract
         wipe
       Retraction When Tool is Disabled (for multi-extruders)
         retract_restart_extra_toolchange

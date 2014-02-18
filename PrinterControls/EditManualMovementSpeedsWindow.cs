@@ -189,6 +189,11 @@ namespace MatterHackers.MatterControl
 
         void save_Click(object sender, MouseEventArgs mouseEvent)
         {
+            UiThread.RunOnIdle(DoSave_Click);
+        }
+
+        void DoSave_Click(object state)
+        {
             bool first = true;
             StringBuilder settingString = new StringBuilder();
             foreach (GuiWidget valueToAdd in listWithValues)
