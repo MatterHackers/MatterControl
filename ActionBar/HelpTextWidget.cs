@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
                     case PrinterCommunication.CommunicationStates.Disconnected:
 					return new LocalizedString("Not connected. Press 'Connect' to enable printing.").Translated;
                     case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-                        return "Attempting to connect...";
+					return new LocalizedString("Attempting to connect...").Translated;
                     case PrinterCommunication.CommunicationStates.ConnectionLost:
                     case PrinterCommunication.CommunicationStates.FailedToConnect:
 					return new LocalizedString("Unable to communicate with printer.").Translated;

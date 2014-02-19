@@ -25,8 +25,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
     public class LibraryThumbnailWidget : ClickWidget
     {
         static Thread thumbNailThread = null;
-		bool viewWindowIsOpen = false;
-		PartPreviewMainWindow viewingWindow;
         private PrintItemWrapper printItem;
         public PrintItemWrapper PrintItem
         {
@@ -203,31 +201,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             //this.thumbNailHasBeenRequested = false;
             this.Invalidate();
         }
-
-		/*
-		private void OpenPartViewWindow()
-		{
-			if (viewWindowIsOpen == false)
-			{
-				viewingWindow = new PartPreviewMainWindow(printItem);
-				this.viewWindowIsOpen = true;
-				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed); 
-			}
-			else
-			{
-				if(viewingWindow != null)
-				{
-					viewingWindow.BringToFront();
-				}
-			}
-
-		}
-
-		void PartPreviewMainWindow_Closed(object sender, EventArgs e)
-		{
-			viewWindowIsOpen = false;
-		}
-		*/
+			
         private void onMouseClick(object sender, MouseEventArgs e)
         {
             if (printItem != null)
@@ -542,7 +516,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
             if (File.Exists(pathAndFile))
             {
 				OpenPartViewWindow ();
-				//new PartPreviewMainWindow(this.printItem);
             }
             else
             {

@@ -146,7 +146,10 @@ namespace MatterHackers.MatterControl.ActionBar
             printerNameText.HAnchor = HAnchor.ParentCenter;
             printerNameText.TextColor = textColor;
 
-            printerStatusText = new TextWidget("Status: Connected", pointSize:statusTextHeight);
+			string printerStatusTxtBeg = new LocalizedString("Status").Translated;
+			string printerStatusTxtEnd = new LocalizedString("Connected").Translated;
+			string printerStatusTxtFull = string.Format("{0}: {1}", printerStatusTxtBeg, printerStatusTxtEnd);
+			printerStatusText = new TextWidget(printerStatusTxtFull, pointSize:statusTextHeight);
             printerStatusText.AutoExpandBoundsToText = true;
             printerStatusText.HAnchor = HAnchor.ParentCenter;
             printerStatusText.TextColor = textColor;
@@ -191,8 +194,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			else
 			{
-                string statusString = new LocalizedString("Status: {0}").Translated;
-                printerStatusText.Text = string.Format(statusString, PrinterCommunication.Instance.PrinterConnectionStatusVerbose);
+				string statusStringBeg = new LocalizedString ("Status").Translated;
+				string statusString = string.Format("{1}: {0}",  PrinterCommunication.Instance.PrinterConnectionStatusVerbose, statusStringBeg);
+				printerStatusText.Text = string.Format(statusString,PrinterCommunication.Instance.PrinterConnectionStatusVerbose);           
 			}
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {

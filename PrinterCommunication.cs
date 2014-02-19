@@ -473,25 +473,25 @@ namespace MatterHackers.MatterControl
                 switch (CommunicationState)
                 {
                     case CommunicationStates.Disconnected:
-                        return "Not Connected";
+						return new LocalizedString("Not Connected").Translated;
                     case CommunicationStates.Disconnecting:
-                        return "Disconnecting";
+						return new LocalizedString("Disconnecting").Translated;
                     case CommunicationStates.AttemptingToConnect:
                         return "Connecting...";
                     case CommunicationStates.ConnectionLost:
-                        return "Connection Lost";
+						return new LocalizedString("Connection Lost").Translated;
                     case CommunicationStates.FailedToConnect:
                         return string.Format("Unable to Connect");
                     case CommunicationStates.Connected:
-                        return "Connected";
+						return new LocalizedString("Connected").Translated;
                     case CommunicationStates.PreparingToPrint:
-                        return "Preparing To Print";
+						return new LocalizedString("Preparing To Print").Translated;
                     case CommunicationStates.Printing:
-                        return "Printing";
+						return new LocalizedString("Printing").Translated;
                     case CommunicationStates.Paused:
-                        return "Paused";
+						return new LocalizedString("Paused").Translated;
                     case CommunicationStates.FinishedPrint:
-                        return "Finished Print";
+						return new LocalizedString("Finished Print").Translated;
                     default:
                         throw new NotImplementedException("Make sure very satus returns the correct connected state.");
                 }

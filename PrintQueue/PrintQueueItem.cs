@@ -86,7 +86,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     string labelName = textInfo.ToTitleCase(PrintItemWrapper.Name);
                     labelName = labelName.Replace('_', ' ');
-					labelName = new LocalizedString (labelName).Translated;
                     partLabel = new TextWidget(labelName, pointSize: 14);
                     partLabel.TextColor = WidgetTextColor;
                     partLabel.MinimumSize = new Vector2(1, 16);
