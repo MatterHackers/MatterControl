@@ -1,4 +1,4 @@
-﻿﻿#define DEBUG_SHOW_TRANSLATED_STRINGS
+﻿﻿//#define DEBUG_SHOW_TRANSLATED_STRINGS
 
 using System;
 using System.Collections.Generic;

@@ -67,8 +67,8 @@ namespace MatterHackers.MatterControl.EeProm
                 valueColmun = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 columnHolder.AddChild(valueColmun);
 
-                descriptionColmun.AddChild(new TextWidget("Description"));
-                valueColmun.AddChild(new TextWidget("Value"));
+                descriptionColmun.AddChild(new TextWidget(new LocalizedString("Description").Translated));
+                valueColmun.AddChild(new TextWidget(new LocalizedString("Value").Translated));
 
                 topToBottom.AddChild(columnHolder);
             }
