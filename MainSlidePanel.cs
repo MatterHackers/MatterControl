@@ -1,3 +1,4 @@
+
 ﻿/*
 Copyright (c) 2014, Lars Brubaker
 All rights reserved.
@@ -26,6 +27,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+
 
 ﻿using System;
 using System.Collections.Generic;
@@ -336,9 +338,9 @@ namespace MatterHackers.MatterControl
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
         {
-
-            string queueString = new LocalizedString("Queue ({0})").Translated;
-            QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
+			string queueStringBeg = new LocalizedString("Queue").Translated;
+			string queueString = string.Format("{1} ({0})",PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
+			QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
         }
 
         private void onThemeChanged(object sender, EventArgs e)

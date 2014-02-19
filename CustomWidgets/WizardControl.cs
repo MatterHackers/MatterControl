@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl
         public WizardControl()
         {
             Padding = new BorderDouble(10);
-
             textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
             textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
             textImageButtonFactory.disabledTextColor = new RGBA_Bytes(200, 200, 200);

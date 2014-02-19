@@ -32,6 +32,11 @@ namespace MatterHackers.MatterControl.PrintQueue
         TextWidget partStatus;
         FlowLayoutWidget editControls;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		ExportQueueItemWindow exportingWindow;
+		PartPreviewMainWindow viewingWindow;
+		bool exportingWindowIsOpen = false;
+		bool viewWindowIsOpen = false;
+
 
         public PrintQueueItem(PrintItemWrapper printItem)
         {
@@ -81,7 +86,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     string labelName = textInfo.ToTitleCase(PrintItemWrapper.Name);
                     labelName = labelName.Replace('_', ' ');
-					labelName = new LocalizedString (labelName).Translated;
                     partLabel = new TextWidget(labelName, pointSize: 14);
                     partLabel.TextColor = WidgetTextColor;
                     partLabel.MinimumSize = new Vector2(1, 16);
@@ -114,6 +118,51 @@ namespace MatterHackers.MatterControl.PrintQueue
             AddHandlers();
         }
 
+		private void OpenExportWindow()
+		{
+			if(exportingWindowIsOpen == false)
+			{
+				exportingWindow = new ExportQueueItemWindow (this);
+				this.exportingWindowIsOpen = true;
+				exportingWindow.Closed += new EventHandler (ExportQueueItemWindow_Closed);
+				exportingWindow.ShowAsSystemWindow();
+			} 
+			else 
+			{
+				if (exportingWindow != null)
+				{
+					exportingWindow.BringToFront ();
+				}
+			}
+		}
+
+		void ExportQueueItemWindow_Closed(object sender, EventArgs e)
+		{
+			this.exportingWindowIsOpen = false;
+		}
+
+		private void OpenViewWindow()
+		{
+			if (viewWindowIsOpen == false)
+			{
+				viewingWindow = new PartPreviewMainWindow(PrintItemWrapper);
+				this.viewWindowIsOpen = true;
+				viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
+			}
+			else
+			{
+				if(viewingWindow != null) 
+				{
+					viewingWindow.BringToFront();
+				}
+			}
+		}
+
+		void PartPreviewWindow_Closed(object sender, EventArgs e)
+		{
+			this.viewWindowIsOpen = false;
+		}
+
         private void CreateEditControls()
         {
             editControls = new FlowLayoutWidget();
@@ -129,10 +178,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 					Button viewLink = linkButtonFactory.Generate(new LocalizedString("View").Translated);
                     viewLink.Click += (sender, e) =>
                     {
+
                         string pathAndFile = PrintItemWrapper.FileLocation;
                         if (File.Exists(pathAndFile))
                         {
-                            new PartPreviewMainWindow(PrintItemWrapper);
+							OpenViewWindow();
                         }
                         else
                         {
@@ -165,8 +215,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 					Button exportLink = linkButtonFactory.Generate(new LocalizedString("Export").Translated);
                     exportLink.Click += (sender, e) =>
                     {
-                        ExportQueueItemWindow exportingWindow = new ExportQueueItemWindow(this);
-                        exportingWindow.ShowAsSystemWindow();
+						OpenExportWindow();
+                        
                     };
                     layoutLeftToRight.AddChild(exportLink);
                 }
