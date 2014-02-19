@@ -13,7 +13,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
     public class SettingsControlBar : FlowLayoutWidget
     {
@@ -135,30 +135,30 @@ namespace MatterHackers.MatterControl
             StyledDropDownList engineMenuDropList = new StyledDropDownList("Engine   ");
             engineMenuDropList.Margin = new BorderDouble(top: 3, left:0);
             {
-                MenuItem slic3rMenuItem = engineMenuDropList.AddItem(PrinterCommunication.SlicingEngine.Slic3r.ToString());
+                MenuItem slic3rMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.Slic3r.ToString());
                 slic3rMenuItem.Selected += (sender, e) =>
                 {
-                    PrinterCommunication.Instance.ActiveSliceEngine = PrinterCommunication.SlicingEngine.Slic3r;
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
                     MainSlidePanel.Instance.ReloadBackPanel();
                 };
 
-                MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(PrinterCommunication.SlicingEngine.CuraEngine.ToString());
+                MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.CuraEngine.ToString());
                 curaEnginMenuItem.Selected += (sender, e) =>
                 {
-                    PrinterCommunication.Instance.ActiveSliceEngine = PrinterCommunication.SlicingEngine.CuraEngine;
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
                     MainSlidePanel.Instance.ReloadBackPanel();
                 };
 
 #if false
-                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(PrinterCommunication.SlicingEngine.MatterSlice.ToString());
+                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngine.MatterSlice.ToString());
                 matterSliceMenuItem.Selected += (sender, e) =>
                 {
-                    PrinterCommunication.Instance.ActiveSliceEngine = PrinterCommunication.SlicingEngine.MatterSlice;
+                    PrinterCommunication.Instance.ActiveSliceEngine = ActivePrinterProfile.SlicingEngine.MatterSlice;
                     MainSlidePanel.Instance.ReloadBackPanel();
                 };
 #endif
 
-                engineMenuDropList.SelectedValue = PrinterCommunication.Instance.ActiveSliceEngine.ToString();
+                engineMenuDropList.SelectedValue = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
             }
             engineMenuDropList.MinimumSize = new Vector2(engineMenuDropList.LocalBounds.Width, engineMenuDropList.LocalBounds.Height);
             return engineMenuDropList;
@@ -259,13 +259,13 @@ namespace MatterHackers.MatterControl
         void SetStatusDisplay()
         {            
             string settingsLayerDescription;
-            if (PrinterCommunication.Instance.ActivePrinter == null)
+            if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
                 settingsLayerDescription = "Default Settings";
             }
             else
             {
-                settingsLayerDescription = PrinterCommunication.Instance.ActivePrinter.Name;
+                settingsLayerDescription = ActivePrinterProfile.Instance.ActivePrinter.Name;
             }
             settingsStatusDescription.Text = string.Format("{0}", settingsLayerDescription);
             

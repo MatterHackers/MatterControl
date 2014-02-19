@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Kevin Pope
+Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -50,7 +51,7 @@ namespace MatterHackers.MatterControl
         public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, EventHandler functionToCallOnSave)
             : base(260, 300)
         {
-            Title = windowTitle;
+			Title = new LocalizedString(windowTitle).Translated;
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -62,7 +63,8 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                TextWidget elementHeader = new TextWidget(string.Format("Movement Speeds Presets:"), pointSize: 14);
+				string movementSpeedsLbl = new LocalizedString("Movement Speeds Presets").Translated;
+				TextWidget elementHeader = new TextWidget(string.Format("{0}:",movementSpeedsLbl), pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -131,11 +133,13 @@ namespace MatterHackers.MatterControl
                 if (settingsArray[i].StartsWith("e"))
                 {
                     int extruderIndex = (int)double.Parse(settingsArray[i].Substring(1)) + 1;
-                    axisLabel = new TextWidget(string.Format("Extruder {0}", extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
+					string extruderLblTxt = new LocalizedString ("Extruder").Translated;
+					axisLabel = new TextWidget(string.Format("{0} {1}",extruderLblTxt ,extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 }
                 else
                 {
-                    axisLabel = new TextWidget(string.Format("Axis {0}", settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
+					string axisLblText = new LocalizedString("Axis").Translated;
+					axisLabel = new TextWidget(string.Format("{0} {1}",axisLblText, settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 }
                 axisLabel.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(axisLabel);
@@ -165,10 +169,10 @@ namespace MatterHackers.MatterControl
 
             ShowAsSystemWindow();
 
-            Button savePresetsButton = textImageButtonFactory.Generate("Save");
+			Button savePresetsButton = textImageButtonFactory.Generate(new LocalizedString("Save").Translated);
             savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);
 
-            Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel");
+			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
             cancelPresetsButton.Click += (sender, e) => { Close(); };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -188,6 +192,11 @@ namespace MatterHackers.MatterControl
         }
 
         void save_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            UiThread.RunOnIdle(DoSave_Click);
+        }
+
+        void DoSave_Click(object state)
         {
             bool first = true;
             StringBuilder settingString = new StringBuilder();

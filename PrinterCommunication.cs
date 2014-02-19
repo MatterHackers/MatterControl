@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -103,7 +103,6 @@ namespace MatterHackers.MatterControl
 
         public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
 
-        public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
@@ -112,7 +111,6 @@ namespace MatterHackers.MatterControl
         public RootedObjectEventHandler ConnectionStateChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
         public RootedObjectEventHandler DestinationChanged = new RootedObjectEventHandler();
-        public RootedObjectEventHandler DoPrintLevelingChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ExtruderTemperatureRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler ExtruderTemperatureSet = new RootedObjectEventHandler();
@@ -198,111 +196,12 @@ namespace MatterHackers.MatterControl
         Thread readFromPrinterThread;
         Thread connectThread;
 
-        private Printer activePrinter;
         private PrintItemWrapper activePrintItem;
 
         int lastRemainingSecondsReported = 0;
         int printerCommandQueueIndex = -1;
 
         Thread sendGCodeToPrinterThread;
-
-        public void Initialize()
-        {
-            DataStorage.Printer autoConnectProfile = GetAutoConnectProfile();
-            if (autoConnectProfile != null)
-            {
-                PrinterCommunication.Instance.ActivePrinter = autoConnectProfile;
-                PrinterCommunication.Instance.HaltConnectionThread();
-                PrinterCommunication.Instance.ConnectToActivePrinter();
-            }
-        }
-
-        private DataStorage.Printer GetAutoConnectProfile()
-        {
-            string query = string.Format("SELECT * FROM Printer;");
-            IEnumerable<Printer> printer_profiles = (IEnumerable<Printer>)Datastore.Instance.dbSQLite.Query<Printer>(query);
-            string[] comportNames = SerialPort.GetPortNames();
-
-            foreach (DataStorage.Printer printer in printer_profiles)
-            {
-                if (printer.AutoConnectFlag)
-                {
-                    bool portIsAvailable = comportNames.Contains(printer.ComPort);
-                    if (portIsAvailable)
-                    {
-                        return printer;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public bool DoPrintLeveling
-        {
-            get
-            {
-                if (ActivePrinter != null)
-                {
-                    return ActivePrinter.DoPrintLeveling;
-                }
-                return false;
-            }
-
-            set
-            {
-                if (ActivePrinter != null && ActivePrinter.DoPrintLeveling != value)
-                {
-                    ActivePrinter.DoPrintLeveling = value;
-                    DoPrintLevelingChanged.CallEvents(this, null);
-                    ActivePrinter.Commit();
-
-                    if (DoPrintLeveling)
-                    {
-                        PrintLeveling.Instance.SetPrintLevelingEquation(
-                            PrinterCommunication.Instance.GetPrintLevelingProbePosition(0),
-                            PrinterCommunication.Instance.GetPrintLevelingProbePosition(1),
-                            PrinterCommunication.Instance.GetPrintLevelingProbePosition(2),
-                            ActiveSliceSettings.Instance.PrintCenter);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// This function returns one of the three positions that will be probed when setting
-        /// up print leveling.
-        /// </summary>
-        /// <param name="position0To2"></param>
-        /// <returns></returns>
-        public Vector3 GetPrintLevelingProbePosition(int position0To2)
-        {
-            if (ActivePrinter != null)
-            {
-                double[] positions = ActivePrinter.GetPrintLevelingPositions();
-                switch (position0To2)
-                {
-                    case 0:
-                        return new Vector3(positions[0], positions[1], positions[2]);
-                    case 1:
-                        return new Vector3(positions[3], positions[4], positions[5]);
-                    case 2:
-                        return new Vector3(positions[6], positions[7], positions[8]);
-                    default:
-                        throw new Exception("there are only 3 probe positions.");
-                }
-            }
-
-            return Vector3.Zero;
-        }
-
-        public void SetPrintLevelingProbePositions(double[] printLevelingPositions3_xyz)
-        {
-            if (ActivePrinter != null)
-            {
-                ActivePrinter.SetPrintLevelingPositions(printLevelingPositions3_xyz);
-                ActivePrinter.Commit();
-            }
-        }
 
         public bool DtrEnableOnConnect
         {
@@ -374,54 +273,15 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public enum SlicingEngine { Slic3r, CuraEngine, MatterSlice };
-        static readonly SlicingEngine defaultEngine = SlicingEngine.Slic3r;
-        public SlicingEngine ActiveSliceEngine
+        private Printer ActivePrinter
         {
             get
             {
-                if (ActivePrinter != null)
-                {
-                    foreach (SlicingEngine engine in SlicingEngine.GetValues(typeof(SlicingEngine)))
-                    {
-                        if (ActivePrinter.CurrentSlicingEngine == engine.ToString())
-                        {
-                            return engine;
-                        }
-                    }
-
-                    // It is not set in the slice settings, so set it and save it.
-                    ActivePrinter.CurrentSlicingEngine = defaultEngine.ToString();
-                    ActivePrinter.Commit();
-                }
-                return defaultEngine;
-            }
-
-            set
-            {
-                if (ActiveSliceEngine != value)
-                {
-                    ActivePrinter.CurrentSlicingEngine = value.ToString();
-                    ActivePrinter.Commit();
-                }
-            }
-        }
-
-        public Printer ActivePrinter
-        {
-            get
-            {
-                return this.activePrinter;
+                return ActivePrinterProfile.Instance.ActivePrinter;
             }
             set
             {
-                if (this.activePrinter != value)
-                {
-                    Disable();
-                    this.activePrinter = value;
-                    this.CommunicationState = CommunicationStates.Disconnected;
-                    OnActivePrinterChanged(null);
-                }
+                ActivePrinterProfile.Instance.ActivePrinter = value;
             }
         }
 
@@ -764,7 +624,7 @@ namespace MatterHackers.MatterControl
             }
             if (temperatureRequestTimer.ElapsedMilliseconds > 2000)
             {
-                if (MonitorPrinterTemperature || PrinterIsPrinting)
+                if (MonitorPrinterTemperature)
                 {
                     QueueLineToPrinter("M105");
                 }
@@ -820,7 +680,7 @@ namespace MatterHackers.MatterControl
 
         public void HomeWasWritenToPrinter(object sender, EventArgs e)
         {
-            if (DoPrintLeveling)
+            if (ActivePrinter.DoPrintLeveling)
             {
                 ReadPosition();
             }
@@ -1178,7 +1038,7 @@ namespace MatterHackers.MatterControl
 
                 //Create and start connection thread
                 connectThread = new Thread(Connect_Thread);
-                connectThread.Name = "Connect To Printer";
+				connectThread.Name = "Connect To Printer";
                 connectThread.IsBackground = true;
                 connectThread.Start();
             }
@@ -1362,11 +1222,6 @@ namespace MatterHackers.MatterControl
             FanSpeedSet.CallEvents(this, e);
         }
 
-        void OnActivePrinterChanged(EventArgs e)
-        {
-            ActivePrinterChanged.CallEvents(this, e);
-        }
-
         void OnActivePrintItemChanged(EventArgs e)
         {
             ActivePrintItemChanged.CallEvents(this, e);
@@ -1379,7 +1234,7 @@ namespace MatterHackers.MatterControl
 
         string ApplyPrintLeveling(string lineBeingSent, bool addLFCR, bool includeSpaces)
         {
-            if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
+            if (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
             {
                 Vector3 newDestination = currentDestination;
                 if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
@@ -1401,11 +1256,11 @@ namespace MatterHackers.MatterControl
                     currentDestination = newDestination;
                     DestinationChanged.CallEvents(this, null);
                 }
-            }
 
-            if (DoPrintLeveling)
-            {
-                lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent, addLFCR, includeSpaces);
+                if (ActivePrinter.DoPrintLeveling)
+                {
+                    lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent, addLFCR, includeSpaces);
+                }
             }
 
             return lineBeingSent;
@@ -1498,7 +1353,7 @@ namespace MatterHackers.MatterControl
                 if (printerCommandQueueIndex > 0
                     && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count -1)
                 {
-                    if (loadedGCode.GCodeCommandQueue[printerCommandQueueIndex+1].Line != lineToWrite)
+                    if (!loadedGCode.GCodeCommandQueue[printerCommandQueueIndex+1].Line.Contains(lineToWrite))
                     {
                         loadedGCode.GCodeCommandQueue.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.GCodeCommandQueue[printerCommandQueueIndex]));
                     }
@@ -1541,8 +1396,6 @@ namespace MatterHackers.MatterControl
             {
                 if (serialPort != null && serialPort.IsOpen)
                 {
-                    lineToWrite = ApplyPrintLeveling(lineToWrite, true, true);
-
                     // write data to communication
                     {
                         StringEventArgs currentEvent = new StringEventArgs(lineToWrite);

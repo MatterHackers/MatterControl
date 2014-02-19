@@ -25,7 +25,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
     public class LibraryThumbnailWidget : ClickWidget
     {
         static Thread thumbNailThread = null;
-
+		bool viewWindowIsOpen = false;
+		PartPreviewMainWindow viewingWindow;
         private PrintItemWrapper printItem;
         public PrintItemWrapper PrintItem
         {
@@ -203,6 +204,30 @@ namespace MatterHackers.MatterControl.PrintLibrary
             this.Invalidate();
         }
 
+		/*
+		private void OpenPartViewWindow()
+		{
+			if (viewWindowIsOpen == false)
+			{
+				viewingWindow = new PartPreviewMainWindow(printItem);
+				this.viewWindowIsOpen = true;
+				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed); 
+			}
+			else
+			{
+				if(viewingWindow != null)
+				{
+					viewingWindow.BringToFront();
+				}
+			}
+
+		}
+
+		void PartPreviewMainWindow_Closed(object sender, EventArgs e)
+		{
+			viewWindowIsOpen = false;
+		}
+		*/
         private void onMouseClick(object sender, MouseEventArgs e)
         {
             if (printItem != null)
@@ -210,7 +235,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 string pathAndFile = printItem.FileLocation;
                 if (File.Exists(pathAndFile))
                 {
-                    new PartPreviewMainWindow(printItem);
+					new PartPreviewMainWindow(printItem);
                 }
                 else
                 {
@@ -281,6 +306,34 @@ namespace MatterHackers.MatterControl.PrintLibrary
         public CheckBox selectionCheckBox;
         FlowLayoutWidget buttonContainer;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		bool exportWindowIsOpen = false;
+		bool viewWindowIsOpen = false;
+		PartPreviewMainWindow viewingWindow;
+		ExportLibraryItemWindow exportingWindow;
+
+		private void OpenExportWindow()
+		{
+			if (exportWindowIsOpen == false)
+			{
+				exportingWindow = new ExportLibraryItemWindow(this);
+				this.exportWindowIsOpen = true;
+				exportingWindow.Closed += new EventHandler(ExportLibraryItemWindow_Closed);
+				exportingWindow.ShowAsSystemWindow ();
+			}
+			else 
+			{
+				if (exportingWindow != null)
+				{
+					exportingWindow.BringToFront ();
+				}
+			}
+
+		}
+
+		void ExportLibraryItemWindow_Closed(object sender, EventArgs e)
+		{
+			this.exportWindowIsOpen = false;
+		}
 
         public PrintLibraryListItem(PrintItemWrapper printItem)
         {
@@ -352,8 +405,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
                     exportLink.Click += (sender, e) =>
                     {
-                        ExportLibraryItemWindow exportingWindow = new ExportLibraryItemWindow(this);
-                        exportingWindow.ShowAsSystemWindow();
+						OpenExportWindow();
                     };
 
 					removeLink = linkButtonFactory.Generate(new LocalizedString("Remove").Translated);
@@ -458,13 +510,39 @@ namespace MatterHackers.MatterControl.PrintLibrary
             UiThread.RunOnIdle(onViewLinkClick);
         }
 
+
+		private void OpenPartViewWindow()
+		{
+			if (viewWindowIsOpen == false)
+			{
+				viewingWindow =  new PartPreviewMainWindow(this.printItem);
+				this.viewWindowIsOpen = true;
+				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed); 
+			}
+			else
+			{
+				if(viewingWindow != null)
+				{
+					viewingWindow.BringToFront();
+				}
+			}
+
+		}
+
+		void PartPreviewMainWindow_Closed(object sender, EventArgs e)
+		{
+			viewWindowIsOpen = false;
+		}
+
+
         private void onViewLinkClick(object state)
         {
             string pathAndFile = this.printItem.FileLocation;
             Console.WriteLine(pathAndFile);
             if (File.Exists(pathAndFile))
             {
-                new PartPreviewMainWindow(this.printItem);
+				OpenPartViewWindow ();
+				//new PartPreviewMainWindow(this.printItem);
             }
             else
             {

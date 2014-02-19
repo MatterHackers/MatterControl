@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -161,9 +161,9 @@ namespace MatterHackers.MatterControl
         static string GetMovementSpeedsString()
         {
             string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,y,z,e1,e2,e3,...
-            if (PrinterCommunication.Instance != null && PrinterCommunication.Instance.ActivePrinter != null)
+            if (PrinterCommunication.Instance != null && ActivePrinterProfile.Instance.ActivePrinter != null)
             {
-                string savedSettings = PrinterCommunication.Instance.ActivePrinter.ManualMovementSpeeds;
+                string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;
                 if (savedSettings != null && savedSettings != "")
                 {
                     presets = savedSettings;
@@ -178,8 +178,8 @@ namespace MatterHackers.MatterControl
             StringEventArgs stringEvent = e as StringEventArgs;
             if (stringEvent != null && stringEvent.Data != null)
             {
-                PrinterCommunication.Instance.ActivePrinter.ManualMovementSpeeds = stringEvent.Data;
-                PrinterCommunication.Instance.ActivePrinter.Commit();
+                ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds = stringEvent.Data;
+                ActivePrinterProfile.Instance.ActivePrinter.Commit();
                 MainSlidePanel.Instance.ReloadBackPanel();
             }
         }
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl
 
             sdCardManagerContainer = new DisablablableWidget();
             sdCardManagerContainer.AddChild(CreateSdCardManagerContainer());
-            if (false)// || PrinterCommunication.Instance.ActivePrinter == null || PrinterCommunication.Instance.ActivePrinter.GetFeatures().HasSdCard())
+            if (false)// || ActivePrinterProfile.Instance.ActivePrinter == null || ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasSdCard())
             {
                 controlsTopToBottomLayout.AddChild(sdCardManagerContainer);
             }
@@ -253,8 +253,8 @@ namespace MatterHackers.MatterControl
             fanControlsContainer = new DisablablableWidget();
             fanControlsContainer.AddChild(fanControlsGroupBox);
 
-            if (PrinterCommunication.Instance.ActivePrinter == null
-                || PrinterCommunication.Instance.ActivePrinter.GetFeatures().HasFan())
+            if (ActivePrinterProfile.Instance.ActivePrinter == null
+                || ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasFan())
             {
                 controlsTopToBottomLayout.AddChild(fanControlsContainer);
             }
@@ -320,8 +320,8 @@ namespace MatterHackers.MatterControl
             bedTemperatureControlWidget = new DisablablableWidget();
             bedTemperatureControlWidget.AddChild(new BedTemperatureControlWidget());
 
-            if (PrinterCommunication.Instance.ActivePrinter == null
-                || PrinterCommunication.Instance.ActivePrinter.GetFeatures().HasHeatedBed())
+            if (ActivePrinterProfile.Instance.ActivePrinter == null
+                || ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasHeatedBed())
             {
                 temperatureControlContainer.AddChild(bedTemperatureControlWidget);
             }
@@ -516,18 +516,18 @@ namespace MatterHackers.MatterControl
                 doLevelingCheckBox.Margin = new BorderDouble(left: 3);
                 doLevelingCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 doLevelingCheckBox.VAnchor = VAnchor.ParentCenter;
-                doLevelingCheckBox.Checked = PrinterCommunication.Instance.DoPrintLeveling;
+                doLevelingCheckBox.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
 
                 buttonBar.AddChild(doLevelingCheckBox);
                 buttonBar.AddChild(runPrintLevelingButton);
                 doLevelingCheckBox.CheckedStateChanged += (sender, e) =>
                 {
-                    PrinterCommunication.Instance.DoPrintLeveling = doLevelingCheckBox.Checked;
+                    ActivePrinterProfile.Instance.DoPrintLeveling = doLevelingCheckBox.Checked;
                 };
-                PrinterCommunication.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+                ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
                 {
-                    doLevelingCheckBox.Checked = PrinterCommunication.Instance.DoPrintLeveling;
-                    if (doLevelingCheckBox.Checked && PrinterCommunication.Instance.ActivePrinter.PrintLevelingProbePositions == null)
+                    doLevelingCheckBox.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
+                    if (doLevelingCheckBox.Checked && ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingProbePositions == null)
                     {
                         //OpenPrintLevelWizard();
                     }
@@ -643,7 +643,7 @@ namespace MatterHackers.MatterControl
 
         private void SetVisibleControls()
         {
-            if (PrinterCommunication.Instance.ActivePrinter == null)
+            if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
                 // no printer selected
                 extruderTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);

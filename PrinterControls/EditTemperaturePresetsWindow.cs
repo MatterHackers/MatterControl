@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
         public EditTemperaturePresetsWindow(string windowTitle, string temperatureSettings, EventHandler functionToCallOnSave)
             : base(360, 300)
         {
-            Title = windowTitle;
+			Title = new LocalizedString(windowTitle).Translated;
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();

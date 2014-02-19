@@ -32,13 +32,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MatterHackers.MatterControl
+using MatterHackers.VectorMath;
+
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class TupleList<T1, T2> : List<Tuple<T1, T2>>
+    public class Slic3rEngineMappings : SliceEngineMaping
     {
-        public void Add(T1 item, T2 item2)
+        static List<string> hideItems = null;
+
+        // private so that this class is a sigleton
+        Slic3rEngineMappings()
         {
-            Add(new Tuple<T1, T2>(item, item2));
+        }
+
+        static Slic3rEngineMappings instance = null;
+        public static Slic3rEngineMappings Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Slic3rEngineMappings();
+                    hideItems = new List<string>();
+                    hideItems.Add("cool_extruder_lift");
+                    hideItems.Add("support_material_create_internal_support");
+                    hideItems.Add("min_extrusion_before_retract");
+                }
+                return instance;
+            }
+        }
+
+        public override bool MapContains(string defaultKey)
+        {
+            if (hideItems.Contains(defaultKey))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

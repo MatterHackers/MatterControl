@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				string printerComPortErrorLbl = new LocalizedString("Attempting to connect").Translated;
 				string printerComPortErrorLblFull = string.Format("{0}...",printerComPortErrorLbl);
 				printerComPortError.Text = printerComPortErrorLblFull;
-                PrinterCommunication.Instance.ActivePrinter = this.ActivePrinter;
+                ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
                 PrinterCommunication.Instance.ConnectToActivePrinter();
                 connectButton.Visible = false;
                 refreshButton.Visible = false;

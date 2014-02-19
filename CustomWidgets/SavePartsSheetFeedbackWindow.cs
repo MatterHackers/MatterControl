@@ -5,6 +5,7 @@ using System.Text;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -18,7 +19,9 @@ namespace MatterHackers.MatterControl
             : base(300, 500)
         {
             BackgroundColor = backgroundColor;
-            Title = "MatterControl - Saving to Parts Sheet";
+			string savePartSheetTitle = new LocalizedString("MatterControl").Translated;
+			string savePartSheetTitleFull = new LocalizedString("Saving to Parts Sheet").Translated;
+			Title = string.Format("{0} - {1}",savePartSheetTitle, savePartSheetTitleFull) ;
             this.totalParts = totalParts;
 
             feedback.Padding = new BorderDouble(5, 5);

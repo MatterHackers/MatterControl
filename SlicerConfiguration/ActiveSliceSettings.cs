@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2014, Lars Brubaker
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Diagnostics;
@@ -12,7 +41,7 @@ using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
     public class SettingsLayer
     {
@@ -67,6 +96,7 @@ namespace MatterHackers.MatterControl
             SettingsChanged.CallEvents(this, null);
         }
 
+        // private so that it can only be gotten through the Instance
         ActiveSliceSettings()
         {
         }
@@ -134,12 +164,12 @@ namespace MatterHackers.MatterControl
 #if false
             SetBedLevelEquation(0, 0, 0);
 #else
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 PrintLeveling.Instance.SetPrintLevelingEquation(
-                    PrinterCommunication.Instance.GetPrintLevelingProbePosition(0),
-                    PrinterCommunication.Instance.GetPrintLevelingProbePosition(1),
-                    PrinterCommunication.Instance.GetPrintLevelingProbePosition(2),
+                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(0),
+                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(1),
+                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(2),
                     ActiveSliceSettings.Instance.PrintCenter);
             }
 #endif
@@ -167,6 +197,14 @@ namespace MatterHackers.MatterControl
             get
             {
                 return ParseDouble(GetActiveValue("max_fan_speed"));
+            }
+        }
+
+        public double FillDensity
+        {
+            get
+            {
+                return ParseDouble(GetActiveValue("fill_density"));
             }
         }
 
@@ -314,22 +352,22 @@ namespace MatterHackers.MatterControl
 
         public void LoadPrinterConfigurationSettings()
         {
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 DataStorage.SliceSettingsCollection collection;
-                if (PrinterCommunication.Instance.ActivePrinter.DefaultSettingsCollectionId != 0)
+                if (ActivePrinterProfile.Instance.ActivePrinter.DefaultSettingsCollectionId != 0)
                 {
-                    int activePrinterSettingsID = PrinterCommunication.Instance.ActivePrinter.DefaultSettingsCollectionId;
+                    int activePrinterSettingsID = ActivePrinterProfile.Instance.ActivePrinter.DefaultSettingsCollectionId;
                     collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == activePrinterSettingsID).Take(1).FirstOrDefault();                    
                 }
                 else
                 {
                     collection = new DataStorage.SliceSettingsCollection();
-                    collection.Name = PrinterCommunication.Instance.ActivePrinter.Name;
+                    collection.Name = ActivePrinterProfile.Instance.ActivePrinter.Name;
                     collection.Commit();
 
-                    PrinterCommunication.Instance.ActivePrinter.DefaultSettingsCollectionId = collection.Id;
-                    PrinterCommunication.Instance.ActivePrinter.Commit();
+                    ActivePrinterProfile.Instance.ActivePrinter.DefaultSettingsCollectionId = collection.Id;
+                    ActivePrinterProfile.Instance.ActivePrinter.Commit();
                 }
                 SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
                 this.activeSettingsLayers.Add(printerSettingsLayer);
@@ -580,11 +618,62 @@ namespace MatterHackers.MatterControl
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
+                if (FillDensity < 0 || FillDensity > 1)
+                {
+                    string error = "The Fill Density must be between 0 and 1 inclusive.";
+                    string details = string.Format("It is currently set to {0}.", FillDensity);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'";
+                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    return false;
+                }
+
+                // If the given speed is part of the current slice engine then check that it is greater than 0.
+                if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("first_layer_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("gap_fill_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("infill_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("perimeter_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("retract_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("small_perimeter_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("solid_infill_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("support_material_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("top_solid_infill_speed")) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("travel_speed")) return false;                
             }
             catch(Exception e)
             {
                 string stackTraceNoBackslashRs = e.StackTrace.Replace("\r", "");
                 ContactFormWindow.Open("Parse Error while slicing", e.Message + stackTraceNoBackslashRs);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateGoodSpeedSettingGreaterThan0(string speedSetting)
+        {
+            string actualSpeedValueString = GetActiveValue(speedSetting);
+            string speedValueString = actualSpeedValueString;
+            if (speedValueString.EndsWith("%"))
+            {
+                speedValueString = speedValueString.Substring(0, speedValueString.Length - 1);
+            }
+            bool valueWasNumber = true;
+            double speedToCheck;
+            if (!double.TryParse(speedValueString, out speedToCheck))
+            {
+                valueWasNumber = false;
+            }
+
+            if (!valueWasNumber 
+                || (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(speedSetting)
+                && speedToCheck <= 0))
+            {
+                string error = string.Format("The '{0}' must be greater than 0.", SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting).PresentationName);
+                string details = string.Format("It is currently set to {0}.", actualSpeedValueString);
+                string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'";
+                StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                 return false;
             }
 

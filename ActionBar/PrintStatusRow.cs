@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.ActionBar
         }
 
         override protected void AddChildElements()
-        {
+        {            
             activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", new Vector2(115, 115));
             activePrintPreviewImage.VAnchor = VAnchor.ParentTop;
             activePrintPreviewImage.Padding = new BorderDouble(0);
@@ -138,8 +138,9 @@ namespace MatterHackers.MatterControl.ActionBar
             container.AddChild(topRow);
             container.AddChild(activePrintName);
             container.AddChild(activePrintStatus);
-            container.AddChild(activePrintInfo);
+            //container.AddChild(activePrintInfo);
             container.AddChild(printActionRow);
+            container.AddChild(new MessageActionRow());
 
             return container;
         }
@@ -199,6 +200,7 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (PrinterCommunication.Instance.ActivePrintItem != null)
             {
+                
                 int secondsPrinted = PrinterCommunication.Instance.SecondsPrinted;
                 int hoursPrinted = (int)(secondsPrinted / (60 * 60));
                 int minutesPrinted = (int)(secondsPrinted / 60 - hoursPrinted * 60);
@@ -285,7 +287,6 @@ namespace MatterHackers.MatterControl.ActionBar
                         {
                             activePrintLabel.Text = PrinterCommunication.Instance.PrintingStateString;
                             ActivePrintStatusText = printPercentRemainingText;
-                            activePrintInfo.Text = printTimeInfoText;
                         }
                         break;
 
@@ -295,7 +296,6 @@ namespace MatterHackers.MatterControl.ActionBar
 							string activePrintLblTxtFull = string.Format("{0}:", activePrintLblTxt);
 							activePrintLabel.Text = activePrintLblTxtFull;
                             ActivePrintStatusText = printPercentRemainingText;
-                            activePrintInfo.Text = printTimeInfoText;
                         }
                         break;
 
@@ -304,7 +304,6 @@ namespace MatterHackers.MatterControl.ActionBar
 					string donePrintingTxtFull = string.Format ("{0}:", donePrintingTxt);
 					activePrintLabel.Text = donePrintingTxtFull;
                         ActivePrintStatusText = printPercentRemainingText;
-                        activePrintInfo.Text = printTimeInfoText;
                         break;
 
 				default:

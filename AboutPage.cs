@@ -227,6 +227,22 @@ namespace MatterHackers.MatterControl
                 string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
                 string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 
+                //Make HEAD request to determine the size of the download (required by GAE)
+                System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
+                request.Method = "HEAD";
+
+                int downloadSize;
+                try
+                {
+                    WebResponse response = request.GetResponse();
+                    downloadSize = (int)response.ContentLength;
+                }
+                catch
+                {
+                    //Unknown download size
+                    downloadSize = 0;
+                }
+
                 if (!System.IO.Directory.Exists(updateFileLocation))
                 {
                     System.IO.Directory.CreateDirectory(updateFileLocation);

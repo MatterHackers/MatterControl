@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -54,6 +54,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.VersionManagement;
 using MatterHackers.MatterControl.PluginSystem;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -115,7 +116,7 @@ namespace MatterHackers.MatterControl
             UseOpenGL = true;
             Title = "MatterControl (beta)";
 
-            PrinterCommunication.Instance.Initialize();
+            ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);
 
             ShowAsSystemWindow();

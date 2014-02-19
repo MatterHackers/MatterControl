@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         protected void SaveAndExit()
         {
             this.ActivePrinter.Commit();
-            PrinterCommunication.Instance.ActivePrinter = this.ActivePrinter;
+            ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
             this.containerWindowToClose.Close();
 
         }

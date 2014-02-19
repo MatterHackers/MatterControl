@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				string printerErrorMessageLblTwoFull = string.Format("{0}...",printerErrorMessageLblTwo);
 				printerErrorMessage.Text = printerErrorMessageLblTwoFull;
                 this.ActivePrinter.Commit();
-                PrinterCommunication.Instance.ActivePrinter = this.ActivePrinter;
+                ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
                 PrinterCommunication.Instance.ConnectToActivePrinter();
                 connectButton.Visible = false;                
             }     
@@ -210,6 +210,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         }
 
         void NextButton_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            UiThread.RunOnIdle(DoNextButton_Click);
+        }
+
+        void DoNextButton_Click(object state)
         {
             Parent.Close();
         }

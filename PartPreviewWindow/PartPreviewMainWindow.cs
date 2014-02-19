@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,9 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -49,7 +51,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public PartPreviewMainWindow(PrintItemWrapper printItem)
             : base(690, 340)
         {
-            Title = "MatterControl: " + Path.GetFileName(printItem.Name);
+			string partPreviewTitle = new LocalizedString ("MatterControl").Translated;
+			Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
