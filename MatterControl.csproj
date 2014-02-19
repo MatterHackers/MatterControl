@@ -75,6 +75,9 @@
     <Compile Include="ActivePrinterProfile.cs" />
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
+    <Compile Include="EeProm\EePromRepatierParameter.cs" />
+    <Compile Include="EeProm\EePromRepatierStorage.cs" />
+    <Compile Include="EeProm\EePromRepatierWidget.cs" />
     <Compile Include="FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
