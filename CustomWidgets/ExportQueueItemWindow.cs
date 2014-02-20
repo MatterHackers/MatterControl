@@ -115,11 +115,12 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(DoExportGCode_Click);
         }
 
-		string GetExtension (string filename)
+		string GetExtension (string filename)                                  
 		{
 			string extension; 
 			int indexOfDot = filename.LastIndexOf(".");
-			if (indexOfDot == -1) {
+			if (indexOfDot == -1) 
+			{
 				extension = "";
 			} 
 			else 
@@ -145,12 +146,10 @@ namespace MatterHackers.MatterControl
 				
 				string filePathToSave = saveParams.FileName;
 				string extension = GetExtension(filePathToSave);
-
 				if(extension == "")
 				{
 					filePathToSave +=  ".gcode";
 				}
-
 
 
                 if (System.IO.Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".STL")
@@ -249,10 +248,8 @@ namespace MatterHackers.MatterControl
 			
 			string filePathToSave = saveParams.FileName;
 			string extension = CheckExtension(filePathToSave);
-
 			if (extension == "") 
-			{
-											
+			{						
 				filePathToSave += ".stl";
 			}
 

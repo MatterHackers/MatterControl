@@ -1,20 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="MainSlidePanel.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\MatterControlPlugins\PrintNotifications\NotificationForm.cs">
     <Files>
-      <File FileName="PrinterCommunication.cs" Line="1" Column="1" />
-      <File FileName="PrinterControls\PrinterConnections\ConnectionWindow.cs" Line="1" Column="1" />
-      <File FileName="WidescreenPanel.cs" Line="1" Column="1" />
-      <File FileName="PrintQueue\QueueControlsWidget.cs" Line="1" Column="1" />
-      <File FileName="PrintLibrary\ExportLibraryItemWindow.cs" Line="1" Column="1" />
-      <File FileName="MainSlidePanel.cs" Line="328" Column="14" />
-      <File FileName="CustomWidgets\WizardControl.cs" Line="1" Column="1" />
-      <File FileName="PartPreviewWindow\PartPreviewMainWindow.cs" Line="1" Column="1" />
-      <File FileName="CustomWidgets\SavePartsSheetFeedbackWindow.cs" Line="1" Column="1" />
-      <File FileName="Localizations\LocalizedString.cs" Line="1" Column="1" />
-      <File FileName="PrintQueue\PrintQueueItem.cs" Line="1" Column="1" />
-      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\Gui\SystemWindow.cs" Line="1" Column="1" />
+      <File FileName="Localizations\LocalizedString.cs" Line="18" Column="14" />
       <File FileName="PrintLibrary\PrintLibraryListItem.cs" Line="1" Column="1" />
+      <File FileName="ActionBar\ActionBarBaseControls.cs" Line="218" Column="49" />
+      <File FileName="ActionBar\HelpTextWidget.cs" Line="145" Column="8" />
+      <File FileName="PrintQueue\PrintQueueMenu.cs" Line="1" Column="1" />
+      <File FileName="CustomWidgets\ExportQueueItemWindow.cs" Line="255" Column="5" />
+      <File FileName="ActionBar\ActionBarPlus.cs" Line="69" Column="23" />
+      <File FileName="ActionBar\PrintActionRow.cs" Line="15" Column="46" />
+      <File FileName="..\MatterControlPlugins\PrintNotifications\NotificationForm.cs" Line="210" Column="65" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

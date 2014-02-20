@@ -61,10 +61,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             //Set the name and callback function of the menu items
             menuItems = new TupleList<string, Func<bool>> 
             {
-				{new LocalizedString("STL").Translated, null},
+				{"STL", null},
 				{new LocalizedString(" Import from Zip").Translated, importQueueFromZipMenu_Click},
 				{new LocalizedString(" Export to Zip").Translated, exportQueueToZipMenu_Click},
-				{new LocalizedString("GCode").Translated, null},
+				{"GCode", null},
 				{new LocalizedString(" Export to Folder").Translated, exportGCodeToFolderButton_Click},
                 //{" Export to SD Card", exportToSDCardButton_Click},
 				{new LocalizedString("Extra").Translated, null},
