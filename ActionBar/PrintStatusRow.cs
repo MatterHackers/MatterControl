@@ -123,9 +123,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
             topRow.AddChild(activePrintLabel);
 
-			activePrintName = getPrintStatusLabel(new LocalizedString("this is the biggest name we will allow").Translated, pointSize: 14);
+			activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);
             activePrintName.AutoExpandBoundsToText = false;
-			activePrintStatus = getPrintStatusLabel(new LocalizedString("this is the biggest label we will allow - bigger").Translated, pointSize: 11);
+			activePrintStatus = getPrintStatusLabel("this is the biggest label we will allow - bigger", pointSize: 11);
             activePrintStatus.AutoExpandBoundsToText = false;
             activePrintStatus.Text = "";
             activePrintStatus.Margin = new BorderDouble(top: 3);
