@@ -129,20 +129,20 @@ namespace MatterHackers.MatterControl
                 switch (PrinterCommunication.Instance.CommunicationState)
                 {
                     case PrinterCommunication.CommunicationStates.Disconnected:
-					return new LocalizedString("Not connected. Press 'Connect' to enable printing.").Translated;
+						return new LocalizedString("Not connected. Press 'Connect' to enable printing.").Translated;
                     case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-					return new LocalizedString("Attempting to connect...").Translated;
+						return new LocalizedString("Attempting to connect...").Translated;
                     case PrinterCommunication.CommunicationStates.ConnectionLost:
                     case PrinterCommunication.CommunicationStates.FailedToConnect:
-					return new LocalizedString("Unable to communicate with printer.").Translated;
+						return new LocalizedString("Unable to communicate with printer.").Translated;
                     case PrinterCommunication.CommunicationStates.Connected:
                         if (PrinterCommunication.Instance.ActivePrintItem != null)
                         {
-						return new LocalizedString("Item selected. Press 'Start' to begin your print.").Translated;
+							return new LocalizedString("Item selected. Press 'Start' to begin your print.").Translated;
                         }
                         else
                         {
-						return new LocalizedString("No items to select. Press 'Add' to select a file to print.").Translated;
+							return new LocalizedString("No items to select. Press 'Add' to select a file to print.").Translated;
                         }
                     default:
                         return "";
