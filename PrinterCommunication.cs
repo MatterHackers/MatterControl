@@ -114,7 +114,8 @@ namespace MatterHackers.MatterControl
         public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
-        public RootedObjectEventHandler CommunicationUnconditional = new RootedObjectEventHandler();
+        public RootedObjectEventHandler CommunicationUnconditionalFromPrinter = new RootedObjectEventHandler();
+        public RootedObjectEventHandler CommunicationUnconditionalToPrinter = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionFailed = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionStateChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
@@ -1432,7 +1433,7 @@ namespace MatterHackers.MatterControl
                     // write data to communication
                     {
                         StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
-                        CommunicationUnconditional.CallEvents(this, new StringEventArgs("->" + currentEvent.Data));
+                        CommunicationUnconditionalToPrinter.CallEvents(this, currentEvent);
 
                         if (lineWithoutChecksum != null)
                         {
@@ -1791,7 +1792,7 @@ namespace MatterHackers.MatterControl
                                 // process this command
                                 {
                                     StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
-                                    CommunicationUnconditional.CallEvents(this, new StringEventArgs("<-" + currentEvent.Data));
+                                    CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
 
                                     FoundStringEventArgs foundResponse = new FoundStringEventArgs(currentEvent.Data);
                                     ReadLineStartCallBacks.CheckForKeys(foundResponse);

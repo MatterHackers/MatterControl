@@ -34,7 +34,7 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-    public class EePromRepatierParameter
+    public class EePromRepatierParameter : EventArgs
     {
         public string description;
         public int type;

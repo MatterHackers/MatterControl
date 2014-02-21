@@ -252,14 +252,28 @@ namespace MatterHackers.MatterControl
         {
             if (filterOutput.Checked)
             {
-                PrinterCommunication.Instance.CommunicationUnconditional.UnregisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
+                PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.UnregisterEvent(FromPrinter, ref unregisterEvents);
+                PrinterCommunication.Instance.CommunicationUnconditionalToPrinter.UnregisterEvent(ToPrinter, ref unregisterEvents);
                 PrinterCommunication.Instance.ReadLine.RegisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
             }
             else
             {
-                PrinterCommunication.Instance.CommunicationUnconditional.RegisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
+                PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
+                PrinterCommunication.Instance.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
                 PrinterCommunication.Instance.ReadLine.UnregisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
             }
+        }
+
+        void FromPrinter(Object sender, EventArgs e)
+        {
+            StringEventArgs lineString = e as StringEventArgs;
+            outputScrollWidget.WriteLine(sender, new StringEventArgs("<-" + lineString.Data));
+        }
+
+        void ToPrinter(Object sender, EventArgs e)
+        {
+            StringEventArgs lineString = e as StringEventArgs;
+            outputScrollWidget.WriteLine(sender, new StringEventArgs("->" + lineString.Data));
         }
 
         void Instance_ConnectionFailed(object sender, EventArgs e)

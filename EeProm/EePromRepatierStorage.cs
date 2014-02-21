@@ -32,6 +32,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using MatterHackers.Agg.UI;
+
 namespace MatterHackers.MatterControl.EeProm
 {
     public delegate void OnEePromRepatierAdded(EePromRepatierParameter param);
@@ -39,7 +41,7 @@ namespace MatterHackers.MatterControl.EeProm
     public class EePromRepatierStorage
     {
         public Dictionary<int, EePromRepatierParameter> eePromSettingsList;
-        public event OnEePromRepatierAdded eventAdded = null;
+        public event EventHandler eventAdded = null;
 
         public EePromRepatierStorage()
         {
@@ -59,8 +61,17 @@ namespace MatterHackers.MatterControl.EeProm
             }
         }
 
-        public void Add(string line)
+        public void Add(object sender, EventArgs e)
         {
+            StringEventArgs lineString = e as StringEventArgs;
+
+            if (e == null)
+            {
+                return;
+            }
+
+            string line = lineString.Data;
+
             if (!line.StartsWith("EPR:"))
             {
                 return;
@@ -75,7 +86,7 @@ namespace MatterHackers.MatterControl.EeProm
             eePromSettingsList.Add(parameter.position, parameter);
             if (eventAdded != null)
             {
-                eventAdded(parameter);
+                eventAdded(this, parameter);
             }
         }
 
