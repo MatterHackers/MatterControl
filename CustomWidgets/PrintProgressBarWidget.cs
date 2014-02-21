@@ -21,26 +21,23 @@ namespace MatterHackers.MatterControl
 
         public PrintProgressBar()
         {
-            MinimumSize = new Vector2(0, 30);
+            MinimumSize = new Vector2(0, 24);
             HAnchor = HAnchor.ParentLeftRight;
             BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
             Margin = new BorderDouble(0);
 
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.LeftToRight);
             container.AnchorAll();
-            container.Padding = new BorderDouble(7,0);
+            container.Padding = new BorderDouble(6,0);
 
-            RGBA_Bytes labelColor = ActiveTheme.Instance.PrimaryAccentColor;
-            //labelColor.alpha = 220;
-
-            printTimeElapsed = new TextWidget("2:30:00");
+            printTimeElapsed = new TextWidget("", pointSize:11);
+            printTimeElapsed.AutoExpandBoundsToText = true;
             printTimeElapsed.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            printTimeElapsed.TextColor = labelColor;
-            
 
-            printTimeRemaining = new TextWidget("4:50:30");
+
+            printTimeRemaining = new TextWidget("", pointSize: 11);
+            printTimeRemaining.AutoExpandBoundsToText = true;
             printTimeRemaining.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            printTimeRemaining.TextColor = labelColor;
 
             GuiWidget spacer = new GuiWidget();
             spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -51,7 +48,8 @@ namespace MatterHackers.MatterControl
 
             AddChild(container);
             AddHandlers();
-            UpdatePrintStatus();
+            SetThemedColors();
+            UpdatePrintStatus();            
             UiThread.RunOnIdle(OnIdle);
         }
 
@@ -74,12 +72,17 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        private void onThemeChanged(object sender, EventArgs e)
+        private void SetThemedColors()
         {
-            //Set background color to new theme
             this.printTimeElapsed.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
             this.printTimeRemaining.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
             this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+        }
+
+        private void onThemeChanged(object sender, EventArgs e)
+        {
+            //Set background color to new theme
+            SetThemedColors();
             this.Invalidate();
         }
 
@@ -158,26 +161,11 @@ namespace MatterHackers.MatterControl
                     printTimeElapsed.Text = string.Format("");
                 }
 
-                int secondsRemaining = PrinterCommunication.Instance.SecondsRemaining;
-                int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-                int minutesRemaining = (int)(secondsRemaining / 60 - hoursRemaining * 60);
-                secondsRemaining = secondsRemaining % 60;
+                string printPercentRemainingText = string.Format("{0:0.0}%", currentPercent);
 
-                if (secondsRemaining > 0)
+                if (PrinterCommunication.Instance.PrinterIsPrinting || PrinterCommunication.Instance.PrinterIsPaused)
                 {
-                    if (hoursRemaining > 0)
-                    {
-                        printTimeRemaining.Text = string.Format("{0}:{1:00}:{2:00}",
-                            hoursRemaining,
-                            minutesRemaining,
-                            secondsRemaining);
-                    }
-                    else
-                    {
-                        printTimeRemaining.Text = string.Format("{0}:{1:00}",
-                            minutesRemaining,
-                            secondsRemaining);
-                    }
+                    printTimeRemaining.Text = printPercentRemainingText;
                 }
                 else if (PrinterCommunication.Instance.PrintIsFinished)
                 {
