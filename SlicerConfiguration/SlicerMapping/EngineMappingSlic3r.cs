@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("cool_extruder_lift");
                     hideItems.Add("support_material_create_internal_support");
                     hideItems.Add("min_extrusion_before_retract");
+                    hideItems.Add("support_material_xy_distance");
+                    hideItems.Add("support_material_z_distance");
                 }
                 return instance;
             }

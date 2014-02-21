@@ -41,43 +41,67 @@ namespace MatterHackers.MatterControl.EeProm
 {
     public partial class EePromRepetierWidget : SystemWindow
     {
+        protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+
         EePromRepatierStorage storage;
         BindingList<EePromRepatierParameter> data = new BindingList<EePromRepatierParameter>();
-        FlowLayoutWidget descriptionColmun;
-        FlowLayoutWidget valueColmun;
+        FlowLayoutWidget settingsColmun;
+
+        event EventHandler unregisterEvents;
 
         Button buttonCancel;
         Button buttonSave;
         
-        bool reinit = true;
         public EePromRepetierWidget()
-            : base(640, 480)
+            : base(540, 480)
         {
-            BackgroundColor = RGBA_Bytes.White;
+            BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 
             storage = new EePromRepatierStorage();
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            topToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
+            topToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+            FlowLayoutWidget row = new FlowLayoutWidget();
+            row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            row.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            row.AddChild(AddDescription(new LocalizedString("Description").Translated));
+
+            GuiWidget valueText = new TextWidget(new LocalizedString("Value").Translated, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            valueText.VAnchor = Agg.UI.VAnchor.ParentCenter;
+            valueText.Margin = new BorderDouble(left: 5);
+            row.AddChild(valueText);
+            topToBottom.AddChild(row);
 
             {
-                FlowLayoutWidget columnHolder = new FlowLayoutWidget();
-                descriptionColmun = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                columnHolder.AddChild(descriptionColmun);
+                ScrollableWidget settingsAreaScrollBox = new ScrollableWidget(true);
+                settingsAreaScrollBox.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+                settingsAreaScrollBox.AnchorAll();
+                topToBottom.AddChild(settingsAreaScrollBox);
 
-                valueColmun = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                columnHolder.AddChild(valueColmun);
+                settingsColmun = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                settingsColmun.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 
-                descriptionColmun.AddChild(new TextWidget(new LocalizedString("Description").Translated));
-                valueColmun.AddChild(new TextWidget(new LocalizedString("Value").Translated));
-
-                topToBottom.AddChild(columnHolder);
+                settingsAreaScrollBox.AddChild(settingsColmun);
             }
 
-            buttonCancel = new Button(new LocalizedString("Cancel").Translated);
-            topToBottom.AddChild(buttonCancel);
+            FlowLayoutWidget buttonBar = new FlowLayoutWidget();
+            buttonBar.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+            buttonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            buttonSave = textImageButtonFactory.Generate(new LocalizedString("Save To EEPROM").Translated);
+            buttonSave.Margin = new BorderDouble(3);
+            buttonBar.AddChild(buttonSave);
 
-            buttonSave = new Button(new LocalizedString("Save To EEPROM").Translated);
-            topToBottom.AddChild(buttonSave);
+            GuiWidget spacer = new GuiWidget(1, 1);
+            spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            buttonBar.AddChild(spacer);
+
+            buttonCancel = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
+            buttonCancel.Margin = new BorderDouble(3);
+            buttonBar.AddChild(buttonCancel);
+
+            topToBottom.AddChild(buttonBar);
 
             //MatterControlApplication.Instance.LanguageChanged += translate;
             this.AddChild(topToBottom);
@@ -85,6 +109,20 @@ namespace MatterHackers.MatterControl.EeProm
             translate();
 
             ShowAsSystemWindow();
+
+            storage.Clear();
+            PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(storage.Add, ref unregisterEvents); 
+            storage.eventAdded += NewSettingReadFromPrinter;
+            storage.AskPrinterForSettings();
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
         }
         
         public void translate()
@@ -97,34 +135,83 @@ namespace MatterHackers.MatterControl.EeProm
             buttonSave.Click += buttonSave_Click;
         }
 
-        private void newline(EePromRepatierParameter p)
+        private void NewSettingReadFromPrinter(object sender, EventArgs e)
         {
-            data.Add(p);
+            EePromRepatierParameter newSetting = e as EePromRepatierParameter;
+            if (newSetting != null)
+            {
+                data.Add(newSetting);
+
+                UiThread.RunOnIdle(AddItemToUi, newSetting);
+            }
+        }
+
+        void AddItemToUi(object state)
+        {
+            EePromRepatierParameter newSetting = state as EePromRepatierParameter;
+            if (newSetting != null)
+            {
+                FlowLayoutWidget row = new FlowLayoutWidget();
+                row.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+                row.AddChild(AddDescription(newSetting.Description));
+                row.Padding = new BorderDouble(5, 0);
+                if ((settingsColmun.Children.Count % 2) == 1)
+                {
+                    row.BackgroundColor = new RGBA_Bytes(0, 0, 0, 50);
+                }
+
+                GuiWidget spacer = new GuiWidget(1, 1);
+                spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                row.AddChild(spacer);
+
+                double currentValue;
+                double.TryParse(newSetting.Value, out currentValue);
+                MHNumberEdit valueEdit = new MHNumberEdit(currentValue, pixelWidth: 80, allowNegatives: true, allowDecimals: true);
+                valueEdit.VAnchor = Agg.UI.VAnchor.ParentCenter;
+                valueEdit.ActuallNumberEdit.EditComplete += (sender, e) =>
+                {
+                    newSetting.Value = valueEdit.ActuallNumberEdit.Value.ToString();
+                };
+                row.AddChild(valueEdit);
+
+                settingsColmun.AddChild(row);
+            }
+        }
+
+        private GuiWidget AddDescription(string description)
+        {
+            GuiWidget holder = new GuiWidget(340, 40);
+            TextWidget textWidget = new TextWidget(description, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            textWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
+            holder.AddChild(textWidget);
+
+            return holder;
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
+            UiThread.RunOnIdle(DoButtonSave_Click);
+        }
+
+        private void DoButtonSave_Click(object state)
+        {
             storage.Save();
             storage.Clear();
-            storage.eventAdded -= newline;
+            storage.eventAdded -= NewSettingReadFromPrinter;
+            Close();
         }
 
         private void buttonAbort_Click(object sender, EventArgs e)
         {
-            storage.Clear();
-            data.Clear();
-            storage.eventAdded -= newline;
+            UiThread.RunOnIdle(DoButtonAbort_Click);
         }
 
-        private void EEPROMRepetier_Activated(object sender, EventArgs e)
+        private void DoButtonAbort_Click(object state)
         {
-            if (reinit)
-            {
-                reinit = false;
-                storage.Clear();
-                storage.eventAdded += newline;
-                storage.AskPrinterForSettings();
-            }
+            storage.Clear();
+            data.Clear();
+            storage.eventAdded -= NewSettingReadFromPrinter;
+            Close();
         }
     }
 }
