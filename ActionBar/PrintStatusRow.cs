@@ -200,73 +200,41 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (PrinterCommunication.Instance.ActivePrintItem != null)
             {
-                
-                int secondsPrinted = PrinterCommunication.Instance.SecondsPrinted;
-                int hoursPrinted = (int)(secondsPrinted / (60 * 60));
-                int minutesPrinted = (int)(secondsPrinted / 60 - hoursPrinted * 60);
-                secondsPrinted = secondsPrinted % 60;
-                string timePrintedText;
-                if (hoursPrinted > 0)
-                {
-					string printTimeLbl = new LocalizedString ("Print Time").Translated;
-					timePrintedText = string.Format("{3}: {0}:{1:00}:{2:00}",
-                        hoursPrinted,
-                        minutesPrinted,
-						secondsPrinted, 
-						printTimeLbl);
-                }
-                else
-                {
-					string printTimeLbl = new LocalizedString ("Print Time").Translated;
-					timePrintedText = string.Format("{2}: {0:00}:{1:00}",
-                        minutesPrinted,
-						secondsPrinted,
-						printTimeLbl);
-                }
+                int totalSecondsInPrint = PrinterCommunication.Instance.TotalSecondsInPrint;
 
-                int secondsRemaining = PrinterCommunication.Instance.SecondsRemaining;
-                int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-                int minutesRemaining = (int)(secondsRemaining / 60 - hoursRemaining * 60);
-                secondsRemaining = secondsRemaining % 60;
-                string timeRemainingText;
-                if (secondsRemaining > 0)
+                int totalHoursInPrint = (int)(totalSecondsInPrint / (60 * 60));
+                int totalMinutesInPrint = (int)(totalSecondsInPrint / 60 - totalHoursInPrint * 60);
+                totalSecondsInPrint = totalSecondsInPrint % 60;
+
+                string totalTimeLabel = new LocalizedString("Est. Print Time").Translated;
+                string calculatingLabel = new LocalizedString("Calculating...").Translated;
+                string totalPrintTimeText;
+
+                if (totalSecondsInPrint > 0)
                 {
-                    if (hoursRemaining > 0)
+                    
+                    if (totalHoursInPrint > 0)
                     {
-						string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
-						timeRemainingText = string.Format("{3} (est): {0}:{1:00}:{2:00}",
-                            hoursRemaining,
-                            minutesRemaining,
-							secondsRemaining,
-							timeRemainingLbl);
+						
+						totalPrintTimeText = string.Format("{3} {0}h {1:00}m {2:00}s",
+                            totalHoursInPrint,
+                            totalMinutesInPrint,
+							totalSecondsInPrint,
+							totalTimeLabel);
                     }
                     else
                     {
-						string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
-						timeRemainingText = string.Format("{2} (est): {0:00}:{1:00}",
-                            minutesRemaining,
-							secondsRemaining,
-							timeRemainingLbl);
+						totalPrintTimeText = string.Format("{2} {0}m {1:00}s",
+                            totalMinutesInPrint,
+							totalSecondsInPrint,
+							totalTimeLabel);
                     }
-                }
-                else if (PrinterCommunication.Instance.PrintIsFinished)
-                {
-                    timeRemainingText = "";
                 }
                 else
                 {
-					string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
-					timeRemainingText = string.Format("{0} (est): --:--",
-						timeRemainingLbl,
-                        secondsPrinted / 60,
-                        secondsPrinted % 60);
+                    totalPrintTimeText = string.Format("{0}: {1}", totalTimeLabel, calculatingLabel);
                 }
 
-                string printTimeInfoText = timePrintedText;
-                if (timeRemainingText != "")
-                {
-                    printTimeInfoText += ", " + timeRemainingText;
-                }
                 //GC.WaitForFullGCComplete();
 
                 string printPercentRemainingText;
@@ -286,7 +254,7 @@ namespace MatterHackers.MatterControl.ActionBar
                     case PrinterCommunication.CommunicationStates.Printing:
                         {
                             activePrintLabel.Text = PrinterCommunication.Instance.PrintingStateString;
-                            ActivePrintStatusText = printPercentRemainingText;
+                            ActivePrintStatusText = totalPrintTimeText;
                         }
                         break;
 
@@ -295,7 +263,7 @@ namespace MatterHackers.MatterControl.ActionBar
 							string activePrintLblTxt = new LocalizedString ("Printing Paused").Translated;
 							string activePrintLblTxtFull = string.Format("{0}:", activePrintLblTxt);
 							activePrintLabel.Text = activePrintLblTxtFull;
-                            ActivePrintStatusText = printPercentRemainingText;
+                            ActivePrintStatusText = totalPrintTimeText;
                         }
                         break;
 
@@ -303,7 +271,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					string donePrintingTxt = new LocalizedString ("Done Printing").Translated;
 					string donePrintingTxtFull = string.Format ("{0}:", donePrintingTxt);
 					activePrintLabel.Text = donePrintingTxtFull;
-                        ActivePrintStatusText = printPercentRemainingText;
+                    ActivePrintStatusText = totalPrintTimeText;
                         break;
 
 				default:
