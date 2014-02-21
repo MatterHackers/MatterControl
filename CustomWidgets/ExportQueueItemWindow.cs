@@ -70,10 +70,10 @@ namespace MatterHackers.MatterControl
 				string exportStlTxt = new LocalizedString("Export as").Translated;
 				string exportStlTxtFull = string.Format("{0} STL", exportStlTxt);
 
-				Button exportSTL = textImageButtonFactory.Generate(exportStlTxtFull);
-                exportSTL.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
+				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTxtFull);
+                exportAsStlButton.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
                 //exportSTL.HAnchor = Agg.UI.HAnchor.ParentCenter;
-                topToBottom.AddChild(exportSTL);
+                topToBottom.AddChild(exportAsStlButton);
             }
 
             bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
@@ -142,19 +142,17 @@ namespace MatterHackers.MatterControl
 			if (streamToSaveTo != null) 
 			{
 				streamToSaveTo.Close ();
-			
 				
 				string filePathToSave = saveParams.FileName;
 				string extension = GetExtension(filePathToSave);
 				if(extension == "")
 				{
+					File.Delete (filePathToSave);
 					filePathToSave +=  ".gcode";
 				}
 
-
                 if (System.IO.Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".STL")
                 {
-                    pathAndFilenameToSave = saveParams.FileName;
                     Close();
                     SlicingQueue.Instance.QueuePartForSlicing(printQueueItem.PrintItemWrapper);
                     printQueueItem.PrintItemWrapper.Done += new EventHandler(sliceItem_Done);
@@ -162,7 +160,7 @@ namespace MatterHackers.MatterControl
                 else if (partIsGCode)
                 {
                     Close();
-                    SaveGCodeToNewLocation(printQueueItem.PrintItemWrapper.FileLocation, saveParams.FileName);
+					SaveGCodeToNewLocation(printQueueItem.PrintItemWrapper.FileLocation, filePathToSave);
                 }
             }
         }
@@ -250,9 +248,9 @@ namespace MatterHackers.MatterControl
 			string extension = CheckExtension(filePathToSave);
 			if (extension == "") 
 			{						
+				File.Delete (filePathToSave);
 				filePathToSave += ".stl";
 			}
-
 			File.Copy (printQueueItem.PrintItemWrapper.FileLocation, filePathToSave, true);
 			ShowFileIfRequested (filePathToSave);
         }

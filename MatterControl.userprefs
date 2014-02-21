@@ -1,22 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\MatterControlPlugins\PrintNotifications\NotificationForm.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Localizations\LocalizedString.cs">
     <Files>
-      <File FileName="Localizations\LocalizedString.cs" Line="18" Column="14" />
+      <File FileName="Localizations\LocalizedString.cs" Line="14" Column="10" />
       <File FileName="PrintLibrary\PrintLibraryListItem.cs" Line="1" Column="1" />
-      <File FileName="ActionBar\ActionBarBaseControls.cs" Line="218" Column="49" />
-      <File FileName="ActionBar\HelpTextWidget.cs" Line="145" Column="8" />
+      <File FileName="ActionBar\ActionBarBaseControls.cs" Line="1" Column="1" />
+      <File FileName="ActionBar\HelpTextWidget.cs" Line="1" Column="1" />
       <File FileName="PrintQueue\PrintQueueMenu.cs" Line="1" Column="1" />
-      <File FileName="CustomWidgets\ExportQueueItemWindow.cs" Line="255" Column="5" />
-      <File FileName="ActionBar\ActionBarPlus.cs" Line="69" Column="23" />
-      <File FileName="ActionBar\PrintActionRow.cs" Line="15" Column="46" />
-      <File FileName="..\MatterControlPlugins\PrintNotifications\NotificationForm.cs" Line="210" Column="65" />
+      <File FileName="..\MatterControlPlugins\PrintNotifications\NotificationForm.cs" Line="1" Column="1" />
+      <File FileName="PrinterCommunication.cs" Line="1" Column="1" />
+      <File FileName="PrintLevelWizard.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\Matter Hackers 1\Development\mattercontrol\PrintQueue\PrintQueueMenu.cs" line="148" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
