@@ -93,7 +93,7 @@
     <Compile Include="PrinterControls\EditMacrosWindow.cs" />
     <Compile Include="PrintLibrary\PluginChooserWindow.cs" />
     <Compile Include="PrintLibrary\ExportLibraryItemWindow.cs" />
-    <Compile Include="PrintLibrary\RegisteredCreatort.cs" />
+    <Compile Include="PrintLibrary\RegisteredCreators.cs" />
     <Compile Include="PrintQueue\ExportToSdCardProcess.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingCura.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
