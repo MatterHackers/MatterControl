@@ -66,11 +66,17 @@ namespace MatterHackers.MatterControl.EeProm
             FlowLayoutWidget row = new FlowLayoutWidget();
             row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             row.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            row.AddChild(AddDescription(new LocalizedString("Description").Translated));
+            GuiWidget descriptionWidget = AddDescription(new LocalizedString("Description").Translated);
+            descriptionWidget.Margin = new BorderDouble(left: 3);
+            row.AddChild(descriptionWidget);
+
+            GuiWidget topSpacer = new GuiWidget(1, 1);
+            topSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            row.AddChild(topSpacer);
 
             GuiWidget valueText = new TextWidget(new LocalizedString("Value").Translated, textColor: ActiveTheme.Instance.PrimaryTextColor);
             valueText.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            valueText.Margin = new BorderDouble(left: 5);
+            valueText.Margin = new BorderDouble(left: 5, right: 60);
             row.AddChild(valueText);
             topToBottom.AddChild(row);
 
