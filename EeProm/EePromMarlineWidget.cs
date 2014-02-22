@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.EeProm
 
         private void DoButtonSave_Click(object state)
         {
-            DoButtonSetActive_Click(state);
+            SaveSettingsToActive();
             currentEePromSettings.SaveToEeProm();
             Close();
         }
@@ -380,6 +380,12 @@ namespace MatterHackers.MatterControl.EeProm
         }
 
         void DoButtonSetActive_Click(object state)
+        {
+            SaveSettingsToActive();
+            Close();
+        }
+
+        void SaveSettingsToActive()
         {
             currentEePromSettings.SX = stepsPerMmX.Text;
             currentEePromSettings.SY = stepsPerMmY.Text;
