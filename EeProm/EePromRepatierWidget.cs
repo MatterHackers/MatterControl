@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.EeProm
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-        EePromRepatierStorage storage;
+        EePromRepatierStorage currentEePromSettings;
         BindingList<EePromRepatierParameter> data = new BindingList<EePromRepatierParameter>();
         FlowLayoutWidget settingsColmun;
 
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.EeProm
         {
             BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 
-            storage = new EePromRepatierStorage();
+            currentEePromSettings = new EePromRepatierStorage();
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
@@ -70,9 +70,7 @@ namespace MatterHackers.MatterControl.EeProm
             descriptionWidget.Margin = new BorderDouble(left: 3);
             row.AddChild(descriptionWidget);
 
-            GuiWidget topSpacer = new GuiWidget(1, 1);
-            topSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            row.AddChild(topSpacer);
+            CreateSpacer(row);
 
             GuiWidget valueText = new TextWidget(new LocalizedString("Value").Translated, textColor: ActiveTheme.Instance.PrimaryTextColor);
             valueText.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -99,9 +97,7 @@ namespace MatterHackers.MatterControl.EeProm
             buttonSave.Margin = new BorderDouble(3);
             buttonBar.AddChild(buttonSave);
 
-            GuiWidget spacer = new GuiWidget(1, 1);
-            spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            buttonBar.AddChild(spacer);
+            CreateSpacer(buttonBar);
 
             buttonCancel = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
             buttonCancel.Margin = new BorderDouble(3);
@@ -109,17 +105,24 @@ namespace MatterHackers.MatterControl.EeProm
 
             topToBottom.AddChild(buttonBar);
 
-            //MatterControlApplication.Instance.LanguageChanged += translate;
             this.AddChild(topToBottom);
 
             translate();
+            //MatterControlApplication.Instance.LanguageChanged += translate;
 
             ShowAsSystemWindow();
 
-            storage.Clear();
-            PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(storage.Add, ref unregisterEvents); 
-            storage.eventAdded += NewSettingReadFromPrinter;
-            storage.AskPrinterForSettings();
+            currentEePromSettings.Clear();
+            PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents); 
+            currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
+            currentEePromSettings.AskPrinterForSettings();
+        }
+
+        private static void CreateSpacer(FlowLayoutWidget buttonBar)
+        {
+            GuiWidget spacer = new GuiWidget(1, 1);
+            spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            buttonBar.AddChild(spacer);
         }
 
         public override void OnClosed(EventArgs e)
@@ -166,9 +169,7 @@ namespace MatterHackers.MatterControl.EeProm
                     row.BackgroundColor = new RGBA_Bytes(0, 0, 0, 50);
                 }
 
-                GuiWidget spacer = new GuiWidget(1, 1);
-                spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                row.AddChild(spacer);
+                CreateSpacer(row);
 
                 double currentValue;
                 double.TryParse(newSetting.Value, out currentValue);
@@ -201,9 +202,9 @@ namespace MatterHackers.MatterControl.EeProm
 
         private void DoButtonSave_Click(object state)
         {
-            storage.Save();
-            storage.Clear();
-            storage.eventAdded -= NewSettingReadFromPrinter;
+            currentEePromSettings.Save();
+            currentEePromSettings.Clear();
+            currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
             Close();
         }
 
@@ -214,9 +215,9 @@ namespace MatterHackers.MatterControl.EeProm
 
         private void DoButtonAbort_Click(object state)
         {
-            storage.Clear();
+            currentEePromSettings.Clear();
             data.Clear();
-            storage.eventAdded -= NewSettingReadFromPrinter;
+            currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
             Close();
         }
     }

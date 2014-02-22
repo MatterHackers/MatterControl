@@ -74,6 +74,8 @@
     <Compile Include="ActivePrinterProfile.cs" />
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
+    <Compile Include="EeProm\EePromMarlineWidget.cs" />
+    <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="EeProm\EePromRepatierParameter.cs" />
     <Compile Include="EeProm\EePromRepatierStorage.cs" />
     <Compile Include="EeProm\EePromRepatierWidget.cs" />

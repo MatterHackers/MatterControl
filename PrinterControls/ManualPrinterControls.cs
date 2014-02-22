@@ -284,9 +284,24 @@ namespace MatterHackers.MatterControl
                     //openEePromWindow.VAnchor = VAnchor.ParentCenter;
                     openEePromWindow.Click += (sender, e) =>
                     {
-                        if (PrinterCommunication.Instance.FirmwareType == PrinterCommunication.FirmwareTypes.Repetier)
+                        switch(PrinterCommunication.Instance.FirmwareType)
                         {
-                            new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
+                            case PrinterCommunication.FirmwareTypes.Repetier:
+                                new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
+                            break;
+
+                            case PrinterCommunication.FirmwareTypes.Marlin:
+                                new MatterHackers.MatterControl.EeProm.EePromMarlinWidget();
+                            break;
+
+                            default:
+                                UiThread.RunOnIdle((state) => 
+                                {
+                                    string message = new LocalizedString("There is no eeprom mapping for your printer's firmware.").Translated;
+                                    StyledMessageBox.ShowMessageBox(message, "Warning no eeprom mapping", StyledMessageBox.MessageType.OK);
+                                }
+                                );
+                            break;
                         }
                     };
 
