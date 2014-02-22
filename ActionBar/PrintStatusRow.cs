@@ -92,17 +92,46 @@ namespace MatterHackers.MatterControl.ActionBar
                 temperatureWidgets.AddChild(extruderTemperatureWidget);
                 temperatureWidgets.AddChild(bedTemperatureWidget);
             }            
-            temperatureWidgets.VAnchor = VAnchor.ParentTop;
+            temperatureWidgets.VAnchor |= VAnchor.ParentTop;
+            temperatureWidgets.Margin = new BorderDouble(left: 6);
 
             FlowLayoutWidget printStatusContainer = getActivePrinterInfo();
-            printStatusContainer.VAnchor = VAnchor.ParentTop;
+            printStatusContainer.VAnchor |= VAnchor.ParentTop;
+
+            FlowLayoutWidget iconContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            iconContainer.Name = "PrintStatusRow.IconContainer";
+            iconContainer.VAnchor |= VAnchor.ParentTop;
+            iconContainer.Margin = new BorderDouble(top: 3);
+            iconContainer.AddChild(GetAutoLevelIndicator());
 
             this.AddChild(activePrintPreviewImage);
             this.AddChild(printStatusContainer);
+            this.AddChild(iconContainer);
             this.AddChild(temperatureWidgets);
 
             UpdatePrintStatus();
             UpdatePrintItemName();
+        }
+
+        private Button GetAutoLevelIndicator()
+        {
+            ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
+            string notifyIconPath = Path.Combine("Icons", "PrintStatusControls", "ruler.png");
+            string notifyHoverIconPath = Path.Combine("Icons", "PrintStatusControls", "ruler.png");
+            Button notifyButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
+            notifyButton.Cursor = Cursors.Hand;
+            notifyButton.Margin = new Agg.BorderDouble(top: 3);
+            notifyButton.MouseEnterBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.ShowHoverText("Print leveling is enabled."); };
+            notifyButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
+            notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+
+            ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+            {
+                notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+
+            }, ref unregisterEvents);
+
+            return notifyButton;
         }
 
         private FlowLayoutWidget getActivePrinterInfo()
