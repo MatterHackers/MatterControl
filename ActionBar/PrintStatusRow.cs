@@ -125,6 +125,12 @@ namespace MatterHackers.MatterControl.ActionBar
             notifyButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
             notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
 
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, e) =>
+            {
+                notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+
+            }, ref unregisterEvents);
+
             ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
             {
                 notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
