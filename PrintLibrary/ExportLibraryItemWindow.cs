@@ -67,10 +67,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             if (!partIsGCode)
             {
-				Button exportSTL = textImageButtonFactory.Generate(new LocalizedString("Export as STL").Translated);
-                exportSTL.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
+				string exportSTLTxt = new LocalizedString ("Export as").Translated;
+				string exportSTLTxtFull = string.Format ("{0} STL", exportSTLTxt);
+
+				Button exportAsSTLButton = textImageButtonFactory.Generate(exportSTLTxtFull);
+				exportAsSTLButton.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
                 //exportSTL.HAnchor = Agg.UI.HAnchor.ParentCenter;
-                topToBottom.AddChild(exportSTL);
+				topToBottom.AddChild(exportAsSTLButton);
             }
 
             bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
@@ -143,6 +146,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				if(extension == "")
 				{
+					File.Delete (filePathToSave);
 					filePathToSave += ".gcode";
 				}
 
@@ -243,6 +247,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			if(extension == "") 
 			{
+				File.Delete (filePathToSave);
 				filePathToSave +=  ".stl";
 			}
 
