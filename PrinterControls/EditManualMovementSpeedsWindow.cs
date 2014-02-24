@@ -173,7 +173,12 @@ namespace MatterHackers.MatterControl
             savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
-            cancelPresetsButton.Click += (sender, e) => { Close(); };
+            cancelPresetsButton.Click += (sender, e) => {
+                UiThread.RunOnIdle((state) =>
+                {
+                    Close();
+                }); 
+            };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
