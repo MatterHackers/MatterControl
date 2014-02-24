@@ -97,7 +97,8 @@ namespace MatterHackers.MatterControl
                     {
                         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
                         buttonFactory.FixedHeight = 20;
-                        buttonFactory.FixedWidth = 35;
+                        buttonFactory.FixedWidth = 30;
+                        buttonFactory.fontSize = 10;
                         buttonFactory.Margin = new BorderDouble(0);
 
                         FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
@@ -123,11 +124,11 @@ namespace MatterHackers.MatterControl
                         moveRadioButtons.AddChild(oneHundredButton);
 
                         tenButton.Checked = true;
-                        moveRadioButtons.Margin = new BorderDouble(3);
+                        moveRadioButtons.Margin = new BorderDouble(0,3);
                         setMoveDistanceControl.AddChild(moveRadioButtons);
                     }
 
-                    TextWidget mmLabel = new TextWidget("mm", textColor: RGBA_Bytes.White);
+                    TextWidget mmLabel = new TextWidget("mm", textColor: RGBA_Bytes.White, pointSize:10);
                     mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
                     setMoveDistanceControl.AddChild(mmLabel);
                     setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -227,7 +228,8 @@ namespace MatterHackers.MatterControl
             {
                 TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
                 buttonFactory.FixedHeight = 20;
-                buttonFactory.FixedWidth = 35;
+                buttonFactory.FixedWidth = 30;
+                buttonFactory.fontSize = 10;
                 buttonFactory.Margin = new BorderDouble(0);
 
                 FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
@@ -244,11 +246,11 @@ namespace MatterHackers.MatterControl
                 oneHundredButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetEMoveAmount(100); };
                 moveRadioButtons.AddChild(oneHundredButton);
                 tenButton.Checked = true;
-                moveRadioButtons.Margin = new BorderDouble(3);
+                moveRadioButtons.Margin = new BorderDouble(0,3);
                 setMoveDistanceControl.AddChild(moveRadioButtons);
             }
 
-            TextWidget mmLabel = new TextWidget("mm", textColor: RGBA_Bytes.White);
+            TextWidget mmLabel = new TextWidget("mm", textColor: RGBA_Bytes.White, pointSize:10);
             mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
             setMoveDistanceControl.AddChild(mmLabel);
             setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
