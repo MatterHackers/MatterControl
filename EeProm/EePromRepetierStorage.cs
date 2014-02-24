@@ -32,61 +32,67 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using MatterHackers.Agg.UI;
+
 namespace MatterHackers.MatterControl.EeProm
 {
-    public class EePromRepatierParameter : EventArgs
+    public delegate void OnEePromRepetierAdded(EePromRepetierParameter param);
+
+    public class EePromRepetierStorage
     {
-        public string description;
-        public int type;
-        public int position;
-        string val = "";
-        bool changed = false;
+        public Dictionary<int, EePromRepetierParameter> eePromSettingsList;
+        public event EventHandler eventAdded = null;
 
-        public EePromRepatierParameter(string line)
+        public EePromRepetierStorage()
         {
-            update(line);
+            eePromSettingsList = new Dictionary<int, EePromRepetierParameter>();
         }
 
-        public void update(string line)
+        public void Clear()
         {
-            string[] lines = line.Substring(4).Split(' ');
-            int.TryParse(lines[0], out type);
-            int.TryParse(lines[1], out position);
-            val = lines[2];
-            description = line.Substring(7 + lines[0].Length + lines[1].Length + lines[2].Length);
-            changed = false;
+            eePromSettingsList.Clear();
         }
-        
-        public void save()
+
+        public void Save()
         {
-            if (!changed)
+            foreach (EePromRepetierParameter p in eePromSettingsList.Values)
+            {
+                p.save();
+            }
+        }
+
+        public void Add(object sender, EventArgs e)
+        {
+            StringEventArgs lineString = e as StringEventArgs;
+
+            if (e == null)
             {
                 return;
             }
 
-            string cmd = "M206 T" + type + " P" + position + " ";
-            if (type == 3) cmd += "X" + val;
-            else cmd += "S" + val;
-            PrinterCommunication.Instance.QueueLineToPrinter(cmd);
-            changed = false;
-        }
+            string line = lineString.Data;
 
-        public string Description
-        {
-            get { return description; }
-            set { description = value; }
-        }
-
-        public string Value
-        {
-            get { return val; }
-            set
+            if (!line.StartsWith("EPR:"))
             {
-                value = value.Replace(',', '.').Trim();
-                if (val.Equals(value)) return;
-                val = value;
-                changed = true;
+                return;
             }
+
+            EePromRepetierParameter parameter = new EePromRepetierParameter(line);
+            if (eePromSettingsList.ContainsKey(parameter.position))
+            {
+                eePromSettingsList.Remove(parameter.position);
+            }
+
+            eePromSettingsList.Add(parameter.position, parameter);
+            if (eventAdded != null)
+            {
+                eventAdded(this, parameter);
+            }
+        }
+
+        public void AskPrinterForSettings()
+        {
+            PrinterCommunication.Instance.QueueLineToPrinter("M205");
         }
     }
 }

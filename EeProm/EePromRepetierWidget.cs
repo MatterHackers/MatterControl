@@ -43,8 +43,8 @@ namespace MatterHackers.MatterControl.EeProm
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-        EePromRepatierStorage currentEePromSettings;
-        BindingList<EePromRepatierParameter> data = new BindingList<EePromRepatierParameter>();
+        EePromRepetierStorage currentEePromSettings;
+        BindingList<EePromRepetierParameter> data = new BindingList<EePromRepetierParameter>();
         FlowLayoutWidget settingsColmun;
 
         event EventHandler unregisterEvents;
@@ -57,11 +57,13 @@ namespace MatterHackers.MatterControl.EeProm
         {
             BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 
-            currentEePromSettings = new EePromRepatierStorage();
+            currentEePromSettings = new EePromRepetierStorage();
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
             topToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			topToBottom.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			topToBottom.Padding = new BorderDouble (3, 0);
 
             FlowLayoutWidget row = new FlowLayoutWidget();
             row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -82,6 +84,7 @@ namespace MatterHackers.MatterControl.EeProm
                 ScrollableWidget settingsAreaScrollBox = new ScrollableWidget(true);
                 settingsAreaScrollBox.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
                 settingsAreaScrollBox.AnchorAll();
+				settingsAreaScrollBox.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
                 topToBottom.AddChild(settingsAreaScrollBox);
 
                 settingsColmun = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -94,7 +97,7 @@ namespace MatterHackers.MatterControl.EeProm
             buttonBar.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             buttonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             buttonSave = textImageButtonFactory.Generate(new LocalizedString("Save To EEPROM").Translated);
-            buttonSave.Margin = new BorderDouble(3);
+			buttonSave.Margin = new BorderDouble(0,3);
             buttonBar.AddChild(buttonSave);
 
             CreateSpacer(buttonBar);
@@ -146,7 +149,7 @@ namespace MatterHackers.MatterControl.EeProm
 
         private void NewSettingReadFromPrinter(object sender, EventArgs e)
         {
-            EePromRepatierParameter newSetting = e as EePromRepatierParameter;
+            EePromRepetierParameter newSetting = e as EePromRepetierParameter;
             if (newSetting != null)
             {
                 data.Add(newSetting);
@@ -157,7 +160,7 @@ namespace MatterHackers.MatterControl.EeProm
 
         void AddItemToUi(object state)
         {
-            EePromRepatierParameter newSetting = state as EePromRepatierParameter;
+            EePromRepetierParameter newSetting = state as EePromRepetierParameter;
             if (newSetting != null)
             {
                 FlowLayoutWidget row = new FlowLayoutWidget();

@@ -93,14 +93,20 @@ namespace MatterHackers.MatterControl.EeProm
         {
             Title = new LocalizedString("Marlin Firmware EEPROM Settings").Translated;
 
-            BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-
             currentEePromSettings = new EePromMarlinSettings();
             currentEePromSettings.eventAdded += SetUiToPrinterSettings;
+
+			FlowLayoutWidget mainContainer = new FlowLayoutWidget (FlowDirection.TopToBottom);
+			mainContainer.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
+			mainContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			mainContainer.Padding = new BorderDouble (3, 0);
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
             topToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			topToBottom.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			topToBottom.Padding = new BorderDouble (top: 3);
 
             // the top button bar
             {
@@ -111,12 +117,12 @@ namespace MatterHackers.MatterControl.EeProm
                 CreateMainButton(ref buttonReLoadSettings, topButtonBar, "Re-Load Default Settings");
                 buttonReLoadSettings.Click += buttonReLoadSettings_Click;
 
-                topButtonBar.AddChild(new GuiWidget(10, 1));
+				topButtonBar.Margin = new BorderDouble (0, 3);
                 
                 CreateMainButton(ref buttonSetToFactorySettings, topButtonBar, "Set Default To Factory Settings");
                 buttonSetToFactorySettings.Click += SetToFactorySettings;
 
-                topToBottom.AddChild(topButtonBar);
+				mainContainer.AddChild(topButtonBar);
             }
 
             topToBottom.AddChild(Create4FieldSet("Steps per mm:",
@@ -160,17 +166,17 @@ namespace MatterHackers.MatterControl.EeProm
             topBottomSpacer.VAnchor = VAnchor.ParentBottomTop;
             topToBottom.AddChild(topBottomSpacer);
 
+			mainContainer.AddChild (topToBottom);
 
             // the bottom button bar
             {
                 FlowLayoutWidget bottomButtonBar = new FlowLayoutWidget();
                 bottomButtonBar.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
                 bottomButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				bottomButtonBar.Margin = new BorderDouble (0, 3);
 
                 CreateMainButton(ref buttonSetActive, bottomButtonBar, "Make Settings Active");
                 buttonSetActive.Click += buttonSetActive_Click;
-
-                bottomButtonBar.AddChild(new GuiWidget(10, 1));
 
                 CreateMainButton(ref buttonSave, bottomButtonBar, "Make Settings Active\nAnd Save To Default");
                 buttonSave.Click += buttonSave_Click;
@@ -180,14 +186,14 @@ namespace MatterHackers.MatterControl.EeProm
                 CreateMainButton(ref buttonAbort, bottomButtonBar, "Cancel");
                 buttonAbort.Click += buttonAbort_Click;
 
-                topToBottom.AddChild(bottomButtonBar);
+				mainContainer.AddChild(bottomButtonBar);
             }
 
             PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
             currentEePromSettings.eventAdded += SetUiToPrinterSettings;
 
-            AddChild(topToBottom);
+			AddChild(mainContainer);
 
             ShowAsSystemWindow();
 
@@ -296,7 +302,6 @@ namespace MatterHackers.MatterControl.EeProm
         private void CreateMainButton(ref Button button, FlowLayoutWidget buttonBar, string text)
         {
             button = textImageButtonFactory.Generate(new LocalizedString(text).Translated);
-            button.Margin = new BorderDouble(3);
             buttonBar.AddChild(button);
         }
 

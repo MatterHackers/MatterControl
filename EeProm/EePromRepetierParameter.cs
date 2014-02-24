@@ -32,67 +32,61 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using MatterHackers.Agg.UI;
-
 namespace MatterHackers.MatterControl.EeProm
 {
-    public delegate void OnEePromRepatierAdded(EePromRepatierParameter param);
-
-    public class EePromRepatierStorage
+    public class EePromRepetierParameter : EventArgs
     {
-        public Dictionary<int, EePromRepatierParameter> eePromSettingsList;
-        public event EventHandler eventAdded = null;
+        public string description;
+        public int type;
+        public int position;
+        string val = "";
+        bool changed = false;
 
-        public EePromRepatierStorage()
+        public EePromRepetierParameter(string line)
         {
-            eePromSettingsList = new Dictionary<int, EePromRepatierParameter>();
+            update(line);
         }
 
-        public void Clear()
+        public void update(string line)
         {
-            eePromSettingsList.Clear();
+            string[] lines = line.Substring(4).Split(' ');
+            int.TryParse(lines[0], out type);
+            int.TryParse(lines[1], out position);
+            val = lines[2];
+            description = line.Substring(7 + lines[0].Length + lines[1].Length + lines[2].Length);
+            changed = false;
         }
-
-        public void Save()
+        
+        public void save()
         {
-            foreach (EePromRepatierParameter p in eePromSettingsList.Values)
-            {
-                p.save();
-            }
-        }
-
-        public void Add(object sender, EventArgs e)
-        {
-            StringEventArgs lineString = e as StringEventArgs;
-
-            if (e == null)
+            if (!changed)
             {
                 return;
             }
 
-            string line = lineString.Data;
-
-            if (!line.StartsWith("EPR:"))
-            {
-                return;
-            }
-
-            EePromRepatierParameter parameter = new EePromRepatierParameter(line);
-            if (eePromSettingsList.ContainsKey(parameter.position))
-            {
-                eePromSettingsList.Remove(parameter.position);
-            }
-
-            eePromSettingsList.Add(parameter.position, parameter);
-            if (eventAdded != null)
-            {
-                eventAdded(this, parameter);
-            }
+            string cmd = "M206 T" + type + " P" + position + " ";
+            if (type == 3) cmd += "X" + val;
+            else cmd += "S" + val;
+            PrinterCommunication.Instance.QueueLineToPrinter(cmd);
+            changed = false;
         }
 
-        public void AskPrinterForSettings()
+        public string Description
         {
-            PrinterCommunication.Instance.QueueLineToPrinter("M205");
+            get { return description; }
+            set { description = value; }
+        }
+
+        public string Value
+        {
+            get { return val; }
+            set
+            {
+                value = value.Replace(',', '.').Trim();
+                if (val.Equals(value)) return;
+                val = value;
+                changed = true;
+            }
         }
     }
 }
