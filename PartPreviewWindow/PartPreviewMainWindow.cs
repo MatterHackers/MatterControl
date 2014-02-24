@@ -79,11 +79,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             tabControl.AddTab(new SimpleTextTabWidget(layerView, 16,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));       
 
-            if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
-            {
-                tabControl.TabBar.SwitchToPage(layerView);
-            }
-
             this.AddChild(tabControl);
             this.AnchorAll();
 
@@ -94,6 +89,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             ShowAsSystemWindow();
             MinimumSize = new Vector2(400, 300);
+
+            // We do this after showing the system window so that when we try and take fucus the parent window (the system window)
+            // exists and can give the fucus to its child the gecode window.
+            if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
+            {
+                tabControl.TabBar.SwitchToPage(layerView);
+                partGcodeView.Focus();
+            }
         }
 
         PerformanceFeedbackWindow timingWindow = null;

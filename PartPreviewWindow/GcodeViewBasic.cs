@@ -510,12 +510,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
                 layerSelectionButtonsPannel.AddChild(navigationWidget);
 
-
                 selectLayerSlider = new Slider(new Vector2(), 10, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
                 SetSliderSize();
+
+                // let's change the active layer so that it is set to the first layer with data
+                gcodeViewWidget.ActiveLayerIndex = gcodeViewWidget.ActiveLayerIndex + 1;
+                gcodeViewWidget.ActiveLayerIndex = gcodeViewWidget.ActiveLayerIndex - 1;
 
                 BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
             }
