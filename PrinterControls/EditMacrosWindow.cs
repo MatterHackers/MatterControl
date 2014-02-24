@@ -335,7 +335,12 @@ namespace MatterHackers.MatterControl
             addMacroButton.Click += new ButtonBase.ButtonEventHandler(addMacro_Click);
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Close").Translated);
-            cancelPresetsButton.Click += (sender, e) => { this.windowController.Close(); };
+            cancelPresetsButton.Click += (sender, e) => {
+                UiThread.RunOnIdle((state) =>
+                {
+                    this.windowController.Close(); 
+                }); 
+            };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
