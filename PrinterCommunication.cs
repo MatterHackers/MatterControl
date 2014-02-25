@@ -486,8 +486,9 @@ namespace MatterHackers.MatterControl
 						return new LocalizedString("Not Connected").Translated;
                     case CommunicationStates.Disconnecting:
 						return new LocalizedString("Disconnecting").Translated;
-                    case CommunicationStates.AttemptingToConnect:
-                        return "Connecting...";
+					case CommunicationStates.AttemptingToConnect:
+						string connectingMessageTxt = new LocalizedString ("Connecting").Translated;
+						return string.Format("{0}...",connectingMessageTxt);
                     case CommunicationStates.ConnectionLost:
 						return new LocalizedString("Connection Lost").Translated;
                     case CommunicationStates.FailedToConnect:
