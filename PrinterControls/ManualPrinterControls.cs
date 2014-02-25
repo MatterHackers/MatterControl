@@ -306,6 +306,9 @@ namespace MatterHackers.MatterControl
 					Button openEePromWindow = textImageButtonFactory.Generate(new LocalizedString("CONFIGURE").Translated);
                     openEePromWindow.Click += (sender, e) =>
                     {
+#if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
+                        new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
+#else
 						switch(PrinterCommunication.Instance.FirmwareType)
                         {
                             case PrinterCommunication.FirmwareTypes.Repetier:
@@ -325,6 +328,7 @@ namespace MatterHackers.MatterControl
                                 );
                             break;
                         }
+#endif
                     };
 					//eePromControlsLayout.AddChild(eePromIcon);
                     eePromControlsLayout.AddChild(openEePromWindow);

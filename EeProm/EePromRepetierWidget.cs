@@ -26,6 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+//#define SIMULATE_CONNECTION
 
 using System;
 using System.Collections.Generic;
@@ -119,7 +120,25 @@ namespace MatterHackers.MatterControl.EeProm
             PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents); 
             currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
             currentEePromSettings.AskPrinterForSettings();
+
+#if SIMULATE_CONNECTION
+            UiThread.RunOnIdle(AddSimulatedItems);
+#endif
         }
+
+#if SIMULATE_CONNECTION
+        int count;
+        void AddSimulatedItems(object state)
+        {
+            NewSettingReadFromPrinter(this, new EePromRepetierParameter("this is a test line " + count.ToString()));
+
+            count++;
+            if (count < 30)
+            {
+                UiThread.RunOnIdle(AddSimulatedItems);
+            }
+        }
+#endif
 
         private static void CreateSpacer(FlowLayoutWidget buttonBar)
         {
@@ -186,6 +205,12 @@ namespace MatterHackers.MatterControl.EeProm
 
                 settingsColmun.AddChild(row);
             }
+
+            // TODO: fix the flow layout so we don't need this.
+            // This is correcting a bug in flow layout widgets not setting sizes correctly.
+            double oldWidth = Width;
+            Width = Width + 1;
+            Width = oldWidth;
         }
 
         private GuiWidget AddDescription(string description)
