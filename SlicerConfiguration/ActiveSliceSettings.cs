@@ -275,7 +275,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         return MeshVisualizer.MeshViewerWidget.BedShape.Circular;
 
                     default:
+#if DEBUG
                         throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetActiveValue("bed_shape")));
+#else
+                        return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
+#endif
                 }
             }
         }
