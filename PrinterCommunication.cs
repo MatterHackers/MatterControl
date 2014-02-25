@@ -98,6 +98,14 @@ namespace MatterHackers.MatterControl
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
+        public enum FirmwareTypes { Unknown, Repetier, Marlin, Sprinter };
+        FirmwareTypes firmwareType = FirmwareTypes.Unknown;
+        
+        public FirmwareTypes FirmwareType
+        {
+            get { return firmwareType; }
+        }
+
         static PrinterCommunication globalInstance;
         string connectionFailureMessage = "Unknown Reason";
 
@@ -106,7 +114,8 @@ namespace MatterHackers.MatterControl
         public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
-        public RootedObjectEventHandler CommunicationUnconditional = new RootedObjectEventHandler();
+        public RootedObjectEventHandler CommunicationUnconditionalFromPrinter = new RootedObjectEventHandler();
+        public RootedObjectEventHandler CommunicationUnconditionalToPrinter = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionFailed = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionStateChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
@@ -373,7 +382,7 @@ namespace MatterHackers.MatterControl
 
             ReadLineStartCallBacks.AddCallBackToKey("ok", PrintingCanContinue);
 
-            ReadLineStartCallBacks.AddCallBackToKey("ok T:", ReadTemperatures); // marline
+            ReadLineStartCallBacks.AddCallBackToKey("ok T:", ReadTemperatures); // marlin
             ReadLineStartCallBacks.AddCallBackToKey("T:", ReadTemperatures); // repatier
 
             ReadLineStartCallBacks.AddCallBackToKey("C:", ReadPositions);
@@ -381,6 +390,7 @@ namespace MatterHackers.MatterControl
 
             ReadLineContainsCallBacks.AddCallBackToKey("RS:", PrinterRequestsResend);
             ReadLineContainsCallBacks.AddCallBackToKey("Resend:", PrinterRequestsResend);
+            ReadLineContainsCallBacks.AddCallBackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
 
             WriteLineStartCallBacks.AddCallBackToKey("G28", HomeWasWritenToPrinter);
 
@@ -476,8 +486,9 @@ namespace MatterHackers.MatterControl
 						return new LocalizedString("Not Connected").Translated;
                     case CommunicationStates.Disconnecting:
 						return new LocalizedString("Disconnecting").Translated;
-                    case CommunicationStates.AttemptingToConnect:
-                        return "Connecting...";
+					case CommunicationStates.AttemptingToConnect:
+						string connectingMessageTxt = new LocalizedString ("Connecting").Translated;
+						return string.Format("{0}...",connectingMessageTxt);
                     case CommunicationStates.ConnectionLost:
 						return new LocalizedString("Connection Lost").Translated;
                     case CommunicationStates.FailedToConnect:
@@ -933,6 +944,29 @@ namespace MatterHackers.MatterControl
             firstLineToResendIndex = int.Parse(splitOnColon[1]) - 1;
         }
 
+        public void PrinterStatesFirmware(object sender, EventArgs e)
+        {
+            FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
+
+            string firmwareName = "";
+            if (GCodeFile.GetFirstStringAfter("FIRMWARE_NAME:", foundStringEventArgs.LineToCheck, " ", ref firmwareName))
+            {
+                firmwareName = firmwareName.ToLower();
+                if (firmwareName.Contains("repetier"))
+                {
+                    firmwareType = FirmwareTypes.Repetier;
+                }
+                else if (firmwareName.Contains("marlin"))
+                {
+                    firmwareType = FirmwareTypes.Marlin;
+                }
+                else if (firmwareName.Contains("sprinter"))
+                {
+                    firmwareType = FirmwareTypes.Sprinter;
+                }
+            }
+        }
+
         public void FoundStart(object sender, EventArgs e)
         {
             FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
@@ -1029,6 +1063,7 @@ namespace MatterHackers.MatterControl
             //Attempt connecting to a specific printer
             CommunicationState = CommunicationStates.AttemptingToConnect;
             this.stopTryingToConnect = false;
+            firmwareType = FirmwareTypes.Unknown;
 
             if (SerialPortIsAvailable(this.ActivePrinter.ComPort))
             {
@@ -1399,7 +1434,7 @@ namespace MatterHackers.MatterControl
                     // write data to communication
                     {
                         StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
-                        CommunicationUnconditional.CallEvents(this, new StringEventArgs("->" + currentEvent.Data));
+                        CommunicationUnconditionalToPrinter.CallEvents(this, currentEvent);
 
                         if (lineWithoutChecksum != null)
                         {
@@ -1758,7 +1793,7 @@ namespace MatterHackers.MatterControl
                                 // process this command
                                 {
                                     StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
-                                    CommunicationUnconditional.CallEvents(this, new StringEventArgs("<-" + currentEvent.Data));
+                                    CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
 
                                     FoundStringEventArgs foundResponse = new FoundStringEventArgs(currentEvent.Data);
                                     ReadLineStartCallBacks.CheckForKeys(foundResponse);

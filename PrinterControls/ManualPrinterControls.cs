@@ -53,11 +53,11 @@ namespace MatterHackers.MatterControl
         }
     }
 
-    public class DisablablableWidget : GuiWidget
+    public class DisableableWidget : GuiWidget
     {
         public GuiWidget disableOverlay;
 
-        public DisablablableWidget()
+        public DisableableWidget()
         {
             HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             VAnchor = Agg.UI.VAnchor.FitToChildren;
@@ -118,16 +118,19 @@ namespace MatterHackers.MatterControl
         Button homeXButton;
         Button homeYButton;
         Button homeZButton;
+		Button enablePrintLevelingButton;
+		Button disablePrintLevelingButton;
 
-        DisablablableWidget extruderTemperatureControlWidget;
-        DisablablableWidget bedTemperatureControlWidget;
-        DisablablableWidget movementControlsContainer;
-        DisablablableWidget fanControlsContainer;
-        DisablablableWidget tuningAdjustmentControlsContainer;
-        DisablablableWidget terminalCommunicationsContainer;
-        DisablablableWidget sdCardManagerContainer;
-        DisablablableWidget printLevelContainer;
-        DisablablableWidget macroControls;
+        DisableableWidget extruderTemperatureControlWidget;
+        DisableableWidget bedTemperatureControlWidget;
+        DisableableWidget movementControlsContainer;
+        DisableableWidget fanControlsContainer;
+        DisableableWidget eePromControlsContainer;
+        DisableableWidget tuningAdjustmentControlsContainer;
+        DisableableWidget terminalCommunicationsContainer;
+        DisableableWidget sdCardManagerContainer;
+        DisableableWidget printLevelContainer;
+        DisableableWidget macroControls;
 
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -198,37 +201,54 @@ namespace MatterHackers.MatterControl
 
             controlsTopToBottomLayout.Padding = new BorderDouble(3, 0);
 
-            terminalCommunicationsContainer = new DisablablableWidget();
+            terminalCommunicationsContainer = new DisableableWidget();
             terminalCommunicationsContainer.AddChild(CreateTerminalControlsContainer());
-            controlsTopToBottomLayout.AddChild(terminalCommunicationsContainer);
+
 
             AddTemperatureControls(controlsTopToBottomLayout);
-            AddMovementControls(controlsTopToBottomLayout);
 
-            printLevelContainer = new DisablablableWidget();
-            printLevelContainer.AddChild(CreatePrintLevelingControlsContainer());
-            controlsTopToBottomLayout.AddChild(printLevelContainer);
+			FlowLayoutWidget centerControlsContainer = new FlowLayoutWidget ();
+			centerControlsContainer.HAnchor = HAnchor.ParentLeftRight;
 
-            sdCardManagerContainer = new DisablablableWidget();
+			FlowLayoutWidget rightColumnContainer = new FlowLayoutWidget (FlowDirection.TopToBottom);
+			rightColumnContainer.AddChild (terminalCommunicationsContainer);
+			rightColumnContainer.Width = 230;
+			rightColumnContainer.VAnchor |= VAnchor.ParentTop;
+
+			AddMovementControls(centerControlsContainer);
+
+			AddFanControls(rightColumnContainer);
+			AddEePromControls(rightColumnContainer);
+
+			centerControlsContainer.AddChild(rightColumnContainer);
+
+			controlsTopToBottomLayout.AddChild (centerControlsContainer);
+
+            
+
+            sdCardManagerContainer = new DisableableWidget();
             sdCardManagerContainer.AddChild(CreateSdCardManagerContainer());
             if (false)// || ActivePrinterProfile.Instance.ActivePrinter == null || ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasSdCard())
             {
                 controlsTopToBottomLayout.AddChild(sdCardManagerContainer);
             }
 
-            macroControls = new DisablablableWidget();
+            macroControls = new DisableableWidget();
             macroControls.AddChild(new MacroControls());
             controlsTopToBottomLayout.AddChild(macroControls);
 
-            PutInFanControls(controlsTopToBottomLayout);
             AddAdjustmentControls(controlsTopToBottomLayout);
+
+			printLevelContainer = new DisableableWidget();
+			printLevelContainer.AddChild(CreatePrintLevelingControlsContainer());
+			controlsTopToBottomLayout.AddChild(printLevelContainer);
 
             this.AddChild(controlsTopToBottomLayout);
             AddHandlers();
             SetVisibleControls();
         }
 
-        private void PutInFanControls(FlowLayoutWidget controlsTopToBottomLayout)
+        private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
 			GroupBox fanControlsGroupBox = new GroupBox(new LocalizedString("Fan Controls").Translated);
 
@@ -250,7 +270,7 @@ namespace MatterHackers.MatterControl
                 fanControlsGroupBox.AddChild(fanControlsLayout);
             }
 
-            fanControlsContainer = new DisablablableWidget();
+            fanControlsContainer = new DisableableWidget();
             fanControlsContainer.AddChild(fanControlsGroupBox);
 
             if (ActivePrinterProfile.Instance.ActivePrinter == null
@@ -258,6 +278,65 @@ namespace MatterHackers.MatterControl
             {
                 controlsTopToBottomLayout.AddChild(fanControlsContainer);
             }
+        }
+
+        private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
+        {
+            GroupBox eePromControlsGroupBox = new GroupBox(new LocalizedString("EEProm Settings").Translated);
+
+			eePromControlsGroupBox.Margin = new BorderDouble(0);
+            eePromControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            eePromControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+            eePromControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+            eePromControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			eePromControlsGroupBox.Height = 68;
+
+            {
+				FlowLayoutWidget eePromControlsLayout = new FlowLayoutWidget();
+				eePromControlsLayout.HAnchor |= HAnchor.ParentLeftRight;
+				eePromControlsLayout.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+				eePromControlsLayout.Margin = new BorderDouble(3, 0, 3, 6);
+				eePromControlsLayout.Padding = new BorderDouble(0);
+                {
+					Agg.Image.ImageBuffer eePromImage = new Agg.Image.ImageBuffer();
+					ImageBMPIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
+					ImageWidget eePromIcon = new ImageWidget(eePromImage);
+					eePromIcon.Margin = new BorderDouble (right: 6);
+
+					Button openEePromWindow = textImageButtonFactory.Generate(new LocalizedString("CONFIGURE").Translated);
+                    openEePromWindow.Click += (sender, e) =>
+                    {
+						switch(PrinterCommunication.Instance.FirmwareType)
+                        {
+                            case PrinterCommunication.FirmwareTypes.Repetier:
+                                new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
+                            break;
+
+                            case PrinterCommunication.FirmwareTypes.Marlin:
+                                new MatterHackers.MatterControl.EeProm.EePromMarlinWidget();
+                            break;
+
+                            default:
+                                UiThread.RunOnIdle((state) => 
+                                {
+									string message = new LocalizedString("Oops! There is no eeprom mapping for your printer's firmware.").Translated;
+                                    StyledMessageBox.ShowMessageBox(message, "Warning no eeprom mapping", StyledMessageBox.MessageType.OK);
+                                }
+                                );
+                            break;
+                        }
+                    };
+					//eePromControlsLayout.AddChild(eePromIcon);
+                    eePromControlsLayout.AddChild(openEePromWindow);
+                }
+
+                eePromControlsGroupBox.AddChild(eePromControlsLayout);
+            }
+
+            eePromControlsContainer = new DisableableWidget();
+            eePromControlsContainer.AddChild(eePromControlsGroupBox);
+
+            controlsTopToBottomLayout.AddChild(eePromControlsContainer);
         }
 
         private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -290,20 +369,16 @@ namespace MatterHackers.MatterControl
                 manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
                 {
                     manualControlsLayout.AddChild(GetHomeButtonBar());
-
                     manualControlsLayout.AddChild(CreateSeparatorLine());
-
                     manualControlsLayout.AddChild(new JogControls(new XYZColors()));
-
                     manualControlsLayout.AddChild(CreateSeparatorLine());
-
                     //manualControlsLayout.AddChild(GetManualMoveBar());
                 }
 
                 movementControlsGroupBox.AddChild(manualControlsLayout);
             }
 
-            movementControlsContainer = new DisablablableWidget();
+            movementControlsContainer = new DisableableWidget();
             movementControlsContainer.AddChild(movementControlsGroupBox);
             controlsTopToBottomLayout.AddChild(movementControlsContainer);
         }
@@ -312,12 +387,13 @@ namespace MatterHackers.MatterControl
         {
             FlowLayoutWidget temperatureControlContainer = new FlowLayoutWidget();
             temperatureControlContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			temperatureControlContainer.Margin = new BorderDouble (top: 10);
 
-            extruderTemperatureControlWidget = new DisablablableWidget();
+            extruderTemperatureControlWidget = new DisableableWidget();
             extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget());
             temperatureControlContainer.AddChild(extruderTemperatureControlWidget);
 
-            bedTemperatureControlWidget = new DisablablableWidget();
+            bedTemperatureControlWidget = new DisableableWidget();
             bedTemperatureControlWidget.AddChild(new BedTemperatureControlWidget());
 
             if (ActivePrinterProfile.Instance.ActivePrinter == null
@@ -460,7 +536,7 @@ namespace MatterHackers.MatterControl
                 adjustmentControlsGroupBox.AddChild(tuningRatiosLayout);
             }
 
-            tuningAdjustmentControlsContainer = new DisablablableWidget();
+            tuningAdjustmentControlsContainer = new DisableableWidget();
             tuningAdjustmentControlsContainer.AddChild(adjustmentControlsGroupBox);
             controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
         }
@@ -487,6 +563,8 @@ namespace MatterHackers.MatterControl
             feedRateValue.Value = ((int)(PrinterCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
         }
 
+		TextWidget printLevelingStatusLabel;
+
         private GuiWidget CreatePrintLevelingControlsContainer()
         {
             GroupBox printLevelingControlsContainer;
@@ -512,13 +590,41 @@ namespace MatterHackers.MatterControl
                 runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
                 runPrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(runPrintLeveling_Click);
 
+                Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
+				ImageBMPIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
+                ImageWidget levelingIcon = new ImageWidget(levelingImage);
+				levelingIcon.Margin = new BorderDouble (right: 6);
+
+				enablePrintLevelingButton = textImageButtonFactory.Generate(new LocalizedString("ENABLE").Translated);
+				enablePrintLevelingButton.Margin = new BorderDouble(left:6);
+				enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
+				enablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(enablePrintLeveling_Click);
+
+				disablePrintLevelingButton = textImageButtonFactory.Generate(new LocalizedString("DISABLE").Translated);
+				disablePrintLevelingButton.Margin = new BorderDouble(left:6);
+				disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
+				disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);
+
 				CheckBox doLevelingCheckBox = new CheckBox(new LocalizedString("Enable Automatic Print Leveling").Translated);
                 doLevelingCheckBox.Margin = new BorderDouble(left: 3);
                 doLevelingCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 doLevelingCheckBox.VAnchor = VAnchor.ParentCenter;
                 doLevelingCheckBox.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
 
-                buttonBar.AddChild(doLevelingCheckBox);
+				printLevelingStatusLabel = new TextWidget ("");
+				printLevelingStatusLabel.AutoExpandBoundsToText = true;
+				printLevelingStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				printLevelingStatusLabel.VAnchor = VAnchor.ParentCenter;
+
+				GuiWidget hSpacer = new GuiWidget ();
+				hSpacer.HAnchor = HAnchor.ParentLeftRight;
+
+                buttonBar.AddChild(levelingIcon);
+				//buttonBar.AddChild(doLevelingCheckBox);
+				buttonBar.AddChild (printLevelingStatusLabel);
+				buttonBar.AddChild (hSpacer);
+				buttonBar.AddChild(enablePrintLevelingButton);
+				buttonBar.AddChild(disablePrintLevelingButton);
                 buttonBar.AddChild(runPrintLevelingButton);
                 doLevelingCheckBox.CheckedStateChanged += (sender, e) =>
                 {
@@ -526,17 +632,13 @@ namespace MatterHackers.MatterControl
                 };
                 ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
                 {
-                    doLevelingCheckBox.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
-                    if (doLevelingCheckBox.Checked && ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingProbePositions == null)
-                    {
-                        //OpenPrintLevelWizard();
-                    }
+					SetPrintLevelButtonVisiblity();
 
                 }, ref unregisterEvents);
 
                 printLevelingControlsContainer.AddChild(buttonBar);
             }
-
+			SetPrintLevelButtonVisiblity ();
             return printLevelingControlsContainer;
         }
 
@@ -562,7 +664,7 @@ namespace MatterHackers.MatterControl
             GroupBox terminalControlsContainer;
 			terminalControlsContainer = new GroupBox(new LocalizedString("Printer Communications").Translated);
 
-            terminalControlsContainer.Margin = new BorderDouble(top: 10);
+            terminalControlsContainer.Margin = new BorderDouble(0);
             terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             terminalControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             terminalControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -572,10 +674,15 @@ namespace MatterHackers.MatterControl
                 FlowLayoutWidget buttonBar = new FlowLayoutWidget();
                 buttonBar.HAnchor |= HAnchor.ParentLeftRight;
                 buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                buttonBar.Margin = new BorderDouble(3, 0, 3, 6);
+				buttonBar.Margin = new BorderDouble(3, 0, 3, 6);
                 buttonBar.Padding = new BorderDouble(0);
 
                 this.textImageButtonFactory.FixedHeight = TallButtonHeight;
+
+				Agg.Image.ImageBuffer terminalImage = new Agg.Image.ImageBuffer();
+				ImageBMPIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "terminal-24x24.png"), terminalImage);
+				ImageWidget terminalIcon = new ImageWidget(terminalImage);
+				terminalIcon.Margin = new BorderDouble (right: 6);
 
 				Button showTerminal = textImageButtonFactory.Generate(new LocalizedString("SHOW TERMINAL").Translated);
                 showTerminal.Margin = new BorderDouble(0);
@@ -583,6 +690,8 @@ namespace MatterHackers.MatterControl
                 {
                     OutputScrollWindow.Show();
                 };
+
+				//buttonBar.AddChild(terminalIcon);
                 buttonBar.AddChild(showTerminal);
 
                 terminalControlsContainer.AddChild(buttonBar);
@@ -646,15 +755,16 @@ namespace MatterHackers.MatterControl
             if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
                 // no printer selected
-                extruderTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                bedTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                movementControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                fanControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                tuningAdjustmentControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                terminalCommunicationsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                printLevelContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                sdCardManagerContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                macroControls.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
+                extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
             else // we at least have a printer selected
             {
@@ -665,28 +775,30 @@ namespace MatterHackers.MatterControl
                     case PrinterCommunication.CommunicationStates.Disconnected:
                     case PrinterCommunication.CommunicationStates.AttemptingToConnect:
                     case PrinterCommunication.CommunicationStates.FailedToConnect:
-                        extruderTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.ConfigOnly);
-                        bedTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.ConfigOnly);
-                        movementControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.ConfigOnly);
-                        fanControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                        sdCardManagerContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                        macroControls.SetEnableLevel(DisablablableWidget.EnableLevel.ConfigOnly);
+                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         break;
 
                     case PrinterCommunication.CommunicationStates.FinishedPrint:
                     case PrinterCommunication.CommunicationStates.Connected:
-                        extruderTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        bedTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        movementControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        fanControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        sdCardManagerContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        macroControls.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
+                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         break;
 
                     case PrinterCommunication.CommunicationStates.PreparingToPrint:
@@ -697,15 +809,16 @@ namespace MatterHackers.MatterControl
                             case PrinterCommunication.DetailedPrintingState.HeatingBed:
                             case PrinterCommunication.DetailedPrintingState.HeatingExtruder:
                             case PrinterCommunication.DetailedPrintingState.Printing:
-                                extruderTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                                bedTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                                movementControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.ConfigOnly);
-                                fanControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                                tuningAdjustmentControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                                terminalCommunicationsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                                printLevelContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                                sdCardManagerContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                                macroControls.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
+                                extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                                fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                                tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                                sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 break;
 
                             default:
@@ -714,15 +827,16 @@ namespace MatterHackers.MatterControl
                         break;
 
                     case PrinterCommunication.CommunicationStates.Paused:
-                        extruderTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        bedTemperatureControlWidget.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        movementControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        fanControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Disabled);
-                        sdCardManagerContainer.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
-                        macroControls.SetEnableLevel(DisablablableWidget.EnableLevel.Enabled);
+                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     default:
@@ -863,6 +977,31 @@ namespace MatterHackers.MatterControl
             SetVisibleControls();
             this.Invalidate();
         }
+
+		void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+		{
+			ActivePrinterProfile.Instance.DoPrintLeveling = true;
+		}
+
+		void disablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+		{
+			ActivePrinterProfile.Instance.DoPrintLeveling = false;
+		}
+
+		void SetPrintLevelButtonVisiblity()
+		{
+			enablePrintLevelingButton.Visible = !ActivePrinterProfile.Instance.DoPrintLeveling;
+			disablePrintLevelingButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+
+			if (ActivePrinterProfile.Instance.DoPrintLeveling) {
+				printLevelingStatusLabel.Text = new LocalizedString ("Automatic Print Leveling (enabled)").Translated;
+			}
+			else
+			{
+				printLevelingStatusLabel.Text = new LocalizedString ("Automatic Print Leveling (disabled)").Translated;
+			}
+		}
+
 
         void disableMotors_Click(object sender, MouseEventArgs mouseEvent)
         {

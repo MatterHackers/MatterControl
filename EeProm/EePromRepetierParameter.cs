@@ -32,45 +32,61 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using MatterHackers.VectorMath;
-
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.EeProm
 {
-    public class Slic3rEngineMappings : SliceEngineMaping
+    public class EePromRepetierParameter : EventArgs
     {
-        static List<string> hideItems = null;
+        public string description;
+        public int type;
+        public int position;
+        string val = "";
+        bool changed = false;
 
-        // private so that this class is a sigleton
-        Slic3rEngineMappings()
+        public EePromRepetierParameter(string line)
         {
+            update(line);
         }
 
-        static Slic3rEngineMappings instance = null;
-        public static Slic3rEngineMappings Instance
+        public void update(string line)
         {
-            get
+            string[] lines = line.Substring(4).Split(' ');
+            int.TryParse(lines[0], out type);
+            int.TryParse(lines[1], out position);
+            val = lines[2];
+            description = line.Substring(7 + lines[0].Length + lines[1].Length + lines[2].Length);
+            changed = false;
+        }
+        
+        public void save()
+        {
+            if (!changed)
             {
-                if (instance == null)
-                {
-                    instance = new Slic3rEngineMappings();
-                    hideItems = new List<string>();
-                    hideItems.Add("cool_extruder_lift");
-                    hideItems.Add("support_material_create_internal_support");
-                    hideItems.Add("min_extrusion_before_retract");
-                    hideItems.Add("support_material_xy_distance");
-                    hideItems.Add("support_material_z_distance");
-                }
-                return instance;
+                return;
             }
+
+            string cmd = "M206 T" + type + " P" + position + " ";
+            if (type == 3) cmd += "X" + val;
+            else cmd += "S" + val;
+            PrinterCommunication.Instance.QueueLineToPrinter(cmd);
+            changed = false;
         }
 
-        public override bool MapContains(string defaultKey)
+        public string Description
         {
-            if (hideItems.Contains(defaultKey))
+            get { return description; }
+            set { description = value; }
+        }
+
+        public string Value
+        {
+            get { return val; }
+            set
             {
-                return false;
+                value = value.Replace(',', '.').Trim();
+                if (val.Equals(value)) return;
+                val = value;
+                changed = true;
             }
-            return true;
         }
     }
 }

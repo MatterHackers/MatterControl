@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             //Create the main container
             GuiWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             mainContainer.AnchorAll();
-            mainContainer.Padding = new BorderDouble(3, 0, 3, 5);
+			mainContainer.Padding = new BorderDouble(3, 5, 3, 5);
             mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             //Create the header row for the widget

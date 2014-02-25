@@ -32,45 +32,67 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using MatterHackers.VectorMath;
+using MatterHackers.Agg.UI;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.EeProm
 {
-    public class Slic3rEngineMappings : SliceEngineMaping
+    public delegate void OnEePromRepetierAdded(EePromRepetierParameter param);
+
+    public class EePromRepetierStorage
     {
-        static List<string> hideItems = null;
+        public Dictionary<int, EePromRepetierParameter> eePromSettingsList;
+        public event EventHandler eventAdded = null;
 
-        // private so that this class is a sigleton
-        Slic3rEngineMappings()
+        public EePromRepetierStorage()
         {
+            eePromSettingsList = new Dictionary<int, EePromRepetierParameter>();
         }
 
-        static Slic3rEngineMappings instance = null;
-        public static Slic3rEngineMappings Instance
+        public void Clear()
         {
-            get
+            eePromSettingsList.Clear();
+        }
+
+        public void Save()
+        {
+            foreach (EePromRepetierParameter p in eePromSettingsList.Values)
             {
-                if (instance == null)
-                {
-                    instance = new Slic3rEngineMappings();
-                    hideItems = new List<string>();
-                    hideItems.Add("cool_extruder_lift");
-                    hideItems.Add("support_material_create_internal_support");
-                    hideItems.Add("min_extrusion_before_retract");
-                    hideItems.Add("support_material_xy_distance");
-                    hideItems.Add("support_material_z_distance");
-                }
-                return instance;
+                p.save();
             }
         }
 
-        public override bool MapContains(string defaultKey)
+        public void Add(object sender, EventArgs e)
         {
-            if (hideItems.Contains(defaultKey))
+            StringEventArgs lineString = e as StringEventArgs;
+
+            if (e == null)
             {
-                return false;
+                return;
             }
-            return true;
+
+            string line = lineString.Data;
+
+            if (!line.StartsWith("EPR:"))
+            {
+                return;
+            }
+
+            EePromRepetierParameter parameter = new EePromRepetierParameter(line);
+            if (eePromSettingsList.ContainsKey(parameter.position))
+            {
+                eePromSettingsList.Remove(parameter.position);
+            }
+
+            eePromSettingsList.Add(parameter.position, parameter);
+            if (eventAdded != null)
+            {
+                eventAdded(this, parameter);
+            }
+        }
+
+        public void AskPrinterForSettings()
+        {
+            PrinterCommunication.Instance.QueueLineToPrinter("M205");
         }
     }
 }

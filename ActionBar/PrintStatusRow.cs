@@ -92,17 +92,52 @@ namespace MatterHackers.MatterControl.ActionBar
                 temperatureWidgets.AddChild(extruderTemperatureWidget);
                 temperatureWidgets.AddChild(bedTemperatureWidget);
             }            
-            temperatureWidgets.VAnchor = VAnchor.ParentTop;
+            temperatureWidgets.VAnchor |= VAnchor.ParentTop;
+            temperatureWidgets.Margin = new BorderDouble(left: 6);
 
             FlowLayoutWidget printStatusContainer = getActivePrinterInfo();
-            printStatusContainer.VAnchor = VAnchor.ParentTop;
+            printStatusContainer.VAnchor |= VAnchor.ParentTop;
+
+            FlowLayoutWidget iconContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            iconContainer.Name = "PrintStatusRow.IconContainer";
+            iconContainer.VAnchor |= VAnchor.ParentTop;
+            iconContainer.Margin = new BorderDouble(top: 3);
+            iconContainer.AddChild(GetAutoLevelIndicator());
 
             this.AddChild(activePrintPreviewImage);
             this.AddChild(printStatusContainer);
+            this.AddChild(iconContainer);
             this.AddChild(temperatureWidgets);
 
             UpdatePrintStatus();
             UpdatePrintItemName();
+        }
+
+        private Button GetAutoLevelIndicator()
+        {
+            ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
+			string notifyIconPath = Path.Combine("Icons", "PrintStatusControls", "leveling-16x16.png");
+			string notifyHoverIconPath = Path.Combine("Icons", "PrintStatusControls", "leveling-16x16.png");
+            Button notifyButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
+            notifyButton.Cursor = Cursors.Hand;
+            notifyButton.Margin = new Agg.BorderDouble(top: 3);
+            notifyButton.MouseEnterBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.ShowHoverText("Print leveling is enabled."); };
+            notifyButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
+            notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, e) =>
+            {
+                notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+
+            }, ref unregisterEvents);
+
+            ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+            {
+                notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+
+            }, ref unregisterEvents);
+
+            return notifyButton;
         }
 
         private FlowLayoutWidget getActivePrinterInfo()
@@ -123,9 +158,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
             topRow.AddChild(activePrintLabel);
 
-			activePrintName = getPrintStatusLabel(new LocalizedString("this is the biggest name we will allow").Translated, pointSize: 14);
+			activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);
             activePrintName.AutoExpandBoundsToText = false;
-			activePrintStatus = getPrintStatusLabel(new LocalizedString("this is the biggest label we will allow - bigger").Translated, pointSize: 11);
+			activePrintStatus = getPrintStatusLabel("this is the biggest label we will allow - bigger", pointSize: 11);
             activePrintStatus.AutoExpandBoundsToText = false;
             activePrintStatus.Text = "";
             activePrintStatus.Margin = new BorderDouble(top: 3);
@@ -200,73 +235,41 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (PrinterCommunication.Instance.ActivePrintItem != null)
             {
-                
-                int secondsPrinted = PrinterCommunication.Instance.SecondsPrinted;
-                int hoursPrinted = (int)(secondsPrinted / (60 * 60));
-                int minutesPrinted = (int)(secondsPrinted / 60 - hoursPrinted * 60);
-                secondsPrinted = secondsPrinted % 60;
-                string timePrintedText;
-                if (hoursPrinted > 0)
-                {
-					string printTimeLbl = new LocalizedString ("Print Time").Translated;
-					timePrintedText = string.Format("{3}: {0}:{1:00}:{2:00}",
-                        hoursPrinted,
-                        minutesPrinted,
-						secondsPrinted, 
-						printTimeLbl);
-                }
-                else
-                {
-					string printTimeLbl = new LocalizedString ("Print Time").Translated;
-					timePrintedText = string.Format("{2}: {0:00}:{1:00}",
-                        minutesPrinted,
-						secondsPrinted,
-						printTimeLbl);
-                }
+                int totalSecondsInPrint = PrinterCommunication.Instance.TotalSecondsInPrint;
 
-                int secondsRemaining = PrinterCommunication.Instance.SecondsRemaining;
-                int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-                int minutesRemaining = (int)(secondsRemaining / 60 - hoursRemaining * 60);
-                secondsRemaining = secondsRemaining % 60;
-                string timeRemainingText;
-                if (secondsRemaining > 0)
+                int totalHoursInPrint = (int)(totalSecondsInPrint / (60 * 60));
+                int totalMinutesInPrint = (int)(totalSecondsInPrint / 60 - totalHoursInPrint * 60);
+                totalSecondsInPrint = totalSecondsInPrint % 60;
+
+                string totalTimeLabel = new LocalizedString("Est. Print Time").Translated;
+                string calculatingLabel = new LocalizedString("Calculating...").Translated;
+                string totalPrintTimeText;
+
+                if (totalSecondsInPrint > 0)
                 {
-                    if (hoursRemaining > 0)
+                    
+                    if (totalHoursInPrint > 0)
                     {
-						string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
-						timeRemainingText = string.Format("{3} (est): {0}:{1:00}:{2:00}",
-                            hoursRemaining,
-                            minutesRemaining,
-							secondsRemaining,
-							timeRemainingLbl);
+						
+						totalPrintTimeText = string.Format("{3} {0}h {1:00}m {2:00}s",
+                            totalHoursInPrint,
+                            totalMinutesInPrint,
+							totalSecondsInPrint,
+							totalTimeLabel);
                     }
                     else
                     {
-						string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
-						timeRemainingText = string.Format("{2} (est): {0:00}:{1:00}",
-                            minutesRemaining,
-							secondsRemaining,
-							timeRemainingLbl);
+						totalPrintTimeText = string.Format("{2} {0}m {1:00}s",
+                            totalMinutesInPrint,
+							totalSecondsInPrint,
+							totalTimeLabel);
                     }
-                }
-                else if (PrinterCommunication.Instance.PrintIsFinished)
-                {
-                    timeRemainingText = "";
                 }
                 else
                 {
-					string timeRemainingLbl = new LocalizedString ("Remaining").Translated;
-					timeRemainingText = string.Format("{0} (est): --:--",
-						timeRemainingLbl,
-                        secondsPrinted / 60,
-                        secondsPrinted % 60);
+                    totalPrintTimeText = string.Format("{0}: {1}", totalTimeLabel, calculatingLabel);
                 }
 
-                string printTimeInfoText = timePrintedText;
-                if (timeRemainingText != "")
-                {
-                    printTimeInfoText += ", " + timeRemainingText;
-                }
                 //GC.WaitForFullGCComplete();
 
                 string printPercentRemainingText;
@@ -286,7 +289,7 @@ namespace MatterHackers.MatterControl.ActionBar
                     case PrinterCommunication.CommunicationStates.Printing:
                         {
                             activePrintLabel.Text = PrinterCommunication.Instance.PrintingStateString;
-                            ActivePrintStatusText = printPercentRemainingText;
+                            ActivePrintStatusText = totalPrintTimeText;
                         }
                         break;
 
@@ -295,7 +298,7 @@ namespace MatterHackers.MatterControl.ActionBar
 							string activePrintLblTxt = new LocalizedString ("Printing Paused").Translated;
 							string activePrintLblTxtFull = string.Format("{0}:", activePrintLblTxt);
 							activePrintLabel.Text = activePrintLblTxtFull;
-                            ActivePrintStatusText = printPercentRemainingText;
+                            ActivePrintStatusText = totalPrintTimeText;
                         }
                         break;
 
@@ -303,7 +306,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					string donePrintingTxt = new LocalizedString ("Done Printing").Translated;
 					string donePrintingTxtFull = string.Format ("{0}:", donePrintingTxt);
 					activePrintLabel.Text = donePrintingTxtFull;
-                        ActivePrintStatusText = printPercentRemainingText;
+                    ActivePrintStatusText = totalPrintTimeText;
                         break;
 
 				default:
