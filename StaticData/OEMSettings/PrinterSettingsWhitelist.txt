@@ -6,3 +6,6 @@ Printrbot
 Deezmaker
 Blue Eagle Labs
 RoBo 3D
+Solidoodle
+Portabee
+Lulzbot
