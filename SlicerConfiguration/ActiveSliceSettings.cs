@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             switch (BedShape)
             {
                 case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
-                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
                     switch (index)
                     {
                         case 0:
