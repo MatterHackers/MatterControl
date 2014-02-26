@@ -89,7 +89,7 @@ solid_fill_pattern|Top/Bottom Fill Pattern|LIST|rectilinear,concentric,hilbertcu
 solid_infill_below_area|Solid Infill Threshold Area|POSITVE_DOUBLE|mm2|Forces solid infill for any area less than this amount.
 solid_infill_every_layers|Solid Infill Every|INT|layers|Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.
 solid_infill_extrusion_width|Solid Infill|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.
-solid_infill_speed|Solid Infill|POSITVE_DOUBLE|mm/s|The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
+solid_infill_speed|Solid Infill|DOUBLE_OR_PERCENT|mm/s|The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
 spiral_vase|Spiral Vase|CHECK_BOX||Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.
 standby_temperature_delta|Temp Lower Amount|DOUBLE|degrees|This is the amount to lower the temperature of an extruder that is not currently printing.
 start_gcode|Start G-Code|MULTI_LINE_TEXT||This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].
@@ -115,7 +115,7 @@ thin_walls|Thin Walls|CHECK_BOX||Detect when walls are too close together and ne
 threads|Threads|INT||The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 toolchange_gcode|Tool Change G-Code|MULTI_LINE_TEXT||This gcode will be inserted after every tool change.
 top_infill_extrusion_width|Top Solid Infill|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.
-top_solid_infill_speed|Top Solid Infill|POSITVE_DOUBLE|mm/s|The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
+top_solid_infill_speed|Top Solid Infill|DOUBLE_OR_PERCENT|mm/s|The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
 top_solid_layers|Number of Solid Layers\n on the Top:|INT||How many layers will be solid filled on the top surfaces of the object.
 travel_speed|Travel|POSITVE_DOUBLE|mm/s|Speed to move when not extruding material.
 use_firmware_retraction|Use Firmware Retraction|CHECK_BOX||Request the firmware to do retractions rather than specify the extruder movements directly.

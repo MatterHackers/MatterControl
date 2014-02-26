@@ -71,8 +71,23 @@ namespace MatterHackers.MatterControl
         public MatterControlApplication(double width, double height)
             : base(width, height)
         {
-            this.commandLineArgs = Environment.GetCommandLineArgs();;
+            this.commandLineArgs = Environment.GetCommandLineArgs();
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+            if (commandLineArgs.Length > 1 && commandLineArgs[1].ToUpper() == "TEST")
+            {
+                Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
+                string[] testCommands = new string[commandLineArgs.Length-2];
+                if (commandLineArgs.Length > 2)
+                {
+                    commandLineArgs.CopyTo(testCommands, 2);
+                }
+                testDispatch.RunTests(testCommands);
+                if (testDispatch.HadErrors)
+                {
+                    return;
+                }
+            }
 
             //WriteTestGCodeFile();
             if (File.Exists("RunUnitTests.txt"))

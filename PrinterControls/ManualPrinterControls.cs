@@ -201,30 +201,30 @@ namespace MatterHackers.MatterControl
 
             controlsTopToBottomLayout.Padding = new BorderDouble(3, 0);
 
-            terminalCommunicationsContainer = new DisableableWidget();
-            terminalCommunicationsContainer.AddChild(CreateTerminalControlsContainer());
-
-
             AddTemperatureControls(controlsTopToBottomLayout);
 
-			FlowLayoutWidget centerControlsContainer = new FlowLayoutWidget ();
-			centerControlsContainer.HAnchor = HAnchor.ParentLeftRight;
+            FlowLayoutWidget centerControlsContainer = new FlowLayoutWidget();
+            centerControlsContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			FlowLayoutWidget rightColumnContainer = new FlowLayoutWidget (FlowDirection.TopToBottom);
-			rightColumnContainer.AddChild (terminalCommunicationsContainer);
-			rightColumnContainer.Width = 230;
-			rightColumnContainer.VAnchor |= VAnchor.ParentTop;
+            AddMovementControls(centerControlsContainer);
 
-			AddMovementControls(centerControlsContainer);
+            // put in the terminal communications
+            {
+                terminalCommunicationsContainer = new DisableableWidget();
+                terminalCommunicationsContainer.AddChild(CreateTerminalControlsContainer());
 
-			AddFanControls(rightColumnContainer);
-			AddEePromControls(rightColumnContainer);
+                FlowLayoutWidget rightColumnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                rightColumnContainer.AddChild(terminalCommunicationsContainer);
+                rightColumnContainer.Width = 180;
+                rightColumnContainer.VAnchor |= VAnchor.ParentTop;
 
-			centerControlsContainer.AddChild(rightColumnContainer);
+                AddFanControls(rightColumnContainer);
+                AddEePromControls(rightColumnContainer);
 
-			controlsTopToBottomLayout.AddChild (centerControlsContainer);
+                centerControlsContainer.AddChild(rightColumnContainer);
+            }
 
-            
+            controlsTopToBottomLayout.AddChild(centerControlsContainer);
 
             sdCardManagerContainer = new DisableableWidget();
             sdCardManagerContainer.AddChild(CreateSdCardManagerContainer());
@@ -239,9 +239,9 @@ namespace MatterHackers.MatterControl
 
             AddAdjustmentControls(controlsTopToBottomLayout);
 
-			printLevelContainer = new DisableableWidget();
-			printLevelContainer.AddChild(CreatePrintLevelingControlsContainer());
-			controlsTopToBottomLayout.AddChild(printLevelContainer);
+            printLevelContainer = new DisableableWidget();
+            printLevelContainer.AddChild(CreatePrintLevelingControlsContainer());
+            controlsTopToBottomLayout.AddChild(printLevelContainer);
 
             this.AddChild(controlsTopToBottomLayout);
             AddHandlers();
@@ -306,6 +306,9 @@ namespace MatterHackers.MatterControl
 					Button openEePromWindow = textImageButtonFactory.Generate(new LocalizedString("CONFIGURE").Translated);
                     openEePromWindow.Click += (sender, e) =>
                     {
+#if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
+                        new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
+#else
 						switch(PrinterCommunication.Instance.FirmwareType)
                         {
                             case PrinterCommunication.FirmwareTypes.Repetier:
@@ -325,6 +328,7 @@ namespace MatterHackers.MatterControl
                                 );
                             break;
                         }
+#endif
                     };
 					//eePromControlsLayout.AddChild(eePromIcon);
                     eePromControlsLayout.AddChild(openEePromWindow);
@@ -662,7 +666,7 @@ namespace MatterHackers.MatterControl
         private GuiWidget CreateTerminalControlsContainer()
         {
             GroupBox terminalControlsContainer;
-			terminalControlsContainer = new GroupBox(new LocalizedString("Printer Communications").Translated);
+			terminalControlsContainer = new GroupBox(new LocalizedString("Communications").Translated);
 
             terminalControlsContainer.Margin = new BorderDouble(0);
             terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;

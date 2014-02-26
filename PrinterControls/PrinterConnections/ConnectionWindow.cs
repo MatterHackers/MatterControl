@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         bool editMode = false;
 
         public ConnectionWindow()
-            : base(350, 500)
+            : base(350, 600)
         {                     
 			string connectToPrinterTitle = new LocalizedString("MatterControl").Translated;
 			string connectToPrinterTitleEnd = new LocalizedString ("Connect to Printer").Translated;

@@ -80,10 +80,14 @@ namespace MatterHackers.MatterControl
 
             if(showExportGCodeButton)
             {
-				Button exportGCode = textImageButtonFactory.Generate(new LocalizedString("Export as GCode").Translated);
+				string exportGCodeText = new LocalizedString("Export as").Translated;
+				string exportGCodeTextFull = string.Format("{0} GCode", exportGCodeText);
+
+				Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
+
                 //exportGCode.HAnchor = Agg.UI.HAnchor.ParentCenter;
-                exportGCode.Click += new ButtonBase.ButtonEventHandler(exportGCode_Click);
-                topToBottom.AddChild(exportGCode);
+				exportGCode.Click += new ButtonBase.ButtonEventHandler(exportGCode_Click);
+				topToBottom.AddChild(exportGCode);
             }
 
             GuiWidget vSpacer = new GuiWidget();

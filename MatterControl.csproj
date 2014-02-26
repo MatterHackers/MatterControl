@@ -98,6 +98,8 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMapingBase.cs" />
+    <Compile Include="Testing\ReleaseTests.cs" />
+    <Compile Include="Testing\TestingDispatch.cs" />
     <Compile Include="ToolsPage\ToolsListControl.cs" />
     <Compile Include="ToolsPage\ToolsListItem.cs" />
     <Compile Include="ToolsPage\ToolsWidget.cs" />
@@ -281,6 +283,10 @@
     <ProjectReference Include="..\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
       <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
       <Name>SerialPortCommunication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
+      <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
+      <Name>WindowsFileDialogs</Name>
     </ProjectReference>
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
       <Project>{F1653F20-D47D-4F29-8C55-3C835542AF5F}</Project>

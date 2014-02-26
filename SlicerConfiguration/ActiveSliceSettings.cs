@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             switch (BedShape)
             {
                 case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
-                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
                     switch (index)
                     {
                         case 0:
@@ -275,7 +275,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         return MeshVisualizer.MeshViewerWidget.BedShape.Circular;
 
                     default:
+#if DEBUG
                         throw new NotImplementedException(string.Format("'{0}' is not a known bed_shape.", GetActiveValue("bed_shape")));
+#else
+                        return MeshVisualizer.MeshViewerWidget.BedShape.Rectangular;
+#endif
                 }
             }
         }

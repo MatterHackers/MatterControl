@@ -110,14 +110,18 @@ namespace MatterHackers.MatterControl.DataStorage
                         {
                             return "StaticData";
                         }
-                        else
-                        {
-                            return Path.Combine(ApplicationPath, "StaticData");
-                        }
+						else if(Directory.Exists(Path.Combine(ApplicationPath, "StaticData")))
+						{
+							return Path.Combine(ApplicationPath, "StaticData");
+						}
+						else
+						{
+							return Path.Combine("..", "..", "StaticData");
+						}
 
                     default:
                         throw new NotImplementedException();
-                }
+				}
             }
         }
 
