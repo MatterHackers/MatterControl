@@ -9,6 +9,9 @@ namespace MatterHackers.MatterControl.Testing
 {
     public class TestingDispatch
     {
+        bool hadErrors = false;
+        public bool HadErrors { get { return hadErrors; } }
+
         string errorLogFileName = null;
         public TestingDispatch()
         {
@@ -32,6 +35,7 @@ namespace MatterHackers.MatterControl.Testing
 
         void DumpException(Exception e)
         {
+            hadErrors = true;
             using (StreamWriter w = File.AppendText(errorLogFileName))
             {
                 w.WriteLine(e.Message);
