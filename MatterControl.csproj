@@ -98,6 +98,8 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMapingBase.cs" />
+    <Compile Include="Testing\ReleaseTests.cs" />
+    <Compile Include="Testing\TestingDispatch.cs" />
     <Compile Include="ToolsPage\ToolsListControl.cs" />
     <Compile Include="ToolsPage\ToolsListItem.cs" />
     <Compile Include="ToolsPage\ToolsWidget.cs" />
