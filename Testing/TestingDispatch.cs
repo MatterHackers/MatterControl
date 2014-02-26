@@ -12,11 +12,12 @@ namespace MatterHackers.MatterControl.Testing
         string errorLogFileName = null;
         public TestingDispatch()
         {
-            errorLogFileName = "ErrorLog.txt";
+            string exePath = Path.GetDirectoryName( System.Reflection.Assembly.GetExecutingAssembly().Location );
+            errorLogFileName = Path.Combine(exePath, "ErrorLog.txt");
             string firstLine = string.Format("MatterControl Errors: {0:yyyy-MM-dd hh:mm:ss tt}", DateTime.Now);
             using (StreamWriter file = new StreamWriter(errorLogFileName))
             {
-                file.WriteLine(errorLogFileName, firstLine);
+                file.WriteLine(firstLine);
             }
         }
 
