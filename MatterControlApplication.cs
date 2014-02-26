@@ -83,10 +83,7 @@ namespace MatterHackers.MatterControl
                     commandLineArgs.CopyTo(testCommands, 2);
                 }
                 testDispatch.RunTests(testCommands);
-                if (testDispatch.HadErrors)
-                {
-                    return;
-                }
+                return;
             }
 
             //WriteTestGCodeFile();

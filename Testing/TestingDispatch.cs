@@ -31,6 +31,17 @@ namespace MatterHackers.MatterControl.Testing
 
             try { MatterHackers.GCodeVisualizer.GCodeFile.AssertDebugNotDefined(); }
             catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.Agg.Graphics2D.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            if (!HadErrors)
+            {
+                File.Delete(errorLogFileName);
+            }
         }
 
         void DumpException(Exception e)
