@@ -1034,6 +1034,20 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public string ComPort
+        {
+            get
+            {
+                string comPort = null;
+                if (this.ActivePrinter != null)
+                {
+                    comPort = this.ActivePrinter.ComPort;
+                    
+                }
+                return comPort;
+            }
+        }
+
         public int BaudRate
         {
             get
@@ -1052,8 +1066,6 @@ namespace MatterHackers.MatterControl
                 }
                 return baudRate;
             }
-
-
         }
 
         private void ConnectToPrinter(Printer printerRecord)
@@ -1466,6 +1478,36 @@ namespace MatterHackers.MatterControl
                 {
                     OnConnectionFailed(null);
                 }
+            }
+        }
+
+        public void PulseRtsLow()
+        {
+            if (serialPort == null && this.ActivePrinter != null)
+            {                
+                serialPort = new FrostedSerialPort(this.ActivePrinter.ComPort);
+                serialPort.BaudRate = this.BaudRate;
+                if (PrinterCommunication.Instance.DtrEnableOnConnect)
+                {
+                    serialPort.DtrEnable = true;
+                }
+
+                // Set the read/write timeouts
+                serialPort.ReadTimeout = 500;
+                serialPort.WriteTimeout = 500;
+                serialPort.Open();
+                
+                serialPort.RtsEnable = true;
+                serialPort.RtsEnable = false;
+                try
+                {
+                    Thread.Sleep(1);
+                }
+                catch
+                {
+                }
+                serialPort.RtsEnable = true;
+                serialPort.Close();
             }
         }
 
