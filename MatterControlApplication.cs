@@ -67,6 +67,9 @@ namespace MatterHackers.MatterControl
     {
         string[] commandLineArgs = null;
         bool firstDraw = true;
+        bool ShowMemoryUsed = false;
+        bool DoCGCollectEveryDraw = false;
+        bool ShowDrawTimingWindow = false;
 
         public MatterControlApplication(double width, double height)
             : base(width, height)
@@ -74,16 +77,33 @@ namespace MatterHackers.MatterControl
             this.commandLineArgs = Environment.GetCommandLineArgs();
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            if (commandLineArgs.Length > 1 && commandLineArgs[1].ToUpper() == "TEST")
+            if (commandLineArgs.Length > 1)
             {
-                Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
-                string[] testCommands = new string[commandLineArgs.Length-2];
-                if (commandLineArgs.Length > 2)
+                switch (commandLineArgs[1].ToUpper())
                 {
-                    commandLineArgs.CopyTo(testCommands, 2);
+                    case "TEST":
+                        Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
+                        string[] testCommands = new string[commandLineArgs.Length - 2];
+                        if (commandLineArgs.Length > 2)
+                        {
+                            commandLineArgs.CopyTo(testCommands, 2);
+                        }
+                        testDispatch.RunTests(testCommands);
+                        return;
+
+                    case "SHOW_MEMORY":
+                        ShowMemoryUsed = true;
+                        break;
+
+                    case "DO_GC_COLLECT_EVERY_DRAW":
+                        ShowMemoryUsed = true;
+                        DoCGCollectEveryDraw = true;
+                        break;
+
+                    case "SHOW_DRAW_TIMING":
+                        ShowDrawTimingWindow = true;
+                        break;
                 }
-                testDispatch.RunTests(testCommands);
-                return;
             }
 
             //WriteTestGCodeFile();
@@ -138,7 +158,7 @@ namespace MatterHackers.MatterControl
         {
             gcodeStringBuilder.AppendLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
         }
-        
+
         public static void WriteTestGCodeFile()
         {
             StringBuilder gcodeStringBuilder = new StringBuilder();
@@ -170,7 +190,7 @@ namespace MatterHackers.MatterControl
 
             System.IO.File.WriteAllText("PerformanceTest.gcode", gcodeStringBuilder.ToString());
         }
-        
+
         void CheckOnPrinter(object state)
         {
             PrinterCommunication.Instance.OnIdle();
@@ -252,7 +272,7 @@ namespace MatterHackers.MatterControl
             listMenuToAddTo.MenuItems.Add(menuItem);
         }
 
-#if DEBUG 
+#if DEBUG
         Stopwatch totalDrawTime = new Stopwatch();
         int drawCount = 0;
         PerformanceFeedbackWindow timingWindow = null;
@@ -269,29 +289,29 @@ namespace MatterHackers.MatterControl
             base.OnDraw(graphics2D);
             drawTimer.Stop();
 
-#if DEBUG // this is to debug memory allocation and freeing
-            totalDrawTime.Stop();
-            long memory = GC.GetTotalMemory(false);
-            this.Title = string.Format("Allocated = {0:n0} : {1}ms, d{2} Size = {3}x{4}", memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height);
-
-#if false
-            if (timingWindow == null)
+            if (ShowMemoryUsed)
             {
-            string staticDataPath = ApplicationDataStorage.Instance.ApplicationStaticDataPath;
-            string fontPath = Path.Combine(staticDataPath, "Fonts", "LiberationMono.svg");
-            TypeFace boldTypeFace = TypeFace.LoadSVG(fontPath);
-            typeFaceToUse = new StyledTypeFace(boldTypeFace, 12);
-
-            timingWindow = new PerformanceFeedbackWindow();
+                totalDrawTime.Stop();
+                long memory = GC.GetTotalMemory(false);
+                this.Title = string.Format("Allocated = {0:n0} : {1}ms, d{2} Size = {3}x{4}", memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height);
+                if (DoCGCollectEveryDraw)
+                {
+                    GC.Collect();
+                }
             }
+
+            if (ShowDrawTimingWindow)
             {
+                if (timingWindow == null)
+                {
+                    timingWindow = new PerformanceFeedbackWindow();
+                }
+
                 if (totalDrawTime.Elapsed.TotalSeconds > .05)
                 {
                     timingWindow.ShowResults(totalDrawTime.Elapsed.TotalSeconds);
                 }
             }
-#endif
-#endif
 
             if (firstDraw)
             {
@@ -325,7 +345,7 @@ namespace MatterHackers.MatterControl
             string windowSize = ApplicationSettings.Instance.get("WindowSize");
             int width = 600;
             int height = 640;
-            if(windowSize !=null && windowSize != "")
+            if (windowSize != null && windowSize != "")
             {
                 string[] sizes = windowSize.Split(',');
                 width = int.Parse(sizes[0]);
@@ -357,7 +377,7 @@ namespace MatterHackers.MatterControl
                 StyledMessageBox.ShowMessageBox("You cannot exit while a print is running.", "Unable to Exit");
                 CancelClose = true;
             }
-            else if(PartsSheet.IsSaving())
+            else if (PartsSheet.IsSaving())
             {
                 if (!StyledMessageBox.ShowMessageBox("You are currently saving a parts sheet, are you sure you want to exit?", "Confirm Exit", StyledMessageBox.MessageType.YES_NO))
                 {
