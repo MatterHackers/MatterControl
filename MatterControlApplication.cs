@@ -272,19 +272,19 @@ namespace MatterHackers.MatterControl
             listMenuToAddTo.MenuItems.Add(menuItem);
         }
 
-#if DEBUG
         Stopwatch totalDrawTime = new Stopwatch();
         int drawCount = 0;
         PerformanceFeedbackWindow timingWindow = null;
-#endif
 
         static NamedExecutionTimer drawTimer = new NamedExecutionTimer("MatterContorl Draw");
         public override void OnDraw(Graphics2D graphics2D)
         {
-#if DEBUG
-            ExecutionTimer.Instance.Reset();
-            totalDrawTime.Restart();
-#endif
+            if (ShowDrawTimingWindow)
+            {
+                ExecutionTimer.Instance.Reset();
+                totalDrawTime.Restart();
+            }
+
             drawTimer.Start();
             base.OnDraw(graphics2D);
             drawTimer.Stop();
