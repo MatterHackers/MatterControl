@@ -80,7 +80,9 @@ namespace MatterHackers.MatterControl
 
         public string ApplyLeveling(Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode, string lineBeingSent, bool addLFCR, bool includeSpaces)
         {
-            if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
+            if ((lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
+                && lineBeingSent.Length > 2 
+                && lineBeingSent[2] == ' ')
             {
                 double extruderDelta = 0;
                 GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
@@ -136,7 +138,7 @@ namespace MatterHackers.MatterControl
             foreach (PrinterMachineInstruction instruction in unleveledGCode.GCodeCommandQueue)
             {
                 Vector3 currentDestination = instruction.Position;
-                instruction.Line = ApplyLeveling(currentDestination, instruction.movementType, instruction.Line, false, false);
+                instruction.Line = ApplyLeveling(currentDestination, instruction.movementType, instruction.Line, false, true);
             }
         }
     }

@@ -50,6 +50,11 @@ namespace MatterHackers.MatterControl
         RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
         TextImageButtonFactory controlButtonFactory = new TextImageButtonFactory();
 
+        public static void HookupPrinterOutput()
+        {
+            //throw new NotImplementedException();
+        }
+
         static OutputScrollWindow connectionWindow = null;
         static bool terminalWindowIsOpen = false;
         public static void Show()
@@ -73,6 +78,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        // private as you can't make one
         private OutputScrollWindow()
             : base(400, 300)
         {
