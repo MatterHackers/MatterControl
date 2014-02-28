@@ -76,7 +76,10 @@ namespace MatterHackers.MatterControl
                 timeSinceLastTextChanged.Stop();
             }
 
-            UiThread.RunOnIdle(OnIdle);
+            if (!WidgetHasBeenClosed)
+            {
+                UiThread.RunOnIdle(OnIdle);
+            }
         }
 
         void internalTextEditWidget_TextChanged(object sender, EventArgs e)
@@ -155,7 +158,10 @@ namespace MatterHackers.MatterControl
                 timeSinceLastTextChanged.Stop();
             }
 
-            UiThread.RunOnIdle(OnIdle);
+            if (!WidgetHasBeenClosed)
+            {
+                UiThread.RunOnIdle(OnIdle);
+            }
         }
 
         void internalNumberEdit_TextChanged(object sender, EventArgs e)

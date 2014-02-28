@@ -122,7 +122,11 @@ namespace MatterHackers.MatterControl
                 UpdatePrintStatus();
                 
             }
-            UiThread.RunOnIdle(OnIdle);
+
+            if (!WidgetHasBeenClosed)
+            {
+                UiThread.RunOnIdle(OnIdle);
+            }
         }
 
         private void UpdatePrintStatus()

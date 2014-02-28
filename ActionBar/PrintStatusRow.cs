@@ -218,7 +218,10 @@ namespace MatterHackers.MatterControl.ActionBar
                 }
             }
 
-            UiThread.RunOnIdle(OnIdle);
+            if (!WidgetHasBeenClosed)
+            {
+                UiThread.RunOnIdle(OnIdle);
+            }
         }
 
         void Instance_WroteLine(object sender, EventArgs e)
