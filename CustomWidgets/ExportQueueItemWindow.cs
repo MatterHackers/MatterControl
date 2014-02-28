@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl
         public ExportQueueItemWindow(PrintQueue.PrintQueueItem printQueueItem)
             : base(400, 250)
         {
-            if (System.IO.Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".GCODE")
+            if (Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".GCODE")
             {
                 partIsGCode = true;
             }
@@ -38,7 +38,6 @@ namespace MatterHackers.MatterControl
             
             // TODO: Complete member initialization
             this.printQueueItem = printQueueItem;
-
 
             doLayout();
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(reloadAfterPrinterProfileChanged, ref unregisterEvents);
@@ -119,23 +118,6 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(DoExportGCode_Click);
         }
 
-		string GetExtension (string filename)                                  
-		{
-			string extension; 
-			int indexOfDot = filename.LastIndexOf(".");
-			if (indexOfDot == -1) 
-			{
-				extension = "";
-			} 
-			else 
-			{
-				extension = filename.Substring (indexOfDot);
-			}
-
-			return extension;
-		}
-
-
         void DoExportGCode_Click(object state)
         {
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
@@ -146,16 +128,16 @@ namespace MatterHackers.MatterControl
 			if (streamToSaveTo != null) 
 			{
 				streamToSaveTo.Close ();
-				
-				string filePathToSave = saveParams.FileName;
-				string extension = GetExtension(filePathToSave);
+
+                pathAndFilenameToSave = saveParams.FileName;
+                string extension = Path.GetExtension(pathAndFilenameToSave);
 				if(extension == "")
 				{
-					File.Delete (filePathToSave);
-					filePathToSave +=  ".gcode";
+                    File.Delete(pathAndFilenameToSave);
+                    pathAndFilenameToSave += ".gcode";
 				}
 
-                if (System.IO.Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".STL")
+                if (Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".STL")
                 {
                     Close();
                     SlicingQueue.Instance.QueuePartForSlicing(printQueueItem.PrintItemWrapper);
@@ -164,7 +146,7 @@ namespace MatterHackers.MatterControl
                 else if (partIsGCode)
                 {
                     Close();
-					SaveGCodeToNewLocation(printQueueItem.PrintItemWrapper.FileLocation, filePathToSave);
+                    SaveGCodeToNewLocation(printQueueItem.PrintItemWrapper.FileLocation, pathAndFilenameToSave);
                 }
             }
         }
@@ -217,21 +199,6 @@ namespace MatterHackers.MatterControl
         }
 
 
-		string CheckExtension(string fileName)
-		{
-			string extension;
-			int indexOfDot = fileName.LastIndexOf(".");
-			if (indexOfDot == -1)
-			{
-				extension = "";
-			}
-			else
-			{
-				extension = fileName.Substring(indexOfDot);
-			}
-			return extension;
-		}
-
         void DoExportSTL_Click(object state)
         {
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");  
@@ -245,11 +212,11 @@ namespace MatterHackers.MatterControl
 				streamToSaveTo.Close ();
 				Close ();
 			}
-				// windows vista +: filePathToSave 'test.stl'
-				// windows xp: filePathToSave 'test'
+			// windows vista +: filePathToSave 'test.stl'
+			// windows xp: filePathToSave 'test'
 			
 			string filePathToSave = saveParams.FileName;
-			string extension = CheckExtension(filePathToSave);
+			string extension = Path.GetExtension(filePathToSave);
 			if (extension == "") 
 			{						
 				File.Delete (filePathToSave);
