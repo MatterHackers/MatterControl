@@ -171,7 +171,6 @@ namespace MatterHackers.MatterControl
                 rightColumnContainer.VAnchor |= VAnchor.ParentTop;
 
                 AddFanControls(rightColumnContainer);
-                AddEePromControls(rightColumnContainer);
 
                 centerControlsContainer.AddChild(rightColumnContainer);
             }
@@ -190,10 +189,6 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(macroControls);
 
             AddAdjustmentControls(controlsTopToBottomLayout);
-
-            printLevelContainer = new DisableableWidget();
-            printLevelContainer.AddChild(CreatePrintLevelingControlsContainer());
-            controlsTopToBottomLayout.AddChild(printLevelContainer);
 
             this.AddChild(controlsTopToBottomLayout);
             AddHandlers();
@@ -717,10 +712,8 @@ namespace MatterHackers.MatterControl
                 bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
@@ -737,10 +730,8 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         break;
@@ -751,9 +742,7 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
@@ -771,10 +760,8 @@ namespace MatterHackers.MatterControl
                                 bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 break;
@@ -789,10 +776,8 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
