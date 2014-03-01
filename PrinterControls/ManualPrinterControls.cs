@@ -765,7 +765,7 @@ namespace MatterHackers.MatterControl
                 bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
