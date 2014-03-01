@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
@@ -53,56 +54,7 @@ namespace MatterHackers.MatterControl
         }
     }
 
-    public class DisableableWidget : GuiWidget
-    {
-        public GuiWidget disableOverlay;
-
-        public DisableableWidget()
-        {
-            HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            VAnchor = Agg.UI.VAnchor.FitToChildren;
-
-            disableOverlay = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
-            disableOverlay.Visible = false;
-            base.AddChild(disableOverlay);
-        }
-
-        public enum EnableLevel { Disabled, ConfigOnly, Enabled };
-
-        public void SetEnableLevel(EnableLevel enabledLevel)
-        {
-            disableOverlay.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor, 160);
-            switch (enabledLevel)
-            {
-                case EnableLevel.Disabled:
-                    disableOverlay.Margin = new BorderDouble(0);
-                    disableOverlay.Visible = true;
-                    break;
-
-                case EnableLevel.ConfigOnly:
-                    disableOverlay.Margin = new BorderDouble(10, 10, 10, 15);
-                    disableOverlay.Visible = true;
-                    break;
-
-                case EnableLevel.Enabled:
-                    disableOverlay.Visible = false;
-                    break;
-            }
-        }
-
-        public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
-        {
-            if (indexInChildrenList == -1)
-            {
-                // put it under the disableOverlay
-                base.AddChild(childToAdd, Children.Count - 1);
-            }
-            else
-            {
-                base.AddChild(childToAdd, indexInChildrenList);
-            }
-        }
-    }
+    
 
     public class ManualPrinterControls : GuiWidget
     {

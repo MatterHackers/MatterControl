@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl
             // set the selected tab back to the one it was before we replace the control
             this.advancedControlsTabControl.SelectTab(topTabIndex);
 
-            // This is a hack to make the pannel remain on the screen.  It would be great to debug it and understand
+            // This is a hack to make the panel remain on the screen.  It would be great to debug it and understand
             // why it does not work without this code in here.
             RectangleDouble localBounds = this.LocalBounds;
             this.LocalBounds = new RectangleDouble(0, 0, this.LocalBounds.Width - 1, 10);
@@ -258,12 +258,19 @@ namespace MatterHackers.MatterControl
             manualPrinterControlsScrollArea.AnchorAll();
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
-			string printerControlsLabel = new LocalizedString ("Printer Controls").Translated;
+            //Add the tab contents for 'Advanced Controls'
+			string printerControlsLabel = new LocalizedString ("Controls").Translated;
 			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 18,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
+            string sliceSettingsLabel = new LocalizedString("Slice Settings").Translated;
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, new LocalizedString("Slice Settings").Translated), 18,
+			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 18,
+                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            string configurationLabel = new LocalizedString("Configuration").Translated;
+            ScrollableWidget configurationControls = new ConfigurationPage();
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             return advancedControls;
@@ -322,8 +329,6 @@ namespace MatterHackers.MatterControl
                     addedUpdateMark.OriginRelativeParent = new Vector2(63, 10);
                     aboutTabView.AddChild(addedUpdateMark);
                 }
-#else
-                AboutTabPage.Text = string.Format("About (!)");
 #endif
             }
             else

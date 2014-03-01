@@ -73,6 +73,8 @@
     <Compile Include="ActionBar\PrinterActionRow.cs" />
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ActivePrinterProfile.cs" />
+    <Compile Include="Configuration\ConfigurationView.cs" />
+    <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
