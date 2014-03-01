@@ -454,7 +454,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             if (partToStartLoadingOnFirstDraw != null)
             {
-                gcodeViewWidget.Load(partToStartLoadingOnFirstDraw);
+                gcodeViewWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
                 partToStartLoadingOnFirstDraw = null;
             }
             base.OnDraw(graphics2D);
