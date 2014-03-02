@@ -189,16 +189,24 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public string GetGCodePathAndFileName()
         {
-            if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
+            if (FileLocation.Trim() != "")
             {
-                return FileLocation;
+
+                if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
+                {
+                    return FileLocation;
+                }
+
+                string engineString = ((int)ActivePrinterProfile.Instance.ActiveSliceEngineType).ToString();
+
+                string gcodeFileName = this.StlFileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
+                string gcodePathAndFileName = Path.Combine(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
+                return gcodePathAndFileName;
             }
-
-            string engineString = ((int)ActivePrinterProfile.Instance.ActiveSliceEngineType).ToString();
-
-            string gcodeFileName = this.StlFileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
-            string gcodePathAndFileName = Path.Combine(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
-            return gcodePathAndFileName;
+            else
+            {
+                return null;
+            }
         }
 
 
