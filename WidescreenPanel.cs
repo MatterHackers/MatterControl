@@ -256,22 +256,27 @@ namespace MatterHackers.MatterControl
             if (this.Width < ColumnThreeMinWidth)
             {                
                 ColumnThree.Visible = false;
-                part3DView.Visible = false;
-                partGcodeView.Visible = false;
+                ColumnTwo.Visible = false;
+
+                ColumnOne.AnchorAll();
                 ColumnOne.Visible = true;
+
             }
             else if (this.Width < ColumnTwoMinWidth)
             {
                 ColumnThree.Visible = true;
-                part3DView.Visible = false;
-                partGcodeView.Visible = false;
+                ColumnTwo.Visible = false;
+
+                ColumnOne.AnchorAll();
                 ColumnOne.Visible = true;
             }
             else
             {
                 ColumnThree.Visible = true;
-                part3DView.Visible = true;
-                partGcodeView.Visible = true;
+                ColumnTwo.Visible = true;
+
+                ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                ColumnOne.Width = 480;
                 ColumnOne.Visible = true;
             }
         }

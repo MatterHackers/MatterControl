@@ -62,16 +62,22 @@ namespace MatterHackers.MatterControl
         TabControl advancedControls;
         private delegate void ReloadPanel();
         event EventHandler unregisterEvents;
-        public RootedObjectEventHandler ReloadPanelTrigger;
-        public RootedObjectEventHandler SetUpdateNotificationTrigger;
+        public RootedObjectEventHandler ReloadPanelTrigger = new RootedObjectEventHandler();
+        public RootedObjectEventHandler SetUpdateNotificationTrigger = new RootedObjectEventHandler();
         
 
         public MainSlidePanel()
         {
-            this.AddChild(new WidescreenPanel());
-            this.AnchorAll();            
+            
         }
 
+        public void AddElements()
+        {
+            //this.AddChild(new MainSlide());
+            this.AddChild(new WidescreenPanel());
+            this.AnchorAll();
+            SetUpdateNotification(this, null);
+        }
 
         public static MainSlidePanel Instance
         {
@@ -80,6 +86,7 @@ namespace MatterHackers.MatterControl
                 if (globalInstance == null)
                 {
                     globalInstance = new MainSlidePanel();
+                    globalInstance.AddElements();
                 }
                 return globalInstance;
             }
@@ -118,8 +125,7 @@ namespace MatterHackers.MatterControl
 
     public class MainSlide : SlidePanel
     {
-        SimpleTextTabWidget aboutTabView;
-        static MainSlidePanel globalInstance;
+        SimpleTextTabWidget aboutTabView;        
         TabControl advancedControlsTabControl;
         TabControl mainControlsTabControl;
         SliceSettingsWidget sliceSettingsWidget;
@@ -129,6 +135,7 @@ namespace MatterHackers.MatterControl
         public TabPage AboutTabPage;
         TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
+        static MainSlide globalInstance;
 
         GuiWidget LeftPanel
         {
@@ -143,7 +150,7 @@ namespace MatterHackers.MatterControl
         public MainSlide()
             : base(2)
         {
-            this.AnchorAll();
+            AddElements();
         }
 
         public void AddElements()
@@ -211,7 +218,7 @@ namespace MatterHackers.MatterControl
                 // and add it
                 this.LeftPanel.AddChild(mainControlsTabControl);
 
-                SetUpdateNotification(this, null);
+                
             }
 
             // do the back panel
@@ -255,13 +262,13 @@ namespace MatterHackers.MatterControl
             HelpTextWidget.Instance.HideHoverText();
         }
 
-        public static MainSlidePanel Instance
+        public static MainSlide Instance
         {
             get
             {
                 if (globalInstance == null)
                 {
-                    globalInstance = new MainSlidePanel();
+                    globalInstance = new MainSlide();
                 }
                 return globalInstance;
             }
@@ -367,7 +374,7 @@ namespace MatterHackers.MatterControl
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
             PrintQueue.PrintQueueControl.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             PrintQueue.PrintQueueControl.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            MainSlidePanel.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
+            MainSlidePanel.Instance.SetUpdateNotificationTrigger.RegisterEvent(OnSetUpdateNotification, ref unregisterEvents);
             MainSlidePanel.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
         }
 
@@ -389,7 +396,7 @@ namespace MatterHackers.MatterControl
         }
 
         GuiWidget addedUpdateMark = null;
-        public void SetUpdateNotification(object sender, EventArgs widgetEvent)
+        public void OnSetUpdateNotification(object sender, EventArgs widgetEvent)
         {
             if (this.UpdateIsAvailable() || UpdateControl.NeedToCheckForUpdateFirstTimeEver)
             {

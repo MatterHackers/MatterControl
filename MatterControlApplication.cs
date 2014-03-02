@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
             //allControls.AddChild(WidescreenPanel.Instance);
-            allControls.AddChild(new ActionBarPlus());
+            //allControls.AddChild(new ActionBarPlus());
             allControls.AddChild(MainSlidePanel.Instance);
 
 #if false // this is to test freeing gcodefile memory
