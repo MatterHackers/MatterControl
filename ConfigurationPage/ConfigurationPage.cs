@@ -285,7 +285,7 @@ namespace MatterHackers.MatterControl
 
         private void SetDisplayAttributes()
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             
             this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
             this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;

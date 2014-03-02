@@ -49,7 +49,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
-{
+{   
     public class WidescreenPanel : FlowLayoutWidget
     {        
         static WidescreenPanel globalInstance;
@@ -70,6 +70,9 @@ namespace MatterHackers.MatterControl
         View3DTransformPart part3DView;
         GcodeViewBasic partGcodeView;
 
+        GuiWidget RightBorderLine;
+        GuiWidget LeftBorderLine;
+
         public WidescreenPanel()
             : base(FlowDirection.LeftToRight)
         {
@@ -77,7 +80,8 @@ namespace MatterHackers.MatterControl
             {
 
                 //PrintQueueControl.Instance.Initialize();
-                BackgroundColor = RGBA_Bytes.Gray;
+                BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+                Padding = new BorderDouble(4);
 
                 ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -89,10 +93,12 @@ namespace MatterHackers.MatterControl
                 ColumnOne.AddChild(new QueueTab());
                 ColumnOne.Width = 480; //Ordering here matters - must go after children are added
                 
-                ColumnOne.Padding = new BorderDouble(4);
-                ColumnTwo.Padding = new BorderDouble(4);
-                ColumnThree.Padding = new BorderDouble(4);
-                
+                //ColumnOne.Padding = new BorderDouble(4);
+                //ColumnTwo.Padding = new BorderDouble(4, 0);
+                //ColumnThree.Padding = new BorderDouble(4);
+
+                LeftBorderLine = CreateBorderLine();
+                RightBorderLine = CreateBorderLine();
 
                 LoadColumnTwo();
                 
@@ -106,7 +112,9 @@ namespace MatterHackers.MatterControl
                 }
 
                 AddChild(ColumnOne);
+                AddChild(LeftBorderLine);
                 AddChild(ColumnTwo);
+                AddChild(RightBorderLine);
                 AddChild(ColumnThree);                
             }
 
@@ -114,6 +122,15 @@ namespace MatterHackers.MatterControl
             AddHandlers();
             SetVisibleStatus();
             
+        }
+
+        private static GuiWidget CreateBorderLine()
+        {
+            GuiWidget topLine = new GuiWidget(3, 1);
+            topLine.BackgroundColor = new RGBA_Bytes(200,200,200);
+            topLine.VAnchor = VAnchor.ParentBottomTop;
+            topLine.Margin = new BorderDouble(8, 0);
+            return topLine;
         }
 
         void onBoundsChanges(Object sender, EventArgs e)
@@ -188,7 +205,7 @@ namespace MatterHackers.MatterControl
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
         {
             advancedControls = new TabControl();
-            advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             advancedControls.TabBar.BorderColor = RGBA_Bytes.White;
             advancedControls.TabBar.Margin = new BorderDouble(0, 0);
             advancedControls.TabBar.Padding = new BorderDouble(0, 2);
@@ -258,8 +275,14 @@ namespace MatterHackers.MatterControl
                 ColumnThree.Visible = false;
                 ColumnTwo.Visible = false;
 
+                ColumnOne.RemoveAllChildren();
+                ColumnOne.AddChild(new ActionBarPlus());
+                ColumnOne.AddChild(new MainSlide());
                 ColumnOne.AnchorAll();
                 ColumnOne.Visible = true;
+
+                LeftBorderLine.Visible = false;
+                RightBorderLine.Visible = false;
 
             }
             else if (this.Width < ColumnTwoMinWidth)
@@ -267,24 +290,38 @@ namespace MatterHackers.MatterControl
                 ColumnThree.Visible = true;
                 ColumnTwo.Visible = false;
 
+                ColumnOne.RemoveAllChildren();
+                ColumnOne.AddChild(new ActionBarPlus());
+                ColumnOne.AddChild(new PrintProgressBar());
+                ColumnOne.AddChild(new QueueTab());
                 ColumnOne.AnchorAll();
                 ColumnOne.Visible = true;
+
+                LeftBorderLine.Visible = true;
+                RightBorderLine.Visible = false;
             }
             else
             {
                 ColumnThree.Visible = true;
                 ColumnTwo.Visible = true;
 
+                ColumnOne.RemoveAllChildren();
+                ColumnOne.AddChild(new ActionBarPlus());
+                ColumnOne.AddChild(new PrintProgressBar());
+                ColumnOne.AddChild(new QueueTab());
                 ColumnOne.HAnchor = Agg.UI.HAnchor.None;
                 ColumnOne.Width = 480;
                 ColumnOne.Visible = true;
+
+                LeftBorderLine.Visible = true;
+                RightBorderLine.Visible = true;
             }
         }
 
 
         private void onThemeChanged(object sender, EventArgs e)
         {
-            this.advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            //this.advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
             this.advancedControls.Invalidate();
         }
 
