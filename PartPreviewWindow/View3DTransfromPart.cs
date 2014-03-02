@@ -290,9 +290,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             centerPartPreviewAndControls.AddChild(viewArea);
             mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
 
-            meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
-            meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
-
             FlowLayoutWidget buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight);
             buttonBottomPanel.HAnchor = HAnchor.ParentLeftRight;
             buttonBottomPanel.Padding = new BorderDouble(3, 3);
@@ -413,6 +410,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             AddViewControls();
 
             AddHandlers();
+
+            // don't load the mesh until we get all the rest of the interface built
+            meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
+            meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
         }
 
         private void MakeCopyOfMesh()

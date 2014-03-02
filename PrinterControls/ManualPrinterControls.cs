@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
@@ -53,56 +54,7 @@ namespace MatterHackers.MatterControl
         }
     }
 
-    public class DisableableWidget : GuiWidget
-    {
-        public GuiWidget disableOverlay;
-
-        public DisableableWidget()
-        {
-            HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            VAnchor = Agg.UI.VAnchor.FitToChildren;
-
-            disableOverlay = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
-            disableOverlay.Visible = false;
-            base.AddChild(disableOverlay);
-        }
-
-        public enum EnableLevel { Disabled, ConfigOnly, Enabled };
-
-        public void SetEnableLevel(EnableLevel enabledLevel)
-        {
-            disableOverlay.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor, 160);
-            switch (enabledLevel)
-            {
-                case EnableLevel.Disabled:
-                    disableOverlay.Margin = new BorderDouble(0);
-                    disableOverlay.Visible = true;
-                    break;
-
-                case EnableLevel.ConfigOnly:
-                    disableOverlay.Margin = new BorderDouble(10, 10, 10, 15);
-                    disableOverlay.Visible = true;
-                    break;
-
-                case EnableLevel.Enabled:
-                    disableOverlay.Visible = false;
-                    break;
-            }
-        }
-
-        public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
-        {
-            if (indexInChildrenList == -1)
-            {
-                // put it under the disableOverlay
-                base.AddChild(childToAdd, Children.Count - 1);
-            }
-            else
-            {
-                base.AddChild(childToAdd, indexInChildrenList);
-            }
-        }
-    }
+    
 
     public class ManualPrinterControls : GuiWidget
     {
@@ -219,7 +171,6 @@ namespace MatterHackers.MatterControl
                 rightColumnContainer.VAnchor |= VAnchor.ParentTop;
 
                 AddFanControls(rightColumnContainer);
-                AddEePromControls(rightColumnContainer);
 
                 centerControlsContainer.AddChild(rightColumnContainer);
             }
@@ -238,10 +189,6 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(macroControls);
 
             AddAdjustmentControls(controlsTopToBottomLayout);
-
-            printLevelContainer = new DisableableWidget();
-            printLevelContainer.AddChild(CreatePrintLevelingControlsContainer());
-            controlsTopToBottomLayout.AddChild(printLevelContainer);
 
             this.AddChild(controlsTopToBottomLayout);
             AddHandlers();
@@ -742,7 +689,7 @@ namespace MatterHackers.MatterControl
 
         private void SetDisplayAttributes()
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             
             this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
             this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
@@ -768,7 +715,6 @@ namespace MatterHackers.MatterControl
 				eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
@@ -785,10 +731,8 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         break;
@@ -799,9 +743,7 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
@@ -819,10 +761,8 @@ namespace MatterHackers.MatterControl
                                 bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 break;
@@ -837,10 +777,8 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;

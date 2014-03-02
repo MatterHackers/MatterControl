@@ -72,11 +72,13 @@
     <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterActionRow.cs" />
     <Compile Include="ActionBar\PrintStatusRow.cs" />
-    <Compile Include="ActivePrinterProfile.cs" />
+    <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
+    <Compile Include="ConfigurationPage\ConfigurationPage.cs" />
+    <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
-    <Compile Include="FieldValidation.cs" />
+    <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewBaseWidget.cs" />
@@ -104,8 +106,8 @@
     <Compile Include="ToolsPage\ToolsListItem.cs" />
     <Compile Include="ToolsPage\ToolsWidget.cs" />
     <Compile Include="WidescreenPanel.cs" />
-    <Compile Include="PrintLevelWizard.cs" />
-    <Compile Include="ContactForm.cs" />
+    <Compile Include="ConfigurationPage\PrintLevelWizard.cs" />
+    <Compile Include="AboutPage\ContactForm.cs" />
     <Compile Include="CustomWidgets\ClickWidget.cs">
       <DependentUpon>ExportQueueItemWindow.cs</DependentUpon>
     </Compile>
@@ -127,15 +129,15 @@
     <Compile Include="DataStorage\SQLiteUnix.cs" />
     <Compile Include="DataStorage\SQLiteAsync.cs" />
     <Compile Include="MainSlidePanel.cs" />
-    <Compile Include="ManifestFileHandler.cs">
+    <Compile Include="Utilities\ManifestFileHandler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ControlElements\MHTextEditWidget.cs" />
     <Compile Include="PartPreviewWindow\GcodeViewBasic.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
-    <Compile Include="PartsSheet.cs" />
-    <Compile Include="JsonResponseDictionary.cs" />
-    <Compile Include="PrinterCommunication.cs" />
+    <Compile Include="PrintQueue\PartsSheet.cs" />
+    <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
+    <Compile Include="PrinterCommunication\PrinterCommunication.cs" />
     <Compile Include="PrinterControls\PrintLeveling.cs" />
     <Compile Include="PrinterControls\OutputScrollWindow.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ChooseConnectionWidget.cs" />
@@ -165,9 +167,9 @@
     <Compile Include="MatterControlApplication.cs" />
     <Compile Include="PrintQueue\PrintQueueControl.cs" />
     <Compile Include="PrintQueue\PrintQueueMenu.cs" />
-    <Compile Include="ProjectFileHandler.cs" />
+    <Compile Include="Utilities\ProjectFileHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestManager.cs" />
+    <Compile Include="Utilities\WebUtilities\RequestManager.cs" />
     <Compile Include="PrintQueue\QueueControlsWidget.cs" />
     <Compile Include="SettingsManagement\ApplicationSettings.cs" />
     <Compile Include="SettingsManagement\UserSettings.cs" />
@@ -177,14 +179,14 @@
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicingQueue.cs" />
-    <Compile Include="TupleList.cs" />
+    <Compile Include="Utilities\TupleList.cs" />
     <Compile Include="FrostedSerial\FrostedSerialPort.cs" />
     <Compile Include="FrostedSerial\FrostedSerialStream.cs" />
     <Compile Include="FrostedSerial\IFrostedSerialStream.cs" />
     <Compile Include="FrostedSerial\WinSerialStream.cs" />
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
     <Compile Include="VersionManagement\VersionFileHandler.cs" />
-    <Compile Include="AboutPage.cs" />
+    <Compile Include="AboutPage\AboutPage.cs" />
     <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
     <Compile Include="ControlElements\TextImageButtonFactory.cs" />
     <Compile Include="FrostedSerial\TermiosH.cs" />
