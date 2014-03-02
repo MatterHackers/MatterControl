@@ -221,12 +221,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        static NamedExecutionTimer drawTimer = new NamedExecutionTimer("View3DTrans");
         public override void OnDraw(Graphics2D graphics2D)
         {
-            drawTimer.Start();
             base.OnDraw(graphics2D);
-            drawTimer.Stop();
         }
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)

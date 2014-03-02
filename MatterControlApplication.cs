@@ -69,7 +69,6 @@ namespace MatterHackers.MatterControl
         bool firstDraw = true;
         bool ShowMemoryUsed = false;
         bool DoCGCollectEveryDraw = false;
-        bool ShowDrawTimingWindow = false;
 
         public MatterControlApplication(double width, double height)
             : base(width, height)
@@ -99,15 +98,13 @@ namespace MatterHackers.MatterControl
                         ShowMemoryUsed = true;
                         DoCGCollectEveryDraw = true;
                         break;
-
-                    case "SHOW_DRAW_TIMING":
-                        ShowDrawTimingWindow = true;
-                        break;
                 }
             }
 
             //WriteTestGCodeFile();
+#if !DEBUG
             if (File.Exists("RunUnitTests.txt"))
+#endif
             {
                 GuiHalWidget.SetClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
 
@@ -274,42 +271,20 @@ namespace MatterHackers.MatterControl
 
         Stopwatch totalDrawTime = new Stopwatch();
         int drawCount = 0;
-        PerformanceFeedbackWindow timingWindow = null;
 
-        static NamedExecutionTimer drawTimer = new NamedExecutionTimer("MatterContorl Draw");
         public override void OnDraw(Graphics2D graphics2D)
         {
-            if (ShowDrawTimingWindow)
-            {
-                ExecutionTimer.Instance.Reset();
-                totalDrawTime.Restart();
-            }
-
-            drawTimer.Start();
+            totalDrawTime.Restart();
             base.OnDraw(graphics2D);
-            drawTimer.Stop();
+            totalDrawTime.Stop();
 
             if (ShowMemoryUsed)
             {
-                totalDrawTime.Stop();
                 long memory = GC.GetTotalMemory(false);
                 this.Title = string.Format("Allocated = {0:n0} : {1}ms, d{2} Size = {3}x{4}", memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height);
                 if (DoCGCollectEveryDraw)
                 {
                     GC.Collect();
-                }
-            }
-
-            if (ShowDrawTimingWindow)
-            {
-                if (timingWindow == null)
-                {
-                    timingWindow = new PerformanceFeedbackWindow();
-                }
-
-                if (totalDrawTime.Elapsed.TotalSeconds > .05)
-                {
-                    timingWindow.ShowResults(totalDrawTime.Elapsed.TotalSeconds);
                 }
             }
 

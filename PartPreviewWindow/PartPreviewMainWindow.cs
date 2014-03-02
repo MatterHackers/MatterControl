@@ -99,34 +99,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        PerformanceFeedbackWindow timingWindow = null;
-        Stopwatch totalDrawTime = new Stopwatch();
-        static NamedExecutionTimer partPreviewDraw = new NamedExecutionTimer("PartPreview Draw");
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            ExecutionTimer.Instance.Reset(); 
-            
-            totalDrawTime.Restart();
-            partPreviewDraw.Start();
-            base.OnDraw(graphics2D);
-            partPreviewDraw.Stop();
-            totalDrawTime.Stop();
-#if true //DEBUG
-#if false
-            if (timingWindow == null)
-            {
-                string staticDataPath = ApplicationDataStorage.Instance.ApplicationStaticDataPath;
-                string fontPath = Path.Combine(staticDataPath, "Fonts", "LiberationMono.svg");
-                TypeFace boldTypeFace = TypeFace.LoadSVG(fontPath);
-                timingWindow = new PerformanceFeedbackWindow(new StyledTypeFace(boldTypeFace, 12));
-            //}
-            //{
-                timingWindow.ShowResults(totalDrawTime.Elapsed.TotalSeconds);
-            }
-#endif
-#endif
-        }
-
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
