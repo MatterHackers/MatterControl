@@ -5,6 +5,7 @@ using System.Text;
 using System.Globalization;
 using System.Threading;
 using System.IO;
+using System.ComponentModel;
 
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.VertexSource;
@@ -22,10 +23,10 @@ namespace MatterHackers.MatterControl
 {
     public class PartThumbnailWidget : ClickWidget
     {
-        static Thread thumbNailThread = null;
+        static BackgroundWorker createThumbnailWorker = null;
 
         PrintItemWrapper printItem;
-        public PrintItemWrapper PrintItem 
+        public PrintItemWrapper PrintItem
         {
             get { return printItem; }
             set
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl
         public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, Vector2 size)
         {
             this.PrintItem = item;
-            
+
             // Set Display Attributes
             this.Margin = new BorderDouble(0);
             this.Padding = new BorderDouble(5);
@@ -79,31 +80,18 @@ namespace MatterHackers.MatterControl
                 ImageBMPIO.LoadImageData(this.GetImageLocation(buildingThumbnailFileName), buildingThumbnailImage);
             }
             this.image = new ImageBuffer(buildingThumbnailImage);
-            
+
             // Add Handlers
             this.Click += new ButtonEventHandler(onMouseClick);
             this.MouseEnterBounds += new EventHandler(onEnter);
             this.MouseLeaveBounds += new EventHandler(onExit);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-
-            CreateThumNailThreadIfNeeded();
         }
 
         void item_FileHasChanged(object sender, EventArgs e)
         {
             thumbNailHasBeenRequested = false;
             Invalidate();
-        }
-
-        private static void CreateThumNailThreadIfNeeded()
-        {
-            if (thumbNailThread == null)
-            {
-                thumbNailThread = new Thread(CreateThumbnailsThread);
-                thumbNailThread.Name = "Queue Create Thumbnail";
-                thumbNailThread.IsBackground = true;
-                thumbNailThread.Start();
-            }
         }
 
         public override void OnClosed(EventArgs e)
@@ -119,73 +107,62 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        static List<PartThumbnailWidget> listOfWidgetsNeedingThumbnails = new List<PartThumbnailWidget>();
-        static void CreateThumbnailsThread()
+        void createThumbnailWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            while (true)
+            PartThumbnailWidget thumbnailWidget = e.Argument as PartThumbnailWidget;
+            if (thumbnailWidget != null)
             {
-                if (listOfWidgetsNeedingThumbnails.Count > 0)
+                if (thumbnailWidget.printItem == null)
                 {
-                    PartThumbnailWidget thumbnailWidget = listOfWidgetsNeedingThumbnails[0];
-                    if (thumbnailWidget.printItem == null)
+                    thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
+                }
+                else // generate the image
+                {
+                    Mesh loadedMesh = StlProcessing.Load(thumbnailWidget.printItem.FileLocation);
+
+                    thumbnailWidget.image = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
+                    thumbnailWidget.Invalidate();
+
+                    if (loadedMesh != null)
+                    {
+                        ImageBuffer tempImage = new ImageBuffer(thumbnailWidget.image.Width, thumbnailWidget.image.Height, 32, new BlenderBGRA());
+                        Graphics2D partGraphics2D = tempImage.NewGraphics2D();
+
+                        List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
+                        if (nonManifoldEdges.Count > 0)
+                        {
+                            if (File.Exists("RunUnitTests.txt"))
+                            {
+                                partGraphics2D.Circle(4, 4, 4, RGBA_Bytes.Red);
+                            }
+                        }
+                        nonManifoldEdges = null;
+
+                        AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
+                        double maxSize = Math.Max(aabb.XSize, aabb.YSize);
+                        double scale = thumbnailWidget.image.Width / (maxSize * 1.2);
+                        RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
+                        PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
+                            new Vector2((thumbnailWidget.image.Width / scale - bounds2D.Width) / 2 - bounds2D.Left,
+                                (thumbnailWidget.image.Height / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
+                            scale,
+                            thumbnailWidget.FillColor);
+
+                        thumbnailWidget.image = new ImageBuffer(tempImage);
+                        loadedMesh = new Mesh();
+                    }
+                    else
                     {
                         thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
                     }
-                    else // generate the image
-                    {
-                        Mesh loadedMesh = StlProcessing.Load(thumbnailWidget.printItem.FileLocation);
-
-                        thumbnailWidget.image = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
-                        thumbnailWidget.Invalidate();
-
-                        if (loadedMesh != null)
-                        {
-                            ImageBuffer tempImage = new ImageBuffer(thumbnailWidget.image.Width, thumbnailWidget.image.Height, 32, new BlenderBGRA());
-                            Graphics2D partGraphics2D = tempImage.NewGraphics2D();
-
-                            List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
-                            if (nonManifoldEdges.Count > 0)
-                            {
-                                if (File.Exists("RunUnitTests.txt"))
-                                {
-                                    partGraphics2D.Circle(4, 4, 4, RGBA_Bytes.Red);
-                                }
-                            }
-
-                            AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
-                            double maxSize = Math.Max(aabb.XSize, aabb.YSize);
-                            double scale = thumbnailWidget.image.Width / (maxSize * 1.2);
-                            RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
-                            PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
-                                new Vector2((thumbnailWidget.image.Width / scale - bounds2D.Width) / 2 - bounds2D.Left,
-                                    (thumbnailWidget.image.Height / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
-                                scale,
-                                thumbnailWidget.FillColor);
-
-                            thumbnailWidget.image = new ImageBuffer(tempImage);
-                        }
-                        else
-                        {
-                            thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
-                        }
-                    }
-                    thumbnailWidget.Invalidate();
-
-                    using (TimedLock.Lock(listOfWidgetsNeedingThumbnails, "CreateThumbnailsThread()"))
-                    {
-                        listOfWidgetsNeedingThumbnails.RemoveAt(0);
-
-                        foreach (PartThumbnailWidget part in listOfWidgetsNeedingThumbnails)
-                        {
-                            // mark them so we try to add them again if needed
-                            part.thumbNailHasBeenRequested = false;
-                        }
-
-                        listOfWidgetsNeedingThumbnails.Clear();
-                    }
                 }
-                Thread.Sleep(100);
+                thumbnailWidget.Invalidate();
             }
+        }
+
+        void createThumbnailWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            createThumbnailWorker = null;
         }
 
         private void onThemeChanged(object sender, EventArgs e)
@@ -228,7 +205,7 @@ namespace MatterHackers.MatterControl
             HoverBorderColor = new RGBA_Bytes();
             this.Invalidate();
         }
-        
+
         public override void OnDraw(Graphics2D graphics2D)
         {
             RoundedRect rectBorder = new RoundedRect(this.LocalBounds, 0);
@@ -236,11 +213,13 @@ namespace MatterHackers.MatterControl
             //Trigger thumbnail generation if neeeded
             if (!thumbNailHasBeenRequested)
             {
-                thumbNailHasBeenRequested = true;
-                using (TimedLock.Lock(listOfWidgetsNeedingThumbnails, "PrintQueueItem OnDraw"))
+                if (createThumbnailWorker == null)
                 {
-                    //Add to thumbnail generation queue
-                    listOfWidgetsNeedingThumbnails.Add(this);
+                    createThumbnailWorker = new BackgroundWorker();
+                    createThumbnailWorker.DoWork += new DoWorkEventHandler(createThumbnailWorker_DoWork);
+                    createThumbnailWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createThumbnailWorker_RunWorkerCompleted);
+                    createThumbnailWorker.RunWorkerAsync(this);
+                    thumbNailHasBeenRequested = true;
                 }
             }
             if (this.FirstWidgetUnderMouse)
@@ -256,7 +235,7 @@ namespace MatterHackers.MatterControl
             graphics2D.Render(strokeRect, HoverBorderColor);
         }
 
-        private string GetImageLocation(string imageName)
+        string GetImageLocation(string imageName)
         {
             return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, imageName);
         }
