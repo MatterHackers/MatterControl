@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl
                 checkUpdateLink.Visible = false;
             }
 
-            MainSlidePanel.Instance.SetUpdateNotification(this, null);
+            //MainSlidePanel.Instance.SetUpdateNotification(this, null);
         }
 
         void onVersionRequestFailed(object sender, EventArgs e)
@@ -454,7 +454,7 @@ namespace MatterHackers.MatterControl
             learnMoreLink.Margin = new BorderDouble(0, 5);
             topToBottom.AddChild(learnMoreLink);
 
-			TextWidget copyrightText = new TextWidget(string.Format(new LocalizedString("Copyright © 2013 MatterHackers, Inc.").Translated), textColor: offWhite);
+			TextWidget copyrightText = new TextWidget(string.Format(new LocalizedString("Copyright © 2014 MatterHackers, Inc.").Translated), textColor: offWhite);
             copyrightText.HAnchor = Agg.UI.HAnchor.ParentCenter;
             topToBottom.AddChild(copyrightText);
 
