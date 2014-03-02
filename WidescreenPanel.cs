@@ -70,8 +70,10 @@ namespace MatterHackers.MatterControl
         View3DTransformPart part3DView;
         GcodeViewBasic partGcodeView;
 
-        GuiWidget RightBorderLine;
-        GuiWidget LeftBorderLine;
+        ClickWidget RightBorderLine;
+        ClickWidget LeftBorderLine;
+
+        bool ColThreeIsHidden = false;
 
         public WidescreenPanel()
             : base(FlowDirection.LeftToRight)
@@ -124,12 +126,13 @@ namespace MatterHackers.MatterControl
             
         }
 
-        private static GuiWidget CreateBorderLine()
+        private static ClickWidget CreateBorderLine()
         {
-            GuiWidget topLine = new GuiWidget(3, 1);
+            ClickWidget topLine = new ClickWidget(3, 1);
             topLine.BackgroundColor = new RGBA_Bytes(200,200,200);
             topLine.VAnchor = VAnchor.ParentBottomTop;
             topLine.Margin = new BorderDouble(8, 0);
+            topLine.Cursor = Cursors.Hand;
             return topLine;
         }
 
@@ -243,6 +246,15 @@ namespace MatterHackers.MatterControl
             PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
             MainSlidePanel.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
             this.BoundsChanged += new EventHandler(onBoundsChanges);
+            RightBorderLine.Click += new ClickWidget.ButtonEventHandler(onRightBorderClick); ;
+            
+        }
+
+        void onRightBorderClick(object sender, EventArgs e)
+        {
+            ColumnThree.Visible = !ColumnThree.Visible;
+            ColThreeIsHidden = !ColumnThree.Visible;
+
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -270,6 +282,8 @@ namespace MatterHackers.MatterControl
 
         void SetVisibleStatus()
         {
+            bool ColThreeVisible = ColumnThree.Visible;
+            
             if (this.Width < ColumnThreeMinWidth)
             {                
                 ColumnThree.Visible = false;
@@ -287,8 +301,9 @@ namespace MatterHackers.MatterControl
             }
             else if (this.Width < ColumnTwoMinWidth)
             {
-                ColumnThree.Visible = true;
+                
                 ColumnTwo.Visible = false;
+                ColumnThree.Visible = !ColThreeIsHidden;
 
                 ColumnOne.RemoveAllChildren();
                 ColumnOne.AddChild(new ActionBarPlus());
@@ -297,12 +312,12 @@ namespace MatterHackers.MatterControl
                 ColumnOne.AnchorAll();
                 ColumnOne.Visible = true;
 
-                LeftBorderLine.Visible = true;
-                RightBorderLine.Visible = false;
+                LeftBorderLine.Visible = false;
+                RightBorderLine.Visible = true;
             }
             else
             {
-                ColumnThree.Visible = true;
+                ColumnThree.Visible = !ColThreeIsHidden;
                 ColumnTwo.Visible = true;
 
                 ColumnOne.RemoveAllChildren();
@@ -385,7 +400,8 @@ namespace MatterHackers.MatterControl
         {
             PrintQueue.PrintQueueControl.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             PrintQueue.PrintQueueControl.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            MainSlidePanel.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);            
+            MainSlidePanel.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);  
+            
         }
 
         public void SetUpdateNotification(object sender, EventArgs widgetEvent)

@@ -22,6 +22,20 @@ namespace MatterHackers.MatterControl
         private int borderWidth = 0;
         private RGBA_Bytes borderColor = RGBA_Bytes.Black;
 
+        public ClickWidget()
+            : base()
+        {
+
+        }
+        
+        public ClickWidget(double width, double height)
+            : base(width, height)
+        {
+
+        }
+
+        
+
         public int BorderWidth 
         {
             get { return borderWidth; }
