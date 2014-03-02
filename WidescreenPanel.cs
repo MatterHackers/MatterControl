@@ -46,109 +46,79 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
-    public class WidescreenPanel : Splitter
-    {
-        SimpleTextTabWidget aboutTabView;
+    public class WidescreenPanel : FlowLayoutWidget
+    {        
         static WidescreenPanel globalInstance;
         TabControl advancedControlsTabControl;
-        TabControl mainControlsTabControl;
         SliceSettingsWidget sliceSettingsWidget;
         TabControl advancedControls;
-        private delegate void ReloadPanel();
-        public TabPage QueueTabPage;
         public TabPage AboutTabPage;
         TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
+        SliceSettingsWidget.UiState sliceSettingsUiState;
 
+        FlowLayoutWidget ColumnOne;
+        FlowLayoutWidget ColumnTwo;
+        int ColumnTwoMinWidth = 1390;
+        FlowLayoutWidget ColumnThree;
+        int ColumnThreeMinWidth = 990;
 
+        View3DTransformPart part3DView;
+        GcodeViewBasic partGcodeView;
 
         public WidescreenPanel()
-            : base()
+            : base(FlowDirection.LeftToRight)
         {
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
-            
-            // do the front panel stuff
             {
-                // first add the print progress bar                
-                this.Panel1.AddChild(new PrintProgressBar());
 
-                // construct the main controls tab control
-                mainControlsTabControl = new TabControl();
-                mainControlsTabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-                mainControlsTabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
-                mainControlsTabControl.TabBar.Margin = new BorderDouble(0, 0);
-                mainControlsTabControl.TabBar.Padding = new BorderDouble(0, 2);
+                //PrintQueueControl.Instance.Initialize();
+                BackgroundColor = RGBA_Bytes.Gray;
 
-                QueueTabPage = new TabPage(new QueueControlsWidget(), "Queue");
-                NumQueueItemsChanged(this, null);
+                ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                ColumnThree = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-                mainControlsTabControl.AddTab(new SimpleTextTabWidget(QueueTabPage, 18,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-                //mainControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(new GuiWidget(), "History"), 18,
-                //        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-                mainControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(new PrintLibraryWidget(), "Library"), 18,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+                ColumnOne.VAnchor = VAnchor.ParentBottomTop;                
+                ColumnOne.AddChild(new ActionBarPlus());
+                ColumnOne.AddChild(new PrintProgressBar());
+                ColumnOne.AddChild(new QueueTab());
+                ColumnOne.Width = 480; //Ordering here matters - must go after children are added
+                
+                ColumnOne.Padding = new BorderDouble(4);
+                ColumnTwo.Padding = new BorderDouble(4);
+                ColumnThree.Padding = new BorderDouble(4);
+                
 
-                AboutTabPage = new TabPage(new AboutPage(), "About");
-                aboutTabView = new SimpleTextTabWidget(AboutTabPage, 18,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
-                mainControlsTabControl.AddTab(aboutTabView);
+                LoadColumnTwo();
+                
+                ColumnThree.VAnchor = VAnchor.ParentBottomTop;
+                
+                
+                {
+                    advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
+                    ColumnThree.AddChild(advancedControlsTabControl);
+                    ColumnThree.Width = 590; //Ordering here matters - must go after children are added
+                }
 
-
-                advancedControlsButtonFactory.normalTextColor = RGBA_Bytes.White;
-                advancedControlsButtonFactory.hoverTextColor = RGBA_Bytes.White;
-                advancedControlsButtonFactory.pressedTextColor = RGBA_Bytes.White;
-                advancedControlsButtonFactory.fontSize = 10;
-
-                advancedControlsButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
-                advancedControlsButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-                advancedControlsButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-                advancedControlsButtonFactory.invertImageLocation = true;
-				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate("Advanced\nControls", "icon_arrow_right_32x32.png");
-                advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
-                advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
-                advancedControlsLinkButton.Cursor = Cursors.Hand;
-                advancedControlsLinkButton.Click += new ButtonBase.ButtonEventHandler(AdvancedControlsButton_Click);
-                advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsAdvancedControlsLink);
-                advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsAdvancedControlsLink);
-
-                GuiWidget hSpacer = new GuiWidget();
-                hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-                mainControlsTabControl.TabBar.AddChild(hSpacer);
-                //mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
-                // and add it
-                this.Panel1.AddChild(mainControlsTabControl);
-
-                SetUpdateNotification(this, null);
+                AddChild(ColumnOne);
+                AddChild(ColumnTwo);
+                AddChild(ColumnThree);                
             }
 
-            // do the back panel
-            {
-                advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
-                this.Panel2.AddChild(advancedControlsTabControl);
-                //this.Panel2.AddChild(new PrintProgressBar());
-            }
-
-            
-
+            AnchorAll();
             AddHandlers();
+            SetVisibleStatus();
+            
         }
 
-        void AdvancedControlsButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onBoundsChanges(Object sender, EventArgs e)
         {
-            if (MainSlidePanel.Instance.PannelIndex == 0)
-            {
-                MainSlidePanel.Instance.PannelIndex = 1;
-            }
-            else
-            {
-                MainSlidePanel.Instance.PannelIndex = 0;
-            }
+            SetVisibleStatus();
         }
 
         void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
@@ -197,27 +167,23 @@ namespace MatterHackers.MatterControl
             //Empty function used as placeholder
         }
 
-        SliceSettingsWidget.UiState sliceSettingsUiState;
+        
         void DoChangePanel(object state)
         {
             // remember which tab we were on
             int topTabIndex = this.advancedControlsTabControl.SelectedTabIndex;
 
             // remove the advance control and replace it with new ones build for the selected printer
-            int advancedControlsWidgetIndex = Panel2.GetChildIndex(this.advancedControlsTabControl);
-            Panel2.RemoveChild(advancedControlsWidgetIndex);
+            int advancedControlsWidgetIndex = ColumnThree.GetChildIndex(this.advancedControlsTabControl);
+            ColumnThree.RemoveChild(advancedControlsWidgetIndex);
             this.advancedControlsTabControl = CreateNewAdvancedControlsTab(sliceSettingsUiState);
-            Panel2.AddChild(this.advancedControlsTabControl, advancedControlsWidgetIndex);
+            ColumnThree.AddChild(this.advancedControlsTabControl, advancedControlsWidgetIndex);
+            ColumnThree.Width = 590;
 
             // set the selected tab back to the one it was before we replace the control
             this.advancedControlsTabControl.SelectTab(topTabIndex);
-
-            // This is a hack to make the pannel remain on the screen.  It would be great to debug it and understand
-            // why it does not work without this code in here.
-            RectangleDouble localBounds = this.LocalBounds;
-            this.LocalBounds = new RectangleDouble(0, 0, this.LocalBounds.Width - 1, 10);
-            this.LocalBounds = localBounds;
         }
+
 
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
         {
@@ -228,29 +194,182 @@ namespace MatterHackers.MatterControl
             advancedControls.TabBar.Padding = new BorderDouble(0, 2);
 
             advancedControlsButtonFactory.invertImageLocation = false;
-            Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate("Print\nQueue", "icon_arrow_left_32x32.png");
-            advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
-            advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
-            advancedControlsLinkButton.Cursor = Cursors.Hand;
-            advancedControlsLinkButton.Click += new ButtonBase.ButtonEventHandler(AdvancedControlsButton_Click);
-            advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsPrintQueueLink);
-            advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsPrintQueueLink);
-
-            //advancedControls.TabBar.AddChild(advancedControlsLinkButton);
 
             GuiWidget manualPrinterControls = new ManualPrinterControls();
             ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
             manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             manualPrinterControlsScrollArea.AnchorAll();
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, "Printer Controls"), 18,
+
+            //Add the tab contents for 'Advanced Controls'
+            string printerControlsLabel = new LocalizedString("Controls").Translated;
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 18,
+            ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            string sliceSettingsLabel = new LocalizedString("Slice Settings").Translated;
+            sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, "Slice Settings"), 18,
+            string configurationLabel = new LocalizedString("Configuration").Translated;
+            ScrollableWidget configurationControls = new ConfigurationPage();
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             return advancedControls;
+        }
+
+        event EventHandler unregisterEvents;
+        void AddHandlers()
+        {
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+            PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+            MainSlidePanel.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
+            this.BoundsChanged += new EventHandler(onBoundsChanges);
+        }
+
+        void onActivePrintItemChanged(object sender, EventArgs e)
+        {
+            LoadColumnTwo();
+        }
+
+        void LoadColumnTwo()
+        {            
+            ColumnTwo.RemoveAllChildren();
+
+            double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+            part3DView = new View3DTransformPart(PrinterCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape);
+            part3DView.Margin = new BorderDouble(bottom: 4);
+            part3DView.AnchorAll();
+
+            partGcodeView = new GcodeViewBasic(PrinterCommunication.Instance.ActivePrintItem, ActiveSliceSettings.Instance.GetBedSize, ActiveSliceSettings.Instance.GetBedCenter);
+            partGcodeView.AnchorAll();
+
+            ColumnTwo.AddChild(part3DView);
+            ColumnTwo.AddChild(partGcodeView);
+            ColumnTwo.AnchorAll();
+            SetVisibleStatus();
+        }
+
+        void SetVisibleStatus()
+        {
+            if (this.Width < ColumnThreeMinWidth)
+            {                
+                ColumnThree.Visible = false;
+                part3DView.Visible = false;
+                partGcodeView.Visible = false;
+                ColumnOne.Visible = true;
+            }
+            else if (this.Width < ColumnTwoMinWidth)
+            {
+                ColumnThree.Visible = true;
+                part3DView.Visible = false;
+                partGcodeView.Visible = false;
+                ColumnOne.Visible = true;
+            }
+            else
+            {
+                ColumnThree.Visible = true;
+                part3DView.Visible = true;
+                partGcodeView.Visible = true;
+                ColumnOne.Visible = true;
+            }
+        }
+
+
+        private void onThemeChanged(object sender, EventArgs e)
+        {
+            this.advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            this.advancedControls.Invalidate();
+        }
+
+        public void ReloadBackPanel(object sender, EventArgs widgetEvent)
+        {
+            sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
+            UiThread.RunOnIdle(DoChangePanel);
+        }
+
+        public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
+        {
+            ActiveSliceSettings.Instance.LoadSettingsForPrinter();
+            MainSlidePanel.Instance.ReloadBackPanel();
+        }
+    }
+
+    class QueueTab : TabControl
+    {
+
+        TabPage QueueTabPage;
+        TabPage LibraryTabPage;
+        TabPage AboutTabPage;
+        SimpleTextTabWidget AboutTabView;
+        RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
+        GuiWidget addedUpdateMark = null;
+
+        public QueueTab()
+        {
+            this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+            this.TabBar.Margin = new BorderDouble(0, 0);
+            this.TabBar.Padding = new BorderDouble(0, 2);
+
+            QueueTabPage = new TabPage(new QueueControlsWidget(), "Queue");
+            this.AddTab(new SimpleTextTabWidget(QueueTabPage, 18,
+                    ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            LibraryTabPage = new TabPage(new PrintLibraryWidget(), "Library");
+            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, 18,
+                    ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            AboutTabPage = new TabPage(new AboutPage(), "About");
+            AboutTabView = new SimpleTextTabWidget(AboutTabPage, 18,
+                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
+            this.AddTab(AboutTabView);
+
+            NumQueueItemsChanged(this, null);
+            SetUpdateNotification(this, null);
+
+        }
+
+        void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
+        {
+            string queueStringBeg = new LocalizedString("Queue").Translated;
+            string queueString = string.Format("{1} ({0})", PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
+            QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
+        }
+
+        event EventHandler unregisterEvents;
+        void AddHandlers()
+        {
+            PrintQueue.PrintQueueControl.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
+            PrintQueue.PrintQueueControl.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
+            MainSlidePanel.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);            
+        }
+
+        public void SetUpdateNotification(object sender, EventArgs widgetEvent)
+        {
+            if (this.UpdateIsAvailable() || UpdateControl.NeedToCheckForUpdateFirstTimeEver)
+            {
+#if true
+                if (addedUpdateMark == null)
+                {
+                    UpdateControl.NeedToCheckForUpdateFirstTimeEver = false;
+                    addedUpdateMark = new NotificationWidget();
+                    addedUpdateMark.OriginRelativeParent = new Vector2(63, 10);
+                    AboutTabView.AddChild(addedUpdateMark);
+                }
+#else
+                AboutTabPage.Text = string.Format("About (!)");
+#endif
+            }
+            else
+            {
+                if (addedUpdateMark != null)
+                {
+                    addedUpdateMark.Visible = false;
+                }
+                AboutTabPage.Text = string.Format("About");
+            }
         }
 
         bool UpdateIsAvailable()
@@ -267,81 +386,21 @@ namespace MatterHackers.MatterControl
                 return true;
             }
         }
+    }
 
-        event EventHandler unregisterEvents;
-        void AddHandlers()
+    class NotificationWidget : GuiWidget
+    {
+        public NotificationWidget()
+            : base(12, 12)
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-            PrintQueue.PrintQueueControl.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            PrintQueue.PrintQueueControl.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
         }
 
-        class NotificationWidget : GuiWidget
+        public override void OnDraw(Graphics2D graphics2D)
         {
-            public NotificationWidget()
-                : base(12, 12)
-            {
-            }
-
-            public override void OnDraw(Graphics2D graphics2D)
-            {
-                graphics2D.Circle(Width / 2, Height / 2, Width / 2, RGBA_Bytes.White);
-                graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, RGBA_Bytes.Red);
-                graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, RGBA_Bytes.White);
-                //graphics2D.DrawString("1", Width / 2, Height / 2 + 1, 8, Justification.Center, Baseline.BoundsCenter, RGBA_Bytes.White);
-                base.OnDraw(graphics2D);
-            }
-        }
-
-        GuiWidget addedUpdateMark = null;
-        public void SetUpdateNotification(object sender, EventArgs widgetEvent)
-        {
-            if (this.UpdateIsAvailable() || UpdateControl.NeedToCheckForUpdateFirstTimeEver)
-            {
-#if true
-                if (addedUpdateMark == null)
-                {
-                    UpdateControl.NeedToCheckForUpdateFirstTimeEver = false;
-                    addedUpdateMark = new NotificationWidget();
-                    addedUpdateMark.OriginRelativeParent = new Vector2(63, 10);
-                    aboutTabView.AddChild(addedUpdateMark);
-                }
-#else
-                AboutTabPage.Text = string.Format("About (!)");
-#endif
-            }
-            else
-            {
-                if (addedUpdateMark != null)
-                {
-                    addedUpdateMark.Visible = false;
-                }
-				AboutTabPage.Text = string.Format("About");
-            }
-        }
-
-        void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
-        {
-			string queueString = "Queue ({0})";
-            QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
-        }
-
-        private void onThemeChanged(object sender, EventArgs e)
-        {
-            this.advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            this.advancedControls.Invalidate();
-        }
-
-        public void ReloadBackPanel()
-        {
-            sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
-            UiThread.RunOnIdle(DoChangePanel);
-        }
-
-        public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
-        {
-            ActiveSliceSettings.Instance.LoadSettingsForPrinter();
-            MainSlidePanel.Instance.ReloadBackPanel();
+            graphics2D.Circle(Width / 2, Height / 2, Width / 2, RGBA_Bytes.White);
+            graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, RGBA_Bytes.Red);
+            graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, RGBA_Bytes.White);
+            base.OnDraw(graphics2D);
         }
     }
 }
