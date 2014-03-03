@@ -278,7 +278,9 @@ namespace MatterHackers.MatterControl
             base.OnDraw(graphics2D);
             totalDrawTime.Stop();
 
+#if !DEBUG
             if (ShowMemoryUsed)
+#endif
             {
                 long memory = GC.GetTotalMemory(false);
                 this.Title = string.Format("Allocated = {0:n0} : {1}ms, d{2} Size = {3}x{4}", memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height);
