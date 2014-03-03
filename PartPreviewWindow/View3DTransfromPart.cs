@@ -408,9 +408,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             AddHandlers();
 
-            // don't load the mesh until we get all the rest of the interface built
-            meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
-            meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
+            if (printItemWrapper != null)
+            {
+                // don't load the mesh until we get all the rest of the interface built
+                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
+                meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
+            }
         }
 
         private void MakeCopyOfMesh()

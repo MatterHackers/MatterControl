@@ -119,33 +119,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
-			string startingMessage = new LocalizedString("Loading GCode...").Translated;
-            if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
+            string startingMessage = new LocalizedString("No GCode Available...").Translated;
+            if (printItem != null)
             {
-                gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
-            }
-            else
-            {
-                string gcodePathAndFileName = printItem.GCodePathAndFileName;
-                bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
-
-                if (gcodeProcessingStateInfoText != null && gcodeProcessingStateInfoText.Text == "Slicing Error")
+                startingMessage = new LocalizedString("Loading GCode...").Translated;
+                if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
                 {
-                    startingMessage = "Slicing Error. Please review your slice settings.";
+                    gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
                 }
                 else
                 {
-					startingMessage = new LocalizedString("Press 'generate' to view layers").Translated;
-                }
+                    string gcodePathAndFileName = printItem.GCodePathAndFileName;
+                    bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
 
-                if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
-                {
-                    gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
-                }
+                    if (gcodeProcessingStateInfoText != null && gcodeProcessingStateInfoText.Text == "Slicing Error")
+                    {
+                        startingMessage = "Slicing Error. Please review your slice settings.";
+                    }
+                    else
+                    {
+                        startingMessage = new LocalizedString("Press 'generate' to view layers").Translated;
+                    }
 
-                // we only hook these up to make sure we can regenerate the gcode when we want
-                printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-                printItem.Done += new EventHandler(sliceItem_Done);
+                    if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
+                    {
+                        gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
+                    }
+
+                    // we only hook these up to make sure we can regenerate the gcode when we want
+                    printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
+                    printItem.Done += new EventHandler(sliceItem_Done);
+                }
             }
 
             centerPartPreviewAndControls.AddChild(gcodeDispalyWidget);
@@ -583,11 +587,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnClosed(EventArgs e)
         {
-            printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-            printItem.Done -= new EventHandler(sliceItem_Done);
-            if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
+            if (printItem != null)
             {
-                SlicingQueue.Instance.CancelCurrentSlicing();
+                printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
+                printItem.Done -= new EventHandler(sliceItem_Done);
+                if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
+                {
+                    SlicingQueue.Instance.CancelCurrentSlicing();
+                }
             }
             base.OnClosed(e);
         }
