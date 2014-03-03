@@ -279,6 +279,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public override void OnClosed(EventArgs e)
         {
+            PrintItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
             if (unregisterEvents != null)
             {
                 unregisterEvents(this, null);

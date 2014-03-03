@@ -101,6 +101,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
             sliceItem.Done -= new EventHandler(sliceItem_Done);
+            sliceItem.SlicingOutputMessage -= printItemWrapper_SlicingOutputMessage;
             savedGCodeFileNames.Add(sliceItem.GCodePathAndFileName);
 
             itemCountBeingWorkedOn++;
