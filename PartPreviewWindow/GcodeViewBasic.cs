@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // we only hook these up to make sure we can regenerate the gcode when we want
                 printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-                printItem.Done += new EventHandler(sliceItem_Done);
+                printItem.Done += sliceItem_Done;
             }
 
             centerPartPreviewAndControls.AddChild(gcodeDispalyWidget);
@@ -622,6 +622,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void sliceItem_Done(object sender, EventArgs e)
         {
+            // We can add this while we have it open (when we are done loading).
+            // So we need to make sure we only have it added once. This will be ok to run when
+            // not added or when added and will ensure we only have one hook.
+            printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
+            printItem.Done -= sliceItem_Done;
+
             UiThread.RunOnIdle(CreateAndAddChildren);
             startedSliceFromGenerateButton = false;
         }
