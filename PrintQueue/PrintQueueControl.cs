@@ -580,28 +580,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            //activeView.OnDraw(graphics2D);
-
-            base.OnDraw(graphics2D);
-        }
-
-        public override void OnMouseDown(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseDown(mouseEvent);
-        }
-
-        public override void OnMouseUp(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseUp(mouseEvent);
-        }
-
-        public override void OnMouseMove(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseMove(mouseEvent);
-        }
-
         public void ClearSelected()
         {
             if (selectedIndex != -1)

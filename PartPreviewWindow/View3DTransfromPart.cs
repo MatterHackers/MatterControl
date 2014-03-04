@@ -69,11 +69,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             : base(hAnchor, vAnchor)
         {
         }
-
-        public override void OnMouseMove(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseMove(mouseEvent);
-        }
     }
 
     public class View3DTransformPart : PartPreviewBaseWidget

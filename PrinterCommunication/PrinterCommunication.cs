@@ -1614,14 +1614,14 @@ namespace MatterHackers.MatterControl
                     {
                         if (printerCommandQueueIndex == loadedGCode.GCodeCommandQueue.Count)
                         {
-                            printJobDisplayName = null;
+                            CommunicationState = CommunicationStates.FinishedPrint;
 
+                            printJobDisplayName = null;
+                            
                             // never leave the extruder and the bed hot
                             ReleaseMotors();
                             TargetExtruderTemperature = 0;
-                            TargetBedTemperature = 0;
-
-                            CommunicationState = CommunicationStates.FinishedPrint;
+                            TargetBedTemperature = 0;                            
                         }
                         else if (!PrinterIsPaused)
                         {
