@@ -51,14 +51,22 @@ namespace MatterHackers.MatterControl.PrintQueue
                     if (doneSlicing)
                     {
                         string message = "Slicing Error";
-                        string gcodePathAndFileName = GetGCodePathAndFileName();
-                        if (gcodePathAndFileName != "" && File.Exists(gcodePathAndFileName))
+                        if (File.Exists(FileLocation))
                         {
-                            FileInfo info = new FileInfo(gcodePathAndFileName);
-                            if (info.Length > 10)
+                            string gcodePathAndFileName = GetGCodePathAndFileName();
+                            if (gcodePathAndFileName != "" && File.Exists(gcodePathAndFileName))
                             {
-                                message = "Ready to Print";
+                                FileInfo info = new FileInfo(gcodePathAndFileName);
+                                // This is really just to make sure it is bigger than nothing.
+                                if (info.Length > 10)
+                                {
+                                    message = "Ready to Print";
+                                }
                             }
+                        }
+                        else
+                        {
+                            message = string.Format("File Not Found\n'{0}'", FileLocation);
                         }
 
                         OnSlicingOutputMessage(new StringEventArgs(message));

@@ -170,71 +170,75 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 if (PrinterCommunication.Instance.ActivePrintItem != null && listOfSlicingItems.Count > 0)
                 {
                     PrintItemWrapper itemToSlice = listOfSlicingItems[0];
-                    itemToSlice.CurrentlySlicing = true;
-
-                    string currentConfigurationFileAndPath = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, "config_" + ActiveSliceSettings.Instance.GetHashCode().ToString() + ".ini");
-                    ActiveSliceSettings.Instance.GenerateConfigFile(currentConfigurationFileAndPath);
-
-                    string gcodePathAndFileName = itemToSlice.GCodePathAndFileName;
-                    bool gcodeFileIsComplete = itemToSlice.IsGCodeFileComplete(gcodePathAndFileName);
-
-                    if (!File.Exists(gcodePathAndFileName) || !gcodeFileIsComplete)
+                    // check that the STL file is currently on disk
+                    if (File.Exists(itemToSlice.FileLocation))
                     {
-                        slicerProcess = new Process();
+                        itemToSlice.CurrentlySlicing = true;
 
-                        switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
+                        string currentConfigurationFileAndPath = Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, "config_" + ActiveSliceSettings.Instance.GetHashCode().ToString() + ".ini");
+                        ActiveSliceSettings.Instance.GenerateConfigFile(currentConfigurationFileAndPath);
+
+                        string gcodePathAndFileName = itemToSlice.GCodePathAndFileName;
+                        bool gcodeFileIsComplete = itemToSlice.IsGCodeFileComplete(gcodePathAndFileName);
+
+                        if (!File.Exists(gcodePathAndFileName) || !gcodeFileIsComplete)
                         {
-                            case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
-                                slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
-                                break;
+                            slicerProcess = new Process();
 
-                            case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-                                slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + CuraEngineMappings.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
-                                //Debug.Write(slicerProcess.StartInfo.Arguments);
-                                break;
-
-                            case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-                                slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
-                                break;
-                        }
-
-					    string slicerFullPath = getSlicerFullPath();
-
-                        slicerProcess.StartInfo.CreateNoWindow = true;
-                        slicerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                        slicerProcess.StartInfo.RedirectStandardError = true;
-                        slicerProcess.StartInfo.RedirectStandardOutput = true;
-
-						slicerProcess.StartInfo.FileName = slicerFullPath;
-                        slicerProcess.StartInfo.UseShellExecute = false;
-
-                        slicerProcess.OutputDataReceived += (sender, args) =>
-                        {
-                            if (args.Data != null)
+                            switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                             {
-                                string message = args.Data;
-                                message = message.Replace("=>", "").Trim();
-                                if (message.Contains(".gcode"))
-                                {
-                                    message = "Saving intermediate file";
-                                }
-                                message += "...";
-                                UiThread.RunOnIdle((state) =>
-                                {
-                                    itemToSlice.OnSlicingOutputMessage(new StringEventArgs(message));
-                                });                                
+                                case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
+                                    slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    break;
+
+                                case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
+                                    slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + CuraEngineMappings.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    //Debug.Write(slicerProcess.StartInfo.Arguments);
+                                    break;
+
+                                case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
+                                    slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    break;
                             }
-                        };
 
-                        slicerProcess.Start();
+                            string slicerFullPath = getSlicerFullPath();
 
-                        slicerProcess.BeginOutputReadLine();
-                        string stdError = slicerProcess.StandardError.ReadToEnd();
+                            slicerProcess.StartInfo.CreateNoWindow = true;
+                            slicerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                            slicerProcess.StartInfo.RedirectStandardError = true;
+                            slicerProcess.StartInfo.RedirectStandardOutput = true;
 
-                        slicerProcess.WaitForExit();
-                        using (TimedLock.Lock(slicerProcess, "SlicingProcess"))
-                        {
-                            slicerProcess = null;
+                            slicerProcess.StartInfo.FileName = slicerFullPath;
+                            slicerProcess.StartInfo.UseShellExecute = false;
+
+                            slicerProcess.OutputDataReceived += (sender, args) =>
+                            {
+                                if (args.Data != null)
+                                {
+                                    string message = args.Data;
+                                    message = message.Replace("=>", "").Trim();
+                                    if (message.Contains(".gcode"))
+                                    {
+                                        message = "Saving intermediate file";
+                                    }
+                                    message += "...";
+                                    UiThread.RunOnIdle((state) =>
+                                    {
+                                        itemToSlice.OnSlicingOutputMessage(new StringEventArgs(message));
+                                    });
+                                }
+                            };
+
+                            slicerProcess.Start();
+
+                            slicerProcess.BeginOutputReadLine();
+                            string stdError = slicerProcess.StandardError.ReadToEnd();
+
+                            slicerProcess.WaitForExit();
+                            using (TimedLock.Lock(slicerProcess, "SlicingProcess"))
+                            {
+                                slicerProcess = null;
+                            }
                         }
                     }
 
