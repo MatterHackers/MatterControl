@@ -198,6 +198,7 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
             controlsTopToBottomLayout.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             controlsTopToBottomLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
+            controlsTopToBottomLayout.Name = "ManualPrinterControls.ControlsContainer";
 
             controlsTopToBottomLayout.Padding = new BorderDouble(3, 0);
 

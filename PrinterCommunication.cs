@@ -106,6 +106,12 @@ namespace MatterHackers.MatterControl
             get { return firmwareType; }
         }
 
+        string firmwareVersion;
+        public string FirmwareVersion
+        {
+            get { return firmwareVersion; }
+        }
+
         static PrinterCommunication globalInstance;
         string connectionFailureMessage = "Unknown Reason";
 
@@ -124,6 +130,7 @@ namespace MatterHackers.MatterControl
         public RootedObjectEventHandler ExtruderTemperatureRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler ExtruderTemperatureSet = new RootedObjectEventHandler();
         public RootedObjectEventHandler FanSpeedSet = new RootedObjectEventHandler();
+        public RootedObjectEventHandler FirmwareVersionRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler PrintFinished = new RootedObjectEventHandler();
         public RootedObjectEventHandler PositionRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler ReadLine = new RootedObjectEventHandler();
@@ -531,7 +538,7 @@ namespace MatterHackers.MatterControl
             {
                 return CommunicationState == CommunicationStates.Paused;
             }
-        }
+        }        
 
         int NumberOfLinesInCurrentPrint
         {
@@ -965,6 +972,16 @@ namespace MatterHackers.MatterControl
                     firmwareType = FirmwareTypes.Sprinter;
                 }
             }
+            string firmwareVersionReported = "";
+            if (GCodeFile.GetFirstStringAfter("PROTOCOL_VERSION:", foundStringEventArgs.LineToCheck, " ", ref firmwareVersionReported))
+            {
+                //Firmware version was detected and is different
+                if (firmwareVersionReported != "" && firmwareVersion != firmwareVersionReported)
+                {                    
+                    firmwareVersion = firmwareVersionReported;
+                    OnFirmwareVersionRead(null);
+                }
+            }
         }
 
         public void FoundStart(object sender, EventArgs e)
@@ -1076,6 +1093,7 @@ namespace MatterHackers.MatterControl
             CommunicationState = CommunicationStates.AttemptingToConnect;
             this.stopTryingToConnect = false;
             firmwareType = FirmwareTypes.Unknown;
+            firmwareVersion = null;
 
             if (SerialPortIsAvailable(this.ActivePrinter.ComPort))
             {
@@ -1242,6 +1260,11 @@ namespace MatterHackers.MatterControl
         public void OnPrintFinished(EventArgs e)
         {
             PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(this.ActivePrintItem));
+        }
+
+        void OnFirmwareVersionRead(EventArgs e)
+        {
+            FirmwareVersionRead.CallEvents(this, e);
         }
 
         void OnExtruderTemperatureRead(EventArgs e)

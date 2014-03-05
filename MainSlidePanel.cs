@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl
         public TabPage AboutTabPage;
         TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
+        public EventHandler AdvancedControlsLoaded;
 
         GuiWidget LeftPanel
         {
@@ -211,6 +212,14 @@ namespace MatterHackers.MatterControl
             //Empty function used as placeholder
         }
 
+        void OnAdvancedControlsLoaded()
+        {
+            if (AdvancedControlsLoaded != null)
+            {
+                AdvancedControlsLoaded(this, null);
+            }
+        }
+
         SliceSettingsWidget.UiState sliceSettingsUiState;
         void DoChangePanel(object state)
         {
@@ -220,7 +229,9 @@ namespace MatterHackers.MatterControl
             // remove the advance control and replace it with new ones build for the selected printer
             int advancedControlsWidgetIndex = RightPanel.GetChildIndex(this.advancedControlsTabControl);
             RightPanel.RemoveChild(advancedControlsWidgetIndex);
-            this.advancedControlsTabControl = CreateNewAdvancedControlsTab(sliceSettingsUiState);
+
+            this.advancedControlsTabControl = CreateNewAdvancedControlsTab(sliceSettingsUiState);            
+
             RightPanel.AddChild(this.advancedControlsTabControl, advancedControlsWidgetIndex);
 
             // set the selected tab back to the one it was before we replace the control
@@ -231,6 +242,8 @@ namespace MatterHackers.MatterControl
             RectangleDouble localBounds = this.LocalBounds;
             this.LocalBounds = new RectangleDouble(0, 0, this.LocalBounds.Width - 1, 10);
             this.LocalBounds = localBounds;
+            OnAdvancedControlsLoaded();
+            
         }
 
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
@@ -266,6 +279,8 @@ namespace MatterHackers.MatterControl
 			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, new LocalizedString("Slice Settings").Translated), 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
+
+            
             return advancedControls;
         }
 
