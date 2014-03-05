@@ -22,9 +22,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         public DropDownMenu MenuDropList;
         private TupleList<string, Func<bool>> menuItems;
 
-
-		ExportToFolderFeedbackWindow exportingWindow;
-		bool exportingWindowIsOpen = false;
+		ExportToFolderFeedbackWindow exportingWindow = null;
 
         public PrintQueueMenu()
         {
@@ -66,7 +64,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{new LocalizedString(" Export to Zip").Translated, exportQueueToZipMenu_Click},
 				{"GCode", null},
 				{new LocalizedString(" Export to Folder").Translated, exportGCodeToFolderButton_Click},
-                //{" Export to SD Card", exportToSDCardButton_Click},
 				{new LocalizedString("Extra").Translated, null},
 				{new LocalizedString(" Create Part Sheet").Translated, createPartsSheetsButton_Click},
             };
@@ -142,30 +139,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             return true;
         }
 
-
-		private void OpenExportWindow(List<PrintItem> parts)
-		{
-			if (this.exportingWindowIsOpen == false) 
-			{
-				exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts [0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-				this.exportingWindowIsOpen = true;
-				exportingWindow.Closed += new EventHandler(ExportToFolderFeedbackWindow_Closed);
-			}
-			else 
-			{
-				if (exportingWindow != null) 
-				{
-					exportingWindow.BringToFront();
-				}
-			}
-		}
-
-
 		void ExportToFolderFeedbackWindow_Closed(object sender, EventArgs e)
 		{
-			this.exportingWindowIsOpen = false;
+			this.exportingWindow = null;
 		}
-
 
 		private void SelectLocationToExportGCode(object state)
         {
@@ -179,45 +156,22 @@ namespace MatterHackers.MatterControl.PrintQueue
                 List<PrintItem> parts = PrintQueueControl.Instance.CreateReadOnlyPartList();
                 if (parts.Count > 0)
                 {
-					OpenExportWindow (parts);
-					ExportToFolderProcess exportToFolderProcess = new ExportToFolderProcess(parts, path);
+                    if (exportingWindow == null)
+                    {
+                        exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
+                        exportingWindow.Closed += new EventHandler(ExportToFolderFeedbackWindow_Closed);
+                        exportingWindow.ShowAsSystemWindow();
+                    }
+                    else
+                    {
+                        exportingWindow.BringToFront();
+                    }
+
+                    ExportToFolderProcess exportToFolderProcess = new ExportToFolderProcess(parts, path);
                     exportToFolderProcess.StartingNextPart += exportingWindow.StartingNextPart;
                     exportToFolderProcess.UpdatePartStatus += exportingWindow.UpdatePartStatus;
                     exportToFolderProcess.DoneSaving += exportingWindow.DoneSaving;
                     exportToFolderProcess.Start();
-                }
-            }
-        }
-
-        bool exportToSDCardButton_Click()
-        {
-            UiThread.RunOnIdle(ExportToSDCardButtonOnIdle);
-            return true;
-        }
-
-        void ExportToSDCardButtonOnIdle(object state)
-        {
-            if (!PrinterCommunication.Instance.PrinterIsConnected)
-            {
-                StyledMessageBox.ShowMessageBox("You must connect to a printer before you can export to the printers SD Card.", "You must connect to a printer");
-            }
-            else
-            {
-                string message = string.Format("Do you want to save your entire queue to the printers SD Card? This can be a lengthy process");
-                if (StyledMessageBox.ShowMessageBox(message, "Save to SD Card", StyledMessageBox.MessageType.YES_NO))
-                {
-                    List<PrintItem> parts = PrintQueueControl.Instance.CreateReadOnlyPartList();
-                    if (parts.Count > 0)
-                    {
-                        ExportToSdCardFeedbackWindow exportingWindow = new ExportToSdCardFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-                        exportingWindow.ShowAsSystemWindow();
-
-                        ExportToSdCardProcess exportToSdCardProcess = new ExportToSdCardProcess(parts);
-                        exportToSdCardProcess.StartingNextPart += exportingWindow.StartingNextPart;
-                        exportToSdCardProcess.UpdatePartStatus += exportingWindow.UpdatePartStatus;
-                        exportToSdCardProcess.DoneSaving += exportingWindow.DoneSaving;
-                        exportToSdCardProcess.Start();
-                    }
                 }
             }
         }
