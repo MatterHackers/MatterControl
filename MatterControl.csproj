@@ -180,16 +180,11 @@
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicingQueue.cs" />
     <Compile Include="Utilities\TupleList.cs" />
-    <Compile Include="FrostedSerial\FrostedSerialPort.cs" />
-    <Compile Include="FrostedSerial\FrostedSerialStream.cs" />
-    <Compile Include="FrostedSerial\IFrostedSerialStream.cs" />
-    <Compile Include="FrostedSerial\WinSerialStream.cs" />
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
     <Compile Include="VersionManagement\VersionFileHandler.cs" />
     <Compile Include="AboutPage\AboutPage.cs" />
     <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
     <Compile Include="ControlElements\TextImageButtonFactory.cs" />
-    <Compile Include="FrostedSerial\TermiosH.cs" />
     <Compile Include="EeProm\EePromMarlinWidget.cs" />
     <Compile Include="EeProm\EePromRepetierParameter.cs" />
     <Compile Include="EeProm\EePromRepetierWidget.cs" />
