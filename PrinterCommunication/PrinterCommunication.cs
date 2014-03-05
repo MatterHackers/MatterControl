@@ -29,27 +29,25 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO.Ports;
-using System.Threading;
 using System.Diagnostics;
-using System.Collections;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Globalization;
-using Microsoft.Win32.SafeHandles;
+using System.IO;
+using System.IO.Ports;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 
-using MatterHackers.MatterControl.FrostedSerial;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.VectorMath;
-using MatterHackers.SerialPortConnecton;
 using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.VersionManagement;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.SerialPortCommunication;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
+using MatterHackers.VectorMath;
+
+using Microsoft.Win32.SafeHandles;
 
 namespace MatterHackers.MatterControl
 {
