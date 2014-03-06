@@ -33,7 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.SerialPortConnecton;
+using MatterHackers.SerialPortCommunication;
 
 namespace MatterHackers.MatterControl
 {    
