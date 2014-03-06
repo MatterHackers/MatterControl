@@ -102,7 +102,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             sliceItem.Done -= new EventHandler(sliceItem_Done);
             sliceItem.SlicingOutputMessage -= printItemWrapper_SlicingOutputMessage;
-            savedGCodeFileNames.Add(sliceItem.GCodePathAndFileName);
+            if (File.Exists(sliceItem.FileLocation))
+            {
+                savedGCodeFileNames.Add(sliceItem.GCodePathAndFileName);
+            }
 
             itemCountBeingWorkedOn++;
             if (itemCountBeingWorkedOn < allFilesToExport.Count)
@@ -125,15 +128,23 @@ namespace MatterHackers.MatterControl.PrintQueue
                         if (lines.Length > 0)
                         {
                             string filamentAmountLine = lines[lines.Length - 1];
+                            bool foundAmountInGCode = false;
                             int startPos = filamentAmountLine.IndexOf("(");
-                            int endPos = filamentAmountLine.IndexOf("cm3)");
-                            string value = filamentAmountLine.Substring(startPos + 1, endPos - (startPos + 1));
-                            double amountForThisFile;
-                            if (double.TryParse(value, out amountForThisFile))
+                            if (startPos > 0)
                             {
-                                total += amountForThisFile;
+                                int endPos = filamentAmountLine.IndexOf("cm3)", startPos);
+                                if (endPos > 0)
+                                {
+                                    string value = filamentAmountLine.Substring(startPos + 1, endPos - (startPos + 1));
+                                    double amountForThisFile;
+                                    if (double.TryParse(value, out amountForThisFile))
+                                    {
+                                        foundAmountInGCode = true;
+                                        total += amountForThisFile;
+                                    }
+                                }
                             }
-                            else
+                            if (!foundAmountInGCode)
                             {
                                 GCodeFile gcodeFile = new GCodeFile(gcodeFileName);
                                 total += gcodeFile.GetFilamentCubicMm(ActiveSliceSettings.Instance.FillamentDiameter) / 1000;
