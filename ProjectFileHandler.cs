@@ -242,8 +242,8 @@ namespace MatterHackers.MatterControl
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Zip file|*.zip");
 
-            System.IO.Stream streamToLoadFrom = FileDialog.OpenFileDialog(ref openParams);
-            if (streamToLoadFrom != null)
+            FileDialog.OpenFileDialog(ref openParams);
+			if (openParams.FileNames != null)
             {
                 string loadedFileName = openParams.FileName;
                 return ImportFromProjectArchive(loadedFileName);

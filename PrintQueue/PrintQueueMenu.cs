@@ -99,13 +99,19 @@ namespace MatterHackers.MatterControl.PrintQueue
             if (parts.Count > 0)
             {
                 SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
+
 				saveParams.ActionButtonLabel = new LocalizedString("Save Parts Sheet").Translated;
 				string saveParamsTitleLbl = new LocalizedString("MatterContol").Translated;
 				string saveParamsTitleLblFull = new LocalizedString ("Save").Translated;
 				saveParams.Title = string.Format("{0}: {1}",saveParamsTitleLbl,saveParamsTitleLblFull);
 
                 System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-                if (streamToSaveTo != null)
+				if (streamToSaveTo != null) 
+				{
+					streamToSaveTo.Close ();
+				}
+
+				if (saveParams.FileName != null)
                 {
                     PartsSheet currentPartsInQueue = new PartsSheet(parts, saveParams.FileName);
 
