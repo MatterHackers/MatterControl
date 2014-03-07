@@ -424,6 +424,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             AutoScroll = true;
             topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            topToBottomItemList.Name = "PrintQueueControl TopToBottom";
             topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             base.AddChild(topToBottomItemList);
         }
@@ -431,7 +432,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
         {
             FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-            itemHolder.Name = "LB item holder";
+            itemHolder.Name = "PrintQueueControl itemHolder";
             itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
             itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             itemHolder.AddChild(childToAdd);

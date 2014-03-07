@@ -129,26 +129,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
                 else
                 {
-                    string gcodePathAndFileName = printItem.GCodePathAndFileName;
-                    bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
-
-                    if (gcodeProcessingStateInfoText != null && gcodeProcessingStateInfoText.Text == "Slicing Error")
+                    if (File.Exists(printItem.FileLocation))
                     {
-                        startingMessage = "Slicing Error. Please review your slice settings.";
+                        string gcodePathAndFileName = printItem.GCodePathAndFileName;
+                        bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
+
+                        if (gcodeProcessingStateInfoText != null && gcodeProcessingStateInfoText.Text == "Slicing Error")
+                        {
+                            startingMessage = new LocalizedString("Slicing Error. Please review your slice settings.").Translated;
+                        }
+                        else
+                        {
+                            startingMessage = new LocalizedString("Press 'generate' to view layers").Translated;
+                        }
+
+                        if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
+                        {
+                            gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
+                        }
+
+                        // we only hook these up to make sure we can regenerate the gcode when we want
+                        printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
+                        printItem.Done += new EventHandler(sliceItem_Done);
                     }
                     else
                     {
-                        startingMessage = new LocalizedString("Press 'generate' to view layers").Translated;
+                        startingMessage = string.Format("{0}\n'{1}'", new LocalizedString("File not found on disk.").Translated, printItem.Name);
                     }
-
-                    if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
-                    {
-                        gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
-                    }
-
-                    // we only hook these up to make sure we can regenerate the gcode when we want
-                    printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-                    printItem.Done += new EventHandler(sliceItem_Done);
                 }
             }
 

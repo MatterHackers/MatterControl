@@ -82,11 +82,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget scaleOptionContainer;
 
         ProgressControl processingProgressControl;
-        FlowLayoutWidget editPlateButtonsContainer;
+        FlowLayoutWidget enterEditButtonsContainer;
+        FlowLayoutWidget doEdittingButtonsContainer;
         RadioButton rotateViewButton;
-        Button editPlateButton;
         GuiWidget viewControlsSeparator;
         RadioButton partSelectButton;
+        bool OpenAddDialogWhenDone = false;
 
         Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
 
@@ -295,49 +296,75 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 FlowLayoutWidget editToolBar = new FlowLayoutWidget();
 
-				string progressFindPartsLbl = new LocalizedString ("Finding Parts").Translated;
-				string progressFindPartsLblFull = string.Format ("{0}:", progressFindPartsLbl);
+                string progressFindPartsLbl = new LocalizedString("Finding Parts").Translated;
+                string progressFindPartsLblFull = string.Format("{0}:", progressFindPartsLbl);
 
-				processingProgressControl = new ProgressControl(progressFindPartsLblFull);
+                processingProgressControl = new ProgressControl(progressFindPartsLblFull);
                 processingProgressControl.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 editToolBar.AddChild(processingProgressControl);
                 editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
                 processingProgressControl.Visible = false;
 
-				editPlateButton = textImageButtonFactory.Generate(new LocalizedString("Edit").Translated);
-                editToolBar.AddChild(editPlateButton);
-
-                editPlateButtonsContainer = new FlowLayoutWidget();
-                editPlateButtonsContainer.Visible = false;
-
-				Button addButton = textImageButtonFactory.Generate(new LocalizedString("Add").Translated, "icon_circle_plus.png");
-                addButton.Margin = new BorderDouble(right: 10);
-                editPlateButtonsContainer.AddChild(addButton);
-                addButton.Click += (sender, e) =>
+                enterEditButtonsContainer = new FlowLayoutWidget();
                 {
-                    UiThread.RunOnIdle((state) =>
+                    Button addButton = textImageButtonFactory.Generate(new LocalizedString("Add").Translated, "icon_circle_plus.png");
+                    addButton.Margin = new BorderDouble(right: 10);
+                    enterEditButtonsContainer.AddChild(addButton);
+                    addButton.Click += (sender, e) =>
                     {
-                        OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file|*.stl", multiSelect: true);
+                        UiThread.RunOnIdle((state) =>
+                        {
+                            enterEditButtonsContainer.Visible = false;
+                            EnterEditAndSplitIntoMeshes();
+                            OpenAddDialogWhenDone = true;
+                        });
+                    };
 
-                        FileDialog.OpenFileDialog(ref openParams);
-                        LoadAndAddPartsToPlate(openParams.FileNames);
-                    });
-                };
+                    Button enterEdittingButton = textImageButtonFactory.Generate(new LocalizedString("Edit").Translated);
+                    enterEdittingButton.Click += (sender, e) =>
+                    {
+                        enterEditButtonsContainer.Visible = false;
 
-				Button copyButton = textImageButtonFactory.Generate(new LocalizedString("Copy").Translated);
-                editPlateButtonsContainer.AddChild(copyButton);
-                copyButton.Click += (sender, e) =>
+                        EnterEditAndSplitIntoMeshes();
+                    };
+
+                    enterEditButtonsContainer.AddChild(enterEdittingButton);
+                }
+                editToolBar.AddChild(enterEditButtonsContainer);
+
+                doEdittingButtonsContainer = new FlowLayoutWidget();
+                doEdittingButtonsContainer.Visible = false;
+
                 {
-                    MakeCopyOfMesh();
-                };
+                    Button addButton = textImageButtonFactory.Generate(new LocalizedString("Add").Translated, "icon_circle_plus.png");
+                    addButton.Margin = new BorderDouble(right: 10);
+                    doEdittingButtonsContainer.AddChild(addButton);
+                    addButton.Click += (sender, e) =>
+                    {
+                        UiThread.RunOnIdle((state) =>
+                        {
+                            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file|*.stl", multiSelect: true);
 
-				Button deleteButton = textImageButtonFactory.Generate(new LocalizedString("Delete").Translated);
-                deleteButton.Margin = new BorderDouble(left: 20);
-                editPlateButtonsContainer.AddChild(deleteButton);
-                deleteButton.Click += (sender, e) =>
-                {
-                    DeleteSelectedMesh();
-                };
+                            FileDialog.OpenFileDialog(ref openParams);
+                            LoadAndAddPartsToPlate(openParams.FileNames);
+                        });
+                    };
+
+                    Button copyButton = textImageButtonFactory.Generate(new LocalizedString("Copy").Translated);
+                    doEdittingButtonsContainer.AddChild(copyButton);
+                    copyButton.Click += (sender, e) =>
+                    {
+                        MakeCopyOfMesh();
+                    };
+
+                    Button deleteButton = textImageButtonFactory.Generate(new LocalizedString("Delete").Translated);
+                    deleteButton.Margin = new BorderDouble(left: 20);
+                    doEdittingButtonsContainer.AddChild(deleteButton);
+                    deleteButton.Click += (sender, e) =>
+                    {
+                        DeleteSelectedMesh();
+                    };
+                }
 
                 KeyDown += (sender, e) =>
                 {
@@ -361,15 +388,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                 };
 
-                editToolBar.AddChild(editPlateButtonsContainer);
+                editToolBar.AddChild(doEdittingButtonsContainer);
                 buttonBottomPanel.AddChild(editToolBar);
-
-                editPlateButton.Click += (sender, e) =>
-                {
-                    editPlateButton.Visible = false;
-
-                    EnterEditAndSplitIntoMeshes();
-                };
             }
 
             autoArrangeButton.Click += (sender, e) =>
@@ -720,7 +740,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void LockEditControls()
         {
-            editPlateButtonsContainer.Visible = false;
+            doEdittingButtonsContainer.Visible = false;
             buttonRightPanelDisabledCover.Visible = true;
             if (viewControlsSeparator != null)
             {
@@ -738,11 +758,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonRightPanelDisabledCover.Visible = false;
             processingProgressControl.Visible = false;
 
-            if (!editPlateButton.Visible)
+            if (!enterEditButtonsContainer.Visible)
             {
                 viewControlsSeparator.Visible = true;
                 partSelectButton.Visible = true;
-                editPlateButtonsContainer.Visible = true;
+                doEdittingButtonsContainer.Visible = true;
             }
         }
 
@@ -822,6 +842,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             partSelectButton.ClickButton(null);
 
             Invalidate();
+
+            if (OpenAddDialogWhenDone)
+            {
+                OpenAddDialogWhenDone = false;
+                OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file|*.stl", multiSelect: true);
+
+                FileDialog.OpenFileDialog(ref openParams);
+                LoadAndAddPartsToPlate(openParams.FileNames);
+            }
         }
 
         void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
