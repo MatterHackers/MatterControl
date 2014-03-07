@@ -241,7 +241,10 @@ namespace MatterHackers.MatterControl
             }
 			try
 			{
+                // save the final document
             	document.Save(pathAndFileToSaveTo);
+                // Now try and open the document. This will lanch whatever PDF viewer is on the system and ask it 
+                // to show the file (at least on Windows).
             	Process.Start(pathAndFileToSaveTo);
 			}
 			catch {
