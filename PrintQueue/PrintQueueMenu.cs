@@ -56,17 +56,34 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void SetMenuItems()
         {
-            //Set the name and callback function of the menu items
-            menuItems = new TupleList<string, Func<bool>> 
+            // The pdf export library is not working on the mac at the moment so we don't include the 
+            // part sheet export option on mac.
+            if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Mac)
             {
-				{"STL", null},
-				{new LocalizedString(" Import from Zip").Translated, importQueueFromZipMenu_Click},
-				{new LocalizedString(" Export to Zip").Translated, exportQueueToZipMenu_Click},
-				{"GCode", null},
-				{new LocalizedString(" Export to Folder").Translated, exportGCodeToFolderButton_Click},
-				{new LocalizedString("Extra").Translated, null},
-				{new LocalizedString(" Create Part Sheet").Translated, createPartsSheetsButton_Click},
-            };
+                //Set the name and callback function of the menu items
+                menuItems = new TupleList<string, Func<bool>> 
+                {
+                {"STL", null},
+                {new LocalizedString(" Import from Zip").Translated, importQueueFromZipMenu_Click},
+                {new LocalizedString(" Export to Zip").Translated, exportQueueToZipMenu_Click},
+                {"GCode", null},
+                {new LocalizedString(" Export to Folder").Translated, exportGCodeToFolderButton_Click},
+                };
+            }
+            else
+            {
+                //Set the name and callback function of the menu items
+                menuItems = new TupleList<string, Func<bool>> 
+                {
+                {"STL", null},
+                {new LocalizedString(" Import from Zip").Translated, importQueueFromZipMenu_Click},
+                {new LocalizedString(" Export to Zip").Translated, exportQueueToZipMenu_Click},
+                {"GCode", null},
+                {new LocalizedString(" Export to Folder").Translated, exportGCodeToFolderButton_Click},
+                {new LocalizedString("Extra").Translated, null},
+                {new LocalizedString(" Create Part Sheet").Translated, createPartsSheetsButton_Click},
+                };
+            }
 
             BorderDouble padding = MenuDropList.MenuItemsPadding;
             //Add the menu items to the menu itself
