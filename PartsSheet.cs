@@ -231,6 +231,7 @@ namespace MatterHackers.MatterControl
             document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
             document.Info.Keywords = "MatterControl, STL, 3D Printing";
 
+
             int nextPartToPrintIndex = 0;
             int plateNumber = 1;
             bool done = false;
@@ -241,10 +242,10 @@ namespace MatterHackers.MatterControl
             }
 			try
 			{
-            	document.Save(pathAndFileToSaveTo);
+				document.Save(pathAndFileToSaveTo);
             	Process.Start(pathAndFileToSaveTo);
 			}
-			catch {
+			catch (Exception e){
 
 			}
 
