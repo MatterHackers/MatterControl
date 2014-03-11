@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         public PluginChooserWindow()
             : base(360, 300)
         {
-			Title = new LocalizedString("Installed Plugins").Translated;
+			Title = LocalizedString.Get("Installed Plugins");
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-				string elementHeaderLblBeg = new LocalizedString("Select a Design Tool").Translated;
+				string elementHeaderLblBeg = LocalizedString.Get("Select a Design Tool");
 				string elementHeaderLblFull = string.Format("{0}:", elementHeaderLblBeg);
 				string elementHeaderLbl = elementHeaderLblFull;
 				TextWidget elementHeader = new TextWidget(string.Format(elementHeaderLbl), pointSize: 14);
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             //ShowAsSystemWindow();
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
+			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
             cancelPresetsButton.Click += (sender, e) => { Close(); };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();

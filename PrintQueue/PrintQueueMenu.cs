@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public PrintQueueMenu()
         {
-			MenuDropList = new DropDownMenu(new LocalizedString("Queue Options").Translated, Direction.Up);
+			MenuDropList = new DropDownMenu(LocalizedString.Get("Queue Options"), Direction.Up);
             MenuDropList.HAnchor |= HAnchor.ParentLeft;
             MenuDropList.VAnchor |= VAnchor.ParentTop;
             SetMenuItems();
@@ -64,10 +64,10 @@ namespace MatterHackers.MatterControl.PrintQueue
                 menuItems = new TupleList<string, Func<bool>> 
                 {
                 {"STL", null},
-                {new LocalizedString(" Import from Zip").Translated, importQueueFromZipMenu_Click},
-                {new LocalizedString(" Export to Zip").Translated, exportQueueToZipMenu_Click},
+                {LocalizedString.Get(" Import from Zip"), importQueueFromZipMenu_Click},
+                {LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click},
                 {"GCode", null},
-                {new LocalizedString(" Export to Folder").Translated, exportGCodeToFolderButton_Click},
+                {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
                 };
             }
             else
@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.PrintQueue
                 menuItems = new TupleList<string, Func<bool>> 
                 {
                 {"STL", null},
-                {new LocalizedString(" Import from Zip").Translated, importQueueFromZipMenu_Click},
-                {new LocalizedString(" Export to Zip").Translated, exportQueueToZipMenu_Click},
+                {LocalizedString.Get(" Import from Zip"), importQueueFromZipMenu_Click},
+                {LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click},
                 {"GCode", null},
-                {new LocalizedString(" Export to Folder").Translated, exportGCodeToFolderButton_Click},
-                {new LocalizedString("Extra").Translated, null},
-                {new LocalizedString(" Create Part Sheet").Translated, createPartsSheetsButton_Click},
+                {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
+                {LocalizedString.Get("Extra"), null},
+                {LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click},
                 };
             }
 
@@ -117,9 +117,9 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
 
-				saveParams.ActionButtonLabel = new LocalizedString("Save Parts Sheet").Translated;
-				string saveParamsTitleLbl = new LocalizedString("MatterContol").Translated;
-				string saveParamsTitleLblFull = new LocalizedString ("Save").Translated;
+				saveParams.ActionButtonLabel = LocalizedString.Get("Save Parts Sheet");
+				string saveParamsTitleLbl = LocalizedString.Get("MatterContol");
+				string saveParamsTitleLblFull = LocalizedString.Get ("Save");
 				saveParams.Title = string.Format("{0}: {1}",saveParamsTitleLbl,saveParamsTitleLblFull);
 
                 System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void SelectLocationToExportGCode(object state)
         {
             SelectFolderDialogParams selectParams = new SelectFolderDialogParams("Select Location To Save Files");
-			selectParams.ActionButtonLabel = new LocalizedString("Export").Translated;
+			selectParams.ActionButtonLabel = LocalizedString.Get("Export");
             selectParams.Title = "MatterControl: Select A Folder";
 
             string path = FileDialog.SelectFolderDialog(ref selectParams);

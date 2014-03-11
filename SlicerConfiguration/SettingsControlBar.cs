@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsStatusLabelContainer.VAnchor |= VAnchor.ParentTop;
             settingsStatusLabelContainer.Margin = new BorderDouble(0);
             {
-				string activeSettingsLabelText = new LocalizedString ("Active Settings").Translated;
+				string activeSettingsLabelText = LocalizedString.Get ("Active Settings");
 				string activeSettingsLabelTextFull = string.Format ("{0}:", activeSettingsLabelText);
 
 
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 settingsStatusDescription.AutoExpandBoundsToText = true;
                 settingsStatusDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-				string unsavedChangesTxtBeg = new  LocalizedString("unsaved changes").Translated;
+                string unsavedChangesTxtBeg = LocalizedString.Get("unsaved changes");
 				string unsavedChangesTxtFull = string.Format ("({0})", unsavedChangesTxtBeg);
 				unsavedChangesIndicator = new TextWidget(unsavedChangesTxtFull, pointSize: 10);
                 unsavedChangesIndicator.AutoExpandBoundsToText = true;
@@ -77,19 +77,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 settingsStatusLabelContainer.AddChild(unsavedChangesIndicator);
             }
 
-			saveButton = textImageButtonFactory.Generate(new LocalizedString("Save").Translated);
+			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
             saveButton.VAnchor = VAnchor.ParentTop;
             saveButton.Visible = false;
             saveButton.Margin = new BorderDouble(0, 0, 0, 10);
             saveButton.Click += new ButtonBase.ButtonEventHandler(saveButton_Click);
 
-			revertbutton = textImageButtonFactory.Generate(new LocalizedString("Revert").Translated);
+			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert"));
             revertbutton.VAnchor = VAnchor.ParentTop;
             revertbutton.Visible = false;
             revertbutton.Margin = new BorderDouble(0,0,0,10);
             revertbutton.Click += new ButtonBase.ButtonEventHandler(revertbutton_Click);
 
-			SliceOptionsMenuDropList = new DropDownMenu(new LocalizedString("Options   ").Translated);
+			SliceOptionsMenuDropList = new DropDownMenu(LocalizedString.Get("Options   "));
             SliceOptionsMenuDropList.Margin = new BorderDouble(top: 11);
             SliceOptionsMenuDropList.VAnchor |= VAnchor.ParentTop;
             SliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             sliceEngineContainer.Margin = new BorderDouble(0,0,10,0);
             sliceEngineContainer.VAnchor |= VAnchor.ParentTop;
             {
-				string sliceEngineLabelText = new LocalizedString ("Slice Engine").Translated;
+				string sliceEngineLabelText = LocalizedString.Get ("Slice Engine");
 				string sliceEngineLabelTextFull = string.Format ("{0}:", sliceEngineLabelText);
 				TextWidget sliceEngineLabel = new TextWidget(string.Format(sliceEngineLabelTextFull), pointSize: 10);
                 sliceEngineLabel.Margin = new BorderDouble(0);
@@ -210,9 +210,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void SetMenuItems()
         {
-			string importTxt = new LocalizedString ("Import").Translated;
+			string importTxt = LocalizedString.Get ("Import");
 			string importTxtFull = string.Format ("{0}", importTxt);
-			string exportTxt = new LocalizedString("Export").Translated;
+			string exportTxt = LocalizedString.Get("Export");
 			string exportTxtFull = string.Format ("{0}", exportTxt);
             //Set the name and callback function of the menu items
             slicerOptionsMenuItems = new TupleList<string, Func<bool>> 

@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             else
             {
                 this.ActivePrinter = activePrinter;
-				string editHeaderTitleTxt = new LocalizedString ("Edit").Translated; 
+                string editHeaderTitleTxt = LocalizedString.Get("Edit"); 
 				headerTitle = string.Format("{1} - {0}", this.ActivePrinter.Name, editHeaderTitleTxt);
                 if (this.ActivePrinter.BaudRate == null)
                 {
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             ConnectionControlContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
             ConnectionControlContainer.HAnchor = HAnchor.ParentLeftRight;            
             {
-				TextWidget printerNameLabel = new TextWidget(new LocalizedString("Printer Name").Translated, 0, 0, 10);
+                TextWidget printerNameLabel = new TextWidget(LocalizedString.Get("Printer Name"), 0, 0, 10);
                 printerNameLabel.TextColor = this.defaultTextColor;
                 printerNameLabel.HAnchor = HAnchor.ParentLeftRight;
                 printerNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
@@ -128,12 +128,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
                 comPortLabelWidget = new FlowLayoutWidget();
 
-				Button refreshComPorts = linkButtonFactory.Generate(new LocalizedString("(refresh)").Translated);
+                Button refreshComPorts = linkButtonFactory.Generate(LocalizedString.Get("(refresh)"));
                 refreshComPorts.Margin = new BorderDouble(left: 5);
                 refreshComPorts.VAnchor = VAnchor.ParentBottom;
-                refreshComPorts.Click += new ButtonBase.ButtonEventHandler(RefreshComPorts);                
+                refreshComPorts.Click += new ButtonBase.ButtonEventHandler(RefreshComPorts);
 
-				TextWidget comPortLabel = new TextWidget(new LocalizedString("Serial Port").Translated, 0, 0, 10);
+                TextWidget comPortLabel = new TextWidget(LocalizedString.Get("Serial Port"), 0, 0, 10);
                 comPortLabel.TextColor = this.defaultTextColor;
 
                 comPortLabelWidget.AddChild(comPortLabel);
@@ -183,14 +183,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 //If there are still no com ports show a message to that effect
                 if (portIndex == 0)
                 {
-					TextWidget comPortOption = new TextWidget(new LocalizedString("No COM ports available").Translated);
+                    TextWidget comPortOption = new TextWidget(LocalizedString.Get("No COM ports available"));
                     comPortOption.Margin = new BorderDouble(3, 6, 5, 6);
                     comPortOption.TextColor = this.subContainerTextColor;
                     comPortContainer.AddChild(comPortOption);
                 }
 
 
-				TextWidget baudRateLabel = new TextWidget(new LocalizedString("Baud Rate").Translated, 0, 0, 10);
+                TextWidget baudRateLabel = new TextWidget(LocalizedString.Get("Baud Rate"), 0, 0, 10);
                 baudRateLabel.TextColor = this.defaultTextColor;
                 baudRateLabel.Margin = new BorderDouble(0, 0, 0, 10);
                 baudRateLabel.HAnchor = HAnchor.ParentLeftRight;
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 FlowLayoutWidget printerMakeContainer = createPrinterMakeContainer();
                 FlowLayoutWidget printerModelContainer = createPrinterModelContainer();
 
-				enableAutoconnect = new CheckBox(new LocalizedString("Auto Connect").Translated);
+                enableAutoconnect = new CheckBox(LocalizedString.Get("Auto Connect"));
                 enableAutoconnect.TextColor = RGBA_Bytes.White;
                 enableAutoconnect.Margin = new BorderDouble(top: 10);
                 enableAutoconnect.HAnchor = HAnchor.ParentLeft;
@@ -228,10 +228,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             buttonContainer.Margin = new BorderDouble(0, 3);
             {
                 //Construct buttons
-				saveButton = textImageButtonFactory.Generate(new LocalizedString("Save").Translated);
+                saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
                 //saveButton.VAnchor = VAnchor.Bottom;
 
-				cancelButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
+                cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
                 //cancelButton.VAnchor = VAnchor.Bottom;
                 cancelButton.Click += new ButtonBase.ButtonEventHandler(CancelButton_Click);
 
@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			TextWidget printerManufacturerLabel = new TextWidget(new LocalizedString("Printer Make").Translated, 0, 0, 10);
+            TextWidget printerManufacturerLabel = new TextWidget(LocalizedString.Get("Printer Make"), 0, 0, 10);
             printerManufacturerLabel.TextColor = this.defaultTextColor;
             printerManufacturerLabel.HAnchor = HAnchor.ParentLeftRight;
             printerManufacturerLabel.Margin = elementMargin;
@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			TextWidget printerModelLabel = new TextWidget(new LocalizedString("Printer Model").Translated, 0, 0, 10);
+            TextWidget printerModelLabel = new TextWidget(LocalizedString.Get("Printer Model"), 0, 0, 10);
             printerModelLabel.TextColor = this.defaultTextColor;
             printerModelLabel.HAnchor = HAnchor.ParentLeftRight;
             printerModelLabel.Margin = elementMargin;
@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 baudRateContainer.AddChild(baudOption);
             }
 
-			otherBaudRateRadioButton = new RadioButton(new LocalizedString("Other").Translated);
+            otherBaudRateRadioButton = new RadioButton(LocalizedString.Get("Other"));
 			otherBaudRateRadioButton.Margin = baudRateMargin;
 			otherBaudRateRadioButton.TextColor = this.subContainerTextColor;
 
@@ -485,7 +485,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				return otherBaudRateInput.Text;
 			}
 
-			throw new Exception(new LocalizedString("Could not find a selected button.").Translated);
+            throw new Exception(LocalizedString.Get("Could not find a selected button."));
         }
 
         void InstallDriver()
@@ -534,7 +534,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 }
             }
 
-			throw new Exception(new LocalizedString("Could not find a selected button.").Translated);
+            throw new Exception(LocalizedString.Get("Could not find a selected button."));
         }
     }
 }

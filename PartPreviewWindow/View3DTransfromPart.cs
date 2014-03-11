@@ -296,7 +296,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 FlowLayoutWidget editToolBar = new FlowLayoutWidget();
 
-                string progressFindPartsLbl = new LocalizedString("Finding Parts").Translated;
+                string progressFindPartsLbl = LocalizedString.Get("Finding Parts");
                 string progressFindPartsLblFull = string.Format("{0}:", progressFindPartsLbl);
 
                 processingProgressControl = new ProgressControl(progressFindPartsLblFull);
@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 enterEditButtonsContainer = new FlowLayoutWidget();
                 {
-                    Button addButton = textImageButtonFactory.Generate(new LocalizedString("Add").Translated, "icon_circle_plus.png");
+                    Button addButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     addButton.Margin = new BorderDouble(right: 10);
                     enterEditButtonsContainer.AddChild(addButton);
                     addButton.Click += (sender, e) =>
@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
-                    Button enterEdittingButton = textImageButtonFactory.Generate(new LocalizedString("Edit").Translated);
+                    Button enterEdittingButton = textImageButtonFactory.Generate(LocalizedString.Get("Edit"));
                     enterEdittingButton.Click += (sender, e) =>
                     {
                         enterEditButtonsContainer.Visible = false;
@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 doEdittingButtonsContainer.Visible = false;
 
                 {
-                    Button addButton = textImageButtonFactory.Generate(new LocalizedString("Add").Translated, "icon_circle_plus.png");
+                    Button addButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     addButton.Margin = new BorderDouble(right: 10);
                     doEdittingButtonsContainer.AddChild(addButton);
                     addButton.Click += (sender, e) =>
@@ -350,14 +350,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
-                    Button copyButton = textImageButtonFactory.Generate(new LocalizedString("Copy").Translated);
+                    Button copyButton = textImageButtonFactory.Generate(LocalizedString.Get("Copy"));
                     doEdittingButtonsContainer.AddChild(copyButton);
                     copyButton.Click += (sender, e) =>
                     {
                         MakeCopyOfMesh();
                     };
 
-                    Button deleteButton = textImageButtonFactory.Generate(new LocalizedString("Delete").Translated);
+                    Button deleteButton = textImageButtonFactory.Generate(LocalizedString.Get("Delete"));
                     deleteButton.Margin = new BorderDouble(left: 20);
                     doEdittingButtonsContainer.AddChild(deleteButton);
                     deleteButton.Click += (sender, e) =>
@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             leftRightSpacer.HAnchor = HAnchor.ParentLeftRight;
             buttonBottomPanel.AddChild(leftRightSpacer);
 
-			closeButton = textImageButtonFactory.Generate(new LocalizedString("Close").Translated);
+			closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
             buttonBottomPanel.AddChild(closeButton);
 
             mainContainerTopToBottom.AddChild(buttonBottomPanel);
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (Meshes.Count > 0)
             {
-				string makingCopyLabel = new LocalizedString("Making Copy").Translated;
+				string makingCopyLabel = LocalizedString.Get("Making Copy");
 				string makingCopyLabelFull = string.Format ("{0}:", makingCopyLabel);
 				processingProgressControl.textWidget.Text = makingCopyLabelFull;
                 processingProgressControl.Visible = true;
@@ -502,7 +502,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (Meshes.Count > 0)
             {
-				string progressArrangeParts = new LocalizedString ("Arranging Parts").Translated;
+				string progressArrangeParts = LocalizedString.Get ("Arranging Parts");
 				string progressArrangePartsFull = string.Format ("{0}:", progressArrangeParts);
 				processingProgressControl.textWidget.Text = progressArrangePartsFull;
                 processingProgressControl.Visible = true;
@@ -605,7 +605,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (Meshes.Count > 0)
             {
-				string loadingPartLabel = new LocalizedString("Loading Parts").Translated;
+				string loadingPartLabel = LocalizedString.Get("Loading Parts");
 				string loadingPartLabelFull = string.Format("{0}:", loadingPartLabel);
 				processingProgressControl.textWidget.Text = loadingPartLabelFull;
                 processingProgressControl.Visible = true;
@@ -927,7 +927,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Rotate").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Rotate"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandRotateOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandRotateOptions);
 
@@ -936,7 +936,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 rotateOptionContainer.Visible = false;
                 buttonRightPanel.AddChild(rotateOptionContainer);
 
-				expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Scale").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Scale"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandScaleOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandScaleOptions);
 
@@ -947,7 +947,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in the mirror options
                 {
-					CheckBox expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Mirror").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					CheckBox expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Mirror"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandMirrorOptions);
 
@@ -967,7 +967,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // put in the part info display
                 if(false)
                 {
-					CheckBox expandPartInfoOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Part Info").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					CheckBox expandPartInfoOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Part Info"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandPartInfoOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandPartInfoOptions);
 
@@ -982,7 +982,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     };
 
                     PartInfoOptionContainer.Margin = new BorderDouble(8, 3);
-					string sizeInfoLbl = new LocalizedString("Size").Translated;
+					string sizeInfoLbl = LocalizedString.Get("Size");
 					string sizeInfoLblFull = string.Format("{0}:", sizeInfoLbl);
 					TextWidget sizeInfo = new TextWidget(sizeInfoLblFull, textColor: RGBA_Bytes.White);
                     PartInfoOptionContainer.AddChild(sizeInfo);
@@ -1001,7 +1001,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in the view options
                 {
-					expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton(new LocalizedString("Display").Translated, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Display"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandViewOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandViewOptions);
 
@@ -1009,27 +1009,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     viewOptionContainer.HAnchor = HAnchor.ParentLeftRight;
                     viewOptionContainer.Visible = false;
                     {
-						showBedCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(new LocalizedString("Show Print Bed").Translated);
+						showBedCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(LocalizedString.Get("Show Print Bed"));
                         showBedCheckBox.Checked = true;
                         showBedCheckBox.Margin = buttonMargin;
                         viewOptionContainer.AddChild(showBedCheckBox);
 
                         if (buildHeight > 0)
                         {
-							showBuildVolumeCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(new LocalizedString("Show Print Area").Translated);
+							showBuildVolumeCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(LocalizedString.Get("Show Print Area"));
                             showBuildVolumeCheckBox.Checked = false;
                             showBuildVolumeCheckBox.Margin = buttonMargin;
                             viewOptionContainer.AddChild(showBuildVolumeCheckBox);
                         }
 
-						showWireframeCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(new LocalizedString("Show Wireframe").Translated);
+						showWireframeCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(LocalizedString.Get("Show Wireframe"));
                         showWireframeCheckBox.Margin = buttonMargin;
                         viewOptionContainer.AddChild(showWireframeCheckBox);
                     }
                     buttonRightPanel.AddChild(viewOptionContainer);
                 }
 
-				autoArrangeButton = whiteButtonFactory.Generate(new LocalizedString("Auto-Arrange").Translated, centerText: true);
+				autoArrangeButton = whiteButtonFactory.Generate(LocalizedString.Get("Auto-Arrange"), centerText: true);
                 autoArrangeButton.Visible = false;
                 autoArrangeButton.Cursor = Cursors.Hand;
                 buttonRightPanel.AddChild(autoArrangeButton);
@@ -1038,7 +1038,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
                 buttonRightPanel.AddChild(verticalSpacer);
 
-				saveButton = whiteButtonFactory.Generate(new LocalizedString("Save").Translated, centerText: true);
+				saveButton = whiteButtonFactory.Generate(LocalizedString.Get("Save"), centerText: true);
                 saveButton.Visible = false;
                 saveButton.Cursor = Cursors.Hand;
                 buttonRightPanel.AddChild(saveButton);
@@ -1070,7 +1070,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
             scaleRatioContainer.Padding = new BorderDouble(5);
 
-			string scaleRatioLblTxt = new LocalizedString("Ratio").Translated;
+			string scaleRatioLblTxt = LocalizedString.Get("Ratio");
 			string scaleRatioLblTxtFull = string.Format("{0}:", scaleRatioLblTxt);
 			TextWidget scaleRatioLabel = new TextWidget(scaleRatioLblTxtFull, textColor: RGBA_Bytes.White);
             scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
@@ -1103,7 +1103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 ApplyScaleFromEditField();
             };
 
-			DropDownMenu presetScaleMenu = new DropDownMenu(new LocalizedString("Conversions").Translated, Direction.Down);
+			DropDownMenu presetScaleMenu = new DropDownMenu(LocalizedString.Get("Conversions"), Direction.Down);
             RectangleDouble presetBounds = presetScaleMenu.LocalBounds;
             presetBounds.Inflate(new BorderDouble(5, 10, 10, 10));
             presetScaleMenu.LocalBounds = presetBounds;
@@ -1114,7 +1114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             presetScaleMenu.AddItem("in to mm (25.4)");
             presetScaleMenu.AddItem("mm to cm (.1)");
             presetScaleMenu.AddItem("cm to mm (10)");
-			string resetLbl = new LocalizedString ("reset").Translated;
+			string resetLbl = LocalizedString.Get ("reset");
 			string resetLblFull = string.Format("{0} (1)",resetLbl);
 			presetScaleMenu.AddItem(resetLblFull);
 
@@ -1147,7 +1147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(presetScaleMenu);
 
-			applyScaleButton = whiteButtonFactory.Generate(new LocalizedString("Apply Scale").Translated, centerText: true);
+			applyScaleButton = whiteButtonFactory.Generate(LocalizedString.Get("Apply Scale"), centerText: true);
             applyScaleButton.Visible = false;
             applyScaleButton.Cursor = Cursors.Hand;
             buttonPanel.AddChild(applyScaleButton);
@@ -1200,7 +1200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void AddRotateControls(FlowLayoutWidget buttonPanel)
         {
             List<GuiWidget> rotateControls = new List<GuiWidget>();
-			transformControls.Add(new LocalizedString("Rotate").Translated, rotateControls);
+			transformControls.Add(LocalizedString.Get("Rotate"), rotateControls);
 
             textImageButtonFactory.FixedWidth = 44;
 
@@ -1211,7 +1211,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             GuiWidget horizontalSpacer = new GuiWidget();
             horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-			string degreesLabelTxt = new LocalizedString("Degrees").Translated;
+			string degreesLabelTxt = LocalizedString.Get("Degrees");
 			string degreesLabelTxtFull = string.Format("{0}:", degreesLabelTxt);
 			TextWidget degreesLabel = new TextWidget(degreesLabelTxt, textColor: RGBA_Bytes.White);
             degreesContainer.AddChild(degreesLabel);
@@ -1297,7 +1297,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(rotateButtonContainer);
 
-			Button layFlatButton = whiteButtonFactory.Generate(new LocalizedString("Align to Bed").Translated, centerText: true);
+			Button layFlatButton = whiteButtonFactory.Generate(LocalizedString.Get("Align to Bed"), centerText: true);
             layFlatButton.Cursor = Cursors.Hand;
             buttonPanel.AddChild(layFlatButton);
 
@@ -1413,7 +1413,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 partSelectButtonWasClicked = partSelectButton.Checked;
 
-				string progressSavingPartslbl = new LocalizedString ("Saving").Translated;
+				string progressSavingPartslbl = LocalizedString.Get ("Saving");
 				string progressSavingPartsLblFull = string.Format("{0}:",progressSavingPartslbl);
 				processingProgressControl.textWidget.Text = progressSavingPartsLblFull;
                 processingProgressControl.Visible = true;

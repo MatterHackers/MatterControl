@@ -80,9 +80,9 @@ namespace MatterHackers.MatterControl.ContactForm
             SetButtonAttributes();
             AnchorAll();
 
-			cancelButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
-			submitButton = textImageButtonFactory.Generate(new LocalizedString("Submit").Translated);
-			doneButton = textImageButtonFactory.Generate(new LocalizedString("Done").Translated);
+            cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+            submitButton = textImageButtonFactory.Generate(LocalizedString.Get("Submit"));
+            doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"));
             doneButton.Visible = false;
 
             DoLayout(subjectText, bodyText);
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.ContactForm
             labelContainer.HAnchor = HAnchor.ParentLeftRight;
             labelContainer.Height = 30;
 
-			TextWidget formLabel = new TextWidget(new LocalizedString("How can we help?").Translated, pointSize:16);
+            TextWidget formLabel = new TextWidget(LocalizedString.Get("How can we help?"), pointSize: 16);
             formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             formLabel.VAnchor = VAnchor.ParentTop;
             formLabel.HAnchor = HAnchor.ParentLeft;
@@ -144,8 +144,8 @@ namespace MatterHackers.MatterControl.ContactForm
             messageContainer.Visible = false;
             messageContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
             messageContainer.Padding = new BorderDouble(10);
-            
-			submissionStatus = new TextWidget(new LocalizedString("Submitting your information...").Translated, pointSize: 13);
+
+            submissionStatus = new TextWidget(LocalizedString.Get("Submitting your information..."), pointSize: 13);
             submissionStatus.AutoExpandBoundsToText = true;
             submissionStatus.Margin = new BorderDouble(0, 5);
             submissionStatus.TextColor = RGBA_Bytes.White;
@@ -158,8 +158,8 @@ namespace MatterHackers.MatterControl.ContactForm
             formContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
             formContainer.Padding = new BorderDouble(10);
 
-			formContainer.AddChild(LabelGenerator(new LocalizedString("Question*").Translated));
-			formContainer.AddChild(LabelGenerator(new LocalizedString("Briefly describe your question").Translated, 9, 14));
+            formContainer.AddChild(LabelGenerator(LocalizedString.Get("Question*")));
+            formContainer.AddChild(LabelGenerator(LocalizedString.Get("Briefly describe your question"), 9, 14));
 
             questionInput = new MHTextEditWidget(subjectText);
             questionInput.HAnchor = HAnchor.ParentLeftRight;
@@ -168,8 +168,8 @@ namespace MatterHackers.MatterControl.ContactForm
             questionErrorMessage = ErrorMessageGenerator();
             formContainer.AddChild(questionErrorMessage);
 
-			formContainer.AddChild(LabelGenerator(new LocalizedString("Details*").Translated));
-			formContainer.AddChild(LabelGenerator(new LocalizedString("Fill in the details here").Translated, 9, 14));
+            formContainer.AddChild(LabelGenerator(LocalizedString.Get("Details*")));
+            formContainer.AddChild(LabelGenerator(LocalizedString.Get("Fill in the details here"), 9, 14));
 
             detailInput = new MHTextEditWidget(bodyText, pixelHeight: 120, multiLine: true);
             detailInput.HAnchor = HAnchor.ParentLeftRight;
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.ContactForm
             detailErrorMessage = ErrorMessageGenerator();
             formContainer.AddChild(detailErrorMessage);
 
-			formContainer.AddChild(LabelGenerator(new LocalizedString("Your Email Address*").Translated));
+            formContainer.AddChild(LabelGenerator(LocalizedString.Get("Your Email Address*")));
 
             emailInput = new MHTextEditWidget();
             emailInput.HAnchor = HAnchor.ParentLeftRight;
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.ContactForm
             emailErrorMessage = ErrorMessageGenerator();
             formContainer.AddChild(emailErrorMessage);
 
-			formContainer.AddChild(LabelGenerator(new LocalizedString("Your Name*").Translated));
+            formContainer.AddChild(LabelGenerator(LocalizedString.Get("Your Name*")));
 
             nameInput = new MHTextEditWidget();
             nameInput.HAnchor = HAnchor.ParentLeftRight;
@@ -266,13 +266,13 @@ namespace MatterHackers.MatterControl.ContactForm
 
         void onPostRequestSucceeded(object sender, EventArgs e)
         {
-			submissionStatus.Text = new LocalizedString("Thank you!  Your information has been submitted.").Translated;
+            submissionStatus.Text = LocalizedString.Get("Thank you!  Your information has been submitted.");
             doneButton.Visible = true;
         }
 
         void onPostRequestFailed(object sender, EventArgs e)
         {
-			submissionStatus.Text = new LocalizedString("Sorry!  We weren't able to submit your request.").Translated;
+            submissionStatus.Text = LocalizedString.Get("Sorry!  We weren't able to submit your request.");
             doneButton.Visible = true;
         }
 
@@ -327,7 +327,7 @@ namespace MatterHackers.MatterControl.ContactForm
         private ContactFormWindow(string subject = "", string bodyText = "")
             : base(500, 550)
         {
-			Title = new LocalizedString("MatterControl: Submit an Issue").Translated;
+            Title = LocalizedString.Get("MatterControl: Submit an Issue");
 
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 

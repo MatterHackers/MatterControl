@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl
                 eMinusControl = moveButtonFactory.Generate("E-", PrinterCommunication.Axis.E, ManualPrinterControls.EFeedRate(0));
                 eMinusControl.Margin = new BorderDouble(0, 0, 5, 0);
                 eMinusButtonAndText.AddChild(eMinusControl);
-				TextWidget eMinusControlLabel = new TextWidget(new LocalizedString("Retract").Translated);
+				TextWidget eMinusControlLabel = new TextWidget(LocalizedString.Get("Retract"));
                 eMinusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 eMinusControlLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 eMinusButtonAndText.AddChild(eMinusControlLabel);
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl
                 ePlusControl = moveButtonFactory.Generate("E+", PrinterCommunication.Axis.E, ManualPrinterControls.EFeedRate(0));
                 ePlusControl.Margin = new BorderDouble(0, 0, 5, 0);
                 ePlusButtonAndText.AddChild(ePlusControl);
-				TextWidget ePlusControlLabel = new TextWidget(new LocalizedString("Extrude").Translated);
+				TextWidget ePlusControlLabel = new TextWidget(LocalizedString.Get("Extrude"));
                 ePlusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 ePlusControlLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 ePlusButtonAndText.AddChild(ePlusControlLabel);

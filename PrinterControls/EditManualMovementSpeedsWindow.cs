@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
         public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, EventHandler functionToCallOnSave)
             : base(260, 300)
         {
-			Title = new LocalizedString(windowTitle).Translated;
+            Title = LocalizedString.Get(windowTitle);
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-				string movementSpeedsLbl = new LocalizedString("Movement Speeds Presets").Translated;
+                string movementSpeedsLbl = LocalizedString.Get("Movement Speeds Presets");
 				TextWidget elementHeader = new TextWidget(string.Format("{0}:",movementSpeedsLbl), pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
@@ -133,12 +133,12 @@ namespace MatterHackers.MatterControl
                 if (settingsArray[i].StartsWith("e"))
                 {
                     int extruderIndex = (int)double.Parse(settingsArray[i].Substring(1)) + 1;
-					string extruderLblTxt = new LocalizedString ("Extruder").Translated;
+                    string extruderLblTxt = LocalizedString.Get("Extruder");
 					axisLabel = new TextWidget(string.Format("{0} {1}",extruderLblTxt ,extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 }
                 else
                 {
-					string axisLblText = new LocalizedString("Axis").Translated;
+                    string axisLblText = LocalizedString.Get("Axis");
 					axisLabel = new TextWidget(string.Format("{0} {1}",axisLblText, settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 }
                 axisLabel.VAnchor = VAnchor.ParentCenter;
@@ -169,10 +169,10 @@ namespace MatterHackers.MatterControl
 
             ShowAsSystemWindow();
 
-			Button savePresetsButton = textImageButtonFactory.Generate(new LocalizedString("Save").Translated);
+            Button savePresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
             savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
+            Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
             cancelPresetsButton.Click += (sender, e) => {
                 UiThread.RunOnIdle((state) =>
                 {

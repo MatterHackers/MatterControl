@@ -359,7 +359,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 buttonContainer.Margin = new BorderDouble(0,6);
                 buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight; 
                 {
-					addToQueueLink = linkButtonFactory.Generate(new LocalizedString("Add to Queue").Translated);
+					addToQueueLink = linkButtonFactory.Generate(LocalizedString.Get("Add to Queue"));
                     addToQueueLink.Margin = new BorderDouble(left: 0, right: 10);
                     addToQueueLink.VAnchor = VAnchor.ParentCenter;
 
@@ -369,11 +369,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
                         PrintQueueControl.Instance.AddChild(queueItem);
                     };
 
-					viewLink = linkButtonFactory.Generate(new LocalizedString("View").Translated);
+					viewLink = linkButtonFactory.Generate(LocalizedString.Get("View"));
                     viewLink.Margin = new BorderDouble(left: 0, right:10);
                     viewLink.VAnchor = VAnchor.ParentCenter;                    
 
-					exportLink = linkButtonFactory.Generate(new LocalizedString("Export").Translated);
+					exportLink = linkButtonFactory.Generate(LocalizedString.Get("Export"));
                     exportLink.Margin = new BorderDouble(left: 0, right: 10);
                     exportLink.VAnchor = VAnchor.ParentCenter;
 
@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						OpenExportWindow();
                     };
 
-					removeLink = linkButtonFactory.Generate(new LocalizedString("Remove").Translated);
+					removeLink = linkButtonFactory.Generate(LocalizedString.Get("Remove"));
                     removeLink.Margin = new BorderDouble(left: 10, right: 10);
                     removeLink.VAnchor = VAnchor.ParentCenter;
 

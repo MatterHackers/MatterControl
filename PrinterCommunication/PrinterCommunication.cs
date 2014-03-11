@@ -488,26 +488,26 @@ namespace MatterHackers.MatterControl
                 switch (CommunicationState)
                 {
                     case CommunicationStates.Disconnected:
-						return new LocalizedString("Not Connected").Translated;
+						return LocalizedString.Get("Not Connected");
                     case CommunicationStates.Disconnecting:
-						return new LocalizedString("Disconnecting").Translated;
+						return LocalizedString.Get("Disconnecting");
 					case CommunicationStates.AttemptingToConnect:
-						string connectingMessageTxt = new LocalizedString ("Connecting").Translated;
+						string connectingMessageTxt = LocalizedString.Get ("Connecting");
 						return string.Format("{0}...",connectingMessageTxt);
                     case CommunicationStates.ConnectionLost:
-						return new LocalizedString("Connection Lost").Translated;
+						return LocalizedString.Get("Connection Lost");
                     case CommunicationStates.FailedToConnect:
                         return string.Format("Unable to Connect");
                     case CommunicationStates.Connected:
-						return new LocalizedString("Connected").Translated;
+						return LocalizedString.Get("Connected");
                     case CommunicationStates.PreparingToPrint:
-						return new LocalizedString("Preparing To Print").Translated;
+						return LocalizedString.Get("Preparing To Print");
                     case CommunicationStates.Printing:
-						return new LocalizedString("Printing").Translated;
+						return LocalizedString.Get("Printing");
                     case CommunicationStates.Paused:
-						return new LocalizedString("Paused").Translated;
+						return LocalizedString.Get("Paused");
                     case CommunicationStates.FinishedPrint:
-						return new LocalizedString("Finished Print").Translated;
+						return LocalizedString.Get("Finished Print");
                     default:
                         throw new NotImplementedException("Make sure very satus returns the correct connected state.");
                 }

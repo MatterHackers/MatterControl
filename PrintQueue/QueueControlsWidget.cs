@@ -46,12 +46,12 @@ namespace MatterHackers.MatterControl.PrintQueue
                 buttonPanel1.Padding = new BorderDouble(0, 3);
 
                 {
-					Button addToQueueButton = textImageButtonFactory.Generate(new LocalizedString("Add").Translated, "icon_circle_plus.png");
+					Button addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     buttonPanel1.AddChild(addToQueueButton);
                     addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
                     addToQueueButton.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
 
-					Button deleteAllFromQueueButton = textImageButtonFactory.Generate(new LocalizedString("Remove All").Translated);
+					Button deleteAllFromQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Remove All"));
                     deleteAllFromQueueButton.Margin = new BorderDouble(3, 0);
                     deleteAllFromQueueButton.Click += new ButtonBase.ButtonEventHandler(deleteAllFromQueueButton_Click);
                     buttonPanel1.AddChild(deleteAllFromQueueButton);

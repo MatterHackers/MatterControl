@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
                     FlowLayoutWidget OutputWindowsLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
                     OutputWindowsLayout.HAnchor |= HAnchor.ParentLeft;
 
-					string filterOutputChkTxt = new LocalizedString("Filter Output").Translated;
+					string filterOutputChkTxt = LocalizedString.Get("Filter Output");
 
 					filterOutput = new CheckBox(filterOutputChkTxt);
                     filterOutput.Margin = new BorderDouble(5, 5, 5, 2);
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
                     filterOutput.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(SetCorrectFilterOutputBehavior);
                     OutputWindowsLayout.AddChild(filterOutput);
 
-					string autoUpperCaseChkTxt = new LocalizedString("Auto Uppercase").Translated;
+					string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
 
 					autoUppercase = new CheckBox(autoUpperCaseChkTxt);
                     autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl
                     manualCommandTextEdit.ActualTextEditWidget.KeyDown += new KeyEventHandler(manualCommandTextEdit_KeyDown);
                     manualEntryLayout.AddChild(manualCommandTextEdit);
 
-					sendCommand = controlButtonFactory.Generate(new LocalizedString("Send").Translated);
+					sendCommand = controlButtonFactory.Generate(LocalizedString.Get("Send"));
                     sendCommand.Margin = new BorderDouble(5, 0);
                     sendCommand.Click += new ButtonBase.ButtonEventHandler(sendManualCommandToPrinter_Click);
                     manualEntryLayout.AddChild(sendCommand);
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl
             SetCorrectFilterOutputBehavior(this, null);
             this.AnchorAll();
 
-			Title = new LocalizedString("MatterControl - Terminal").Translated;
+			Title = LocalizedString.Get("MatterControl - Terminal");
             this.ShowAsSystemWindow();
             MinimumSize = new Vector2(Width, Height);
         }

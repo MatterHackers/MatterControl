@@ -19,8 +19,8 @@ namespace MatterHackers.MatterControl
             : base(300, 500)
         {
             BackgroundColor = backgroundColor;
-			string savePartSheetTitle = new LocalizedString("MatterControl").Translated;
-			string savePartSheetTitleFull = new LocalizedString("Saving to Parts Sheet").Translated;
+			string savePartSheetTitle = LocalizedString.Get("MatterControl");
+			string savePartSheetTitleFull = LocalizedString.Get("Saving to Parts Sheet");
 			Title = string.Format("{0} - {1}",savePartSheetTitle, savePartSheetTitleFull) ;
             this.totalParts = totalParts;
 

@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
         public EditTemperaturePresetsWindow(string windowTitle, string temperatureSettings, EventHandler functionToCallOnSave)
             : base(360, 300)
         {
-			Title = new LocalizedString(windowTitle).Translated;
+            Title = LocalizedString.Get(windowTitle);
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-				string tempShortcutPresetLbl = new LocalizedString("Temperature Shortcut Presets").Translated;
+                string tempShortcutPresetLbl = LocalizedString.Get("Temperature Shortcut Presets");
 				string tempShortcutPresetLblFull = string.Format ("{0}:", tempShortcutPresetLbl);
 				TextWidget elementHeader = new TextWidget(tempShortcutPresetLblFull, pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
             labelLabelContainer.Height = 16;
             labelLabelContainer.Margin = new BorderDouble(3, 0);
 
-			string labelLabelTxt = new LocalizedString("Label").Translated;
+            string labelLabelTxt = LocalizedString.Get("Label");
 			TextWidget labelLabel = new TextWidget(string.Format(labelLabelTxt), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
             labelLabel.HAnchor = HAnchor.ParentLeft;
             labelLabel.VAnchor = VAnchor.ParentCenter;
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
                 FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
                 leftRightEdit.Padding = new BorderDouble(3);
                 leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-				string presetLabelTxt = new LocalizedString ("Preset").Translated;
+                string presetLabelTxt = LocalizedString.Get("Preset");
 				TextWidget label = new TextWidget(string.Format("{1} {0}.", preset_count,presetLabelTxt ), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 label.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(label);
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-				TextWidget maxWidgetLabel = new TextWidget(new LocalizedString("Max Temp.").Translated, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                TextWidget maxWidgetLabel = new TextWidget(LocalizedString.Get("Max Temp."), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 maxWidgetLabel.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(maxWidgetLabel);
                 leftRightEdit.AddChild(hSpacer);
@@ -200,10 +200,10 @@ namespace MatterHackers.MatterControl
 
             ShowAsSystemWindow();
 
-			Button savePresetsButton = textImageButtonFactory.Generate(new LocalizedString("Save").Translated);
+            Button savePresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
             savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
+            Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
             cancelPresetsButton.Click += (sender, e) => { CloseOnIdle(); };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();

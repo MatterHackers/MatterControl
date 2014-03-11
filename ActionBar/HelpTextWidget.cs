@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl
         {
             if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
-				return new LocalizedString("No printer selected.  Press 'Connect' to choose a printer.").Translated;
+				return LocalizedString.Get("No printer selected.  Press 'Connect' to choose a printer.");
             }
             else
             {
@@ -129,22 +129,22 @@ namespace MatterHackers.MatterControl
                 switch (PrinterCommunication.Instance.CommunicationState)
                 {
                     case PrinterCommunication.CommunicationStates.Disconnected:
-						return new LocalizedString("Not connected. Press 'Connect' to enable printing.").Translated;
+						return LocalizedString.Get("Not connected. Press 'Connect' to enable printing.");
 					case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-						string attemptToConnect = new LocalizedString ("Attempting to Connect").Translated;
+						string attemptToConnect = LocalizedString.Get ("Attempting to Connect");
 						string attemptToConnectFull = string.Format ("{0}...", attemptToConnect);
 						return  attemptToConnectFull;               
                     case PrinterCommunication.CommunicationStates.ConnectionLost:
                     case PrinterCommunication.CommunicationStates.FailedToConnect:
-						return new LocalizedString("Unable to communicate with printer.").Translated;
+						return LocalizedString.Get("Unable to communicate with printer.");
                     case PrinterCommunication.CommunicationStates.Connected:
                         if (PrinterCommunication.Instance.ActivePrintItem != null)
                         {
-							return new LocalizedString("Item selected. Press 'Start' to begin your print.").Translated;
+							return LocalizedString.Get("Item selected. Press 'Start' to begin your print.");
                         }
                         else
                         {
-							return new LocalizedString("No items to select. Press 'Add' to select a file to print.").Translated;
+							return LocalizedString.Get("No items to select. Press 'Add' to select a file to print.");
                         }
                     default:
                         return "";

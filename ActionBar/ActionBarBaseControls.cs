@@ -146,8 +146,8 @@ namespace MatterHackers.MatterControl.ActionBar
             printerNameText.HAnchor = HAnchor.ParentCenter;
             printerNameText.TextColor = textColor;
 
-			string printerStatusTxtBeg = new LocalizedString("Status").Translated;
-			string printerStatusTxtEnd = new LocalizedString("Connected").Translated;
+            string printerStatusTxtBeg = LocalizedString.Get("Status");
+            string printerStatusTxtEnd = LocalizedString.Get("Connected");
 			string printerStatusTxtFull = string.Format("{0}: {1}", printerStatusTxtBeg, printerStatusTxtEnd);
 			printerStatusText = new TextWidget(printerStatusTxtFull, pointSize:statusTextHeight);
             printerStatusText.AutoExpandBoundsToText = true;
@@ -189,12 +189,12 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (PrinterCommunication.Instance.CommunicationState == PrinterCommunication.CommunicationStates.FailedToConnect && PrinterCommunication.Instance.ConnectionFailureMessage != "")
 			{
-                string statusString = new LocalizedString("Status: {0} - {1}").Translated;
+                string statusString = LocalizedString.Get("Status: {0} - {1}");
                 printerStatusText.Text = string.Format(statusString, PrinterCommunication.Instance.PrinterConnectionStatusVerbose, PrinterCommunication.Instance.ConnectionFailureMessage);
 			}
 			else
 			{
-				string statusStringBeg = new LocalizedString ("Status").Translated;
+                string statusStringBeg = LocalizedString.Get("Status");
 				string statusString = string.Format("{1}: {0}",  PrinterCommunication.Instance.PrinterConnectionStatusVerbose, statusStringBeg);
 				printerStatusText.Text = string.Format(statusString,PrinterCommunication.Instance.PrinterConnectionStatusVerbose);           
 			}
@@ -207,13 +207,13 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 if (GetPrinterRecordCount() > 0)
                 {
-					string printerNameLbl = new LocalizedString ("Select Printer").Translated;
+                    string printerNameLbl = LocalizedString.Get("Select Printer");
 					string printerNameLblFull = string.Format("- {0} -", printerNameLbl);
 					printerNameText.Text = (printerNameLblFull);
                 }
                 else
                 {
-					string addPrinterLbl = new LocalizedString ("Add Printer").Translated;
+                    string addPrinterLbl = LocalizedString.Get("Add Printer");
 					string addPrinterLblFull = string.Format ("- {0} -", addPrinterLbl);
 					printerNameText.Text = (addPrinterLblFull);
                 }

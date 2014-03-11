@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
 
             
-			cancelButton = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
+			cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
             cancelButton.Click += new ButtonBase.ButtonEventHandler(CancelButton_Click);
 
             //Create the main container
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
             headerRow.HAnchor = HAnchor.ParentLeftRight;
             {
-				string defaultHeaderTitle = new LocalizedString("3D Printer Setup").Translated;                
+				string defaultHeaderTitle = LocalizedString.Get("3D Printer Setup");                
                 headerLabel = new TextWidget(defaultHeaderTitle, pointSize: 14);
                 headerLabel.AutoExpandBoundsToText = true;
                 headerLabel.TextColor = this.defaultTextColor;

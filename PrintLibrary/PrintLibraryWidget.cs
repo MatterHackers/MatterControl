@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     searchInput.HAnchor = HAnchor.ParentLeftRight;
                     searchInput.VAnchor = VAnchor.ParentCenter;
 
-					searchButton = searchButtonFactory.Generate(new LocalizedString("Search").Translated);
+					searchButton = searchButtonFactory.Generate(LocalizedString.Get("Search"));
                     searchButton.Margin = new BorderDouble(right:9);
 
                     searchPanel.AddChild(searchInput);
@@ -96,12 +96,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 buttonPanel.HAnchor = HAnchor.ParentLeftRight;
                 buttonPanel.Padding = new BorderDouble(0, 3);
                 {
-					Button addToLibrary = textImageButtonFactory.Generate(new LocalizedString("Import").Translated, "icon_import_white_32x32.png");
+					Button addToLibrary = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
                     buttonPanel.AddChild(addToLibrary);
                     addToLibrary.Margin = new BorderDouble(0, 0, 3, 0);
                     addToLibrary.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
 
-					Button runCreator = textImageButtonFactory.Generate(new LocalizedString("Create").Translated, "icon_creator_white_32x32.png");
+					Button runCreator = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
                     buttonPanel.AddChild(runCreator);
                     runCreator.Margin = new BorderDouble(0, 0, 3, 0);
                     runCreator.Click += (sender, e) =>

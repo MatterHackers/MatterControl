@@ -862,3 +862,6 @@ Translated:View Manual Printer Controls and Slicing Settings
 English:View Queue and Library
 Translated:View Queue and Library
 
+English:Bed Temperature
+Translated:Bed Temperature
+

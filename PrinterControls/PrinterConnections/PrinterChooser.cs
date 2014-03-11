@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl
 
         public PrinterChooser(string selectedMake = null)
         {
-			string defaultManufacturerLbl = new LocalizedString ("Select Make").Translated;
+			string defaultManufacturerLbl = LocalizedString.Get ("Select Make");
 			string defaultManufacturerLblFull = string.Format ("- {0} -", defaultManufacturerLbl);
 			ManufacturerDropList = new StyledDropDownList(defaultManufacturerLblFull);            
             bool addOther = false;
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
                     {
                         preselectIndex = index;
                     }
-					ManufacturerDropList.AddItem(new LocalizedString("Other").Translated);
+					ManufacturerDropList.AddItem(LocalizedString.Get("Other"));
                 }
                 if (preselectIndex != -1)
                 {
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 
         public ModelChooser(string manufacturer)
         {
-			string defaultModelDropDownLbl = new LocalizedString("Select Model").Translated;
+			string defaultModelDropDownLbl = LocalizedString.Get("Select Model");
 			string defaultModelDropDownLblFull = string.Format("- {0} -", defaultModelDropDownLbl);
 			ModelDropList = new StyledDropDownList(defaultModelDropDownLblFull);
             string pathToModels = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", manufacturer);
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
                     ModelDropList.AddItem(model);
                 }
             }
-			ModelDropList.AddItem(new LocalizedString("Other").Translated);
+			ModelDropList.AddItem(LocalizedString.Get("Other"));
 
             AddChild(ModelDropList);
 

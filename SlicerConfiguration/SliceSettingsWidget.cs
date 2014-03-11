@@ -124,10 +124,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             int minSettingNameWidth = 220;
 
-			showHelpBox = new CheckBox(new LocalizedString("Show Help").Translated);
+			showHelpBox = new CheckBox(LocalizedString.Get("Show Help"));
 			showHelpBox.Checked = uiState.showHelp;
 
-			showAllDetails = new CheckBox(new LocalizedString("Show All Settings").Translated);
+			showAllDetails = new CheckBox(LocalizedString.Get("Show All Settings"));
             showAllDetails.Checked = uiState.userLevel == "Advanced";
 
             FlowLayoutWidget pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: Agg.UI.VAnchor.ParentTop);
@@ -138,14 +138,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsControlBar = new SettingsControlBar();
             pageTopToBottomLayout.AddChild(settingsControlBar);
 
-			noConnectionMessageContainer = new GroupBox(new LocalizedString("No Printer Selected").Translated);
+			noConnectionMessageContainer = new GroupBox(LocalizedString.Get("No Printer Selected"));
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             noConnectionMessageContainer.Height = 80;
 
-			TextWidget noConnectionMessage = new TextWidget(new LocalizedString("No printer is currently selected. Select printer to edit slice settings.").Translated);
+			TextWidget noConnectionMessage = new TextWidget(LocalizedString.Get("No printer is currently selected. Select printer to edit slice settings."));
             noConnectionMessage.Margin = new BorderDouble(5);
             noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessage.VAnchor = VAnchor.ParentCenter;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
             {
                 OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
-				string categoryPageLbl = new LocalizedString (category.Name).Translated;
+				string categoryPageLbl = LocalizedString.Get (category.Name);
 				TabPage categoryPage = new TabPage(categoryPageLbl);
                 SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, 16,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             foreach (OrganizerGroup group in category.GroupsList)
             {
                 tabIndexForItem = 0;
-				string groupTabLbl = new LocalizedString (group.Name).Translated;
+				string groupTabLbl = LocalizedString.Get (group.Name);
 				TabPage groupTabPage = new TabPage(groupTabLbl);
                 SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, 14,
                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     if (addedSettingToSubGroup)
                     {
                         needToAddSubGroup = true;
-						string groupBoxLbl = new LocalizedString (subGroup.Name).Translated;
+						string groupBoxLbl = LocalizedString.Get (subGroup.Name);
 						GroupBox groupBox = new GroupBox (groupBoxLbl);
                         groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -428,7 +428,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     }
                 }
 
-                GroupBox groupBox = new GroupBox(new LocalizedString("Extra").Translated);
+                GroupBox groupBox = new GroupBox(LocalizedString.Get("Extra"));
                 groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
                 groupBox.AddChild(topToBottomSettings);
@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     string convertedNewLines = settingData.PresentationName.Replace("\\n ", "\n");
                     convertedNewLines = convertedNewLines.Replace("\\n", "\n");
-					convertedNewLines = new LocalizedString (convertedNewLines).Translated;
+					convertedNewLines = LocalizedString.Get (convertedNewLines);
                     TextWidget settingName = new TextWidget(convertedNewLines);
                     settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     settingName.Width = minSettingNameWidth;

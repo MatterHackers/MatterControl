@@ -10,47 +10,30 @@ using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.Localizations
 {
-    public class LocalizedString
+    public static class LocalizedString
     {
         static TranslationMap MatterControlTranslationMap;
 
-        string englishText;
-        string EnglishText 
+        public static string Get(string EnglishText)
         {
-            get
+            string language = "fr";
+            if (language == "en")
             {
-                return englishText;
+                return EnglishText;
             }
-        }
-
-        public string Translated
-        {
-            get
+            else
             {
-                string language = "fr";
-                if (language == "en")
+                if (MatterControlTranslationMap == null)
                 {
-                    return EnglishText;
+                    string pathToTranslationsFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Translations");
+                    MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
                 }
-                else
-                {
-                    if (MatterControlTranslationMap == null)
-                    {
-                        string pathToTranslationsFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Translations");
-                        MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
-                    }
 #if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG
                 return "El " + EnglishText + " o";
 #else
-                    return MatterControlTranslationMap.Translate(EnglishText);
-                }
-#endif
+                return MatterControlTranslationMap.Translate(EnglishText);
             }
-        }
-
-        public LocalizedString(string EnglishText)
-        {
-            this.englishText = EnglishText;
+#endif
         }
     }
 }

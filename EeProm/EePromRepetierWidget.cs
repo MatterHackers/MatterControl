@@ -69,13 +69,13 @@ namespace MatterHackers.MatterControl.EeProm
             FlowLayoutWidget row = new FlowLayoutWidget();
             row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             row.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            GuiWidget descriptionWidget = AddDescription(new LocalizedString("Description").Translated);
+            GuiWidget descriptionWidget = AddDescription(LocalizedString.Get("Description"));
             descriptionWidget.Margin = new BorderDouble(left: 3);
             row.AddChild(descriptionWidget);
 
             CreateSpacer(row);
 
-            GuiWidget valueText = new TextWidget(new LocalizedString("Value").Translated, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            GuiWidget valueText = new TextWidget(LocalizedString.Get("Value"), textColor: ActiveTheme.Instance.PrimaryTextColor);
             valueText.VAnchor = Agg.UI.VAnchor.ParentCenter;
             valueText.Margin = new BorderDouble(left: 5, right: 60);
             row.AddChild(valueText);
@@ -97,13 +97,13 @@ namespace MatterHackers.MatterControl.EeProm
             FlowLayoutWidget buttonBar = new FlowLayoutWidget();
             buttonBar.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             buttonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            buttonSave = textImageButtonFactory.Generate(new LocalizedString("Save To EEPROM").Translated);
+            buttonSave = textImageButtonFactory.Generate(LocalizedString.Get("Save To EEPROM"));
 			buttonSave.Margin = new BorderDouble(0,3);
             buttonBar.AddChild(buttonSave);
 
             CreateSpacer(buttonBar);
 
-            buttonCancel = textImageButtonFactory.Generate(new LocalizedString("Cancel").Translated);
+            buttonCancel = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
             buttonCancel.Margin = new BorderDouble(3);
             buttonBar.AddChild(buttonCancel);
 
@@ -158,11 +158,11 @@ namespace MatterHackers.MatterControl.EeProm
         
         public void translate()
         {
-            Title = new LocalizedString("Firmware EEPROM Settings").Translated;
-            buttonCancel.Text = new LocalizedString("Cancel").Translated;
+            Title = LocalizedString.Get("Firmware EEPROM Settings");
+            buttonCancel.Text = LocalizedString.Get("Cancel");
             buttonCancel.Click += buttonAbort_Click;
-            
-            buttonSave.Text = new LocalizedString("Save to EEPROM").Translated;
+
+            buttonSave.Text = LocalizedString.Get("Save to EEPROM");
             buttonSave.Click += buttonSave_Click;
         }
 
