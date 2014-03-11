@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 else if (partIsGCode)
                 {
                     Close();
-                    SaveGCodeToNewLocation(printQueueItem.printItem.FileLocation, saveParams.FileName);
+					SaveGCodeToNewLocation(printQueueItem.printItem.FileLocation,filePathToSave);//saveParams.FileName
                 }
             }
         }

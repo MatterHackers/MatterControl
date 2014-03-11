@@ -2,16 +2,15 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="c:\Users\Matter Hackers 1\Development\agg-sharp\examples\GCodeVisualizer\GCodeFile.cs">
     <Files>
-      <File FileName="PrinterCommunication.cs" Line="491" Column="7" />
       <File FileName="PrintQueue\QueueControlsWidget.cs" Line="1" Column="1" />
-      <File FileName="CustomWidgets\ExportQueueItemWindow.cs" Line="84" Column="78" />
-      <File FileName="PrintLibrary\ExportLibraryItemWindow.cs" Line="83" Column="74" />
-      <File FileName="PartPreviewWindow\GcodeViewBasic.cs" Line="459" Column="1" />
-      <File FileName="Localizations\LocalizedString.cs" Line="15" Column="16" />
-      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\Gui\FileDialogs\FileDialog.cs" Line="14" Column="6" />
-      <File FileName="ActionBar\HelpTextWidget.cs" Line="136" Column="51" />
-      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\PlatformWin32\win32\WidgetForWindowsFormsAbstract.cs" Line="195" Column="1" />
-      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\examples\GCodeVisualizer\GCodeViewWidget.cs" Line="399" Column="1" />
+      <File FileName="CustomWidgets\ExportQueueItemWindow.cs" Line="1" Column="1" />
+      <File FileName="PrintLibrary\ExportLibraryItemWindow.cs" Line="1" Column="1" />
+      <File FileName="PartPreviewWindow\GcodeViewBasic.cs" Line="1" Column="1" />
+      <File FileName="Localizations\LocalizedString.cs" Line="1" Column="1" />
+      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\Gui\FileDialogs\FileDialog.cs" Line="1" Column="1" />
+      <File FileName="ActionBar\HelpTextWidget.cs" Line="1" Column="1" />
+      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\PlatformWin32\win32\WidgetForWindowsFormsAbstract.cs" Line="1" Column="1" />
+      <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\examples\GCodeVisualizer\GCodeViewWidget.cs" Line="1" Column="1" />
       <File FileName="c:\Users\Matter Hackers 1\Development\agg-sharp\examples\GCodeVisualizer\GCodeFile.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
