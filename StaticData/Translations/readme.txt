@@ -1,5 +1,5 @@
-These files represent the translations of the 'MasterList.txt'.  
-The only file that is always up to date is 'MasterList.txt' and 
+These files represent the translations of 'Master.txt'.  
+The only file that is always up to date is 'Master.txt' and 
 attempts to maintain it's order of string entries. So new strings
 should appear at the bottom of that file.
 
