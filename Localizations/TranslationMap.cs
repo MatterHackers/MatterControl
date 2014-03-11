@@ -51,7 +51,10 @@ namespace MatterHackers.Localizations
             ReadIntoDictonary(masterDictionary, pathToMasterFile);
 
             this.pathToTranslationFile = Path.Combine(pathToTranslationsFolder, twoLetterIsoLanguageName, "Translation.txt");
-            ReadIntoDictonary(translationDictionary, pathToTranslationFile);
+            if (File.Exists(pathToTranslationFile))
+            {
+                ReadIntoDictonary(translationDictionary, pathToTranslationFile);
+            }
 
             foreach (KeyValuePair<string, string> keyValue in translationDictionary)
             {
@@ -91,8 +94,21 @@ namespace MatterHackers.Localizations
 
                 using (TimedLock.Lock(this, "TranslationMap"))
                 {
+                    string pathName = Path.GetDirectoryName(pathAndFilename);
+                    if (!Directory.Exists(pathName))
+                    {
+                        Directory.CreateDirectory(pathName);
+                    }
+                    if (!File.Exists(pathAndFilename))
+                    {
+                        using (StreamWriter masterFileStream = File.CreateText(pathAndFilename))
+                        {
+                        }
+                    }
+
                     using (StreamWriter masterFileStream = File.AppendText(pathAndFilename))
                     {
+
                         masterFileStream.WriteLine(string.Format("English:{0}", EncodeForSaving(englishString)));
                         masterFileStream.WriteLine(string.Format("Translated:{0}", EncodeForSaving(englishString)));
                         masterFileStream.WriteLine("");

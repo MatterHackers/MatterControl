@@ -22,25 +22,26 @@ namespace MatterHackers.Localizations
                 return englishText;
             }
         }
-        
-        public string Translated 
+
+        public string Translated
         {
             get
             {
-                if (MatterControlTranslationMap == null)
-                {
-                    string pathToTranslationsFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Translations");
-                    MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, "es");
-                }
-#if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG
-                return "El " + EnglishText + " o";
-#else
-                if (MatterControlTranslationMap.TwoLetterIsoLanguageName == "en")
+                string language = "fr";
+                if (language == "en")
                 {
                     return EnglishText;
                 }
                 else
                 {
+                    if (MatterControlTranslationMap == null)
+                    {
+                        string pathToTranslationsFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Translations");
+                        MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
+                    }
+#if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG
+                return "El " + EnglishText + " o";
+#else
                     return MatterControlTranslationMap.Translate(EnglishText);
                 }
 #endif
