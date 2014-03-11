@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class GcodeViewBasic : PartPreviewBaseWidget
     {
         public Slider selectLayerSlider;
+        public Slider layerStartRenderRatioSlider;
         TextWidget gcodeProcessingStateInfoText;
         GCodeViewWidget gcodeViewWidget;
         PrintItemWrapper printItem;
@@ -525,7 +526,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
-                SetSliderSize();
+
+                layerStartRenderRatioSlider = new Slider(new Vector2(), 10);
+                layerStartRenderRatioSlider.ValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
+                AddChild(layerStartRenderRatioSlider);
+
+                SetSliderSizes();
 
                 // let's change the active layer so that it is set to the first layer with data
                 gcodeViewWidget.ActiveLayerIndex = gcodeViewWidget.ActiveLayerIndex + 1;
@@ -533,6 +539,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
             }
+        }
+
+        void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         void gcodeViewWidget_ActiveLayerChanged(object sender, EventArgs e)
@@ -550,13 +561,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void PartPreviewGCode_BoundsChanged(object sender, EventArgs e)
         {
-            SetSliderSize();
+            SetSliderSizes();
         }
 
-        void SetSliderSize()
+        void SetSliderSizes()
         {
             selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDispalyWidget.Width - 20, 80);
             selectLayerSlider.TotalWidthInPixels = gcodeDispalyWidget.Height - 80;
+
+            layerStartRenderRatioSlider.OriginRelativeParent = new Vector2(20, 70);
+            layerStartRenderRatioSlider.TotalWidthInPixels = layerStartRenderRatioSlider.Width - 80;
         }
 
         private void AddHandlers()
