@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl
 			if (streamToSaveTo != null) 
 			{
 				streamToSaveTo.Close ();
-				Close ();
+				Close();
 			}
 			// windows vista +: filePathToSave 'test.stl'
 			// windows xp: filePathToSave 'test'
