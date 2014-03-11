@@ -16,7 +16,7 @@ namespace MatterHackers.Localizations
 
         public static string Get(string EnglishText)
         {
-            string language = "fr";
+            string language = "en";
             if (language == "en")
             {
                 return EnglishText;
