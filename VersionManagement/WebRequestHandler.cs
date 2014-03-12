@@ -25,6 +25,7 @@ namespace MatterHackers.MatterControl.VersionManagement
         protected Dictionary<string, string> requestValues;
         public event EventHandler RequestSucceeded;
         public event EventHandler RequestFailed;
+        public event EventHandler RequestComplete;
 
         void OnRequestSuceeded()
         {
@@ -33,6 +34,16 @@ namespace MatterHackers.MatterControl.VersionManagement
                 RequestSucceeded(this, null);
             }
         }
+
+        //This gets called after failure or success
+        void OnRequestComplete()            
+        {
+            if (RequestComplete != null)
+            {
+                RequestComplete(this, null);
+            }
+        }
+
 
         void OnRequestFailed()
         {
@@ -78,6 +89,7 @@ namespace MatterHackers.MatterControl.VersionManagement
                 ProcessErrorResponse();
                 OnRequestFailed();
             }
+            OnRequestComplete();
             
         }
 
