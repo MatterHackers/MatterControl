@@ -28,7 +28,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             contentRow.AddChild(createPrinterConnectionMessageContainer());
             {
                 //Construct buttons
-				nextButton = textImageButtonFactory.Generate(new LocalizedString("Continue").Translated);
+				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
                 nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);                
 
                 GuiWidget hSpacer = new GuiWidget();
@@ -50,22 +50,22 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(5);            
             BorderDouble elementMargin = new BorderDouble(top: 5);
 
-			TextWidget printerMessageOne = new TextWidget(new LocalizedString("MatterControl will now attempt to auto-detect printer.").Translated, 0, 0, 10);
+			TextWidget printerMessageOne = new TextWidget(LocalizedString.Get("MatterControl will now attempt to auto-detect printer."), 0, 0, 10);
             printerMessageOne.Margin = new BorderDouble(0, 10, 0,5);
             printerMessageOne.TextColor = RGBA_Bytes.White;
             printerMessageOne.HAnchor = HAnchor.ParentLeftRight;
             printerMessageOne.Margin = elementMargin;
 
-			string printerMessageTwoTxt = new LocalizedString("Disconnect printer").Translated;
-			string printerMessageTwoTxtEnd = new LocalizedString("if currently connected").Translated;
+			string printerMessageTwoTxt = LocalizedString.Get("Disconnect printer");
+			string printerMessageTwoTxtEnd = LocalizedString.Get("if currently connected");
 			string printerMessageTwoTxtFull = string.Format ("1.) {0} ({1}).", printerMessageTwoTxt, printerMessageTwoTxtEnd);
 			TextWidget printerMessageTwo = new TextWidget(printerMessageTwoTxtFull, 0, 0, 12);
             printerMessageTwo.TextColor = RGBA_Bytes.White;
             printerMessageTwo.HAnchor = HAnchor.ParentLeftRight;
             printerMessageTwo.Margin = elementMargin;
 
-			string printerMessageThreeTxt = new LocalizedString("Press").Translated;
-			string printerMessageThreeTxtEnd = new LocalizedString ("Continue").Translated;
+			string printerMessageThreeTxt = LocalizedString.Get("Press");
+			string printerMessageThreeTxtEnd = LocalizedString.Get ("Continue");
 			string printerMessageThreeFull = string.Format ("2.) {0} '{1}'.", printerMessageThreeTxt, printerMessageThreeTxtEnd);
 			TextWidget printerMessageThree = new TextWidget(printerMessageThreeFull, 0, 0, 12);
             printerMessageThree.TextColor = RGBA_Bytes.White;
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             GuiWidget vSpacer = new GuiWidget();
             vSpacer.VAnchor = VAnchor.ParentBottomTop;
 
-			Button manualLink = linkButtonFactory.Generate(new LocalizedString("Manual Configuration").Translated);
+			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Manual Configuration"));
             manualLink.Margin = new BorderDouble(0, 5);
             manualLink.Click += new ButtonBase.ButtonEventHandler(ManualLink_Click);
 

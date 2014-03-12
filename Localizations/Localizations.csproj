@@ -62,7 +62,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LocalizedString.cs" />
-    <Compile Include="TraslationMap.cs" />
+    <Compile Include="TranslationMap.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\agg-sharp\Agg\Agg.csproj">
+      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
+      <Name>Agg</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

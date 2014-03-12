@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.EeProm
         public EePromMarlinWidget()
             : base(700, 480)
         {
-            Title = new LocalizedString("Marlin Firmware EEPROM Settings").Translated;
+            Title = LocalizedString.Get("Marlin Firmware EEPROM Settings");
 
             currentEePromSettings = new EePromMarlinSettings();
             currentEePromSettings.eventAdded += SetUiToPrinterSettings;
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.EeProm
             row.Margin = new BorderDouble(3);
             row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-            TextWidget labelWidget = new TextWidget(new LocalizedString(label).Translated, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            TextWidget labelWidget = new TextWidget(LocalizedString.Get(label), textColor: ActiveTheme.Instance.PrimaryTextColor);
             labelWidget.VAnchor = VAnchor.ParentCenter;
             maxWidthOfLeftStuff = Math.Max(maxWidthOfLeftStuff, labelWidget.Width);
             GuiWidget holder = new GuiWidget(labelWidget.Width, labelWidget.Height);
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.EeProm
 
         private void CreateMainButton(ref Button button, FlowLayoutWidget buttonBar, string text)
         {
-            button = textImageButtonFactory.Generate(new LocalizedString(text).Translated);
+            button = textImageButtonFactory.Generate(LocalizedString.Get(text));
             buttonBar.AddChild(button);
         }
 

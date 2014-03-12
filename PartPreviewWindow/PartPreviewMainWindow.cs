@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public PartPreviewMainWindow(PrintItemWrapper printItem)
             : base(690, 340)
         {
-			string partPreviewTitle = new LocalizedString ("MatterControl").Translated;
+			string partPreviewTitle = LocalizedString.Get ("MatterControl");
 			Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -63,13 +63,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
 			string part3DViewLblBeg = ("3D");
-			string part3DViewLblEnd = new LocalizedString ("View").Translated;
+			string part3DViewLblEnd = LocalizedString.Get ("View");
 			string part3DViewLblFull = string.Format("{0} {1} ", part3DViewLblBeg, part3DViewLblEnd);
             part3DView = new View3DTransformPart(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape);
 			TabPage partPreview3DView = new TabPage(part3DView, part3DViewLblFull);
 
             partGcodeView = new GcodeViewBasic(printItem, ActiveSliceSettings.Instance.GetBedSize, ActiveSliceSettings.Instance.GetBedCenter);
-			TabPage layerView = new TabPage(partGcodeView, new LocalizedString("Layer View").Translated);
+			TabPage layerView = new TabPage(partGcodeView, LocalizedString.Get("Layer View"));
 
             //part3DGcodeView = new PartPreview3DGcode(printItem.FileLocation, bedXSize, bedYSize);
 

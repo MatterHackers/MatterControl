@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                     partLabel.TextColor = WidgetTextColor;
                     partLabel.MinimumSize = new Vector2(1, 16);
 
-					string partStatusLblTxt = new LocalizedString ("Status").Translated;     
-					string partStatusLblTxtTest = new LocalizedString ("Queued to Print").Translated;
+					string partStatusLblTxt = LocalizedString.Get ("Status");     
+					string partStatusLblTxtTest = LocalizedString.Get ("Queued to Print");
 					string partStatusLblTxtFull = string.Format("{0}: {1}", partStatusLblTxt,partStatusLblTxtTest);
 
 					partStatus = new TextWidget(partStatusLblTxtFull, pointSize: 10);
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 // view button
                 {
-					Button viewLink = linkButtonFactory.Generate(new LocalizedString("View").Translated);
+					Button viewLink = linkButtonFactory.Generate(LocalizedString.Get("View"));
                     viewLink.Click += (sender, e) =>
                     {
 
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 // copy button
                 {
-					Button copyLink = linkButtonFactory.Generate(new LocalizedString("Copy").Translated);
+					Button copyLink = linkButtonFactory.Generate(LocalizedString.Get("Copy"));
                     copyLink.Click += (sender, e) =>
                     {
                         CreateCopyInQueue();
@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 // the export menu
                 {
-					Button exportLink = linkButtonFactory.Generate(new LocalizedString("Export").Translated);
+					Button exportLink = linkButtonFactory.Generate(LocalizedString.Get("Export"));
                     exportLink.Click += (sender, e) =>
                     {
 						OpenExportWindow();
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 // delete button
                 {
-					Button deleteLink = linkButtonFactory.Generate(new LocalizedString("Remove").Translated);
+					Button deleteLink = linkButtonFactory.Generate(LocalizedString.Get("Remove"));
                     deleteLink.Click += (sender, e) =>
                     {
                         DeletePartFromQueue();
@@ -421,10 +421,10 @@ namespace MatterHackers.MatterControl.PrintQueue
                     string end = maxLengthName.Substring(maxLengthName.Length - amountRemaining, amountRemaining);
                     maxLengthName = start + end;
                 }
-				string notFoundMessage = new LocalizedString("Oops! Could not find this file").Translated;
-				string notFoundMessageEnd = new LocalizedString("Would you like to remove it from the queue").Translated;
+				string notFoundMessage = LocalizedString.Get("Oops! Could not find this file");
+				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
 				string message = String.Format("{0}:\n'{1}'\n\n{2}?",notFoundMessage, maxLengthName,notFoundMessageEnd);
-				string titleLbl = new LocalizedString("Item not Found").Translated;
+				string titleLbl = LocalizedString.Get("Item not Found");
 					if (StyledMessageBox.ShowMessageBox(message, titleLbl, StyledMessageBox.MessageType.YES_NO))
                 {
                     PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.GetIndex(printItem));

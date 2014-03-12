@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             contentRow.AddChild(printerModelContainer);
 
             //Construct buttons
-			nextButton = textImageButtonFactory.Generate(new LocalizedString("Save & Continue").Translated);
+			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Save & Continue"));
             nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
 
             GuiWidget hSpacer = new GuiWidget();
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string printerNameLabelTxt = new LocalizedString("Printer Name").Translated;
+			string printerNameLabelTxt = LocalizedString.Get("Printer Name");
 			string printerNameLabelTxtFull = string.Format ("{0}:", printerNameLabelTxt);
 			TextWidget printerNameLabel = new TextWidget(printerNameLabelTxtFull, 0, 0, 12);
             printerNameLabel.TextColor = this.defaultTextColor;
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerNameInput = new MHTextEditWidget(this.ActivePrinter.Name);
             printerNameInput.HAnchor = HAnchor.ParentLeftRight;
 
-			printerNameError = new TextWidget(new LocalizedString("Give your printer a name.").Translated, 0, 0, 10);
+			printerNameError = new TextWidget(LocalizedString.Get("Give your printer a name."), 0, 0, 10);
             printerNameError.TextColor = RGBA_Bytes.White;
             printerNameError.HAnchor = HAnchor.ParentLeftRight;
             printerNameError.Margin = elementMargin;
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string printerManufacturerLabelTxt = new LocalizedString("Select Make").Translated;
+			string printerManufacturerLabelTxt = LocalizedString.Get("Select Make");
 			string printerManufacturerLabelTxtFull = string.Format("{0}:", printerManufacturerLabelTxt);
 			TextWidget printerManufacturerLabel = new TextWidget(printerManufacturerLabelTxtFull, 0, 0, 12);
             printerManufacturerLabel.TextColor = this.defaultTextColor;
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerManufacturerSelector.Margin = elementMargin;
             printerManufacturerSelector.ManufacturerDropList.SelectionChanged += new EventHandler(ManufacturerDropList_SelectionChanged);
 
-			printerMakeError = new TextWidget(new LocalizedString("Select the printer manufacturer").Translated, 0, 0, 10);
+			printerMakeError = new TextWidget(LocalizedString.Get("Select the printer manufacturer"), 0, 0, 10);
             printerMakeError.TextColor = RGBA_Bytes.White;
             printerMakeError.HAnchor = HAnchor.ParentLeftRight;
             printerMakeError.Margin = elementMargin;
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string printerModelLabelTxt = new LocalizedString("Select Model").Translated;
+			string printerModelLabelTxt = LocalizedString.Get("Select Model");
 			string printerModelLabelTxtFull = string.Format ("{0}:", printerModelLabelTxt);
 			TextWidget printerModelLabel = new TextWidget(printerModelLabelTxtFull, 0, 0, 12);
             printerModelLabel.TextColor = this.defaultTextColor;
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerModelSelector.Margin = elementMargin;
             printerModelSelector.ModelDropList.SelectionChanged += new EventHandler(ModelDropList_SelectionChanged);
 
-			printerModelError = new TextWidget(new LocalizedString("Select the printer model").Translated, 0, 0, 10);
+			printerModelError = new TextWidget(LocalizedString.Get("Select the printer model"), 0, 0, 10);
             printerModelError.TextColor = RGBA_Bytes.White;
             printerModelError.HAnchor = HAnchor.ParentLeftRight;
             printerModelError.Margin = elementMargin;

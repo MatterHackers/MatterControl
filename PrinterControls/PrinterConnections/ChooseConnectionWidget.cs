@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 headerRow.Padding = new BorderDouble(0, 3, 0, 3);
                 
                 {
-					string chooseThreeDPrinterConfigLabel = new LocalizedString("Choose a 3D Printer Configuration").Translated;
+                    string chooseThreeDPrinterConfigLabel = LocalizedString.Get("Choose a 3D Printer Configuration");
 					string chooseThreeDPrinterConfigFull = string.Format ("{0}:", chooseThreeDPrinterConfigLabel);
 
 					TextWidget elementHeader = new TextWidget(string.Format(chooseThreeDPrinterConfigFull), pointSize: 14);
@@ -63,11 +63,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     ActionLink editModeLink;
                     if (!this.editMode)
                     {
-						editModeLink = actionLinkFactory.Generate(new LocalizedString("Edit").Translated, 12, EditModeOnLink_Click);
+                        editModeLink = actionLinkFactory.Generate(LocalizedString.Get("Edit"), 12, EditModeOnLink_Click);
                     }
                     else
                     {
-						editModeLink = actionLinkFactory.Generate(new LocalizedString("Done").Translated, 12, EditModeOffLink_Click);
+                        editModeLink = actionLinkFactory.Generate(LocalizedString.Get("Done"), 12, EditModeOffLink_Click);
                     }
 
                     editModeLink.TextColor = new RGBA_Bytes(250, 250, 250);
@@ -107,12 +107,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 buttonContainer.HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight;
                 buttonContainer.Margin = new BorderDouble(0, 3);
                 {
-					closeButton = textImageButtonFactory.Generate(new LocalizedString("Close").Translated);
+                    closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
 
-					Button addPrinterButton = textImageButtonFactory.Generate(new LocalizedString("Add").Translated, "icon_circle_plus.png");
+                    Button addPrinterButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     addPrinterButton.Click += new ButtonBase.ButtonEventHandler(AddConnectionLink_Click);
 
-					Button refreshListButton = textImageButtonFactory.Generate(new LocalizedString("Refresh").Translated);
+                    Button refreshListButton = textImageButtonFactory.Generate(LocalizedString.Get("Refresh"));
                     refreshListButton.Click += new ButtonBase.ButtonEventHandler(EditModeOffLink_Click);
 
                     GuiWidget spacer = new GuiWidget();

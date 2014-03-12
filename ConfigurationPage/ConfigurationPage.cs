@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            GroupBox eePromControlsGroupBox = new GroupBox(new LocalizedString("EEProm Settings").Translated);
+            GroupBox eePromControlsGroupBox = new GroupBox(LocalizedString.Get("EEProm Settings"));
 
 			eePromControlsGroupBox.Margin = new BorderDouble(0);
             eePromControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
-					Button openEePromWindow = textImageButtonFactory.Generate(new LocalizedString("CONFIGURE").Translated);
+                    Button openEePromWindow = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
                     openEePromWindow.Click += (sender, e) =>
                     {
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
                             default:
                                 UiThread.RunOnIdle((state) => 
                                 {
-									string message = new LocalizedString("Oops! There is no eeprom mapping for your printer's firmware.").Translated;
+                                    string message = LocalizedString.Get("Oops! There is no eeprom mapping for your printer's firmware.");
                                     StyledMessageBox.ShowMessageBox(message, "Warning no eeprom mapping", StyledMessageBox.MessageType.OK);
                                 }
                                 );
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl
         private GuiWidget CreatePrintLevelingControlsContainer()
         {
             GroupBox printLevelingControlsContainer;
-			printLevelingControlsContainer = new GroupBox(new LocalizedString("Automatic Calibration").Translated);
+            printLevelingControlsContainer = new GroupBox(LocalizedString.Get("Automatic Calibration"));
 
             printLevelingControlsContainer.Margin = new BorderDouble(0);
             printLevelingControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl
 
                 this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-				Button runPrintLevelingButton = textImageButtonFactory.Generate(new LocalizedString("CONFIGURE").Translated);
+                Button runPrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
                 runPrintLevelingButton.Margin = new BorderDouble(left:6);
                 runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
                 runPrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(runPrintLeveling_Click);
@@ -218,17 +218,17 @@ namespace MatterHackers.MatterControl
                 ImageWidget levelingIcon = new ImageWidget(levelingImage);
 				levelingIcon.Margin = new BorderDouble (right: 6);
 
-				enablePrintLevelingButton = textImageButtonFactory.Generate(new LocalizedString("ENABLE").Translated);
+                enablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("ENABLE"));
 				enablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				enablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(enablePrintLeveling_Click);
 
-				disablePrintLevelingButton = textImageButtonFactory.Generate(new LocalizedString("DISABLE").Translated);
+                disablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("DISABLE"));
 				disablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);
 
-				CheckBox doLevelingCheckBox = new CheckBox(new LocalizedString("Enable Automatic Print Leveling").Translated);
+                CheckBox doLevelingCheckBox = new CheckBox(LocalizedString.Get("Enable Automatic Print Leveling"));
                 doLevelingCheckBox.Margin = new BorderDouble(left: 3);
                 doLevelingCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 doLevelingCheckBox.VAnchor = VAnchor.ParentCenter;
@@ -394,11 +394,11 @@ namespace MatterHackers.MatterControl
 			disablePrintLevelingButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
 
 			if (ActivePrinterProfile.Instance.DoPrintLeveling) {
-				printLevelingStatusLabel.Text = new LocalizedString ("Automatic Print Leveling (enabled)").Translated;
+                printLevelingStatusLabel.Text = LocalizedString.Get("Automatic Print Leveling (enabled)");
 			}
 			else
 			{
-				printLevelingStatusLabel.Text = new LocalizedString ("Automatic Print Leveling (disabled)").Translated;
+                printLevelingStatusLabel.Text = LocalizedString.Get("Automatic Print Leveling (disabled)");
 			}
 		}
 

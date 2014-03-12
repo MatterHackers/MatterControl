@@ -55,44 +55,44 @@ namespace MatterHackers.MatterControl.ActionBar
 
         protected override void AddChildElements()
         {
-            addButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(new LocalizedString("Add").Translated, "icon_circle_plus.png");
-			addButton.tooltipText = new LocalizedString("Add a file to be printed").Translated;
+            addButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Add"), "icon_circle_plus.png");
+			addButton.tooltipText = LocalizedString.Get("Add a file to be printed");
             addButton.Margin = new BorderDouble(0, 6, 6, 3);
 
-			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(new LocalizedString("Start").Translated, "icon_play_32x32.png");
-			startButton.tooltipText = new LocalizedString("Begin printing the selected item.").Translated;
+			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Start"), "icon_play_32x32.png");
+			startButton.tooltipText = LocalizedString.Get("Begin printing the selected item.");
             startButton.Margin = new BorderDouble(0, 6, 6, 3);
 
-			string skipButtonTxt = new LocalizedString("Skip").Translated;
-			string skipButtonMessage = new LocalizedString("Skip the current item and move to the next in queue").Translated;
+			string skipButtonTxt = LocalizedString.Get("Skip");
+			string skipButtonMessage = LocalizedString.Get("Skip the current item and move to the next in queue");
 			skipButton = makeButton(skipButtonTxt, skipButtonMessage);
 
-			string removeButtonTxt = new LocalizedString("Remove").Translated;
-			string removeButtonMessage = new LocalizedString("Remove current item from queue").Translated;
+			string removeButtonTxt = LocalizedString.Get("Remove");
+			string removeButtonMessage = LocalizedString.Get("Remove current item from queue");
 			removeButton = makeButton(removeButtonTxt, removeButtonMessage);
 
-			string pauseButtonTxt = new LocalizedString("Pause").Translated;
-			string pauseButtonMessage = new LocalizedString("Pause the current print").Translated;
+			string pauseButtonTxt = LocalizedString.Get("Pause");
+			string pauseButtonMessage = LocalizedString.Get("Pause the current print");
 			pauseButton = makeButton(pauseButtonTxt, pauseButtonMessage);
 
-            string cancelCancelButtonTxt = new LocalizedString("Cancel Connect").Translated;
-            string cancelConnectButtonMessage = new LocalizedString("Stop trying to connect to the printer.").Translated;
+            string cancelCancelButtonTxt = LocalizedString.Get("Cancel Connect");
+            string cancelConnectButtonMessage = LocalizedString.Get("Stop trying to connect to the printer.");
             cancelConnectButton = makeButton(cancelCancelButtonTxt, cancelConnectButtonMessage);
 
-			string cancelButtonTxt = new LocalizedString("Cancel").Translated;
-			string cancelButtonMessage = new LocalizedString("Stop the current print").Translated;
+			string cancelButtonTxt = LocalizedString.Get("Cancel");
+			string cancelButtonMessage = LocalizedString.Get("Stop the current print");
 			cancelButton = makeButton(cancelButtonTxt, cancelButtonMessage);
 
-			string resumeButtonTxt = new LocalizedString("Resume").Translated;
-			string resumeButtonMessage = new LocalizedString ("Resume the current print").Translated;
+			string resumeButtonTxt = LocalizedString.Get("Resume");
+			string resumeButtonMessage = LocalizedString.Get ("Resume the current print");
 			resumeButton = makeButton(resumeButtonTxt, resumeButtonMessage);
 
-			string reprintButtonTxt = new LocalizedString("Reprint").Translated;
-			string reprintButtonMessage = new LocalizedString ("Print current item again").Translated;
+			string reprintButtonTxt = LocalizedString.Get("Reprint");
+			string reprintButtonMessage = LocalizedString.Get ("Print current item again");
 			reprintButton = makeButton(reprintButtonTxt, reprintButtonMessage);
 
-			string doneCurrentPartButtonTxt = new LocalizedString ("Done").Translated;
-			string doenCurrentPartButtonMessage = new LocalizedString ("Move to next print in queue").Translated;
+			string doneCurrentPartButtonTxt = LocalizedString.Get ("Done");
+			string doenCurrentPartButtonMessage = LocalizedString.Get ("Move to next print in queue");
 			doneWithCurrentPartButton = makeButton(doneCurrentPartButtonTxt, doenCurrentPartButtonMessage);
 
             this.AddChild(addButton);

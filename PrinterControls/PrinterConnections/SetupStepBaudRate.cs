@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerBaudRateContainer = createPrinterBaudRateContainer();
             contentRow.AddChild(printerBaudRateContainer);
             {                
-				nextButton = textImageButtonFactory.Generate(new LocalizedString("Continue").Translated);
+				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
                 nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
 
                 GuiWidget hSpacer = new GuiWidget();
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.VAnchor = VAnchor.ParentBottomTop;
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string baudRateLabelText = new LocalizedString ("Baud Rate").Translated;
+			string baudRateLabelText = LocalizedString.Get ("Baud Rate");
 			string baudRateLabelTextFull = string.Format ("{0}:", baudRateLabelText);
 
 			TextWidget baudRateLabel = new TextWidget(baudRateLabelTextFull, 0, 0, 12);
@@ -73,16 +73,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             baudRateMessageContainer.Margin = elementMargin;
             baudRateMessageContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			printerBaudRateError = new TextWidget(new LocalizedString("Select the baud rate.").Translated, 0, 0, 10);
+			printerBaudRateError = new TextWidget(LocalizedString.Get("Select the baud rate."), 0, 0, 10);
             printerBaudRateError.TextColor = RGBA_Bytes.White;
             printerBaudRateError.AutoExpandBoundsToText = true;   
 
-			printerBaudRateHelpLink = linkButtonFactory.Generate(new LocalizedString("What's this?").Translated);
+			printerBaudRateHelpLink = linkButtonFactory.Generate(LocalizedString.Get("What's this?"));
             printerBaudRateHelpLink.Margin = new BorderDouble(left: 5);
             printerBaudRateHelpLink.VAnchor = VAnchor.ParentBottom;
             printerBaudRateHelpLink.Click += new ButtonBase.ButtonEventHandler(printerBaudRateHelp_Click);
 
-			printerBaudRateHelpMessage = new TextWidget(new LocalizedString("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.").Translated, 0, 0, 10);
+			printerBaudRateHelpMessage = new TextWidget(LocalizedString.Get("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000."), 0, 0, 10);
             printerBaudRateHelpMessage.TextColor = RGBA_Bytes.White;
             printerBaudRateHelpMessage.Margin = new BorderDouble(top: 10);
             printerBaudRateHelpMessage.Visible = false;
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 baudRateContainer.AddChild(baudOption);
             }
 
-			otherBaudRateRadioButton = new RadioButton(new LocalizedString("Other").Translated);
+			otherBaudRateRadioButton = new RadioButton(LocalizedString.Get("Other"));
             otherBaudRateRadioButton.Margin = baudRateMargin;
             otherBaudRateRadioButton.TextColor = this.subContainerTextColor;
 
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 printerBaudRateHelpLink.Visible = false;
                 printerBaudRateError.TextColor = RGBA_Bytes.Red;
-				printerBaudRateError.Text = new LocalizedString("Oops! Please select a baud rate.").Translated;
+				printerBaudRateError.Text = LocalizedString.Get("Oops! Please select a baud rate.");
             }
 
             if (baudRate != null)
@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 {
                     printerBaudRateHelpLink.Visible = false;
                     printerBaudRateError.TextColor = RGBA_Bytes.Red;
-					printerBaudRateError.Text = new LocalizedString("Oops! Baud Rate must be an integer.").Translated;
+					printerBaudRateError.Text = LocalizedString.Get("Oops! Baud Rate must be an integer.");
                     return false;
                 }
             }
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 return otherBaudRateInput.Text;
             }
 
-			throw new Exception(new LocalizedString("Could not find a selected button.").Translated);
+			throw new Exception(LocalizedString.Get("Could not find a selected button."));
         }
     }
 }

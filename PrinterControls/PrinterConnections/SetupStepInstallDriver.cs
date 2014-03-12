@@ -33,15 +33,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             this.printerDriverFilePath = this.PrinterSetupStatus.DriverFilePath;
 
-			headerLabel.Text = string.Format(new LocalizedString("Install Communication Driver").Translated);
+			headerLabel.Text = string.Format(LocalizedString.Get("Install Communication Driver"));
             printerDriverContainer = createPrinterDriverContainer();
             contentRow.AddChild(printerDriverContainer);
             {
                 //Construct buttons
-				installButton = textImageButtonFactory.Generate(new LocalizedString("Install Driver").Translated);
+				installButton = textImageButtonFactory.Generate(LocalizedString.Get("Install Driver"));
                 installButton.Click += new ButtonBase.ButtonEventHandler(installButton_Click);
 
-				skipButton = textImageButtonFactory.Generate(new LocalizedString("Skip").Translated);
+				skipButton = textImageButtonFactory.Generate(LocalizedString.Get("Skip"));
                 skipButton.Click += new ButtonBase.ButtonEventHandler(skipButton_Click);
 
                 GuiWidget hSpacer = new GuiWidget();
@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);            
 
-			printerDriverMessage = new TextWidget(new LocalizedString("This printer requires a driver for communication.").Translated, 0, 0, 10);
+			printerDriverMessage = new TextWidget(LocalizedString.Get("This printer requires a driver for communication."), 0, 0, 10);
             printerDriverMessage.TextColor = RGBA_Bytes.White;
             printerDriverMessage.HAnchor = HAnchor.ParentLeftRight;
             printerDriverMessage.Margin = elementMargin;
 
-			TextWidget printerDriverMessageTwo = new TextWidget(new LocalizedString("Driver located. Would you like to install?").Translated, 0, 0, 10);
+			TextWidget printerDriverMessageTwo = new TextWidget(LocalizedString.Get("Driver located. Would you like to install?"), 0, 0, 10);
 			printerDriverMessageTwo.TextColor = RGBA_Bytes.White;
 			printerDriverMessageTwo.HAnchor = HAnchor.ParentLeftRight;
 			printerDriverMessageTwo.Margin = elementMargin;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             try
             {
-				string printerDriverMessageLbl = new LocalizedString("Installing").Translated;
+				string printerDriverMessageLbl = LocalizedString.Get("Installing");
 				string printerDriverMessageLblFull = string.Format("{0}...", printerDriverMessageLbl);
 				printerDriverMessage.Text = printerDriverMessageLblFull;
                 InstallDriver(this.printerDriverFilePath);
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
             catch
             {
-				printerDriverMessage.Text = new LocalizedString("Sorry, we were unable to install the driver.").Translated;
+				printerDriverMessage.Text = LocalizedString.Get("Sorry, we were unable to install the driver.");
                 return false;
             }
         }

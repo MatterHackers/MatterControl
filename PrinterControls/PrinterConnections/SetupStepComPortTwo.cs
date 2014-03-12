@@ -34,11 +34,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             contentRow.AddChild(createPrinterConnectionMessageContainer());
             {
                 //Construct buttons
-				nextButton = textImageButtonFactory.Generate(new LocalizedString("Done").Translated);
+				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"));
                 nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
                 nextButton.Visible = false;
 
-				connectButton = textImageButtonFactory.Generate(new LocalizedString("Connect").Translated);
+				connectButton = textImageButtonFactory.Generate(LocalizedString.Get("Connect"));
                 connectButton.Click += new ButtonBase.ButtonEventHandler(ConnectButton_Click);
 
                 PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
@@ -71,38 +71,38 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.Margin = new BorderDouble(5);
             BorderDouble elementMargin = new BorderDouble(top: 5);
 
-			string printerMessageOneText = new LocalizedString ("MatterControl will now attempt to auto-detect printer.").Translated;
+			string printerMessageOneText = LocalizedString.Get ("MatterControl will now attempt to auto-detect printer.");
 			TextWidget printerMessageOne = new TextWidget(printerMessageOneText, 0, 0, 10);
             printerMessageOne.Margin = new BorderDouble(0, 10, 0, 5);
             printerMessageOne.TextColor = RGBA_Bytes.White;
             printerMessageOne.HAnchor = HAnchor.ParentLeftRight;
             printerMessageOne.Margin = elementMargin;
 
-			string printerMessageTwoTxtBeg = new LocalizedString ("Disconnect printer").Translated;
-			string printerMessageTwoTxtEnd = new LocalizedString ("if currently connected").Translated;
+			string printerMessageTwoTxtBeg = LocalizedString.Get ("Disconnect printer");
+			string printerMessageTwoTxtEnd = LocalizedString.Get ("if currently connected");
 			string printerMessageTwoTxtFull = string.Format ("1.) {0} ({1}).", printerMessageTwoTxtBeg, printerMessageTwoTxtEnd);
 			TextWidget printerMessageTwo = new TextWidget(printerMessageTwoTxtFull, 0, 0, 12);
             printerMessageTwo.TextColor = RGBA_Bytes.White;
             printerMessageTwo.HAnchor = HAnchor.ParentLeftRight;
             printerMessageTwo.Margin = elementMargin;
 
-			string printerMessageThreeTxtBeg = new LocalizedString ("Press").Translated;
-			string printerMessageThreeTxtEnd = new LocalizedString ("Continue").Translated;
+			string printerMessageThreeTxtBeg = LocalizedString.Get ("Press");
+			string printerMessageThreeTxtEnd = LocalizedString.Get ("Continue");
 			string printerMessageThreeTxtFull = string.Format ("2.) {0} '{1}'.", printerMessageThreeTxtBeg, printerMessageThreeTxtEnd);
 			TextWidget printerMessageThree = new TextWidget(printerMessageThreeTxtFull, 0, 0, 12);
             printerMessageThree.TextColor = RGBA_Bytes.White;
             printerMessageThree.HAnchor = HAnchor.ParentLeftRight;
             printerMessageThree.Margin = elementMargin;
 
-			string printerMessageFourBeg = new LocalizedString ("Power on and connect printer").Translated;
+			string printerMessageFourBeg = LocalizedString.Get ("Power on and connect printer");
 			string printerMessageFourFull = string.Format ("3.) {0}.", printerMessageFourBeg);
 			TextWidget printerMessageFour = new TextWidget(printerMessageFourFull, 0, 0, 12);
             printerMessageFour.TextColor = RGBA_Bytes.White;
             printerMessageFour.HAnchor = HAnchor.ParentLeftRight;
             printerMessageFour.Margin = elementMargin;
 
-			string printerMessageFiveTxtBeg = new LocalizedString ("Press").Translated;
-			string printerMessageFiveTxtEnd = new LocalizedString ("Connect").Translated;
+			string printerMessageFiveTxtBeg = LocalizedString.Get ("Press");
+			string printerMessageFiveTxtEnd = LocalizedString.Get ("Connect");
 			string printerMessageFiveTxtFull = string.Format ("4.) {0} '{1}'.", printerMessageFiveTxtBeg, printerMessageFiveTxtEnd);
 			TextWidget printerMessageFive = new TextWidget(printerMessageFiveTxtFull, 0, 0, 12);
             printerMessageFive.TextColor = RGBA_Bytes.White;
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             GuiWidget vSpacer = new GuiWidget();
             vSpacer.VAnchor = VAnchor.ParentBottomTop;
 
-			Button manualLink = linkButtonFactory.Generate(new LocalizedString("Manual Configuration").Translated);
+			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Manual Configuration"));
             manualLink.Margin = new BorderDouble(0, 5);
             manualLink.Click += new ButtonBase.ButtonEventHandler(ManualLink_Click);
 
@@ -161,14 +161,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             if (candidatePort == null)
             {
                 printerErrorMessage.TextColor = RGBA_Bytes.Red;
-				string printerErrorMessageLblFull = new LocalizedString ("Oops! Printer could not be detected ").Translated;
+				string printerErrorMessageLblFull = LocalizedString.Get ("Oops! Printer could not be detected ");
 				printerErrorMessage.Text = printerErrorMessageLblFull;                
             }
             else
             {
                 ActivePrinter.ComPort = candidatePort;
                 printerErrorMessage.TextColor = RGBA_Bytes.White;
-				string printerErrorMessageLblTwo = new LocalizedString ("Attempting to connect").Translated;
+				string printerErrorMessageLblTwo = LocalizedString.Get ("Attempting to connect");
 				string printerErrorMessageLblTwoFull = string.Format("{0}...",printerErrorMessageLblTwo);
 				printerErrorMessage.Text = printerErrorMessageLblTwoFull;
                 this.ActivePrinter.Commit();
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         void onConnectionFailed()
         {
             printerErrorMessage.TextColor = RGBA_Bytes.Red;
-			printerErrorMessage.Text = new LocalizedString("Uh-oh! Could not connect to printer.").Translated;
+			printerErrorMessage.Text = LocalizedString.Get("Uh-oh! Could not connect to printer.");
             connectButton.Visible = true;
             nextButton.Visible = false;
         }
@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         void onConnectionSuccess()
         {
             printerErrorMessage.TextColor = RGBA_Bytes.White;
-			string printerErrorMessageLblThree = new LocalizedString ("Connection succeeded").Translated;
+			string printerErrorMessageLblThree = LocalizedString.Get ("Connection succeeded");
 			string printerErrorMessageLblThreeFull = string.Format ("{0}!", printerErrorMessageLblThree);
 			printerErrorMessage.Text = printerErrorMessageLblThreeFull;
             nextButton.Visible = true;

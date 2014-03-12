@@ -46,13 +46,13 @@ namespace MatterHackers.MatterControl.ActionBar
         protected override void AddChildElements()
         {
             actionBarButtonFactory.invertImageLocation = false;
-            string connectString = new LocalizedString("Connect").Translated;
+            string connectString = LocalizedString.Get("Connect");
             connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
             connectPrinterButton.Margin = new BorderDouble(3, 0);
             connectPrinterButton.VAnchor = VAnchor.ParentCenter;
             connectPrinterButton.Cursor = Cursors.Hand;
 
-            string disconnectString = new LocalizedString("Disconnect").Translated;
+            string disconnectString = LocalizedString.Get("Disconnect");
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
             disconnectPrinterButton.Margin = new BorderDouble(3, 0);
             disconnectPrinterButton.VAnchor = VAnchor.ParentCenter;
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Margin = new BorderDouble(5, 0);
-            string optionsString = new LocalizedString("Options").Translated;
+            string optionsString = LocalizedString.Get("Options");
             TextWidget optionsText = new TextWidget(optionsString, textColor: RGBA_Bytes.White);
             optionsText.VAnchor = Agg.UI.VAnchor.ParentCenter;
             optionsText.Margin = new BorderDouble(0, 0, 3, 0);

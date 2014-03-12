@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl
                         FlowLayoutWidget extruderActualIndicator = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
                         
                         extruderActualIndicator.Margin = new BorderDouble(3, 0);
-						string extruderActualLabelTxt = new LocalizedString ("Actual").Translated;
+						string extruderActualLabelTxt = LocalizedString.Get ("Actual");
 						string extruderActualLabelTxtFull = string.Format ("{0}: ", extruderActualLabelTxt);
 						TextWidget extruderActualLabel = new TextWidget(extruderActualLabelTxtFull, pointSize: 10);
                         extruderActualLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl
                         extruderActualIndicator.AddChild(extruderActualLabel);
                         extruderActualIndicator.AddChild(actualTempIndicator);
 
-						string extruderAboutLabelTxt = new LocalizedString ("Target").Translated;
+						string extruderAboutLabelTxt = LocalizedString.Get ("Target");
 						string extruderAboutLabelTxtFull = string.Format ("{0}: ", extruderAboutLabelTxt);
 
 						TextWidget extruderTargetLabel = new TextWidget(extruderAboutLabelTxtFull, pointSize: 10);
@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget presetsContainer = new FlowLayoutWidget();
             presetsContainer.Margin = new BorderDouble(3, 0);
 
-			string presetsLabelTxt = new LocalizedString ("Presets").Translated;
+			string presetsLabelTxt = LocalizedString.Get ("Presets");
 			string presetsLabelTxtFull = string.Format ("{0}: ", presetsLabelTxt);
 
 		    TextWidget presetsLabel = new TextWidget(presetsLabelTxtFull, pointSize: 10);

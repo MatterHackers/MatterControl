@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerName.TextColor = this.defaultTextColor;
             printerName.HAnchor = HAnchor.ParentLeftRight;
 
-			string availableText = new LocalizedString("Unavailable").Translated;
+			string availableText = LocalizedString.Get("Unavailable");
             RGBA_Bytes availableColor = new RGBA_Bytes(158, 18, 0);
             if (portIsAvailable)
             {
@@ -146,10 +146,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerName.TextColor = this.defaultTextColor;
             printerName.HAnchor = HAnchor.ParentLeftRight;
 
-			editLink = linkButtonFactory.Generate(new LocalizedString("edit").Translated);
+			editLink = linkButtonFactory.Generate(LocalizedString.Get("edit"));
             editLink.VAnchor = VAnchor.ParentCenter;
 
-			removeLink = linkButtonFactory.Generate(new LocalizedString("remove").Translated);
+			removeLink = linkButtonFactory.Generate(LocalizedString.Get("remove"));
             removeLink.VAnchor = VAnchor.ParentCenter;
 
             this.AddChild(printerName);

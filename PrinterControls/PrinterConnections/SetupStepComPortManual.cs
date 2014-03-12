@@ -38,16 +38,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             contentRow.AddChild(printerComPortContainer);
             {
                 //Construct buttons
-				nextButton = textImageButtonFactory.Generate(new LocalizedString("Done").Translated);
+				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"));
                 nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
                 nextButton.Visible = false;
 
-				connectButton = textImageButtonFactory.Generate(new LocalizedString("Connect").Translated);
+				connectButton = textImageButtonFactory.Generate(LocalizedString.Get("Connect"));
                 connectButton.Click += new ButtonBase.ButtonEventHandler(ConnectButton_Click);
 
                 PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
-				refreshButton = textImageButtonFactory.Generate(new LocalizedString("Refresh").Translated);
+				refreshButton = textImageButtonFactory.Generate(LocalizedString.Get("Refresh"));
                 refreshButton.Click += new ButtonBase.ButtonEventHandler(RefreshButton_Click);
 
                 GuiWidget hSpacer = new GuiWidget();
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.VAnchor = VAnchor.ParentBottomTop;
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			string serialPortLabel = new LocalizedString("Serial Port").Translated;
+			string serialPortLabel = LocalizedString.Get("Serial Port");
 			string serialPortLabelFull = string.Format("{0}:", serialPortLabel);
 
 			TextWidget comPortLabel = new TextWidget(serialPortLabelFull, 0, 0, 12);
@@ -94,16 +94,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             comPortMessageContainer.Margin = elementMargin;
             comPortMessageContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			printerComPortError = new TextWidget(new LocalizedString("Currently available serial ports.").Translated, 0, 0, 10);
+			printerComPortError = new TextWidget(LocalizedString.Get("Currently available serial ports."), 0, 0, 10);
             printerComPortError.TextColor = RGBA_Bytes.White;
             printerComPortError.AutoExpandBoundsToText = true;            
 
-			printerComPortHelpLink = linkButtonFactory.Generate(new LocalizedString("What's this?").Translated);
+			printerComPortHelpLink = linkButtonFactory.Generate(LocalizedString.Get("What's this?"));
             printerComPortHelpLink.Margin = new BorderDouble(left: 5);
             printerComPortHelpLink.VAnchor = VAnchor.ParentBottom;
             printerComPortHelpLink.Click += new ButtonBase.ButtonEventHandler(printerComPortHelp_Click);
 
-			printerComPortHelpMessage = new TextWidget(new LocalizedString("The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.").Translated, 0, 0, 10);
+			printerComPortHelpMessage = new TextWidget(LocalizedString.Get("The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter."), 0, 0, 10);
             printerComPortHelpMessage.TextColor = RGBA_Bytes.White;
             printerComPortHelpMessage.Margin = new BorderDouble(top: 10);
             printerComPortHelpMessage.Visible = false;
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             //If there are still no com ports show a message to that effect
             if (portIndex == 0)
             {
-				TextWidget comPortOption = new TextWidget(new LocalizedString("No COM ports available").Translated);
+				TextWidget comPortOption = new TextWidget(LocalizedString.Get("No COM ports available"));
                 comPortOption.Margin = new BorderDouble(3, 6, 5, 6);
                 comPortOption.TextColor = this.subContainerTextColor;
                 container.AddChild(comPortOption);
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             printerComPortHelpLink.Visible = false;
             printerComPortError.TextColor = RGBA_Bytes.Red;            
-			printerComPortError.Text = new LocalizedString("Uh-oh! Could not connect to printer.").Translated;
+			printerComPortError.Text = LocalizedString.Get("Uh-oh! Could not connect to printer.");
             connectButton.Visible = true;
             nextButton.Visible = false;
         }
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             printerComPortHelpLink.Visible = false;
             printerComPortError.TextColor = RGBA_Bytes.White;
-			printerComPortError.Text = new LocalizedString("Connection succeeded!").Translated;
+			printerComPortError.Text = LocalizedString.Get("Connection succeeded!");
             nextButton.Visible = true;
             connectButton.Visible = false;
         }
@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 this.ActivePrinter.Commit();
                 printerComPortHelpLink.Visible = false;
                 printerComPortError.TextColor = RGBA_Bytes.White;
-				string printerComPortErrorLbl = new LocalizedString("Attempting to connect").Translated;
+				string printerComPortErrorLbl = LocalizedString.Get("Attempting to connect");
 				string printerComPortErrorLblFull = string.Format("{0}...",printerComPortErrorLbl);
 				printerComPortError.Text = printerComPortErrorLblFull;
                 ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
@@ -276,7 +276,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 printerComPortHelpLink.Visible = false;
                 printerComPortError.TextColor = RGBA_Bytes.Red;
-				printerComPortError.Text = new LocalizedString("Oops! Please select a serial port.").Translated;
+				printerComPortError.Text = LocalizedString.Get("Oops! Please select a serial port.");
             }
         }
 
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     return button.PortValue;
                 }
             }
-			throw new Exception(new LocalizedString("Could not find a selected button.").Translated);
+			throw new Exception(LocalizedString.Get("Could not find a selected button."));
         }
     }
 }

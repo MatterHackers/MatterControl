@@ -222,16 +222,16 @@ namespace MatterHackers.MatterControl
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
             //Add the tab contents for 'Advanced Controls'
-            string printerControlsLabel = new LocalizedString("Controls").Translated;
+            string printerControlsLabel = LocalizedString.Get("Controls");
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 18,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string sliceSettingsLabel = new LocalizedString("Slice Settings").Translated;
+            string sliceSettingsLabel = LocalizedString.Get("Slice Settings");
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string configurationLabel = new LocalizedString("Configuration").Translated;
+            string configurationLabel = LocalizedString.Get("Configuration");
             ScrollableWidget configurationControls = new ConfigurationPage();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
@@ -390,7 +390,7 @@ namespace MatterHackers.MatterControl
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
         {
-            string queueStringBeg = new LocalizedString("Queue").Translated;
+            string queueStringBeg = LocalizedString.Get("Queue");
             string queueString = string.Format("{1} ({0})", PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
             QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
         }

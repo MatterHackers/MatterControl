@@ -76,14 +76,14 @@ namespace MatterHackers.MatterControl
                         FlowLayoutWidget yesNoButtonsFlow = new FlowLayoutWidget();
                         yesNoButtonsFlow.HAnchor |= HAnchor.ParentCenter;
 
-					Button yesButton = textImageButtonFactory.Generate(new LocalizedString("Yes").Translated, centerText:true);
+					Button yesButton = textImageButtonFactory.Generate(LocalizedString.Get("Yes"), centerText:true);
                         yesButton.Click += new ButtonBase.ButtonEventHandler(okButton_Click);
                         yesNoButtonsFlow.AddChild(yesButton);
 
                         GuiWidget buttonSpacer = new GuiWidget(10, 10);
                         yesNoButtonsFlow.AddChild(buttonSpacer);
 
-					Button noButton = textImageButtonFactory.Generate(new LocalizedString("No").Translated, centerText: true);
+					Button noButton = textImageButtonFactory.Generate(LocalizedString.Get("No"), centerText: true);
                         noButton.Click += new ButtonBase.ButtonEventHandler(noButton_Click);
                         yesNoButtonsFlow.AddChild(noButton);
 
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 
                 case MessageType.OK:
                     {
-					Button okButton = textImageButtonFactory.Generate(new LocalizedString("Ok").Translated, centerText: true);
+					Button okButton = textImageButtonFactory.Generate(LocalizedString.Get("Ok"), centerText: true);
                         //okButton.DebugShowBounds = true;
                         okButton.Click += new ButtonBase.ButtonEventHandler(okButton_Click);
                         okButton.HAnchor = HAnchor.ParentCenter;

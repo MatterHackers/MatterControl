@@ -56,13 +56,13 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget buttonBar = new FlowLayoutWidget();
 
             textImageButtonFactory.FixedWidth = 60;
-			backButton = textImageButtonFactory.Generate(new LocalizedString("Back").Translated, centerText: true);
+			backButton = textImageButtonFactory.Generate(LocalizedString.Get("Back"), centerText: true);
             backButton.Click += new ButtonBase.ButtonEventHandler(back_Click);
 
-			nextButton = textImageButtonFactory.Generate(new LocalizedString("Next").Translated, centerText: true);
+			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Next"), centerText: true);
             nextButton.Click += new ButtonBase.ButtonEventHandler(next_Click);
 
-			doneButton = textImageButtonFactory.Generate(new LocalizedString("Done").Translated, centerText: true);
+			doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"), centerText: true);
             doneButton.Click += new ButtonBase.ButtonEventHandler(done_Click);
 
             textImageButtonFactory.FixedWidth = 0;

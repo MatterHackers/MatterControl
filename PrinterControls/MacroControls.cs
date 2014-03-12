@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
         void AddChildElements()
         {
             Button editButton;
-			GroupBox groupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(new LocalizedString("Macros").Translated, out editButton));
+			GroupBox groupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(LocalizedString.Get("Macros"), out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editSettingsWindow == null)
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl
             }
             if (buttonCount == 0)
             {
-				TextWidget noMacrosFound = new TextWidget(new LocalizedString("No macros are currently setup for this printer.").Translated);
+				TextWidget noMacrosFound = new TextWidget(LocalizedString.Get("No macros are currently setup for this printer."));
                 noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 macroButtonContainer.AddChild(noMacrosFound);
             }

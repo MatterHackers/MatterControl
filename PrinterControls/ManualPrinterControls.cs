@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl
 
         private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-			GroupBox fanControlsGroupBox = new GroupBox(new LocalizedString("Fan Controls").Translated);
+			GroupBox fanControlsGroupBox = new GroupBox(LocalizedString.Get("Fan Controls"));
 
             fanControlsGroupBox.Margin = new BorderDouble(0);
             fanControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl
 
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            GroupBox eePromControlsGroupBox = new GroupBox(new LocalizedString("EEProm Settings").Translated);
+            GroupBox eePromControlsGroupBox = new GroupBox(LocalizedString.Get("EEProm Settings"));
 
 			eePromControlsGroupBox.Margin = new BorderDouble(0);
             eePromControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
-					Button openEePromWindow = textImageButtonFactory.Generate(new LocalizedString("CONFIGURE").Translated);
+					Button openEePromWindow = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
                     openEePromWindow.Click += (sender, e) =>
                     {
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl
                             default:
                                 UiThread.RunOnIdle((state) => 
                                 {
-									string message = new LocalizedString("Oops! There is no eeprom mapping for your printer's firmware.").Translated;
+									string message = LocalizedString.Get("Oops! There is no eeprom mapping for your printer's firmware.");
                                     StyledMessageBox.ShowMessageBox(message, "Warning no eeprom mapping", StyledMessageBox.MessageType.OK);
                                 }
                                 );
@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl
         private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             Button editButton;
-			GroupBox movementControlsGroupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(new LocalizedString("Movement Controls").Translated, out editButton));
+			GroupBox movementControlsGroupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(LocalizedString.Get("Movement Controls"), out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editSettingsWindow == null)
@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Padding = new BorderDouble(3, 0, 0, 5);
 
-			TextWidget fanSpeedDescription = new TextWidget(new LocalizedString("Fan Speed:").Translated, textColor: RGBA_Bytes.White);
+			TextWidget fanSpeedDescription = new TextWidget(LocalizedString.Get("Fan Speed:"), textColor: RGBA_Bytes.White);
             fanSpeedDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
             leftToRight.AddChild(fanSpeedDescription);
 
@@ -404,7 +404,7 @@ namespace MatterHackers.MatterControl
 
         private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-			GroupBox adjustmentControlsGroupBox = new GroupBox(new LocalizedString("Tuning Adjustment (while printing)").Translated);
+			GroupBox adjustmentControlsGroupBox = new GroupBox(LocalizedString.Get("Tuning Adjustment (while printing)"));
             adjustmentControlsGroupBox.Margin = new BorderDouble(0);
             adjustmentControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             adjustmentControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl
 
                         feedRateLeftToRight = new FlowLayoutWidget();
 
-						feedRateDescription = new TextWidget(new LocalizedString("Speed Multiplier").Translated);
+						feedRateDescription = new TextWidget(LocalizedString.Get("Speed Multiplier"));
                         feedRateDescription.TextColor = RGBA_Bytes.White;
                         feedRateLeftToRight.AddChild(feedRateDescription);
                         feedRateRatioSlider = new Slider(new Vector2(), 300, minFeedRateRatio, maxFeedRateRatio);
@@ -446,7 +446,7 @@ namespace MatterHackers.MatterControl
                         feedRateLeftToRight.AddChild(feedRateValue);
                         feedRateValue.Margin = new BorderDouble(0, 0, 5, 0);
                         textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
-						feedRateLeftToRight.AddChild(textImageButtonFactory.Generate(new LocalizedString("Set").Translated));
+						feedRateLeftToRight.AddChild(textImageButtonFactory.Generate(LocalizedString.Get("Set")));
                     }
 
                     TextWidget extrusionDescription;
@@ -455,7 +455,7 @@ namespace MatterHackers.MatterControl
 
                         FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 
-						extrusionDescription = new TextWidget(new LocalizedString("Extrusion Multiplier").Translated);
+						extrusionDescription = new TextWidget(LocalizedString.Get("Extrusion Multiplier"));
                         extrusionDescription.TextColor = RGBA_Bytes.White;
                         leftToRight.AddChild(extrusionDescription);
                         extrusionRatioSlider = new Slider(new Vector2(), 300, minExtrutionRatio, maxExtrusionRatio);
@@ -476,7 +476,7 @@ namespace MatterHackers.MatterControl
                         leftToRight.AddChild(extrusionValue);
                         extrusionValue.Margin = new BorderDouble(0, 0, 5, 0);
                         textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
-						leftToRight.AddChild(textImageButtonFactory.Generate(new LocalizedString("Set").Translated));
+						leftToRight.AddChild(textImageButtonFactory.Generate(LocalizedString.Get("Set")));
                     }
 
                     feedRateDescription.Width = extrusionDescription.Width;
@@ -520,7 +520,7 @@ namespace MatterHackers.MatterControl
         private GuiWidget CreatePrintLevelingControlsContainer()
         {
             GroupBox printLevelingControlsContainer;
-			printLevelingControlsContainer = new GroupBox(new LocalizedString("Automatic Calibration").Translated);
+			printLevelingControlsContainer = new GroupBox(LocalizedString.Get("Automatic Calibration"));
 
             printLevelingControlsContainer.Margin = new BorderDouble(0);
             printLevelingControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -537,7 +537,7 @@ namespace MatterHackers.MatterControl
 
                 this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-				Button runPrintLevelingButton = textImageButtonFactory.Generate(new LocalizedString("CONFIGURE").Translated);
+				Button runPrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
                 runPrintLevelingButton.Margin = new BorderDouble(left:6);
                 runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
                 runPrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(runPrintLeveling_Click);
@@ -547,17 +547,17 @@ namespace MatterHackers.MatterControl
                 ImageWidget levelingIcon = new ImageWidget(levelingImage);
 				levelingIcon.Margin = new BorderDouble (right: 6);
 
-				enablePrintLevelingButton = textImageButtonFactory.Generate(new LocalizedString("ENABLE").Translated);
+				enablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("ENABLE"));
 				enablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				enablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(enablePrintLeveling_Click);
 
-				disablePrintLevelingButton = textImageButtonFactory.Generate(new LocalizedString("DISABLE").Translated);
+				disablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("DISABLE"));
 				disablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);
 
-				CheckBox doLevelingCheckBox = new CheckBox(new LocalizedString("Enable Automatic Print Leveling").Translated);
+				CheckBox doLevelingCheckBox = new CheckBox(LocalizedString.Get("Enable Automatic Print Leveling"));
                 doLevelingCheckBox.Margin = new BorderDouble(left: 3);
                 doLevelingCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 doLevelingCheckBox.VAnchor = VAnchor.ParentCenter;
@@ -614,7 +614,7 @@ namespace MatterHackers.MatterControl
         private GuiWidget CreateTerminalControlsContainer()
         {
             GroupBox terminalControlsContainer;
-			terminalControlsContainer = new GroupBox(new LocalizedString("Communications").Translated);
+			terminalControlsContainer = new GroupBox(LocalizedString.Get("Communications"));
 
             terminalControlsContainer.Margin = new BorderDouble(0);
             terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -638,7 +638,7 @@ namespace MatterHackers.MatterControl
 				ImageWidget terminalIcon = new ImageWidget(terminalImage);
 				terminalIcon.Margin = new BorderDouble (right: 6);
 
-				Button showTerminal = textImageButtonFactory.Generate(new LocalizedString("SHOW TERMINAL").Translated);
+				Button showTerminal = textImageButtonFactory.Generate(LocalizedString.Get("SHOW TERMINAL"));
                 showTerminal.Margin = new BorderDouble(0);
                 showTerminal.Click += (sender, e) =>
                 {
@@ -805,7 +805,7 @@ namespace MatterHackers.MatterControl
             homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2);
             RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
             textImageButtonFactory.normalFillColor = new RGBA_Bytes(190, 190, 190);
-			homeAllButton = textImageButtonFactory.Generate(new LocalizedString("ALL").Translated);
+			homeAllButton = textImageButtonFactory.Generate(LocalizedString.Get("ALL"));
             this.textImageButtonFactory.normalFillColor = oldColor;
             homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
             homeAllButton.Click += new ButtonBase.ButtonEventHandler(homeAll_Click);
@@ -829,7 +829,7 @@ namespace MatterHackers.MatterControl
             GuiWidget spacer = new GuiWidget();
             spacer.HAnchor = HAnchor.ParentLeftRight;
 
-			disableMotors = textImageButtonFactory.Generate(new LocalizedString("UNLOCK").Translated);
+			disableMotors = textImageButtonFactory.Generate(LocalizedString.Get("UNLOCK"));
             disableMotors.Margin = new BorderDouble(0);
             disableMotors.Click += new ButtonBase.ButtonEventHandler(disableMotors_Click);
 
@@ -938,11 +938,11 @@ namespace MatterHackers.MatterControl
 			disablePrintLevelingButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
 
 			if (ActivePrinterProfile.Instance.DoPrintLeveling) {
-				printLevelingStatusLabel.Text = new LocalizedString ("Automatic Print Leveling (enabled)").Translated;
+				printLevelingStatusLabel.Text = LocalizedString.Get ("Automatic Print Leveling (enabled)");
 			}
 			else
 			{
-				printLevelingStatusLabel.Text = new LocalizedString ("Automatic Print Leveling (disabled)").Translated;
+				printLevelingStatusLabel.Text = LocalizedString.Get ("Automatic Print Leveling (disabled)");
 			}
 		}
 

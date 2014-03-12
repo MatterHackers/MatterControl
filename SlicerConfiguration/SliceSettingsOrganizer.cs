@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.SlicerConfigName = slicerConfigName;
             this.PresentationName = presentationName;
             this.DataEditType = dataEditType;
-			this.HelpText = new LocalizedString(helpText).Translated;
+			this.HelpText = LocalizedString.Get(helpText);
         }
     }
 

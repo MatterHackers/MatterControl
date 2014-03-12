@@ -84,18 +84,18 @@ namespace MatterHackers.MatterControl
                 GuiWidget horizontalSpacer = new GuiWidget();
                 horizontalSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-				checkUpdateLink = textImageButtonFactory.Generate(new LocalizedString("Check for Update").Translated);
+				checkUpdateLink = textImageButtonFactory.Generate(LocalizedString.Get("Check for Update"));
                 checkUpdateLink.VAnchor = VAnchor.ParentCenter;
                 checkUpdateLink.Click += CheckForUpdate;
                 checkUpdateLink.Visible = false;
 
-				downloadUpdateLink = textImageButtonFactory.Generate(new LocalizedString("Download Update").Translated);
+                downloadUpdateLink = textImageButtonFactory.Generate(LocalizedString.Get("Download Update"));
                 downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
                 downloadUpdateLink.Click += DownloadUpdate;
                 downloadUpdateLink.Visible = false;
 
 
-				installUpdateLink = textImageButtonFactory.Generate(new LocalizedString("Install Update").Translated);
+                installUpdateLink = textImageButtonFactory.Generate(LocalizedString.Get("Install Update"));
                 installUpdateLink.VAnchor = VAnchor.ParentCenter;
                 installUpdateLink.Click += InstallUpdate;
                 installUpdateLink.Visible = false;
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
         {
             if (!updateInitiated)
             {
-				updateStatusText.Text = new LocalizedString("Checking for updates...").Translated;
+                updateStatusText.Text = LocalizedString.Get("Checking for updates...");
                 checkUpdateLink.Visible = false;
 
                 updateInitiated = true;
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl
             catch
             {
                 installUpdateLink.Visible = false;
-				updateStatusText.Text = string.Format(new LocalizedString("Oops! Unable to install update.").Translated);
+                updateStatusText.Text = string.Format(LocalizedString.Get("Oops! Unable to install update."));
                 if (System.IO.File.Exists(friendlyFileName))
                 {
                     System.IO.File.Delete(friendlyFileName);
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl
             if (!updateInitiated)
             {
                 downloadUpdateLink.Visible = false;
-				updateStatusText.Text = string.Format(new LocalizedString("Downloading updates...").Translated);
+                updateStatusText.Text = string.Format(LocalizedString.Get("Downloading updates..."));
                 updateInitiated = true;
 
                 string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
@@ -260,13 +260,13 @@ namespace MatterHackers.MatterControl
         void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             this.downloadPercent = e.ProgressPercentage; //This doesn't work currently
-			updateStatusText.Text = string.Format(new LocalizedString("Downloading updates...").Translated);
+            updateStatusText.Text = string.Format(LocalizedString.Get("Downloading updates..."));
         }
 
         void DownloadCompleted(object sender, EventArgs e)
         {
             this.updateInitiated = false;
-			updateStatusText.Text = string.Format(new LocalizedString("New updates are ready to install.").Translated);
+            updateStatusText.Text = string.Format(LocalizedString.Get("New updates are ready to install."));
             downloadUpdateLink.Visible = false;
             installUpdateLink.Visible = true;
             checkUpdateLink.Visible = false;
@@ -281,19 +281,19 @@ namespace MatterHackers.MatterControl
 
             if (applicationBuildToken == currentBuildToken || currentBuildToken == null)
             {
-				updateStatusText.Text = string.Format(new LocalizedString("New updates may be available.").Translated);
+                updateStatusText.Text = string.Format(LocalizedString.Get("New updates may be available."));
                 checkUpdateLink.Visible = true;
             }
             else if (System.IO.File.Exists(updateFileName))
             {
-				updateStatusText.Text = string.Format(new LocalizedString("New updates are ready to install.").Translated);
+                updateStatusText.Text = string.Format(LocalizedString.Get("New updates are ready to install."));
                 installUpdateLink.Visible = true;
                 checkUpdateLink.Visible = false;
             }
             else
             {
                 //updateStatusText.Text = string.Format("New version available: {0}", ApplicationSettings.Instance.get("CurrentReleaseVersion"));
-				updateStatusText.Text = string.Format(new LocalizedString("There are updates available.").Translated);
+                updateStatusText.Text = string.Format(LocalizedString.Get("There are updates available."));
                 downloadUpdateLink.Visible = true;
                 checkUpdateLink.Visible = false;
             }
@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl
 
             if (applicationBuildToken == currentBuildToken)
             {
-				updateStatusText.Text = string.Format(new LocalizedString("Your application is up-to-date.").Translated);
+                updateStatusText.Text = string.Format(LocalizedString.Get("Your application is up-to-date."));
                 downloadUpdateLink.Visible = false;
                 installUpdateLink.Visible = false;
                 checkUpdateLink.Visible = true;
@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl
             }
             else if (System.IO.File.Exists(updateFileName))
             {
-				updateStatusText.Text = string.Format(new LocalizedString("New updates are ready to install.").Translated);
+                updateStatusText.Text = string.Format(LocalizedString.Get("New updates are ready to install."));
                 downloadUpdateLink.Visible = false;
                 installUpdateLink.Visible = true;
                 checkUpdateLink.Visible = false;
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl
             }
             else
             {
-				updateStatusText.Text = string.Format(new LocalizedString("There is a recommended update available.").Translated);
+                updateStatusText.Text = string.Format(LocalizedString.Get("There is a recommended update available."));
                 //updateStatusText.Text = string.Format("New version available: {0}", ApplicationSettings.Instance.get("CurrentReleaseVersion"));
                 downloadUpdateLink.Visible = true;
                 installUpdateLink.Visible = false;
@@ -338,7 +338,7 @@ namespace MatterHackers.MatterControl
         void onVersionRequestFailed(object sender, EventArgs e)
         {
             this.updateInitiated = false;
-			updateStatusText.Text = string.Format(new LocalizedString("No updates are currently available.").Translated);
+            updateStatusText.Text = string.Format(LocalizedString.Get("No updates are currently available."));
             checkUpdateLink.Visible = true;
             downloadUpdateLink.Visible = false;
             installUpdateLink.Visible = false;
@@ -383,17 +383,17 @@ namespace MatterHackers.MatterControl
             headerContainer.Margin = new BorderDouble(0, 0, 0, 10);
             headerContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             {
-				TextWidget headerText = new TextWidget(string.Format(new LocalizedString("MatterControl").Translated), textColor: RGBA_Bytes.White, pointSize: 20);
+                TextWidget headerText = new TextWidget(string.Format(LocalizedString.Get("MatterControl")), textColor: RGBA_Bytes.White, pointSize: 20);
                 headerText.MinimumSize = new VectorMath.Vector2(headerText.Width, headerText.Height);
                 headerText.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 headerContainer.AddChild(headerText);
 
-				TextWidget versionText = new TextWidget(string.Format(new LocalizedString("Version {0}").Translated, VersionInfo.Instance.ReleaseVersion), textColor: RGBA_Bytes.White, pointSize: 10);
+                TextWidget versionText = new TextWidget(string.Format(LocalizedString.Get("Version {0}"), VersionInfo.Instance.ReleaseVersion), textColor: RGBA_Bytes.White, pointSize: 10);
                 versionText.MinimumSize = new VectorMath.Vector2(versionText.Width, versionText.Height);
                 versionText.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 headerContainer.AddChild(versionText);
 
-				TextWidget developedByText = new TextWidget(new LocalizedString("Developed by MatterHackers").Translated, textColor: RGBA_Bytes.White);
+                TextWidget developedByText = new TextWidget(LocalizedString.Get("Developed by MatterHackers"), textColor: RGBA_Bytes.White);
                 developedByText.Margin = new BorderDouble(top: 5);
                 developedByText.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 developedByText.MinimumSize = new VectorMath.Vector2(developedByText.Width, developedByText.Height);
@@ -410,13 +410,13 @@ namespace MatterHackers.MatterControl
                 // donate to mc
                 {
                     FlowLayoutWidget donateTextContanier = new FlowLayoutWidget();
-					TextWidget donateStartText = new TextWidget(new LocalizedString("Please consider ").Translated, textColor: RGBA_Bytes.White);
+                    TextWidget donateStartText = new TextWidget(LocalizedString.Get("Please consider "), textColor: RGBA_Bytes.White);
                     donateTextContanier.AddChild(donateStartText);
-					Button matterControlDonateLink = linkButtonFactory.Generate(new LocalizedString("donating").Translated);
+                    Button matterControlDonateLink = linkButtonFactory.Generate(LocalizedString.Get("donating"));
                     matterControlDonateLink.OriginRelativeParent = new VectorMath.Vector2(matterControlDonateLink.OriginRelativeParent.x, matterControlDonateLink.OriginRelativeParent.y + donateStartText.Printer.TypeFaceStyle.DescentInPixels);
                     matterControlDonateLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("http://www.matterhackers.com/store/printer-accessories/mattercontrol-donation"); };
                     donateTextContanier.AddChild(matterControlDonateLink);
-					donateTextContanier.AddChild(new TextWidget(new LocalizedString(" to help support and improve MatterControl.").Translated, textColor: RGBA_Bytes.White));
+                    donateTextContanier.AddChild(new TextWidget(LocalizedString.Get(" to help support and improve MatterControl."), textColor: RGBA_Bytes.White));
                     donateTextContanier.HAnchor = Agg.UI.HAnchor.ParentCenter;
                     topToBottom.AddChild(donateTextContanier);
                 }
@@ -436,7 +436,7 @@ namespace MatterHackers.MatterControl
             {
                 feedbackButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
 
-				Button feedbackLink = textImageButtonFactory.Generate(new LocalizedString("Send Feedback").Translated);
+                Button feedbackLink = textImageButtonFactory.Generate(LocalizedString.Get("Send Feedback"));
 
                 feedbackLink.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
                 feedbackButtons.AddChild(feedbackLink);
@@ -447,14 +447,14 @@ namespace MatterHackers.MatterControl
 
             topToBottom.AddChild(feedbackButtons);
 
-			Button learnMoreLink = linkButtonFactory.Generate(new LocalizedString("www.matterhackers.com").Translated);
+            Button learnMoreLink = linkButtonFactory.Generate(LocalizedString.Get("www.matterhackers.com"));
             learnMoreLink.Margin = new BorderDouble(right: 12);
             learnMoreLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("http://www.matterhackers.com?clk=mc"); };
             learnMoreLink.HAnchor = HAnchor.ParentCenter;
             learnMoreLink.Margin = new BorderDouble(0, 5);
             topToBottom.AddChild(learnMoreLink);
 
-			TextWidget copyrightText = new TextWidget(string.Format(new LocalizedString("Copyright © 2014 MatterHackers, Inc.").Translated), textColor: offWhite);
+            TextWidget copyrightText = new TextWidget(string.Format(LocalizedString.Get("Copyright © 2014 MatterHackers, Inc.")), textColor: offWhite);
             copyrightText.HAnchor = Agg.UI.HAnchor.ParentCenter;
             topToBottom.AddChild(copyrightText);
 
@@ -462,12 +462,12 @@ namespace MatterHackers.MatterControl
                 FlowLayoutWidget leftToRightBuildInfo = new FlowLayoutWidget();
                 leftToRightBuildInfo.HAnchor |= HAnchor.ParentCenter;
 
-				TextWidget buildText = new TextWidget(string.Format(new LocalizedString("Build: {0} | ").Translated, VersionInfo.Instance.BuildVersion), textColor: offWhite, pointSize: 10);
+                TextWidget buildText = new TextWidget(string.Format(LocalizedString.Get("Build: {0} | "), VersionInfo.Instance.BuildVersion), textColor: offWhite, pointSize: 10);
                 leftToRightBuildInfo.AddChild(buildText);
 
                 double oldFontSize = linkButtonFactory.fontSize;
                 linkButtonFactory.fontSize = 10;
-				Button deleteCacheLink = linkButtonFactory.Generate(new LocalizedString("Clear Cache").Translated);
+                Button deleteCacheLink = linkButtonFactory.Generate(LocalizedString.Get("Clear Cache"));
                 linkButtonFactory.fontSize = oldFontSize;
                 deleteCacheLink.OriginRelativeParent = new VectorMath.Vector2(deleteCacheLink.OriginRelativeParent.x, deleteCacheLink.OriginRelativeParent.y + buildText.Printer.TypeFaceStyle.DescentInPixels);
                 deleteCacheLink.Click += (sender, mouseEvent) => { DeleteCacheData(); };
@@ -482,9 +482,9 @@ namespace MatterHackers.MatterControl
             // slicer credit
             {
                 FlowLayoutWidget donateTextContainer = new FlowLayoutWidget();
-				TextWidget thanksText = new TextWidget(new LocalizedString("Special thanks to Alessandro Ranellucci for his incredible work on ").Translated, textColor: RGBA_Bytes.White);
+                TextWidget thanksText = new TextWidget(LocalizedString.Get("Special thanks to Alessandro Ranellucci for his incredible work on "), textColor: RGBA_Bytes.White);
                 donateTextContainer.AddChild(thanksText);
-				Button slic3rOrgLink = linkButtonFactory.Generate(new LocalizedString("Slic3r").Translated);
+                Button slic3rOrgLink = linkButtonFactory.Generate(LocalizedString.Get("Slic3r"));
                 //slic3rOrgLink.VAnchor = Agg.UI.VAnchor.Bottom;
                 slic3rOrgLink.OriginRelativeParent = new VectorMath.Vector2(slic3rOrgLink.OriginRelativeParent.x, slic3rOrgLink.OriginRelativeParent.y + thanksText.Printer.TypeFaceStyle.DescentInPixels);
                 slic3rOrgLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("https://github.com/alexrj/Slic3r"); };
@@ -496,10 +496,10 @@ namespace MatterHackers.MatterControl
             // cura engine credit
             {
                 FlowLayoutWidget curaEngineTextContanier = new FlowLayoutWidget();
-				TextWidget donateStartText = new TextWidget(new LocalizedString("and to David Braam and Ultimaker BV, for the amazing ").Translated, textColor: RGBA_Bytes.White);
+                TextWidget donateStartText = new TextWidget(LocalizedString.Get("and to David Braam and Ultimaker BV, for the amazing "), textColor: RGBA_Bytes.White);
                 curaEngineTextContanier.AddChild(donateStartText);
 
-				Button curaEngineSourceLink = linkButtonFactory.Generate(new LocalizedString("CuraEngine").Translated);
+                Button curaEngineSourceLink = linkButtonFactory.Generate(LocalizedString.Get("CuraEngine"));
                 curaEngineSourceLink.OriginRelativeParent = new VectorMath.Vector2(curaEngineSourceLink.OriginRelativeParent.x, curaEngineSourceLink.OriginRelativeParent.y + donateStartText.Printer.TypeFaceStyle.DescentInPixels);
                 curaEngineSourceLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("https://github.com/Ultimaker/CuraEngine"); };
                 curaEngineTextContanier.AddChild(curaEngineSourceLink);

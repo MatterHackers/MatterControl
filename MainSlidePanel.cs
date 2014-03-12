@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
                 //mainControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(new GuiWidget(), "History"), 18,
                 //        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-                string libraryTabLabel = new LocalizedString("Library").Translated;
+                string libraryTabLabel = LocalizedString.Get("Library");
 
                 mainControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(new PrintLibraryWidget(), libraryTabLabel), 18,
                     ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl
                 //mainControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(new ToolsWidget(), "Tools"), 18,
                 //ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-                AboutTabPage = new TabPage(new AboutPage(), new LocalizedString("About").Translated);
+                AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About"));
                 aboutTabView = new SimpleTextTabWidget(AboutTabPage, 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
                 mainControlsTabControl.AddTab(aboutTabView);
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl
                 advancedControlsButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
                 advancedControlsButtonFactory.invertImageLocation = true;
-                Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(new LocalizedString("Advanced\nControls").Translated, "icon_arrow_right_32x32.png");
+                Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Advanced\nControls"), "icon_arrow_right_32x32.png");
                 advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
                 advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
                 advancedControlsLinkButton.Cursor = Cursors.Hand;
@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl
 
         void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
         {
-            HelpTextWidget.Instance.ShowHoverText(new LocalizedString("View Manual Printer Controls and Slicing Settings").Translated);
+            HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("View Manual Printer Controls and Slicing Settings"));
         }
 
         void onMouseLeaveBoundsAdvancedControlsLink(Object sender, EventArgs e)
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl
 
         void onMouseEnterBoundsPrintQueueLink(Object sender, EventArgs e)
         {
-            HelpTextWidget.Instance.ShowHoverText(new LocalizedString("View Queue and Library").Translated);
+            HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("View Queue and Library"));
         }
 
         void onMouseLeaveBoundsPrintQueueLink(Object sender, EventArgs e)
@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl
             advancedControls.TabBar.Padding = new BorderDouble(0, 2);
 
             advancedControlsButtonFactory.invertImageLocation = false;
-            Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(new LocalizedString("Print\nQueue").Translated, "icon_arrow_left_32x32.png");
+            Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Print\nQueue"), "icon_arrow_left_32x32.png");
             advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
             advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
             advancedControlsLinkButton.Cursor = Cursors.Hand;
@@ -347,16 +347,16 @@ namespace MatterHackers.MatterControl
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
             //Add the tab contents for 'Advanced Controls'
-            string printerControlsLabel = new LocalizedString("Controls").Translated;
+            string printerControlsLabel = LocalizedString.Get("Controls");
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 18,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string sliceSettingsLabel = new LocalizedString("Slice Settings").Translated;
+            string sliceSettingsLabel = LocalizedString.Get("Slice Settings");
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string configurationLabel = new LocalizedString("Configuration").Translated;
+            string configurationLabel = LocalizedString.Get("Configuration");
             ScrollableWidget configurationControls = new ConfigurationPage();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 18,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
         {
-            string queueStringBeg = new LocalizedString("Queue").Translated;
+            string queueStringBeg = LocalizedString.Get("Queue");
             string queueString = string.Format("{1} ({0})", PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
             QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
         }

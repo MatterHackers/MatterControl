@@ -32,8 +32,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 partIsGCode = true;
             }
 
-			string exportLibraryFileTitle = new LocalizedString("MatterControl").Translated;
-			string exportLibraryFileTitleFull = new LocalizedString("Export File").Translated;
+            string exportLibraryFileTitle = LocalizedString.Get("MatterControl");
+            string exportLibraryFileTitleFull = LocalizedString.Get("Export File");
 			this.Title = string.Format("{0}: {1}", exportLibraryFileTitle, exportLibraryFileTitleFull);
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             topToBottom.Padding = new BorderDouble(10);
             topToBottom.AnchorAll();
 
-			string fileExportLabelTxt = new LocalizedString("File export options").Translated;
+            string fileExportLabelTxt = LocalizedString.Get("File export options");
 			TextWidget exportLabel = new TextWidget(string.Format("{0}:", fileExportLabelTxt));
             exportLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             topToBottom.AddChild(exportLabel);
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             if (!partIsGCode)
             {
-				string exportSTLTxt = new LocalizedString ("Export as").Translated;
+                string exportSTLTxt = LocalizedString.Get("Export as");
 				string exportSTLTxtFull = string.Format ("{0} STL", exportSTLTxt);
 
 				Button exportAsSTLButton = textImageButtonFactory.Generate(exportSTLTxtFull);
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             if (showExportGCodeButton)
             {
-				string exportGCodeText = new LocalizedString("Export as").Translated;
+                string exportGCodeText = LocalizedString.Get("Export as");
 				string exportGCodeTextFull = string.Format ("{0} GCode", exportGCodeText);
 
 				Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
@@ -96,8 +96,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             if (!showExportGCodeButton)
             {
-				string noGCodeMessageText = new LocalizedString("Note").Translated;
-				string noGCodeMessageTextFull = new LocalizedString("To enable GCode export, select a printer profile").Translated;
+                string noGCodeMessageText = LocalizedString.Get("Note");
+                string noGCodeMessageTextFull = LocalizedString.Get("To enable GCode export, select a printer profile");
 				TextWidget noGCodeMessage = new TextWidget(string.Format("{0}: {1}.", noGCodeMessageText, noGCodeMessageTextFull), textColor: RGBA_Bytes.White, pointSize: 10);
                 topToBottom.AddChild(noGCodeMessage);
             }
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             // TODO: make this work on the mac and then delete this if
             if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Windows)
             {
-				showInFolderAfterSave = new CheckBox(new LocalizedString("Show file in folder after save").Translated, RGBA_Bytes.White, 10);
+                showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), RGBA_Bytes.White, 10);
                 showInFolderAfterSave.Margin = new BorderDouble(top: 10);
                 topToBottom.AddChild(showInFolderAfterSave);
             }
