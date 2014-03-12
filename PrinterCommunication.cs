@@ -973,7 +973,7 @@ namespace MatterHackers.MatterControl
                 }
             }
             string firmwareVersionReported = "";
-            if (GCodeFile.GetFirstStringAfter("PROTOCOL_VERSION:", foundStringEventArgs.LineToCheck, " ", ref firmwareVersionReported))
+            if (GCodeFile.GetFirstStringAfter("MACHINE_TYPE:", foundStringEventArgs.LineToCheck, " EXTRUDER_COUNT", ref firmwareVersionReported))
             {
                 //Firmware version was detected and is different
                 if (firmwareVersionReported != "" && firmwareVersion != firmwareVersionReported)

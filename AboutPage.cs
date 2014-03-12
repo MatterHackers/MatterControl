@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl
                 DataStorage.ApplicationSession firstSession;
                 firstSession = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.ApplicationSession>().OrderBy(v => v.SessionStart).Take(1).FirstOrDefault();
                 if (firstSession != null
-                    && DateTime.Compare(firstSession.SessionStart.AddDays(14), DateTime.Now) < 0)
+                    && DateTime.Compare(firstSession.SessionStart.AddDays(7), DateTime.Now) < 0)
                 {
                     NeedToCheckForUpdateFirstTimeEver = true;
                 }
