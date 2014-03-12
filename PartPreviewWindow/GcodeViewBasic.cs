@@ -326,17 +326,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string filamentVolumeLblFull = string.Format("{0}:", filamentVolumeLbl);
 			modelInfoContainer.AddChild(new TextWidget(filamentVolumeLblFull, textColor: RGBA_Bytes.White));
             {
-                var density = 1.0;
-                string filamentType = "PLA";
-                if(filamentType == "ABS")
-                {
-                    density = 1.04;
-                }
-                else if(filamentType == "PLA") 
-                {
-                    density = 1.24;
-                }
-                
                 double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.FillamentDiameter);
 
                 GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm3", filamentMm3/1000), textColor: RGBA_Bytes.White, pointSize: 10);
