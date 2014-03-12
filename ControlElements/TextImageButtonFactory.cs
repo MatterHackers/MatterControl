@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl
         {
             string path = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, imageName);
             ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-            ImageBMPIO.LoadImageData(path, buffer);
+            ImageIO.LoadImageData(path, buffer);
             return buffer;
         }
 
@@ -279,22 +279,22 @@ namespace MatterHackers.MatterControl
 
             if (normalImageName != null)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
+                ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
             }
 
             if (hoverImageName != null)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
+                ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
             }
 
             if (pressedImageName != null)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(hoverImageName), hoverImage);
+                ImageIO.LoadImageData(this.GetImageLocation(hoverImageName), hoverImage);
             }
 
             if (disabledImageName != null)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(disabledImageName), disabledImage);
+                ImageIO.LoadImageData(this.GetImageLocation(disabledImageName), disabledImage);
             }
 
             if (invertImageLocation)
@@ -331,22 +331,22 @@ namespace MatterHackers.MatterControl
 
             if (normalImageName != null)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
+                ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
             }
 
             if (pressedImageName != null)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
+                ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
             }
 
             if (normalToPressedImageName != null)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(normalToPressedImageName), normalToPressedImage);
+                ImageIO.LoadImageData(this.GetImageLocation(normalToPressedImageName), normalToPressedImage);
             }
 
             if (pressedToNormalImageName != null)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(pressedToNormalImageName), pressedToNormalImage);
+                ImageIO.LoadImageData(this.GetImageLocation(pressedToNormalImageName), pressedToNormalImage);
             }
 
             if (normalToPressedImageName == null)
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl
             if (iconImageName != null)
             {
                 iconImage = new ImageBuffer();
-                ImageBMPIO.LoadImageData(this.GetImageLocation(iconImageName), iconImage);
+                ImageIO.LoadImageData(this.GetImageLocation(iconImageName), iconImage);
             }
 
             BorderDouble internalMargin = new BorderDouble(0);

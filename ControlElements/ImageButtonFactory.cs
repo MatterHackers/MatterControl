@@ -36,10 +36,10 @@ namespace MatterHackers.MatterControl
             Agg.Image.ImageBuffer hoverImage = new Agg.Image.ImageBuffer();
             Agg.Image.ImageBuffer disabledImage = new Agg.Image.ImageBuffer();
 
-            ImageBMPIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
-            ImageBMPIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
-            ImageBMPIO.LoadImageData(this.GetImageLocation(hoverImageName), hoverImage);
-            ImageBMPIO.LoadImageData(this.GetImageLocation(disabledImageName), disabledImage);
+            ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
+            ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
+            ImageIO.LoadImageData(this.GetImageLocation(hoverImageName), hoverImage);
+            ImageIO.LoadImageData(this.GetImageLocation(disabledImageName), disabledImage);
 
             //normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
             //pressedImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);

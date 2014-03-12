@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl
             {
                 Directory.CreateDirectory(folderToSavePrintsTo);
             }
-            ImageBMPIO.SaveImageData(jpegFileName, plateInventoryImage);
+            ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
 
             XGraphics gfx = XGraphics.FromPdfPage(pdfPage);
             XImage jpegImage = XImage.FromFile(jpegFileName);
@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl
             if(File.Exists(logoPathAndFile))
             {
                 ImageBuffer logoImage = new ImageBuffer();
-                ImageBMPIO.LoadImageData(logoPathAndFile, logoImage);
+                ImageIO.LoadImageData(logoPathAndFile, logoImage);
                 currentlyPrintingHeightPixels -= logoImage.Height;
                 plateGraphics.Render(logoImage, (plateInventoryImage.Width - logoImage.Width) / 2, currentlyPrintingHeightPixels);
             }
