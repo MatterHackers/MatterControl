@@ -37,7 +37,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-using Ionic.Zip;
+using ICSharpCode.SharpZipLib.Zip;
 
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -173,7 +173,6 @@ namespace MatterHackers.MatterControl
 
         public void ExportToProjectArchive(string savedFileName = null)
         {            
-
             if (savedFileName == null)
             {
                 savedFileName = defaultProjectPathAndFileName;
@@ -197,24 +196,54 @@ namespace MatterHackers.MatterControl
             StreamWriter sw = new System.IO.StreamWriter(fs);
             sw.Write(jsonString);
             sw.Close();
-            
-            ZipFile zip = new ZipFile();
-            zip.AddFile(defaultManifestPathAndFileName).FileName = Path.GetFileName(defaultManifestPathAndFileName);
+
+            FileStream outputFileStream = File.Create(savedFileName);
+            ZipOutputStream zipStream = new ZipOutputStream(outputFileStream);
+            zipStream.SetLevel(3);
+            CopyFileToZip(zipStream, defaultManifestPathAndFileName);
             {
                 foreach (KeyValuePair<string, ManifestItem> item in this.sourceFiles)
                 {
-                    zip.AddFile(item.Key).FileName = Path.GetFileName(item.Key);
+                    CopyFileToZip(zipStream, item.Key);
                 }
             }
-            zip.Save(savedFileName);            
+            zipStream.IsStreamOwner = true; // Makes the Close also Close the underlying stream
+            zipStream.Close();
+        }
+
+        private static void CopyFileToZip(ZipOutputStream zipStream, string sourceFile)
+        {
+            if (File.Exists(sourceFile))
+            {
+                ZipEntry newEntry = new ZipEntry(Path.GetFileName(sourceFile));
+                FileInfo fi = new FileInfo(sourceFile);
+                newEntry.DateTime = fi.LastWriteTime;
+                newEntry.Size = fi.Length;
+                zipStream.PutNextEntry(newEntry);
+                using (FileStream streamReader = File.OpenRead(sourceFile))
+                {
+                    CopyStream(streamReader, zipStream);
+                }
+                zipStream.CloseEntry();
+            }
+        }
+
+        public static void CopyStream(Stream input, Stream output)
+        {
+            byte[] buffer = new byte[4096];
+            int read;
+            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                output.Write(buffer, 0, read);
+            }
         }
 
         public List<PrintItem> OpenFromDialog()
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Zip file|*.zip");
 
-            System.IO.Stream streamToLoadFrom = FileDialog.OpenFileDialog(ref openParams);
-            if (streamToLoadFrom != null)
+            FileDialog.OpenFileDialog(ref openParams);
+			if (openParams.FileNames != null)
             {
                 string loadedFileName = openParams.FileName;
                 return ImportFromProjectArchive(loadedFileName);
@@ -233,9 +262,9 @@ namespace MatterHackers.MatterControl
             }
 
             if (System.IO.File.Exists(loadedFileName))
-            { 
-
-                ZipFile zip = ZipFile.Read(loadedFileName);
+            {
+                FileStream fs = File.OpenRead(loadedFileName);
+                ZipFile zip = new ZipFile(fs);
                 int projectHashCode = zip.GetHashCode();
             
                 //If the temp folder doesn't exist - create it, otherwise clear it
@@ -253,20 +282,37 @@ namespace MatterHackers.MatterControl
                 List<PrintItem> printItemList = new List<PrintItem>();
                 Project projectManifest = null;
 
-                foreach (ZipEntry e in zip)
-                {   
-                    e.Extract(stagingFolder, ExtractExistingFileAction.OverwriteSilently);
-                    if (e.FileName == "manifest.json")
+                foreach (ZipEntry zipEntry in zip)
+                {
+                    if (!zipEntry.IsFile)
                     {
-                        e.Extract(stagingFolder, ExtractExistingFileAction.OverwriteSilently);
-                        string extractedFileName = Path.Combine(stagingFolder, e.FileName);
-                        StreamReader sr = new System.IO.StreamReader(extractedFileName);
-                        projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
-                        sr.Close();
+                        continue;           // Ignore directories
                     }
-                    else if (System.IO.Path.GetExtension(e.FileName).ToUpper() == ".STL" || System.IO.Path.GetExtension(e.FileName).ToUpper() == ".GCODE")
+
+                    if (zipEntry.Name == "manifest.json"
+                        || System.IO.Path.GetExtension(zipEntry.Name).ToUpper() == ".STL"
+                        || System.IO.Path.GetExtension(zipEntry.Name).ToUpper() == ".GCODE")
                     {
-                        e.Extract(stagingFolder, ExtractExistingFileAction.OverwriteSilently);
+                        string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
+
+                        string neededPathForZip = Path.GetDirectoryName(extractedFileName);
+                        if (!Directory.Exists(neededPathForZip))
+                        {
+                            Directory.CreateDirectory(neededPathForZip);
+                        }
+
+                        Stream zipStream = zip.GetInputStream(zipEntry);
+                        using (FileStream streamWriter = File.Create(extractedFileName))
+                        {
+                            CopyStream(zipStream, streamWriter);
+                        }
+
+                        if (zipEntry.Name == "manifest.json")
+                        {
+                            StreamReader sr = new System.IO.StreamReader(extractedFileName);
+                            projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
+                            sr.Close();
+                        }
                     }
                 }
 

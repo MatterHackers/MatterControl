@@ -231,6 +231,7 @@ namespace MatterHackers.MatterControl
             document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
             document.Info.Keywords = "MatterControl, STL, 3D Printing";
 
+
             int nextPartToPrintIndex = 0;
             int plateNumber = 1;
             bool done = false;
@@ -241,11 +242,14 @@ namespace MatterHackers.MatterControl
             }
 			try
 			{
+                // save the final document
             	document.Save(pathAndFileToSaveTo);
+                // Now try and open the document. This will lanch whatever PDF viewer is on the system and ask it 
+                // to show the file (at least on Windows).
             	Process.Start(pathAndFileToSaveTo);
 			}
-			catch {
-
+			catch (Exception)
+            {
 			}
 
             OnDoneSaving();

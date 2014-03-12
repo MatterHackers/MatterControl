@@ -194,8 +194,9 @@
     <Compile Include="EeProm\EePromRepetierStorage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Zip">
-      <HintPath>Ionic.Zip.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp">
       <HintPath>PdfSharp.dll</HintPath>

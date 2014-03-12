@@ -665,6 +665,8 @@ namespace MatterHackers.MatterControl
             {
                 string lineToWrite = LinesToWriteQueue[0];
 
+                lineToWrite = ApplyPrintLeveling(lineToWrite, false, false);
+
                 WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
                 LinesToWriteQueue.RemoveAt(0);
                 System.Threading.Thread.Sleep(1);
@@ -830,18 +832,18 @@ namespace MatterHackers.MatterControl
 
             string lineToParse = foundStringEventArgs.LineToCheck;
             Vector3 positionRead = Vector3.Zero;
-            GCodeFile.GetFirstNumberAfter('X', lineToParse, ref positionRead.x);
-            GCodeFile.GetFirstNumberAfter('Y', lineToParse, ref positionRead.y);
-            GCodeFile.GetFirstNumberAfter('Z', lineToParse, ref positionRead.z);
+            GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref positionRead.x);
+            GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref positionRead.y);
+            GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref positionRead.z);
 
             int xPosition = lineToParse.IndexOf('X');
             int secondXPosition = lineToParse.IndexOf("Count", xPosition);
             if (secondXPosition != -1)
             {
                 Vector3 currentPositionRead = Vector3.Zero;
-                GCodeFile.GetFirstNumberAfter('X', lineToParse, ref currentPositionRead.x, secondXPosition - 1);
-                GCodeFile.GetFirstNumberAfter('Y', lineToParse, ref currentPositionRead.y, secondXPosition - 1);
-                GCodeFile.GetFirstNumberAfter('Z', lineToParse, ref currentPositionRead.z, secondXPosition - 1);
+                GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref currentPositionRead.x, secondXPosition - 1);
+                GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref currentPositionRead.y, secondXPosition - 1);
+                GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref currentPositionRead.z, secondXPosition - 1);
 
                 lastReportedPosition = currentPositionRead;
             }
@@ -1312,9 +1314,9 @@ namespace MatterHackers.MatterControl
                     newDestination = Vector3.Zero;
                 }
 
-                GCodeFile.GetFirstNumberAfter('X', lineBeingSent, ref newDestination.x);
-                GCodeFile.GetFirstNumberAfter('Y', lineBeingSent, ref newDestination.y);
-                GCodeFile.GetFirstNumberAfter('Z', lineBeingSent, ref newDestination.z);
+                GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.x);
+                GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.y);
+                GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.z);
 
                 if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
                 {
@@ -1329,7 +1331,8 @@ namespace MatterHackers.MatterControl
 
                 if (ActivePrinter.DoPrintLeveling)
                 {
-                    lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent, addLFCR, includeSpaces);
+                    string inputLine = lineBeingSent;
+                    lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, inputLine, addLFCR, includeSpaces);
                 }
             }
 
@@ -1341,7 +1344,7 @@ namespace MatterHackers.MatterControl
             lineBeingSent = lineBeingSent.ToUpper().Trim();
             if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
             {
-                if (GCodeFile.GetFirstNumberAfter('E', lineBeingSent, ref gcodeRequestedExtrusionPosition))
+                if (GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref gcodeRequestedExtrusionPosition))
                 {
                     double delta = gcodeRequestedExtrusionPosition - previousGcodeRequestedExtrusionPosition;
                     if (extruderMode == PrinterMachineInstruction.MovementTypes.Relative)
@@ -1356,7 +1359,7 @@ namespace MatterHackers.MatterControl
             }
             else if (lineBeingSent.StartsWith("G92"))
             {
-                if (GCodeFile.GetFirstNumberAfter('E', lineBeingSent, ref gcodeRequestedExtrusionPosition))
+                if (GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref gcodeRequestedExtrusionPosition))
                 {
                     previousGcodeRequestedExtrusionPosition = gcodeRequestedExtrusionPosition;
                     currentActualExtrusionPosition = gcodeRequestedExtrusionPosition;
@@ -1374,7 +1377,7 @@ namespace MatterHackers.MatterControl
                 if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
                 {
                     double feedRate = 0;
-                    if (GCodeFile.GetFirstNumberAfter('F', lineBeingSent, ref feedRate))
+                    if (GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate))
                     {
                         lineBeingSent = GCodeFile.ReplaceNumberAfter('F', lineBeingSent, feedRate * FeedRateRatio);
                     }
