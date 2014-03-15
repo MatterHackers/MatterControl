@@ -865,3 +865,42 @@ Translated:View Queue and Library
 English:Bed Temperature
 Translated:Bed Temperature
 
+English:This gcode will be inserted when the print is canceled.
+Translated:This gcode will be inserted when the print is canceled.
+
+English:This gcode will be inserted when the printer is paused.
+Translated:This gcode will be inserted when the printer is paused.
+
+English:This gcode will be inserted when the printer is resumed.
+Translated:This gcode will be inserted when the printer is resumed.
+
+English:Print Time
+Translated:Print Time
+
+English:Filament Length
+Translated:Filament Length
+
+English:Filament Volume
+Translated:Filament Volume
+
+English:Weight
+Translated:Weight
+
+English:Show Grid
+Translated:Show Grid
+
+English:Show Moves
+Translated:Show Moves
+
+English:Show Retractions
+Translated:Show Retractions
+
+English:Go
+Translated:Go
+
+English:start:
+Translated:start:
+
+English:end:
+Translated:end:
+

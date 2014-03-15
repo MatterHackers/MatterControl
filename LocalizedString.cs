@@ -17,23 +17,15 @@ namespace MatterHackers.Localizations
         public static string Get(string EnglishText)
         {
             string language = "en";
-            if (language == "en")
+            if (MatterControlTranslationMap == null)
             {
-                return EnglishText;
+                string pathToTranslationsFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Translations");
+                MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
             }
-            else
-            {
-                if (MatterControlTranslationMap == null)
-                {
-                    string pathToTranslationsFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Translations");
-                    MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
-                }
 #if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG
-                return "El " + EnglishText + " o";
-#else
-                return MatterControlTranslationMap.Translate(EnglishText);
-            }
+            return "El " + EnglishText + " o";
 #endif
+            return MatterControlTranslationMap.Translate(EnglishText);
         }
     }
 }

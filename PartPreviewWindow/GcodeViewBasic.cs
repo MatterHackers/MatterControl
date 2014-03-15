@@ -517,12 +517,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
-                AddChild(new TextWidget("start:", 50, 77, 10, Agg.Font.Justification.Right));
+                AddChild(new TextWidget(LocalizedString.Get("start:"), 50, 77, 10, Agg.Font.Justification.Right));
                 layerStartRenderRatioSlider = new Slider(new Vector2(), 10);
                 layerStartRenderRatioSlider.ValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
                 AddChild(layerStartRenderRatioSlider);
 
-                AddChild(new TextWidget("end:", 50, 57, 10, Agg.Font.Justification.Right));
+                AddChild(new TextWidget(LocalizedString.Get("end:"), 50, 57, 10, Agg.Font.Justification.Right));
                 layerEndRenderRatioSlider = new Slider(new Vector2(), 10);
                 layerEndRenderRatioSlider.Value = 1;
                 layerEndRenderRatioSlider.ValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
