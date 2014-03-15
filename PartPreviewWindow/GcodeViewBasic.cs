@@ -517,10 +517,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
+                AddChild(new TextWidget("start:", 40, 75, 10, Agg.Font.Justification.Right));
                 layerStartRenderRatioSlider = new Slider(new Vector2(), 10);
                 layerStartRenderRatioSlider.ValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
                 AddChild(layerStartRenderRatioSlider);
 
+                AddChild(new TextWidget("end:", 40, 60, 10, Agg.Font.Justification.Right));
                 layerEndRenderRatioSlider = new Slider(new Vector2(), 10);
                 layerEndRenderRatioSlider.Value = 1;
                 layerEndRenderRatioSlider.ValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
@@ -545,7 +547,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeViewWidget.FeatureToStartOnRatio0To1 = layerStartRenderRatioSlider.Value;
             gcodeViewWidget.FeatureToEndOnRatio0To1 = layerEndRenderRatioSlider.Value;
-            Invalidate();
+            gcodeViewWidget.Invalidate();
         }
 
         void layerEndRenderRatioSlider_ValueChanged(object sender, EventArgs e)
@@ -557,7 +559,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeViewWidget.FeatureToStartOnRatio0To1 = layerStartRenderRatioSlider.Value;
             gcodeViewWidget.FeatureToEndOnRatio0To1 = layerEndRenderRatioSlider.Value;
-            Invalidate();
+            gcodeViewWidget.Invalidate();
         }
 
         void gcodeViewWidget_ActiveLayerChanged(object sender, EventArgs e)
@@ -583,11 +585,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDispalyWidget.Width - 20, 80);
             selectLayerSlider.TotalWidthInPixels = gcodeDispalyWidget.Height - 80;
 
-            layerStartRenderRatioSlider.OriginRelativeParent = new Vector2(20, 80);
-            layerStartRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 80;
+            layerStartRenderRatioSlider.OriginRelativeParent = new Vector2(60, 80);
+            layerStartRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 100;
 
-            layerEndRenderRatioSlider.OriginRelativeParent = new Vector2(20, 60);
-            layerEndRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 80;
+            layerEndRenderRatioSlider.OriginRelativeParent = new Vector2(60, 60);
+            layerEndRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 100;
         }
 
         private void AddHandlers()
