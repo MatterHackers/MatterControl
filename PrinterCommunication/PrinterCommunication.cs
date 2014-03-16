@@ -467,10 +467,10 @@ namespace MatterHackers.MatterControl
                         return "Homing Axis";
 
                     case DetailedPrintingState.HeatingBed:
-                        return string.Format("Waiting for Bed to Heat to {0}°", TargetBedTemperature);
+                        return "Waiting for Bed to Heat to {0}°".FormatWith(TargetBedTemperature);
 
                     case DetailedPrintingState.HeatingExtruder:
-                        return string.Format("Waiting for Extruder to Heat to {0}°", TargetExtruderTemperature);
+                        return "Waiting for Extruder to Heat to {0}°".FormatWith(TargetExtruderTemperature);
 
                     case DetailedPrintingState.Printing:
                         return "Currently Printing:";
@@ -493,11 +493,11 @@ namespace MatterHackers.MatterControl
 						return LocalizedString.Get("Disconnecting");
 					case CommunicationStates.AttemptingToConnect:
 						string connectingMessageTxt = LocalizedString.Get ("Connecting");
-						return string.Format("{0}...",connectingMessageTxt);
+						return "{0}...".FormatWith(connectingMessageTxt);
                     case CommunicationStates.ConnectionLost:
 						return LocalizedString.Get("Connection Lost");
                     case CommunicationStates.FailedToConnect:
-                        return string.Format("Unable to Connect");
+                        return "Unable to Connect";
                     case CommunicationStates.Connected:
 						return LocalizedString.Get("Connected");
                     case CommunicationStates.PreparingToPrint:
@@ -683,7 +683,7 @@ namespace MatterHackers.MatterControl
                 {
                     targetExtruderTemperature = value;
                     OnExtruderTemperatureSet(new TemperatureEventArgs(TargetExtruderTemperature));
-                    QueueLineToPrinter(string.Format("M104 S{0}", targetExtruderTemperature));
+                    QueueLineToPrinter("M104 S{0}".FormatWith(targetExtruderTemperature));
                 }
             }
         }
@@ -721,7 +721,7 @@ namespace MatterHackers.MatterControl
                 }
                 catch
                 {
-                    Debug.WriteLine(string.Format("Unable to Parse Extruder Temperature: {0}", temp));
+                    Debug.WriteLine("Unable to Parse Extruder Temperature: {0}".FormatWith(temp));
                 }
             }
         }
@@ -734,7 +734,7 @@ namespace MatterHackers.MatterControl
             {
                 fanSpeed = Math.Max(0, Math.Min(255, value));
                 OnFanSpeedSet(null);
-                QueueLineToPrinter(string.Format("M106 S{0}", fanSpeed));
+                QueueLineToPrinter("M106 S{0}".FormatWith(fanSpeed));
             }
         }
 
@@ -750,7 +750,7 @@ namespace MatterHackers.MatterControl
                 {
                     targetBedTemperature = value;
                     OnBedTemperatureSet(new TemperatureEventArgs(TargetBedTemperature));
-                    QueueLineToPrinter(string.Format("M140 S{0}", targetBedTemperature));
+                    QueueLineToPrinter("M140 S{0}".FormatWith(targetBedTemperature));
                 }
             }
         }
@@ -783,7 +783,7 @@ namespace MatterHackers.MatterControl
                 }
                 catch
                 {
-                    Debug.WriteLine(string.Format("Unable to Parse Bed Temperature: {0}", temp));
+                    Debug.WriteLine("Unable to Parse Bed Temperature: {0}".FormatWith(temp));
                 }
             }
         }
@@ -819,7 +819,7 @@ namespace MatterHackers.MatterControl
                 }
                 catch
                 {
-                    Debug.WriteLine(string.Format("Unable to Parse Fan Speed: {0}", fanSpeed));
+                    Debug.WriteLine("Unable to Parse Fan Speed: {0}".FormatWith(fanSpeed));
                 }
             }
         }
@@ -889,7 +889,7 @@ namespace MatterHackers.MatterControl
                     }
                     catch
                     {
-                        Debug.WriteLine(string.Format("Unable to Parse Extruder Temperature: {0}", extruderTemp));
+                        Debug.WriteLine("Unable to Parse Extruder Temperature: {0}".FormatWith(extruderTemp));
                     }
                 }
             }
@@ -916,7 +916,7 @@ namespace MatterHackers.MatterControl
                     }
                     catch
                     {
-                        Debug.WriteLine(string.Format("Unable to Parse Bed Temperature: {0}", bedTemp));
+                        Debug.WriteLine("Unable to Parse Bed Temperature: {0}".FormatWith(bedTemp));
                     }
                 }
             }
@@ -1109,7 +1109,7 @@ namespace MatterHackers.MatterControl
             }
             else
             {
-                Debug.WriteLine(string.Format("Connection failed: {0}", this.ActivePrinter.ComPort));
+                Debug.WriteLine("Connection failed: {0}".FormatWith(this.ActivePrinter.ComPort));
 				connectionFailureMessage = "Unavailable";
                 OnConnectionFailed(null);
             }
@@ -1120,10 +1120,10 @@ namespace MatterHackers.MatterControl
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             // Allow the user to set the appropriate properties.
             var portNames = SerialPort.GetPortNames();
-            //Debug.WriteLine(string.Format("Open ports: {0}", portNames.Length));
+            //Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
             if (portNames.Length > 0)
             {
-                //Debug.WriteLine(string.Format("Connecting to: {0} {1}", this.ActivePrinter.ComPort, this.BaudRate));
+                //Debug.WriteLine("Connecting to: {0} {1}".FormatWith(this.ActivePrinter.ComPort, this.BaudRate));
                 AttemptToConnect(this.ActivePrinter.ComPort, this.BaudRate);
                 if (CommunicationState == CommunicationStates.FailedToConnect)
                 {
@@ -1946,8 +1946,8 @@ namespace MatterHackers.MatterControl
             if (moveAmountMm != 0)
             {
                 SetMovementToRelative();
-                PrinterCommunication.Instance.QueueLineToPrinter(string.Format("G1 F{0}", feedRateMmPerMinute));
-                PrinterCommunication.Instance.QueueLineToPrinter(string.Format("G1 {0}{1}", axis, moveAmountMm));
+                PrinterCommunication.Instance.QueueLineToPrinter("G1 F{0}".FormatWith(feedRateMmPerMinute));
+                PrinterCommunication.Instance.QueueLineToPrinter("G1 {0}{1}".FormatWith(axis, moveAmountMm));
                 SetMovementToAbsolute();
             }
         }
@@ -1955,15 +1955,15 @@ namespace MatterHackers.MatterControl
         public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
         {
             SetMovementToAbsolute();
-            PrinterCommunication.Instance.QueueLineToPrinter(string.Format("G1 F{0}", feedRateMmPerMinute));
-            PrinterCommunication.Instance.QueueLineToPrinter(string.Format("G1 {0}{1}", axis, axisPositionMm));
+            PrinterCommunication.Instance.QueueLineToPrinter("G1 F{0}".FormatWith(feedRateMmPerMinute));
+            PrinterCommunication.Instance.QueueLineToPrinter("G1 {0}{1}".FormatWith(axis, axisPositionMm));
         }
 
         public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
         {
             SetMovementToAbsolute();
-            PrinterCommunication.Instance.QueueLineToPrinter(string.Format("G1 F{0}", feedRateMmPerMinute));
-            PrinterCommunication.Instance.QueueLineToPrinter(string.Format("G1 X{0}Y{1}Z{2}", position.x, position.y, position.z));
+            PrinterCommunication.Instance.QueueLineToPrinter("G1 F{0}".FormatWith(feedRateMmPerMinute));
+            PrinterCommunication.Instance.QueueLineToPrinter("G1 X{0}Y{1}Z{2}".FormatWith(position.x, position.y, position.z));
         }
 
         public void ReadPosition()

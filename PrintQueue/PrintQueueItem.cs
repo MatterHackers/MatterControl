@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 					string partStatusLblTxt = LocalizedString.Get ("Status");     
 					string partStatusLblTxtTest = LocalizedString.Get ("Queued to Print");
-					string partStatusLblTxtFull = string.Format("{0}: {1}", partStatusLblTxt,partStatusLblTxtTest);
+					string partStatusLblTxtFull = "{0}: {1}".FormatWith(partStatusLblTxt,partStatusLblTxtTest);
 
 					partStatus = new TextWidget(partStatusLblTxtFull, pointSize: 10);
                     partStatus.AutoExpandBoundsToText = true;
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         void PrintItem_SlicingOutputMessage(object sender, EventArgs e)
         {
             StringEventArgs message = e as StringEventArgs;
-            partStatus.Text = string.Format("Status: {0}", message.Data);
+            partStatus.Text = "Status: {0}".FormatWith(message.Data);
         }
 
         void SetDisplayAttributes()
@@ -388,7 +388,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     if (itemNames.Contains(testName))
                     {
-                        testName = string.Format("{0} {1}", newName, copyNumber);
+                        testName = "{0} {1}".FormatWith(newName, copyNumber);
                         copyNumber++;
                     }
                     else
@@ -423,7 +423,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 }
 				string notFoundMessage = LocalizedString.Get("Oops! Could not find this file");
 				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
-				string message = String.Format("{0}:\n'{1}'\n\n{2}?",notFoundMessage, maxLengthName,notFoundMessageEnd);
+				string message = "{0}:\n'{1}'\n\n{2}?".FormatWith(notFoundMessage, maxLengthName,notFoundMessageEnd);
 				string titleLbl = LocalizedString.Get("Item not Found");
 					if (StyledMessageBox.ShowMessageBox(message, titleLbl, StyledMessageBox.MessageType.YES_NO))
                 {

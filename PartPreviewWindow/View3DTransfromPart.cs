@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 FlowLayoutWidget editToolBar = new FlowLayoutWidget();
 
                 string progressFindPartsLbl = LocalizedString.Get("Finding Parts");
-                string progressFindPartsLblFull = string.Format("{0}:", progressFindPartsLbl);
+                string progressFindPartsLblFull = "{0}:".FormatWith(progressFindPartsLbl);
 
                 processingProgressControl = new ProgressControl(progressFindPartsLblFull);
                 processingProgressControl.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -606,7 +606,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (Meshes.Count > 0)
             {
 				string loadingPartLabel = LocalizedString.Get("Loading Parts");
-				string loadingPartLabelFull = string.Format("{0}:", loadingPartLabel);
+				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
 				processingProgressControl.textWidget.Text = loadingPartLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
@@ -983,7 +983,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     PartInfoOptionContainer.Margin = new BorderDouble(8, 3);
 					string sizeInfoLbl = LocalizedString.Get("Size");
-					string sizeInfoLblFull = string.Format("{0}:", sizeInfoLbl);
+					string sizeInfoLblFull = "{0}:".FormatWith(sizeInfoLbl);
 					TextWidget sizeInfo = new TextWidget(sizeInfoLblFull, textColor: RGBA_Bytes.White);
                     PartInfoOptionContainer.AddChild(sizeInfo);
                     TextWidget xSizeInfo = new TextWidget("  x 10.1", pointSize: 10, textColor: RGBA_Bytes.White);
@@ -1071,7 +1071,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             scaleRatioContainer.Padding = new BorderDouble(5);
 
 			string scaleRatioLblTxt = LocalizedString.Get("Ratio");
-			string scaleRatioLblTxtFull = string.Format("{0}:", scaleRatioLblTxt);
+			string scaleRatioLblTxtFull = "{0}:".FormatWith(scaleRatioLblTxt);
 			TextWidget scaleRatioLabel = new TextWidget(scaleRatioLblTxtFull, textColor: RGBA_Bytes.White);
             scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
             scaleRatioContainer.AddChild(scaleRatioLabel);
@@ -1115,7 +1115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             presetScaleMenu.AddItem("mm to cm (.1)");
             presetScaleMenu.AddItem("cm to mm (10)");
 			string resetLbl = LocalizedString.Get ("reset");
-			string resetLblFull = string.Format("{0} (1)",resetLbl);
+			string resetLblFull = "{0} (1)".FormatWith(resetLbl);
 			presetScaleMenu.AddItem(resetLblFull);
 
 
@@ -1212,7 +1212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
 
 			string degreesLabelTxt = LocalizedString.Get("Degrees");
-			string degreesLabelTxtFull = string.Format("{0}:", degreesLabelTxt);
+			string degreesLabelTxtFull = "{0}:".FormatWith(degreesLabelTxt);
 			TextWidget degreesLabel = new TextWidget(degreesLabelTxt, textColor: RGBA_Bytes.White);
             degreesContainer.AddChild(degreesLabel);
             degreesContainer.AddChild(horizontalSpacer);
@@ -1414,7 +1414,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 partSelectButtonWasClicked = partSelectButton.Checked;
 
 				string progressSavingPartslbl = LocalizedString.Get ("Saving");
-				string progressSavingPartsLblFull = string.Format("{0}:",progressSavingPartslbl);
+				string progressSavingPartsLblFull = "{0}:".FormatWith(progressSavingPartslbl);
 				processingProgressControl.textWidget.Text = progressSavingPartsLblFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
