@@ -1372,3 +1372,11 @@ Translated:Finished Print
 English:Done Printing
 Translated:Done Printing
 
+English:Save As
+Translated:Save As
+
+English:Installed Plugins
+Translated:Installed Plugins
+
+English:Select a Design Tool
+Translated:Select a Design Tool

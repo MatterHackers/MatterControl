@@ -100,9 +100,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         CheckBox expandScaleOptions;
 
         Button autoArrangeButton;
-        Button saveButton;
+		Button saveButton;
+		Button saveAsButton;
         Button closeButton;
         Button applyScaleButton;
+
+		SaveAsWindow saveAs;
 
         PrintItemWrapper printItemWrapper;
 
@@ -249,6 +252,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 && meshSelectInfo.downOnPart
                 && meshSelectInfo.lastMoveDelta != Vector3.Zero)
             {
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
             }
 
@@ -775,6 +779,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshExtraData.RemoveAt(SelectedMeshIndex);
                 MeshTransforms.RemoveAt(SelectedMeshIndex);
                 SelectedMeshIndex = Math.Min(SelectedMeshIndex, Meshes.Count - 1);
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             }
@@ -1038,6 +1043,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
                 buttonRightPanel.AddChild(verticalSpacer);
 
+				//Create Save As Button 	
+				saveAsButton = whiteButtonFactory.Generate("Save As".Localize(), centerText: true);
+				saveAsButton.Visible = false;
+				saveAsButton.Cursor = Cursors.Hand;
+				buttonRightPanel.AddChild (saveAsButton);
+
 				saveButton = whiteButtonFactory.Generate(LocalizedString.Get("Save"), centerText: true);
                 saveButton.Visible = false;
                 saveButton.Cursor = Cursors.Hand;
@@ -1190,6 +1201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
                 MeshExtraData[SelectedMeshIndex].currentScale = scale;
@@ -1246,6 +1258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and shift it back so the new center is where the old center was
                 SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             };
@@ -1269,6 +1282,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and shift it back so the new center is where the old center was
                 SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             };
@@ -1291,6 +1305,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
                 // and shift it back so the new center is where the old center was
                 SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             };
@@ -1305,6 +1320,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 MakeLowestFaceFlat(SelectedMeshIndex);
 
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             };
@@ -1337,6 +1353,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 totalTransfrom *= Matrix4X4.CreateTranslation(center);
 
                 SelectedMeshTransform *= totalTransfrom;
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             };
@@ -1355,6 +1372,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 totalTransfrom *= Matrix4X4.CreateTranslation(center);
 
                 SelectedMeshTransform *= totalTransfrom;
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             };
@@ -1375,6 +1393,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 SelectedMeshTransform *= totalTransfrom;
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
 
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             };
@@ -1398,6 +1417,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
             expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
 
+
+
+			saveAsButton.Click += (sender, e) => 
+			{
+				new SaveAsWindow();
+
+			};
+
             saveButton.Click += (sender, e) =>
             {
                 MergeAndSavePartsToStl();
@@ -1405,6 +1432,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
         }
+
 
         bool partSelectButtonWasClicked = false;
         private void MergeAndSavePartsToStl()
@@ -1609,6 +1637,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and shift it back so the new center is where the old center was
                 MeshTransforms[indexToLayFlat] *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
+				saveAsButton.Visible = true;
                 saveButton.Visible = true;
                 Invalidate();
             }
