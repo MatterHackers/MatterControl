@@ -105,6 +105,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Button closeButton;
         Button applyScaleButton;
 
+		SaveAsWindow saveAs;
+
         PrintItemWrapper printItemWrapper;
 
         List<Mesh> asynchMeshesList = new List<Mesh>();
@@ -1415,6 +1417,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
             expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
 
+
+
+			saveAsButton.Click += (sender, e) => 
+			{
+				new SaveAsWindow();
+
+			};
+
             saveButton.Click += (sender, e) =>
             {
                 MergeAndSavePartsToStl();
@@ -1422,6 +1432,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
         }
+
 
         bool partSelectButtonWasClicked = false;
         private void MergeAndSavePartsToStl()
