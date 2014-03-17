@@ -105,8 +105,8 @@ namespace MatterHackers.MatterControl
             // set background images
             if (noThumbnailImage.Width == 0)
             {
-                ImageBMPIO.LoadImageData(this.GetImageLocation(noThumbnailFileName), noThumbnailImage);
-                ImageBMPIO.LoadImageData(this.GetImageLocation(buildingThumbnailFileName), buildingThumbnailImage);
+                ImageIO.LoadImageData(this.GetImageLocation(noThumbnailFileName), noThumbnailImage);
+                ImageIO.LoadImageData(this.GetImageLocation(buildingThumbnailFileName), buildingThumbnailImage);
             }
             this.image = new ImageBuffer(buildingThumbnailImage);
 

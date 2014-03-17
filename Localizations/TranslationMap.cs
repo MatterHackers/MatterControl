@@ -47,10 +47,12 @@ namespace MatterHackers.Localizations
 
         public void LoadTranslation(string pathToTranslationsFolder, string twoLetterIsoLanguageName)
         {
+            this.twoLetterIsoLanguageName = twoLetterIsoLanguageName;
+
             this.pathToMasterFile = Path.Combine(pathToTranslationsFolder, "Master.txt");
             ReadIntoDictonary(masterDictionary, pathToMasterFile);
 
-            this.pathToTranslationFile = Path.Combine(pathToTranslationsFolder, twoLetterIsoLanguageName, "Translation.txt");
+            this.pathToTranslationFile = Path.Combine(pathToTranslationsFolder, TwoLetterIsoLanguageName, "Translation.txt");
             if (File.Exists(pathToTranslationFile))
             {
                 ReadIntoDictonary(translationDictionary, pathToTranslationFile);
@@ -64,11 +66,14 @@ namespace MatterHackers.Localizations
                 }
             }
 
-            foreach (KeyValuePair<string, string> keyValue in masterDictionary)
+            if (TwoLetterIsoLanguageName != "en")
             {
-                if (!translationDictionary.ContainsKey(keyValue.Key))
+                foreach (KeyValuePair<string, string> keyValue in masterDictionary)
                 {
-                    AddNewString(translationDictionary, pathToTranslationFile, keyValue.Key);
+                    if (!translationDictionary.ContainsKey(keyValue.Key))
+                    {
+                        AddNewString(translationDictionary, pathToTranslationFile, keyValue.Key);
+                    }
                 }
             }
         }
@@ -122,7 +127,10 @@ namespace MatterHackers.Localizations
             string tranlatedString;
             if (!translationDictionary.TryGetValue(englishString, out tranlatedString))
             {
-                AddNewString(translationDictionary, pathToTranslationFile, englishString);
+                if (TwoLetterIsoLanguageName != "en")
+                {
+                    AddNewString(translationDictionary, pathToTranslationFile, englishString);
+                }
                 AddNewString(masterDictionary, pathToMasterFile, englishString);
                 return englishString;
             }

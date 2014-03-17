@@ -29,37 +29,19 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Collections;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Diagnostics;
-using System.Reflection;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Globalization;
-using System.Net;
-
+using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.Font;
-using MatterHackers.VectorMath;
-
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.VersionManagement;
-using MatterHackers.MatterControl.PluginSystem;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PluginSystem;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json.Utilities;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {

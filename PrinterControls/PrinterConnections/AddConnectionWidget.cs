@@ -488,42 +488,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             throw new Exception(LocalizedString.Get("Could not find a selected button."));
         }
 
-        void InstallDriver()
-        {
-            string infPathAndFileToInstall = "";
-            switch (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType())
-            {
-                case Agg.UI.WindowsFormsAbstract.OSType.Windows:
-                    if (!File.Exists(infPathAndFileToInstall))
-                    {
-                        var driverInstallerProcess = new Process();
-                        // Prepare the process to run
-                        // Enter in the command line arguments, everything you would enter after the executable name itself
-                        driverInstallerProcess.StartInfo.Arguments = "--installInf \"" + infPathAndFileToInstall;
-                        // Enter the executable to run, including the complete path
-                        string printerDriverInstallerExePathAndFileName = Path.Combine(".", "PrinterDriverInstaller.exe");
-
-                        driverInstallerProcess.StartInfo.CreateNoWindow = true;
-                        driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-                        driverInstallerProcess.StartInfo.FileName = System.IO.Path.GetFullPath(printerDriverInstallerExePathAndFileName);
-                        driverInstallerProcess.StartInfo.Verb = "runas";
-                        driverInstallerProcess.StartInfo.UseShellExecute = true;
-
-                        driverInstallerProcess.Start();
-
-                        driverInstallerProcess.WaitForExit();
-
-                        // Retrieve the app's exit code
-                        var exitCode = driverInstallerProcess.ExitCode;
-                    }
-                    break;
-
-                case Agg.UI.WindowsFormsAbstract.OSType.Mac:
-                    break;
-            }
-        }
-
         private string GetSelectedSerialPort()
         {
             foreach (SerialPortIndexRadioButton button in SerialPortButtonsList)

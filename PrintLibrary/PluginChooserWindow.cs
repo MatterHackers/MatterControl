@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             string path = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, imageName);
             ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-            ImageBMPIO.LoadImageData(path, buffer);
+            ImageIO.LoadImageData(path, buffer);
             return buffer;
         }
 

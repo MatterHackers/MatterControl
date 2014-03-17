@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             if (File.Exists(imagePathAndFile))
             {
                 ImageBuffer wattermarkImage = new ImageBuffer();
-                ImageBMPIO.LoadImageData(imagePathAndFile, wattermarkImage);
+                ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);
                 GuiWidget watermarkWidget = new ImageWidget(wattermarkImage);
                 watermarkWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 watermarkWidget.HAnchor = Agg.UI.HAnchor.ParentCenter;

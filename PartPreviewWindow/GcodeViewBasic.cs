@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     {
         public Slider selectLayerSlider;
         public Slider layerStartRenderRatioSlider;
+        public Slider layerEndRenderRatioSlider;
         TextWidget gcodeProcessingStateInfoText;
         GCodeViewWidget gcodeViewWidget;
         PrintItemWrapper printItem;
@@ -516,9 +517,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
+                AddChild(new TextWidget(LocalizedString.Get("start:"), 50, 77, 10, Agg.Font.Justification.Right));
                 layerStartRenderRatioSlider = new Slider(new Vector2(), 10);
                 layerStartRenderRatioSlider.ValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
                 AddChild(layerStartRenderRatioSlider);
+
+                AddChild(new TextWidget(LocalizedString.Get("end:"), 50, 57, 10, Agg.Font.Justification.Right));
+                layerEndRenderRatioSlider = new Slider(new Vector2(), 10);
+                layerEndRenderRatioSlider.Value = 1;
+                layerEndRenderRatioSlider.ValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
+                AddChild(layerEndRenderRatioSlider);
 
                 SetSliderSizes();
 
@@ -532,7 +540,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            if (layerEndRenderRatioSlider.Value < layerStartRenderRatioSlider.Value)
+            {
+                layerEndRenderRatioSlider.Value = layerStartRenderRatioSlider.Value;
+            }
+
+            gcodeViewWidget.FeatureToStartOnRatio0To1 = layerStartRenderRatioSlider.Value;
+            gcodeViewWidget.FeatureToEndOnRatio0To1 = layerEndRenderRatioSlider.Value;
+            gcodeViewWidget.Invalidate();
+        }
+
+        void layerEndRenderRatioSlider_ValueChanged(object sender, EventArgs e)
+        {
+            if (layerStartRenderRatioSlider.Value > layerEndRenderRatioSlider.Value)
+            {
+                layerStartRenderRatioSlider.Value = layerEndRenderRatioSlider.Value;
+            }
+
+            gcodeViewWidget.FeatureToStartOnRatio0To1 = layerStartRenderRatioSlider.Value;
+            gcodeViewWidget.FeatureToEndOnRatio0To1 = layerEndRenderRatioSlider.Value;
+            gcodeViewWidget.Invalidate();
         }
 
         void gcodeViewWidget_ActiveLayerChanged(object sender, EventArgs e)
@@ -555,11 +582,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void SetSliderSizes()
         {
-            selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDispalyWidget.Width - 20, 80);
+            selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDispalyWidget.Width - 20, 100);
             selectLayerSlider.TotalWidthInPixels = gcodeDispalyWidget.Height - 80;
 
-            layerStartRenderRatioSlider.OriginRelativeParent = new Vector2(20, 70);
-            layerStartRenderRatioSlider.TotalWidthInPixels = layerStartRenderRatioSlider.Width - 80;
+            layerStartRenderRatioSlider.OriginRelativeParent = new Vector2(60, 80);
+            layerStartRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 100;
+
+            layerEndRenderRatioSlider.OriginRelativeParent = new Vector2(60, 60);
+            layerEndRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 100;
         }
 
         private void AddHandlers()

@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             ImageBuffer gearImage = new ImageBuffer();
             string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "gear_icon.png");
-            ImageBMPIO.LoadImageData(imagePathAndFile, gearImage);
+            ImageIO.LoadImageData(imagePathAndFile, gearImage);
 
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Margin = new BorderDouble(5, 0);

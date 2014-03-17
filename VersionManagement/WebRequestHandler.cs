@@ -40,12 +40,22 @@ namespace MatterHackers.MatterControl.VersionManagement
         protected Dictionary<string, string> requestValues;
         public event EventHandler RequestSucceeded;
         public event EventHandler RequestFailed;
+        public event EventHandler RequestComplete;
 
         void OnRequestSuceeded()
         {
             if (RequestSucceeded != null)
             {
                 RequestSucceeded(this, null);
+            }
+        }
+
+        //This gets called after failure or success
+        void OnRequestComplete()            
+        {
+            if (RequestComplete != null)
+            {
+                RequestComplete(this, null);
             }
         }
 
@@ -100,6 +110,8 @@ namespace MatterHackers.MatterControl.VersionManagement
                 ProcessErrorResponse(responseValues);
                 OnRequestFailed();
             }
+
+            OnRequestComplete();
         }
 
         public virtual void ProcessSuccessResponse(JsonResponseDictionary responseValues)

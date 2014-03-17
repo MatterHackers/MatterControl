@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 				eePromControlsLayout.Padding = new BorderDouble(0);
                 {
 					Agg.Image.ImageBuffer eePromImage = new Agg.Image.ImageBuffer();
-					ImageBMPIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
+					ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
@@ -543,7 +543,7 @@ namespace MatterHackers.MatterControl
                 runPrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(runPrintLeveling_Click);
 
                 Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
-				ImageBMPIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
+				ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
                 ImageWidget levelingIcon = new ImageWidget(levelingImage);
 				levelingIcon.Margin = new BorderDouble (right: 6);
 
@@ -634,7 +634,7 @@ namespace MatterHackers.MatterControl
                 this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
 				Agg.Image.ImageBuffer terminalImage = new Agg.Image.ImageBuffer();
-				ImageBMPIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "terminal-24x24.png"), terminalImage);
+				ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "terminal-24x24.png"), terminalImage);
 				ImageWidget terminalIcon = new ImageWidget(terminalImage);
 				terminalIcon.Margin = new BorderDouble (right: 6);
 
@@ -799,7 +799,7 @@ namespace MatterHackers.MatterControl
             string homeIconFile = "icon_home_white_24x24.png";
             string fileAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, homeIconFile);
             ImageBuffer helpIconImage = new ImageBuffer();
-            ImageBMPIO.LoadImageData(fileAndPath, helpIconImage);
+            ImageIO.LoadImageData(fileAndPath, helpIconImage);
             ImageWidget homeIconImageWidget = new ImageWidget(helpIconImage);
             homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
             homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2);
