@@ -910,3 +910,12 @@ Translated:There is a recommended update available.
 English:Layer View
 Translated:Layer View
 
+English:Save As
+Translated:Save As
+
+English:Installed Plugins
+Translated:Installed Plugins
+
+English:Select a Design Tool
+Translated:Select a Design Tool
+
