@@ -101,15 +101,8 @@ namespace MatterHackers.MatterControl
 
             GuiWidget.DefaultEnforceIntegerBounds = true;
 
-            FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            allControls.AnchorAll();
-
-            this.AddChild(allControls);
+            this.AddChild(ApplicationWidget.Instance);
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
-
-            //allControls.AddChild(WidescreenPanel.Instance);
-            //allControls.AddChild(new ActionBarPlus());
-            allControls.AddChild(MainSlidePanel.Instance);
 
 #if false // this is to test freeing gcodefile memory
             Button test = new Button("test");
@@ -142,17 +135,17 @@ namespace MatterHackers.MatterControl
         {
             StringBuilder gcodeStringBuilder = new StringBuilder();
 
-            int loops = 5;
-            int steps = 200;
-            double radius = 40;
-            Vector2 center = new Vector2(50, 50);
+            int loops = 15;
+            int steps = 20;
+            double radius = 90;
+            Vector2 center = new Vector2(0, 0);
 
             gcodeStringBuilder.AppendLine("G28 ; home all axes");
             gcodeStringBuilder.AppendLine("G90 ; use absolute coordinates");
             gcodeStringBuilder.AppendLine("G21 ; set units to millimeters");
             gcodeStringBuilder.AppendLine("G92 E0");
             gcodeStringBuilder.AppendLine("G1 F7800.000");
-            gcodeStringBuilder.AppendLine("G1 Z" + (30).ToString());
+            //gcodeStringBuilder.AppendLine("G1 Z" + (30).ToString());
             WriteMove(gcodeStringBuilder, center);
 
             for (int loop = 0; loop < loops; loop++)

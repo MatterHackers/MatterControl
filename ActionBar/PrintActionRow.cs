@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onPauseButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrinterCommunication.Instance.Pause();
+            PrinterCommunication.Instance.RequestPause();
         }
 
         void CancelButton_Click(object state)

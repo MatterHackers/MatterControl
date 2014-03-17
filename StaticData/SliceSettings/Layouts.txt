@@ -200,6 +200,12 @@ Advanced
         layer_gcode
       Tool Change G-Code
         toolchange_gcode
+      Pause G-Code
+        pause_gcode
+      Resume G-Code
+        resume_gcode
+      Cancel G-Code
+        cancel_gcode
     Extruder 1
       Size
         nozzle_diameter

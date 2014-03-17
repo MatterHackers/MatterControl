@@ -139,14 +139,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 slic3rMenuItem.Selected += (sender, e) =>
                 {
                     ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
-                    MainSlidePanel.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 };
 
                 MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.CuraEngine.ToString());
                 curaEnginMenuItem.Selected += (sender, e) =>
                 {
                     ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
-                    MainSlidePanel.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 };
 
 #if false
@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 bool goodLoad = ActiveSliceSettings.Instance.LoadSettingsFromIni();
                 if (goodLoad)
                 {
-                    MainSlidePanel.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 }
             });
 
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         void revertbutton_Click(object sender, MouseEventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.LoadSettingsForPrinter();
-            MainSlidePanel.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadBackPanel();
         }
     }
 }
