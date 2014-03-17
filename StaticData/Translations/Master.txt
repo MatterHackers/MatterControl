@@ -907,3 +907,6 @@ Translated:end:
 English:There is a recommended update available.
 Translated:There is a recommended update available.
 
+English:Layer View
+Translated:Layer View
+
