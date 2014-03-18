@@ -129,11 +129,14 @@ namespace MatterHackers.MatterControl
             {
                 switch (ActiveSliceEngineType)
                 {
-                    case SlicingEngineTypes.Slic3r:
-                        return Slic3rEngineMappings.Instance;
-
                     case SlicingEngineTypes.CuraEngine:
                         return CuraEngineMappings.Instance;
+
+                    case SlicingEngineTypes.MatterSlice:
+                        return CuraEngineMappings.Instance;
+
+                    case SlicingEngineTypes.Slic3r:
+                        return Slic3rEngineMappings.Instance;
 
                     default:
                         return null;

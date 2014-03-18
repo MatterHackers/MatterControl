@@ -180,6 +180,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                 {
                     case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
+                    case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
                     case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
                         if (gcodeFileContents.Contains("filament used ="))
                         {

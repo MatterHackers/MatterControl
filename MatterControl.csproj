@@ -287,6 +287,10 @@
       <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
       <Name>WindowsFileDialogs</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MatterSlice\MatterSlice.csproj">
+      <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
+      <Name>MatterSlice</Name>
+    </ProjectReference>
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
       <Project>{F1653F20-D47D-4F29-8C55-3C835542AF5F}</Project>
       <Name>Community.CsharpSqlite</Name>

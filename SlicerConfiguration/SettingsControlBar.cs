@@ -149,14 +149,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     ApplicationWidget.Instance.ReloadBackPanel();
                 };
 
-#if false
-                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngine.MatterSlice.ToString());
+                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.MatterSlice.ToString());
                 matterSliceMenuItem.Selected += (sender, e) =>
                 {
-                    PrinterCommunication.Instance.ActiveSliceEngine = ActivePrinterProfile.SlicingEngine.MatterSlice;
-                    MainSlidePanel.Instance.ReloadBackPanel();
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 };
-#endif
 
                 engineMenuDropList.SelectedValue = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
             }
