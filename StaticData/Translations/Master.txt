@@ -1,4 +1,4 @@
-English:Connect
+﻿English:Connect
 Translated:Connect
 
 English:Disconnect
@@ -1380,6 +1380,7 @@ Translated:Installed Plugins
 
 English:Select a Design Tool
 Translated:Select a Design Tool
+
 English:Movement Speeds
 Translated:Movement Speeds
 
@@ -1391,4 +1392,31 @@ Translated:Axis
 
 English:Extruder
 Translated:Extruder
+
+English:Save As:
+Translated:Save As:
+
+English:Macro Editor
+Translated:Macro Editor
+
+English:Macro Presets
+Translated:Macro Presets
+
+English:Bed Temperature Settings
+Translated:Bed Temperature Settings
+
+English:Temperature Shortcut Presets
+Translated:Temperature Shortcut Presets
+
+English:Label
+Translated:Label
+
+English:Preset
+Translated:Preset
+
+English:Max Temp.
+Translated:Max Temp.
+
+English:Slicing Error. Please review your slice settings.
+Translated:Slicing Error. Please review your slice settings.
 

@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory ();
 
 		public SaveAsWindow()
-			: base (360, 420)
+			: base (350, 250)
 		{
 			Title = "Save As Window";
 
@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl
 			topToBottom.AnchorAll();
 			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
-
+			// Creates Header
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			headerRow.HAnchor = HAnchor.ParentLeftRight;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
@@ -39,9 +39,9 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 
-			
+			//Creates Text and adds into header 
 			{
-				string saveAsLabel = "Save As";
+				string saveAsLabel = "Save As:";
 				TextWidget elementHeader = new TextWidget (saveAsLabel, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				elementHeader.HAnchor = HAnchor.ParentLeftRight;
@@ -49,23 +49,81 @@ namespace MatterHackers.MatterControl
 
 				headerRow.AddChild (elementHeader);
 				topToBottom.AddChild (headerRow);
-
+				this.AddChild (topToBottom);
 			}
 
+			//Creates container in the middle of window
+			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			{
+				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
+				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
+				presetsFormContainer.Padding = new BorderDouble(3);
+				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+				topToBottom.AddChild(presetsFormContainer);
+			}
 
+			//Adds text box and check box to the above container
+			MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here");
+			//textToAddWidget.VAnchor = VAnchor.ParentCenter;
+			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
+			textToAddWidget.Margin = new BorderDouble(5);
+			presetsFormContainer.AddChild(textToAddWidget);
+
+			GuiWidget cTSpacer = new GuiWidget ();
+			cTSpacer.HAnchor = HAnchor.ParentLeftRight;
+
+
+			addToLibraryOption = new CheckBox("Add to Library");
+			//addToLibraryOption.VAnchor = VAnchor.Parent;
+			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
+
+			presetsFormContainer.AddChild(textToAddWidget);
+			presetsFormContainer.AddChild(cTSpacer);
+			presetsFormContainer.AddChild(addToLibraryOption);
+
+			//Sets button attributes
+			SetButtonAttributes();
+
+			//Creates button container on the bottom of window 
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			{
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				buttonRow.HAnchor = HAnchor.ParentLeftRight;
+				//buttonRow.VAnchor = VAnchor.ParentBottomTop;
+				buttonRow.Padding = new BorderDouble(0,3);
+			}
+				
+			//Adds SaveAs and Close Button to button container
+			GuiWidget hButtonSpacer = new GuiWidget();
+			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
+
+		
 			saveAsButton = textImageButtonFactory.Generate("Save As".Localize(), centerText: true);
 			saveAsButton.Visible = true;
 			saveAsButton.Cursor = Cursors.Hand;
 
 
+			cancelSaveButton = textImageButtonFactory.Generate ("Cancel", centerText: true);
+			cancelSaveButton.Visible = true;
+			cancelSaveButton.Cursor = Cursors.Hand;
 
-			this.AddChild (topToBottom);
+
+			buttonRow.AddChild(this.saveAsButton);
+			buttonRow.AddChild(hButtonSpacer);
+			buttonRow.AddChild(this.cancelSaveButton);
+
+
+			topToBottom.AddChild(buttonRow);
+			AddChild(topToBottom);
 
 
 			ShowAsSystemWindow ();
 		}
 
-		public void GenericButton()
+
+
+
+		public void SetButtonAttributes()
 		{
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;            
 			this.textImageButtonFactory.FixedHeight = 24;
