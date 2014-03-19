@@ -1380,3 +1380,15 @@ Translated:Installed Plugins
 
 English:Select a Design Tool
 Translated:Select a Design Tool
+English:Movement Speeds
+Translated:Movement Speeds
+
+English:Movement Speeds Presets
+Translated:Movement Speeds Presets
+
+English:Axis
+Translated:Axis
+
+English:Extruder
+Translated:Extruder
+
