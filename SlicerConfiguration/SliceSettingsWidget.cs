@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             CheckBox checkBox = sender as CheckBox;
             if (checkBox != null)
             {
-                MainSlidePanel.Instance.ReloadBackPanel();
+                ApplicationWidget.Instance.ReloadBackPanel();
             }
         }
 

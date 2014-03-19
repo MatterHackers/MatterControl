@@ -418,6 +418,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public PrintQueueControl()
         {
+            Name = "PrintQueueControl";
+
             SetDisplayAttributes();
 			AddWatermark();
             ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;

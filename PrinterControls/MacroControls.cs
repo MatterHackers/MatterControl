@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 
         protected void ReloadMacros(object sender, EventArgs e)
         {
-            MainSlidePanel.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadBackPanel();
         }
 
         

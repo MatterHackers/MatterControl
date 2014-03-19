@@ -33,7 +33,6 @@ using System.Linq;
 using System.Text;
 
 using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -130,6 +129,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapStartGCode("startCode", "start_gcode"),
             new MapEndGCode("endCode", "end_gcode"),
             
+            new NotPassedItem("", "pause_gcode"),
+            new NotPassedItem("", "resume_gcode"),
+            new NotPassedItem("", "cancel_gcode"),
 #if false
             SETTING(filamentFlow);
             SETTING(infillOverlap);

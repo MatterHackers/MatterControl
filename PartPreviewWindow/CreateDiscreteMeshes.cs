@@ -237,8 +237,8 @@ namespace MatterHackers.MatterControl
 
             // now clip the polygons to get the inside and outside polys
             Clipper clipper = new Clipper();
-            clipper.AddPolygons(lineLoops, PolyType.ptSubject);
-            clipper.AddPolygon(boundingPoly, PolyType.ptClip);
+            clipper.AddPaths(lineLoops, PolyType.ptSubject, true);
+            clipper.AddPath(boundingPoly, PolyType.ptClip, true);
 
             PolyTree polyTreeForPlate = new PolyTree();
             clipper.Execute(ClipType.ctIntersection, polyTreeForPlate);

@@ -52,7 +52,6 @@ namespace MatterHackers.MatterControl
 {   
     public class WidescreenPanel : FlowLayoutWidget
     {        
-        static WidescreenPanel globalInstance;
         TabControl advancedControlsTabControl;
         SliceSettingsWidget sliceSettingsWidget;
         TabControl advancedControls;
@@ -78,9 +77,9 @@ namespace MatterHackers.MatterControl
         public WidescreenPanel()
             : base(FlowDirection.LeftToRight)
         {
+            Name = "WidescreenPanel";
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
             {
-
                 //PrintQueueControl.Instance.Initialize();
                 BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
                 Padding = new BorderDouble(4);
@@ -105,7 +104,6 @@ namespace MatterHackers.MatterControl
                 LoadColumnTwo();
                 
                 ColumnThree.VAnchor = VAnchor.ParentBottomTop;
-                
                 
                 {
                     advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
@@ -161,18 +159,6 @@ namespace MatterHackers.MatterControl
             HelpTextWidget.Instance.HideHoverText();
         }
 
-        public static WidescreenPanel Instance
-        {
-            get
-            {
-                if (globalInstance == null)
-                {
-                    globalInstance = new WidescreenPanel();
-                }
-                return globalInstance;
-            }
-        }
-
         public override void OnClosed(EventArgs e)
         {
             if (unregisterEvents != null)
@@ -187,7 +173,6 @@ namespace MatterHackers.MatterControl
             //Empty function used as placeholder
         }
 
-        
         void DoChangePanel(object state)
         {
             // remember which tab we were on
@@ -203,7 +188,6 @@ namespace MatterHackers.MatterControl
             // set the selected tab back to the one it was before we replace the control
             this.advancedControlsTabControl.SelectTab(topTabIndex);
         }
-
 
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
         {
@@ -244,7 +228,7 @@ namespace MatterHackers.MatterControl
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
             PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-            MainSlidePanel.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
+            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
             this.BoundsChanged += new EventHandler(onBoundsChanges);
             RightBorderLine.Click += new ClickWidget.ButtonEventHandler(onRightBorderClick); ;
             
@@ -254,7 +238,6 @@ namespace MatterHackers.MatterControl
         {
             ColumnThree.Visible = !ColumnThree.Visible;
             ColThreeIsHidden = !ColumnThree.Visible;
-
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -291,7 +274,7 @@ namespace MatterHackers.MatterControl
 
                 ColumnOne.RemoveAllChildren();
                 ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new MainSlide());
+                ColumnOne.AddChild(new CompactSlidePanel());
                 ColumnOne.AnchorAll();
                 ColumnOne.Visible = true;
 
@@ -349,7 +332,7 @@ namespace MatterHackers.MatterControl
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
         {
             ActiveSliceSettings.Instance.LoadSettingsForPrinter();
-            MainSlidePanel.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadBackPanel();
         }
     }
 
@@ -400,7 +383,7 @@ namespace MatterHackers.MatterControl
         {
             PrintQueue.PrintQueueControl.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             PrintQueue.PrintQueueControl.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            MainSlidePanel.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);  
+            ApplicationWidget.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);  
             
         }
 

@@ -9,6 +9,7 @@ bridge_flow_ratio|Bridge Flow Ratio|POSITVE_DOUBLE||This controls the ratio of m
 bridge_speed|Bridges|POSITVE_DOUBLE|mm/s|The speed to move when bridging between walls.
 brim_width|Brim Width|POSITVE_DOUBLE|mm|The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
 build_height|Build Height|POSITVE_DOUBLE|mm|The height of the printable area. If set to 0 the parts height will not be validated.
+cancel_gcode|Cancel G-Code|MULTI_LINE_TEXT||This gcode will be inserted when the print is canceled.
 complete_objects|Complete Individual Objects|CHECK_BOX||Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
 cool_extruder_lift|Enable Extruder Lift|CHECK_BOX||Moves the extruder up off the part to allow cooling.
 cooling|Enable Auto Cooling|CHECK_BOX||Turns on and off all cooling settings (all settings below this one).
@@ -61,6 +62,7 @@ only_retract_when_crossing_perimeters|Only Retract When\n Crossing Perimeters|CH
 ooze_prevention|Enable|CHECK_BOX||This will lower the temperature of the non-printing extruder to help prevent oozing.
 overhangs|Optimize Overhangs|CHECK_BOX||Experimental feature that attempts to improve overhangs using the fan and bridge settings.
 output_filename_format|Output File Name Format|STRING||Sets the way that slicer creates file names (this is not used by MatterControl).
+pause_gcode|Pause G-Code|MULTI_LINE_TEXT||This gcode will be inserted when the printer is paused.
 perimeter_acceleration|Perimeters|POSITVE_DOUBLE|mm/s²|Acceleration to use on perimeters. Set to 0 to disable changing the printer's acceleration.
 perimeter_extruder|Perimeter Extruder|INT||The index of the extruder to use for perimeters.
 perimeter_extrusion_width|Perimeters|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.
@@ -70,6 +72,7 @@ post_process|Post-Processing Scripts|MULTI_LINE_TEXT||You can include additional
 print_center|Print Center|VECTOR2|mm|The position (coordinates) of the center of the print bed.
 raft_layers|Raft Layers|INT|layers|Number of layers to print before printing any parts.
 randomize_start|Randomize Starting Points|CHECK_BOX||Start each new layer from a different vertex to reduce seams.
+resume_gcode|Resume G-Code|MULTI_LINE_TEXT||This gcode will be inserted when the printer is resumed.
 retract_before_travel|Minimum Travel After\n Retraction|POSITVE_DOUBLE|mm|The minimum distance of a non-printing move that will result in a retraction.
 retract_layer_change|Retract on Layer Change|CHECK_BOX||If set, a retraction will occur prior to changing the layer height.
 retract_length|Length|POSITVE_DOUBLE|mm|The amount that the filament will be reversed after each qualifying non-printing move.

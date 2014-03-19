@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 using Microsoft.Win32.SafeHandles;
@@ -140,6 +141,7 @@ namespace MatterHackers.MatterControl
         FoundStringStartsWithCallbacks WriteLineStartCallBacks = new FoundStringStartsWithCallbacks();
         FoundStringContainsCallbacks WriteLineContainsCallBacks = new FoundStringContainsCallbacks();
 
+        bool printWasCanceled = false;
         int firstLineToResendIndex = 0;
         List<string> allCheckSumLinesSent = new List<string>();
 
@@ -659,7 +661,7 @@ namespace MatterHackers.MatterControl
 
         private void WriteNextLineFromQueue()
         {
-            using (TimedLock.Lock(this, "WriteNextLine"))
+            using (TimedLock.Lock(this, "WriteNextLineFromQueue"))
             {
                 string lineToWrite = LinesToWriteQueue[0];
 
@@ -1420,13 +1422,16 @@ namespace MatterHackers.MatterControl
             lineToWrite = lineToWrite.Split(';')[0].Trim();
             if (PrinterIsPrinting)
             {
-                // Get the temperature during print.
-                if (printerCommandQueueIndex > 0
-                    && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count -1)
+                // insert the command into the printing queue
+                using (TimedLock.Lock(this, "QueueLineToPrinter"))
                 {
-                    if (!loadedGCode.GCodeCommandQueue[printerCommandQueueIndex+1].Line.Contains(lineToWrite))
+                    if (printerCommandQueueIndex >= 0
+                        && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count - 1)
                     {
-                        loadedGCode.GCodeCommandQueue.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.GCodeCommandQueue[printerCommandQueueIndex]));
+                        if (!loadedGCode.GCodeCommandQueue[printerCommandQueueIndex + 1].Line.Contains(lineToWrite))
+                        {
+                            loadedGCode.GCodeCommandQueue.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.GCodeCommandQueue[printerCommandQueueIndex]));
+                        }
                     }
                 }
             }
@@ -1467,6 +1472,8 @@ namespace MatterHackers.MatterControl
             {
                 if (serialPort != null && serialPort.IsOpen)
                 {
+                    FoundStringEventArgs foundStringEvent = new FoundStringEventArgs(lineWithoutChecksum);
+
                     // write data to communication
                     {
                         StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
@@ -1474,7 +1481,6 @@ namespace MatterHackers.MatterControl
 
                         if (lineWithoutChecksum != null)
                         {
-                            FoundStringEventArgs foundStringEvent = new FoundStringEventArgs(lineWithoutChecksum);
                             WriteLineStartCallBacks.CheckForKeys(foundStringEvent);
                             WriteLineContainsCallBacks.CheckForKeys(foundStringEvent);
 
@@ -1618,7 +1624,8 @@ namespace MatterHackers.MatterControl
                     System.Threading.Thread.Sleep(1);
                 }
 
-                using (TimedLock.Lock(this, "WriteNextLine"))
+                bool pauseRequested = false;
+                using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile"))
                 {
                     if (PrinterIsPrinting && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count)
                     {
@@ -1629,10 +1636,27 @@ namespace MatterHackers.MatterControl
                         else
                         {
                             string lineToWrite = loadedGCode.GCodeCommandQueue[printerCommandQueueIndex].Line;
-                            WriteChecksumLineToPrinter(lineToWrite);
+                            if (lineToWrite == "MH_PAUSE")
+                            {
+                                pauseRequested = true;
+                            }
+                            else
+                            {
+                                WriteChecksumLineToPrinter(lineToWrite);
+                            }
+
                             printerCommandQueueIndex++;
                             firstLineToResendIndex++;
                         }
+                    }
+                    else if (printWasCanceled)
+                    {
+                        CommunicationState = CommunicationStates.Connected;
+                        // never leave the extruder and the bed hot
+                        ReleaseMotors();
+                        TargetExtruderTemperature = 0;
+                        TargetBedTemperature = 0;
+                        printWasCanceled = false;
                     }
                     else
                     {
@@ -1653,10 +1677,45 @@ namespace MatterHackers.MatterControl
                         }
                     }
                 }
+
+                if (pauseRequested)
+                {
+                    DoPause();
+                }
             }
         }
 
-        public void Pause()
+        public void RequestPause()
+        {
+            if (PrinterIsPrinting)
+            {
+                // Add the pause_gcode to the loadedGCode.GCodeCommandQueue
+                string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
+                if (pauseGCode.Trim() == "")
+                {
+                    DoPause();
+                }
+                else
+                {
+                    using (TimedLock.Lock(this, "RequestPause"))
+                    {
+                        double currentFeedRate = loadedGCode.GCodeCommandQueue[printerCommandQueueIndex].FeedRate;
+                        int lastIndexAdded = InjectGCode(pauseGCode, printerCommandQueueIndex);
+
+                        // inject a marker to tell when we are done with the inserted pause code
+                        lastIndexAdded = InjectGCode("MH_PAUSE", lastIndexAdded);
+
+                        // inject the resume_gcode to execute when we resume printing
+                        string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
+                        lastIndexAdded = InjectGCode(resumeGCode, lastIndexAdded);
+
+                        lastIndexAdded = InjectGCode("G1 F{0}".FormatWith(currentFeedRate), lastIndexAdded);
+                    }
+                }
+            }
+        }
+
+        void DoPause()
         {
             if (PrinterIsPrinting)
             {
@@ -1666,33 +1725,34 @@ namespace MatterHackers.MatterControl
                     sendGCodeToPrinterThread.Join();
                 }
                 sendGCodeToPrinterThread = null;
-
-#if PAUSE_INJECTION
-                // Add the pause_gcode to the loadedGCode.GCodeCommandQueue
-                string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
-                int lastIndexAdded = InjectGCode(pauseGCode, printerCommandQueueIndex);
-
-                // inject a marker to tell when we are done with the inserted pause code
-                lastIndexAdded = InjectGCode("MH_Pause", lastIndexAdded);
-
-                // inject the resume_gcode to execute when we resume printing
-                string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
-                lastIndexAdded = InjectGCode("MH_Pause", lastIndexAdded);
-#endif
             }
         }
 
         private int InjectGCode(string codeToInject, int indexToStartInjection)
         {
+            codeToInject = codeToInject.Replace("\\n", "\n");
             string[] lines = codeToInject.Split('\n');
 
-            foreach (string line in lines)
+            int linesAdded = 0;
+            for (int i = lines.Length - 1; i >= 0; i--)
             {
-                loadedGCode.GCodeCommandQueue.Insert(indexToStartInjection, new PrinterMachineInstruction(line, loadedGCode.GCodeCommandQueue[indexToStartInjection]));
-                indexToStartInjection++;
+                string[] splitOnSemicolon = lines[i].Split(';');
+                string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
+                if (trimedLine != "")
+                {
+                    if (loadedGCode.GCodeCommandQueue.Count > indexToStartInjection)
+                    {
+                        loadedGCode.GCodeCommandQueue.Insert(indexToStartInjection, new PrinterMachineInstruction(trimedLine, loadedGCode.GCodeCommandQueue[indexToStartInjection]));
+                    }
+                    else
+                    {
+                        loadedGCode.GCodeCommandQueue.Add(new PrinterMachineInstruction(trimedLine));
+                    }
+                    linesAdded++;
+                }
             }
 
-            return indexToStartInjection;
+            return indexToStartInjection + linesAdded;
         }
 
         public void Resume()
@@ -1735,25 +1795,20 @@ namespace MatterHackers.MatterControl
             switch (CommunicationState)
             {
                 case CommunicationStates.Printing:
-#if CANCEL_INJECTION
                     {
-                        //Only run cancel gcode if actively printing.
-                        string cancelGCode = ActiveSliceSettings.Instance.GetActiveValue("cancel_gcode");
-                        WriteLineToPrinter(cancelGCode);
-                    }
-                    break;
-#endif
-                    {
-                        CommunicationState = CommunicationStates.Connected;
-                        if (sendGCodeToPrinterThread != null)
+                        using (TimedLock.Lock(this, "CancelingPrint"))
                         {
-                            sendGCodeToPrinterThread.Join();
-                            sendGCodeToPrinterThread = null;
+                            // get rid of all the gcode we have left to print
+                            ClearQueuedGCode();
+                            string cancelGCode = ActiveSliceSettings.Instance.GetActiveValue("cancel_gcode");
+                            if (cancelGCode.Trim() != "")
+                            {
+                                // add any gcode we want to print while canceling
+                                InjectGCode(cancelGCode, printerCommandQueueIndex);
+                            }
+                            // let the process know we canceled not ended normaly.
+                            printWasCanceled = true;
                         }
-                        ClearQueuedGCode();
-                        ReleaseMotors();
-                        TargetExtruderTemperature = 0;
-                        TargetBedTemperature = 0;
                     }
                     break;
 
@@ -1849,7 +1904,7 @@ namespace MatterHackers.MatterControl
                     while (serialPort.BytesToRead > 0)
                     {
                         char nextChar = (char)serialPort.ReadChar();
-                        using (TimedLock.Lock(this, "ReadNextChar"))
+                        using (TimedLock.Lock(this, "ReadFromPrinter"))
                         {
                             if (nextChar == '\r' || nextChar == '\n')
                             {

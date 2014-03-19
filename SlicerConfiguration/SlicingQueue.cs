@@ -152,6 +152,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
                                 return applicationPath;
                             }
+                        case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
+                            {
+                                string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "MatterSlice");
+                                return applicationPath;
+                            }
 
                         default:
                             throw new NotImplementedException();
@@ -197,7 +202,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-                                    slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + CuraEngineMappings.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                     break;
                             }
 
@@ -229,15 +234,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 }
                             };
 
-                            slicerProcess.Start();
-
-                            slicerProcess.BeginOutputReadLine();
-                            string stdError = slicerProcess.StandardError.ReadToEnd();
-
-                            slicerProcess.WaitForExit();
-                            using (TimedLock.Lock(slicerProcess, "SlicingProcess"))
+#if DEBUG
+                            if (ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {
-                                slicerProcess = null;
+                                MatterSlice.MatterSlice.ProcessArgs(slicerProcess.StartInfo.Arguments);
+                            }
+                            else
+#endif
+                            {
+                                slicerProcess.Start();
+                                slicerProcess.BeginOutputReadLine();
+                                string stdError = slicerProcess.StandardError.ReadToEnd();
+
+                                slicerProcess.WaitForExit();
+                                using (TimedLock.Lock(slicerProcess, "SlicingProcess"))
+                                {
+                                    slicerProcess = null;
+                                }
                             }
                         }
                     }

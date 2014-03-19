@@ -71,6 +71,7 @@
     <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterActionRow.cs" />
     <Compile Include="ActionBar\PrintStatusRow.cs" />
+    <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
     <Compile Include="ConfigurationPage\ConfigurationPage.cs" />
@@ -105,7 +106,7 @@
     <Compile Include="ToolsPage\ToolsListControl.cs" />
     <Compile Include="ToolsPage\ToolsListItem.cs" />
     <Compile Include="ToolsPage\ToolsWidget.cs" />
-    <Compile Include="WidescreenPanel.cs" />
+    <Compile Include="ApplicationView\WidescreenPanel.cs" />
     <Compile Include="ConfigurationPage\PrintLevelWizard.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />
     <Compile Include="CustomWidgets\ClickWidget.cs">
@@ -128,7 +129,7 @@
     <Compile Include="DataStorage\Datastore.cs" />
     <Compile Include="DataStorage\SQLiteUnix.cs" />
     <Compile Include="DataStorage\SQLiteAsync.cs" />
-    <Compile Include="MainSlidePanel.cs" />
+    <Compile Include="ApplicationView\MainApplicationWidget.cs" />
     <Compile Include="Utilities\ManifestFileHandler.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -285,6 +286,10 @@
     <ProjectReference Include="..\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
       <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
       <Name>WindowsFileDialogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MatterSlice\MatterSlice.csproj">
+      <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
+      <Name>MatterSlice</Name>
     </ProjectReference>
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
       <Project>{F1653F20-D47D-4F29-8C55-3C835542AF5F}</Project>

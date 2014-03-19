@@ -910,6 +910,468 @@ Translated:There is a recommended update available.
 English:Layer View
 Translated:Layer View
 
+English:Connect to Printer
+Translated:Connect to Printer
+
+English:Choose a 3D Printer Configuration
+Translated:Choose a 3D Printer Configuration
+
+English:Unavailable
+Translated:Unavailable
+
+English:Refresh
+Translated:Refresh
+
+English:Automatic Print Leveling (enabled)
+Translated:Automatic Print Leveling (enabled)
+
+English:Connecting
+Translated:Connecting
+
+English:Status: {0} - {1}
+Translated:Status: {0} - {1}
+
+English:edit
+Translated:edit
+
+English:remove
+Translated:remove
+
+English:Printer Name
+Translated:Printer Name
+
+English:(refresh)
+Translated:(refresh)
+
+English:Serial Port
+Translated:Serial Port
+
+English:Baud Rate
+Translated:Baud Rate
+
+English:Other
+Translated:Other
+
+English:Printer Make
+Translated:Printer Make
+
+English:Printer Model
+Translated:Printer Model
+
+English:Auto Connect
+Translated:Auto Connect
+
+English:Preparing To Print
+Translated:Preparing To Print
+
+English:Preparing to slice model
+Translated:Preparing to slice model
+
+English:Printing
+Translated:Printing
+
+English:Filter Output
+Translated:Filter Output
+
+English:Auto Uppercase
+Translated:Auto Uppercase
+
+English:Send
+Translated:Send
+
+English:MatterControl - Terminal
+Translated:MatterControl - Terminal
+
+English:First Layer Height
+Translated:First Layer Height
+
+English:Spiral Vase
+Translated:Spiral Vase
+
+English:Number of Solid Layers\non the Top:
+Translated:Number of Solid Layers\non the Top:
+
+English:Number of Solid Layers\non the Bottom:
+Translated:Number of Solid Layers\non the Bottom:
+
+English:Horizontal Shells
+Translated:Horizontal Shells
+
+English:Speed
+Translated:Speed
+
+English:Perimeters
+Translated:Perimeters
+
+English:Speed for Print Moves
+Translated:Speed for Print Moves
+
+English:Travel
+Translated:Travel
+
+English:Speed for non Print Moves
+Translated:Speed for non Print Moves
+
+English:First Layer Speed
+Translated:First Layer Speed
+
+English:Modifiers
+Translated:Modifiers
+
+English:Skirt and Brim
+Translated:Skirt and Brim
+
+English:Loops
+Translated:Loops
+
+English:Distance from Object
+Translated:Distance from Object
+
+English:Minimum Extrusion Length
+Translated:Minimum Extrusion Length
+
+English:Skirt
+Translated:Skirt
+
+English:Overhang Threshold
+Translated:Overhang Threshold
+
+English:Pattern Spacing
+Translated:Pattern Spacing
+
+English:X and Y Distance
+Translated:X and Y Distance
+
+English:Z Distance
+Translated:Z Distance
+
+English:Internal Support
+Translated:Internal Support
+
+English:Notes
+Translated:Notes
+
+English:Output Options
+Translated:Output Options
+
+English:Multiple Extruders
+Translated:Multiple Extruders
+
+English:Advanced
+Translated:Advanced
+
+English:Enable Extruder Lift
+Translated:Enable Extruder Lift
+
+English:Min Fan Speed
+Translated:Min Fan Speed
+
+English:Max Fan Speed
+Translated:Max Fan Speed
+
+English:Disable Fan For The First
+Translated:Disable Fan For The First
+
+English:Fan Speed
+Translated:Fan Speed
+
+English:Slow Down If Layer Print\nTime Is Below
+Translated:Slow Down If Layer Print\nTime Is Below
+
+English:Cooling Thresholds
+Translated:Cooling Thresholds
+
+English:Bed Shape
+Translated:Bed Shape
+
+English:Custom G-Code
+Translated:Custom G-Code
+
+English:Start G-Code
+Translated:Start G-Code
+
+English:End G-Code
+Translated:End G-Code
+
+English:Length
+Translated:Length
+
+English:Minimum Travel After\nRetraction
+Translated:Minimum Travel After\nRetraction
+
+English:Min Extrusion
+Translated:Min Extrusion
+
+English:Retraction
+Translated:Retraction
+
+English:Generate Extra Perimeters\nWhen Needed:
+Translated:Generate Extra Perimeters\nWhen Needed:
+
+English:Avoid Crossing Perimeters
+Translated:Avoid Crossing Perimeters
+
+English:Start At Concave Points
+Translated:Start At Concave Points
+
+English:Start At Non Overhang
+Translated:Start At Non Overhang
+
+English:Thin Walls
+Translated:Thin Walls
+
+English:Quality (slower slicing)
+Translated:Quality (slower slicing)
+
+English:Randomize Starting Points
+Translated:Randomize Starting Points
+
+English:External Perimeters First
+Translated:External Perimeters First
+
+English:Top/Bottom Fill Pattern
+Translated:Top/Bottom Fill Pattern
+
+English:Infill Every
+Translated:Infill Every
+
+English:Only Infill Where Needed
+Translated:Only Infill Where Needed
+
+English:Solid Infill Every
+Translated:Solid Infill Every
+
+English:Fill Angle
+Translated:Fill Angle
+
+English:Solid Infill Threshold Area
+Translated:Solid Infill Threshold Area
+
+English:Only Retract When\nCrossing Perimeters
+Translated:Only Retract When\nCrossing Perimeters
+
+English:Do Infill Before Perimeters
+Translated:Do Infill Before Perimeters
+
+English:Small Perimeters
+Translated:Small Perimeters
+
+English:External Perimeters
+Translated:External Perimeters
+
+English:Solid Infill
+Translated:Solid Infill
+
+English:Top Solid Infill
+Translated:Top Solid Infill
+
+English:Bridges
+Translated:Bridges
+
+English:Gap Fill
+Translated:Gap Fill
+
+English:Min Print Speed
+Translated:Min Print Speed
+
+English:Bridge
+Translated:Bridge
+
+English:First Layer
+Translated:First Layer
+
+English:Default
+Translated:Default
+
+English:Acceleration Control
+Translated:Acceleration Control
+
+English:Skirt Height
+Translated:Skirt Height
+
+English:Brim Width
+Translated:Brim Width
+
+English:Brim
+Translated:Brim
+
+English:Enforce Support For First
+Translated:Enforce Support For First
+
+English:Raft Layers
+Translated:Raft Layers
+
+English:Raft
+Translated:Raft
+
+English:Pattern
+Translated:Pattern
+
+English:Pattern Angle
+Translated:Pattern Angle
+
+English:Interface Layers
+Translated:Interface Layers
+
+English:Interface Pattern Spacing
+Translated:Interface Pattern Spacing
+
+English:Complete Individual Objects
+Translated:Complete Individual Objects
+
+English:Extruder Clearance Height
+Translated:Extruder Clearance Height
+
+English:Extruder Clearance Radius
+Translated:Extruder Clearance Radius
+
+English:Sequential Printing
+Translated:Sequential Printing
+
+English:Verbose G-Code
+Translated:Verbose G-Code
+
+English:Output File Name Format
+Translated:Output File Name Format
+
+English:Output File
+Translated:Output File
+
+English:Post-Processing Scripts
+Translated:Post-Processing Scripts
+
+English:Perimeter Extruder
+Translated:Perimeter Extruder
+
+English:Infill Extruder
+Translated:Infill Extruder
+
+English:Support Material Extruder
+Translated:Support Material Extruder
+
+English:Support Interface Extruder
+Translated:Support Interface Extruder
+
+English:Extruders
+Translated:Extruders
+
+English:Temp Lower Amount
+Translated:Temp Lower Amount
+
+English:Ooze Prevention
+Translated:Ooze Prevention
+
+English:Default Extrusion Width
+Translated:Default Extrusion Width
+
+English:Extrusion Width
+Translated:Extrusion Width
+
+English:Bridge Flow Ratio
+Translated:Bridge Flow Ratio
+
+English:Flow
+Translated:Flow
+
+English:Threads
+Translated:Threads
+
+English:Resolution
+Translated:Resolution
+
+English:Extrusion Axis
+Translated:Extrusion Axis
+
+English:Optimize Overhangs
+Translated:Optimize Overhangs
+
+English:Keep Fan Always On
+Translated:Keep Fan Always On
+
+English:Bridging Fan Speed
+Translated:Bridging Fan Speed
+
+English:Enable Fan If Layer\nPrint Time Is Below
+Translated:Enable Fan If Layer\nPrint Time Is Below
+
+English:Z Offset
+Translated:Z Offset
+
+English:G-Code Flavor
+Translated:G-Code Flavor
+
+English:Use Relative E Distances
+Translated:Use Relative E Distances
+
+English:Use Arcs
+Translated:Use Arcs
+
+English:Use G0
+Translated:Use G0
+
+English:Firmware
+Translated:Firmware
+
+English:Use Firmware Retraction
+Translated:Use Firmware Retraction
+
+English:Vibration Limit
+Translated:Vibration Limit
+
+English:Layer Change G-Code
+Translated:Layer Change G-Code
+
+English:Tool Change G-Code
+Translated:Tool Change G-Code
+
+English:Pause G-Code
+Translated:Pause G-Code
+
+English:Resume G-Code
+Translated:Resume G-Code
+
+English:Cancel G-Code
+Translated:Cancel G-Code
+
+English:Extruder Offset
+Translated:Extruder Offset
+
+English:Position (for multi-extrude printers)
+Translated:Position (for multi-extrude printers)
+
+English:Change Tool
+Translated:Change Tool
+
+English:Z Lift
+Translated:Z Lift
+
+English:Extra Length On Restart
+Translated:Extra Length On Restart
+
+English:Retract on Layer Change
+Translated:Retract on Layer Change
+
+English:Wipe Before Retract
+Translated:Wipe Before Retract
+
+English:Retraction When Tool is Disabled (for multi-extruders)
+Translated:Retraction When Tool is Disabled (for multi-extruders)
+
+English:Paused
+Translated:Paused
+
+English:Printing Paused
+Translated:Printing Paused
+
+English:Ok
+Translated:Ok
+
+English:Finished Print
+Translated:Finished Print
+
+English:Done Printing
+Translated:Done Printing
+
 English:Save As
 Translated:Save As
 
@@ -918,4 +1380,3 @@ Translated:Installed Plugins
 
 English:Select a Design Tool
 Translated:Select a Design Tool
-

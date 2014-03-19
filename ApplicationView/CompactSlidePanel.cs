@@ -50,80 +50,9 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
-    public class MainSlidePanel : GuiWidget
+    public class CompactSlidePanel : SlidePanel
     {
         SimpleTextTabWidget aboutTabView;
-        static MainSlidePanel globalInstance;
-        TabControl advancedControlsTabControl;
-        TabControl mainControlsTabControl;
-        SliceSettingsWidget sliceSettingsWidget;
-        TabControl advancedControls;
-        private delegate void ReloadPanel();
-        event EventHandler unregisterEvents;
-        public RootedObjectEventHandler ReloadPanelTrigger = new RootedObjectEventHandler();
-        public RootedObjectEventHandler SetUpdateNotificationTrigger = new RootedObjectEventHandler();
-        
-
-        public MainSlidePanel()
-        {
-            
-        }
-
-        public void AddElements()
-        {
-            //this.AddChild(new MainSlide());
-            this.AddChild(new WidescreenPanel());
-            this.AnchorAll();
-            SetUpdateNotification(this, null);
-        }
-
-        public static MainSlidePanel Instance
-        {
-            get
-            {
-                if (globalInstance == null)
-                {
-                    globalInstance = new MainSlidePanel();
-                    globalInstance.AddElements();
-                }
-                return globalInstance;
-            }
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-
-        void DoNotChangePanel()
-        {
-            //Empty function used as placeholder
-        }
-
-
-        public void SetUpdateNotification(object sender, EventArgs widgetEvent)
-        {
-            SetUpdateNotificationTrigger.CallEvents(this, null);
-        }
-
-        public void ReloadBackPanel()
-        {
-            ReloadPanelTrigger.CallEvents(this, null);
-        }
-
-        void OnReloadBackPanel(EventArgs e)
-        {
-            ReloadPanelTrigger.CallEvents(this, e);
-        }
-    }
-
-    public class MainSlide : SlidePanel
-    {
-        SimpleTextTabWidget aboutTabView;        
         TabControl advancedControlsTabControl;
         TabControl mainControlsTabControl;
         SliceSettingsWidget sliceSettingsWidget;
@@ -133,7 +62,6 @@ namespace MatterHackers.MatterControl
         public TabPage AboutTabPage;
         TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-        static MainSlide globalInstance;
         public EventHandler AdvancedControlsLoaded;
 
         GuiWidget LeftPanel
@@ -146,7 +74,7 @@ namespace MatterHackers.MatterControl
             get { return GetPannel(1); }
         }
 
-        public MainSlide()
+        public CompactSlidePanel()
             : base(2)
         {
             AddElements();
@@ -217,7 +145,7 @@ namespace MatterHackers.MatterControl
                 // and add it
                 this.LeftPanel.AddChild(mainControlsTabControl);
 
-                
+
             }
 
             // do the back panel
@@ -261,18 +189,6 @@ namespace MatterHackers.MatterControl
             HelpTextWidget.Instance.HideHoverText();
         }
 
-        public static MainSlide Instance
-        {
-            get
-            {
-                if (globalInstance == null)
-                {
-                    globalInstance = new MainSlide();
-                }
-                return globalInstance;
-            }
-        }
-
         public override void OnClosed(EventArgs e)
         {
             if (unregisterEvents != null)
@@ -305,7 +221,7 @@ namespace MatterHackers.MatterControl
             int advancedControlsWidgetIndex = RightPanel.GetChildIndex(this.advancedControlsTabControl);
             RightPanel.RemoveChild(advancedControlsWidgetIndex);
 
-            this.advancedControlsTabControl = CreateNewAdvancedControlsTab(sliceSettingsUiState);            
+            this.advancedControlsTabControl = CreateNewAdvancedControlsTab(sliceSettingsUiState);
 
             RightPanel.AddChild(this.advancedControlsTabControl, advancedControlsWidgetIndex);
 
@@ -318,7 +234,7 @@ namespace MatterHackers.MatterControl
             this.LocalBounds = new RectangleDouble(0, 0, this.LocalBounds.Width - 1, 10);
             this.LocalBounds = localBounds;
             OnAdvancedControlsLoaded();
-            
+
         }
 
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
@@ -362,7 +278,7 @@ namespace MatterHackers.MatterControl
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
 
-            
+
             return advancedControls;
         }
 
@@ -387,8 +303,8 @@ namespace MatterHackers.MatterControl
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
             PrintQueue.PrintQueueControl.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             PrintQueue.PrintQueueControl.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            MainSlidePanel.Instance.SetUpdateNotificationTrigger.RegisterEvent(OnSetUpdateNotification, ref unregisterEvents);
-            MainSlidePanel.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
+            ApplicationWidget.Instance.SetUpdateNotificationTrigger.RegisterEvent(OnSetUpdateNotification, ref unregisterEvents);
+            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
         }
 
         class NotificationWidget : GuiWidget
@@ -455,7 +371,7 @@ namespace MatterHackers.MatterControl
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
         {
             ActiveSliceSettings.Instance.LoadSettingsForPrinter();
-            MainSlidePanel.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadBackPanel();
         }
     }
 }

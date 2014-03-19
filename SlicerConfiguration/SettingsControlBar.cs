@@ -139,24 +139,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 slic3rMenuItem.Selected += (sender, e) =>
                 {
                     ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
-                    MainSlidePanel.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 };
 
                 MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.CuraEngine.ToString());
                 curaEnginMenuItem.Selected += (sender, e) =>
                 {
                     ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
-                    MainSlidePanel.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 };
 
-#if false
-                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngine.MatterSlice.ToString());
+                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.MatterSlice.ToString());
                 matterSliceMenuItem.Selected += (sender, e) =>
                 {
-                    PrinterCommunication.Instance.ActiveSliceEngine = ActivePrinterProfile.SlicingEngine.MatterSlice;
-                    MainSlidePanel.Instance.ReloadBackPanel();
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 };
-#endif
 
                 engineMenuDropList.SelectedValue = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
             }
@@ -235,7 +233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 bool goodLoad = ActiveSliceSettings.Instance.LoadSettingsFromIni();
                 if (goodLoad)
                 {
-                    MainSlidePanel.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 }
             });
 
@@ -291,7 +289,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         void revertbutton_Click(object sender, MouseEventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.LoadSettingsForPrinter();
-            MainSlidePanel.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadBackPanel();
         }
     }
 }

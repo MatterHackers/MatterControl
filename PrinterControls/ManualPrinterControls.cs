@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
             {
                 ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds = stringEvent.Data;
                 ActivePrinterProfile.Instance.ActivePrinter.Commit();
-                MainSlidePanel.Instance.ReloadBackPanel();
+                ApplicationWidget.Instance.ReloadBackPanel();
             }
         }
 
