@@ -61,16 +61,16 @@ namespace MatterHackers.MatterControl
 
         void SetDisplayAttributes()
         {
-            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;            
-            this.textImageButtonFactory.FixedHeight = 24;
-            this.textImageButtonFactory.fontSize = 12;
+			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;            
+			this.textImageButtonFactory.FixedHeight = 24;
+			this.textImageButtonFactory.fontSize = 12;
 
-            this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-            this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-            this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.ParentLeftRight;
         }
 
         public override RectangleDouble LocalBounds
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
             {
                 if (editSettingsWindow == null)
                 {
-                    editSettingsWindow = new EditMacrosWindow(GetMacros(), ReloadMacros);
+                    editSettingsWindow = new EditMacrosWindow(ReloadMacros);
                     editSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editSettingsWindow = null; };
                 }
                 else

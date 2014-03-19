@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl
 
         public DataStorage.CustomCommands ActiveMacro;
 
-        public EditMacrosWindow(IEnumerable<DataStorage.CustomCommands> macros, EventHandler functionToCallOnSave)
+        public EditMacrosWindow(EventHandler functionToCallOnSave)
             : base(360, 420)
         {
             Title = LocalizedString.Get("Macro Editor");
