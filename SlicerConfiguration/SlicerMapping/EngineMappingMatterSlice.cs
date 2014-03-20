@@ -36,21 +36,21 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class CuraEngineMappings : SliceEngineMaping
+    public class EngineMappingsMatterControl : SliceEngineMaping
     {
         // private so that this class is a sigleton
-        CuraEngineMappings()
+        EngineMappingsMatterControl()
         {
         }
 
-        static CuraEngineMappings instance = null;
-        public static CuraEngineMappings Instance
+        static EngineMappingsMatterControl instance = null;
+        public static EngineMappingsMatterControl Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new CuraEngineMappings();
+                    instance = new EngineMappingsMatterControl();
                 }
                 return instance;
             }
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public override bool MapContains(string defaultKey)
         {
-            foreach (MapItem mapItem in curaToDefaultMapping)
+            foreach (MapItem mapItem in matterSliceToDefaultMapping)
             {
                 if (mapItem.DefaultKey == defaultKey)
                 {
@@ -69,10 +69,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return false;
         }
 
-        static MapItem[] curaToDefaultMapping = 
+        static MapItem[] matterSliceToDefaultMapping = 
         {
-            new ScaledSingleNumber("layerThickness", "layer_height", 1000),
-            new AsPercentOfReferenceOrDirect("initialLayerThickness", "first_layer_height", "layer_height", 1000),
+            new MapItem("layerThickness", "layer_height"),
+            new AsPercentOfReferenceOrDirect("initialLayerThickness", "first_layer_height", "layer_height", 1),
             new ScaledSingleNumber("filamentDiameter", "filament_diameter", 1000),
             new ScaledSingleNumber("extrusionWidth", "nozzle_diameter", 1000),
 
@@ -167,15 +167,15 @@ enableOozeShield = 0;
 #endif
         };
 
-        public static string GetCuraCommandLineSettings()
+        public static string GetMatterSliceCommandLineSettings()
         {
             StringBuilder settings = new StringBuilder();
-            for (int i = 0; i < curaToDefaultMapping.Length; i++)
+            for (int i = 0; i < matterSliceToDefaultMapping.Length; i++)
             {
-                string curaValue = curaToDefaultMapping[i].TranslatedValue;
-                if (curaValue != null && curaValue != "")
+                string matterSliceValue = matterSliceToDefaultMapping[i].TranslatedValue;
+                if (matterSliceValue != null && matterSliceValue != "")
                 {
-                    settings.Append(string.Format("-s {0}=\"{1}\" ", curaToDefaultMapping[i].CuraKey, curaValue));
+                    settings.Append(string.Format("-s {0}=\"{1}\" ", matterSliceToDefaultMapping[i].CuraKey, matterSliceValue));
                 }
             }
 
