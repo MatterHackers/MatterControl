@@ -36,21 +36,21 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class EngineMappingsMatterControl : SliceEngineMaping
+    public class EngineMappingsMatterSlice : SliceEngineMaping
     {
         // private so that this class is a sigleton
-        EngineMappingsMatterControl()
+        EngineMappingsMatterSlice()
         {
         }
 
-        static EngineMappingsMatterControl instance = null;
-        public static EngineMappingsMatterControl Instance
+        static EngineMappingsMatterSlice instance = null;
+        public static EngineMappingsMatterSlice Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new EngineMappingsMatterControl();
+                    instance = new EngineMappingsMatterSlice();
                 }
                 return instance;
             }
