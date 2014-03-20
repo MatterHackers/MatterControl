@@ -197,12 +197,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-                                    slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + CuraEngineMappings.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                     //Debug.Write(slicerProcess.StartInfo.Arguments);
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-                                    slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + CuraEngineMappings.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingsMatterSlice.GetMatterSliceCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                     break;
                             }
 
