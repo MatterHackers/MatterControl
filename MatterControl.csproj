@@ -247,10 +247,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\agg-sharp\clipper_library\clipper_library.csproj">
-      <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
-      <Name>clipper_library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\agg-sharp\Csg\Csg.csproj">
       <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
       <Name>Csg</Name>
@@ -334,6 +330,10 @@
     <ProjectReference Include="..\agg-sharp\Agg\Agg.csproj">
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MatterSlice\clipper_library\clipper_library.csproj">
+      <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
+      <Name>clipper_library</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
