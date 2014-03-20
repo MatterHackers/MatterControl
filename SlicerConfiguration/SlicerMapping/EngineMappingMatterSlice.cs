@@ -109,8 +109,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             new NotPassedItem("", "bed_size"),
 
-            new PrintCenterX("posx", "print_center"),
-            new PrintCenterY("posy", "print_center"),
+            new PrintCenterX("objectPosition.X", "print_center"),
+            new PrintCenterY("objectPosition.Y", "print_center"),
 
             new NotPassedItem("", "build_height"),
 
