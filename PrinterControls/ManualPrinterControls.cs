@@ -690,7 +690,7 @@ namespace MatterHackers.MatterControl
 
         private void SetDisplayAttributes()
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             
             this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
             this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
@@ -917,9 +917,9 @@ namespace MatterHackers.MatterControl
 
         private void onThemeChanged(object sender, EventArgs e)
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            SetVisibleControls();
-            this.Invalidate();
+            //this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            //SetVisibleControls();
+            //this.Invalidate();
         }
 
 		void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)

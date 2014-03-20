@@ -72,6 +72,7 @@
     <Compile Include="ActionBar\PrinterActionRow.cs" />
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
+    <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
     <Compile Include="ConfigurationPage\ConfigurationPage.cs" />
