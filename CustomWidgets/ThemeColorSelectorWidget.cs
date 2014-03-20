@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 					themeButtons.AddChild(colorButton);
 				}
 			}
-			themeButtons.Margin = new BorderDouble(5);
+			themeButtons.Margin = new BorderDouble(2);
 			this.AddChild(themeButtons);
             this.VAnchor = VAnchor.ParentCenter;
 		}
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
             base.OnDraw(graphics2D);
             RectangleDouble border = LocalBounds;
             border.Deflate(new BorderDouble(1));
-            graphics2D.Rectangle(border, ActiveTheme.Instance.SecondaryBackgroundColor, 4);
+            //graphics2D.Rectangle(border, ActiveTheme.Instance.SecondaryBackgroundColor, 4);
         }
 	}
 }
