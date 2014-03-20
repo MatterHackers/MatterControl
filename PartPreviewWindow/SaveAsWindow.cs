@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory ();
 
 		public SaveAsWindow()
-			: base (350, 250)
+			: base (480, 250)
 		{
 			Title = "Save As Window";
 
@@ -57,22 +57,44 @@ namespace MatterHackers.MatterControl
 				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
 				presetsFormContainer.Padding = new BorderDouble(5);
 				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-				//topToBottom.AddChild(presetsFormContainer);
 			}
 
+			string fileNameLabel = "Design Name*";
+			TextWidget textBoxHeader = new TextWidget(fileNameLabel, pointSize: 12);
+			textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textBoxHeader.Margin = new BorderDouble (5);
+			textBoxHeader.HAnchor = HAnchor.ParentLeft;
+
+			string fileNameLabelFull = "Enter the name of your design.";
+			TextWidget textBoxHeaderFull = new TextWidget(fileNameLabelFull, pointSize: 9);
+			textBoxHeaderFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textBoxHeaderFull.Margin = new BorderDouble (5);
+			textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
+
+
 			//Adds text box and check box to the above container
-			MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here");
+			MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here");
 			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
 			textToAddWidget.Margin = new BorderDouble(5);
 
 			GuiWidget cTSpacer = new GuiWidget();
 			cTSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-			addToLibraryOption = new CheckBox("Add to Library",RGBA_Bytes.White);
+			string checkBoxHelpText = "Design will be saved to MatterControl library unless 'Add to Queue' box is checked.";
+			TextWidget checkBoxHelpFull = new TextWidget(checkBoxHelpText, pointSize: 9);
+			checkBoxHelpFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			checkBoxHelpFull.Margin = new BorderDouble(5);
+			checkBoxHelpFull.HAnchor = HAnchor.ParentLeftRight;
+
+			addToLibraryOption = new CheckBox("Add to Queue",RGBA_Bytes.White);
+			addToLibraryOption.Margin = new BorderDouble (5);
 			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
 
+			presetsFormContainer.AddChild(textBoxHeader);
+			presetsFormContainer.AddChild (textBoxHeaderFull);
 			presetsFormContainer.AddChild(textToAddWidget);
 			presetsFormContainer.AddChild(cTSpacer);
+			presetsFormContainer.AddChild(checkBoxHelpFull);
 			presetsFormContainer.AddChild(addToLibraryOption);
 			topToBottom.AddChild(presetsFormContainer);
 
@@ -103,6 +125,7 @@ namespace MatterHackers.MatterControl
 			topToBottom.AddChild(buttonRow);
 
 			ShowAsSystemWindow ();
+
 		}
 			
 	}
