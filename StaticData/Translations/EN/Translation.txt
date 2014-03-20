@@ -1380,6 +1380,7 @@ Translated:Installed Plugins
 
 English:Select a Design Tool
 Translated:Select a Design Tool
+
 English:Temperature (C)
 Translated:Temperature (C)
 

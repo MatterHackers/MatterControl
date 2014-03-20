@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
         SliceSettingsWidget.UiState sliceSettingsUiState;
 
+        FlowLayoutWidget ColumnZero;
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
         int ColumnTwoMinWidth = 1390;
@@ -84,15 +85,12 @@ namespace MatterHackers.MatterControl
                 BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
                 Padding = new BorderDouble(4);
 
+                ColumnZero = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 ColumnThree = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-                ColumnOne.VAnchor = VAnchor.ParentBottomTop;                
-                ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new PrintProgressBar());
-                ColumnOne.AddChild(new QueueTab());
-                ColumnOne.Width = 480; //Ordering here matters - must go after children are added
+
                 
                 //ColumnOne.Padding = new BorderDouble(4);
                 //ColumnTwo.Padding = new BorderDouble(4, 0);
@@ -101,16 +99,15 @@ namespace MatterHackers.MatterControl
                 LeftBorderLine = CreateBorderLine();
                 RightBorderLine = CreateBorderLine();
 
-                LoadColumnTwo();
+                LoadColumnZero();
+                LoadColumnOne();
+                LoadColumnTwo();                
                 
                 ColumnThree.VAnchor = VAnchor.ParentBottomTop;
                 
-                {
-                    advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
-                    ColumnThree.AddChild(advancedControlsTabControl);
-                    ColumnThree.Width = 590; //Ordering here matters - must go after children are added
-                }
+                LoadColumnThree();
 
+                AddChild(ColumnZero);
                 AddChild(ColumnOne);
                 AddChild(LeftBorderLine);
                 AddChild(ColumnTwo);
@@ -238,6 +235,7 @@ namespace MatterHackers.MatterControl
         {
             ColumnThree.Visible = !ColumnThree.Visible;
             ColThreeIsHidden = !ColumnThree.Visible;
+            SetVisibleStatus();
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -263,56 +261,88 @@ namespace MatterHackers.MatterControl
             SetVisibleStatus();
         }
 
+        void LoadColumnZero()
+        {
+            ColumnZero.RemoveAllChildren();
+            ColumnZero.AddChild(new ActionBarPlus());
+            ColumnZero.AddChild(new CompactSlidePanel());
+            ColumnZero.AnchorAll();
+        }
+
+        void LoadColumnOne()
+        {
+            ColumnOne.VAnchor = VAnchor.ParentBottomTop;
+            ColumnOne.AddChild(new ActionBarPlus());
+            ColumnOne.AddChild(new PrintProgressBar());
+            ColumnOne.AddChild(new QueueTab());
+            ColumnOne.Width = 480; //Ordering here matters - must go after children are added                      
+        }
+
+        void LoadColumnThree()
+        {
+            advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
+            ColumnThree.AddChild(advancedControlsTabControl);
+            ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
+            
+        }
+
+        int UiState;
+
         void SetVisibleStatus()
         {
             bool ColThreeVisible = ColumnThree.Visible;
             
+
             if (this.Width < ColumnThreeMinWidth)
-            {                
-                ColumnThree.Visible = false;
-                ColumnTwo.Visible = false;
+            {
+                if (UiState != 0)
+                {
+                    UiState = 0;
+                    ColumnThree.Visible = false;
+                    ColumnTwo.Visible = false;
+                    ColumnOne.Visible = false;
+                    ColumnZero.Visible = true;
 
-                ColumnOne.RemoveAllChildren();
-                ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new CompactSlidePanel());
-                ColumnOne.AnchorAll();
-                ColumnOne.Visible = true;
+                    ColumnOne.AnchorAll();
 
-                LeftBorderLine.Visible = false;
-                RightBorderLine.Visible = false;
+                    LeftBorderLine.Visible = false;
+                    RightBorderLine.Visible = false;
+                }
 
             }
-            else if (this.Width < ColumnTwoMinWidth)
+            else if (this.Width < ColumnTwoMinWidth && !ColThreeIsHidden)
             {
-                
-                ColumnTwo.Visible = false;
-                ColumnThree.Visible = !ColThreeIsHidden;
+                if (UiState != 1)
+                {
+                    UiState = 1;
+                    ColumnTwo.Visible = false;
+                    ColumnThree.Visible = !ColThreeIsHidden;
+                    ColumnOne.Visible = true;
+                    ColumnZero.Visible = false;
 
-                ColumnOne.RemoveAllChildren();
-                ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new PrintProgressBar());
-                ColumnOne.AddChild(new QueueTab());
-                ColumnOne.AnchorAll();
-                ColumnOne.Visible = true;
+                    ColumnOne.AnchorAll();
 
-                LeftBorderLine.Visible = false;
-                RightBorderLine.Visible = true;
+                    LeftBorderLine.Visible = false;
+                    RightBorderLine.Visible = true;
+                }
             }
             else
             {
-                ColumnThree.Visible = !ColThreeIsHidden;
-                ColumnTwo.Visible = true;
+                if (UiState != 2)
+                {
+                    UiState = 2;
+                    ColumnThree.Visible = !ColThreeIsHidden;
+                    ColumnTwo.Visible = true;
 
-                ColumnOne.RemoveAllChildren();
-                ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new PrintProgressBar());
-                ColumnOne.AddChild(new QueueTab());
-                ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                ColumnOne.Width = 480;
-                ColumnOne.Visible = true;
+                    ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                    ColumnOne.Width = 590;
 
-                LeftBorderLine.Visible = true;
-                RightBorderLine.Visible = true;
+                    ColumnOne.Visible = true;
+                    ColumnZero.Visible = false;
+
+                    LeftBorderLine.Visible = true;
+                    RightBorderLine.Visible = true;
+                }
             }
         }
 

@@ -1384,3 +1384,24 @@ Translated:Installed Plugins
 English:Select a Design Tool
 Translated:Select a Design Tool
 
+English:Language Settings
+Translated:Language Settings
+
+English:Select Model
+Translated:Select Model
+
+English:Theme Settings
+Translated:Theme Settings
+
+English:New updates are ready to install.
+Translated:New updates are ready to install.
+
+English:Select Language
+Translated:Select Language
+
+English:File not found on disk.
+Translated:File not found on disk.
+
+English:Not connected. Press 'Connect' to enable printing.
+Translated:Not connected. Press 'Connect' to enable printing.
+
