@@ -55,16 +55,15 @@ namespace MatterHackers.MatterControl
 			{
 				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
 				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
-				presetsFormContainer.Padding = new BorderDouble(3);
+				presetsFormContainer.Padding = new BorderDouble(5);
 				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-				topToBottom.AddChild(presetsFormContainer);
+				//topToBottom.AddChild(presetsFormContainer);
 			}
 
 			//Adds text box and check box to the above container
 			MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here");
 			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
 			textToAddWidget.Margin = new BorderDouble(5);
-			presetsFormContainer.AddChild(textToAddWidget);
 
 			GuiWidget cTSpacer = new GuiWidget();
 			cTSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -75,19 +74,17 @@ namespace MatterHackers.MatterControl
 			presetsFormContainer.AddChild(textToAddWidget);
 			presetsFormContainer.AddChild(cTSpacer);
 			presetsFormContainer.AddChild(addToLibraryOption);
+			topToBottom.AddChild(presetsFormContainer);
 
-			//Sets button attributes
-			//SetButtonAttributes();
 
 			//Creates button container on the bottom of window 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				buttonRow.HAnchor = HAnchor.ParentLeftRight;
-				//buttonRow.VAnchor = VAnchor.ParentBottomTop;
-				buttonRow.Padding = new BorderDouble(0,8);
+				buttonRow.Padding = new BorderDouble(0,3);
 			}
-
+				
 			saveAsButton = textImageButtonFactory.Generate("Save As".Localize(), centerText: true);
 			saveAsButton.Visible = true;
 			saveAsButton.Cursor = Cursors.Hand;
@@ -103,29 +100,11 @@ namespace MatterHackers.MatterControl
 			buttonRow.AddChild(saveAsButton);
 			buttonRow.AddChild(hButtonSpacer);
 			buttonRow.AddChild(cancelSaveButton);
-
 			topToBottom.AddChild(buttonRow);
-			AddChild(topToBottom);
 
 			ShowAsSystemWindow ();
 		}
-
-
-
-		//public void SetButtonAttributes()
-		//{
-
-			//this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;            
-			//this.textImageButtonFactory.FixedHeight = 24;
-			//this.textImageButtonFactory.fontSize = 12;
-
-			//this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			//this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			//this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			//this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			//this.HAnchor = HAnchor.ParentLeftRight;
-
-		//}
+			
 	}
 }
 

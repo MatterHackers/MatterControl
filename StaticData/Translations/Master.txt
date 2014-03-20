@@ -1441,3 +1441,33 @@ Translated:To enable GCode export, select a printer profile
 English:Show file in folder after save
 Translated:Show file in folder after save
 
+English:MatterControl: Submit an Issue
+Translated:MatterControl: Submit an Issue
+
+English:Submit
+Translated:Submit
+
+English:How can we help?
+Translated:How can we help?
+
+English:Submitting your information...
+Translated:Submitting your information...
+
+English:Question*
+Translated:Question*
+
+English:Briefly describe your question
+Translated:Briefly describe your question
+
+English:Details*
+Translated:Details*
+
+English:Fill in the details here
+Translated:Fill in the details here
+
+English:Your Email Address*
+Translated:Your Email Address*
+
+English:Your Name*
+Translated:Your Name*
+
