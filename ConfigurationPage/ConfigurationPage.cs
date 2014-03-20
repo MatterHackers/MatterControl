@@ -40,6 +40,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl;
 
 namespace MatterHackers.MatterControl
 {
@@ -79,11 +80,80 @@ namespace MatterHackers.MatterControl
             mainLayoutContainer.Padding = new BorderDouble(3, 0, 3, 10);
             
             AddEePromControls(mainLayoutContainer);
-            AddPrintLevelingControls(mainLayoutContainer);       
+            AddPrintLevelingControls(mainLayoutContainer);
+
+            FlowLayoutWidget settingsControls = new FlowLayoutWidget();
+            settingsControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+            AddThemeControls(settingsControls);
+            AddLanguageControls(settingsControls);            
+
+            mainLayoutContainer.AddChild(settingsControls);
+
             AddChild(mainLayoutContainer);
 
             AddHandlers();
             SetVisibleControls();
+        }
+
+        private void AddThemeControls(FlowLayoutWidget controlsTopToBottomLayout)
+        {
+            DisableableWidget container = new DisableableWidget();   
+            
+            GroupBox themeControlsGroupBox = new GroupBox(LocalizedString.Get("Theme Settings"));
+            themeControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            themeControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+            themeControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            themeControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
+            themeControlsGroupBox.Height = 78;            
+
+            ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
+            themeControlsGroupBox.AddChild(themeSelector);
+
+            container.AddChild(themeControlsGroupBox);
+
+            controlsTopToBottomLayout.AddChild(container);
+        }
+
+        private void AddLanguageControls(FlowLayoutWidget controlsTopToBottomLayout)
+        {
+            DisableableWidget container = new DisableableWidget();
+            
+            GroupBox languageControlsGroupBox = new GroupBox(LocalizedString.Get("Language Settings"));
+            languageControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            languageControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+            languageControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            languageControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
+            languageControlsGroupBox.Height = 78;
+            
+
+            LanguageSelector languageSelector = new LanguageSelector();
+            languageSelector.HAnchor = HAnchor.ParentLeftRight;
+            languageSelector.Margin = new BorderDouble(0);
+            languageSelector.LanguageDropList.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
+
+            languageControlsGroupBox.AddChild(languageSelector);
+
+            container.AddChild(languageControlsGroupBox);
+
+            controlsTopToBottomLayout.AddChild(container);
+        }
+
+        private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
+        {
+            string languageVerbose = ((DropDownList)sender).SelectedValue;
+            Dictionary<string, string> languageDict = new Dictionary<string, string>();
+            languageDict["Default"] = "EN";
+            languageDict["English"] = "EN";
+            languageDict["Spanish"] = "ES";
+
+            string languageCode;
+            if (!languageDict.TryGetValue(languageVerbose,out languageCode))
+            {
+                languageCode = "EN";
+            }
+
+            UserSettings.Instance.set("Language", languageCode);
         }
 
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -96,7 +166,6 @@ namespace MatterHackers.MatterControl
             eePromControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             eePromControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			eePromControlsGroupBox.Height = 68;
-
             {
 				FlowLayoutWidget eePromControlsLayout = new FlowLayoutWidget();
 				eePromControlsLayout.HAnchor |= HAnchor.ParentLeftRight;
@@ -285,7 +354,7 @@ namespace MatterHackers.MatterControl
 
         private void SetDisplayAttributes()
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             
             this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
             this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
@@ -373,9 +442,9 @@ namespace MatterHackers.MatterControl
 
         private void onThemeChanged(object sender, EventArgs e)
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            SetVisibleControls();
-            this.Invalidate();
+            //this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            //SetVisibleControls();
+            //this.Invalidate();
         }
 
 		void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)

@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl
 
         public LanguageSelector()
         {
-            string defaultModelDropDownLbl = LocalizedString.Get("Select Model");
+            string defaultModelDropDownLbl = LocalizedString.Get("Select Language");
             string defaultModelDropDownLblFull = string.Format("- {0} -", defaultModelDropDownLbl);
 
             List<string> languageList = new List<string>( new string[]{"English", "Spanish", "German"});
