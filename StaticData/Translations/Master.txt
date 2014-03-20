@@ -1420,3 +1420,24 @@ Translated:Max Temp.
 English:Slicing Error. Please review your slice settings.
 Translated:Slicing Error. Please review your slice settings.
 
+English:Extruder Temperature Settings
+Translated:Extruder Temperature Settings
+
+English:Export File
+Translated:Export File
+
+English:File export options
+Translated:File export options
+
+English:Export as
+Translated:Export as
+
+English:Note
+Translated:Note
+
+English:To enable GCode export, select a printer profile
+Translated:To enable GCode export, select a printer profile
+
+English:Show file in folder after save
+Translated:Show file in folder after save
+

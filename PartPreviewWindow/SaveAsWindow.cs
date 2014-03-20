@@ -18,14 +18,12 @@ namespace MatterHackers.MatterControl
 		Button saveAsButton;
 		Button cancelSaveButton;
 		CheckBox addToLibraryOption;
-		protected TextImageButtonFactory testButtonFactory = new TextImageButtonFactory ();
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory ();
 
 		public SaveAsWindow()
 			: base (350, 250)
 		{
 			Title = "Save As Window";
-
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
@@ -64,17 +62,14 @@ namespace MatterHackers.MatterControl
 
 			//Adds text box and check box to the above container
 			MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here");
-			//textToAddWidget.VAnchor = VAnchor.ParentCenter;
 			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
 			textToAddWidget.Margin = new BorderDouble(5);
 			presetsFormContainer.AddChild(textToAddWidget);
 
-			GuiWidget cTSpacer = new GuiWidget ();
+			GuiWidget cTSpacer = new GuiWidget();
 			cTSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-
-			addToLibraryOption = new CheckBox("Add to Library");
-			//addToLibraryOption.VAnchor = VAnchor.Parent;
+			addToLibraryOption = new CheckBox("Add to Library",RGBA_Bytes.White);
 			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
 
 			presetsFormContainer.AddChild(textToAddWidget);
@@ -82,7 +77,7 @@ namespace MatterHackers.MatterControl
 			presetsFormContainer.AddChild(addToLibraryOption);
 
 			//Sets button attributes
-			SetButtonAttributes();
+			//SetButtonAttributes();
 
 			//Creates button container on the bottom of window 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
@@ -90,52 +85,47 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				buttonRow.HAnchor = HAnchor.ParentLeftRight;
 				//buttonRow.VAnchor = VAnchor.ParentBottomTop;
-				buttonRow.Padding = new BorderDouble(0,3);
+				buttonRow.Padding = new BorderDouble(0,8);
 			}
-				
-			//Adds SaveAs and Close Button to button container
-			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-		
 			saveAsButton = textImageButtonFactory.Generate("Save As".Localize(), centerText: true);
 			saveAsButton.Visible = true;
 			saveAsButton.Cursor = Cursors.Hand;
 
+			//Adds SaveAs and Close Button to button container
+			GuiWidget hButtonSpacer = new GuiWidget();
+			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
 
 			cancelSaveButton = textImageButtonFactory.Generate ("Cancel", centerText: true);
 			cancelSaveButton.Visible = true;
 			cancelSaveButton.Cursor = Cursors.Hand;
 
-
-			buttonRow.AddChild(this.saveAsButton);
+			buttonRow.AddChild(saveAsButton);
 			buttonRow.AddChild(hButtonSpacer);
-			buttonRow.AddChild(this.cancelSaveButton);
-
+			buttonRow.AddChild(cancelSaveButton);
 
 			topToBottom.AddChild(buttonRow);
 			AddChild(topToBottom);
-
 
 			ShowAsSystemWindow ();
 		}
 
 
 
+		//public void SetButtonAttributes()
+		//{
 
-		public void SetButtonAttributes()
-		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;            
-			this.textImageButtonFactory.FixedHeight = 24;
-			this.textImageButtonFactory.fontSize = 12;
+			//this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;            
+			//this.textImageButtonFactory.FixedHeight = 24;
+			//this.textImageButtonFactory.fontSize = 12;
 
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.HAnchor = HAnchor.ParentLeftRight;
+			//this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
+			//this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			//this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+			//this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			//this.HAnchor = HAnchor.ParentLeftRight;
 
-		}
+		//}
 	}
 }
 
