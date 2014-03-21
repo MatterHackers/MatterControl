@@ -222,7 +222,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandModelOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Model"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                string label = LocalizedString.Get("MODEL");
+				expandModelOptions = expandMenuOptionFactory.GenerateCheckBoxButton(label, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandModelOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandModelOptions);
                 expandModelOptions.Checked = true;
@@ -232,7 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 //modelOptionsContainer.Visible = false;
                 buttonRightPanel.AddChild(modelOptionsContainer);
 
-				expandLayerOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Layer"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandLayerOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("LAYER"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandLayerOptions.Margin = new BorderDouble(bottom: 2);
                 //buttonRightPanel.AddChild(expandLayerOptions);
 
@@ -241,7 +242,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 layerOptionsContainer.Visible = false;
                 buttonRightPanel.AddChild(layerOptionsContainer);
 
-				expandDisplayOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Display"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandDisplayOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("DISPLAY"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandDisplayOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandDisplayOptions);
                 expandDisplayOptions.Checked = true;
@@ -279,10 +280,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             modelInfoContainer.HAnchor = HAnchor.ParentLeftRight;
             modelInfoContainer.Padding = new BorderDouble(5);
 
-			string printTimeLbl = LocalizedString.Get ("Print Time");
+			string printTimeLbl = LocalizedString.Get ("PRINT TIME");
 			string printTimeLblFull = string.Format ("{0}:", printTimeLbl);
             // put in the print time
-			modelInfoContainer.AddChild(new TextWidget(printTimeLblFull, textColor: RGBA_Bytes.White));
+            modelInfoContainer.AddChild(new TextWidget(printTimeLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10));
             {
                 string timeRemainingText = "---";
 
@@ -302,42 +303,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                 }
 
-                GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0}", timeRemainingText), textColor: RGBA_Bytes.White, pointSize: 10);
-                estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
-                estimatedPrintTime.Margin = new BorderDouble(3, 0, 0, 3);
+                GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0}", timeRemainingText), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 14);
+                //estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
+                estimatedPrintTime.Margin = new BorderDouble(0, 9, 0 ,3);
                 modelInfoContainer.AddChild(estimatedPrintTime);
             }
 
-            //modelInfoContainer.AddChild(new TextWidget("Size:", textColor: RGBA_Bytes.White));
+            //modelInfoContainer.AddChild(new TextWidget("Size:", textColor: ActiveTheme.Instance.PrimaryTextColor));
             
-			string filamentLengthLbl = LocalizedString.Get ("Filament Length");
+			string filamentLengthLbl = LocalizedString.Get ("FILAMENT LENGTH");
 			string filamentLengthLblFull = string.Format ("{0}:", filamentLengthLbl);
             // show the filament used
-			modelInfoContainer.AddChild(new TextWidget(filamentLengthLblFull, textColor: RGBA_Bytes.White));
+            modelInfoContainer.AddChild(new TextWidget(filamentLengthLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
             {
                 double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.NozzleDiameter);
 
-                GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.0} mm", filamentUsed), textColor: RGBA_Bytes.White, pointSize: 10);
-                estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
-                estimatedPrintTime.Margin = new BorderDouble(3, 0, 0, 3);
+                GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.0} mm", filamentUsed), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                //estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
+                estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
                 modelInfoContainer.AddChild(estimatedPrintTime);
             }
 
-			string filamentVolumeLbl = LocalizedString.Get ("Filament Volume");
+			string filamentVolumeLbl = LocalizedString.Get ("FILAMENT VOLUME");
 			string filamentVolumeLblFull = string.Format("{0}:", filamentVolumeLbl);
-			modelInfoContainer.AddChild(new TextWidget(filamentVolumeLblFull, textColor: RGBA_Bytes.White));
+            modelInfoContainer.AddChild(new TextWidget(filamentVolumeLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
             {
                 double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.FillamentDiameter);
 
-                GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm3", filamentMm3/1000), textColor: RGBA_Bytes.White, pointSize: 10);
-                estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
-                estimatedPrintTime.Margin = new BorderDouble(3, 0, 0, 3);
+                GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm3", filamentMm3 / 1000), pointSize:14, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                //estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
+                estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
                 modelInfoContainer.AddChild(estimatedPrintTime);
             }
 
-			string weightLbl = LocalizedString.Get("Weight");
+			string weightLbl = LocalizedString.Get("EST. WEIGHT");
 			string weightLblFull = string.Format("{0}:", weightLbl);
-			modelInfoContainer.AddChild(new TextWidget(weightLblFull, textColor: RGBA_Bytes.White));
+            modelInfoContainer.AddChild(new TextWidget(weightLblFull, pointSize: 9, textColor: ActiveTheme.Instance.SecondaryTextColor));
             {
                 var density = 1.0;
                 string filamentType = "PLA";
@@ -352,13 +353,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 double filamentWeightGrams = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(ActiveSliceSettings.Instance.FillamentDiameter, density);
 
-                GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} g", filamentWeightGrams), textColor: RGBA_Bytes.White, pointSize: 10);
-                estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
-                estimatedPrintTime.Margin = new BorderDouble(3, 0, 0, 3);
+                GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} g", filamentWeightGrams), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                //estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
+                estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
                 modelInfoContainer.AddChild(estimatedPrintTime);
             }
 
-            //modelInfoContainer.AddChild(new TextWidget("Layer Count:", textColor: RGBA_Bytes.White));
+            //modelInfoContainer.AddChild(new TextWidget("Layer Count:", textColor: ActiveTheme.Instance.PrimaryTextColor));
 
             buttonPanel.AddChild(modelInfoContainer);
 
@@ -373,15 +374,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
             layerInfoContainer.Padding = new BorderDouble(5);
 
-			layerInfoContainer.AddChild(new TextWidget("Layer Number:", textColor: RGBA_Bytes.White));
-            layerInfoContainer.AddChild(new TextWidget("Layer Height:", textColor: RGBA_Bytes.White));
-            layerInfoContainer.AddChild(new TextWidget("Num GCodes:", textColor: RGBA_Bytes.White));
-            layerInfoContainer.AddChild(new TextWidget("Filament Used:", textColor: RGBA_Bytes.White));
-            layerInfoContainer.AddChild(new TextWidget("Weight:", textColor: RGBA_Bytes.White));
-            layerInfoContainer.AddChild(new TextWidget("Print Time:", textColor: RGBA_Bytes.White));
-            layerInfoContainer.AddChild(new TextWidget("Extrude Speeds:", textColor: RGBA_Bytes.White));
-            layerInfoContainer.AddChild(new TextWidget("Move Speeds:", textColor: RGBA_Bytes.White));
-            layerInfoContainer.AddChild(new TextWidget("Retract Speeds:", textColor: RGBA_Bytes.White));
+            layerInfoContainer.AddChild(new TextWidget("Layer Number:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+            layerInfoContainer.AddChild(new TextWidget("Layer Height:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+            layerInfoContainer.AddChild(new TextWidget("Num GCodes:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+            layerInfoContainer.AddChild(new TextWidget("Filament Used:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+            layerInfoContainer.AddChild(new TextWidget("Weight:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+            layerInfoContainer.AddChild(new TextWidget("Print Time:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+            layerInfoContainer.AddChild(new TextWidget("Extrude Speeds:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+            layerInfoContainer.AddChild(new TextWidget("Move Speeds:", textColor: ActiveTheme.Instance.PrimaryTextColor));
+            layerInfoContainer.AddChild(new TextWidget("Retract Speeds:", textColor: ActiveTheme.Instance.PrimaryTextColor));
 
             buttonPanel.AddChild(layerInfoContainer);
 
@@ -397,7 +398,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerInfoContainer.Padding = new BorderDouble(5);
 
             // put in a show grid check box
-			CheckBox showGrid = new CheckBox(LocalizedString.Get("Show Grid"), textColor: RGBA_Bytes.White);
+            CheckBox showGrid = new CheckBox(LocalizedString.Get("Show Grid"), textColor: ActiveTheme.Instance.PrimaryTextColor);
             showGrid.Checked = gcodeViewWidget.RenderGrid;
             showGrid.CheckedStateChanged += (sender, e) =>
             {
@@ -406,7 +407,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerInfoContainer.AddChild(showGrid);
 
             // put in a show moves checkbox
-			CheckBox showMoves = new CheckBox(LocalizedString.Get("Show Moves"), textColor: RGBA_Bytes.White);
+            CheckBox showMoves = new CheckBox(LocalizedString.Get("Show Moves"), textColor: ActiveTheme.Instance.PrimaryTextColor);
             showMoves.Checked = gcodeViewWidget.RenderMoves;
             showMoves.CheckedStateChanged += (sender, e) =>
             {
@@ -415,7 +416,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerInfoContainer.AddChild(showMoves);
 
             // put in a show Retractions checkbox
-            CheckBox showRetractions = new CheckBox(LocalizedString.Get("Show Retractions"), textColor: RGBA_Bytes.White);
+            CheckBox showRetractions = new CheckBox(LocalizedString.Get("Show Retractions"), textColor: ActiveTheme.Instance.PrimaryTextColor);
             showRetractions.Checked = gcodeViewWidget.RenderRetractions;
             showRetractions.CheckedStateChanged += (sender, e) =>
             {
@@ -423,7 +424,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
             layerInfoContainer.AddChild(showRetractions);
 
-            //layerInfoContainer.AddChild(new CheckBox("Show Retractions", textColor: RGBA_Bytes.White));
+            //layerInfoContainer.AddChild(new CheckBox("Show Retractions", textColor: ActiveTheme.Instance.PrimaryTextColor));
 
             buttonPanel.AddChild(layerInfoContainer);
 
@@ -691,11 +692,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             :base(FlowDirection.LeftToRight)
         {
             this.gcodeViewWidget = gcodeViewWidget;
-            
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+
+            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             
             editCurrentLayerIndex = new NumberEdit(1, pixelWidth: 40);
             editCurrentLayerIndex.VAnchor = VAnchor.ParentCenter;
@@ -740,10 +741,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             this.gcodeViewWidget = gcodeViewWidget;
 
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             
             prevLayerButton = textImageButtonFactory.Generate("<<");
             prevLayerButton.Click += new Button.ButtonEventHandler(prevLayer_ButtonClick);

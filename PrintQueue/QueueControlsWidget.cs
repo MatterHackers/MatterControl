@@ -24,11 +24,11 @@ namespace MatterHackers.MatterControl.PrintQueue
         public QueueControlsWidget()
         {
             SetDisplayAttributes();
-            
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+
+            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.borderWidth = 0;
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);

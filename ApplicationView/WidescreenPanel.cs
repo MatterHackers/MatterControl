@@ -60,15 +60,11 @@ namespace MatterHackers.MatterControl
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
         SliceSettingsWidget.UiState sliceSettingsUiState;
 
-        FlowLayoutWidget ColumnZero;
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
         int ColumnTwoMinWidth = 1390;
         FlowLayoutWidget ColumnThree;
         int ColumnThreeMinWidth = 990;
-
-        ActionBarPlus actionBarPlus;
-        QueueTab queueTab;
 
         View3DTransformPart part3DView;
         GcodeViewBasic partGcodeView;
@@ -203,18 +199,18 @@ namespace MatterHackers.MatterControl
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
             //Add the tab contents for 'Advanced Controls'
-            string printerControlsLabel = LocalizedString.Get("Controls");
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 18,
+            string printerControlsLabel = LocalizedString.Get("CONTROLS");
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 16,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string sliceSettingsLabel = LocalizedString.Get("Slice Settings");
+            string sliceSettingsLabel = LocalizedString.Get("SLICE SETTINGS");
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 18,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string configurationLabel = LocalizedString.Get("Configuration");
+            string configurationLabel = LocalizedString.Get("CONFIGURATION");
             ScrollableWidget configurationControls = new ConfigurationPage();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 18,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             return advancedControls;
@@ -423,17 +419,17 @@ namespace MatterHackers.MatterControl
 
             this.Margin = new BorderDouble(top: 4);
 
-            QueueTabPage = new TabPage(new QueueControlsWidget(), "Queue");
-            this.AddTab(new SimpleTextTabWidget(QueueTabPage, 18,
-                    ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+            QueueTabPage = new TabPage(new QueueControlsWidget(), "QUEUE");
+            this.AddTab(new SimpleTextTabWidget(QueueTabPage, 16,
+                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            LibraryTabPage = new TabPage(new PrintLibraryWidget(), "Library");
-            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, 18,
-                    ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+            LibraryTabPage = new TabPage(new PrintLibraryWidget(), "LIBRARY");
+            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, 16,
+                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            AboutTabPage = new TabPage(new AboutPage(), "About");
-            AboutTabView = new SimpleTextTabWidget(AboutTabPage, 18,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
+            AboutTabPage = new TabPage(new AboutPage(), "ABOUT");
+            AboutTabView = new SimpleTextTabWidget(AboutTabPage, 16,
+                        ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
             this.AddTab(AboutTabView);
 
             NumQueueItemsChanged(this, null);
@@ -443,7 +439,7 @@ namespace MatterHackers.MatterControl
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
         {
-            string queueStringBeg = LocalizedString.Get("Queue");
+            string queueStringBeg = LocalizedString.Get("QUEUE");
             string queueString = string.Format("{1} ({0})", PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
             QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
         }
@@ -466,7 +462,7 @@ namespace MatterHackers.MatterControl
                 {
                     UpdateControl.NeedToCheckForUpdateFirstTimeEver = false;
                     addedUpdateMark = new NotificationWidget();
-                    addedUpdateMark.OriginRelativeParent = new Vector2(63, 10);
+                    addedUpdateMark.OriginRelativeParent = new Vector2(72, 10);
                     AboutTabView.AddChild(addedUpdateMark);
                 }
 #else
@@ -479,7 +475,7 @@ namespace MatterHackers.MatterControl
                 {
                     addedUpdateMark.Visible = false;
                 }
-                AboutTabPage.Text = string.Format("About");
+                AboutTabPage.Text = string.Format("ABOUT");
             }
         }
 

@@ -1407,3 +1407,51 @@ Translated:Not connected. Press 'Connect' to enable printing.
 English:Loading Parts
 Translated:Loading Parts
 
+English:CONNECT
+Translated:CONNECT
+
+English:DISCONNECT
+Translated:DISCONNECT
+
+English:OPTIONS
+Translated:OPTIONS
+
+English:QUEUE
+Translated:QUEUE
+
+English:STATUS
+Translated:STATUS
+
+English:CONTROLS
+Translated:CONTROLS
+
+English:SLICE SETTINGS
+Translated:SLICE SETTINGS
+
+English:CONFIGURATION
+Translated:CONFIGURATION
+
+English:MODEL
+Translated:MODEL
+
+English:LAYER
+Translated:LAYER
+
+English:DISPLAY
+Translated:DISPLAY
+
+English:PRINT TIME
+Translated:PRINT TIME
+
+English:FILAMENT LENGTH
+Translated:FILAMENT LENGTH
+
+English:FILAMENT VOLUME
+Translated:FILAMENT VOLUME
+
+English:WEIGHT
+Translated:WEIGHT
+
+English:EST. WEIGHT
+Translated:EST. WEIGHT
+

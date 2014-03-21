@@ -30,11 +30,11 @@ namespace MatterHackers.MatterControl.ActionBar
 
         protected override void Initialize()
         {
-            actionBarButtonFactory.normalTextColor = RGBA_Bytes.White;
-            actionBarButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            actionBarButtonFactory.pressedTextColor = RGBA_Bytes.White;
+            actionBarButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            actionBarButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            actionBarButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            actionBarButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
+            actionBarButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
             actionBarButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -46,15 +46,15 @@ namespace MatterHackers.MatterControl.ActionBar
         protected override void AddChildElements()
         {
             actionBarButtonFactory.invertImageLocation = false;
-            string connectString = LocalizedString.Get("Connect");
+            string connectString = LocalizedString.Get("CONNECT");
             connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
-            connectPrinterButton.Margin = new BorderDouble(3, 0);
+            connectPrinterButton.Margin = new BorderDouble(0, 0, 3);
             connectPrinterButton.VAnchor = VAnchor.ParentCenter;
             connectPrinterButton.Cursor = Cursors.Hand;
 
-            string disconnectString = LocalizedString.Get("Disconnect");
+            string disconnectString = LocalizedString.Get("DISCONNECT");
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
-            disconnectPrinterButton.Margin = new BorderDouble(3, 0);
+            disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3);
             disconnectPrinterButton.VAnchor = VAnchor.ParentCenter;
             disconnectPrinterButton.Visible = false;
             disconnectPrinterButton.Cursor = Cursors.Hand;
@@ -62,13 +62,15 @@ namespace MatterHackers.MatterControl.ActionBar
             selectActivePrinterButton = new PrinterSelectButton();
             selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
             selectActivePrinterButton.Cursor = Cursors.Hand;
+            selectActivePrinterButton.Margin = new BorderDouble(0, 6);
+            
 
             actionBarButtonFactory.invertImageLocation = true;
 
             this.AddChild(connectPrinterButton);
             this.AddChild(disconnectPrinterButton);
             this.AddChild(selectActivePrinterButton);
-            this.AddChild(CreateOptionsMenu());
+            //this.AddChild(CreateOptionsMenu());
         }
 
         GuiWidget CreateOptionsMenu()
@@ -79,8 +81,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Margin = new BorderDouble(5, 0);
-            string optionsString = LocalizedString.Get("Options");
-            TextWidget optionsText = new TextWidget(optionsString, textColor: RGBA_Bytes.White);
+            string optionsString = LocalizedString.Get("OPTIONS");
+            TextWidget optionsText = new TextWidget(optionsString, textColor: ActiveTheme.Instance.PrimaryTextColor);
             optionsText.VAnchor = Agg.UI.VAnchor.ParentCenter;
             optionsText.Margin = new BorderDouble(0, 0, 3, 0);
             leftToRight.AddChild(optionsText);

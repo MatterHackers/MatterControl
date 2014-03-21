@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     partLabel.TextColor = WidgetTextColor;
                     partLabel.MinimumSize = new Vector2(1, 16);
 
-					string partStatusLblTxt = LocalizedString.Get ("Status");     
+					string partStatusLblTxt = LocalizedString.Get ("STATUS");     
 					string partStatusLblTxtTest = LocalizedString.Get ("Queued to Print");
 					string partStatusLblTxtFull = "{0}: {1}".FormatWith(partStatusLblTxt,partStatusLblTxtTest);
 
@@ -438,8 +438,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				//Set background and text color to new theme
 	            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-	            this.partLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-	            this.partStatus.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+	            this.partLabel.TextColor = RGBA_Bytes.White;
+                this.partStatus.TextColor = RGBA_Bytes.White;
 	            this.Invalidate();
 			}
         }
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 //RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
                 this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-                SetTextColors(ActiveTheme.Instance.PrimaryTextColor);
+                SetTextColors(RGBA_Bytes.White);
 
                 //graphics2D.Render(new Stroke(rectBorder, 4), ActiveTheme.Instance.SecondaryAccentColor);
             }            
