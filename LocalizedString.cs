@@ -49,8 +49,8 @@ namespace MatterHackers.Localizations
             string language = UserSettings.Instance.get("Language");
             if (language == null)
             {
-                language = "EN";
-                UserSettings.Instance.set("Language","EN");
+                language = "en";
+                UserSettings.Instance.set("Language","en");
             }
 
             if (MatterControlTranslationMap == null)
