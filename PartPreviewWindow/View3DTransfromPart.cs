@@ -114,6 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         List<PlatingMeshData> asynchPlatingDataList = new List<PlatingMeshData>();
 
         List<PlatingMeshData> MeshExtraData;
+        bool autoRotateEnabled = true;
 
         public Matrix4X4 SelectedMeshTransform
         {
@@ -191,6 +192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         MeshSelectInfo meshSelectInfo;
         public override void OnMouseDown(MouseEventArgs mouseEvent)
         {
+            autoRotateEnabled = false;
             base.OnMouseDown(mouseEvent);
             if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
             {
@@ -432,6 +434,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // don't load the mesh until we get all the rest of the interface built
                 meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
                 meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
+            }
+
+            UiThread.RunOnIdle(AutoSpin);
+        }
+
+        Stopwatch timeSinceLastSpin = new Stopwatch();
+        void AutoSpin(object state)
+        {
+            if (!WidgetHasBeenClosed && autoRotateEnabled)
+            {
+                // add it back in to keep it running.
+                UiThread.RunOnIdle(AutoSpin);
+
+                if (!timeSinceLastSpin.IsRunning || timeSinceLastSpin.ElapsedMilliseconds > 50)
+                {
+                    timeSinceLastSpin.Restart();
+
+                    Quaternion currentRotation = meshViewerWidget.TrackballTumbleWidget.TrackBallController.CurrentRotation.GetRotation();
+                    Quaternion invertedRotation = Quaternion.Invert(currentRotation);
+
+                    Quaternion rotateAboutZ = Quaternion.FromEulerAngles(new Vector3(0, 0, .01));
+                    rotateAboutZ = invertedRotation * rotateAboutZ * currentRotation;
+                    meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(rotateAboutZ);
+                    Invalidate();
+                }
             }
         }
 
