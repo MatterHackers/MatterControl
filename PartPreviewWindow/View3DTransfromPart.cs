@@ -224,6 +224,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnDraw(Graphics2D graphics2D)
         {
+            hasDrawn = true;
             base.OnDraw(graphics2D);
         }
 
@@ -439,6 +440,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             UiThread.RunOnIdle(AutoSpin);
         }
 
+        bool hasDrawn = false;
         Stopwatch timeSinceLastSpin = new Stopwatch();
         void AutoSpin(object state)
         {
@@ -447,8 +449,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // add it back in to keep it running.
                 UiThread.RunOnIdle(AutoSpin);
 
-                if (!timeSinceLastSpin.IsRunning || timeSinceLastSpin.ElapsedMilliseconds > 50)
+                if ((!timeSinceLastSpin.IsRunning || timeSinceLastSpin.ElapsedMilliseconds > 50)
+                    && hasDrawn)
                 {
+                    hasDrawn = false;
                     timeSinceLastSpin.Restart();
 
                     Quaternion currentRotation = meshViewerWidget.TrackballTumbleWidget.TrackBallController.CurrentRotation.GetRotation();
