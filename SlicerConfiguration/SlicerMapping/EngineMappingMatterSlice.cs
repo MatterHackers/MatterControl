@@ -98,14 +98,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("upSkinCount", "top_solid_layers"),
 
             new FanTranslator("fanFullOnLayerNr", "disable_fan_first_layers"),
-            new MapItem("coolHeadLift", "cool_extruder_lift"),
+            new MapItemToBool("coolHeadLift", "cool_extruder_lift"),
 
             new ScaledSingleNumber("retractionAmount", "retract_length", 1000),
             new MapItem("retractionSpeed", "retract_speed"),
             new ScaledSingleNumber("retractionMinimalDistance", "retract_before_travel", 1000),
             new ScaledSingleNumber("minimalExtrusionBeforeRetraction", "min_extrusion_before_retract", 1000),
 
-            new MapItem("spiralizeMode", "spiral_vase"),
+            new MapItemToBool("spiralizeMode", "spiral_vase"),
 
             new NotPassedItem("", "bed_size"),
 
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             // needs testing, not working
             new ScaledSingleNumber("supportLineDistance", "support_material_spacing", 1000),
-            new SupportMatterial("supportAngle", "support_material"),
+            new SupportMatterial("supportAngleDegrees", "support_material"),
             new NotPassedItem("", "support_material_threshold"),
             new MapItem("supportEverywhere", "support_material_create_internal_support"),
             new ScaledSingleNumber("supportXYDistance", "support_material_xy_distance", 1000),
@@ -125,6 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("minimalLayerTime", "slowdown_below_layer_time"),
 
             new InfillTranslator("sparseInfillLineDistance", "fill_density"),
+            new MapItem("infillAngleDegrees", "fill_angle"),
 
             new MapStartGCode("startCode", "start_gcode"),
             new MapEndGCode("endCode", "end_gcode"),
