@@ -41,6 +41,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         }
     }
 
+    public class MapItemToBool : MapItem
+    {
+        public override string TranslatedValue
+        {
+            get
+            {
+                if (base.TranslatedValue == "1")
+                {
+                    return "True";
+                }
+
+                return "False";
+            }
+        }
+
+        public MapItemToBool(string cura, string slicer)
+            : base(cura, slicer)
+        {
+        }
+    }
+
     public class ScaledSingleNumber : MapItem
     {
         internal double scale;
