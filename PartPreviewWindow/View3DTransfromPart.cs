@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         List<PlatingMeshData> asynchPlatingDataList = new List<PlatingMeshData>();
 
         List<PlatingMeshData> MeshExtraData;
-        bool autoRotateEnabled = true;
+        bool autoRotateEnabled = false;
 
         public Matrix4X4 SelectedMeshTransform
         {
