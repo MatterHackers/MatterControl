@@ -83,7 +83,7 @@ namespace MatterHackers.Localizations
 
         public void LoadTranslation(string pathToTranslationsFolder, string twoLetterIsoLanguageName)
         {
-            this.twoLetterIsoLanguageName = twoLetterIsoLanguageName;
+            this.twoLetterIsoLanguageName = twoLetterIsoLanguageName.ToLower();
 
             this.pathToMasterFile = Path.Combine(pathToTranslationsFolder, "Master.txt");
             ReadIntoDictonary(masterDictionary, pathToMasterFile);

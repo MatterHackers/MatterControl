@@ -1404,3 +1404,21 @@ Translated:File not found on disk.
 English:Not connected. Press 'Connect' to enable printing.
 Translated:Not connected. Press 'Connect' to enable printing.
 
+English:Oops! Could not find this file
+Translated:Oops! Could not find this file
+
+English:Would you like to remove it from the queue
+Translated:Would you like to remove it from the queue
+
+English:Item not Found
+Translated:Item not Found
+
+English:Yes
+Translated:Yes
+
+English:No
+Translated:No
+
+English:Saving
+Translated:Saving
+
