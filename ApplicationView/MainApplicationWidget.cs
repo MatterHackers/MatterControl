@@ -55,6 +55,23 @@ namespace MatterHackers.MatterControl
         static ApplicationWidget globalInstance;
         public RootedObjectEventHandler ReloadPanelTrigger = new RootedObjectEventHandler();
         public RootedObjectEventHandler SetUpdateNotificationTrigger = new RootedObjectEventHandler();
+        bool widescreenMode;
+
+        public bool WidescreenMode
+        { 
+            get 
+            { 
+                return widescreenMode; 
+            }
+            set 
+            { 
+                if (value != widescreenMode)
+                {
+                    widescreenMode = value;
+                    ApplicationWidget.Instance.ReloadBackPanel();
+                }
+            }
+        }
 
         public ApplicationWidget()
         {

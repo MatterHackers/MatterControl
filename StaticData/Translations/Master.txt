@@ -1404,3 +1404,6 @@ Translated:File not found on disk.
 English:Not connected. Press 'Connect' to enable printing.
 Translated:Not connected. Press 'Connect' to enable printing.
 
+English:Loading Parts
+Translated:Loading Parts
+
