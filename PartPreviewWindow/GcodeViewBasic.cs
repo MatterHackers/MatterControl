@@ -338,7 +338,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string weightLbl = LocalizedString.Get("EST. WEIGHT");
 			string weightLblFull = string.Format("{0}:", weightLbl);
-            modelInfoContainer.AddChild(new TextWidget(weightLblFull, pointSize: 9, textColor: ActiveTheme.Instance.SecondaryTextColor));
+            modelInfoContainer.AddChild(new TextWidget(weightLblFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
             {
                 var density = 1.0;
                 string filamentType = "PLA";
