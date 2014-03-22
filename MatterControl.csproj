@@ -73,6 +73,7 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
+    <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
     <Compile Include="ConfigurationPage\ConfigurationPage.cs" />

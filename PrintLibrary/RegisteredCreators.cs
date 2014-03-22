@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.CreatorPlugins
 {
     public class CreatorInformation
     {
