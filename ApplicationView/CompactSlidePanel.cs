@@ -119,9 +119,9 @@ namespace MatterHackers.MatterControl
                 mainControlsTabControl.AddTab(aboutTabView);
 
 
-                advancedControlsButtonFactory.normalTextColor = RGBA_Bytes.White;
-                advancedControlsButtonFactory.hoverTextColor = RGBA_Bytes.White;
-                advancedControlsButtonFactory.pressedTextColor = RGBA_Bytes.White;
+                advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+                advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+                advancedControlsButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 advancedControlsButtonFactory.fontSize = 10;
 
                 advancedControlsButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;

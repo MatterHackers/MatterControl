@@ -1455,3 +1455,18 @@ Translated:WEIGHT
 English:EST. WEIGHT
 Translated:EST. WEIGHT
 
+English:Saving
+Translated:Saving
+
+English:Export File
+Translated:Export File
+
+English:File export options
+Translated:File export options
+
+English:Export as
+Translated:Export as
+
+English:Show file in folder after save
+Translated:Show file in folder after save
+

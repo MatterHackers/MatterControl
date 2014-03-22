@@ -62,7 +62,14 @@ namespace MatterHackers.MatterControl.ActionBar
             selectActivePrinterButton = new PrinterSelectButton();
             selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
             selectActivePrinterButton.Cursor = Cursors.Hand;
-            selectActivePrinterButton.Margin = new BorderDouble(0, 6);
+            if (ApplicationWidget.Instance.WidescreenMode)
+            {
+                selectActivePrinterButton.Margin = new BorderDouble(0, 6);
+            }
+            else
+            {
+                selectActivePrinterButton.Margin = new BorderDouble(0, 6, 6, 6);
+            }
             
 
             actionBarButtonFactory.invertImageLocation = true;

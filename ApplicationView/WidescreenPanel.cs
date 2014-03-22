@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl
         {
             advancedControls = new TabControl();
             advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            advancedControls.TabBar.BorderColor = RGBA_Bytes.White;
+            advancedControls.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
             advancedControls.TabBar.Margin = new BorderDouble(0, 0);
             advancedControls.TabBar.Padding = new BorderDouble(0, 2);
 
