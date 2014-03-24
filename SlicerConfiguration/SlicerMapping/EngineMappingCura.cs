@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new ScaledSingleNumber("filamentDiameter", "filament_diameter", 1000),
             new ScaledSingleNumber("extrusionWidth", "nozzle_diameter", 1000),
 
-            new MapItem("printSpeed", "perimeter_speed"),
+            new MapItem("printSpeed", "infill_speed"),
             new MapItem("infillSpeed", "infill_speed"),
             new MapItem("moveSpeed", "travel_speed"),
             new AsPercentOfReferenceOrDirect("initialLayerSpeed", "first_layer_speed", "infill_speed"),

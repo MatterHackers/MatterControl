@@ -77,6 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
              
             //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
+            
             //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
             
             //continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
@@ -105,13 +106,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("filamentDiameter", "filament_diameter"),
             
             //filamentFlowPercent=100 # Lets you adjust how much material to extrude.
+
             //firstLayerExtrusionWidth=0.8 # The width of the line to extrude for the first layer.
+            new AsPercentOfReferenceOrDirect("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
+
             //firstLayerSpeed=20 # mm/s.
+            new AsPercentOfReferenceOrDirect("firstLayerSpeed", "first_layer_speed", "infill_speed"),
 
             //firstLayerThickness=0.3 # The height of the first layer to print, in millimeters.
             new AsPercentOfReferenceOrDirect("firstLayerThickness", "first_layer_height", "layer_height", 1),
 
             //firstLayerToAllowFan=2 # The fan will be force to stay off below this layer.
+            new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
+
             //outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, BFB, MACH3
             
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
@@ -123,23 +130,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new ScaledSingleNumber("infillPercent", "fill_density", 100),
 
             //infillSpeed=50 # mm/s.
+            new MapItem("infillSpeed", "infill_speed"),
             
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),            
 
             //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
+            new MapItem("insidePerimetersSpeed", "perimeter_speed"),
+
             //layerThickness=0.1
+            new MapItem("layerThickness", "layer_height"),
+
             //minimumExtrusionBeforeRetraction=0.1 # mm.
             //minimumFeedrate=10 # mm/s.
             //minimumLayerTimeSeconds=5
             //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
             //modelRotationMatrix=[[1,0,0],[0,1,0],[0,0,1]]
             //multiVolumeOverlapPercent=0
-            //normalPrintSpeed=50 # mm/s.
 
             //numberOfBottomLayers=6
             new MapItem("numberOfBottomLayers", "bottom_solid_layers"),
             
+            //numberOfSkirtLoops=1 # The number of loops to draw around objects. Can be used to help hold them down.
+            new MapItem("numberOfSkirtLoops", "skirts"),
+
             //numberOfTopLayers=6
             new MapItem("numberOfTopLayers", "top_solid_layers"),
 
@@ -157,21 +171,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //raftInterfaceLinewidth=0
             //raftInterfaceThicknes=0
             //raftLineSpacing=1
+
             //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_NON_CLOSED # You can or them together using '|'.
             //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
+            
             //retractionOnExtruderSwitch=14.5
             //retractionOnTravel=4.5
             //retractionSpeed=45 # mm/s.
             //retractionZHop=0 # The amount to move the extruder up in z after retracting (before a move). mm.
+            
             //skirtDistanceFromObject=6 # How far from objects the first skirt loop should be, in millimeters.
-            //numberOfSkirtLoops=1 # The number of loops to draw around objects. Can be used to help hold them down.
-            //skirtMinLength=0 # The minimum length of line to draw, in millimeters.
+            new MapItem("skirtDistanceFromObject", "skirt_distance"),
+
+            //skirtMinLength=0 # The minimum length of the skirt line, in millimeters.
+            new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
 
             //startCode=M109 S210
             new MapStartGCode("startCode", "start_gcode"),
 
             //supportExtruder=-1
             //supportLineSpacing=2
+            //supportMaterialSpeed=50 # mm/s.
             
             //supportStartingAngleDegrees=0
             new MapItem("supportStartingAngleDegrees", "support_material_angle"),            
@@ -455,7 +475,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
                     double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 
-                    return (lineLength * 1000).ToString();
+                    return lineLength.ToString();
                 }
             }
         }

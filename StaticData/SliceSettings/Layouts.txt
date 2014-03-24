@@ -45,7 +45,7 @@ Advanced
       Horizontal Shells
         top_solid_layers
         bottom_solid_layers
-      Quality (slower slicing)
+      Quality
         extra_perimeters
         avoid_crossing_perimeters
         start_perimeters_at_concave_points
