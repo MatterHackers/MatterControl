@@ -1756,3 +1756,15 @@ Translated:Press [Z-] one click PAST the first hint of resistance
 English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:Oops! There is no eeprom mapping for your printer's firmware.
 
+English:History
+Translated:History
+
+English:Slicing Error. Please review your slice settings.
+Translated:Slicing Error. Please review your slice settings.
+
+English:Quality
+Translated:Quality
+
+English:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+

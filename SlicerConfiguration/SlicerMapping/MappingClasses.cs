@@ -8,26 +8,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
     public class MapItem
     {
-        string curaKey;
-        string defaultKey;
+        string mappedKey;
+        string originalKey;
 
-        internal MapItem(string curaKey, string defaultKey)
+        public MapItem(string mappedKey, string originalKey)
         {
-            this.curaKey = curaKey;
-            this.defaultKey = defaultKey;
+            this.mappedKey = mappedKey;
+            this.originalKey = originalKey;
         }
 
-        public string CuraKey { get { return curaKey; } }
-        public string DefaultKey { get { return defaultKey; } }
+        public string MappedKey { get { return mappedKey; } }
+        public string OriginalKey { get { return originalKey; } }
 
-        public string SlicerValue { get { return ActiveSliceSettings.Instance.GetActiveValue(defaultKey); } }
+        public string OriginalValue { get { return ActiveSliceSettings.Instance.GetActiveValue(originalKey); } }
 
-        public virtual string TranslatedValue { get { return SlicerValue; } }
+        public virtual string MappedValue { get { return OriginalValue; } }
     }
 
     public class NotPassedItem : MapItem
     {
-        public override string TranslatedValue
+        public override string MappedValue
         {
             get
             {
@@ -35,19 +35,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public NotPassedItem(string cura, string slicer)
-            : base(cura, slicer)
+        public NotPassedItem(string mappedKey, string originalKey)
+            : base(mappedKey, originalKey)
         {
         }
     }
 
     public class MapItemToBool : MapItem
     {
-        public override string TranslatedValue
+        public override string MappedValue
         {
             get
             {
-                if (base.TranslatedValue == "1")
+                if (base.MappedValue == "1")
                 {
                     return "True";
                 }
@@ -56,8 +56,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public MapItemToBool(string cura, string slicer)
-            : base(cura, slicer)
+        public MapItemToBool(string mappedKey, string originalKey)
+            : base(mappedKey, originalKey)
         {
         }
     }
@@ -65,50 +65,94 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     public class ScaledSingleNumber : MapItem
     {
         internal double scale;
-        public override string TranslatedValue
+        public override string MappedValue
         {
             get
             {
                 if (scale != 1)
                 {
-                    return (double.Parse(base.TranslatedValue) * scale).ToString();
+                    return (double.Parse(base.MappedValue) * scale).ToString();
                 }
-                return base.TranslatedValue;
+                return base.MappedValue;
             }
         }
 
-        internal ScaledSingleNumber(string cura, string slicer, double scale = 1)
-            : base(cura, slicer)
+        internal ScaledSingleNumber(string mappedKey, string originalKey, double scale = 1)
+            : base(mappedKey, originalKey)
         {
             this.scale = scale;
         }
     }
 
-    public class AsPercentOfReferenceOrDirect : ScaledSingleNumber
+    public class InjectGCodeCommands : ConvertCRs
     {
-        internal string slicerReference;
-        public override string TranslatedValue
+        public InjectGCodeCommands(string mappedKey, string originalKey)
+            : base(mappedKey, originalKey)
+        {
+        }
+
+        protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] linesToCheckIfAlreadyPresent, string comment)
+        {
+            string command = commandToAdd.Split(' ')[0].Trim();
+            bool foundCommand = false;
+            foreach (string line in linesToCheckIfAlreadyPresent)
+            {
+                if (line.StartsWith(command))
+                {
+                    foundCommand = true;
+                    break;
+                }
+            }
+
+            if (!foundCommand)
+            {
+                linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
+            }
+        }
+    }
+
+    public class ConvertCRs : MapItem
+    {
+        public override string MappedValue
         {
             get
             {
-                if (SlicerValue.Contains("%"))
+                string actualCRs = base.MappedValue.Replace("\\n", "\n");
+                return actualCRs;
+            }
+        }
+
+        public ConvertCRs(string mappedKey, string originalKey)
+            : base(mappedKey, originalKey)
+        {
+        }
+    }
+
+    public class AsPercentOfReferenceOrDirect : ScaledSingleNumber
+    {
+        internal string originalReference;
+        public override string MappedValue
+        {
+            get
+            {
+                if (OriginalValue.Contains("%"))
                 {
-                    string withoutPercent = SlicerValue.Replace("%", "");
+                    string withoutPercent = OriginalValue.Replace("%", "");
                     double ratio = double.Parse(withoutPercent) / 100.0;
-                    string slicerReferenceString = ActiveSliceSettings.Instance.GetActiveValue(slicerReference);
-                    double valueToModify = double.Parse(slicerReferenceString);
+                    string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
+                    double valueToModify = double.Parse(originalReferenceString);
                     double finalValue = valueToModify * ratio * scale;
                     return finalValue.ToString();
                 }
 
-                return base.TranslatedValue;
+                return base.MappedValue;
             }
         }
 
-        internal AsPercentOfReferenceOrDirect(string cura, string slicer, string slicerReference, double scale = 1)
-            : base(cura, slicer, scale)
+        public AsPercentOfReferenceOrDirect(string mappedKey, string originalKey, string originalReference, double scale = 1)
+            : base(mappedKey, originalKey, scale)
         {
-            this.slicerReference = slicerReference;
+            this.originalReference = originalReference;
         }
     }
 }

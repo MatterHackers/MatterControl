@@ -33,6 +33,7 @@ using System.Linq;
 using System.Text;
 
 using MatterHackers.VectorMath;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -56,11 +57,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public override bool MapContains(string defaultKey)
+        public override bool MapContains(string originalKey)
         {
             foreach (MapItem mapItem in matterSliceToDefaultMapping)
             {
-                if (mapItem.DefaultKey == defaultKey)
+                if (mapItem.OriginalKey == originalKey)
                 {
                     return true;
                 }
@@ -71,6 +72,147 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         static MapItem[] matterSliceToDefaultMapping = 
         {
+#if true
+            //avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
+            new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
+             
+            //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
+            
+            //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
+            
+            //continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
+            new MapItemToBool("continuousSpiralOuterPerimeter", "spiral_vase"),
+            
+            //createWipeShield=False # Create an outline around shapes so the extrude will be wiped when entering.
+            
+            //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
+            new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
+            
+            //endCode=M104 S0
+            new MapEndGCode("endCode", "end_gcode"),
+
+            //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+
+            //extrusionWidth=0.4 # The width of the line to extrude.
+            new MapItem("extrusionWidth", "nozzle_diameter"),
+            
+            //fanSpeedMaxPercent=100
+            new MapItem("fanSpeedMaxPercent", "max_fan_speed"),
+
+            //fanSpeedMinPercent=100
+            new MapItem("fanSpeedMinPercent", "min_fan_speed"),
+
+            //filamentDiameter=2.89 # The width of the filament being fed into the extruder, in millimeters.
+            new MapItem("filamentDiameter", "filament_diameter"),
+            
+            //filamentFlowPercent=100 # Lets you adjust how much material to extrude.
+
+            //firstLayerExtrusionWidth=0.8 # The width of the line to extrude for the first layer.
+            new AsPercentOfReferenceOrDirect("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
+
+            //firstLayerSpeed=20 # mm/s.
+            new AsPercentOfReferenceOrDirect("firstLayerSpeed", "first_layer_speed", "infill_speed"),
+
+            //firstLayerThickness=0.3 # The height of the first layer to print, in millimeters.
+            new AsPercentOfReferenceOrDirect("firstLayerThickness", "first_layer_height", "layer_height", 1),
+
+            //firstLayerToAllowFan=2 # The fan will be force to stay off below this layer.
+            new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
+
+            //outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, BFB, MACH3
+            
+            //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
+            new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
+            
+            //infillOverlapPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
+            
+            //infillPercent=20 # The percent of filled space to open space while infilling.
+            new ScaledSingleNumber("infillPercent", "fill_density", 100),
+
+            //infillSpeed=50 # mm/s.
+            new MapItem("infillSpeed", "infill_speed"),
+            
+            //infillStartingAngle=45
+            new MapItem("infillStartingAngle", "fill_angle"),            
+
+            //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
+            new MapItem("insidePerimetersSpeed", "perimeter_speed"),
+
+            //layerThickness=0.1
+            new MapItem("layerThickness", "layer_height"),
+
+            //minimumExtrusionBeforeRetraction=0.1 # mm.
+            //minimumFeedrate=10 # mm/s.
+            //minimumLayerTimeSeconds=5
+            //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
+            //modelRotationMatrix=[[1,0,0],[0,1,0],[0,0,1]]
+            //multiVolumeOverlapPercent=0
+
+            //numberOfBottomLayers=6
+            new MapItem("numberOfBottomLayers", "bottom_solid_layers"),
+            
+            //numberOfSkirtLoops=1 # The number of loops to draw around objects. Can be used to help hold them down.
+            new MapItem("numberOfSkirtLoops", "skirts"),
+
+            //numberOfTopLayers=6
+            new MapItem("numberOfTopLayers", "top_solid_layers"),
+
+            //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
+            
+            //numberOfPerimeters=2
+            new MapItem("numberOfPerimeters", "perimeters"),
+
+            //positionToPlaceObjectCenter=[102.5,102.5]
+            new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", ""),
+
+            //raftBaseLinewidth=0
+            //raftBaseThickness=0
+            //raftExtraDistanceAroundPart=5 # mm.
+            //raftInterfaceLinewidth=0
+            //raftInterfaceThicknes=0
+            //raftLineSpacing=1
+
+            //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_NON_CLOSED # You can or them together using '|'.
+            //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
+            
+            //retractionOnExtruderSwitch=14.5
+            //retractionOnTravel=4.5
+            //retractionSpeed=45 # mm/s.
+            //retractionZHop=0 # The amount to move the extruder up in z after retracting (before a move). mm.
+            
+            //skirtDistanceFromObject=6 # How far from objects the first skirt loop should be, in millimeters.
+            new MapItem("skirtDistanceFromObject", "skirt_distance"),
+
+            //skirtMinLength=0 # The minimum length of the skirt line, in millimeters.
+            new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
+
+            //startCode=M109 S210
+            new MapStartGCode("startCode", "start_gcode"),
+
+            //supportExtruder=-1
+            //supportLineSpacing=2
+            //supportMaterialSpeed=50 # mm/s.
+            
+            //supportStartingAngleDegrees=0
+            new MapItem("supportStartingAngleDegrees", "support_material_angle"),            
+
+            //supportType=NONE # Available Values: NONE, GRID, LINES
+            //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
+            //supportZDistanceFromObject=0.15 # The closest z distance that support will be to the object. mm/s.
+            //travelSpeed=200 # The speed to move when not extruding material. mm/s.
+            //wipeShieldDistance=2 # mm.
+            //wipeTowerSize=0 # Unlike the wipe shield this is a square of size X size in the lower left corner for wiping during extruder changing.
+
+            new NotPassedItem("", "pause_gcode"),
+            new NotPassedItem("", "resume_gcode"),
+            new NotPassedItem("", "cancel_gcode"),
+
+            new NotPassedItem("", "build_height"),
+
+            new NotPassedItem("", "temperature"),
+            new NotPassedItem("", "bed_temperature"),
+            new NotPassedItem("", "bed_shape"),
+#else
             new MapItem("layerThickness", "layer_height"),
             new AsPercentOfReferenceOrDirect("initialLayerThickness", "first_layer_height", "layer_height", 1),
             new ScaledSingleNumber("filamentDiameter", "filament_diameter", 1000),
@@ -81,21 +223,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("moveSpeed", "travel_speed"),
             new AsPercentOfReferenceOrDirect("initialLayerSpeed", "first_layer_speed", "infill_speed"),
 
-            new NotPassedItem("", "temperature"),
-            new NotPassedItem("", "bed_temperature"),
-            new NotPassedItem("", "bed_shape"),
-
             new MapItem("insetCount", "perimeters"),
 
             new MapItem("skirtLineCount", "skirts"),
             new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
             new ScaledSingleNumber("skirtDistance", "skirt_distance", 1000),
-
-            new MapItem("fanSpeedMin", "max_fan_speed"),
-            new MapItem("fanSpeedMax", "min_fan_speed"),
-
-            new MapItem("downSkinCount", "bottom_solid_layers"),
-            new MapItem("upSkinCount", "top_solid_layers"),
 
             new FanTranslator("fanFullOnLayerNr", "disable_fan_first_layers"),
             new MapItemToBool("coolHeadLift", "cool_extruder_lift"),
@@ -112,8 +244,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new PrintCenterX("objectPosition.X", "print_center"),
             new PrintCenterY("objectPosition.Y", "print_center"),
 
-            new NotPassedItem("", "build_height"),
-
             // needs testing, not working
             new ScaledSingleNumber("supportLineDistance", "support_material_spacing", 1000),
             new SupportMatterial("supportAngleDegrees", "support_material"),
@@ -125,7 +255,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("minimalLayerTime", "slowdown_below_layer_time"),
 
             new InfillTranslator("sparseInfillLineDistance", "fill_density"),
-            new MapItem("infillAngleDegrees", "fill_angle"),
 
             new MapStartGCode("startCode", "start_gcode"),
             new MapEndGCode("endCode", "end_gcode"),
@@ -133,38 +262,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new NotPassedItem("", "pause_gcode"),
             new NotPassedItem("", "resume_gcode"),
             new NotPassedItem("", "cancel_gcode"),
-#if false
-            SETTING(filamentFlow);
-            SETTING(infillOverlap);
-
-            SETTING(initialSpeedupLayers);
-
-            SETTING(supportExtruder);
-
-            SETTING(retractionAmountExtruderSwitch);
-            SETTING(enableCombing);
-            SETTING(multiVolumeOverlap);
-            SETTING(objectSink);
-
-            SETTING(raftMargin);
-            SETTING(raftLineSpacing);
-            SETTING(raftBaseThickness);
-            SETTING(raftBaseLinewidth);
-            SETTING(raftInterfaceThickness);
-            SETTING(raftInterfaceLinewidth);
-
-            SETTING(minimalFeedrate);
-
-fanFullOnLayerNr = 2;
-
-            SETTING(fixHorrible);
-            SETTING(gcodeFlavor);
-
-/*
-objectPosition.X = 102500;
-objectPosition.Y = 102500;
-enableOozeShield = 0;
-*/
 #endif
         };
 
@@ -173,10 +270,10 @@ enableOozeShield = 0;
             StringBuilder settings = new StringBuilder();
             for (int i = 0; i < matterSliceToDefaultMapping.Length; i++)
             {
-                string matterSliceValue = matterSliceToDefaultMapping[i].TranslatedValue;
+                string matterSliceValue = matterSliceToDefaultMapping[i].MappedValue;
                 if (matterSliceValue != null && matterSliceValue != "")
                 {
-                    settings.Append(string.Format("-s {0}=\"{1}\" ", matterSliceToDefaultMapping[i].CuraKey, matterSliceValue));
+                    settings.Append(string.Format("-s {0}=\"{1}\" ", matterSliceToDefaultMapping[i].MappedKey, matterSliceValue));
                 }
             }
 
@@ -185,25 +282,25 @@ enableOozeShield = 0;
 
         public class FanTranslator : MapItem
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
-                    int numLayersFanIsDisabledOn = int.Parse(base.TranslatedValue);
+                    int numLayersFanIsDisabledOn = int.Parse(base.MappedValue);
                     int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
                     return layerToEnableFanOn.ToString();
                 }
             }
 
-            public FanTranslator(string cura, string slicer)
-                : base(cura, slicer)
+            public FanTranslator(string mappedKey, string slicer)
+                : base(mappedKey, slicer)
             {
             }
         }
 
         public class SupportMatterial : MapItem
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
@@ -217,19 +314,19 @@ enableOozeShield = 0;
                 }
             }
 
-            public SupportMatterial(string cura, string slicer)
-                : base(cura, slicer)
+            public SupportMatterial(string mappedKey, string slicer)
+                : base(mappedKey, slicer)
             {
             }
         }
 
         public class InfillTranslator : MapItem
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
-                    double infillRatio0To1 = Double.Parse(base.TranslatedValue);
+                    double infillRatio0To1 = Double.Parse(base.MappedValue);
                     // 400 = solid (extruder width)
                     double nozzle_diameter = double.Parse(ActiveSliceSettings.Instance.GetActiveValue("nozzle_diameter"));
                     double linespacing = 1000;
@@ -242,121 +339,43 @@ enableOozeShield = 0;
                 }
             }
 
-            public InfillTranslator(string cura, string slicer)
-                : base(cura, slicer)
+            public InfillTranslator(string mappedKey, string slicer)
+                : base(mappedKey, slicer)
             {
-            }
-        }
-
-        public class PrintCenterX : MapItem
-        {
-            public override string TranslatedValue
-            {
-                get
-                {
-                    Vector2 PrinteCenter = ActiveSliceSettings.Instance.PrintCenter;
-                    return (PrinteCenter.x * 1000).ToString();
-                }
-            }
-
-            public PrintCenterX(string cura, string slicer)
-                : base(cura, slicer)
-            {
-            }
-        }
-
-        public class PrintCenterY : MapItem
-        {
-            public override string TranslatedValue
-            {
-                get
-                {
-                    Vector2 PrinteCenter = ActiveSliceSettings.Instance.PrintCenter;
-                    return (PrinteCenter.y * 1000).ToString();
-                }
-            }
-
-            public PrintCenterY(string cura, string slicer)
-                : base(cura, slicer)
-            {
-            }
-        }
-
-        public class ConvertCRs : MapItem
-        {
-            public override string TranslatedValue
-            {
-                get
-                {
-                    string actualCRs = base.TranslatedValue.Replace("\\n", "\n");
-                    return actualCRs;
-                }
-            }
-
-            public ConvertCRs(string cura, string slicer)
-                : base(cura, slicer)
-            {
-            }
-        }
-
-        public class InjectGCodeCommands : ConvertCRs
-        {
-            public InjectGCodeCommands(string cura, string slicer)
-                : base(cura, slicer)
-            {
-            }
-
-            protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] linesToCheckIfAlreadyPresent, string comment)
-            {
-                string command = commandToAdd.Split(' ')[0].Trim();
-                bool foundCommand = false;
-                foreach (string line in linesToCheckIfAlreadyPresent)
-                {
-                    if (line.StartsWith(command))
-                    {
-                        foundCommand = true;
-                        break;
-                    }
-                }
-
-                if (!foundCommand)
-                {
-                    linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
-                }
             }
         }
 
         public class MapStartGCode : InjectGCodeCommands
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
-                    StringBuilder curaStartGCode = new StringBuilder();
+                    StringBuilder startGCode = new StringBuilder();
                     foreach (string line in PreStartGCode())
                     {
-                        curaStartGCode.Append(line + "\n");
+                        startGCode.Append(line + "\n");
                     }
 
-                    curaStartGCode.Append(base.TranslatedValue);
+                    startGCode.Append(base.MappedValue);
 
                     bool first = true;
                     foreach (string line in PostStartGCode())
                     {
                         if (!first)
                         {
-                            curaStartGCode.Append("\n");
+                            startGCode.Append("\n");
                         }
-                        curaStartGCode.Append(line);
+                        startGCode.Append(line);
                         first = false;
                     }
 
-                    return curaStartGCode.ToString();
+                    return startGCode.ToString();
                 }
             }
 
-            public MapStartGCode(string cura, string slicer)
-                : base(cura, slicer)
+            public MapStartGCode(string mappedKey, string slicer)
+                : base(mappedKey, slicer)
             {
             }
 
@@ -401,44 +420,62 @@ enableOozeShield = 0;
 
         public class MapEndGCode : InjectGCodeCommands
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
-                    StringBuilder curaEndGCode = new StringBuilder();
+                    StringBuilder endGCode = new StringBuilder();
 
-                    curaEndGCode.Append(base.TranslatedValue);
+                    endGCode.Append(base.MappedValue);
 
-                    curaEndGCode.Append("\n; filament used = filament_used_replace_mm (filament_used_replace_cm3)");
+                    endGCode.Append("\n; filament used = filament_used_replace_mm (filament_used_replace_cm3)");
 
-                    return curaEndGCode.ToString();
+                    return endGCode.ToString();
                 }
             }
 
-            public MapEndGCode(string cura, string slicer)
-                : base(cura, slicer)
+            public MapEndGCode(string mappedKey, string slicer)
+                : base(mappedKey, slicer)
             {
+            }
+        }
+
+        public class MapPositionToPlaceObjectCenter : MapItem
+        {
+            public MapPositionToPlaceObjectCenter(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
+            {
+            }
+
+            public override string MappedValue
+            {
+                get
+                {
+                    Vector2 PrinteCenter = ActiveSliceSettings.Instance.PrintCenter;
+
+                    return "[{0},{1}]".FormatWith(PrinteCenter.x, PrinteCenter.y);
+                }
             }
         }
 
         public class SkirtLengthMaping : MapItem
         {
-            public SkirtLengthMaping(string curaKey, string defaultKey)
-                : base(curaKey, defaultKey)
+            public SkirtLengthMaping(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
             {
             }
 
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
-                    double lengthToExtrudeMm = double.Parse(base.TranslatedValue);
+                    double lengthToExtrudeMm = double.Parse(base.MappedValue);
                     // we need to convert mm of filament to mm of extrusion path
                     double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
                     double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
                     double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 
-                    return (lineLength * 1000).ToString();
+                    return lineLength.ToString();
                 }
             }
         }
