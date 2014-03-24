@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             foreach (MapItem mapItem in curaToDefaultMapping)
             {
-                if (mapItem.DefaultKey == defaultKey)
+                if (mapItem.OriginalKey == defaultKey)
                 {
                     return true;
                 }
@@ -172,10 +172,10 @@ enableOozeShield = 0;
             StringBuilder settings = new StringBuilder();
             for (int i = 0; i < curaToDefaultMapping.Length; i++)
             {
-                string curaValue = curaToDefaultMapping[i].TranslatedValue;
+                string curaValue = curaToDefaultMapping[i].MappedValue;
                 if (curaValue != null && curaValue != "")
                 {
-                    settings.Append(string.Format("-s {0}=\"{1}\" ", curaToDefaultMapping[i].CuraKey, curaValue));
+                    settings.Append(string.Format("-s {0}=\"{1}\" ", curaToDefaultMapping[i].MappedKey, curaValue));
                 }
             }
 
@@ -184,11 +184,11 @@ enableOozeShield = 0;
 
         public class FanTranslator : MapItem
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
-                    int numLayersFanIsDisabledOn = int.Parse(base.TranslatedValue);
+                    int numLayersFanIsDisabledOn = int.Parse(base.MappedValue);
                     int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
                     return layerToEnableFanOn.ToString();
                 }
@@ -202,7 +202,7 @@ enableOozeShield = 0;
 
         public class SupportMatterial : MapItem
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
@@ -224,11 +224,11 @@ enableOozeShield = 0;
 
         public class InfillTranslator : MapItem
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
-                    double infillRatio0To1 = Double.Parse(base.TranslatedValue);
+                    double infillRatio0To1 = Double.Parse(base.MappedValue);
                     // 400 = solid (extruder width)
                     double nozzle_diameter = double.Parse(ActiveSliceSettings.Instance.GetActiveValue("nozzle_diameter"));
                     double linespacing = 1000;
@@ -249,7 +249,7 @@ enableOozeShield = 0;
 
         public class PrintCenterX : MapItem
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
@@ -266,7 +266,7 @@ enableOozeShield = 0;
 
         public class PrintCenterY : MapItem
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
@@ -281,53 +281,9 @@ enableOozeShield = 0;
             }
         }
 
-        public class ConvertCRs : MapItem
-        {
-            public override string TranslatedValue
-            {
-                get
-                {
-                    string actualCRs = base.TranslatedValue.Replace("\\n", "\n");
-                    return actualCRs;
-                }
-            }
-
-            public ConvertCRs(string cura, string slicer)
-                : base(cura, slicer)
-            {
-            }
-        }
-
-        public class InjectGCodeCommands : ConvertCRs
-        {
-            public InjectGCodeCommands(string cura, string slicer)
-                : base(cura, slicer)
-            {
-            }
-
-            protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] linesToCheckIfAlreadyPresent, string comment)
-            {
-                string command = commandToAdd.Split(' ')[0].Trim();
-                bool foundCommand = false;
-                foreach (string line in linesToCheckIfAlreadyPresent)
-                {
-                    if (line.StartsWith(command))
-                    {
-                        foundCommand = true;
-                        break;
-                    }
-                }
-
-                if (!foundCommand)
-                {
-                    linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
-                }
-            }
-        }
-
         public class MapStartGCode : InjectGCodeCommands
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
@@ -337,7 +293,7 @@ enableOozeShield = 0;
                         curaStartGCode.Append(line + "\n");
                     }
 
-                    curaStartGCode.Append(base.TranslatedValue);
+                    curaStartGCode.Append(base.MappedValue);
 
                     bool first = true;
                     foreach (string line in PostStartGCode())
@@ -400,13 +356,13 @@ enableOozeShield = 0;
 
         public class MapEndGCode : InjectGCodeCommands
         {
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
                     StringBuilder curaEndGCode = new StringBuilder();
 
-                    curaEndGCode.Append(base.TranslatedValue);
+                    curaEndGCode.Append(base.MappedValue);
 
                     curaEndGCode.Append("\n; filament used = filament_used_replace_mm (filament_used_replace_cm3)");
 
@@ -427,11 +383,11 @@ enableOozeShield = 0;
             {
             }
 
-            public override string TranslatedValue
+            public override string MappedValue
             {
                 get
                 {
-                    double lengthToExtrudeMm = double.Parse(base.TranslatedValue);
+                    double lengthToExtrudeMm = double.Parse(base.MappedValue);
                     // we need to convert mm of filament to mm of extrusion path
                     double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
                     double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
