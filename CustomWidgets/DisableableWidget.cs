@@ -26,15 +26,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
         public void SetEnableLevel(EnableLevel enabledLevel)
         {
-            if (ApplicationWidget.Instance.WidescreenMode)
-            {
-                disableOverlay.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 160);
-            }
-            else
-            {
-                disableOverlay.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor, 160);
-            }
-
+            disableOverlay.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 160);
 
             switch (enabledLevel)
             {

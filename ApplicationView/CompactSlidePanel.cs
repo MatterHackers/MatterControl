@@ -90,33 +90,7 @@ namespace MatterHackers.MatterControl
                 this.LeftPanel.AddChild(new PrintProgressBar());
 
                 // construct the main controls tab control
-                mainControlsTabControl = new TabControl();
-                mainControlsTabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-                mainControlsTabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
-                mainControlsTabControl.TabBar.Margin = new BorderDouble(0, 0);
-                mainControlsTabControl.TabBar.Padding = new BorderDouble(0, 2);
-
-                QueueTabPage = new TabPage(new QueueControlsWidget(), "QUEUE");
-                NumQueueItemsChanged(this, null);
-
-                mainControlsTabControl.AddTab(new SimpleTextTabWidget(QueueTabPage, 16,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-                mainControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(new GuiWidget(), LocalizedString.Get("HISTORY")), 16,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-                string libraryTabLabel = LocalizedString.Get("LIBRARY");
-                mainControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(new PrintLibraryWidget(), libraryTabLabel), 16,
-                    ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-                //mainControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(new ToolsWidget(), "Tools"), 16,
-                //ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-                AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("ABOUT"));
-                aboutTabView = new SimpleTextTabWidget(AboutTabPage, 16,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
-                mainControlsTabControl.AddTab(aboutTabView);
-
+                mainControlsTabControl = new QueueTab();
 
                 advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -141,7 +115,7 @@ namespace MatterHackers.MatterControl
 
                 mainControlsTabControl.TabBar.AddChild(hSpacer);
                 mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
-                // and add it
+
                 this.LeftPanel.AddChild(mainControlsTabControl);
 
 
@@ -150,8 +124,10 @@ namespace MatterHackers.MatterControl
             // do the back panel
             {
                 advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
-                this.RightPanel.AddChild(advancedControlsTabControl);
+                
                 this.RightPanel.AddChild(new PrintProgressBar());
+                this.RightPanel.AddChild(advancedControlsTabControl);
+                
             }
             AddHandlers();
         }
@@ -239,7 +215,7 @@ namespace MatterHackers.MatterControl
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
         {
             advancedControls = new TabControl();
-            advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             advancedControls.TabBar.BorderColor = RGBA_Bytes.White;
             advancedControls.TabBar.Margin = new BorderDouble(0, 0);
             advancedControls.TabBar.Padding = new BorderDouble(0, 2);
@@ -263,17 +239,17 @@ namespace MatterHackers.MatterControl
 
             //Add the tab contents for 'Advanced Controls'
             string printerControlsLabel = LocalizedString.Get("CONTROLS");
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 16,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 14,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string sliceSettingsLabel = LocalizedString.Get("SLICE SETTINGS");
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 16,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 14,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("CONFIGURATION");
             ScrollableWidget configurationControls = new ConfigurationPage();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 16,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 14,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
 
@@ -300,59 +276,7 @@ namespace MatterHackers.MatterControl
         void AddHandlers()
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-            PrintQueue.PrintQueueControl.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            PrintQueue.PrintQueueControl.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            ApplicationWidget.Instance.SetUpdateNotificationTrigger.RegisterEvent(OnSetUpdateNotification, ref unregisterEvents);
             ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
-        }
-
-        class NotificationWidget : GuiWidget
-        {
-            public NotificationWidget()
-                : base(12, 12)
-            {
-            }
-
-            public override void OnDraw(Graphics2D graphics2D)
-            {
-                graphics2D.Circle(Width / 2, Height / 2, Width / 2, RGBA_Bytes.White);
-                graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, RGBA_Bytes.Red);
-                graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, RGBA_Bytes.White);
-                //graphics2D.DrawString("1", Width / 2, Height / 2 + 1, 8, Justification.Center, Baseline.BoundsCenter, RGBA_Bytes.White);
-                base.OnDraw(graphics2D);
-            }
-        }
-
-        GuiWidget addedUpdateMark = null;
-        public void OnSetUpdateNotification(object sender, EventArgs widgetEvent)
-        {
-            if (this.UpdateIsAvailable() || UpdateControl.NeedToCheckForUpdateFirstTimeEver)
-            {
-#if true
-                if (addedUpdateMark == null)
-                {
-                    UpdateControl.NeedToCheckForUpdateFirstTimeEver = false;
-                    addedUpdateMark = new NotificationWidget();
-                    addedUpdateMark.OriginRelativeParent = new Vector2(70, 10);
-                    aboutTabView.AddChild(addedUpdateMark);
-                }
-#endif
-            }
-            else
-            {
-                if (addedUpdateMark != null)
-                {
-                    addedUpdateMark.Visible = false;
-                }
-                AboutTabPage.Text = string.Format("ABOUT");
-            }
-        }
-
-        void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
-        {
-            string queueStringBeg = LocalizedString.Get("QUEUE");
-            string queueString = string.Format("{1} ({0})", PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
-            QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
         }
 
         private void onThemeChanged(object sender, EventArgs e)
