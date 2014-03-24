@@ -11,6 +11,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -98,14 +99,14 @@ namespace MatterHackers.MatterControl
 				string noGCodeMessageTxtBeg = LocalizedString.Get("Note");
 				string noGCodeMessageTxtEnd = LocalizedString.Get ("To enable GCode export, select a printer profile.");
 				string noGCodeMessageTxtFull = string.Format ("{0}: {1}", noGCodeMessageTxtBeg, noGCodeMessageTxtEnd);
-				TextWidget noGCodeMessage = new TextWidget(noGCodeMessageTxtFull, textColor: RGBA_Bytes.White, pointSize: 10);
+				TextWidget noGCodeMessage = new TextWidget(noGCodeMessageTxtFull, textColor:ActiveTheme.Instance.PrimaryTextColor, pointSize: 10); 
                 topToBottom.AddChild(noGCodeMessage);
 			}
 
             // TODO: make this work on the mac and then delete this if
            	if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Windows)
             {
-				showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), RGBA_Bytes.White, 10);
+				showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), ActiveTheme.Instance.PrimaryTextColor, 10);
                 showInFolderAfterSave.Margin = new BorderDouble(top: 10);
                 topToBottom.AddChild(showInFolderAfterSave);
             }

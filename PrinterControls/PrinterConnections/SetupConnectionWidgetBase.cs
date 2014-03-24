@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
 
             
-			cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			cancelButton = textImageButtonFactory.Generate (LocalizedString.Get ("Cancel"));
             cancelButton.Click += new ButtonBase.ButtonEventHandler(CancelButton_Click);
 
             //Create the main container
@@ -170,13 +170,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         private void SetDisplayAttributes()
         {
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.borderWidth = 0;
 
-            linkButtonFactory.textColor = RGBA_Bytes.White;
+			linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
             linkButtonFactory.fontSize = 10;
 
             this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;

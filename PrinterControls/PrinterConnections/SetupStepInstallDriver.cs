@@ -77,12 +77,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             BorderDouble elementMargin = new BorderDouble(top: 3);            
 
 			printerDriverMessage = new TextWidget(LocalizedString.Get("This printer requires a driver for communication."), 0, 0, 10);
-            printerDriverMessage.TextColor = RGBA_Bytes.White;
+			printerDriverMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerDriverMessage.HAnchor = HAnchor.ParentLeftRight;
             printerDriverMessage.Margin = elementMargin;
 
 			TextWidget printerDriverMessageTwo = new TextWidget(LocalizedString.Get("Driver located. Would you like to install?"), 0, 0, 10);
-			printerDriverMessageTwo.TextColor = RGBA_Bytes.White;
+			printerDriverMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printerDriverMessageTwo.HAnchor = HAnchor.ParentLeftRight;
 			printerDriverMessageTwo.Margin = elementMargin;
 

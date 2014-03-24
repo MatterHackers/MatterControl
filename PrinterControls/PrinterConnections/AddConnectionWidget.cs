@@ -42,13 +42,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public EditConnectionWidget(ConnectionWindow windowController, GuiWidget containerWindowToClose, Printer activePrinter = null)
             : base(windowController, containerWindowToClose)
         {
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.borderWidth = 0;
 
-            linkButtonFactory.textColor = RGBA_Bytes.White;
+			linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
             linkButtonFactory.fontSize = 8;
 
             this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 FlowLayoutWidget printerModelContainer = createPrinterModelContainer();
 
                 enableAutoconnect = new CheckBox(LocalizedString.Get("Auto Connect"));
-                enableAutoconnect.TextColor = RGBA_Bytes.White;
+				enableAutoconnect.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 enableAutoconnect.Margin = new BorderDouble(top: 10);
                 enableAutoconnect.HAnchor = HAnchor.ParentLeft;
                 if (this.ActivePrinter.AutoConnectFlag)

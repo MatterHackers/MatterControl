@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.ContactForm
             submissionStatus = new TextWidget(LocalizedString.Get("Submitting your information..."), pointSize: 13);
             submissionStatus.AutoExpandBoundsToText = true;
             submissionStatus.Margin = new BorderDouble(0, 5);
-            submissionStatus.TextColor = RGBA_Bytes.White;
+			submissionStatus.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             submissionStatus.HAnchor = HAnchor.ParentLeft;
 
             messageContainer.AddChild(submissionStatus);
@@ -287,10 +287,10 @@ namespace MatterHackers.MatterControl.ContactForm
 
         private void SetButtonAttributes()
         {
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             whiteButtonFactory.FixedWidth = 138;
             whiteButtonFactory.normalFillColor = RGBA_Bytes.White;

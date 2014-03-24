@@ -1471,3 +1471,288 @@ Translated:Your Email Address*
 English:Your Name*
 Translated:Your Name*
 
+English:Temperature (C)
+Translated:Temperature (C)
+
+English:Language Settings
+Translated:Language Settings
+
+English:Select Model
+Translated:Select Model
+
+English:Theme Settings
+Translated:Theme Settings
+
+English:New updates are ready to install.
+Translated:New updates are ready to install.
+
+English:Select Language
+Translated:Select Language
+
+English:File not found on disk.
+Translated:File not found on disk.
+
+English:Not connected. Press 'Connect' to enable printing.
+Translated:Not connected. Press 'Connect' to enable printing.
+
+English:Loading Parts
+Translated:Loading Parts
+
+English:MODEL
+Translated:MODEL
+
+English:LAYER
+Translated:LAYER
+
+English:DISPLAY
+Translated:DISPLAY
+
+English:CONNECT
+Translated:CONNECT
+
+English:DISCONNECT
+Translated:DISCONNECT
+
+English:STATUS
+Translated:STATUS
+
+English:QUEUE
+Translated:QUEUE
+
+English:HISTORY
+Translated:HISTORY
+
+English:LIBRARY
+Translated:LIBRARY
+
+English:Developed By: 
+Translated:Developed By: 
+
+English: to help support MatterControl.
+Translated: to help support MatterControl.
+
+English:ABOUT
+Translated:ABOUT
+
+English:CONTROLS
+Translated:CONTROLS
+
+English:SLICE SETTINGS
+Translated:SLICE SETTINGS
+
+English:CONFIGURATION
+Translated:CONFIGURATION
+
+English:History
+Translated:History
+
+English:Attempting to Connect
+Translated:Attempting to Connect
+
+English:Unable to communicate with printer.
+Translated:Unable to communicate with printer.
+
+English:3D Printer Setup
+Translated:3D Printer Setup
+
+English:Give your printer a name.
+Translated:Give your printer a name.
+
+English:Select Make
+Translated:Select Make
+
+English:Select the printer manufacturer
+Translated:Select the printer manufacturer
+
+English:Select the printer model
+Translated:Select the printer model
+
+English:Save & Continue
+Translated:Save & Continue
+
+English:MatterControl will now attempt to auto-detect printer.
+Translated:MatterControl will now attempt to auto-detect printer.
+
+English:Disconnect printer
+Translated:Disconnect printer
+
+English:if currently connected
+Translated:if currently connected
+
+English:Press
+Translated:Press
+
+English:Continue
+Translated:Continue
+
+English:Manual Configuration
+Translated:Manual Configuration
+
+English:Install Communication Driver
+Translated:Install Communication Driver
+
+English:This printer requires a driver for communication.
+Translated:This printer requires a driver for communication.
+
+English:Driver located. Would you like to install?
+Translated:Driver located. Would you like to install?
+
+English:Install Driver
+Translated:Install Driver
+
+English:No COM ports available
+Translated:No COM ports available
+
+English:Currently available serial ports.
+Translated:Currently available serial ports.
+
+English:What's this?
+Translated:What's this?
+
+English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+Translated:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+
+English:Could not find a selected button.
+Translated:Could not find a selected button.
+
+English:Oops! Please select a serial port.
+Translated:Oops! Please select a serial port.
+
+English:Installing
+Translated:Installing
+
+English:Power on and connect printer
+Translated:Power on and connect printer
+
+English:Oops! Printer could not be detected 
+Translated:Oops! Printer could not be detected 
+
+English:Thank you!  Your information has been submitted.
+Translated:Thank you!  Your information has been submitted.
+
+English:Select the baud rate.
+Translated:Select the baud rate.
+
+English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+
+English:Edit Macro
+Translated:Edit Macro
+
+English:Macro Name
+Translated:Macro Name
+
+English:Give your macro a name
+Translated:Give your macro a name
+
+English:Macro Commands
+Translated:Macro Commands
+
+English:This should be in 'Gcode'
+Translated:This should be in 'Gcode'
+
+English:Downloading updates...
+Translated:Downloading updates...
+
+English:Save Parts Sheet
+Translated:Save Parts Sheet
+
+English:MatterContol
+Translated:MatterContol
+
+English:Item selected. Press 'Start' to begin your print.
+Translated:Item selected. Press 'Start' to begin your print.
+
+English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
+Translated:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
+
+English:'Home' the printer
+Translated:'Home' the printer
+
+English:Sample the bed at three points
+Translated:Sample the bed at three points
+
+English:Turn auto leveling on
+Translated:Turn auto leveling on
+
+English:You should be done in about 3 minutes.
+Translated:You should be done in about 3 minutes.
+
+English:Click 'Next' to continue.
+Translated:Click 'Next' to continue.
+
+English:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
+Translated:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
+
+English:A standard sheet of paper
+Translated:A standard sheet of paper
+
+English:We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.
+Translated:We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.
+
+English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
+Translated:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
+
+English:Remove the paper
+Translated:Remove the paper
+
+English:If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.
+Translated:If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.
+
+English:Step
+Translated:Step
+
+English:of
+Translated:of
+
+English:Print Leveling Wizard
+Translated:Print Leveling Wizard
+
+English:Back
+Translated:Back
+
+English:Next
+Translated:Next
+
+English:Position
+Translated:Position
+
+English:Low Precision
+Translated:Low Precision
+
+English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
+Translated:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
+
+English:Place the paper under the extruder
+Translated:Place the paper under the extruder
+
+English:Using the above contols
+Translated:Using the above contols
+
+English:Press [Z-] until there is resistance to moving the paper
+Translated:Press [Z-] until there is resistance to moving the paper
+
+English:Press [Z+] once to release the paper
+Translated:Press [Z+] once to release the paper
+
+English:Finally click 'Next' to continue.
+Translated:Finally click 'Next' to continue.
+
+English:Medium Precision
+Translated:Medium Precision
+
+English:We will now refine our measurement of the extruder height at this position.
+Translated:We will now refine our measurement of the extruder height at this position.
+
+English:High Precision
+Translated:High Precision
+
+English:We will now finalize our measurement of the extruder height at this position.
+Translated:We will now finalize our measurement of the extruder height at this position.
+
+English:Press [Z-] one click PAST the first hint of resistance
+Translated:Press [Z-] one click PAST the first hint of resistance
+
+English:Oops! There is no eeprom mapping for your printer's firmware.
+Translated:Oops! There is no eeprom mapping for your printer's firmware.
+

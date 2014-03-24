@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			TextWidget printerMessageOne = new TextWidget(LocalizedString.Get("MatterControl will now attempt to auto-detect printer."), 0, 0, 10);
             printerMessageOne.Margin = new BorderDouble(0, 10, 0,5);
-            printerMessageOne.TextColor = RGBA_Bytes.White;
+			printerMessageOne.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMessageOne.HAnchor = HAnchor.ParentLeftRight;
             printerMessageOne.Margin = elementMargin;
 
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageTwoTxtEnd = LocalizedString.Get("if currently connected");
 			string printerMessageTwoTxtFull = string.Format ("1.) {0} ({1}).", printerMessageTwoTxt, printerMessageTwoTxtEnd);
 			TextWidget printerMessageTwo = new TextWidget(printerMessageTwoTxtFull, 0, 0, 12);
-            printerMessageTwo.TextColor = RGBA_Bytes.White;
+			printerMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMessageTwo.HAnchor = HAnchor.ParentLeftRight;
             printerMessageTwo.Margin = elementMargin;
 
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageThreeTxtEnd = LocalizedString.Get ("Continue");
 			string printerMessageThreeFull = string.Format ("2.) {0} '{1}'.", printerMessageThreeTxt, printerMessageThreeTxtEnd);
 			TextWidget printerMessageThree = new TextWidget(printerMessageThreeFull, 0, 0, 12);
-            printerMessageThree.TextColor = RGBA_Bytes.White;
+			printerMessageThree.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMessageThree.HAnchor = HAnchor.ParentLeftRight;
             printerMessageThree.Margin = elementMargin;
 

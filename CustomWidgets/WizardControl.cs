@@ -43,11 +43,11 @@ namespace MatterHackers.MatterControl
         public WizardControl()
         {
             Padding = new BorderDouble(10);
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.disabledTextColor = new RGBA_Bytes(200, 200, 200);
             textImageButtonFactory.disabledFillColor = new RGBA_Bytes(0, 0, 0, 0);
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             AnchorAll();
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
