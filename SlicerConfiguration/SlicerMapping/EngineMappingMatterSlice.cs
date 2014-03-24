@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     double lengthToExtrudeMm = double.Parse(base.MappedValue);
                     // we need to convert mm of filament to mm of extrusion path
-                    double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FillamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
+                    double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
                     double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
                     double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 

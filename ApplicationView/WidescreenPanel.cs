@@ -405,6 +405,7 @@ namespace MatterHackers.MatterControl
 
         TabPage QueueTabPage;
         TabPage LibraryTabPage;
+        TabPage HistoryTabPage;
         TabPage AboutTabPage;
         SimpleTextTabWidget AboutTabView;
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
@@ -419,16 +420,20 @@ namespace MatterHackers.MatterControl
 
             this.Margin = new BorderDouble(top: 4);
 
-            QueueTabPage = new TabPage(new QueueControlsWidget(), "QUEUE");
-            this.AddTab(new SimpleTextTabWidget(QueueTabPage, 16,
+            QueueTabPage = new TabPage(new QueueControlsWidget(), LocalizedString.Get("Queue").ToUpper());
+            this.AddTab(new SimpleTextTabWidget(QueueTabPage, 15,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            LibraryTabPage = new TabPage(new PrintLibraryWidget(), "LIBRARY");
-            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, 16,
+            LibraryTabPage = new TabPage(new PrintLibraryWidget(), LocalizedString.Get("Library").ToUpper());
+            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, 15,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            AboutTabPage = new TabPage(new AboutPage(), "ABOUT");
-            AboutTabView = new SimpleTextTabWidget(AboutTabPage, 16,
+            HistoryTabPage = new TabPage(new GuiWidget(), LocalizedString.Get("History").ToUpper());
+            this.AddTab(new SimpleTextTabWidget(HistoryTabPage, 15,
+                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
+            AboutTabView = new SimpleTextTabWidget(AboutTabPage, 15,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
             this.AddTab(AboutTabView);
 
@@ -439,7 +444,7 @@ namespace MatterHackers.MatterControl
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
         {
-            string queueStringBeg = LocalizedString.Get("QUEUE");
+            string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
             string queueString = string.Format("{1} ({0})", PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
             QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
         }
@@ -462,7 +467,7 @@ namespace MatterHackers.MatterControl
                 {
                     UpdateControl.NeedToCheckForUpdateFirstTimeEver = false;
                     addedUpdateMark = new NotificationWidget();
-                    addedUpdateMark.OriginRelativeParent = new Vector2(72, 10);
+                    addedUpdateMark.OriginRelativeParent = new Vector2(68, 7);
                     AboutTabView.AddChild(addedUpdateMark);
                 }
 #else
@@ -475,7 +480,7 @@ namespace MatterHackers.MatterControl
                 {
                     addedUpdateMark.Visible = false;
                 }
-                AboutTabPage.Text = string.Format("ABOUT");
+                AboutTabPage.Text = string.Format("About").ToUpper();
             }
         }
 

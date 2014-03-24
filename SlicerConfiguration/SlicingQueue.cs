@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #if DEBUG
                             if (ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {
-                                MatterSlice.MatterSlice.ProcessArgs(slicerProcess.StartInfo.Arguments);
+                                //MatterSlice.MatterSlice.ProcessArgs(slicerProcess.StartInfo.Arguments);
                             }
                             else
 #endif

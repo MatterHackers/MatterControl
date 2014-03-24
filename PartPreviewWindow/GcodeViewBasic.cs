@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string filamentVolumeLblFull = string.Format("{0}:", filamentVolumeLbl);
             modelInfoContainer.AddChild(new TextWidget(filamentVolumeLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
             {
-                double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.FillamentDiameter);
+                double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.FilamentDiameter);
 
                 GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm3", filamentMm3 / 1000), pointSize:14, textColor: ActiveTheme.Instance.PrimaryTextColor);
                 //estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -338,7 +338,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string weightLbl = LocalizedString.Get("EST. WEIGHT");
 			string weightLblFull = string.Format("{0}:", weightLbl);
-            modelInfoContainer.AddChild(new TextWidget(weightLblFull, pointSize: 9, textColor: ActiveTheme.Instance.SecondaryTextColor));
+            modelInfoContainer.AddChild(new TextWidget(weightLblFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
             {
                 var density = 1.0;
                 string filamentType = "PLA";
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     density = 1.24;
                 }
 
-                double filamentWeightGrams = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(ActiveSliceSettings.Instance.FillamentDiameter, density);
+                double filamentWeightGrams = gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(ActiveSliceSettings.Instance.FilamentDiameter, density);
 
                 GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} g", filamentWeightGrams), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
                 //estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;

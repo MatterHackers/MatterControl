@@ -151,10 +151,10 @@ namespace MatterHackers.MatterControl
         public RGBA_Bytes pressedBorderColor = new RGBA_Bytes(0, 0, 0, 0);
         public RGBA_Bytes disabledBorderColor = new RGBA_Bytes(0, 0, 0, 0);
 
-        public RGBA_Bytes normalTextColor = RGBA_Bytes.White;
-        public RGBA_Bytes hoverTextColor = RGBA_Bytes.White;
-        public RGBA_Bytes pressedTextColor = RGBA_Bytes.White;
-        public RGBA_Bytes disabledTextColor = RGBA_Bytes.White;
+        public RGBA_Bytes normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+        public RGBA_Bytes hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+        public RGBA_Bytes pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+        public RGBA_Bytes disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
         public int fontSize = 12;
         public double borderWidth = 1;
         public bool invertImageLocation = false;

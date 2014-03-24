@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsStatusLabelContainer.VAnchor |= VAnchor.ParentTop;
             settingsStatusLabelContainer.Margin = new BorderDouble(0);
             {
-				string activeSettingsLabelText = LocalizedString.Get ("Active Settings");
+				string activeSettingsLabelText = LocalizedString.Get ("Active Settings").ToUpper();
 				string activeSettingsLabelTextFull = string.Format ("{0}:", activeSettingsLabelText);
 
 
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             sliceEngineContainer.Margin = new BorderDouble(0,0,10,0);
             sliceEngineContainer.VAnchor |= VAnchor.ParentTop;
             {
-				string sliceEngineLabelText = LocalizedString.Get ("Slice Engine");
+                string sliceEngineLabelText = LocalizedString.Get("Slice Engine").ToUpper();
 				string sliceEngineLabelTextFull = string.Format ("{0}:", sliceEngineLabelText);
 				TextWidget sliceEngineLabel = new TextWidget(string.Format(sliceEngineLabelTextFull), pointSize: 10);
                 sliceEngineLabel.Margin = new BorderDouble(0);
