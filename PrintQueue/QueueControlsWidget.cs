@@ -14,21 +14,23 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CreatorPlugins;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
     public class QueueControlsWidget : GuiWidget
     {
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+        PluginChooserWindow pluginChooserWindow;
 
         public QueueControlsWidget()
         {
             SetDisplayAttributes();
-            
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+
+            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.borderWidth = 0;
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -50,6 +52,14 @@ namespace MatterHackers.MatterControl.PrintQueue
                     buttonPanel1.AddChild(addToQueueButton);
                     addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
                     addToQueueButton.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
+
+                    Button runCreator = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
+                    buttonPanel1.AddChild(runCreator);
+                    runCreator.Margin = new BorderDouble(0, 0, 3, 0);
+                    runCreator.Click += (sender, e) =>
+                    {
+                        OpenPluginChooserWindow();
+                    };
 
 					Button deleteAllFromQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Remove All"));
                     deleteAllFromQueueButton.Margin = new BorderDouble(3, 0);
@@ -82,7 +92,25 @@ namespace MatterHackers.MatterControl.PrintQueue
             this.AnchorAll();
         }
 
-        void createPatrsSheetsButton_Click(object sender, MouseEventArgs mouseEvent)
+
+        private void OpenPluginChooserWindow()
+        {
+            if (pluginChooserWindow == null)
+            {
+                pluginChooserWindow = new PluginChooserWindow();
+                pluginChooserWindow.Closed += (sender, e) =>
+                {
+                    pluginChooserWindow = null;
+                };
+                pluginChooserWindow.ShowAsSystemWindow();
+            }
+            else
+            {
+                pluginChooserWindow.BringToFront();
+            }
+        }
+
+        void createPartsSheetsButton_Click(object sender, MouseEventArgs mouseEvent)
         {
             List<PrintItem> parts = PrintQueueControl.Instance.CreateReadOnlyPartList();
 

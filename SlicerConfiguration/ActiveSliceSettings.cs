@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             get { return ParseDouble(GetActiveValue("nozzle_diameter")); }
         }
 
-        public double FillamentDiameter
+        public double FilamentDiameter
         {
             get { return ParseDouble(GetActiveValue("filament_diameter")); }
         }
@@ -609,7 +609,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     string error = "The Min Fan Speed can only go as high as 100%.";
                     string details = string.Format("It is currently set to {0}.", MinFanSpeed);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Fillament' -> 'Cooling' (show all settings)";
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (show all settings)";
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
@@ -618,7 +618,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     string error = "The Max Fan Speed can only go as high as 100%.";
                     string details = string.Format("It is currently set to {0}.", MaxFanSpeed);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Fillament' -> 'Cooling' (show all settings)";
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (show all settings)";
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }

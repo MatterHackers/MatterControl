@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl
         ClickWidget RightBorderLine;
         ClickWidget LeftBorderLine;
 
+        bool ColTwoIsHidden = false;
         bool ColThreeIsHidden = false;
 
         public WidescreenPanel()
@@ -88,11 +89,7 @@ namespace MatterHackers.MatterControl
                 ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 ColumnThree = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-                ColumnOne.VAnchor = VAnchor.ParentBottomTop;                
-                ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new PrintProgressBar());
-                ColumnOne.AddChild(new QueueTab());
-                ColumnOne.Width = 480; //Ordering here matters - must go after children are added
+
                 
                 //ColumnOne.Padding = new BorderDouble(4);
                 //ColumnTwo.Padding = new BorderDouble(4, 0);
@@ -100,16 +97,12 @@ namespace MatterHackers.MatterControl
 
                 LeftBorderLine = CreateBorderLine();
                 RightBorderLine = CreateBorderLine();
-
-                LoadColumnTwo();
+                
+                LoadColumnTwo();                
                 
                 ColumnThree.VAnchor = VAnchor.ParentBottomTop;
                 
-                {
-                    advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
-                    ColumnThree.AddChild(advancedControlsTabControl);
-                    ColumnThree.Width = 590; //Ordering here matters - must go after children are added
-                }
+                LoadColumnThree();
 
                 AddChild(ColumnOne);
                 AddChild(LeftBorderLine);
@@ -193,7 +186,7 @@ namespace MatterHackers.MatterControl
         {
             advancedControls = new TabControl();
             advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            advancedControls.TabBar.BorderColor = RGBA_Bytes.White;
+            advancedControls.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
             advancedControls.TabBar.Margin = new BorderDouble(0, 0);
             advancedControls.TabBar.Padding = new BorderDouble(0, 2);
 
@@ -206,18 +199,18 @@ namespace MatterHackers.MatterControl
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
             //Add the tab contents for 'Advanced Controls'
-            string printerControlsLabel = LocalizedString.Get("Controls");
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 18,
+            string printerControlsLabel = LocalizedString.Get("CONTROLS");
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 16,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string sliceSettingsLabel = LocalizedString.Get("Slice Settings");
+            string sliceSettingsLabel = LocalizedString.Get("SLICE SETTINGS");
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 18,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string configurationLabel = LocalizedString.Get("Configuration");
+            string configurationLabel = LocalizedString.Get("CONFIGURATION");
             ScrollableWidget configurationControls = new ConfigurationPage();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 18,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             return advancedControls;
@@ -230,14 +223,21 @@ namespace MatterHackers.MatterControl
             PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
             ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
             this.BoundsChanged += new EventHandler(onBoundsChanges);
-            RightBorderLine.Click += new ClickWidget.ButtonEventHandler(onRightBorderClick); ;
+            RightBorderLine.Click += new ClickWidget.ButtonEventHandler(onRightBorderClick);
+            LeftBorderLine.Click += new ClickWidget.ButtonEventHandler(onLeftBorderClick);
             
         }
 
         void onRightBorderClick(object sender, EventArgs e)
-        {
-            ColumnThree.Visible = !ColumnThree.Visible;
-            ColThreeIsHidden = !ColumnThree.Visible;
+        {            
+            ColThreeIsHidden = ColumnThree.Visible;
+            SetVisibleStatus(true);
+        }
+
+        void onLeftBorderClick(object sender, EventArgs e)
+        {            
+            ColTwoIsHidden = ColumnTwo.Visible;
+            SetVisibleStatus(true);
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -263,56 +263,120 @@ namespace MatterHackers.MatterControl
             SetVisibleStatus();
         }
 
-        void SetVisibleStatus()
+        void LoadColumnZero()
         {
-            bool ColThreeVisible = ColumnThree.Visible;
+            ColumnOne.RemoveAllChildren();
+            ColumnOne.AddChild(new ActionBarPlus());
+            ColumnOne.AddChild(new CompactSlidePanel());
+            ColumnOne.AnchorAll();
+        }
+
+        void LoadColumnOne()
+        {
+            ColumnOne.RemoveAllChildren();
+            ColumnOne.VAnchor = VAnchor.ParentBottomTop;
+            ColumnOne.AddChild(new ActionBarPlus());
+            ColumnOne.AddChild(new PrintProgressBar());
+            ColumnOne.AddChild(new QueueTab());
+            ColumnOne.Width = 480; //Ordering here matters - must go after children are added                      
+        }
+
+        void LoadColumnThree()
+        {
+            advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
+            ColumnThree.AddChild(advancedControlsTabControl);
+            ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
             
+        }
+
+        int UiState = -1;
+        void SetVisibleStatus(bool forceReset = false)
+        {            
+            if (forceReset)
+            {
+                UiState = -1;
+            }
+
             if (this.Width < ColumnThreeMinWidth)
-            {                
-                ColumnThree.Visible = false;
-                ColumnTwo.Visible = false;
+            {
+                if (UiState != 0)
+                {
+                    UiState = 0;
+                    ApplicationWidget.Instance.WidescreenMode = false;
 
-                ColumnOne.RemoveAllChildren();
-                ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new CompactSlidePanel());
-                ColumnOne.AnchorAll();
-                ColumnOne.Visible = true;
+                    LoadColumnZero();                   
 
-                LeftBorderLine.Visible = false;
-                RightBorderLine.Visible = false;
+                    ColumnThree.Visible = false;
+                    ColumnTwo.Visible = false;
+                    ColumnOne.Visible = true;
+                    
+                    
+                    Padding = new BorderDouble(0);
+
+                    LeftBorderLine.Visible = false;
+                    RightBorderLine.Visible = false;
+                }
 
             }
-            else if (this.Width < ColumnTwoMinWidth)
+            else if (this.Width < ColumnTwoMinWidth && !ColThreeIsHidden)
             {
-                
-                ColumnTwo.Visible = false;
-                ColumnThree.Visible = !ColThreeIsHidden;
+                if (UiState != 1)
+                {
+                    UiState = 1;
+                    ApplicationWidget.Instance.WidescreenMode = true;
 
-                ColumnOne.RemoveAllChildren();
-                ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new PrintProgressBar());
-                ColumnOne.AddChild(new QueueTab());
-                ColumnOne.AnchorAll();
-                ColumnOne.Visible = true;
+                    LoadColumnOne();
+                    
+                    ColumnTwo.Visible = !!ColTwoIsHidden;
+                    ColumnThree.Visible = !ColThreeIsHidden;
+                    ColumnOne.Visible = true;
+                    Padding = new BorderDouble(4);
 
-                LeftBorderLine.Visible = false;
-                RightBorderLine.Visible = true;
+                    LeftBorderLine.Visible = false;
+                    RightBorderLine.Visible = true;
+                }
+            }
+            else if (ColTwoIsHidden)
+            {
+                if (UiState != 2)
+                {
+                    UiState = 2;
+                    ApplicationWidget.Instance.WidescreenMode = true;
+
+                    LoadColumnOne();                    
+                    ColumnThree.Visible = !ColThreeIsHidden;
+                    ColumnTwo.Visible = !ColTwoIsHidden;
+                    ColumnOne.AnchorAll();
+
+                    Padding = new BorderDouble(4);
+
+                    ColumnOne.Visible = true;
+
+                    LeftBorderLine.Visible = true;
+                    RightBorderLine.Visible = true;
+                }
             }
             else
             {
-                ColumnThree.Visible = !ColThreeIsHidden;
-                ColumnTwo.Visible = true;
+                if (UiState != 3)
+                {
+                    UiState = 3;
+                    ApplicationWidget.Instance.WidescreenMode = true;
 
-                ColumnOne.RemoveAllChildren();
-                ColumnOne.AddChild(new ActionBarPlus());
-                ColumnOne.AddChild(new PrintProgressBar());
-                ColumnOne.AddChild(new QueueTab());
-                ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                ColumnOne.Width = 480;
-                ColumnOne.Visible = true;
+                    LoadColumnOne();
+                    
+                    ColumnThree.Visible = !ColThreeIsHidden;
+                    ColumnTwo.Visible = !ColTwoIsHidden;
 
-                LeftBorderLine.Visible = true;
-                RightBorderLine.Visible = true;
+                    ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                    ColumnOne.Width = 480;
+                    Padding = new BorderDouble(4);
+
+                    ColumnOne.Visible = true;
+
+                    LeftBorderLine.Visible = true;
+                    RightBorderLine.Visible = true;
+                }
             }
         }
 
@@ -341,6 +405,7 @@ namespace MatterHackers.MatterControl
 
         TabPage QueueTabPage;
         TabPage LibraryTabPage;
+        TabPage HistoryTabPage;
         TabPage AboutTabPage;
         SimpleTextTabWidget AboutTabView;
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
@@ -353,17 +418,23 @@ namespace MatterHackers.MatterControl
             this.TabBar.Margin = new BorderDouble(0, 0);
             this.TabBar.Padding = new BorderDouble(0, 2);
 
-            QueueTabPage = new TabPage(new QueueControlsWidget(), "Queue");
-            this.AddTab(new SimpleTextTabWidget(QueueTabPage, 18,
-                    ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+            this.Margin = new BorderDouble(top: 4);
 
-            LibraryTabPage = new TabPage(new PrintLibraryWidget(), "Library");
-            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, 18,
-                    ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+            QueueTabPage = new TabPage(new QueueControlsWidget(), LocalizedString.Get("Queue").ToUpper());
+            this.AddTab(new SimpleTextTabWidget(QueueTabPage, 15,
+                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            AboutTabPage = new TabPage(new AboutPage(), "About");
-            AboutTabView = new SimpleTextTabWidget(AboutTabPage, 18,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
+            LibraryTabPage = new TabPage(new PrintLibraryWidget(), LocalizedString.Get("Library").ToUpper());
+            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, 15,
+                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            HistoryTabPage = new TabPage(new GuiWidget(), LocalizedString.Get("History").ToUpper());
+            this.AddTab(new SimpleTextTabWidget(HistoryTabPage, 15,
+                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
+            AboutTabView = new SimpleTextTabWidget(AboutTabPage, 15,
+                        ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
             this.AddTab(AboutTabView);
 
             NumQueueItemsChanged(this, null);
@@ -373,7 +444,7 @@ namespace MatterHackers.MatterControl
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
         {
-            string queueStringBeg = LocalizedString.Get("Queue");
+            string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
             string queueString = string.Format("{1} ({0})", PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
             QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
         }
@@ -396,7 +467,7 @@ namespace MatterHackers.MatterControl
                 {
                     UpdateControl.NeedToCheckForUpdateFirstTimeEver = false;
                     addedUpdateMark = new NotificationWidget();
-                    addedUpdateMark.OriginRelativeParent = new Vector2(63, 10);
+                    addedUpdateMark.OriginRelativeParent = new Vector2(68, 7);
                     AboutTabView.AddChild(addedUpdateMark);
                 }
 #else
@@ -409,7 +480,7 @@ namespace MatterHackers.MatterControl
                 {
                     addedUpdateMark.Visible = false;
                 }
-                AboutTabPage.Text = string.Format("About");
+                AboutTabPage.Text = string.Format("About").ToUpper();
             }
         }
 

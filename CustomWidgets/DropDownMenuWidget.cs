@@ -189,7 +189,7 @@ namespace MatterHackers.Agg.UI
 
         private void SetDisplayAttributes()
         {
-            this.TextColor = RGBA_Bytes.White;
+            this.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             this.NormalColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.HoverColor = RGBA_Bytes.Gray;
             this.MenuItemsBorderWidth = 1;

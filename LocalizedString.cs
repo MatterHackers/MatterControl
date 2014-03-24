@@ -35,6 +35,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.Localizations
@@ -45,7 +46,13 @@ namespace MatterHackers.Localizations
 
         public static string Get(string englishText)
         {
-            string language = "en";
+            string language = UserSettings.Instance.get("Language");
+            if (language == null)
+            {
+                language = "en";
+                UserSettings.Instance.set("Language","en");
+            }
+
             if (MatterControlTranslationMap == null)
             {
                 string pathToTranslationsFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Translations");

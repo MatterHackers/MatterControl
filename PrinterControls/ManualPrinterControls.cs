@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Padding = new BorderDouble(3, 0, 0, 5);
 
-			TextWidget fanSpeedDescription = new TextWidget(LocalizedString.Get("Fan Speed:"), textColor: RGBA_Bytes.White);
+			TextWidget fanSpeedDescription = new TextWidget(LocalizedString.Get("Fan Speed:"), textColor: ActiveTheme.Instance.PrimaryTextColor);
             fanSpeedDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
             leftToRight.AddChild(fanSpeedDescription);
 
@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl
             GuiWidget topLine = new GuiWidget(10, 1);
             topLine.Margin = new BorderDouble(0, 5);
             topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            topLine.BackgroundColor = RGBA_Bytes.White;
+            topLine.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
             return topLine;
         }
 
@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl
                         feedRateLeftToRight = new FlowLayoutWidget();
 
 						feedRateDescription = new TextWidget(LocalizedString.Get("Speed Multiplier"));
-                        feedRateDescription.TextColor = RGBA_Bytes.White;
+                        feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         feedRateLeftToRight.AddChild(feedRateDescription);
                         feedRateRatioSlider = new Slider(new Vector2(), 300, minFeedRateRatio, maxFeedRateRatio);
                         feedRateRatioSlider.Margin = new BorderDouble(5, 0);
@@ -456,7 +456,7 @@ namespace MatterHackers.MatterControl
                         FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 
 						extrusionDescription = new TextWidget(LocalizedString.Get("Extrusion Multiplier"));
-                        extrusionDescription.TextColor = RGBA_Bytes.White;
+                        extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         leftToRight.AddChild(extrusionDescription);
                         extrusionRatioSlider = new Slider(new Vector2(), 300, minExtrutionRatio, maxExtrusionRatio);
                         extrusionRatioSlider.Margin = new BorderDouble(5, 0);
@@ -690,7 +690,7 @@ namespace MatterHackers.MatterControl
 
         private void SetDisplayAttributes()
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             
             this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
             this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
@@ -917,9 +917,9 @@ namespace MatterHackers.MatterControl
 
         private void onThemeChanged(object sender, EventArgs e)
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            SetVisibleControls();
-            this.Invalidate();
+            //this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            //SetVisibleControls();
+            //this.Invalidate();
         }
 
 		void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)

@@ -54,39 +54,34 @@ namespace MatterHackers.MatterControl.PrintLibrary
         Button deleteFromLibraryButton;
         Button addToQueueButton;
         Button searchButton;
-        MHTextEditWidget searchInput;
-        PluginChooserWindow pluginChooserWindow;
+        MHTextEditWidget searchInput;        
 
         public PrintLibraryWidget()
         {
             SetDisplayAttributes();
-            
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+
             textImageButtonFactory.borderWidth = 0;
 
-            searchButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            searchButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            searchButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            searchButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            searchButtonFactory.normalTextColor = RGBA_Bytes.White;
+            searchButtonFactory.hoverTextColor = RGBA_Bytes.White;
+            searchButtonFactory.disabledTextColor = RGBA_Bytes.White;
+            searchButtonFactory.pressedTextColor = RGBA_Bytes.White;
             searchButtonFactory.borderWidth = 0;
+            searchButtonFactory.FixedWidth = 80;
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {   
                 FlowLayoutWidget searchPanel = new FlowLayoutWidget();
-                searchPanel.BackgroundColor = new RGBA_Bytes(180, 180, 180);
+                searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
                 searchPanel.HAnchor = HAnchor.ParentLeftRight;
-                searchPanel.Padding = new BorderDouble(3, 3);
+                searchPanel.Padding = new BorderDouble(0);                
                 {
                     searchInput = new MHTextEditWidget();
-                    searchInput.Margin = new BorderDouble(6, 0);
+                    searchInput.Margin = new BorderDouble(6, 3, 0, 0);
                     searchInput.HAnchor = HAnchor.ParentLeftRight;
                     searchInput.VAnchor = VAnchor.ParentCenter;
 
-					searchButton = searchButtonFactory.Generate(LocalizedString.Get("Search"));
-                    searchButton.Margin = new BorderDouble(right:9);
+					searchButton = searchButtonFactory.Generate(LocalizedString.Get("Search"),centerText:true);
 
                     searchPanel.AddChild(searchInput);
                     searchPanel.AddChild(searchButton);
@@ -100,14 +95,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     buttonPanel.AddChild(addToLibrary);
                     addToLibrary.Margin = new BorderDouble(0, 0, 3, 0);
                     addToLibrary.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
-
-					Button runCreator = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
-                    buttonPanel.AddChild(runCreator);
-                    runCreator.Margin = new BorderDouble(0, 0, 3, 0);
-                    runCreator.Click += (sender, e) =>
-                    {
-                        OpenPluginChooserWindow();
-                    };
 
 					addToQueueButton = textImageButtonFactory.Generate("Add to Queue");
                     addToQueueButton.Margin = new BorderDouble(3, 0);
@@ -137,22 +124,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
             AddHandlers();
         }
 
-        private void OpenPluginChooserWindow()
-        {
-            if (pluginChooserWindow == null)
-            {
-                pluginChooserWindow = new PluginChooserWindow();
-                pluginChooserWindow.Closed += (sender, e) =>
-                {
-                    pluginChooserWindow = null;
-                };
-                pluginChooserWindow.ShowAsSystemWindow();
-            }
-            else
-            {
-                pluginChooserWindow.BringToFront();
-            }
-        }
 
         private void AddHandlers()
         {

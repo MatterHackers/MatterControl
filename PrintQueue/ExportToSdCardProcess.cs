@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         else
                         {
                             GCodeFile gcodeFile = new GCodeFile(gcodeFileName);
-                            total += gcodeFile.GetFilamentCubicMm(ActiveSliceSettings.Instance.FillamentDiameter) / 1000;
+                            total += gcodeFile.GetFilamentCubicMm(ActiveSliceSettings.Instance.FilamentDiameter) / 1000;
                         }
                     }
 

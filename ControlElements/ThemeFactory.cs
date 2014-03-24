@@ -40,6 +40,14 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public bool IsDarkTheme
+        {
+            get
+            {
+                return loadedTheme.DarkTheme;
+            }
+        }
+
         public RGBA_Bytes TransparentDarkOverlay
         {
             get
@@ -55,6 +63,7 @@ namespace MatterHackers.MatterControl
                 return new RGBA_Bytes(255,255,255,50);
             }
         }
+
 
         public RGBA_Bytes TabLabelSelected
         {
@@ -72,6 +81,13 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public RGBA_Bytes SecondaryTextColor
+        {
+            get
+            {
+                return loadedTheme.secondaryTextColor;
+            }
+        }
 
         public RGBA_Bytes PrimaryBackgroundColor
         {
@@ -175,18 +191,36 @@ namespace MatterHackers.MatterControl
         {
             //Generate a list of available theme definitions
             List<Theme> themeList = new List<Theme>();
-            themeList.Add(new Theme("Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190)));
 
-            themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204)));
+            themeList.Add(new Theme("Dark Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190)));
+            themeList.Add(new Theme("Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190), false));
             
-			themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32)));
-			themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255)));
-			themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76)));
+            themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204)));
+            themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204), false));    
+
+            themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32)));
+            themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32), false));
+
+            themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255)));
+            themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255), false));
+
+            themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76)));
+            themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76), false));
+
             themeList.Add(new Theme("Purple", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229)));
-			themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77)));
-			themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203)));
-			themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114)));
-			themeList.Add(new Theme("Pink", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188,0,200)));
+            themeList.Add(new Theme("Purple", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229), false));
+
+            themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77)));
+            themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77), false));
+
+            themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203)));
+            themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203), false));
+
+            themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114)));
+            themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114), false));
+
+            themeList.Add(new Theme("Pink", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188,0,200)));
+            themeList.Add(new Theme("Pink", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188, 0, 200), false));
 			return themeList;
         }
     }
@@ -202,9 +236,13 @@ namespace MatterHackers.MatterControl
         public RGBA_Bytes tabLabelSelectedColor;
         public RGBA_Bytes tabLabelUnselectedColor;
         public string name;
+        bool darkTheme;
+
+        public bool DarkTheme { get { return darkTheme; } }
 
         public Theme(string name, RGBA_Bytes primary, RGBA_Bytes secondary, bool darkTheme = true)
         {
+            this.darkTheme = darkTheme;
             this.name = name;
 
             if (darkTheme)
@@ -215,20 +253,22 @@ namespace MatterHackers.MatterControl
                 this.primaryBackgroundColor = new RGBA_Bytes(68, 68, 68);
                 this.secondaryBackgroundColor = new RGBA_Bytes(51, 51, 51);
                 this.tabLabelSelectedColor = new RGBA_Bytes(255, 255, 255);
-                this.tabLabelUnselectedColor = new RGBA_Bytes(200, 200, 200);
+                this.tabLabelUnselectedColor = new RGBA_Bytes(180, 180, 180);
                 this.primaryTextColor = new RGBA_Bytes(255, 255, 255);
+                this.secondaryTextColor = new RGBA_Bytes(240, 240, 240);
 
             }
             else
             {
                 this.primaryAccentColor = secondary;
                 this.secondaryAccentColor = primary;
-                
-                this.primaryBackgroundColor = new RGBA_Bytes(169, 169, 169);
-                this.secondaryBackgroundColor = new RGBA_Bytes(208, 208, 208);
-                this.tabLabelSelectedColor = new RGBA_Bytes(255, 255, 255);
-                this.tabLabelUnselectedColor = new RGBA_Bytes(200, 200, 200);
-                this.primaryTextColor = new RGBA_Bytes(255, 255, 255);
+
+                this.primaryBackgroundColor = new RGBA_Bytes(208, 208, 208);
+                this.secondaryBackgroundColor = new RGBA_Bytes(185, 185, 185);
+                this.tabLabelSelectedColor = new RGBA_Bytes(51, 51, 51);
+                this.tabLabelUnselectedColor = new RGBA_Bytes(102, 102, 102);
+                this.primaryTextColor = new RGBA_Bytes(34, 34, 34);
+                this.secondaryTextColor = new RGBA_Bytes(51, 51, 51);
             }
         }
     }

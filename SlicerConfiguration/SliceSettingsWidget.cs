@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             pageTopToBottomLayout.AddChild(noConnectionMessageContainer);
 
             categoryTabs = new TabControl();
-            categoryTabs.TabBar.BorderColor = RGBA_Bytes.White;
+            categoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             categoryTabs.Margin = new BorderDouble(top: 8);
             categoryTabs.AnchorAll();
             List<TabBar> sideTabBarsListForLayout = new List<TabBar>();
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             // add in the ability to turn on and off all details settings
             {
-                showAllDetails.TextColor = RGBA_Bytes.White;
+                showAllDetails.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 showAllDetails.Margin = new BorderDouble(right: 8);
                 showAllDetails.VAnchor = VAnchor.ParentCenter;
                 showAllDetails.Cursor = Cursors.Hand;
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             // add in the ability to turn on and off help text
             {
-                showHelpBox.TextColor = RGBA_Bytes.White;
+                showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 showHelpBox.Margin = new BorderDouble(right: 3);
                 showHelpBox.VAnchor = VAnchor.ParentCenter;
                 showHelpBox.Cursor = Cursors.Hand;
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             TabControl groupTabs = new TabControl(Orientation.Vertical);
             groupTabs.Margin = new BorderDouble(0, 0, 0, 5);
-            groupTabs.TabBar.BorderColor = RGBA_Bytes.White;
+            groupTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             foreach (OrganizerGroup group in category.GroupsList)
             {
                 tabIndexForItem = 0;

@@ -114,6 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         List<PlatingMeshData> asynchPlatingDataList = new List<PlatingMeshData>();
 
         List<PlatingMeshData> MeshExtraData;
+        bool autoRotateEnabled = true;
 
         public Matrix4X4 SelectedMeshTransform
         {
@@ -191,6 +192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         MeshSelectInfo meshSelectInfo;
         public override void OnMouseDown(MouseEventArgs mouseEvent)
         {
+            autoRotateEnabled = false;
             base.OnMouseDown(mouseEvent);
             if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
             {
@@ -222,6 +224,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnDraw(Graphics2D graphics2D)
         {
+            hasDrawn = true;
             base.OnDraw(graphics2D);
         }
 
@@ -432,6 +435,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // don't load the mesh until we get all the rest of the interface built
                 meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
                 meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
+            }
+
+            UiThread.RunOnIdle(AutoSpin);
+        }
+
+        bool hasDrawn = false;
+        Stopwatch timeSinceLastSpin = new Stopwatch();
+        void AutoSpin(object state)
+        {
+            if (!WidgetHasBeenClosed && autoRotateEnabled)
+            {
+                // add it back in to keep it running.
+                UiThread.RunOnIdle(AutoSpin);
+
+                if ((!timeSinceLastSpin.IsRunning || timeSinceLastSpin.ElapsedMilliseconds > 50)
+                    && hasDrawn)
+                {
+                    hasDrawn = false;
+                    timeSinceLastSpin.Restart();
+
+                    Quaternion currentRotation = meshViewerWidget.TrackballTumbleWidget.TrackBallController.CurrentRotation.GetRotation();
+                    Quaternion invertedRotation = Quaternion.Invert(currentRotation);
+
+                    Quaternion rotateAboutZ = Quaternion.FromEulerAngles(new Vector3(0, 0, .01));
+                    rotateAboutZ = invertedRotation * rotateAboutZ * currentRotation;
+                    meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(rotateAboutZ);
+                    Invalidate();
+                }
             }
         }
 
@@ -989,17 +1020,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     PartInfoOptionContainer.Margin = new BorderDouble(8, 3);
 					string sizeInfoLbl = LocalizedString.Get("Size");
 					string sizeInfoLblFull = "{0}:".FormatWith(sizeInfoLbl);
-					TextWidget sizeInfo = new TextWidget(sizeInfoLblFull, textColor: RGBA_Bytes.White);
+					TextWidget sizeInfo = new TextWidget(sizeInfoLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
                     PartInfoOptionContainer.AddChild(sizeInfo);
-                    TextWidget xSizeInfo = new TextWidget("  x 10.1", pointSize: 10, textColor: RGBA_Bytes.White);
+                    TextWidget xSizeInfo = new TextWidget("  x 10.1", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
                     xSizeInfo.AutoExpandBoundsToText = true;
                     PartInfoOptionContainer.AddChild(xSizeInfo);
 
-                    TextWidget ySizeInfo = new TextWidget("  y 10.1", pointSize: 10, textColor: RGBA_Bytes.White);
+                    TextWidget ySizeInfo = new TextWidget("  y 10.1", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
                     ySizeInfo.AutoExpandBoundsToText = true;
                     PartInfoOptionContainer.AddChild(ySizeInfo);
-                    
-                    TextWidget zSizeInfo = new TextWidget("  z 100.1", pointSize: 10, textColor: RGBA_Bytes.White);
+
+                    TextWidget zSizeInfo = new TextWidget("  z 100.1", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
                     zSizeInfo.AutoExpandBoundsToText = true;
                     PartInfoOptionContainer.AddChild(zSizeInfo);
                 }
@@ -1083,7 +1114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string scaleRatioLblTxt = LocalizedString.Get("Ratio");
 			string scaleRatioLblTxtFull = "{0}:".FormatWith(scaleRatioLblTxt);
-			TextWidget scaleRatioLabel = new TextWidget(scaleRatioLblTxtFull, textColor: RGBA_Bytes.White);
+            TextWidget scaleRatioLabel = new TextWidget(scaleRatioLblTxtFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
             scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
             scaleRatioContainer.AddChild(scaleRatioLabel);
 
@@ -1225,7 +1256,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string degreesLabelTxt = LocalizedString.Get("Degrees");
 			string degreesLabelTxtFull = "{0}:".FormatWith(degreesLabelTxt);
-			TextWidget degreesLabel = new TextWidget(degreesLabelTxt, textColor: RGBA_Bytes.White);
+            TextWidget degreesLabel = new TextWidget(degreesLabelTxt, textColor: ActiveTheme.Instance.PrimaryTextColor);
             degreesContainer.AddChild(degreesLabel);
             degreesContainer.AddChild(horizontalSpacer);
 
@@ -1240,7 +1271,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateButtonContainer.HAnchor = HAnchor.ParentLeftRight;
 
             Button rotateXButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
-            TextWidget centeredX = new TextWidget("X", pointSize: 10, textColor: RGBA_Bytes.White); centeredX.Margin = new BorderDouble(3, 0, 0, 0); centeredX.AnchorCenter(); rotateXButton.AddChild(centeredX);
+            TextWidget centeredX = new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredX.Margin = new BorderDouble(3, 0, 0, 0); centeredX.AnchorCenter(); rotateXButton.AddChild(centeredX);
             rotateButtonContainer.AddChild(rotateXButton);
             rotateControls.Add(rotateXButton);
             rotateXButton.Click += (object sender, MouseEventArgs mouseEvent) =>
@@ -1264,7 +1295,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
 
             Button rotateYButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
-            TextWidget centeredY = new TextWidget("Y", pointSize: 10, textColor: RGBA_Bytes.White); centeredY.Margin = new BorderDouble(3, 0, 0, 0); centeredY.AnchorCenter(); rotateYButton.AddChild(centeredY);
+            TextWidget centeredY = new TextWidget("Y", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredY.Margin = new BorderDouble(3, 0, 0, 0); centeredY.AnchorCenter(); rotateYButton.AddChild(centeredY);
             rotateButtonContainer.AddChild(rotateYButton);
             rotateControls.Add(rotateYButton);
             rotateYButton.Click += (object sender, MouseEventArgs mouseEvent) =>
@@ -1288,7 +1319,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
 
             Button rotateZButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
-            TextWidget centeredZ = new TextWidget("Z", pointSize: 10, textColor: RGBA_Bytes.White); centeredZ.Margin = new BorderDouble(3, 0, 0, 0); centeredZ.AnchorCenter(); rotateZButton.AddChild(centeredZ);
+            TextWidget centeredZ = new TextWidget("Z", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredZ.Margin = new BorderDouble(3, 0, 0, 0); centeredZ.AnchorCenter(); rotateZButton.AddChild(centeredZ);
             rotateButtonContainer.AddChild(rotateZButton);
             rotateControls.Add(rotateZButton);
             rotateZButton.Click += (object sender, MouseEventArgs mouseEvent) =>

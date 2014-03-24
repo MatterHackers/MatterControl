@@ -55,10 +55,30 @@ namespace MatterHackers.MatterControl
         static ApplicationWidget globalInstance;
         public RootedObjectEventHandler ReloadPanelTrigger = new RootedObjectEventHandler();
         public RootedObjectEventHandler SetUpdateNotificationTrigger = new RootedObjectEventHandler();
+        bool widescreenMode;
+        event EventHandler unregisterEvents;
+
+        public bool WidescreenMode
+        { 
+            get 
+            { 
+                return widescreenMode; 
+            }
+            set 
+            { 
+                if (value != widescreenMode)
+                {
+                    widescreenMode = value;
+                    ApplicationWidget.Instance.ReloadBackPanel();
+                }
+            }
+        }
+
 
         public ApplicationWidget()
         {
             Name = "MainSlidePanel";
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ReloadAll, ref unregisterEvents);
         }
 
         public void AddElements()
@@ -67,6 +87,15 @@ namespace MatterHackers.MatterControl
             this.AddChild(new WidescreenPanel());
             this.AnchorAll();
             SetUpdateNotification(this, null);
+        }
+
+        public void ReloadAll(object sender, EventArgs e)
+        {
+            UiThread.RunOnIdle((state) =>
+            {                            
+                this.RemoveAllChildren();
+                this.AddChild(new WidescreenPanel());
+            });
         }
 
         public static ApplicationWidget Instance

@@ -40,6 +40,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.VersionManagement;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -95,8 +96,8 @@ namespace MatterHackers.MatterControl
 
         public UpdateControl()
         {
-            textImageButtonFactory.normalFillColor = ActiveTheme.Instance.PrimaryTextColor;
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+            textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
+            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
 
             HAnchor = HAnchor.ParentLeftRight;
             BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
@@ -374,7 +375,7 @@ namespace MatterHackers.MatterControl
     {
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
+        RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
         
         public AboutPage()
         {
@@ -385,16 +386,16 @@ namespace MatterHackers.MatterControl
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             linkButtonFactory.fontSize = 12;
-            linkButtonFactory.textColor = offWhite;
+            linkButtonFactory.textColor = aboutTextColor;
 
-            textImageButtonFactory.normalFillColor = ActiveTheme.Instance.PrimaryTextColor;
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+            textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
+            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
 
             FlowLayoutWidget customInfoTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             customInfoTopToBottom.Name = "AboutPageCustomInfo";
             customInfoTopToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             customInfoTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
-            customInfoTopToBottom.Padding = new BorderDouble(5, 10);
+            customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
 
             customInfoTopToBottom.AddChild(new UpdateControl());
             AddMatterHackersInfo(customInfoTopToBottom);
@@ -408,21 +409,33 @@ namespace MatterHackers.MatterControl
             headerContainer.Margin = new BorderDouble(0, 0, 0, 10);
             headerContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             {
-                TextWidget headerText = new TextWidget(string.Format("MatterControl"), textColor: RGBA_Bytes.White, pointSize: 20);
+                TextWidget headerText = new TextWidget(string.Format("MatterControl"), textColor: aboutTextColor, pointSize: 20);
                 headerText.MinimumSize = new VectorMath.Vector2(headerText.Width, headerText.Height);
                 headerText.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 headerContainer.AddChild(headerText);
 
-                TextWidget versionText = new TextWidget(string.Format("Version {0}".Localize(), VersionInfo.Instance.ReleaseVersion), textColor: RGBA_Bytes.White, pointSize: 10);
+                TextWidget versionText = new TextWidget(string.Format("Version {0}".Localize(), VersionInfo.Instance.ReleaseVersion).ToUpper(), textColor: aboutTextColor, pointSize: 10);
                 versionText.MinimumSize = new VectorMath.Vector2(versionText.Width, versionText.Height);
                 versionText.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 headerContainer.AddChild(versionText);
 
-                TextWidget developedByText = new TextWidget("Developed by MatterHackers".Localize(), textColor: RGBA_Bytes.White);
-                developedByText.Margin = new BorderDouble(top: 5);
-                developedByText.HAnchor = Agg.UI.HAnchor.ParentCenter;
+                FlowLayoutWidget developedByContainer = new FlowLayoutWidget();
+                developedByContainer.Margin = new BorderDouble(top: 5);
+                developedByContainer.HAnchor = HAnchor.ParentLeftRight;
+
+                TextWidget developedByText = new TextWidget("Developed By: ".Localize().ToUpper(), pointSize:10, textColor: aboutTextColor);
+                                
                 developedByText.MinimumSize = new VectorMath.Vector2(developedByText.Width, developedByText.Height);
-                headerContainer.AddChild(developedByText);
+
+                TextWidget MatterHackersText = new TextWidget("MatterHackers", pointSize: 14, textColor: aboutTextColor);
+
+
+                developedByContainer.AddChild(new HorizontalSpacer());
+                developedByContainer.AddChild(developedByText);
+                developedByContainer.AddChild(MatterHackersText);
+                developedByContainer.AddChild(new HorizontalSpacer());
+
+                headerContainer.AddChild(developedByContainer);
             }
             topToBottom.AddChild(headerContainer);
 
@@ -435,14 +448,17 @@ namespace MatterHackers.MatterControl
                 // donate to mc
                 {
                     FlowLayoutWidget donateTextContanier = new FlowLayoutWidget();
-                    TextWidget donateStartText = new TextWidget("Please consider ".Localize(), textColor: RGBA_Bytes.White);
+                    donateTextContanier.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+                    TextWidget donateStartText = new TextWidget("Please consider ".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                    TextWidget donateEndText = new TextWidget(" to help support MatterControl.".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+
+                    donateTextContanier.AddChild(new HorizontalSpacer());
                     donateTextContanier.AddChild(donateStartText);
-                    Button matterControlDonateLink = linkButtonFactory.Generate("donating".Localize());
-                    matterControlDonateLink.OriginRelativeParent = new VectorMath.Vector2(matterControlDonateLink.OriginRelativeParent.x, matterControlDonateLink.OriginRelativeParent.y + donateStartText.Printer.TypeFaceStyle.DescentInPixels);
-                    matterControlDonateLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("http://www.matterhackers.com/store/printer-accessories/mattercontrol-donation"); };
-                    donateTextContanier.AddChild(matterControlDonateLink);
-                    donateTextContanier.AddChild(new TextWidget(" to help support and improve MatterControl.".Localize(), textColor: RGBA_Bytes.White));
-                    donateTextContanier.HAnchor = Agg.UI.HAnchor.ParentCenter;
+                    donateTextContanier.AddChild(getDonateLink(donateStartText));
+                    donateTextContanier.AddChild(donateEndText);
+                    donateTextContanier.AddChild(new HorizontalSpacer());
+
                     topToBottom.AddChild(donateTextContanier);
                 }
 
@@ -479,7 +495,7 @@ namespace MatterHackers.MatterControl
             learnMoreLink.Margin = new BorderDouble(0, 5);
             topToBottom.AddChild(learnMoreLink);
 
-            TextWidget copyrightText = new TextWidget(string.Format("Copyright © 2014 MatterHackers, Inc."), textColor: offWhite);
+            TextWidget copyrightText = new TextWidget(string.Format("Copyright © 2014 MatterHackers, Inc."), textColor: aboutTextColor);
             copyrightText.HAnchor = Agg.UI.HAnchor.ParentCenter;
             topToBottom.AddChild(copyrightText);
 
@@ -487,7 +503,7 @@ namespace MatterHackers.MatterControl
                 FlowLayoutWidget leftToRightBuildInfo = new FlowLayoutWidget();
                 leftToRightBuildInfo.HAnchor |= HAnchor.ParentCenter;
 
-                TextWidget buildText = new TextWidget(string.Format("Build: {0} | ".Localize(), VersionInfo.Instance.BuildVersion), textColor: offWhite, pointSize: 10);
+                TextWidget buildText = new TextWidget(string.Format("Build: {0} | ".Localize(), VersionInfo.Instance.BuildVersion), textColor: aboutTextColor, pointSize: 10);
                 leftToRightBuildInfo.AddChild(buildText);
 
                 double oldFontSize = linkButtonFactory.fontSize;
@@ -502,12 +518,21 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        Button getDonateLink(TextWidget donateStartText )
+        {
+            Button matterControlDonateLink = linkButtonFactory.Generate("donating".Localize());
+            matterControlDonateLink.OriginRelativeParent = new VectorMath.Vector2(matterControlDonateLink.OriginRelativeParent.x, matterControlDonateLink.OriginRelativeParent.y + donateStartText.Printer.TypeFaceStyle.DescentInPixels);
+            matterControlDonateLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("http://www.matterhackers.com/store/printer-accessories/mattercontrol-donation"); };
+            return matterControlDonateLink;
+        }
+
         public static void InsertAttributionText(GuiWidget topToBottom, LinkButtonFactory linkButtonFactory)
         {
             // slicer credit
             {
                 FlowLayoutWidget donateTextContainer = new FlowLayoutWidget();
-                TextWidget thanksText = new TextWidget("Special thanks to Alessandro Ranellucci for his incredible work on ".Localize(), textColor: RGBA_Bytes.White);
+                TextWidget thanksText = new TextWidget("Special thanks to Alessandro Ranellucci for his incredible work on ".Localize() ,textColor: ActiveTheme.Instance.PrimaryTextColor);
+                
                 donateTextContainer.AddChild(thanksText);
                 Button slic3rOrgLink = linkButtonFactory.Generate("Slic3r");
                 //slic3rOrgLink.VAnchor = Agg.UI.VAnchor.Bottom;
@@ -521,14 +546,14 @@ namespace MatterHackers.MatterControl
             // cura engine credit
             {
                 FlowLayoutWidget curaEngineTextContanier = new FlowLayoutWidget();
-                TextWidget donateStartText = new TextWidget("and to David Braam and Ultimaker BV, for the amazing ".Localize(), textColor: RGBA_Bytes.White);
+                TextWidget donateStartText = new TextWidget("and to David Braam and Ultimaker BV, for the amazing ".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 curaEngineTextContanier.AddChild(donateStartText);
 
                 Button curaEngineSourceLink = linkButtonFactory.Generate("CuraEngine");
                 curaEngineSourceLink.OriginRelativeParent = new VectorMath.Vector2(curaEngineSourceLink.OriginRelativeParent.x, curaEngineSourceLink.OriginRelativeParent.y + donateStartText.Printer.TypeFaceStyle.DescentInPixels);
                 curaEngineSourceLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("https://github.com/Ultimaker/CuraEngine"); };
                 curaEngineTextContanier.AddChild(curaEngineSourceLink);
-                curaEngineTextContanier.AddChild(new TextWidget(".", textColor: RGBA_Bytes.White));
+                curaEngineTextContanier.AddChild(new TextWidget(".", textColor: ActiveTheme.Instance.PrimaryTextColor));
 
                 curaEngineTextContanier.HAnchor = Agg.UI.HAnchor.ParentCenter;
                 topToBottom.AddChild(curaEngineTextContanier);
@@ -581,7 +606,7 @@ namespace MatterHackers.MatterControl
             }
 #endif
 
-            graphics2D.FillRectangle(new RectangleDouble(0, this.Height - 1, this.Width, this.Height), RGBA_Bytes.White);
+            graphics2D.FillRectangle(new RectangleDouble(0, this.Height - 1, this.Width, this.Height), ActiveTheme.Instance.PrimaryTextColor);
             base.OnDraw(graphics2D);
         }
     }

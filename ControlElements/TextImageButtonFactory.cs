@@ -42,6 +42,7 @@ using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl
 {
@@ -76,8 +77,13 @@ namespace MatterHackers.MatterControl
                 container.AddChild(leftSpace);
             }
 
-            if (image != null)
+            if (image != null && image.Width > 0)
             {
+                if (!ActiveTheme.Instance.IsDarkTheme)
+                {
+                    InvertLightness.DoInvertLightness(image);
+                }
+                
                 imageWidget = new ImageWidget(image);
                 imageWidget.VAnchor = VAnchor.ParentCenter;
                 container.AddChild(imageWidget);
@@ -145,10 +151,10 @@ namespace MatterHackers.MatterControl
         public RGBA_Bytes pressedBorderColor = new RGBA_Bytes(0, 0, 0, 0);
         public RGBA_Bytes disabledBorderColor = new RGBA_Bytes(0, 0, 0, 0);
 
-        public RGBA_Bytes normalTextColor = RGBA_Bytes.White;
-        public RGBA_Bytes hoverTextColor = RGBA_Bytes.White;
-        public RGBA_Bytes pressedTextColor = RGBA_Bytes.White;
-        public RGBA_Bytes disabledTextColor = RGBA_Bytes.White;
+        public RGBA_Bytes normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+        public RGBA_Bytes hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+        public RGBA_Bytes pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+        public RGBA_Bytes disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
         public int fontSize = 12;
         public double borderWidth = 1;
         public bool invertImageLocation = false;
@@ -187,6 +193,11 @@ namespace MatterHackers.MatterControl
             string path = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, imageName);
             ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
             ImageIO.LoadImageData(path, buffer);
+
+            if (!ActiveTheme.Instance.IsDarkTheme)
+            {
+                InvertLightness.DoInvertLightness(buffer);
+            }
             return buffer;
         }
 
@@ -197,7 +208,7 @@ namespace MatterHackers.MatterControl
             editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_Black.png")));
             editButton.Margin = new BorderDouble(2, -2, 2, 0);
             editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
-            TextWidget textLabel = new TextWidget(label, textColor: RGBA_Bytes.White);
+            TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
             textLabel.VAnchor = Agg.UI.VAnchor.ParentTop;
             groupLableAndEditControl.AddChild(textLabel);
             groupLableAndEditControl.AddChild(editButton);
@@ -329,6 +340,26 @@ namespace MatterHackers.MatterControl
                 pressedText = label;
             }
 
+            if (normalToPressedImageName == null)
+            {
+                normalToPressedImageName = pressedImageName;
+            }
+
+            if (pressedImageName == null)
+            {
+                pressedImageName = normalToPressedImageName;
+            }
+
+            if (pressedToNormalImageName == null)
+            {
+                pressedToNormalImageName = normalImageName;
+            }
+
+            if (normalImageName == "icon_arrow_right_no_border_32x32.png")
+            {
+                int a = 0;
+            }
+
             if (normalImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
@@ -349,20 +380,7 @@ namespace MatterHackers.MatterControl
                 ImageIO.LoadImageData(this.GetImageLocation(pressedToNormalImageName), pressedToNormalImage);
             }
 
-            if (normalToPressedImageName == null)
-            {
-                normalToPressedImage = pressedImage;
-            }
 
-            if (pressedImageName == null)
-            {
-                pressedImage = normalToPressedImage;
-            }
-
-            if (pressedToNormalImageName == null)
-            {
-                pressedToNormalImage = normalImage;
-            }
 
             if (invertImageLocation)
             {
@@ -394,6 +412,10 @@ namespace MatterHackers.MatterControl
             {
                 iconImage = new ImageBuffer();
                 ImageIO.LoadImageData(this.GetImageLocation(iconImageName), iconImage);
+                if (!ActiveTheme.Instance.IsDarkTheme)
+                {
+                    InvertLightness.DoInvertLightness(iconImage);
+                }
             }
 
             BorderDouble internalMargin = new BorderDouble(0);

@@ -12,6 +12,9 @@ namespace MatterHackers.Localizations
 {
     public class TranslationMap
     {
+        const string engishTag = "English:";
+        const string translatedTag = "Translated:";
+
         Dictionary<string, string> translationDictionary = new Dictionary<string, string>();
         Dictionary<string, string> masterDictionary = new Dictionary<string, string>();
 
@@ -37,17 +40,50 @@ namespace MatterHackers.Localizations
         void ReadIntoDictonary(Dictionary<string, string> dictionary, string pathAndFilename)
         {
             string[] lines = File.ReadAllLines(pathAndFilename);
-            for (int i = 0; i < lines.Length; i+=3)
+            bool lookingForEnglish = true;
+            string englishString = "";
+            for (int i = 0; i < lines.Length; i++)
             {
-                string englishString = lines[i].Substring("english:".Length);
-                string translatedString = lines[i+1].Substring("translated:".Length);
-                dictionary.Add(DecodeWhileReading(englishString), DecodeWhileReading(translatedString));
+                string line = lines[i].Trim();
+                if (line.Length == 0)
+                {
+                    // we are happy to skip blank lines
+                    continue;
+                }
+
+                if (lookingForEnglish)
+                {
+                    if (line.Length < engishTag.Length || !line.StartsWith(engishTag))
+                    {
+                        throw new Exception("Found unknown string at line {0}. Looking for {1}.".FormatWith(i, engishTag));
+                    }
+                    else
+                    {
+                        englishString = lines[i].Substring(engishTag.Length);
+                        lookingForEnglish = false;
+                    }
+                }
+                else
+                {
+                    if (line.Length < translatedTag.Length || !line.StartsWith(translatedTag))
+                    {
+                        throw new Exception("Found unknown string at line {0}. Looking for {1}.".FormatWith(i, translatedTag));
+                    }
+                    else
+                    {
+                        string translatedString = lines[i].Substring(translatedTag.Length);
+                        // store the string
+                        dictionary.Add(DecodeWhileReading(englishString), DecodeWhileReading(translatedString));
+                        // go back to looking for english
+                        lookingForEnglish = true;
+                    }
+                }
             }
         }
 
         public void LoadTranslation(string pathToTranslationsFolder, string twoLetterIsoLanguageName)
         {
-            this.twoLetterIsoLanguageName = twoLetterIsoLanguageName;
+            this.twoLetterIsoLanguageName = twoLetterIsoLanguageName.ToLower();
 
             this.pathToMasterFile = Path.Combine(pathToTranslationsFolder, "Master.txt");
             ReadIntoDictonary(masterDictionary, pathToMasterFile);
@@ -114,8 +150,8 @@ namespace MatterHackers.Localizations
                     using (StreamWriter masterFileStream = File.AppendText(pathAndFilename))
                     {
 
-                        masterFileStream.WriteLine(string.Format("English:{0}", EncodeForSaving(englishString)));
-                        masterFileStream.WriteLine(string.Format("Translated:{0}", EncodeForSaving(englishString)));
+                        masterFileStream.WriteLine("{0}{1}".FormatWith(engishTag, EncodeForSaving(englishString)));
+                        masterFileStream.WriteLine("{0}{1}".FormatWith(translatedTag, EncodeForSaving(englishString)));
                         masterFileStream.WriteLine("");
                     }
                 }

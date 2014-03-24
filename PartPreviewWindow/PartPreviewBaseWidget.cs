@@ -54,10 +54,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public PartPreviewBaseWidget()
         {
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             whiteButtonFactory.FixedWidth = 138;
             whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
@@ -66,10 +66,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
 
             expandMenuOptionFactory.FixedWidth = 138;
-            expandMenuOptionFactory.normalTextColor = RGBA_Bytes.White;
-            expandMenuOptionFactory.hoverTextColor = RGBA_Bytes.White;
-            expandMenuOptionFactory.disabledTextColor = RGBA_Bytes.White;
-            expandMenuOptionFactory.pressedTextColor = RGBA_Bytes.White;
+            expandMenuOptionFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            expandMenuOptionFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            expandMenuOptionFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            expandMenuOptionFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             expandMenuOptionFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 50);
             expandMenuOptionFactory.pressedFillColor = new RGBA_Bytes(255, 255, 255, 50);
             expandMenuOptionFactory.disabledFillColor = new RGBA_Bytes(255, 255, 255, 50);
@@ -78,18 +78,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             checkboxButtonFactory.FixedWidth = 138;
             checkboxButtonFactory.borderWidth = 3;
 
-            checkboxButtonFactory.normalTextColor = RGBA_Bytes.White;
+            checkboxButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
             checkboxButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 0);
             checkboxButtonFactory.normalFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            checkboxButtonFactory.hoverTextColor = RGBA_Bytes.White;
+            checkboxButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
             checkboxButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 50);
             checkboxButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 50);
 
-            checkboxButtonFactory.pressedTextColor = RGBA_Bytes.White;
+            checkboxButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             checkboxButtonFactory.pressedBorderColor = new RGBA_Bytes(0, 0, 0, 50);
 
-            checkboxButtonFactory.disabledTextColor = RGBA_Bytes.White;
+            checkboxButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             BackgroundColor = RGBA_Bytes.White;
         }

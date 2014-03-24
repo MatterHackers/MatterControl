@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			else
 			{
-                string statusStringBeg = LocalizedString.Get("Status");
+                string statusStringBeg = LocalizedString.Get("STATUS");
 				string statusString = string.Format("{1}: {0}",  PrinterCommunication.Instance.PrinterConnectionStatusVerbose, statusStringBeg);
 				printerStatusText.Text = string.Format(statusString,PrinterCommunication.Instance.PrinterConnectionStatusVerbose);           
 			}

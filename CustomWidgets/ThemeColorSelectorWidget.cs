@@ -24,10 +24,13 @@ namespace MatterHackers.MatterControl
 			//colorText.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			//this.AddChild(colorText);
 			//Temporary theme changer button
-			GuiWidget themeButtons = new GuiWidget(96, 42);
+			GuiWidget themeButtons = new GuiWidget(186, 42);
+
+            int themeCount = ActiveTheme.Instance.AvailableThemes.Count;
+
 			themeButtons.BackgroundColor = RGBA_Bytes.White;
 			int index = 0;
-			for (int x = 0; x < 5; x++)
+            for (int x = 0; x < themeCount/2; x++)
 			{
 				for (int y = 0; y < 2; y++)
 				{
@@ -49,8 +52,8 @@ namespace MatterHackers.MatterControl
 					index++;
 					themeButtons.AddChild(colorButton);
 				}
-			}
-			themeButtons.Margin = new BorderDouble(5);
+			}            
+			themeButtons.Margin = new BorderDouble(2);
 			this.AddChild(themeButtons);
             this.VAnchor = VAnchor.ParentCenter;
 		}
@@ -60,7 +63,7 @@ namespace MatterHackers.MatterControl
             base.OnDraw(graphics2D);
             RectangleDouble border = LocalBounds;
             border.Deflate(new BorderDouble(1));
-            graphics2D.Rectangle(border, ActiveTheme.Instance.SecondaryBackgroundColor, 4);
+            //graphics2D.Rectangle(border, ActiveTheme.Instance.SecondaryBackgroundColor, 4);
         }
 	}
 }

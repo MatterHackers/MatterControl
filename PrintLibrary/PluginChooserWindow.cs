@@ -40,7 +40,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.CreatorPlugins
 {
     
     public class PluginChooserWindow : SystemWindow
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         public PluginChooserWindow()
             : base(360, 300)
         {
-			Title = LocalizedString.Get("Installed Plugins");
+			Title = LocalizedString.Get("Installed Plugins");            
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -150,7 +150,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             //ShowAsSystemWindow();
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
-            cancelPresetsButton.Click += (sender, e) => { Close(); };
+            cancelPresetsButton.Click += (sender, e) => {
+                UiThread.RunOnIdle(CloseOnIdle);            
+            };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
