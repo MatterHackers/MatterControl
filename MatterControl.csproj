@@ -72,6 +72,7 @@
     <Compile Include="ActionBar\PrinterActionRow.cs" />
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
+    <Compile Include="ApplicationView\QueueTabs.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="LocalizedString.cs" />
@@ -81,6 +82,9 @@
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
+    <Compile Include="PrintHistory\PrintHistoryListControl.cs" />
+    <Compile Include="PrintHistory\PrintHistoryListItem.cs" />
+    <Compile Include="PrintHistory\PrintHistoryWidget.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
