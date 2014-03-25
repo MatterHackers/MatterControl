@@ -340,6 +340,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             return "Unknown";
         }
+        /// <summary>
+        /// Returns whether or not the setting is overridden by the active layer
+        /// </summary>
+        /// <param name="sliceSetting"></param>
+        /// <returns></returns>
+        public bool SettingExistsInLayer(string sliceSetting, int layer=0)
+        {
+            bool settingExistsInLayer;
+            if (layer < activeSettingsLayers.Count)
+            {
+                settingExistsInLayer = (activeSettingsLayers[layer].settingsDictionary.ContainsKey(sliceSetting));
+            }
+            else
+            {
+                settingExistsInLayer = false;
+            }
+            return settingExistsInLayer;
+        }
 
         public Vector2 GetActiveVector2(string sliceSetting)
         {

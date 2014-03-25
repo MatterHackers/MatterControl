@@ -23,6 +23,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public int ActiveLayerIndex
+        {
+            get { return activeLayerIndex; }
+        }
+
+
         public void SaveSetting(string settingKey, string settingValue)
         {
             ActiveSliceSettings.Instance.SaveValue(settingKey, settingValue, this.activeLayerIndex);
