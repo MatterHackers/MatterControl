@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					Button deleteAllFromQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Remove All"));
                     deleteAllFromQueueButton.Margin = new BorderDouble(3, 0);
                     deleteAllFromQueueButton.Click += new ButtonBase.ButtonEventHandler(deleteAllFromQueueButton_Click);
-                    buttonPanel1.AddChild(deleteAllFromQueueButton);
+					//buttonPanel1.AddChild(deleteAllFromQueueButton);
 
                     GuiWidget spacer1 = new GuiWidget();
                     spacer1.HAnchor = HAnchor.ParentLeftRight;
