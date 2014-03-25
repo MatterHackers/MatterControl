@@ -58,9 +58,10 @@ namespace MatterHackers.MatterControl
             this.commandLineArgs = Environment.GetCommandLineArgs();
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            if (commandLineArgs.Length > 1)
+            foreach(string command in commandLineArgs)
             {
-                switch (commandLineArgs[1].ToUpper())
+                string commandUpper = command.ToUpper();
+                switch (commandUpper)
                 {
                     case "TEST":
                         Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
@@ -71,6 +72,10 @@ namespace MatterHackers.MatterControl
                         }
                         testDispatch.RunTests(testCommands);
                         return;
+
+                    case "CLEAR_CACHE":
+                        AboutPage.DeleteCacheData();
+                        break;
 
                     case "SHOW_MEMORY":
                         ShowMemoryUsed = true;
@@ -253,9 +258,7 @@ namespace MatterHackers.MatterControl
             base.OnDraw(graphics2D);
             totalDrawTime.Stop();
 
-#if !DEBUG
             if (ShowMemoryUsed)
-#endif
             {
                 long memory = GC.GetTotalMemory(false);
                 this.Title = string.Format("Allocated = {0:n0} : {1}ms, d{2} Size = {3}x{4}", memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height);
