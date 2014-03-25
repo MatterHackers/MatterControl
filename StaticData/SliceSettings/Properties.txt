@@ -111,7 +111,7 @@ support_material_interface_extruder|Support Interface Extruder|INT||The index of
 support_material_interface_layers|Interface Layers|INT|layers|The number of layers to print between the supports and the part.
 support_material_interface_spacing|Interface Pattern Spacing|POSITIVE_DOUBLE|mm|The space between lines of the interface layers (0 is solid).
 support_material_pattern|Pattern|LIST|rectilinear,rectilinear-grid,honeycomb|The pattern used while generating support material.
-support_material_spacing|Pattern Spacing|POSITIVE_DOUBLE|mm|The space between the lines of he support material.
+support_material_spacing|Pattern Spacing|POSITIVE_DOUBLE|mm|The space between the lines of the support material.
 support_material_speed|Support Material|POSITIVE_DOUBLE|mm/s|The speed to print support material structures.
 support_material_threshold|Overhang Threshold|POSITIVE_DOUBLE|degrees|The last angle at which support material will be generated. Larger numbers will result in more support. Set to 0 to enable automatic settings.
 support_material_xy_distance|X and Y Distance|POSITIVE_DOUBLE|mm|The distance the support material will be from the object in the x and y direction.

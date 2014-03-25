@@ -1569,3 +1569,6 @@ Translated:gcode_output_type
 English:Starting Angle
 Translated:Starting Angle
 
+English:The space between the lines of the support material.
+Translated:The space between the lines of the support material.
+
