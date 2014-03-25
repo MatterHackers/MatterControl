@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
              
             //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
-            new MapItemToBool("bottomClipAmount", "bottom_clip_amount"),
+            new MapItem("bottomClipAmount", "bottom_clip_amount"),
             
             //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
             new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("numberOfTopLayers", "top_solid_layers"),
 
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
-            new MapItem("outsidePerimeterSpeed", "external_perimeter_speed"),
+            new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
             
             //numberOfPerimeters=2
             new MapItem("numberOfPerimeters", "perimeters"),
