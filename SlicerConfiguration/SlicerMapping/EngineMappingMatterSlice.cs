@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("infillSpeed", "infill_speed"),
             
             //infillStartingAngle=45
-            new MapItem("infillStartingAngle", "fill_angle"),            
+            new MapItem("infillStartingAngle", "fill_angle"),
 
             //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
             new MapItem("insidePerimetersSpeed", "perimeter_speed"),
@@ -216,8 +216,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //supportMaterialSpeed=50 # mm/s.
             new MapItem("supportMaterialSpeed", "support_material_speed"),
             
-            //supportStartingAngleDegrees=0
-            new MapItem("supportStartingAngleDegrees", "support_material_angle"),            
+            //supportEndAngle=0 # Support will be generated up to this angle. Mor than this and there will be no support (it can rest on itself), degrees.
+            new ConstantMinusValue("supportEndAngle", "support_material_threshold", 90),
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
             new MapItem("supportType", "support_type"),
@@ -282,25 +282,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public class SupportMatterial : MapItem
+        public class ConstantMinusValue : MapItem
         {
+            double constant;
+            
+            public ConstantMinusValue(string mappedKey, string originalKey, double constant)
+                : base(mappedKey, originalKey)
+            {
+                this.constant = constant;
+            }
+
             public override string MappedValue
             {
                 get
                 {
-                    string supportMaterial = ActiveSliceSettings.Instance.GetActiveValue("support_material");
-                    if (supportMaterial == "0")
-                    {
-                        return "-1";
-                    }
-
-                    return (90 - double.Parse(ActiveSliceSettings.Instance.GetActiveValue("support_material_threshold"))).ToString();
+                    return (90 - double.Parse(OriginalValue)).ToString();
                 }
-            }
-
-            public SupportMatterial(string mappedKey, string slicer)
-                : base(mappedKey, slicer)
-            {
             }
         }
 

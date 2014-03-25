@@ -1572,3 +1572,6 @@ Translated:Starting Angle
 English:The space between the lines of the support material.
 Translated:The space between the lines of the support material.
 
+English:The last angle at which support material will be generated. Larger numbers will result in more support.
+Translated:The last angle at which support material will be generated. Larger numbers will result in more support.
+
