@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
                 {LocalizedString.Get("Extra"), null},
                 {LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click},
+					{LocalizedString.Get("  Remove All"), removeAllFromQueueButton_Click},
                 };
             }
 
@@ -235,7 +236,20 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        void deleteFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
+		bool removeAllFromQueueButton_Click()
+		{
+			UiThread.RunOnIdle (removeAllPrintsFromQueue);
+			return true;
+		}
+
+		void removeAllPrintsFromQueue (object state)
+		{
+
+			PrintQueueControl.Instance.RemoveAllChildren ();
+			PrintQueueControl.Instance.SaveDefaultQueue ();
+		}
+       
+		void deleteFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
         {
             PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.SelectedIndex);
             PrintQueueControl.Instance.SaveDefaultQueue();
