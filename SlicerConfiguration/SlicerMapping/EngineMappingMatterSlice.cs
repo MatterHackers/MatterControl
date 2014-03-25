@@ -229,10 +229,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size X size in the lower left corner for wiping during extruder changing.
 
+
             new NotPassedItem("", "pause_gcode"),
             new NotPassedItem("", "resume_gcode"),
             new NotPassedItem("", "cancel_gcode"),
 
+            new NotPassedItem("", "bed_size"),
             new NotPassedItem("", "build_height"),
 
             new NotPassedItem("", "temperature"),

@@ -30,7 +30,7 @@ extrusion_width|Default Extrusion Width|DOUBLE_OR_PERCENT|mm or %\nleave 0 for a
 fan_always_on|Keep Fan Always On|CHECK_BOX||This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.
 fan_below_layer_time|Enable Fan If Layer\nPrint Time Is Below|INT|Seconds|If a layer is estimated to take less than this to print, the fan will be turned on.
 filament_diameter|Diameter|POSITIVE_DOUBLE|mm|This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
-fill_angle|Fill Angle|POSITIVE_DOUBLE|Angle Degrees|Sets the starting angle of the infill. Not used when bridging.
+fill_angle|Starting Angle|POSITIVE_DOUBLE|degrees|Sets the starting angle of the infill. Not used when bridging.
 fill_density|Fill Density|POSITIVE_DOUBLE|Ratio (0 to 1)|The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
 fill_pattern|Fill Pattern|LIST|rectilinear,line,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral|The pattern used on the inside portions of the print.
 first_layer_acceleration|First Layer|DOUBLE|mm/s|Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.
@@ -102,7 +102,7 @@ standby_temperature_delta|Temp Lower Amount|DOUBLE|degrees|This is the amount to
 start_gcode|Start G-Code|MULTI_LINE_TEXT||This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].
 start_perimeters_at_concave_points|Start At Concave Points|CHECK_BOX||Make sure the first point on a perimeter is a concave point.
 start_perimeters_at_non_overhang|Start At Non Overhang|CHECK_BOX||Make sure the first point on a perimeter is not an overhang.
-support_material_angle|Pattern Angle|POSITIVE_DOUBLE|degrees|The starting angle of the supports.
+support_material_angle|Starting Angle|POSITIVE_DOUBLE|degrees|The starting angle of the supports.
 support_material_create_internal_support|Internal Support|CHECK_BOX||Create support where needed on internal features.
 support_material_enforce_layers|Enforce Support For First|INT|layers|Generate support material everywhere not touching the bed for n layers, regardless of angle.
 support_material_extruder|Support Material Extruder|INT||The index of the extruder to use for support material.

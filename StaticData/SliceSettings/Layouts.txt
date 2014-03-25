@@ -3,7 +3,7 @@ Beginner
     Layers/Perimeters
       Layer Height
         layer_height
-      Vertical Shells
+      Perimeters
         perimeters
     Infill
       Infill
@@ -43,22 +43,22 @@ Advanced
       Layer Height
         layer_height
         first_layer_height
-      Vertical Shells
+        bottom_clip_amount
+      Perimeters
         perimeters
+        avoid_crossing_perimeters
         spiral_vase
-      Horizontal Shells
+      Top & Bottom Layers
         top_solid_layers
         bottom_solid_layers
       Quality
         extra_perimeters
-        avoid_crossing_perimeters
         start_perimeters_at_concave_points
         start_perimeters_at_non_overhang
         thin_walls
       Advanced
         randomize_start
         external_perimeters_first
-        bottom_clip_amount
     Infill
       Infill
         fill_density
@@ -75,12 +75,12 @@ Advanced
         infill_overlap_perimeter
     Speed
       Speed for Print Moves
-        perimeter_speed
-        small_perimeter_speed
-        external_perimeter_speed
         infill_speed
         solid_infill_speed
         top_solid_infill_speed
+        perimeter_speed
+        small_perimeter_speed
+        external_perimeter_speed
         support_material_speed
         bridge_speed
         gap_fill_speed
