@@ -1500,3 +1500,30 @@ Translated:Yes
 English:No
 Translated:No
 
+English:History
+Translated:History
+
+English:Slicing Error. Please review your slice settings.
+Translated:Slicing Error. Please review your slice settings.
+
+English:Quality
+Translated:Quality
+
+English:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+
+English:This will cause the print to be centered on the bed. Disable this if you know your models have been created where you want them to print.
+Translated:This will cause the print to be centered on the bed. Disable this if you know your models have been created where you want them to print.
+
+English:Center On Bed
+Translated:Center On Bed
+
+English:Center Print
+Translated:Center Print
+
+English:Note
+Translated:Note
+
+English:To enable GCode export, select a printer profile.
+Translated:To enable GCode export, select a printer profile.
+
