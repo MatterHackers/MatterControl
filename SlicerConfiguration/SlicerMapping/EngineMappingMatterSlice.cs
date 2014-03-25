@@ -79,11 +79,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
             
             //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
+            new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
             
             //continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
             new MapItemToBool("continuousSpiralOuterPerimeter", "spiral_vase"),
-            
-            //createWipeShield=False # Create an outline around shapes so the extrude will be wiped when entering.
             
             //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
             new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
@@ -105,7 +104,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //filamentDiameter=2.89 # The width of the filament being fed into the extruder, in millimeters.
             new MapItem("filamentDiameter", "filament_diameter"),
             
-            //filamentFlowPercent=100 # Lets you adjust how much material to extrude.
+            //extrusionMultiplier=1 # Lets you adjust how much material to extrude.
+            new MapItem("extrusionMultiplier", "extrusion_multiplier"),
 
             //firstLayerExtrusionWidth=0.8 # The width of the line to extrude for the first layer.
             new AsPercentOfReferenceOrDirect("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
@@ -142,8 +142,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("layerThickness", "layer_height"),
 
             //minimumExtrusionBeforeRetraction=0.1 # mm.
+            new MapItem("minimumExtrusionBeforeRetraction", "min_extrusion_before_retract"),
+
             //minimumFeedrate=10 # mm/s.
+            
             //minimumLayerTimeSeconds=5
+            new MapItem("minimumLayerTimeSeconds", "slowdown_below_layer_time"),
+
             //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
             //modelRotationMatrix=[[1,0,0],[0,1,0],[0,0,1]]
             //multiVolumeOverlapPercent=0
@@ -163,7 +168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("numberOfPerimeters", "perimeters"),
 
             //positionToPlaceObjectCenter=[102.5,102.5]
-            new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", ""),
+            new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", "print_center"),
 
             //raftBaseLinewidth=0
             //raftBaseThickness=0
@@ -176,9 +181,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
             
             //retractionOnExtruderSwitch=14.5
+            new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
+            
             //retractionOnTravel=4.5
+            new MapItem("retractionOnTravel", "retract_before_travel"),
+
             //retractionSpeed=45 # mm/s.
+            new MapItem("retractionSpeed", "retract_speed"),
+            
             //retractionZHop=0 # The amount to move the extruder up in z after retracting (before a move). mm.
+            new MapItem("retract_lift", "retractionZHop"),
             
             //skirtDistanceFromObject=6 # How far from objects the first skirt loop should be, in millimeters.
             new MapItem("skirtDistanceFromObject", "skirt_distance"),
@@ -197,10 +209,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("supportStartingAngleDegrees", "support_material_angle"),            
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
+            
             //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
+            new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
+            
             //supportZDistanceFromObject=0.15 # The closest z distance that support will be to the object. mm/s.
+            new MapItem("supportZDistanceFromObject", "support_material_z_distance"),
+
             //travelSpeed=200 # The speed to move when not extruding material. mm/s.
-            //wipeShieldDistance=2 # mm.
+            new MapItem("travelSpeed", "travel_speed"),
+            
+            //wipeShieldDistanceFromObject=2 # mm.
+            //new MapItem("wipeShieldDistanceFromObject", ""),
+
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size X size in the lower left corner for wiping during extruder changing.
 
             new NotPassedItem("", "pause_gcode"),

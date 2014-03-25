@@ -117,6 +117,8 @@ Advanced
       Notes
         notes
     Output Options
+      Center Print
+        center_part_on_bed
       Sequential Printing
         complete_objects
         extruder_clearance_height

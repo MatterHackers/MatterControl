@@ -10,6 +10,7 @@ bridge_speed|Bridges|POSITVE_DOUBLE|mm/s|The speed to move when bridging between
 brim_width|Brim Width|POSITVE_DOUBLE|mm|The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
 build_height|Build Height|POSITVE_DOUBLE|mm|The height of the printable area. If set to 0 the parts height will not be validated.
 cancel_gcode|Cancel G-Code|MULTI_LINE_TEXT||This gcode will be inserted when the print is canceled.
+center_part_on_bed|Center On Bed|CHECK_BOX||This will cause the print to be centered on the bed. Disable this if you know your models have been created where you want them to print.
 complete_objects|Complete Individual Objects|CHECK_BOX||Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
 cool_extruder_lift|Enable Extruder Lift|CHECK_BOX||Moves the extruder up off the part to allow cooling.
 cooling|Enable Auto Cooling|CHECK_BOX||Turns on and off all cooling settings (all settings below this one).
