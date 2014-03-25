@@ -1527,3 +1527,33 @@ Translated:Note
 English:To enable GCode export, select a printer profile.
 Translated:To enable GCode export, select a printer profile.
 
+English:The amount to remove from the bottom of the model
+Translated:The amount to remove from the bottom of the model
+
+English:The amount the infill edge will push into the preimiter. Helps ensure the infill is connected to the edge.
+Translated:The amount the infill edge will push into the preimiter. Helps ensure the infill is connected to the edge.
+
+English:The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
+Translated:The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
+
+English:Bottom Clip
+Translated:Bottom Clip
+
+English:Infill Overlap
+Translated:Infill Overlap
+
+English:Inside Perimeters
+Translated:Inside Perimeters
+
+English:Outside Perimeter
+Translated:Outside Perimeter
+
+English:Sets the default movement speed while printing inside perimeters.
+Translated:Sets the default movement speed while printing inside perimeters.
+
+English:The type of support to create for surfaces that need it.
+Translated:The type of support to create for surfaces that need it.
+
+English:Support Type
+Translated:Support Type
+

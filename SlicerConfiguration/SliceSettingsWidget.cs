@@ -505,7 +505,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         }
                         break;
 
-                    case OrganizerSettingsData.DataEditTypes.POSITVE_DOUBLE:
+                    case OrganizerSettingsData.DataEditTypes.POSITIVE_DOUBLE:
                         {
                             double currentValue = 0;
                             double.TryParse(sliceSettingValue, out currentValue);

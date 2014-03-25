@@ -77,6 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
              
             //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
+            new MapItemToBool("bottomClipAmount", "bottom_clip_amount"),
             
             //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
             new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
@@ -120,11 +121,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
 
             //outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, BFB, MACH3
+            new MapItem("outputType", "gcode_output_type"),
             
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
             
             //infillOverlapPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
+            new MapItem("infillOverlapPerimeter", "infill_overlap_perimeter"),
             
             //infillPercent=20 # The percent of filled space to open space while infilling.
             new ScaledSingleNumber("infillPercent", "fill_density", 100),
@@ -163,6 +166,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("numberOfTopLayers", "top_solid_layers"),
 
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
+            new MapItem("outsidePerimeterSpeed", "external_perimeter_speed"),
             
             //numberOfPerimeters=2
             new MapItem("numberOfPerimeters", "perimeters"),
@@ -209,6 +213,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("supportStartingAngleDegrees", "support_material_angle"),            
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
+            new MapItem("supportType", "support_type"),
             
             //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
             new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),

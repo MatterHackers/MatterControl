@@ -9,9 +9,13 @@ Beginner
       Infill
         fill_density
         fill_pattern
+    Skirt and Brim
+      Skirt
+        skirt_distance
     Support Material
       Support Material
         support_material
+        support_type
   Filament
     Filament
       Filament
@@ -54,6 +58,7 @@ Advanced
       Advanced
         randomize_start
         external_perimeters_first
+        bottom_clip_amount
     Infill
       Infill
         fill_density
@@ -67,6 +72,7 @@ Advanced
         solid_infill_below_area
         only_retract_when_crossing_perimeters
         infill_first
+        infill_overlap_perimeter
     Speed
       Speed for Print Moves
         perimeter_speed
@@ -100,6 +106,7 @@ Advanced
     Support Material
       Support Material
         support_material
+        support_type
         support_material_threshold
         support_material_enforce_layers
       Raft
