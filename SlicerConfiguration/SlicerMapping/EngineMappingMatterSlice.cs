@@ -207,8 +207,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //startCode=M109 S210
             new MapStartGCode("startCode", "start_gcode"),
 
-            //supportExtruder=-1
-            new MapItem("supportExtruder", "support_material_extruder"),
+            //supportExtruder=1
+            new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
 
             //supportLineSpacing=2
             new MapItem("supportLineSpacing", "support_material_spacing"),            
@@ -285,7 +285,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public class ConstantMinusValue : MapItem
         {
             double constant;
-            
+
             public ConstantMinusValue(string mappedKey, string originalKey, double constant)
                 : base(mappedKey, originalKey)
             {
@@ -297,6 +297,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 get
                 {
                     return (90 - double.Parse(OriginalValue)).ToString();
+                }
+            }
+        }
+
+        public class ValuePlusConstant : MapItem
+        {
+            double constant;
+
+            public ValuePlusConstant(string mappedKey, string originalKey, double constant)
+                : base(mappedKey, originalKey)
+            {
+                this.constant = constant;
+            }
+
+            public override string MappedValue
+            {
+                get
+                {
+                    return (double.Parse(OriginalValue) + constant).ToString();
                 }
             }
         }
