@@ -467,11 +467,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (keyEvent.KeyCode == Keys.Up)
             {
-                gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex + 1);
+                if (gcodeViewWidget != null)
+                {
+                    gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex + 1);
+                }
             }
             else if (keyEvent.KeyCode == Keys.Down)
             {
-                gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex - 1);
+                if (gcodeViewWidget != null)
+                {
+                    gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex - 1);
+                }
             }
         }
 

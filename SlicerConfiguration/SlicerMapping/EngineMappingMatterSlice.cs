@@ -72,11 +72,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         static MapItem[] matterSliceToDefaultMapping = 
         {
-#if true
             //avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
             new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
              
             //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
+            new MapItem("bottomClipAmount", "bottom_clip_amount"),
             
             //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
             new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
@@ -120,11 +120,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
 
             //outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, BFB, MACH3
+            new MapItem("outputType", "gcode_output_type"),
             
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
             
             //infillOverlapPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
+            new MapItem("infillOverlapPerimeter", "infill_overlap_perimeter"),
             
             //infillPercent=20 # The percent of filled space to open space while infilling.
             new ScaledSingleNumber("infillPercent", "fill_density", 100),
@@ -133,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("infillSpeed", "infill_speed"),
             
             //infillStartingAngle=45
-            new MapItem("infillStartingAngle", "fill_angle"),            
+            new MapItem("infillStartingAngle", "fill_angle"),
 
             //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
             new MapItem("insidePerimetersSpeed", "perimeter_speed"),
@@ -144,12 +146,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //minimumExtrusionBeforeRetraction=0.1 # mm.
             new MapItem("minimumExtrusionBeforeRetraction", "min_extrusion_before_retract"),
 
-            //minimumFeedrate=10 # mm/s.
+            //minimumPrintingSpeed=10 # The minimum speed that the extruder is allowed to move while printing. mm/s.
+            new MapItem("minimumPrintingSpeed", "min_print_speed"),            
             
             //minimumLayerTimeSeconds=5
             new MapItem("minimumLayerTimeSeconds", "slowdown_below_layer_time"),
 
             //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
+            new MapItem("minimumTravelToCauseRetraction", "retract_before_travel"),            
+
             //modelRotationMatrix=[[1,0,0],[0,1,0],[0,0,1]]
             //multiVolumeOverlapPercent=0
 
@@ -163,6 +168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("numberOfTopLayers", "top_solid_layers"),
 
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
+            new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
             
             //numberOfPerimeters=2
             new MapItem("numberOfPerimeters", "perimeters"),
@@ -202,13 +208,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapStartGCode("startCode", "start_gcode"),
 
             //supportExtruder=-1
+            new MapItem("supportExtruder", "support_material_extruder"),
+
             //supportLineSpacing=2
+            new MapItem("supportLineSpacing", "support_material_spacing"),            
+
             //supportMaterialSpeed=50 # mm/s.
+            new MapItem("supportMaterialSpeed", "support_material_speed"),
             
-            //supportStartingAngleDegrees=0
-            new MapItem("supportStartingAngleDegrees", "support_material_angle"),            
+            //supportEndAngle=0 # Support will be generated up to this angle. Mor than this and there will be no support (it can rest on itself), degrees.
+            new ConstantMinusValue("supportEndAngle", "support_material_threshold", 90),
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
+            new MapItem("supportType", "support_type"),
             
             //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
             new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
@@ -222,68 +234,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //wipeShieldDistanceFromObject=2 # mm.
             //new MapItem("wipeShieldDistanceFromObject", ""),
 
-            //wipeTowerSize=0 # Unlike the wipe shield this is a square of size X size in the lower left corner for wiping during extruder changing.
+            //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
+
 
             new NotPassedItem("", "pause_gcode"),
             new NotPassedItem("", "resume_gcode"),
             new NotPassedItem("", "cancel_gcode"),
 
+            new NotPassedItem("", "bed_size"),
             new NotPassedItem("", "build_height"),
 
             new NotPassedItem("", "temperature"),
             new NotPassedItem("", "bed_temperature"),
             new NotPassedItem("", "bed_shape"),
-#else
-            new MapItem("layerThickness", "layer_height"),
-            new AsPercentOfReferenceOrDirect("initialLayerThickness", "first_layer_height", "layer_height", 1),
-            new ScaledSingleNumber("filamentDiameter", "filament_diameter", 1000),
-            new ScaledSingleNumber("extrusionWidth", "nozzle_diameter", 1000),
-
-            new MapItem("printSpeed", "perimeter_speed"),
-            new MapItem("infillSpeed", "infill_speed"),
-            new MapItem("moveSpeed", "travel_speed"),
-            new AsPercentOfReferenceOrDirect("initialLayerSpeed", "first_layer_speed", "infill_speed"),
-
-            new MapItem("insetCount", "perimeters"),
-
-            new MapItem("skirtLineCount", "skirts"),
-            new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
-            new ScaledSingleNumber("skirtDistance", "skirt_distance", 1000),
-
-            new FanTranslator("fanFullOnLayerNr", "disable_fan_first_layers"),
-            new MapItemToBool("coolHeadLift", "cool_extruder_lift"),
-
-            new ScaledSingleNumber("retractionAmount", "retract_length", 1000),
-            new MapItem("retractionSpeed", "retract_speed"),
-            new ScaledSingleNumber("retractionMinimalDistance", "retract_before_travel", 1000),
-            new ScaledSingleNumber("minimalExtrusionBeforeRetraction", "min_extrusion_before_retract", 1000),
-
-            new MapItemToBool("spiralizeMode", "spiral_vase"),
-
-            new NotPassedItem("", "bed_size"),
-
-            new PrintCenterX("objectPosition.X", "print_center"),
-            new PrintCenterY("objectPosition.Y", "print_center"),
-
-            // needs testing, not working
-            new ScaledSingleNumber("supportLineDistance", "support_material_spacing", 1000),
-            new SupportMatterial("supportAngleDegrees", "support_material"),
-            new NotPassedItem("", "support_material_threshold"),
-            new MapItem("supportEverywhere", "support_material_create_internal_support"),
-            new ScaledSingleNumber("supportXYDistance", "support_material_xy_distance", 1000),
-            new ScaledSingleNumber("supportZDistance", "support_material_z_distance", 1000),
-
-            new MapItem("minimalLayerTime", "slowdown_below_layer_time"),
-
-            new InfillTranslator("sparseInfillLineDistance", "fill_density"),
-
-            new MapStartGCode("startCode", "start_gcode"),
-            new MapEndGCode("endCode", "end_gcode"),
-            
-            new NotPassedItem("", "pause_gcode"),
-            new NotPassedItem("", "resume_gcode"),
-            new NotPassedItem("", "cancel_gcode"),
-#endif
         };
 
         public static string GetMatterSliceCommandLineSettings()
@@ -319,25 +282,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public class SupportMatterial : MapItem
+        public class ConstantMinusValue : MapItem
         {
+            double constant;
+            
+            public ConstantMinusValue(string mappedKey, string originalKey, double constant)
+                : base(mappedKey, originalKey)
+            {
+                this.constant = constant;
+            }
+
             public override string MappedValue
             {
                 get
                 {
-                    string supportMaterial = ActiveSliceSettings.Instance.GetActiveValue("support_material");
-                    if (supportMaterial == "0")
-                    {
-                        return "-1";
-                    }
-
-                    return (90 - double.Parse(ActiveSliceSettings.Instance.GetActiveValue("support_material_threshold"))).ToString();
+                    return (90 - double.Parse(OriginalValue)).ToString();
                 }
-            }
-
-            public SupportMatterial(string mappedKey, string slicer)
-                : base(mappedKey, slicer)
-            {
             }
         }
 
