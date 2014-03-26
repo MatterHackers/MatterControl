@@ -116,6 +116,7 @@ support_material_speed|Support Material|POSITIVE_DOUBLE|mm/s|The speed to print 
 support_material_threshold|Overhang Threshold|POSITIVE_DOUBLE|degrees|The last angle at which support material will be generated. Larger numbers will result in more support.
 support_material_xy_distance|X and Y Distance|POSITIVE_DOUBLE|mm|The distance the support material will be from the object in the x and y direction.
 support_material_z_distance|Z Distance|POSITIVE_DOUBLE|mm|The distance the support material will be from the object in the z direction.
+support_material_z_gap_layers|Z Gap|INT||The number of layers to skip in z. The gap between the support and the model.
 support_material|Generate Support Material|CHECK_BOX||This turns on and off the generation of support material.
 support_type|Support Type|LIST|NONE, GRID, LINES|The type of support to create for surfaces that need it.
 temperature|Extruder Other Layers|POSITIVE_DOUBLE|degrees|The temperature to set the extruder to after the first layer has been printed.

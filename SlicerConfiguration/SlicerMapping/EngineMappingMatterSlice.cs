@@ -239,8 +239,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
             new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
             
-            //supportZDistanceFromObject=0.15 # The closest z distance that support will be to the object. mm/s.
-            new MapItem("supportZDistanceFromObject", "support_material_z_distance"),
+            //supportZDistanceFromObject=1 # The number of layers to skip in z. The gap between the support and the model.
+            new MapItem("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers"),
 
             //travelSpeed=200 # The speed to move when not extruding material. mm/s.
             new MapItem("travelSpeed", "travel_speed"),

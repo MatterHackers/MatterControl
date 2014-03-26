@@ -1587,3 +1587,12 @@ Translated:Wipe Shield Dist
 English:Wipe Shield
 Translated:Wipe Shield
 
+English:  Remove All
+Translated:  Remove All
+
+English:The number of layers to skip in z. The gap between the support and the model.
+Translated:The number of layers to skip in z. The gap between the support and the model.
+
+English:Z Gap
+Translated:Z Gap
+
