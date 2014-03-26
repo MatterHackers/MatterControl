@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2014, Kevin Pope
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +44,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 
 using MatterHackers.PolygonMesh;
@@ -25,8 +55,8 @@ namespace MatterHackers.MatterControl.PrintHistory
    
 
     public class PrintHistoryListItem : FlowLayoutWidget
-    {
-        public PrintItemWrapper printItem;
+    {        
+        public PrintTask printTask;
         public RGBA_Bytes WidgetTextColor;
         public RGBA_Bytes WidgetBackgroundColor;
 
@@ -34,36 +64,18 @@ namespace MatterHackers.MatterControl.PrintHistory
         public bool isSelectedItem = false;
         public bool isHoverItem = false;
         TextWidget partLabel;
-        Button viewLink;
+        Button printAgainLink;
         public CheckBox selectionCheckBox;
         FlowLayoutWidget buttonContainer;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-        bool viewWindowIsOpen = false;
-        PartPreviewMainWindow viewingWindow;
-        Random rand;
 
-        public PrintHistoryListItem(PrintItemWrapper printItem)
-        {
-            this.printItem = printItem;
-            InitRandomizer();
+        public PrintHistoryListItem(PrintTask printTask)
+        {            
+            this.printTask = printTask;
+            
             SetDisplayAttributes();
             AddChildElements();
-            this.AddChild(new TextWidget("foo"));
             AddHandlers();
-        }
-
-        DateTime start;
-        int range;
-        void InitRandomizer()
-        {
-            rand = new Random();
-            start = new DateTime(1995, 1, 1);
-            range  = (DateTime.Today - start).Days;
-        }
-
-        DateTime RandomDay()
-        {   
-            return start.AddDays(rand.Next(range));
         }
 
         void AddChildElements()
@@ -74,56 +86,133 @@ namespace MatterHackers.MatterControl.PrintHistory
                 GuiWidget indicator = new GuiWidget();
                 indicator.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
                 indicator.Width = 15;
-                if (rand.NextDouble() > 0.5)
+                if (printTask.PrintComplete)
                 {
-                    indicator.BackgroundColor = new RGBA_Bytes(38, 147, 51, 200);
+                    indicator.BackgroundColor = new RGBA_Bytes(38, 147, 51, 180);
                 }
                 else
                 {
-                    indicator.BackgroundColor = new RGBA_Bytes(233, 53, 0, 200);
+                    indicator.BackgroundColor = new RGBA_Bytes(252, 209, 22, 180);
                 }
-
-                FlowLayoutWidget leftColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                leftColumn.VAnchor |= VAnchor.ParentTop;
-                leftColumn.AddChild(new TextWidget(RandomDay().ToShortDateString()));
 
                 FlowLayoutWidget middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 middleColumn.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-                middleColumn.Padding = new BorderDouble(0, 6);
-                middleColumn.Margin = new BorderDouble(10, 0);
+                middleColumn.Padding = new BorderDouble(6,3);
                 {
-                    string labelName = textInfo.ToTitleCase(printItem.Name);
+                    FlowLayoutWidget labelContainer = new FlowLayoutWidget();
+                    labelContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+                    string labelName = textInfo.ToTitleCase(printTask.PrintName);
                     labelName = labelName.Replace('_', ' ');
-                    partLabel = new TextWidget(labelName, pointSize: 12);
+                    partLabel = new TextWidget(labelName, pointSize: 15);
                     partLabel.TextColor = WidgetTextColor;
-                    partLabel.MinimumSize = new Vector2(1, 16);
-                    middleColumn.AddChild(partLabel);
+
+                    labelContainer.AddChild(partLabel);
+
+
+                    middleColumn.AddChild(labelContainer);
                 }
+
+                RGBA_Bytes timeTextColor = RGBA_Bytes.Gray;
 
                 buttonContainer = new FlowLayoutWidget();
-                buttonContainer.Margin = new BorderDouble(0, 6);
+                buttonContainer.Margin = new BorderDouble(0);
                 buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 {
-                    viewLink = linkButtonFactory.Generate(LocalizedString.Get("Reprint"));
-                    viewLink.Margin = new BorderDouble(left: 0, right: 10);
-                    viewLink.VAnchor = VAnchor.ParentCenter;
+                    TextWidget statusIndicator = new TextWidget("STATUS: Completed", pointSize:8);
+                    statusIndicator.Margin = new BorderDouble(right: 3);
+                    //buttonContainer.AddChild(statusIndicator);
 
-                    buttonContainer.AddChild(viewLink);
+                    TextWidget timeLabel = new TextWidget("PRINT TIME: ", pointSize:8);
+                    timeLabel.TextColor = timeTextColor;
+
+                    TextWidget timeIndicator = new TextWidget(string.Format("{0}min", printTask.PrintTimeMinutes), pointSize: 12);
+                    timeIndicator.Margin = new BorderDouble(right: 6);
+                    timeIndicator.TextColor = timeTextColor;
+
+                    buttonContainer.AddChild(timeLabel);
+                    buttonContainer.AddChild(timeIndicator);
+                    
+                    printAgainLink = linkButtonFactory.Generate(LocalizedString.Get("Print Again"));
+                    printAgainLink.Margin = new BorderDouble(left: 0, right: 10);
+                    printAgainLink.VAnchor = VAnchor.ParentCenter;
+
+                    printAgainLink.Click += (sender, e) =>
+                    {
+                        PrintQueueItem queueItem = new PrintQueueItem(new PrintItemWrapper(printTask.PrintItemId));
+                        PrintQueueControl.Instance.AddChild(queueItem);
+                    };
+
+                    buttonContainer.AddChild(printAgainLink);
                     middleColumn.AddChild(buttonContainer);
+                }                
+
+                FlowLayoutWidget rightColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                rightColumn.BackgroundColor = RGBA_Bytes.LightGray;
+                rightColumn.Padding = new BorderDouble(6,0);
+
+                FlowLayoutWidget startTimeContainer = new FlowLayoutWidget();
+                startTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                startTimeContainer.Padding = new BorderDouble(0,3);
+
+                TextWidget startLabel = new TextWidget("START:", pointSize:8);
+                startLabel.TextColor = timeTextColor;
+
+                string startTimeString = printTask.PrintStart.ToString("MMM d yyyy h:mm ") + printTask.PrintStart.ToString("tt").ToLower();
+                TextWidget startDate = new TextWidget(startTimeString, pointSize: 12);
+                startDate.TextColor = timeTextColor;
+
+                startTimeContainer.AddChild(startLabel);
+                startTimeContainer.AddChild(new HorizontalSpacer());
+                startTimeContainer.AddChild(startDate);
+                
+
+                FlowLayoutWidget endTimeContainer = new FlowLayoutWidget();
+                endTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                endTimeContainer.Padding = new BorderDouble(0,3);
+
+                TextWidget endLabel = new TextWidget("END:", pointSize: 8);
+                endLabel.TextColor = timeTextColor;
+
+                string endTimeString;
+                if (printTask.PrintEnd != DateTime.MinValue)
+                {
+                    endTimeString = printTask.PrintEnd.ToString("MMM d yyyy h:mm ") + printTask.PrintEnd.ToString("tt").ToLower() ;
+                }
+                else
+                {
+                    endTimeString = "Unknown";
                 }
 
+                TextWidget endDate = new TextWidget(endTimeString, pointSize: 12);
+                endDate.TextColor = timeTextColor;
+
+                endTimeContainer.AddChild(endLabel);
+                endTimeContainer.AddChild(new HorizontalSpacer());
+                endTimeContainer.AddChild(endDate);
+
+                HorizontalLine horizontalLine = new HorizontalLine();
+                horizontalLine.BackgroundColor = RGBA_Bytes.Gray;
+
+                rightColumn.AddChild(endTimeContainer);
+                rightColumn.AddChild(horizontalLine);
+                rightColumn.AddChild(startTimeContainer);
+                
+                rightColumn.Width = 220;
+
                 this.AddChild(indicator);
-                this.AddChild(leftColumn);
                 this.AddChild(middleColumn);
-                //mainContainer.AddChild(rightColumn);
+                this.AddChild(rightColumn);
             }
         }
 
         void SetDisplayAttributes()
         {
+            linkButtonFactory.fontSize = 10;
+            
             this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            this.Height = 28;
+            this.Height = 70;
             this.BackgroundColor = this.WidgetBackgroundColor;
             this.Padding = new BorderDouble(0);
             this.Margin = new BorderDouble(6, 0, 6, 6);
@@ -150,31 +239,6 @@ namespace MatterHackers.MatterControl.PrintHistory
             }
             base.OnClosed(e);
         }
-
-
-        private void onViewLinkClick(object sender, MouseEventArgs e)
-        {
-            UiThread.RunOnIdle(onViewLinkClick);
-        }
-
-        private void onViewLinkClick(object state)
-        {
-            string pathAndFile = this.printItem.FileLocation;
-            Console.WriteLine(pathAndFile);
-            if (File.Exists(pathAndFile))
-            {
-                //
-            }
-            else
-            {
-                string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the queue?", pathAndFile);
-                if (StyledMessageBox.ShowMessageBox(message, "Item not found", StyledMessageBox.MessageType.YES_NO))
-                {
-                    PrintHistoryListControl.Instance.RemoveChild(this);
-                }
-            }
-        }
-
 
         public override void OnDraw(Graphics2D graphics2D)
         {
