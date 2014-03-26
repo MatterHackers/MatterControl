@@ -143,6 +143,7 @@ namespace MatterHackers.MatterControl
 
         bool printWasCanceled = false;
         int firstLineToResendIndex = 0;
+        PrintTask activePrintTask;
         List<string> allCheckSumLinesSent = new List<string>();
 
         List<string> LinesToWriteQueue = new List<string>();
@@ -176,6 +177,16 @@ namespace MatterHackers.MatterControl
                         }
                         else if (value == CommunicationStates.FinishedPrint)
                         {
+                            if (activePrintTask != null)
+                            {
+                                TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+
+                                activePrintTask.PrintEnd = DateTime.Now;
+                                activePrintTask.PrintComplete = true;
+                                activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
+                                activePrintTask.Commit();
+                            }
+                            
                             OnPrintFinished(null);
                             timeSinceStartedPrint.Stop();
                         }
@@ -1809,7 +1820,17 @@ namespace MatterHackers.MatterControl
                             // let the process know we canceled not ended normaly.
                             printWasCanceled = true;
                         }
+                        if (activePrintTask != null)
+                        {
+                            TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+
+                            activePrintTask.PrintEnd = DateTime.Now;
+                            activePrintTask.PrintComplete = false;
+                            activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
+                            activePrintTask.Commit();
+                        }
                     }
+                    
                     break;
 
                 case CommunicationStates.Paused:
@@ -1820,7 +1841,16 @@ namespace MatterHackers.MatterControl
                             sendGCodeToPrinterThread.Join();
                             sendGCodeToPrinterThread = null;
                         }
-                    }
+                        if (activePrintTask != null)
+                        {
+                            TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+
+                            activePrintTask.PrintEnd = DateTime.Now;
+                            activePrintTask.PrintComplete = false;
+                            activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
+                            activePrintTask.Commit();
+                        }
+                    }                    
                     break;
 
                 case CommunicationStates.AttemptingToConnect:
@@ -1844,10 +1874,10 @@ namespace MatterHackers.MatterControl
                     CommunicationState = CommunicationStates.Connected;
                     break;
             }
-        }
+        }        
 
         public bool StartPrint(string gcodeFileContents, int startIndex = 0)
-        {
+        {   
             gcodeFileContents = gcodeFileContents.Replace("\r\n", "\n");
             gcodeFileContents = gcodeFileContents.Replace('\r', '\n');
             string[] gcodeLines = gcodeFileContents.Split('\n');
@@ -1864,10 +1894,24 @@ namespace MatterHackers.MatterControl
                 printableGCode.Add(trimedLine);
             }
 
+            //Is there a reason this check doesn't happen earlier? (KP)
             if (!PrinterIsConnected || PrinterIsPrinting)
             {
                 return false;
             }
+
+            if (ActivePrintItem.PrintItem.Id == 0)
+            {
+                ActivePrintItem.PrintItem.Commit();
+            }
+
+            activePrintTask = new PrintTask();
+            activePrintTask.PrintStart = DateTime.Now;
+            activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+            activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
+            activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
+            activePrintTask.PrintComplete = false;
+            activePrintTask.Commit();
 
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
