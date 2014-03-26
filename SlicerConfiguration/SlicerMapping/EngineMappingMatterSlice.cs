@@ -231,8 +231,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //travelSpeed=200 # The speed to move when not extruding material. mm/s.
             new MapItem("travelSpeed", "travel_speed"),
             
-            //wipeShieldDistanceFromObject=2 # mm.
-            //new MapItem("wipeShieldDistanceFromObject", ""),
+            //wipeShieldDistanceFromObject=0 # If greater than 0 this creates an outline around shapes so the extrude will be wiped when entering.
+            new MapItem("wipeShieldDistanceFromObject", "wipe_shield_distance"),
 
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
 

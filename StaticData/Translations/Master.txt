@@ -1578,3 +1578,12 @@ Translated:The last angle at which support material will be generated. Larger nu
 English:Add Printer
 Translated:Add Printer
 
+English:If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+Translated:If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+
+English:Wipe Shield Dist
+Translated:Wipe Shield Dist
+
+English:Wipe Shield
+Translated:Wipe Shield
+
