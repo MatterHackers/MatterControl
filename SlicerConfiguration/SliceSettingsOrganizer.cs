@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     public class OrganizerSettingsData
     {
         [JsonConverter(typeof(StringEnumConverter))]
-        public enum DataEditTypes { STRING, INT, DOUBLE, POSITVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, OFFSET2, CHECK_BOX, LIST, MULTI_LINE_TEXT };
+        public enum DataEditTypes { STRING, INT, DOUBLE, POSITIVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, OFFSET2, CHECK_BOX, LIST, MULTI_LINE_TEXT };
 
         public string SlicerConfigName { get; set; }
 

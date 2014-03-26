@@ -99,6 +99,12 @@ namespace MatterHackers.MatterControl.PrintQueue
             //}
         }
 
+        public PrintItemWrapper(int printItemId)
+        {
+            this.PrintItem = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItem>().Where(v => v.Id == printItemId).Take(1).FirstOrDefault();
+            this.fileType = System.IO.Path.GetExtension(this.PrintItem.FileLocation).ToUpper();
+        }
+
         public void Delete()
         {
             PrintItem.Delete();

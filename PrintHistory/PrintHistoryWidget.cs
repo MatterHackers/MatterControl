@@ -73,19 +73,13 @@ namespace MatterHackers.MatterControl.PrintHistory
                 buttonPanel.Padding = new BorderDouble(0, 3);
                 {
                     Button addToLibrary = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
-                    buttonPanel.AddChild(addToLibrary);
+                    //buttonPanel.AddChild(addToLibrary);
                     addToLibrary.Margin = new BorderDouble(0, 0, 3, 0);
-
-                    addToQueueButton = textImageButtonFactory.Generate("Add to Queue");
-                    addToQueueButton.Margin = new BorderDouble(3, 0);
-                    addToQueueButton.Click += new ButtonBase.ButtonEventHandler(addToQueueButton_Click);
-                    addToQueueButton.Visible = false;
-                    buttonPanel.AddChild(addToQueueButton);
 
                     deleteFromLibraryButton = textImageButtonFactory.Generate("Remove");
                     deleteFromLibraryButton.Margin = new BorderDouble(3, 0);
                     deleteFromLibraryButton.Visible = false;
-                    buttonPanel.AddChild(deleteFromLibraryButton);
+                    //buttonPanel.AddChild(deleteFromLibraryButton);
 
                     GuiWidget spacer = new GuiWidget();
                     spacer.HAnchor = HAnchor.ParentLeftRight;
@@ -107,31 +101,7 @@ namespace MatterHackers.MatterControl.PrintHistory
         {
             //pass
         }
-
-        private void addToQueueButton_Click(object sender, MouseEventArgs e)
-        {
-            foreach (PrintHistoryListItem item in PrintHistoryListControl.Instance.SelectedItems)
-            {
-                PrintQueue.PrintQueueItem queueItem = new PrintQueue.PrintQueueItem(item.printItem);
-                PrintQueue.PrintQueueControl.Instance.AddChild(queueItem);
-            }
-            PrintQueue.PrintQueueControl.Instance.EnsureSelection();
-        }
-
-        private void onLibraryItemsSelected(object sender, EventArgs e)
-        {
-            List<PrintHistoryListItem> selectedItemsList = (List<PrintHistoryListItem>)sender;
-            if (selectedItemsList.Count > 0)
-            {
-                addToQueueButton.Visible = true;
-                deleteFromLibraryButton.Visible = true;
-            }
-            else
-            {
-                addToQueueButton.Visible = false;
-                deleteFromLibraryButton.Visible = false;
-            }
-        }
+      
 
         private void SetDisplayAttributes()
         {

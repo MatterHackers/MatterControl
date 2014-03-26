@@ -59,6 +59,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("min_extrusion_before_retract");
                     hideItems.Add("support_material_xy_distance");
                     hideItems.Add("support_material_z_distance");
+                    hideItems.Add("center_part_on_bed");
+                    hideItems.Add("infill_overlap_perimeter");
+                    hideItems.Add("support_type");
                 }
                 return instance;
             }

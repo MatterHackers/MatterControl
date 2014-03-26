@@ -479,8 +479,10 @@ namespace MatterHackers.MatterControl.DataStorage
         public int PrinterId { get; set; }
         [Indexed]
         public int PrintItemId { get; set; }
+        public string PrintName { get; set; }
         public DateTime PrintStart { get; set; }
         public DateTime PrintEnd { get; set; }
+        public int PrintTimeMinutes { get; set; }
         public bool PrintComplete { get; set; }
 
         public PrintTask()

@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2014, Kevin Pope
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,7 +79,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                 if (instance == null)
                 {
                     instance = new PrintHistoryListControl();
-                    instance.LoadLibraryItems();
+                    instance.LoadHistoryItems();
                 }
                 return instance;
             }
@@ -65,73 +94,7 @@ namespace MatterHackers.MatterControl.PrintHistory
             this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
         }
 
-        public void RemoveSelectedIndex()
-        {
-            if (SelectedIndex >= 0 && SelectedIndex < Count)
-            {
-                RemoveChild(SelectedIndex);
-            }
-        }
 
-
-        public PrintItem SelectedPart
-        {
-            get
-            {
-                if (SelectedIndex >= 0)
-                {
-                    return GetSTLToPrint(SelectedIndex);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        public PrintItem GetSTLToPrint(int index)
-        {
-            if (index >= 0 && index < Count)
-            {
-                GuiWidget itemHolder = topToBottomItemList.Children[index];
-                PrintHistoryListItem child = (PrintHistoryListItem)itemHolder.Children[0];
-                return new PrintItem(child.printItem.Name, child.printItem.FileLocation);
-            }
-
-            return null;
-        }
-
-        public List<PrintItem> CreateReadOnlyPartList()
-        {
-            List<PrintItem> listToReturn = new List<PrintItem>();
-            for (int i = 0; i < Count; i++)
-            {
-                listToReturn.Add(GetSTLToPrint(i));
-            }
-            return listToReturn;
-        }
-
-        public DataStorage.PrintItemCollection LibraryCollection
-        {
-            get
-            {
-                //Retrieve a list of saved printers from the Datastore            
-                if (libraryCollection == null)
-                {
-                    libraryCollection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
-                }
-
-
-                if (libraryCollection == null)
-                {
-                    libraryCollection = new PrintItemCollection();
-                    libraryCollection.Name = "_library";
-                    libraryCollection.Commit();
-                    PreloadLibrary();
-                }
-                return libraryCollection;
-            }
-        }
 
         private List<string> GetLibraryParts()
         {
@@ -160,75 +123,39 @@ namespace MatterHackers.MatterControl.PrintHistory
             return libraryFilesToPreload;
         }
 
-        void PreloadLibrary()
+
+
+        int RecordLimit = 20;
+        IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
         {
-            List<string> calibrationPrints = GetLibraryParts();
-            foreach (string partFile in calibrationPrints)
-            {
-                string partFullPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "SampleParts", partFile);
-                if (System.IO.File.Exists(partFullPath))
-                {
-                    PrintItem printItem = new PrintItem();
-                    printItem.Name = System.IO.Path.GetFileNameWithoutExtension(partFullPath);
-                    printItem.FileLocation = System.IO.Path.GetFullPath(partFullPath);
-                    printItem.PrintItemCollectionID = PrintHistoryListControl.Instance.LibraryCollection.Id;
-                    printItem.Commit();
-                }
-            }
+            string query;
+            query = string.Format("SELECT * FROM PrintTask ORDER BY PrintStart DESC LIMIT {0};", recordCount);
+            //query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name DESC;", libraryCollection.Id);
+            IEnumerable<DataStorage.PrintTask> result = (IEnumerable<DataStorage.PrintTask>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintTask>(query);
+            return result;
         }
 
-        IEnumerable<DataStorage.PrintItem> GetLibraryItems(string keyphrase = null)
+        public void LoadHistoryItems(int NumItemsToLoad = 0)
         {
-            if (LibraryCollection == null)
+            if (NumItemsToLoad == 0 || NumItemsToLoad < RecordLimit)
             {
-                return null;
+                NumItemsToLoad = RecordLimit;
             }
-            else
-            {
-                string query;
-                query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", libraryCollection.Id);
-                IEnumerable<DataStorage.PrintItem> result = (IEnumerable<DataStorage.PrintItem>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintItem>(query);
-                return result;
-            }
-        }
-
-
-
-        public void LoadLibraryItems()
-        {
+            
             RemoveAllChildren();
-            IEnumerable<DataStorage.PrintItem> partFiles = GetLibraryItems("");
+            IEnumerable<DataStorage.PrintTask> partFiles = GetHistoryItems(NumItemsToLoad);
             if (partFiles != null)
             {
-                foreach (PrintItem part in partFiles)
+                foreach (PrintTask part in partFiles)
                 {
-                    PrintHistoryListControl.Instance.AddChild(new PrintHistoryListItem(new PrintItemWrapper(part)));
+                    PrintHistoryListControl.Instance.AddChild(new PrintHistoryListItem(part));
                 }
             }
         }
 
 
-
-        public void SaveLibraryItems()
-        {
-            //
-        }
-
-        public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
-        public event SelectedValueChangedEventHandler SelectedValueChanged;
-        public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
-        public event HoverValueChangedEventHandler HoverValueChanged;
-
         protected FlowLayoutWidget topToBottomItemList;
-
-        RGBA_Bytes hoverColor = new RGBA_Bytes(204, 204, 204, 255);
-        RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
-        RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
-
-        public SelectedPrintItems<PrintHistoryListItem> SelectedItems = new SelectedPrintItems<PrintHistoryListItem>();
-        int selectedIndex = -1;
-        int hoverIndex = -1;
-        int dragIndex = -1;
+       
 
         public int Count
         {
@@ -238,79 +165,7 @@ namespace MatterHackers.MatterControl.PrintHistory
             }
         }
 
-        public int SelectedIndex
-        {
-            get
-            {
-                return selectedIndex;
-            }
-            set
-            {
-                if (value < -1 || value >= topToBottomItemList.Children.Count)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                selectedIndex = value;
-                OnSelectedIndexChanged();
-            }
-        }
-
-        public int DragIndex
-        {
-            get
-            {
-                return dragIndex;
-            }
-            set
-            {
-                if (value < -1 || value >= topToBottomItemList.Children.Count)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-
-                if (value != dragIndex)
-                {
-                    dragIndex = value;
-                }
-            }
-        }
-
-        public int HoverIndex
-        {
-            get
-            {
-                return hoverIndex;
-            }
-            set
-            {
-                if (value < -1 || value >= topToBottomItemList.Children.Count)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-
-                if (value != hoverIndex)
-                {
-                    hoverIndex = value;
-                    OnHoverIndexChanged();
-
-                    for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-                    {
-                        GuiWidget child = topToBottomItemList.Children[index];
-                        if (index == HoverIndex)
-                        {
-                            ((PrintHistoryListItem)child.Children[0]).isHoverItem = true;
-                        }
-                        else if (((PrintHistoryListItem)child.Children[0]).isHoverItem == true)
-                        {
-                            ((PrintHistoryListItem)child.Children[0]).isHoverItem = false;
-                        }
-                        child.Invalidate();
-                    }
-
-                    Invalidate();
-                }
-            }
-        }
+       
 
         public PrintHistoryListControl()
         {
@@ -321,13 +176,28 @@ namespace MatterHackers.MatterControl.PrintHistory
             topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             base.AddChild(topToBottomItemList);
-
-            AddHandlers();
+            AddHandlers(); 
+            
         }
 
         void AddHandlers()
         {
-            this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
+            PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(ReloadData, ref unregisterEvents);
+        }
+
+        void ReloadData(object sender, EventArgs e)
+        {            
+            LoadHistoryItems(Count);
+        }
+
+        event EventHandler unregisterEvents;
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
         }
 
         public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
@@ -339,11 +209,6 @@ namespace MatterHackers.MatterControl.PrintHistory
             itemHolder.AddChild(child);
             itemHolder.VAnchor = VAnchor.FitToChildren;
             topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
-
-            itemHolder.MouseEnterBounds += new EventHandler(itemToAdd_MouseEnterBounds);
-            itemHolder.MouseLeaveBounds += new EventHandler(itemToAdd_MouseLeaveBounds);
-            itemHolder.MouseDownInBounds += new MouseEventHandler(itemHolder_MouseDownInBounds);
-            itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
         }
 
         bool settingLocalBounds = false;
@@ -381,15 +246,6 @@ namespace MatterHackers.MatterControl.PrintHistory
             }
         }
 
-        public void RemoveSelectedItems()
-        {
-            foreach (PrintHistoryListItem item in instance.SelectedItems)
-            {
-                RemoveChild(item);
-                item.printItem.Delete();
-            }
-        }
-
         public override void RemoveChild(int index)
         {
             topToBottomItemList.RemoveChild(index);
@@ -412,124 +268,6 @@ namespace MatterHackers.MatterControl.PrintHistory
             topToBottomItemList.RemoveAllChildren();
         }
 
-        void itemHolder_ParentChanged(object sender, EventArgs e)
-        {
-            FlowLayoutWidget itemHolder = (FlowLayoutWidget)sender;
-            itemHolder.MouseEnterBounds -= new EventHandler(itemToAdd_MouseEnterBounds);
-            itemHolder.MouseLeaveBounds -= new EventHandler(itemToAdd_MouseLeaveBounds);
-            itemHolder.MouseDownInBounds -= new MouseEventHandler(itemHolder_MouseDownInBounds);
-            itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
-        }
 
-        void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
-        {
-
-        }
-
-        void control_MouseLeaveBounds(object sender, EventArgs e)
-        {
-            HoverIndex = -1;
-        }
-
-        void itemToAdd_MouseLeaveBounds(object sender, EventArgs e)
-        {
-            GuiWidget widgetLeft = ((GuiWidget)sender);
-
-            if (SelectedIndex >= 0)
-            {
-                if (widgetLeft != topToBottomItemList.Children[SelectedIndex])
-                {
-                    widgetLeft.BackgroundColor = new RGBA_Bytes();
-                    widgetLeft.Invalidate();
-                    Invalidate();
-                }
-            }
-        }
-
-        void itemToAdd_MouseEnterBounds(object sender, EventArgs e)
-        {
-            GuiWidget widgetEntered = ((GuiWidget)sender);
-            for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-            {
-                GuiWidget child = topToBottomItemList.Children[index];
-                if (child == widgetEntered)
-                {
-                    HoverIndex = index;
-                }
-            }
-        }
-
-        public void OnSelectedIndexChanged()
-        {
-            Invalidate();
-            if (SelectedValueChanged != null)
-            {
-                SelectedValueChanged(this, null);
-            }
-        }
-
-        public void OnHoverIndexChanged()
-        {
-            Invalidate();
-            if (HoverValueChanged != null)
-            {
-                HoverValueChanged(this, null);
-            }
-        }
-
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            //activeView.OnDraw(graphics2D);
-
-            base.OnDraw(graphics2D);
-        }
-
-        public override void OnMouseDown(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseDown(mouseEvent);
-        }
-
-        public override void OnMouseUp(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseUp(mouseEvent);
-        }
-
-        public override void OnMouseMove(MouseEventArgs mouseEvent)
-        {
-            base.OnMouseMove(mouseEvent);
-        }
-
-        public void ClearSelected()
-        {
-            if (selectedIndex != -1)
-            {
-                selectedIndex = -1;
-                OnSelectedIndexChanged();
-            }
-        }
-
-        public GuiWidget SelectedItem
-        {
-            get
-            {
-                if (SelectedIndex != -1)
-                {
-                    return Children[SelectedIndex];
-                }
-
-                return null;
-            }
-
-            set
-            {
-                for (int i = 0; i < Children.Count; i++)
-                {
-                    if (Children[SelectedIndex] == value)
-                    {
-                        SelectedIndex = i;
-                    }
-                }
-            }
-        }
     }
 }
