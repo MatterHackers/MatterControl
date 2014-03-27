@@ -482,13 +482,22 @@ namespace MatterHackers.MatterControl.DataStorage
         public string PrintName { get; set; }
         public DateTime PrintStart { get; set; }
         public DateTime PrintEnd { get; set; }
-        public int PrintTimeMinutes { get; set; }
         public bool PrintComplete { get; set; }
 
         public PrintTask()
             : base()
         {
             PrintStart = DateTime.Now;
+        }
+
+        public int PrintTimeMinutes
+        {
+            get
+            {
+                TimeSpan printTimeSpan = PrintEnd.Subtract(PrintStart);
+
+                return (int)(printTimeSpan.TotalMinutes + .5);
+            }
         }
     }
 

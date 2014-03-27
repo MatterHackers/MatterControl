@@ -127,7 +127,17 @@ namespace MatterHackers.MatterControl.PrintHistory
                     TextWidget timeLabel = new TextWidget("PRINT TIME: ", pointSize:8);
                     timeLabel.TextColor = timeTextColor;
 
-                    TextWidget timeIndicator = new TextWidget(string.Format("{0}min", printTask.PrintTimeMinutes), pointSize: 12);
+                    TextWidget timeIndicator;
+                    int minutes = printTask.PrintTimeMinutes;
+                    if (minutes > 60)
+                    {
+                        timeIndicator = new TextWidget("{0}hrs {1}min".FormatWith(printTask.PrintTimeMinutes / 60, printTask.PrintTimeMinutes % 60), pointSize: 12);
+                    }
+                    else
+                    {
+                        timeIndicator = new TextWidget(string.Format("{0}min", printTask.PrintTimeMinutes), pointSize: 12);
+                    }
+                    
                     timeIndicator.Margin = new BorderDouble(right: 6);
                     timeIndicator.TextColor = timeTextColor;
 

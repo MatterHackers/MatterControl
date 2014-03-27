@@ -183,7 +183,6 @@ namespace MatterHackers.MatterControl
 
                                 activePrintTask.PrintEnd = DateTime.Now;
                                 activePrintTask.PrintComplete = true;
-                                activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
                                 activePrintTask.Commit();
                             }
                             
@@ -1826,7 +1825,6 @@ namespace MatterHackers.MatterControl
 
                             activePrintTask.PrintEnd = DateTime.Now;
                             activePrintTask.PrintComplete = false;
-                            activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
                             activePrintTask.Commit();
                         }
                     }
@@ -1847,7 +1845,6 @@ namespace MatterHackers.MatterControl
 
                             activePrintTask.PrintEnd = DateTime.Now;
                             activePrintTask.PrintComplete = false;
-                            activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
                             activePrintTask.Commit();
                         }
                     }                    
