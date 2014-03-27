@@ -176,7 +176,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //positionToPlaceObjectCenter=[102.5,102.5]
             new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", "print_center"),
 
-            new MapItemToBool("enableRaft", "create_raft"),
+            // the raft currently does not handle brim correctly
+            //new MapItemToBool("enableRaft", "create_raft"),
 
             //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_NON_CLOSED # You can or them together using '|'.
             //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
