@@ -16,6 +16,8 @@ Beginner
       Support Material
         support_material
         support_type
+      Raft
+        create_raft
   Filament
     Filament
       Filament
@@ -110,6 +112,7 @@ Advanced
         support_material_threshold
         support_material_enforce_layers
       Raft
+        create_raft
         raft_layers
       Options
         support_material_pattern

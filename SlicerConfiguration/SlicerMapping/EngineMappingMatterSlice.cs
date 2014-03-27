@@ -176,26 +176,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //positionToPlaceObjectCenter=[102.5,102.5]
             new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", "print_center"),
 
-            //raftAirGap=0
-            
-            //raftBaseLinewidth=0
-            //raftBaseThickness=0
-            
-            //raftExtraDistanceAroundPart=5 # mm.
-            //raftFanSpeedPercent=0
-
-            //raftInterfaceLineSpacing=250
-            //raftInterfaceLinewidth=0
-            //raftInterfaceThicknes=0
-            
-            //raftLineSpacing=1
-            //raftPrintSpeed=0
-            
-            //raftSurfaceLayers=0
-            //raftSurfaceLineSpacing=0
-            //raftSurfaceLinewidth=0
-            //raftSurfacePrintSpeed=0
-            //raftSurfaceThickness=0
+            new MapItemToBool("enableRaft", "create_raft"),
 
             //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_NON_CLOSED # You can or them together using '|'.
             //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.

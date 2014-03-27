@@ -1599,3 +1599,12 @@ Translated:Z Gap
 English:Print Again
 Translated:Print Again
 
+English:Turns on and off the creation of a raft which can help parts adhear to the bed.
+Translated:Turns on and off the creation of a raft which can help parts adhear to the bed.
+
+English:Enable Raft
+Translated:Enable Raft
+
+English:Create Raft
+Translated:Create Raft
+
