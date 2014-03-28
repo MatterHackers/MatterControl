@@ -129,7 +129,14 @@ namespace MatterHackers.MatterControl.PrintHistory
         IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
         {
             string query;
-            query = string.Format("SELECT * FROM PrintTask ORDER BY PrintStart DESC LIMIT {0};", recordCount);
+            if (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true")
+            {                
+                query = string.Format("SELECT * FROM PrintTask WHERE PrintComplete = 1 ORDER BY PrintStart DESC LIMIT {0};", recordCount);
+            }
+            else
+            {
+                query = string.Format("SELECT * FROM PrintTask ORDER BY PrintStart DESC LIMIT {0};", recordCount);
+            }
             //query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name DESC;", libraryCollection.Id);
             IEnumerable<DataStorage.PrintTask> result = (IEnumerable<DataStorage.PrintTask>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintTask>(query);
             return result;

@@ -43,6 +43,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PrintHistory
@@ -51,22 +52,47 @@ namespace MatterHackers.MatterControl.PrintHistory
     {
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         Button deleteFromLibraryButton;
-        Button addToQueueButton;
-        Button searchButton;
+        CheckBox showOnlyCompleted;
 
         public PrintHistoryWidget()
         {
             SetDisplayAttributes();
 
             textImageButtonFactory.borderWidth = 0;
+            RGBA_Bytes historyPanelTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
-                FlowLayoutWidget searchPanel = new FlowLayoutWidget();
+
+                FlowLayoutWidget historyStatsContainer = new FlowLayoutWidget();
+                historyStatsContainer.AddChild(new TextWidget("Total Print Time: ", pointSize:10, textColor:historyPanelTextColor));
+                historyStatsContainer.AddChild(new TextWidget(GetPrintTimeString(), pointSize: 14, textColor: historyPanelTextColor));
+                
+                historyStatsContainer.Padding = new BorderDouble(6, 2);
+
+                FlowLayoutWidget completedStatsContainer = new FlowLayoutWidget();
+                completedStatsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                completedStatsContainer.AddChild(new TextWidget("Completed Prints: ", pointSize: 10, textColor: historyPanelTextColor));
+                completedStatsContainer.AddChild(new TextWidget(GetCompletedPrints().ToString(), pointSize: 14, textColor: historyPanelTextColor));
+
+                completedStatsContainer.AddChild(new HorizontalSpacer());
+
+                showOnlyCompleted = new CheckBox("Only Show Completed ", historyPanelTextColor, textSize: 10);
+                showOnlyCompleted.Margin = new BorderDouble(top: 8);
+                bool showCompleted = (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true");
+                showOnlyCompleted.Checked = showCompleted;
+
+                completedStatsContainer.AddChild(showOnlyCompleted);
+
+                completedStatsContainer.Padding = new BorderDouble(6, 2);
+                
+                FlowLayoutWidget searchPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
                 searchPanel.HAnchor = HAnchor.ParentLeftRight;
-                searchPanel.Padding = new BorderDouble(0);
-                searchPanel.Height = 50;
+                searchPanel.Padding = new BorderDouble(0,2);
+
+                searchPanel.AddChild(completedStatsContainer);
+                searchPanel.AddChild(historyStatsContainer);
 
                 FlowLayoutWidget buttonPanel = new FlowLayoutWidget();
                 buttonPanel.HAnchor = HAnchor.ParentLeftRight;
@@ -99,9 +125,61 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         private void AddHandlers()
         {
-            //pass
+            showOnlyCompleted.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(UpdateHistoryFilterShowCompleted);
         }
-      
+
+        private void UpdateHistoryFilterShowCompleted(object sender, EventArgs e)
+        {
+            if (showOnlyCompleted.Checked)
+            {
+                UserSettings.Instance.set("PrintHistoryFilterShowCompleted", "true");
+            }
+            else
+            {
+                UserSettings.Instance.set("PrintHistoryFilterShowCompleted", "false");
+            }
+            PrintHistoryListControl.Instance.LoadHistoryItems();
+        }
+
+        private int GetCompletedPrints()
+        {            
+            //string query = "SELECT COUNT(*) FROM PrintTask WHERE PrintComplete = '{0}';".FormatWith(true);
+            var results = DataStorage.Datastore.Instance.dbSQLite.Table<PrintTask>().Where(o => o.PrintComplete == true);
+            return results.Count();
+        }
+
+        private int GetTotalPrintSeconds()
+        {
+            string query = "SELECT SUM(PrintTimeSeconds) FROM PrintTask";
+            var results = DataStorage.Datastore.Instance.dbSQLite.ExecuteScalar<int>(query);
+            return results;
+        }
+
+
+        private string GetPrintTimeString()
+        {
+            int seconds = GetTotalPrintSeconds();
+            TimeSpan span = new TimeSpan(0,0,seconds);
+
+            string timeString;
+            if (seconds <= 0)
+            {
+                timeString = "Omin";
+            }
+            else if (seconds > 86400)
+            {
+                timeString = "{0}days {1}hrs {2}min".FormatWith(span.Days, span.Hours, span.Minutes);
+            }
+            else if (seconds > 3600)
+            {
+                timeString = "{0}hrs {1}min".FormatWith(span.Hours, span.Minutes);
+            }
+            else
+            {
+                timeString = "{0}min".FormatWith(span.Minutes);
+            }
+            return timeString;
+        }
 
         private void SetDisplayAttributes()
         {
