@@ -124,11 +124,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             int minSettingNameWidth = 220;
 
-			showHelpBox = new CheckBox(LocalizedString.Get("Show Help"));
+            showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
 			showHelpBox.Checked = uiState.showHelp;
 
-			showAllDetails = new CheckBox(LocalizedString.Get("Show All Settings"));
-            showAllDetails.Checked = uiState.userLevel == "Advanced";
+			showAllDetails = new CheckBox(0, 0,LocalizedString.Get("Show All Settings"), textSize:10);
+            showAllDetails.Checked = uiState.userLevel == "Advanced";            
 
             FlowLayoutWidget pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: Agg.UI.VAnchor.ParentTop);
             pageTopToBottomLayout.AnchorAll();
@@ -137,6 +137,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             settingsControlBar = new SettingsControlBar();
             pageTopToBottomLayout.AddChild(settingsControlBar);
+
+            EnhancedSettingsControlBar enhancedSettingsControlBar = new EnhancedSettingsControlBar();
+            pageTopToBottomLayout.AddChild(enhancedSettingsControlBar);
 
 			noConnectionMessageContainer = new GroupBox(LocalizedString.Get("No Printer Selected"));
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);

@@ -15,6 +15,43 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+    public class EnhancedSettingsControlBar : FlowLayoutWidget
+    {
+        public EnhancedSettingsControlBar()
+        {                     
+            this.HAnchor = HAnchor.ParentLeftRight;
+            this.AddChild(new SliceSelectorWidget("Device", RGBA_Bytes.YellowGreen));
+            this.AddChild(new SliceSelectorWidget("Material", RGBA_Bytes.Yellow));
+            this.AddChild(new SliceSelectorWidget("Quality", RGBA_Bytes.Orange));
+            this.AddChild(new SliceSelectorWidget("Item", RGBA_Bytes.Violet));
+            this.AddChild(new GuiWidget(1,80));
+            this.Height = 60;
+        }
+    }
+
+    public class SliceSelectorWidget : FlowLayoutWidget
+    {
+        public SliceSelectorWidget(string label, RGBA_Bytes accentColor)
+            :base(FlowDirection.TopToBottom)
+        {            
+            this.HAnchor = HAnchor.ParentLeftRight;
+            this.Margin = new BorderDouble(4);
+            this.BackgroundColor = RGBA_Bytes.LightGray;
+
+            GuiWidget accentBar = new GuiWidget(1, 5);
+            accentBar.BackgroundColor = accentColor;
+            accentBar.HAnchor = HAnchor.ParentLeftRight;
+
+            TextWidget labelText = new TextWidget(LocalizedString.Get(label).ToUpper());
+            labelText.HAnchor = Agg.UI.HAnchor.ParentCenter;
+            labelText.Margin = new BorderDouble(0, 3);
+
+            this.AddChild(labelText);
+            this.AddChild(new GuiWidget(1,60));
+            this.AddChild(accentBar);
+        }
+    }
+    
     public class SettingsControlBar : FlowLayoutWidget
     {
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
