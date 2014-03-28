@@ -482,6 +482,7 @@ namespace MatterHackers.MatterControl.DataStorage
         public string PrintName { get; set; }
         public DateTime PrintStart { get; set; }
         public DateTime PrintEnd { get; set; }
+        public int PrintTimeSeconds { get; set; }
         public bool PrintComplete { get; set; }
 
         public PrintTask()
@@ -498,6 +499,16 @@ namespace MatterHackers.MatterControl.DataStorage
 
                 return (int)(printTimeSpan.TotalMinutes + .5);
             }
+        }
+
+        public override void Commit()
+        {
+            if (this.PrintEnd != DateTime.MinValue)
+            {
+                TimeSpan printTimeSpan = PrintEnd.Subtract(PrintStart);
+                PrintTimeSeconds = (int)printTimeSpan.TotalSeconds;
+            }
+            base.Commit();
         }
     }
 
@@ -544,10 +555,10 @@ namespace MatterHackers.MatterControl.DataStorage
         }
     }
 
-    public class PrinterFeaturs
+    public class PrinterFeatures
     {
         Dictionary<string, string> features = new Dictionary<string, string>();
-        public PrinterFeaturs(string features)
+        public PrinterFeatures(string features)
         {
             if (features != null)
             {
@@ -641,12 +652,12 @@ namespace MatterHackers.MatterControl.DataStorage
         /// </summary>
         public string PrintLevelingProbePositions { get; set; }
 
-        protected PrinterFeaturs printerFeatures;
-        public PrinterFeaturs GetFeatures()
+        protected PrinterFeatures printerFeatures;
+        public PrinterFeatures GetFeatures()
         {
             if (printerFeatures == null)
             {
-                printerFeatures = new PrinterFeaturs(_features);
+                printerFeatures = new PrinterFeatures(_features);
             }
 
             return printerFeatures;
