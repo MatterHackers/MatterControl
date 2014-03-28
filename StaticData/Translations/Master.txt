@@ -1617,3 +1617,12 @@ Translated:Overhang Percent
 English:support_material_overhang_percent
 Translated:support_material_overhang_percent
 
+English:Device
+Translated:Device
+
+English:Material
+Translated:Material
+
+English:Item
+Translated:Item
+

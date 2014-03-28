@@ -132,5 +132,5 @@ use_firmware_retraction|Use Firmware Retraction|CHECK_BOX||Request the firmware 
 use_relative_e_distances|Use Relative E Distances|CHECK_BOX||Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 vibration_limit|Vibration Limit|INT|Hz|This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 wipe|Wipe Before Retract|CHECK_BOX||This will cause the extruder to move while retracting to minimize blobs.
-wipe_shield_distance|Wipe Shield Dist|POSITIVE_DOUBLE|mm|If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+wipe_shield_distance|Wipe Shield Distance|POSITIVE_DOUBLE|mm|If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
 z_offset|Z Offset|OFFSET|mm|This value will be added to all of the z positions of the created gcode.
