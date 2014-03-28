@@ -109,7 +109,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 buttonContainer.Margin = new BorderDouble(0, 3);
                 {
                     closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
-				
 
                     Button addPrinterButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     addPrinterButton.Click += new ButtonBase.ButtonEventHandler(AddConnectionLink_Click);

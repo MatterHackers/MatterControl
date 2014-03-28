@@ -128,13 +128,10 @@ Advanced
       Notes
         notes
     Output Options
-<<<<<<< HEAD
-=======
       Center Print
         center_part_on_bed
       Wipe Shield
         wipe_shield_distance
->>>>>>> e08d49595f6bbaa525105c5a4defd1ec3f36d56b
       Sequential Printing
         complete_objects
         extruder_clearance_height
