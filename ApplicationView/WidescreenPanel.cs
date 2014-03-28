@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl
             ColumnOne.AddChild(new ActionBarPlus());
             ColumnOne.AddChild(new PrintProgressBar());
             ColumnOne.AddChild(new QueueTab());
-            ColumnOne.Width = 480; //Ordering here matters - must go after children are added                      
+            ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
         }
 
         void LoadColumnThree()
@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl
                     ColumnTwo.Visible = !ColTwoIsHidden;
 
                     ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                    ColumnOne.Width = 480;
+                    ColumnOne.Width = 500;
                     Padding = new BorderDouble(4);
 
                     ColumnOne.Visible = true;
