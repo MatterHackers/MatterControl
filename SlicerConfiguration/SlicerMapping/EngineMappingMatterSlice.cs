@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //positionToPlaceObjectCenter=[102.5,102.5]
             new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", "print_center"),
 
-            // the raft currently does not handle brim correctly
+            // TODO: The raft currently does not handle brim correctly. So it needs to be fixed before it is enabled.
             //new MapItemToBool("enableRaft", "create_raft"),
 
             //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_NON_CLOSED # You can or them together using '|'.
@@ -230,9 +230,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             
             //wipeShieldDistanceFromObject=0 # If greater than 0 this creates an outline around shapes so the extrude will be wiped when entering.
             new MapItem("wipeShieldDistanceFromObject", "wipe_shield_distance"),
-
+            
+            // TODO: We don't need this yet as it is only for dual extrusion
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
-
 
             new NotPassedItem("", "pause_gcode"),
             new NotPassedItem("", "resume_gcode"),
