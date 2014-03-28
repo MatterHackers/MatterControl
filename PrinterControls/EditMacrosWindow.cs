@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
             string giveMacroANameLbl = LocalizedString.Get("Give your macro a name");
 			string giveMacroANameLblFull = string.Format ("{0}.", giveMacroANameLbl);
 			macroNameError = new TextWidget(giveMacroANameLblFull, 0, 0, 10);
-            macroNameError.TextColor = RGBA_Bytes.White;
+			macroNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             macroNameError.HAnchor = HAnchor.ParentLeftRight;
             macroNameError.Margin = elementMargin;
 
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
             string shouldBeGCodeLbl = LocalizedString.Get("This should be in 'Gcode'");
 			string shouldBeGCodeLblFull = string.Format("{0}.", shouldBeGCodeLbl);
 			macroCommandError = new TextWidget(shouldBeGCodeLblFull, 0, 0, 10);
-            macroCommandError.TextColor = RGBA_Bytes.White;
+			macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             macroCommandError.HAnchor = HAnchor.ParentLeftRight;
             macroCommandError.Margin = elementMargin;
 
@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl
 
         public DataStorage.CustomCommands ActiveMacro;
 
-        public EditMacrosWindow(IEnumerable<DataStorage.CustomCommands> macros, EventHandler functionToCallOnSave)
+        public EditMacrosWindow(EventHandler functionToCallOnSave)
             : base(360, 420)
         {
             Title = LocalizedString.Get("Macro Editor");

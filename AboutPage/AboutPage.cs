@@ -97,13 +97,13 @@ namespace MatterHackers.MatterControl
         public UpdateControl()
         {
             textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             HAnchor = HAnchor.ParentLeftRight;
             BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
             Padding = new BorderDouble(6, 5);
             {
-                updateStatusText = new TextWidget(string.Format(""), textColor: offWhite);
+				updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 updateStatusText.AutoExpandBoundsToText = true;
                 updateStatusText.VAnchor = VAnchor.ParentCenter;
 
@@ -389,7 +389,7 @@ namespace MatterHackers.MatterControl
             linkButtonFactory.textColor = aboutTextColor;
 
             textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
-            textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             FlowLayoutWidget customInfoTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             customInfoTopToBottom.Name = "AboutPageCustomInfo";
@@ -478,6 +478,7 @@ namespace MatterHackers.MatterControl
                 feedbackButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
 
                 Button feedbackLink = textImageButtonFactory.Generate("Send Feedback".Localize());
+			
 
                 feedbackLink.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
                 feedbackButtons.AddChild(feedbackLink);

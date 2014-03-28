@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerNameInput.HAnchor = HAnchor.ParentLeftRight;
 
 			printerNameError = new TextWidget(LocalizedString.Get("Give your printer a name."), 0, 0, 10);
-            printerNameError.TextColor = RGBA_Bytes.White;
+			printerNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerNameError.HAnchor = HAnchor.ParentLeftRight;
             printerNameError.Margin = elementMargin;
 
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerManufacturerSelector.ManufacturerDropList.SelectionChanged += new EventHandler(ManufacturerDropList_SelectionChanged);
 
 			printerMakeError = new TextWidget(LocalizedString.Get("Select the printer manufacturer"), 0, 0, 10);
-            printerMakeError.TextColor = RGBA_Bytes.White;
+			printerMakeError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMakeError.HAnchor = HAnchor.ParentLeftRight;
             printerMakeError.Margin = elementMargin;
 
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerModelSelector.ModelDropList.SelectionChanged += new EventHandler(ModelDropList_SelectionChanged);
 
 			printerModelError = new TextWidget(LocalizedString.Get("Select the printer model"), 0, 0, 10);
-            printerModelError.TextColor = RGBA_Bytes.White;
+			printerModelError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerModelError.HAnchor = HAnchor.ParentLeftRight;
             printerModelError.Margin = elementMargin;
 

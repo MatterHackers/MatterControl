@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
                         setMoveDistanceControl.AddChild(moveRadioButtons);
                     }
 
-                    TextWidget mmLabel = new TextWidget("mm", textColor: RGBA_Bytes.White, pointSize:10);
+					TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
                     mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
                     setMoveDistanceControl.AddChild(mmLabel);
                     setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl
                 setMoveDistanceControl.AddChild(moveRadioButtons);
             }
 
-            TextWidget mmLabel = new TextWidget("mm", textColor: RGBA_Bytes.White, pointSize:10);
+			TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
             mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
             setMoveDistanceControl.AddChild(mmLabel);
             setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;

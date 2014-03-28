@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageOneText = LocalizedString.Get ("MatterControl will now attempt to auto-detect printer.");
 			TextWidget printerMessageOne = new TextWidget(printerMessageOneText, 0, 0, 10);
             printerMessageOne.Margin = new BorderDouble(0, 10, 0, 5);
-            printerMessageOne.TextColor = RGBA_Bytes.White;
+			printerMessageOne.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMessageOne.HAnchor = HAnchor.ParentLeftRight;
             printerMessageOne.Margin = elementMargin;
 
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageTwoTxtEnd = LocalizedString.Get ("if currently connected");
 			string printerMessageTwoTxtFull = string.Format ("1.) {0} ({1}).", printerMessageTwoTxtBeg, printerMessageTwoTxtEnd);
 			TextWidget printerMessageTwo = new TextWidget(printerMessageTwoTxtFull, 0, 0, 12);
-            printerMessageTwo.TextColor = RGBA_Bytes.White;
+			printerMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMessageTwo.HAnchor = HAnchor.ParentLeftRight;
             printerMessageTwo.Margin = elementMargin;
 
@@ -90,14 +90,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageThreeTxtEnd = LocalizedString.Get ("Continue");
 			string printerMessageThreeTxtFull = string.Format ("2.) {0} '{1}'.", printerMessageThreeTxtBeg, printerMessageThreeTxtEnd);
 			TextWidget printerMessageThree = new TextWidget(printerMessageThreeTxtFull, 0, 0, 12);
-            printerMessageThree.TextColor = RGBA_Bytes.White;
+			printerMessageThree.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMessageThree.HAnchor = HAnchor.ParentLeftRight;
             printerMessageThree.Margin = elementMargin;
 
 			string printerMessageFourBeg = LocalizedString.Get ("Power on and connect printer");
 			string printerMessageFourFull = string.Format ("3.) {0}.", printerMessageFourBeg);
 			TextWidget printerMessageFour = new TextWidget(printerMessageFourFull, 0, 0, 12);
-            printerMessageFour.TextColor = RGBA_Bytes.White;
+			printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMessageFour.HAnchor = HAnchor.ParentLeftRight;
             printerMessageFour.Margin = elementMargin;
 
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageFiveTxtEnd = LocalizedString.Get ("Connect");
 			string printerMessageFiveTxtFull = string.Format ("4.) {0} '{1}'.", printerMessageFiveTxtBeg, printerMessageFiveTxtEnd);
 			TextWidget printerMessageFive = new TextWidget(printerMessageFiveTxtFull, 0, 0, 12);
-            printerMessageFive.TextColor = RGBA_Bytes.White;
+			printerMessageFive.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerMessageFive.HAnchor = HAnchor.ParentLeftRight;
             printerMessageFive.Margin = elementMargin;
 
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             else
             {
                 ActivePrinter.ComPort = candidatePort;
-                printerErrorMessage.TextColor = RGBA_Bytes.White;
+				printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				string printerErrorMessageLblTwo = LocalizedString.Get ("Attempting to connect");
 				string printerErrorMessageLblTwoFull = string.Format("{0}...",printerErrorMessageLblTwo);
 				printerErrorMessage.Text = printerErrorMessageLblTwoFull;
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void onConnectionSuccess()
         {
-            printerErrorMessage.TextColor = RGBA_Bytes.White;
+			printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			string printerErrorMessageLblThree = LocalizedString.Get ("Connection succeeded");
 			string printerErrorMessageLblThreeFull = string.Format ("{0}!", printerErrorMessageLblThree);
 			printerErrorMessage.Text = printerErrorMessageLblThreeFull;

@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
             topToBottomControls.HAnchor |= Agg.UI.HAnchor.ParentCenter;
             topToBottomControls.VAnchor |= Agg.UI.VAnchor.ParentTop;
 
-            AddTextField(instructionsText, 10);
+			AddTextField(instructionsText, 10);
 
             AddChild(topToBottomControls);
 
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 
             string wrappedInstructions = TypeFacePrinter.InsertCRs(instructionsText, 400, 12);
             string wrappedInstructionsTabsToSpaces = wrappedInstructions.Replace("\t", "    ");
-            TextWidget instructionsWidget = new TextWidget(wrappedInstructionsTabsToSpaces, textColor: RGBA_Bytes.White);
+			TextWidget instructionsWidget = new TextWidget(wrappedInstructionsTabsToSpaces, textColor: ActiveTheme.Instance.PrimaryTextColor);
             instructionsWidget.HAnchor = Agg.UI.HAnchor.ParentCenter;
             topToBottomControls.AddChild(instructionsWidget);
         }

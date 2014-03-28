@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl
 
                 FlowLayoutWidget rightColumnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 rightColumnContainer.AddChild(terminalCommunicationsContainer);
-                rightColumnContainer.Width = 180;
+				rightColumnContainer.Width = 220;
                 rightColumnContainer.VAnchor |= VAnchor.ParentTop;
 
                 AddFanControls(rightColumnContainer);

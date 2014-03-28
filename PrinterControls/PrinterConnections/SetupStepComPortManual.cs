@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             comPortMessageContainer.HAnchor = HAnchor.ParentLeftRight;
 
 			printerComPortError = new TextWidget(LocalizedString.Get("Currently available serial ports."), 0, 0, 10);
-            printerComPortError.TextColor = RGBA_Bytes.White;
+			printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerComPortError.AutoExpandBoundsToText = true;            
 
 			printerComPortHelpLink = linkButtonFactory.Generate(LocalizedString.Get("What's this?"));
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerComPortHelpLink.Click += new ButtonBase.ButtonEventHandler(printerComPortHelp_Click);
 
 			printerComPortHelpMessage = new TextWidget(LocalizedString.Get("The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter."), 0, 0, 10);
-            printerComPortHelpMessage.TextColor = RGBA_Bytes.White;
+			printerComPortHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerComPortHelpMessage.Margin = new BorderDouble(top: 10);
             printerComPortHelpMessage.Visible = false;
 

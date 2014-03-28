@@ -31,10 +31,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 this.editMode = editMode;
 
-                textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-                textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-                textImageButtonFactory.disabledTextColor = RGBA_Bytes.White;
-                textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+				textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 textImageButtonFactory.borderWidth = 0;
                 
                 this.AnchorAll();
@@ -70,7 +70,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                         editModeLink = actionLinkFactory.Generate(LocalizedString.Get("Done"), 12, EditModeOffLink_Click);
                     }
 
-                    editModeLink.TextColor = new RGBA_Bytes(250, 250, 250);
+					//editModeLink.TextColor = new RGBA_Bytes(250, 250, 250);
+					editModeLink.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     editModeLink.VAnchor = Agg.UI.VAnchor.ParentBottom;
 
                     headerRow.AddChild(elementHeader);
@@ -108,6 +109,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 buttonContainer.Margin = new BorderDouble(0, 3);
                 {
                     closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+				
 
                     Button addPrinterButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     addPrinterButton.Click += new ButtonBase.ButtonEventHandler(AddConnectionLink_Click);

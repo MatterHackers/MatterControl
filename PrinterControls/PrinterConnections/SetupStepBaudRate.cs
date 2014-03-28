@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             baudRateMessageContainer.HAnchor = HAnchor.ParentLeftRight;
 
 			printerBaudRateError = new TextWidget(LocalizedString.Get("Select the baud rate."), 0, 0, 10);
-            printerBaudRateError.TextColor = RGBA_Bytes.White;
+			printerBaudRateError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerBaudRateError.AutoExpandBoundsToText = true;   
 
 			printerBaudRateHelpLink = linkButtonFactory.Generate(LocalizedString.Get("What's this?"));
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerBaudRateHelpLink.Click += new ButtonBase.ButtonEventHandler(printerBaudRateHelp_Click);
 
 			printerBaudRateHelpMessage = new TextWidget(LocalizedString.Get("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000."), 0, 0, 10);
-            printerBaudRateHelpMessage.TextColor = RGBA_Bytes.White;
+			printerBaudRateHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             printerBaudRateHelpMessage.Margin = new BorderDouble(top: 10);
             printerBaudRateHelpMessage.Visible = false;
 
