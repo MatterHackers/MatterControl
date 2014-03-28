@@ -119,7 +119,7 @@ support_material_xy_distance|X and Y Distance|POSITIVE_DOUBLE|mm|The distance th
 support_material_z_distance|Z Distance|POSITIVE_DOUBLE|mm|The distance the support material will be from the object in the z direction.
 support_material_z_gap_layers|Z Gap|INT||The number of layers to skip in z. The gap between the support and the model.
 support_material|Generate Support Material|CHECK_BOX||This turns on and off the generation of support material.
-support_type|Support Type|LIST|NONE, GRID, LINES|The type of support to create for surfaces that need it.
+support_type|Support Type|LIST|GRID,LINES|The type of support to create for surfaces that need it.
 temperature|Extruder Other Layers|POSITIVE_DOUBLE|degrees|The temperature to set the extruder to after the first layer has been printed.
 thin_walls|Thin Walls|CHECK_BOX||Detect when walls are too close together and need to be extruded as just one wall.
 threads|Threads|INT||The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.

@@ -1608,3 +1608,12 @@ Translated:Enable Raft
 English:Create Raft
 Translated:Create Raft
 
+English:The amount of overhangs to support. 0 is no support 100 is support every overhang regardless of angle.
+Translated:The amount of overhangs to support. 0 is no support 100 is support every overhang regardless of angle.
+
+English:Overhang Percent
+Translated:Overhang Percent
+
+English:support_material_overhang_percent
+Translated:support_material_overhang_percent
+

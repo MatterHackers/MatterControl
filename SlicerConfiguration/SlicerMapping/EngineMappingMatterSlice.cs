@@ -212,8 +212,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //supportMaterialSpeed=50 # mm/s.
             new MapItem("supportMaterialSpeed", "support_material_speed"),
             
-            //supportEndAngle=0 # Support will be generated up to this angle. Mor than this and there will be no support (it can rest on itself), degrees.
-            new ConstantMinusValue("supportEndAngle", "support_material_threshold", 90),
+            // get the check box on the screen
+            new SupportMatterial("supportEndAngle", "support_material"),
+            new NotPassedItem("", "support_material_threshold"),
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
             new MapItem("supportType", "support_type"),
@@ -275,6 +276,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             public FanTranslator(string mappedKey, string slicer)
                 : base(mappedKey, slicer)
             {
+            }
+        }
+
+        public class SupportMatterial : MapItem
+        {
+            public SupportMatterial(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
+            {
+            }
+
+            public override string MappedValue
+            {
+                get
+                {
+                    string supportMaterial = ActiveSliceSettings.Instance.GetActiveValue("support_material");
+                    if (supportMaterial == "0")
+                    {
+                        return "-1";
+                    }
+
+                    return (double.Parse(ActiveSliceSettings.Instance.GetActiveValue("support_material_threshold"))).ToString();
+                }
             }
         }
 
