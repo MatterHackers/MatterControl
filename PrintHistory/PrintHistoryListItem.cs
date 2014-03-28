@@ -129,7 +129,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                     TextWidget timeIndicator;
                     int minutes = printTask.PrintTimeMinutes;
-                    if (minutes > 60)
+                    if (minutes < 0)
+                    {
+                        timeIndicator = new TextWidget("Unknown");
+                    }
+                    else if (minutes > 60)
                     {
                         timeIndicator = new TextWidget("{0}hrs {1}min".FormatWith(printTask.PrintTimeMinutes / 60, printTask.PrintTimeMinutes % 60), pointSize: 12);
                     }
