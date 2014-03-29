@@ -1626,3 +1626,6 @@ Translated:Material
 English:Item
 Translated:Item
 
+English:Wipe Shield Distance
+Translated:Wipe Shield Distance
+
