@@ -184,6 +184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void AddViewControls()
         {
             TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
+            iconTextImageButtonFactory.invertImageColor = false;
 
             FlowLayoutWidget transformTypeSelector = new FlowLayoutWidget();
             transformTypeSelector.BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);

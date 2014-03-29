@@ -900,6 +900,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             transformTypeSelector.BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
             textImageButtonFactory.FixedHeight = 20;
             textImageButtonFactory.FixedWidth = 20;
+            textImageButtonFactory.invertImageColor = false;
+
             string rotateIconPath = Path.Combine("Icons", "ViewTransformControls", "rotate.png");
             rotateViewButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
             rotateViewButton.Margin = new BorderDouble(3);

@@ -73,6 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandMenuOptionFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 50);
             expandMenuOptionFactory.pressedFillColor = new RGBA_Bytes(255, 255, 255, 50);
             expandMenuOptionFactory.disabledFillColor = new RGBA_Bytes(255, 255, 255, 50);
+            
 
             checkboxButtonFactory.fontSize = 11;
             checkboxButtonFactory.FixedWidth = 138;

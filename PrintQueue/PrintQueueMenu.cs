@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
                 {LocalizedString.Get("Extra"), null},
                 {LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click},
-					{LocalizedString.Get("  Remove All"), removeAllFromQueueButton_Click},
+					{LocalizedString.Get(" Remove All"), removeAllFromQueueButton_Click},
                 };
             }
 
