@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PrintHistory
             string timeString;
             if (seconds <= 0)
             {
-                timeString = "Omin";
+                timeString = "0min";
             }
             else if (seconds > 86400)
             {
