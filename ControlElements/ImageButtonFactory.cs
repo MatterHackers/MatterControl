@@ -13,11 +13,14 @@ using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl
 {
     public class ImageButtonFactory
     {
+        bool invertImageColor = true;
+        
         public Button Generate(string normalImageName, string hoverImageName, string pressedImageName = null, string disabledImageName = null)
         {
 
@@ -40,6 +43,14 @@ namespace MatterHackers.MatterControl
             ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
             ImageIO.LoadImageData(this.GetImageLocation(hoverImageName), hoverImage);
             ImageIO.LoadImageData(this.GetImageLocation(disabledImageName), disabledImage);
+
+            if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+            {
+                InvertLightness.DoInvertLightness(normalImage);
+                InvertLightness.DoInvertLightness(pressedImage);
+                InvertLightness.DoInvertLightness(hoverImage);
+                InvertLightness.DoInvertLightness(disabledImage);
+            }
 
             //normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
             //pressedImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
