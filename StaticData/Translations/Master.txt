@@ -1644,3 +1644,9 @@ Translated:Making Copy
 English:Arranging Parts
 Translated:Arranging Parts
 
+English:Only Show Completed
+Translated:Only Show Completed
+
+English:Show Timestamp
+Translated:Show Timestamp
+
