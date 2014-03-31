@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl
 {
     public class ImageButtonFactory
     {
-        bool invertImageColor = true;
+        public bool invertImageColor = true;
         
         public Button Generate(string normalImageName, string hoverImageName, string pressedImageName = null, string disabledImageName = null)
         {
