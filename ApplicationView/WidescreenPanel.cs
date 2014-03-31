@@ -199,16 +199,16 @@ namespace MatterHackers.MatterControl
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
             //Add the tab contents for 'Advanced Controls'
-            string printerControlsLabel = LocalizedString.Get("CONTROLS");
+            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 16,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string sliceSettingsLabel = LocalizedString.Get("SLICE SETTINGS");
+            string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string configurationLabel = LocalizedString.Get("CONFIGURATION");
+            string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new ConfigurationPage();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));

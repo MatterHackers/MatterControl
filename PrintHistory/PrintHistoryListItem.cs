@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                 buttonContainer.Margin = new BorderDouble(0);
                 buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 {
-                    TextWidget statusIndicator = new TextWidget("STATUS: Completed", pointSize:8);
+                    TextWidget statusIndicator = new TextWidget("Status: Completed", pointSize:8);
                     statusIndicator.Margin = new BorderDouble(right: 3);
                     //buttonContainer.AddChild(statusIndicator);
 
