@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     partLabel.TextColor = WidgetTextColor;
                     partLabel.MinimumSize = new Vector2(1, 16);
 
-					string partStatusLblTxt = LocalizedString.Get ("STATUS");     
+					string partStatusLblTxt = LocalizedString.Get ("Status").ToUpper();     
 					string partStatusLblTxtTest = LocalizedString.Get ("Queued to Print");
 					string partStatusLblTxtFull = "{0}: {1}".FormatWith(partStatusLblTxt,partStatusLblTxtTest);
 

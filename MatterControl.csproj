@@ -75,6 +75,7 @@
     <Compile Include="ApplicationView\QueueTabs.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
+    <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
     <Compile Include="ConfigurationPage\ConfigurationPage.cs" />
@@ -85,6 +86,8 @@
     <Compile Include="PrintHistory\PrintHistoryListControl.cs" />
     <Compile Include="PrintHistory\PrintHistoryListItem.cs" />
     <Compile Include="PrintHistory\PrintHistoryWidget.cs" />
+    <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
+    <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />

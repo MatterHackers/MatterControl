@@ -138,9 +138,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsControlBar = new SettingsControlBar();
             pageTopToBottomLayout.AddChild(settingsControlBar);
 
-            EnhancedSettingsControlBar enhancedSettingsControlBar = new EnhancedSettingsControlBar();
-            pageTopToBottomLayout.AddChild(enhancedSettingsControlBar);
-
 			noConnectionMessageContainer = new GroupBox(LocalizedString.Get("No Printer Selected"));
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
