@@ -1629,3 +1629,18 @@ Translated:Item
 English:Wipe Shield Distance
 Translated:Wipe Shield Distance
 
+English: Remove All
+Translated: Remove All
+
+English:Slice Presets Editor
+Translated:Slice Presets Editor
+
+English:Attempting to Connect
+Translated:Attempting to Connect
+
+English:Making Copy
+Translated:Making Copy
+
+English:Arranging Parts
+Translated:Arranging Parts
+

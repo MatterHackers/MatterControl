@@ -96,6 +96,7 @@ namespace MatterHackers.MatterControl
             {
                 GuiHalWidget.SetClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
 
+                MatterHackers.RayTracer.UnitTests.Run();
                 MatterHackers.Agg.Tests.UnitTests.Run();
                 MatterHackers.VectorMath.Tests.UnitTests.Run();
                 MatterHackers.Agg.UI.Tests.UnitTests.Run();
