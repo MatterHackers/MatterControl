@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
         bool firstDraw = true;
         bool ShowMemoryUsed = false;
         bool DoCGCollectEveryDraw = false;
+        public bool RestartOnClose = false;
 
         public MatterControlApplication(double width, double height)
             : base(width, height)
@@ -329,7 +330,7 @@ namespace MatterHackers.MatterControl
 
             if (PrinterCommunication.Instance.PrinterIsPrinting)
             {
-                StyledMessageBox.ShowMessageBox("You cannot exit while a print is running.", "Unable to Exit");
+                StyledMessageBox.ShowMessageBox("Oop! You cannot exit while a print is active.", "Unable to Exit");
                 CancelClose = true;
             }
             else if (PartsSheet.IsSaving())

@@ -6,30 +6,20 @@ using System.IO;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 
 
 namespace MatterHackers.MatterControl
 {
-    public class LanguageSelector : GuiWidget
-    {
-        public StyledDropDownList LanguageDropList;
+    public class LanguageSelector : StyledDropDownList
+    {        
 
-        public LanguageSelector()
-        {
-            string defaultModelDropDownLbl = LocalizedString.Get("Select Language");
-            string defaultModelDropDownLblFull = string.Format("- {0} -", defaultModelDropDownLbl);
+        public LanguageSelector(string selection)
+            : base(selection)
+        {            
 
-            List<string> languageList = new List<string>( new string[]{"English", "Spanish", "German"});
-            
-            LanguageDropList = new StyledDropDownList(defaultModelDropDownLblFull);
-            LanguageDropList.AddItem("Default");
-
-            foreach (string language in languageList)
-            {
-                LanguageDropList.AddItem(language);
-            }
 
             //string pathToModels = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", manufacturer);
             //if (Directory.Exists(pathToModels))
@@ -40,12 +30,8 @@ namespace MatterHackers.MatterControl
             //        ModelDropList.AddItem(model);
             //    }
             //}
-            
 
-            AddChild(LanguageDropList);
-
-            HAnchor = HAnchor.FitToChildren;
-            VAnchor = VAnchor.FitToChildren;
+            this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
         }
     }
        
