@@ -320,6 +320,7 @@ namespace MatterHackers.MatterControl
             }
             else if (this.Width < ColumnTwoMinWidth && !ColThreeIsHidden)
             {
+                //Queue column and advanced controls columns show
                 if (UiState != 1)
                 {
                     UiState = 1;
@@ -330,6 +331,7 @@ namespace MatterHackers.MatterControl
                     ColumnTwo.Visible = !!ColTwoIsHidden;
                     ColumnThree.Visible = !ColThreeIsHidden;
                     ColumnOne.Visible = true;
+                    ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                     Padding = new BorderDouble(4);
 
                     LeftBorderLine.Visible = false;
@@ -338,6 +340,7 @@ namespace MatterHackers.MatterControl
             }
             else if (ColTwoIsHidden)
             {
+                //Queue column and preview column shown                
                 if (UiState != 2)
                 {
                     UiState = 2;
@@ -358,6 +361,7 @@ namespace MatterHackers.MatterControl
             }
             else
             {
+                //All three columns shown
                 if (UiState != 3)
                 {
                     UiState = 3;

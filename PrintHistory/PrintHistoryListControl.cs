@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.PrintHistory
     {
         static PrintHistoryListControl instance;
         private DataStorage.PrintItemCollection libraryCollection;
+        public bool ShowTimestamp;
 
         public static PrintHistoryListControl Instance
         {
@@ -155,7 +156,7 @@ namespace MatterHackers.MatterControl.PrintHistory
             {
                 foreach (PrintTask part in partFiles)
                 {
-                    PrintHistoryListControl.Instance.AddChild(new PrintHistoryListItem(part));
+                    PrintHistoryListControl.Instance.AddChild(new PrintHistoryListItem(part, ShowTimestamp));
                 }
             }
         }
@@ -176,6 +177,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         public PrintHistoryListControl()
         {
+            ShowTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
+            
             SetDisplayAttributes();
             ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 

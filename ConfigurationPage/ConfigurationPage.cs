@@ -35,6 +35,7 @@ using System.IO.Ports;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
@@ -336,6 +337,11 @@ namespace MatterHackers.MatterControl
 
                 Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
 				ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
+                if (!ActiveTheme.Instance.IsDarkTheme)
+                {
+                    InvertLightness.DoInvertLightness(levelingImage);
+                }
+                
                 ImageWidget levelingIcon = new ImageWidget(levelingImage);
 				levelingIcon.Margin = new BorderDouble (right: 6);
 

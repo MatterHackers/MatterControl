@@ -52,7 +52,8 @@ namespace MatterHackers.MatterControl.PrintHistory
     {
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         Button deleteFromLibraryButton;
-        CheckBox showOnlyCompleted;
+        CheckBox showOnlyCompletedCheckbox;
+        CheckBox showTimestampCheckbox;
 
         public PrintHistoryWidget()
         {
@@ -64,27 +65,35 @@ namespace MatterHackers.MatterControl.PrintHistory
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
 
-                FlowLayoutWidget historyStatsContainer = new FlowLayoutWidget();
-                historyStatsContainer.AddChild(new TextWidget("Total Print Time: ", pointSize:10, textColor:historyPanelTextColor));
-                historyStatsContainer.AddChild(new TextWidget(GetPrintTimeString(), pointSize: 14, textColor: historyPanelTextColor));
                 
-                historyStatsContainer.Padding = new BorderDouble(6, 2);
 
                 FlowLayoutWidget completedStatsContainer = new FlowLayoutWidget();
                 completedStatsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                completedStatsContainer.Padding = new BorderDouble(6, 2);
+
+                showOnlyCompletedCheckbox = new CheckBox(LocalizedString.Get("Only Show Completed"), historyPanelTextColor, textSize: 10);
+                showOnlyCompletedCheckbox.Margin = new BorderDouble(top: 8);
+                bool showOnlyCompleted = (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true");
+                showOnlyCompletedCheckbox.Checked = showOnlyCompleted;
+
                 completedStatsContainer.AddChild(new TextWidget("Completed Prints: ", pointSize: 10, textColor: historyPanelTextColor));
                 completedStatsContainer.AddChild(new TextWidget(GetCompletedPrints().ToString(), pointSize: 14, textColor: historyPanelTextColor));
-
                 completedStatsContainer.AddChild(new HorizontalSpacer());
+                completedStatsContainer.AddChild(showOnlyCompletedCheckbox);
 
-                showOnlyCompleted = new CheckBox("Only Show Completed ", historyPanelTextColor, textSize: 10);
-                showOnlyCompleted.Margin = new BorderDouble(top: 8);
-                bool showCompleted = (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true");
-                showOnlyCompleted.Checked = showCompleted;
+                FlowLayoutWidget historyStatsContainer = new FlowLayoutWidget();
+                historyStatsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                historyStatsContainer.Padding = new BorderDouble(6, 2);
 
-                completedStatsContainer.AddChild(showOnlyCompleted);
+                showTimestampCheckbox = new CheckBox(LocalizedString.Get("Show Timestamp"), historyPanelTextColor, textSize: 10);
+                //showTimestampCheckbox.Margin = new BorderDouble(top: 8);
+                bool showTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
+                showTimestampCheckbox.Checked = showTimestamp;
 
-                completedStatsContainer.Padding = new BorderDouble(6, 2);
+                historyStatsContainer.AddChild(new TextWidget("Total Print Time: ", pointSize: 10, textColor: historyPanelTextColor));
+                historyStatsContainer.AddChild(new TextWidget(GetPrintTimeString(), pointSize: 14, textColor: historyPanelTextColor));
+                historyStatsContainer.AddChild(new HorizontalSpacer());
+                historyStatsContainer.AddChild(showTimestampCheckbox);
                 
                 FlowLayoutWidget searchPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
@@ -125,12 +134,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         private void AddHandlers()
         {
-            showOnlyCompleted.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(UpdateHistoryFilterShowCompleted);
+            showOnlyCompletedCheckbox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(UpdateHistoryFilterShowCompleted);
+            showTimestampCheckbox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(UpdateHistoryFilterShowTimestamp);
         }
 
         private void UpdateHistoryFilterShowCompleted(object sender, EventArgs e)
         {
-            if (showOnlyCompleted.Checked)
+            if (showOnlyCompletedCheckbox.Checked)
             {
                 UserSettings.Instance.set("PrintHistoryFilterShowCompleted", "true");
             }
@@ -138,6 +148,20 @@ namespace MatterHackers.MatterControl.PrintHistory
             {
                 UserSettings.Instance.set("PrintHistoryFilterShowCompleted", "false");
             }
+            PrintHistoryListControl.Instance.LoadHistoryItems();
+        }
+
+        private void UpdateHistoryFilterShowTimestamp(object sender, EventArgs e)
+        {
+            if (showTimestampCheckbox.Checked)
+            {
+                UserSettings.Instance.set("PrintHistoryFilterShowTimestamp", "true");
+            }
+            else
+            {
+                UserSettings.Instance.set("PrintHistoryFilterShowTimestamp", "false");
+            }
+            PrintHistoryListControl.Instance.ShowTimestamp = showTimestampCheckbox.Checked;
             PrintHistoryListControl.Instance.LoadHistoryItems();
         }
 
