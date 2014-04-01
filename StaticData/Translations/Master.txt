@@ -1662,3 +1662,15 @@ Translated:Outlines
 English:Polygons
 Translated:Polygons
 
+English:New updates may be available.
+Translated:New updates may be available.
+
+English:Unable to communicate with printer.
+Translated:Unable to communicate with printer.
+
+English:Item selected. Press 'Start' to begin your print.
+Translated:Item selected. Press 'Start' to begin your print.
+
+English:Disconnecting
+Translated:Disconnecting
+

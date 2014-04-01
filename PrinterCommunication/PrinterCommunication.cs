@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+#define USE_FROSTED_SERIAL_PORT
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -218,7 +220,11 @@ namespace MatterHackers.MatterControl
         double targetBedTemperature;
         string printJobDisplayName = null;
         GCodeFile loadedGCode = new GCodeFile();
-        IFrostedSerialPort serialPort;
+		#if USE_FROSTED_SERIAL_PORT
+		IFrostedSerialPort serialPort;
+		#else
+		SerialPort serialPort;
+		#endif
         Thread readFromPrinterThread;
         Thread connectThread;
 
@@ -1224,13 +1230,28 @@ namespace MatterHackers.MatterControl
 
             if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
             {
-                serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, DtrEnableOnConnect);
-
                 if (CommunicationState == CommunicationStates.AttemptingToConnect)
                 {
                     try
                     {
-                        readFromPrinterThread = new Thread(ReadFromPrinter);
+						#if USE_FROSTED_SERIAL_PORT
+						serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, DtrEnableOnConnect);
+						#else
+						serialPort = new SerialPort(serialPortName);
+						serialPort.BaudRate = baudRate;
+						if (DtrEnableOnConnect)
+						{
+						serialPort.DtrEnable = true;
+						}
+
+						// Set the read/write timeouts
+						serialPort.ReadTimeout = 500;
+						serialPort.WriteTimeout = 500;
+
+						serialPort.Open();
+						#endif
+
+						readFromPrinterThread = new Thread(ReadFromPrinter);
                         readFromPrinterThread.Name = "Read From Printer";
                         readFromPrinterThread.IsBackground = true;
                         readFromPrinterThread.Start();
@@ -1510,8 +1531,12 @@ namespace MatterHackers.MatterControl
         public void PulseRtsLow()
         {
             if (serialPort == null && this.ActivePrinter != null)
-            {                
+            {   
+				#if USE_FROSTED_SERIAL_PORT
                 serialPort = new FrostedSerialPort(this.ActivePrinter.ComPort);
+				#else
+				serialPort = new SerialPort(this.ActivePrinter.ComPort);
+				#endif
                 serialPort.BaudRate = this.BaudRate;
                 if (PrinterCommunication.Instance.DtrEnableOnConnect)
                 {
