@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl
         double targetBedTemperature;
         string printJobDisplayName = null;
         GCodeFile loadedGCode = new GCodeFile();
-        FrostedSerialPort serialPort;
+        IFrostedSerialPort serialPort;
         Thread readFromPrinterThread;
         Thread connectThread;
 
@@ -1224,7 +1224,7 @@ namespace MatterHackers.MatterControl
 
             if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
             {
-                serialPort = new FrostedSerialPort(serialPortName);
+                serialPort = FrostedSerialPort.Create(serialPortName);
                 serialPort.BaudRate = baudRate;
                 //serialPort.Parity = Parity.None;
                 //serialPort.DataBits = 8;
