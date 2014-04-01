@@ -1224,27 +1224,12 @@ namespace MatterHackers.MatterControl
 
             if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
             {
-                serialPort = FrostedSerialPort.Create(serialPortName);
-                serialPort.BaudRate = baudRate;
-                //serialPort.Parity = Parity.None;
-                //serialPort.DataBits = 8;
-                //serialPort.StopBits = StopBits.One;
-                //serialPort.Handshake = Handshake.None;
-                if (PrinterCommunication.Instance.DtrEnableOnConnect)
-                {
-                    serialPort.DtrEnable = true;
-                }
-
-                // Set the read/write timeouts
-                serialPort.ReadTimeout = 500;
-                serialPort.WriteTimeout = 500;
+                serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, DtrEnableOnConnect);
 
                 if (CommunicationState == CommunicationStates.AttemptingToConnect)
                 {
                     try
                     {
-                        serialPort.Open();
-
                         readFromPrinterThread = new Thread(ReadFromPrinter);
                         readFromPrinterThread.Name = "Read From Printer";
                         readFromPrinterThread.IsBackground = true;
