@@ -38,6 +38,33 @@ namespace MatterHackers.MatterControl.Testing
             try { MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined(); }
             catch (Exception e) { DumpException(e); }
 
+            try { ClipperLib.Clipper.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.Csg.CSGTests.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.Localizations.TranslationMap.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.MarchingSquares.MarchingSquaresByte.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.MatterControl.PluginSystem.MatterControlPlugin.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { MatterHackers.RenderOpenGl.GLMeshPlugin.AssertDebugNotDefined(); }
+            catch (Exception e) { DumpException(e); }
+
             if (!HadErrors)
             {
                 File.Delete(errorLogFileName);
