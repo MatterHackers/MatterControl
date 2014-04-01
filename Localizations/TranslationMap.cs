@@ -127,6 +127,9 @@ namespace MatterHackers.Localizations
 
         void AddNewString(Dictionary<string, string> dictionary, string pathAndFilename, string englishString)
         {
+            // We only ship release and this could cause a write to the ProgramFiles directory which is not allowed.
+            // So we only write translation text while in debug (another solution in the future could be implemented). LBB
+#if DEBUG 
             // TODO: make sure we don't throw an assertion when running from the ProgramFiles directory.
             // Don't do saving when we are.
             if (!dictionary.ContainsKey(englishString))
@@ -156,6 +159,7 @@ namespace MatterHackers.Localizations
                     }
                 }
             }
+#endif
         }
 
         public string Translate(string englishString)
