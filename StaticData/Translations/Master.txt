@@ -1650,3 +1650,15 @@ Translated:Only Show Completed
 English:Show Timestamp
 Translated:Show Timestamp
 
+English:Render Type
+Translated:Render Type
+
+English:Shaded
+Translated:Shaded
+
+English:Outlines
+Translated:Outlines
+
+English:Polygons
+Translated:Polygons
+
