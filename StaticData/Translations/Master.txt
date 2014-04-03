@@ -1686,3 +1686,6 @@ Translated:Axis
 English:Sampled Positions
 Translated:Sampled Positions
 
+English:Position
+Translated:Position
+

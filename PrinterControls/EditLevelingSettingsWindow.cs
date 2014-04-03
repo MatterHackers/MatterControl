@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
         List<GuiWidget> listWithValues = new List<GuiWidget>();
 
         public EditLevelingSettingsWindow()
-            : base(320, 360)
+            : base(360, 360)
         {
             Title = LocalizedString.Get("Leveling Settings".Localize());
 
@@ -108,12 +108,6 @@ namespace MatterHackers.MatterControl
             tempLabelContainer.Height = 16;
             tempLabelContainer.Margin = new BorderDouble(3, 0);
 
-            TextWidget tempLabel = new TextWidget(string.Format("mm / minute"), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
-            tempLabel.HAnchor = HAnchor.ParentLeft;
-            tempLabel.VAnchor = VAnchor.ParentCenter;
-
-            tempLabelContainer.AddChild(tempLabel);
-
             leftRightLabels.AddChild(hLabelSpacer);
             leftRightLabels.AddChild(tempLabelContainer);
 
@@ -133,25 +127,18 @@ namespace MatterHackers.MatterControl
                 position2.x, position0.y, position2.z).Split(',');
             int preset_count = 1;
             int tab_index = 0;
-            for (int i = 0; i < settingsArray.Count() - 1; i += 2)
+            for (int i = 0; i < settingsArray.Count() - 1; i += 3)
             {
                 FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
                 leftRightEdit.Padding = new BorderDouble(3);
                 leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-                TextWidget axisLabel;
-                if (settingsArray[i].StartsWith("e"))
-                {
-                    int extruderIndex = (int)double.Parse(settingsArray[i].Substring(1)) + 1;
-                    string extruderLableTxt = LocalizedString.Get("Extruder");
-                    axisLabel = new TextWidget(string.Format("{0} {1}", extruderLableTxt, extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                }
-                else
-                {
-                    string axisLableText = LocalizedString.Get("Axis");
-                    axisLabel = new TextWidget(string.Format("{0} {1}", axisLableText, settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                }
-                axisLabel.VAnchor = VAnchor.ParentCenter;
-                leftRightEdit.AddChild(axisLabel);
+                TextWidget positionLabel;
+
+                string whichPositionText = LocalizedString.Get("Position");
+                positionLabel = new TextWidget(string.Format("{0} {1,-14} x: {2,-10:0.00} y:{3,-10:0.00}", whichPositionText, preset_count, settingsArray[i], settingsArray[i + 1]), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                
+                positionLabel.VAnchor = VAnchor.ParentCenter;
+                leftRightEdit.AddChild(positionLabel);
 
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -162,9 +149,9 @@ namespace MatterHackers.MatterControl
                 TextWidget typeEdit = new TextWidget(settingsArray[i]);
                 listWithValues.Add(typeEdit);
 
-                double movementSpeed = 0;
-                double.TryParse(settingsArray[i + 1], out movementSpeed);
-                MHNumberEdit valueEdit = new MHNumberEdit(movementSpeed, allowNegatives:true, allowDecimals: true, minValue: 0, pixelWidth: 60, tabIndex: tab_index++);
+                double zPosition = 0;
+                double.TryParse(settingsArray[i + 2], out zPosition);
+                MHNumberEdit valueEdit = new MHNumberEdit(zPosition, allowNegatives:true, allowDecimals: true, minValue: 0, pixelWidth: 60, tabIndex: tab_index++);
                 valueEdit.Margin = new BorderDouble(3);
                 leftRightEdit.AddChild(valueEdit);
                 listWithValues.Add(valueEdit);
@@ -213,6 +200,8 @@ namespace MatterHackers.MatterControl
 
         void DoSave_Click(object state)
         {
+            throw new NotImplementedException("Make it save the new z positions.");
+
             PrintLeveling.Instance.SetPrintLevelingEquation(
                 ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0),
                 ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1),
