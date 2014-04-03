@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
                         foreach (FaceEdge faceEdgeToAdd in face.FaceEdgeIterator())
                         {
                             // we allow duplicates (the true) to make sure we are not changing the loaded models acuracy.
-                            Vertex newVertex = allPolygons.CreateVertex(faceEdgeToAdd.vertex.Position, true);
+                            Vertex newVertex = allPolygons.CreateVertex(faceEdgeToAdd.firstVertex.Position, true);
                             faceVertices.Add(newVertex);
                         }
 
