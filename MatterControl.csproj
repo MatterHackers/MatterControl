@@ -83,6 +83,7 @@
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
+    <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
     <Compile Include="PrintHistory\PrintHistoryListControl.cs" />
     <Compile Include="PrintHistory\PrintHistoryListItem.cs" />
     <Compile Include="PrintHistory\PrintHistoryWidget.cs" />

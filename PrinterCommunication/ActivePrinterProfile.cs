@@ -171,9 +171,9 @@ namespace MatterHackers.MatterControl
                     if (DoPrintLeveling)
                     {
                         PrintLeveling.Instance.SetPrintLevelingEquation(
-                            GetPrintLevelingProbePosition(0),
-                            GetPrintLevelingProbePosition(1),
-                            GetPrintLevelingProbePosition(2),
+                            GetPrintLevelingMeasuredPosition(0),
+                            GetPrintLevelingMeasuredPosition(1),
+                            GetPrintLevelingMeasuredPosition(2),
                             ActiveSliceSettings.Instance.PrintCenter);
                     }
                 }
@@ -181,16 +181,15 @@ namespace MatterHackers.MatterControl
         }
 
         /// <summary>
-        /// This function returns one of the three positions that will be probed when setting
-        /// up print leveling.
+        /// This function returns one of the three positions as it was actually measured
         /// </summary>
         /// <param name="position0To2"></param>
         /// <returns></returns>
-        public Vector3 GetPrintLevelingProbePosition(int position0To2)
+        public Vector3 GetPrintLevelingMeasuredPosition(int position0To2)
         {
             if (ActivePrinter != null)
             {
-                double[] positions = ActivePrinter.GetPrintLevelingPositions();
+                double[] positions = ActivePrinter.GetPrintLevelingMeasuredPositions();
                 switch (position0To2)
                 {
                     case 0:
@@ -207,11 +206,11 @@ namespace MatterHackers.MatterControl
             return Vector3.Zero;
         }
 
-        public void SetPrintLevelingProbePositions(double[] printLevelingPositions3_xyz)
+        public void SetPrintLevelingMeasuredPositions(double[] printLevelingPositions3_xyz)
         {
             if (ActivePrinter != null)
             {
-                ActivePrinter.SetPrintLevelingPositions(printLevelingPositions3_xyz);
+                ActivePrinter.SetPrintLevelingMeasuredPositions(printLevelingPositions3_xyz);
                 ActivePrinter.Commit();
             }
         }

@@ -115,7 +115,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public Vector2 GetPrintLevelSamplePosition(int index)
+        /// <summary>
+        /// This returns one of the three positions that should be probed when leveling
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public Vector2 GetPrintLevelPositionToSample(int index)
         {
             Vector2 bedSize = ActiveSliceSettings.Instance.BedSize;
             Vector2 printCenter = ActiveSliceSettings.Instance.PrintCenter;
@@ -167,9 +172,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 PrintLeveling.Instance.SetPrintLevelingEquation(
-                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(0),
-                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(1),
-                    ActivePrinterProfile.Instance.GetPrintLevelingProbePosition(2),
+                    ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0),
+                    ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1),
+                    ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2),
                     ActiveSliceSettings.Instance.PrintCenter);
             }
 #endif

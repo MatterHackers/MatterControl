@@ -1674,3 +1674,15 @@ Translated:Item selected. Press 'Start' to begin your print.
 English:Disconnecting
 Translated:Disconnecting
 
+English:Leveling Settings
+Translated:Leveling Settings
+
+English:Movement Speeds Presets
+Translated:Movement Speeds Presets
+
+English:Axis
+Translated:Axis
+
+English:Sampled Positions
+Translated:Sampled Positions
+

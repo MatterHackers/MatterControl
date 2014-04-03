@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
                 probePositions[1].position.x, probePositions[1].position.y, probePositions[1].position.z, 
                 probePositions[2].position.x, probePositions[2].position.y, probePositions[2].position.z, 
             };
-            ActivePrinterProfile.Instance.SetPrintLevelingProbePositions(printLevelPositions3x3);
+            ActivePrinterProfile.Instance.SetPrintLevelingMeasuredPositions(printLevelPositions3x3);
 
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl
             printLevelWizard.AddPage(new FirstPageInstructions(pageOneInstructions));
             printLevelWizard.AddPage(new HomePrinterPage(homingPageInstructions));
 
-            Vector2 probeBackCenter = ActiveSliceSettings.Instance.GetPrintLevelSamplePosition(0);
+            Vector2 probeBackCenter = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(0);
 
 			string lowPrecisionPositionLbl = LocalizedString.Get ("Position");
 			string lowPrecisionLbl = LocalizedString.Get ("Low Precision");
@@ -357,7 +357,7 @@ namespace MatterHackers.MatterControl
 			string highPrecisionLbl = LocalizedString.Get("High Precision");
 			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 1 - {2}", Step(), precisionPositionLbl, highPrecisionLbl), probePositions[0]));
 
-            Vector2 probeFrontLeft = ActiveSliceSettings.Instance.GetPrintLevelSamplePosition(1);
+            Vector2 probeFrontLeft = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(1);
 			string positionLblTwo = LocalizedString.Get("Position");
 			string lowPrecisionTwoLbl = LocalizedString.Get("Low Precision");
 			string medPrecisionTwoLbl = LocalizedString.Get("Medium Precision");
@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl
 			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", Step(), positionLblTwo,medPrecisionTwoLbl), probePositions[1]));
 			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", Step(), positionLblTwo,highPrecisionTwoLbl), probePositions[1]));
 
-            Vector2 probeFrontRight = ActiveSliceSettings.Instance.GetPrintLevelSamplePosition(2);
+            Vector2 probeFrontRight = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(2);
 			string positionLabelThree = LocalizedString.Get("Position");
 			string lowPrecisionLblThree = LocalizedString.Get("Low Precision");
 			string medPrecisionLblThree = LocalizedString.Get("Medium Precision");

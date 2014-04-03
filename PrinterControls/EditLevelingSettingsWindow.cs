@@ -39,19 +39,20 @@ using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-    public class EditManualMovementSpeedsWindow : SystemWindow
+    public class EditLevelingSettingsWindow : SystemWindow
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         EventHandler functionToCallOnSave;
         List<GuiWidget> listWithValues = new List<GuiWidget>();
 
-        public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, EventHandler functionToCallOnSave)
-            : base(260, 300)
+        public EditLevelingSettingsWindow()
+            : base(320, 360)
         {
-            Title = LocalizedString.Get(windowTitle);
+            Title = LocalizedString.Get("Leveling Settings".Localize());
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -63,15 +64,14 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                string movementSpeedsLbl = LocalizedString.Get("Movement Speeds Presets".Localize());
-				TextWidget elementHeader = new TextWidget(string.Format("{0}:",movementSpeedsLbl), pointSize: 14);
+                string movementSpeedsLbl = LocalizedString.Get("Sampled Positions".Localize());
+                TextWidget elementHeader = new TextWidget(string.Format("{0}:", movementSpeedsLbl), pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
 
                 headerRow.AddChild(elementHeader);
             }
-
 
             topToBottom.AddChild(headerRow);
 
@@ -86,13 +86,12 @@ namespace MatterHackers.MatterControl
 
             topToBottom.AddChild(presetsFormContainer);
 
-            this.functionToCallOnSave = functionToCallOnSave;
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             int oldHeight = textImageButtonFactory.FixedHeight;
             textImageButtonFactory.FixedHeight = 30;
 
-            TextWidget tempTypeLabel = new TextWidget(windowTitle, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
+            TextWidget tempTypeLabel = new TextWidget(Title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
             tempTypeLabel.Margin = new BorderDouble(3);
             tempTypeLabel.HAnchor = HAnchor.ParentLeft;
             presetsFormContainer.AddChild(tempTypeLabel);
@@ -121,7 +120,17 @@ namespace MatterHackers.MatterControl
             presetsFormContainer.AddChild(leftRightLabels);
 
             // put in the movement edit controls
-            string[] settingsArray = movementSpeedsString.Split(',');
+            Vector2 probeBackCenter = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(0);
+
+            Vector3 position0 = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0);
+            Vector3 position1 = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1);
+            Vector3 position2 = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2);
+
+            
+            string[] settingsArray = "{0},{1},{2},{3},{4},{5},{6},{7},{8}".FormatWith(
+                position0.x, position0.y, position0.z,
+                position1.x, position0.y, position1.z,
+                position2.x, position0.y, position2.z).Split(',');
             int preset_count = 1;
             int tab_index = 0;
             for (int i = 0; i < settingsArray.Count() - 1; i += 2)
@@ -133,13 +142,13 @@ namespace MatterHackers.MatterControl
                 if (settingsArray[i].StartsWith("e"))
                 {
                     int extruderIndex = (int)double.Parse(settingsArray[i].Substring(1)) + 1;
-                    string extruderLblTxt = LocalizedString.Get("Extruder");
-					axisLabel = new TextWidget(string.Format("{0} {1}",extruderLblTxt ,extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                    string extruderLableTxt = LocalizedString.Get("Extruder");
+                    axisLabel = new TextWidget(string.Format("{0} {1}", extruderLableTxt, extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 }
                 else
                 {
-                    string axisLblText = LocalizedString.Get("Axis");
-					axisLabel = new TextWidget(string.Format("{0} {1}",axisLblText, settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                    string axisLableText = LocalizedString.Get("Axis");
+                    axisLabel = new TextWidget(string.Format("{0} {1}", axisLableText, settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 }
                 axisLabel.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(axisLabel);
@@ -155,7 +164,7 @@ namespace MatterHackers.MatterControl
 
                 double movementSpeed = 0;
                 double.TryParse(settingsArray[i + 1], out movementSpeed);
-                MHNumberEdit valueEdit = new MHNumberEdit(movementSpeed, minValue: 0, pixelWidth: 60, tabIndex: tab_index++);
+                MHNumberEdit valueEdit = new MHNumberEdit(movementSpeed, allowNegatives:true, allowDecimals: true, minValue: 0, pixelWidth: 60, tabIndex: tab_index++);
                 valueEdit.Margin = new BorderDouble(3);
                 leftRightEdit.AddChild(valueEdit);
                 listWithValues.Add(valueEdit);
@@ -173,11 +182,12 @@ namespace MatterHackers.MatterControl
             savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);
 
             Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
-            cancelPresetsButton.Click += (sender, e) => {
+            cancelPresetsButton.Click += (sender, e) =>
+            {
                 UiThread.RunOnIdle((state) =>
                 {
                     Close();
-                }); 
+                });
             };
 
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -203,6 +213,12 @@ namespace MatterHackers.MatterControl
 
         void DoSave_Click(object state)
         {
+            PrintLeveling.Instance.SetPrintLevelingEquation(
+                ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0),
+                ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1),
+                ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2),
+                ActiveSliceSettings.Instance.PrintCenter);
+
             bool first = true;
             StringBuilder settingString = new StringBuilder();
             foreach (GuiWidget valueToAdd in listWithValues)

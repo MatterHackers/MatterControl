@@ -286,9 +286,7 @@ namespace MatterHackers.MatterControl
         Slider feedRateRatioSlider;
         Slider extrusionRatioSlider;
         NumberEdit extrusionValue;
-        PrintLevelWizardWindow printLevelWizardWindow;
-
-        
+        PrintLevelWizardWindow printLevelWizardWindow;        
 
         public override void OnClosed(EventArgs e)
         {
@@ -299,10 +297,8 @@ namespace MatterHackers.MatterControl
 
             base.OnClosed(e);
         }
-      
 
 		TextWidget printLevelingStatusLabel;
-
         private void AddPrintLevelingControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             printLevelContainer = new DisableableWidget();
@@ -310,10 +306,23 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(printLevelContainer);
         }
 
+        EditLevelingSettingsWindow editLevelingSettingsWindow;
         private GuiWidget CreatePrintLevelingControlsContainer()
         {
-            GroupBox printLevelingControlsContainer;
-            printLevelingControlsContainer = new GroupBox(LocalizedString.Get("Automatic Calibration"));
+            Button editButton;
+            GroupBox printLevelingControlsContainer = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(LocalizedString.Get("Automatic Calibration"), out editButton));
+            editButton.Click += (sender, e) =>
+            {
+                if (editLevelingSettingsWindow == null)
+                {
+                    editLevelingSettingsWindow = new EditLevelingSettingsWindow();
+                    editLevelingSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editLevelingSettingsWindow = null; };
+                }
+                else
+                {
+                    editLevelingSettingsWindow.BringToFront();
+                }
+            };
 
             printLevelingControlsContainer.Margin = new BorderDouble(0);
             printLevelingControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -444,7 +453,7 @@ namespace MatterHackers.MatterControl
                     case PrinterCommunication.CommunicationStates.AttemptingToConnect:
                     case PrinterCommunication.CommunicationStates.FailedToConnect:                        
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         break;
 
                     case PrinterCommunication.CommunicationStates.FinishedPrint:
