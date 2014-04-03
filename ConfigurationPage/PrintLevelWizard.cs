@@ -192,8 +192,18 @@ namespace MatterHackers.MatterControl
             return zButtons;
         }
 
+        string zIsTooLowMessage = "You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.".Localize();
+        string zTooLowTitle = "Waring Moving Too Low".Localize();
         void zMinusControl_Click(object sender, MouseEventArgs mouseEvent)
         {
+            if (PrinterCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
+            {
+                if (!StyledMessageBox.ShowMessageBox(zIsTooLowMessage, zTooLowTitle, StyledMessageBox.MessageType.OK))
+                {
+                    // don't move the bed lower it will not work when we print.
+                    return;
+                }
+            }
             PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, -moveAmount, 1000);
             PrinterCommunication.Instance.ReadPosition();
         }
@@ -324,7 +334,6 @@ namespace MatterHackers.MatterControl
 			pageOneInstructions = string.Format("{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}",pageOneInstructionsTxtOne, pageOneInstructionsTxtTwo, pageOneInstructionsTxtThree, pageOneInstructionsTxtFour, pageOneInstructionsTxtFive, pageOneInstructionsTxtSix);
 			homingPageInstructions = string.Format("{0}:\n\n\t• {1}\n\n{2}", homingPageInstructionsTxtOne, homingPageInstructionsTxtTwo, homingPageInstructionsTxtThree);
 			doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}",doneInstructionsTxt, doneInstructionsTxtTwo, doneInstructionsTxtThree);
-
 
 			string printLevelWizardTitle = LocalizedString.Get("MatterControl");
 			string printLevelWizardTitleFull = LocalizedString.Get ("Print Leveling Wizard");

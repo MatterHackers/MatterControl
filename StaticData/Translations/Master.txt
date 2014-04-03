@@ -1689,3 +1689,108 @@ Translated:Sampled Positions
 English:Position
 Translated:Position
 
+English:Do not show this again
+Translated:Do not show this again
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+
+English:Cannot find\n'{0}'.\nWould you like to remove it from the queue?
+Translated:Cannot find\n'{0}'.\nWould you like to remove it from the queue?
+
+English:Item not found
+Translated:Item not found
+
+English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
+Translated:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
+
+English:'Home' the printer
+Translated:'Home' the printer
+
+English:Sample the bed at three points
+Translated:Sample the bed at three points
+
+English:Turn auto leveling on
+Translated:Turn auto leveling on
+
+English:You should be done in about 3 minutes.
+Translated:You should be done in about 3 minutes.
+
+English:Click 'Next' to continue.
+Translated:Click 'Next' to continue.
+
+English:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
+Translated:The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need
+
+English:A standard sheet of paper
+Translated:A standard sheet of paper
+
+English:We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.
+Translated:We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.
+
+English:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
+Translated:Congratulations!\n\nAuto Print Leveling is now configured and enabled.
+
+English:Remove the paper
+Translated:Remove the paper
+
+English:If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.
+Translated:If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.
+
+English:Step
+Translated:Step
+
+English:of
+Translated:of
+
+English:Print Leveling Wizard
+Translated:Print Leveling Wizard
+
+English:Back
+Translated:Back
+
+English:Next
+Translated:Next
+
+English:Low Precision
+Translated:Low Precision
+
+English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
+Translated:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
+
+English:Place the paper under the extruder
+Translated:Place the paper under the extruder
+
+English:Using the above contols
+Translated:Using the above contols
+
+English:Press [Z-] until there is resistance to moving the paper
+Translated:Press [Z-] until there is resistance to moving the paper
+
+English:Press [Z+] once to release the paper
+Translated:Press [Z+] once to release the paper
+
+English:Finally click 'Next' to continue.
+Translated:Finally click 'Next' to continue.
+
+English:This part of your bed is too low for the extruder to reach it. You need to raise your bed, or lower your limit, for print leveling to work.
+Translated:This part of your bed is too low for the extruder to reach it. You need to raise your bed, or lower your limit, for print leveling to work.
+
+English:Waring Moving Too Low
+Translated:Waring Moving Too Low
+
+English:Medium Precision
+Translated:Medium Precision
+
+English:We will now refine our measurement of the extruder height at this position.
+Translated:We will now refine our measurement of the extruder height at this position.
+
+English:High Precision
+Translated:High Precision
+
+English:We will now finalize our measurement of the extruder height at this position.
+Translated:We will now finalize our measurement of the extruder height at this position.
+
+English:Press [Z-] one click PAST the first hint of resistance
+Translated:Press [Z-] one click PAST the first hint of resistance
+

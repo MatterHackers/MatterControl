@@ -169,7 +169,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void AddButtonOnIdle(object state)
         {
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file|*.stl", multiSelect: true);
+            string selectInstruction = "Select an STL file".Localize();
+            OpenFileDialogParams openParams = new OpenFileDialogParams("{0}|*.stl".FormatWith(selectInstruction), multiSelect: true);
 
             FileDialog.OpenFileDialog(ref openParams);
             if (openParams.FileNames != null)
@@ -219,6 +220,10 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
+        string doNotShowAgainMessage = "Do not show this again".Localize();
+        string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?".Localize();
+        string removeFromQueueMessage = "Cannot find\n'{0}'.\nWould you like to remove it from the queue?".Localize();
+        string itemNotFoundMessage = "Item not found".Localize();
         void PrintActivePart()
         {
             if (ActiveSliceSettings.Instance.IsValid())
@@ -230,7 +235,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
                     if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null )
                     {
-                        CheckBox hideGCodeWaringCheckBox = new CheckBox("Do not show this again");
+                        CheckBox hideGCodeWaringCheckBox = new CheckBox(doNotShowAgainMessage);
                         hideGCodeWaringCheckBox.HAnchor = Agg.UI.HAnchor.ParentCenter;
                         hideGCodeWaringCheckBox.TextColor = RGBA_Bytes.White;
                         hideGCodeWaringCheckBox.Click += (sender, e) =>
@@ -244,8 +249,7 @@ namespace MatterHackers.MatterControl.ActionBar
                                 ApplicationSettings.Instance.set("HideGCodeWarning", null);
                             }
                         };
-                        string message = "The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?";
-                        if (!StyledMessageBox.ShowMessageBox(message, "Warning GCode file", new GuiWidget[] { hideGCodeWaringCheckBox }, StyledMessageBox.MessageType.YES_NO))
+                        if (!StyledMessageBox.ShowMessageBox(gcodeWarningMessage, "Warning GCode file".Localize(), new GuiWidget[] { hideGCodeWaringCheckBox }, StyledMessageBox.MessageType.YES_NO))
                         {
                             // the user selected 'no' they don't want to print the file
                             return;
@@ -260,8 +264,8 @@ namespace MatterHackers.MatterControl.ActionBar
                 }
                 else
                 {
-                    string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the queue?", pathAndFile);
-                    if (StyledMessageBox.ShowMessageBox(message, "Item not found", StyledMessageBox.MessageType.YES_NO))
+                    string message = String.Format(removeFromQueueMessage, pathAndFile);
+                    if (StyledMessageBox.ShowMessageBox(message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO))
                     {
                         PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.SelectedIndex);
                     }
