@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
                 TextWidget positionLabel;
 
                 string whichPositionText = LocalizedString.Get("Position");
-                positionLabel = new TextWidget(string.Format("{0} {1,-14} x: {2,-10:0.00} y:{3,-10:0.00}", whichPositionText, preset_count, settingsArray[i], settingsArray[i + 1]), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                positionLabel = new TextWidget(string.Format("{0} {1,-14} x: {2,-10:0.00} y:{3,-10:0.00} z:", whichPositionText, preset_count, settingsArray[i], settingsArray[i + 1]), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 
                 positionLabel.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(positionLabel);
@@ -156,7 +156,6 @@ namespace MatterHackers.MatterControl
                 leftRightEdit.AddChild(valueEdit);
                 listWithValues.Add(valueEdit);
 
-                //leftRightEdit.AddChild(textImageButtonFactory.Generate("Delete"));
                 presetsFormContainer.AddChild(leftRightEdit);
                 preset_count += 1;
             }

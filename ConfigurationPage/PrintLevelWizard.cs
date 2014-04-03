@@ -192,8 +192,8 @@ namespace MatterHackers.MatterControl
             return zButtons;
         }
 
-        string zIsTooLowMessage = "You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.".Localize();
-        string zTooLowTitle = "Waring Moving Too Low".Localize();
+        static string zIsTooLowMessage = "You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.".Localize();
+        static string zTooLowTitle = "Waring Moving Too Low".Localize();
         void zMinusControl_Click(object sender, MouseEventArgs mouseEvent)
         {
             if (PrinterCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
@@ -219,8 +219,8 @@ namespace MatterHackers.MatterControl
     {
 		static string setZHeightCoarseInstruction1 = LocalizedString.Get("Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.");
 
-		static string setZHeightCourseInstructTxtOne = LocalizedString.Get("Place the paper under the extruder");
-		static string setZHeightCourseInstructTxtTwo = LocalizedString.Get("Using the above contols");
+		static string setZHeightCourseInstructTxtOne = "Place the paper under the extruder".Localize();
+        static string setZHeightCourseInstructTxtTwo = "Using the above contols".Localize();
 		static string setZHeightCourseInstructTxtThree = LocalizedString.Get("Press [Z-] until there is resistance to moving the paper");
 		static string setZHeightCourseInstructTxtFour = LocalizedString.Get("Press [Z+] once to release the paper");
 		static string setZHeightCourseInstructTxtFive = LocalizedString.Get("Finally click 'Next' to continue.");                                

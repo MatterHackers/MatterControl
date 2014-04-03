@@ -1794,3 +1794,12 @@ Translated:We will now finalize our measurement of the extruder height at this p
 English:Press [Z-] one click PAST the first hint of resistance
 Translated:Press [Z-] one click PAST the first hint of resistance
 
+English:Save Parts Sheet
+Translated:Save Parts Sheet
+
+English:MatterContol
+Translated:MatterContol
+
+English:Saving to Parts Sheet
+Translated:Saving to Parts Sheet
+
