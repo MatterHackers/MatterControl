@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl
         public int fontSize = 12;
         public double borderWidth = 1;
         public bool invertImageLocation = false;
-        public bool invertImageColor = true;
+        public bool AllowThemeToAdjustImage = true;
         FlowDirection flowDirection;
         public int FixedWidth = 0;
         public int FixedHeight = 40;
@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl
             if (normalImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(normalImage);
                 }
@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl
             if (hoverImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(pressedImage);
                 }
@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl
             if (pressedImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(hoverImageName), hoverImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(hoverImage);
                 }
@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl
             if (disabledImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(disabledImageName), disabledImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(disabledImage);
                 }
@@ -368,16 +368,11 @@ namespace MatterHackers.MatterControl
                 pressedToNormalImageName = normalImageName;
             }
 
-            if (normalImageName == "icon_arrow_right_no_border_32x32.png")
-            {
-                int a = 0;
-            }
-
             if (normalImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
                 
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(normalImage);
                 }
@@ -386,7 +381,7 @@ namespace MatterHackers.MatterControl
             if (pressedImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(pressedImage);
                 }
@@ -396,7 +391,7 @@ namespace MatterHackers.MatterControl
             if (normalToPressedImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(normalToPressedImageName), normalToPressedImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(normalToPressedImage);
                 }
@@ -405,7 +400,7 @@ namespace MatterHackers.MatterControl
             if (pressedToNormalImageName != null)
             {
                 ImageIO.LoadImageData(this.GetImageLocation(pressedToNormalImageName), pressedToNormalImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(pressedToNormalImage);
                 }
@@ -443,7 +438,7 @@ namespace MatterHackers.MatterControl
             {
                 iconImage = new ImageBuffer();
                 ImageIO.LoadImageData(this.GetImageLocation(iconImageName), iconImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
+                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(iconImage);
                 }

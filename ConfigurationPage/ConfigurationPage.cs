@@ -282,10 +282,6 @@ namespace MatterHackers.MatterControl
             return topLine;
         }
 
-        NumberEdit feedRateValue;
-        Slider feedRateRatioSlider;
-        Slider extrusionRatioSlider;
-        NumberEdit extrusionValue;
         PrintLevelWizardWindow printLevelWizardWindow;        
 
         public override void OnClosed(EventArgs e)

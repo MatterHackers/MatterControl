@@ -1267,7 +1267,7 @@ namespace MatterHackers.MatterControl
                         OnConnectionFailed(null);
                     }
 
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         OnConnectionFailed(null);
                     }

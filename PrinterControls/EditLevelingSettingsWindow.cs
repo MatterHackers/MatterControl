@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl
     public class EditLevelingSettingsWindow : SystemWindow
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        EventHandler functionToCallOnSave;
         List<GuiWidget> listWithValues = new List<GuiWidget>();
 
         public EditLevelingSettingsWindow()
@@ -219,7 +218,6 @@ namespace MatterHackers.MatterControl
                 settingString.Append(valueToAdd.Text);
                 first = false;
             }
-            functionToCallOnSave(this, new StringEventArgs(settingString.ToString()));
             Close();
         }
     }

@@ -78,7 +78,6 @@ namespace MatterHackers.MatterControl
         ImageBuffer image = new Agg.Image.ImageBuffer();
 
         // all te color stuff
-        public double BorderWidth = 0;
         protected double borderRadius = 0;
         protected RGBA_Bytes HoverBorderColor = new RGBA_Bytes();
 

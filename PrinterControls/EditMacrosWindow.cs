@@ -293,7 +293,6 @@ namespace MatterHackers.MatterControl
             topToBottom.AddChild(presetsFormContainer);
 
             IEnumerable<DataStorage.CustomCommands> macroList = GetMacros();
-            int buttonCount = 0;
             foreach (DataStorage.CustomCommands m in macroList)
             {                
                 FlowLayoutWidget macroRow = new FlowLayoutWidget();

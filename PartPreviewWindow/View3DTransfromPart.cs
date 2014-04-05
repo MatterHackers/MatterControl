@@ -71,12 +71,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
     }
 
-    public class View3DTransformPart : PartPreviewBaseWidget
+    public class View3DTransformPart : PartPreview3DWidget
     {
-        MeshViewerWidget meshViewerWidget;
-        Cover buttonRightPanelDisabledCover;
-        FlowLayoutWidget buttonRightPanel;
-
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
         FlowLayoutWidget scaleOptionContainer;
@@ -84,9 +80,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         ProgressControl processingProgressControl;
         FlowLayoutWidget enterEditButtonsContainer;
         FlowLayoutWidget doEdittingButtonsContainer;
-        RadioButton rotateViewButton;
-        GuiWidget viewControlsSeparator;
-        RadioButton partSelectButton;
         bool OpenAddDialogWhenDone = false;
 
         Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
@@ -100,8 +93,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		Button saveAsButton;
         Button closeButton;
         Button applyScaleButton;
-
-		SaveAsWindow saveAs;
 
         PrintItemWrapper printItemWrapper;
 
@@ -422,7 +413,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AnchorAll();
 
             meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-            AddViewControls();
+            Add3DViewControls();
+            viewControlsSeparator.Visible = false;
+            partSelectButton.Visible = false;
 
             AddHandlers();
 
@@ -890,64 +883,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             processingProgressControl.PercentComplete = e.ProgressPercentage;
         }
 
-        void AddViewControls()
-        {
-            FlowLayoutWidget transformTypeSelector = new FlowLayoutWidget();
-            transformTypeSelector.BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-            textImageButtonFactory.FixedHeight = 20;
-            textImageButtonFactory.FixedWidth = 20;
-            textImageButtonFactory.invertImageColor = false;
-
-            string rotateIconPath = Path.Combine("Icons", "ViewTransformControls", "rotate.png");
-            rotateViewButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
-            rotateViewButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(rotateViewButton);
-            rotateViewButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-            };
-
-            string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
-            RadioButton translateButton = textImageButtonFactory.GenerateRadioButton("", translateIconPath);
-            translateButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(translateButton);
-            translateButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
-            };
-
-            string scaleIconPath = Path.Combine("Icons", "ViewTransformControls", "scale.png");
-            RadioButton scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
-            scaleButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(scaleButton);
-            scaleButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
-            };
-
-            viewControlsSeparator = new GuiWidget(2, 32);
-            viewControlsSeparator.Visible = false;
-            viewControlsSeparator.BackgroundColor = RGBA_Bytes.White;
-            viewControlsSeparator.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(viewControlsSeparator);
-
-            string partSelectIconPath = Path.Combine("Icons", "ViewTransformControls", "partSelect.png");
-            partSelectButton = textImageButtonFactory.GenerateRadioButton("", partSelectIconPath);
-            partSelectButton.Visible = false;
-            partSelectButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(partSelectButton);
-            partSelectButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
-            };
-
-            transformTypeSelector.Margin = new BorderDouble(5);
-            transformTypeSelector.HAnchor |= Agg.UI.HAnchor.ParentLeft;
-            transformTypeSelector.VAnchor = Agg.UI.VAnchor.ParentTop;
-            AddChild(transformTypeSelector);
-            rotateViewButton.Checked = true;
-        }
-
         private void CreateOptionsContent()
         {
             AddRotateControls(rotateOptionContainer);
@@ -998,6 +933,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     AddMirrorControls(mirrorOptionContainer);
                 }
 
+#if false // this is not finished yet so it is in here for reference in case we do finish it. LBB 2014/04/04
                 // put in the part info display
                 if(false)
                 {
@@ -1032,6 +968,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     zSizeInfo.AutoExpandBoundsToText = true;
                     PartInfoOptionContainer.AddChild(zSizeInfo);
                 }
+#endif
 
                 // put in the view options
                 {
