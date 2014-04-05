@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl
         {
             advancedControls = new TabControl();
             advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            advancedControls.TabBar.BorderColor = RGBA_Bytes.White;
+            advancedControls.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
             advancedControls.TabBar.Margin = new BorderDouble(0, 0);
             advancedControls.TabBar.Padding = new BorderDouble(0, 2);
 
@@ -237,16 +237,16 @@ namespace MatterHackers.MatterControl
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
             //Add the tab contents for 'Advanced Controls'
-            string printerControlsLabel = LocalizedString.Get("CONTROLS");
+            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 14,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string sliceSettingsLabel = LocalizedString.Get("SLICE SETTINGS");
+            string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 14,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string configurationLabel = LocalizedString.Get("CONFIGURATION");
+            string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new ConfigurationPage();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 14,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));

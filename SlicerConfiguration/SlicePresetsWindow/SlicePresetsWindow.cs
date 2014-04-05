@@ -44,9 +44,9 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class SlicePresetsWidget : GuiWidget
+    public class SlicePresetDetailWidget : GuiWidget
     {
-        TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+        TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
         SlicePresetsWindow windowController;
         MHTextEditWidget macroNameInput;
@@ -54,79 +54,74 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         MHTextEditWidget macroCommandInput;
         TextWidget macroCommandError;
 
-        public SlicePresetsWidget(SlicePresetsWindow windowController)
+        public SlicePresetDetailWidget(SlicePresetsWindow windowController)
         {
             this.windowController = windowController;
-            if (this.windowController.ActiveMacro == null)
+            if (this.windowController.ActivePresetLayer == null)
             {
-                initMacro();
+                initSlicePreset();
             }
 
 
             linkButtonFactory.fontSize = 10;
 
-            FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            topToBottom.AnchorAll();
-            topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+        }
 
-            FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-            headerRow.HAnchor = HAnchor.ParentLeftRight;
-            headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-            headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+        void AddElements()
+        {
+            FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            mainContainer.Padding = new BorderDouble(3);
+            mainContainer.AnchorAll();
 
-            {
-                string editMacroLabel = LocalizedString.Get("Edit Macro");
-                string editMacroLabelFull = string.Format("{0}:", editMacroLabel);
-                TextWidget elementHeader = new TextWidget(editMacroLabelFull, pointSize: 14);
-                elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                elementHeader.HAnchor = HAnchor.ParentLeftRight;
-                elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
-                headerRow.AddChild(elementHeader);
-            }
+            mainContainer.AddChild(GetTopRow());
+            mainContainer.AddChild(GetMiddleRow());
+            mainContainer.AddChild(GetBottomRow());
 
+            this.AddChild(mainContainer);
+        }
 
-            topToBottom.AddChild(headerRow);
+        FlowLayoutWidget GetTopRow()
+        {
+            FlowLayoutWidget container = new FlowLayoutWidget();
+            container.HAnchor = HAnchor.ParentLeftRight;
+            container.Padding = new BorderDouble(0, 6);
+            TextWidget labelText = new TextWidget("{0} Presets:".FormatWith(windowController.filterLabel.Localize()), pointSize: 14);
 
-            FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            {
-                presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
-                presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
-                presetsFormContainer.Padding = new BorderDouble(3);
-                presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-            }
+            container.AddChild(labelText);
+            container.AddChild(new HorizontalSpacer());
+            return container;
+        }
 
-            topToBottom.AddChild(presetsFormContainer);
+        FlowLayoutWidget GetMiddleRow()
+        {
+            FlowLayoutWidget container = new FlowLayoutWidget();
+            container.HAnchor = HAnchor.ParentLeftRight;
+            container.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+            container.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+            container.Margin = new BorderDouble(0, 3);
+            return container;
+        }
 
-            presetsFormContainer.AddChild(createMacroNameContainer());
-            presetsFormContainer.AddChild(createMacroCommandContainer());
+        FlowLayoutWidget GetBottomRow()
+        {
+            FlowLayoutWidget container = new FlowLayoutWidget();
+            container.HAnchor = HAnchor.ParentLeftRight;
 
-
-            Button addMacroButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
-            addMacroButton.Click += new ButtonBase.ButtonEventHandler(saveMacro_Click);
-
-            Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
-            cancelPresetsButton.Click += (sender, e) =>
+            Button addPresetButton = buttonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+            Button cancelButton = buttonFactory.Generate(LocalizedString.Get("Cancel"));
+            cancelButton.Click += (sender, e) =>
             {
                 UiThread.RunOnIdle((state) =>
                 {
-                    windowController.ChangeToSlicePresetList();
+                    Close();
                 });
             };
 
-            FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-            buttonRow.HAnchor = HAnchor.ParentLeftRight;
-            buttonRow.Padding = new BorderDouble(0, 3);
+            container.AddChild(addPresetButton);
+            container.AddChild(new HorizontalSpacer());
+            container.AddChild(cancelButton);
 
-            GuiWidget hButtonSpacer = new GuiWidget();
-            hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-            buttonRow.AddChild(addMacroButton);
-            buttonRow.AddChild(hButtonSpacer);
-            buttonRow.AddChild(cancelPresetsButton);
-
-            topToBottom.AddChild(buttonRow);
-            AddChild(topToBottom);
-            this.AnchorAll();
+            return container;
         }
 
         private FlowLayoutWidget createMacroNameContainer()
@@ -142,7 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             macroNameLabel.HAnchor = HAnchor.ParentLeftRight;
             macroNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
 
-            macroNameInput = new MHTextEditWidget(windowController.ActiveMacro.Name);
+            macroNameInput = new MHTextEditWidget(windowController.ActivePresetLayer.settingsCollectionData.Name);
             macroNameInput.HAnchor = HAnchor.ParentLeftRight;
 
             string giveMacroANameLbl = LocalizedString.Get("Give your macro a name");
@@ -159,35 +154,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return container;
         }
 
-        private FlowLayoutWidget createMacroCommandContainer()
-        {
-            FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            container.Margin = new BorderDouble(0, 5);
-            BorderDouble elementMargin = new BorderDouble(top: 3);
-
-            string macroCommandLblTxt = LocalizedString.Get("Macro Commands");
-            string macroCommandLblTxtFull = string.Format("{0}:", macroCommandLblTxt);
-            TextWidget macroCommandLabel = new TextWidget(macroCommandLblTxtFull, 0, 0, 12);
-            macroCommandLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            macroCommandLabel.HAnchor = HAnchor.ParentLeftRight;
-            macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
-
-            macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.Value, pixelHeight: 120, multiLine: true);
-            macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
-
-            string shouldBeGCodeLbl = LocalizedString.Get("This should be in 'Gcode'");
-            string shouldBeGCodeLblFull = string.Format("{0}.", shouldBeGCodeLbl);
-            macroCommandError = new TextWidget(shouldBeGCodeLblFull, 0, 0, 10);
-            macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            macroCommandError.HAnchor = HAnchor.ParentLeftRight;
-            macroCommandError.Margin = elementMargin;
-
-            container.AddChild(macroCommandLabel);
-            container.AddChild(macroCommandInput);
-            container.AddChild(macroCommandError);
-            container.HAnchor = HAnchor.ParentLeftRight;
-            return container;
-        }
+        
 
         private bool ValidateMacroForm()
         {
@@ -213,19 +180,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return formIsValid;
         }
 
-        void initMacro()
+        void initSlicePreset()
         {
-            if (ActivePrinterProfile.Instance.ActivePrinter != null)
-            {
-                windowController.ActiveMacro = new CustomCommands();
-                windowController.ActiveMacro.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
-                windowController.ActiveMacro.Name = "Home All";
-                windowController.ActiveMacro.Value = "G28 ; Home All Axes";
-            }
-            else
-            {
-                throw new Exception("Macros require a printer profile");
-            }
+            Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
+            DataStorage.SliceSettingsCollection collection = new DataStorage.SliceSettingsCollection();
+            collection.Name = "Default";
+            collection.Tag = windowController.filterTag;
+
+            windowController.ActivePresetLayer = new SettingsLayer(collection, settingsDictionary);
+            
         }
 
         void saveMacro_Click(object sender, MouseEventArgs mouseEvent)
@@ -234,44 +197,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 if (ValidateMacroForm())
                 {
-                    saveActiveMacro();
+                    saveActivePresets();
                     windowController.functionToCallOnSave(this, null);
                     windowController.ChangeToSlicePresetList();
                 }
             });
         }
 
-        void saveActiveMacro()
+        void saveActivePresets()
         {
-            windowController.ActiveMacro.Name = macroNameInput.Text;
-            windowController.ActiveMacro.Value = macroCommandInput.Text;
-            windowController.ActiveMacro.Commit();
+            windowController.ActivePresetLayer.settingsCollectionData.Name = macroNameInput.Text;
+            windowController.ActivePresetLayer.settingsCollectionData.Commit();
         }
-
-        IEnumerable<DataStorage.CustomCommands> GetMacros()
-        {
-            IEnumerable<DataStorage.CustomCommands> results = Enumerable.Empty<DataStorage.CustomCommands>();
-            if (ActivePrinterProfile.Instance.ActivePrinter != null)
-            {
-                //Retrieve a list of saved printers from the Datastore
-                string query = string.Format("SELECT * FROM CustomCommands WHERE PrinterId = {0};", ActivePrinterProfile.Instance.ActivePrinter.Id);
-                results = (IEnumerable<DataStorage.CustomCommands>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.CustomCommands>(query);
-                return results;
-            }
-            return results;
-        }
-
     }
 
-    public class SlicePresetList : GuiWidget
+    public class SlicePresetListWidget : GuiWidget
     {
         SlicePresetsWindow windowController;
         TextImageButtonFactory buttonFactory;
+        LinkButtonFactory linkButtonFactory;
 
-        public SlicePresetList(SlicePresetsWindow windowController)
+        public SlicePresetListWidget(SlicePresetsWindow windowController)
         {
             this.windowController = windowController;
             this.AnchorAll();
+
+            linkButtonFactory = new LinkButtonFactory();
 
             buttonFactory = new TextImageButtonFactory();
             buttonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -300,10 +251,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             FlowLayoutWidget container = new FlowLayoutWidget();
             container.HAnchor = HAnchor.ParentLeftRight;
-            container.AddChild(new GuiWidget(1, 40));
+            container.Padding = new BorderDouble(0, 6);
+            TextWidget labelText = new TextWidget("{0} Presets:".FormatWith(windowController.filterLabel.Localize()), pointSize:14);           
 
-            container.AddChild(new TextWidget(LocalizedString.Get(windowController.filterTag)));
-
+            container.AddChild(labelText);
+            container.AddChild(new HorizontalSpacer());
             return container;
         }
 
@@ -324,12 +276,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             Button addPresetButton = buttonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
             Button cancelButton = buttonFactory.Generate(LocalizedString.Get("Cancel"));
+            cancelButton.Click += (sender, e) =>
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    Close();
+                });
+            };
 
             container.AddChild(addPresetButton);
             container.AddChild(new HorizontalSpacer());
             container.AddChild(cancelButton);
 
             return container;
+        }
+
+        IEnumerable<DataStorage.SliceSettingsCollection> GetCollections()
+        {
+            IEnumerable<DataStorage.SliceSettingsCollection> results = Enumerable.Empty<DataStorage.SliceSettingsCollection>();
+            
+            //Retrieve a list of collections matching from the Datastore
+            string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = {0};", windowController.filterTag);
+            results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
+            return results;
         }
     }
 
@@ -338,15 +307,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public EventHandler functionToCallOnSave;
         public string filterTag;
+        public string filterLabel;
+        public SettingsLayer ActivePresetLayer;        
 
-        public DataStorage.CustomCommands ActiveMacro;
-
-        public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterTag)
+        public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag)
             : base(420, 560)
         {
+            
             Title = LocalizedString.Get("Slice Presets Editor");
+            
             this.filterTag = filterTag;
+            this.filterLabel = filterLabel;
+            this.MinimumSize = new Vector2(420, 560);
             this.functionToCallOnSave = functionToCallOnSave;
+
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             ChangeToSlicePresetList();
             ShowAsSystemWindow();
@@ -355,27 +329,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public void ChangeToSlicePresetList()
         {
-            this.ActiveMacro = null;
-            UiThread.RunOnIdle(DoChangeToMacroList);
+            this.ActivePresetLayer = null;
+            UiThread.RunOnIdle(DoChangeToSlicePresetList);
         }
 
-        private void DoChangeToMacroList(object state)
+        private void DoChangeToSlicePresetList(object state)
         {
-            GuiWidget slicePresetWidget = new SlicePresetList(this);
+            GuiWidget slicePresetWidget = new SlicePresetListWidget(this);
             this.RemoveAllChildren();
             this.AddChild(slicePresetWidget);
             this.Invalidate();
         }
 
-        public void ChangeToMacroDetail(CustomCommands macro = null)
+        public void ChangeToSlicePresetDetail(SliceSettingsCollection collection = null)
         {
-            this.ActiveMacro = macro;
-            UiThread.RunOnIdle(DoChangeToMacroDetail);
+            Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
+            IEnumerable<DataStorage.SliceSetting> settingsList = GetCollectionSettings(collection.Id);
+            foreach (DataStorage.SliceSetting s in settingsList)
+            {
+                settingsDictionary[s.Name] = s;
+            }            
+            this.ActivePresetLayer = new SettingsLayer(collection, settingsDictionary);
+            UiThread.RunOnIdle(DoChangeToSlicePresetDetail);
         }
 
-        private void DoChangeToMacroDetail(object state)
+        IEnumerable<DataStorage.SliceSetting> GetCollectionSettings(int collectionId)
         {
-            GuiWidget macroDetailWidget = new SlicePresetList(this);
+            //Retrieve a list of slice settings from the Datastore
+            string query = string.Format("SELECT * FROM SliceSetting WHERE SettingsCollectionID = {0};", collectionId);
+            IEnumerable<DataStorage.SliceSetting> result = (IEnumerable<DataStorage.SliceSetting>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSetting>(query);
+            return result;
+        }
+
+        private void DoChangeToSlicePresetDetail(object state)
+        {
+            GuiWidget macroDetailWidget = new SlicePresetDetailWidget(this);
             this.RemoveAllChildren();
             this.AddChild(macroDetailWidget);
             this.Invalidate();

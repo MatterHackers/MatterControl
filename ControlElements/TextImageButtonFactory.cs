@@ -191,10 +191,10 @@ namespace MatterHackers.MatterControl
             ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
             ImageIO.LoadImageData(path, buffer);
 
-            //if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
-            //{
-            //    InvertLightness.DoInvertLightness(buffer);
-            //}
+            if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
+            {
+                InvertLightness.DoInvertLightness(buffer);
+            }
             return buffer;
         }
 

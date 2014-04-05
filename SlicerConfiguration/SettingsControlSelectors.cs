@@ -53,12 +53,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         SlicePresetsWindow editSlicePresetsWindow;
 
         string filterTag;
+        string filterLabel;
         public AnchoredDropDownList DropDownList;
         private TupleList<string, Func<bool>> DropDownMenuItems = new TupleList<string, Func<bool>>();
         
         public SliceSelectorWidget(string label, RGBA_Bytes accentColor, string tag=null)
             : base(FlowDirection.TopToBottom)
         {
+            this.filterLabel = label;
             if (tag == null)
             {
                 this.filterTag = label.ToLower();
@@ -103,7 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 if (editSlicePresetsWindow == null)
                 {
-                    editSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, filterTag);
+                    editSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
                     editSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editSlicePresetsWindow = null; };
                 }
                 else
