@@ -40,6 +40,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -265,11 +266,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     public class SlicePresetList : GuiWidget
     {
         SlicePresetsWindow windowController;
-        
+        TextImageButtonFactory buttonFactory;
+
         public SlicePresetList(SlicePresetsWindow windowController)
         {
             this.windowController = windowController;
             this.AnchorAll();
+
+            buttonFactory = new TextImageButtonFactory();
+            buttonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonFactory.borderWidth = 0;
 
             AddElements();
         }
@@ -292,6 +301,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             FlowLayoutWidget container = new FlowLayoutWidget();
             container.HAnchor = HAnchor.ParentLeftRight;
             container.AddChild(new GuiWidget(1, 40));
+
+            container.AddChild(new TextWidget(LocalizedString.Get(windowController.filterTag)));
+
             return container;
         }
 
@@ -301,6 +313,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             container.HAnchor = HAnchor.ParentLeftRight;
             container.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
             container.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+            container.Margin = new BorderDouble(0, 3);
             return container;
         }
 
@@ -308,7 +321,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             FlowLayoutWidget container = new FlowLayoutWidget();
             container.HAnchor = HAnchor.ParentLeftRight;
-            container.AddChild(new GuiWidget(1, 30));
+
+            Button addPresetButton = buttonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+            Button cancelButton = buttonFactory.Generate(LocalizedString.Get("Cancel"));
+
+            container.AddChild(addPresetButton);
+            container.AddChild(new HorizontalSpacer());
+            container.AddChild(cancelButton);
+
             return container;
         }
     }
@@ -317,7 +337,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     {
 
         public EventHandler functionToCallOnSave;
-        string filterTag;
+        public string filterTag;
 
         public DataStorage.CustomCommands ActiveMacro;
 
