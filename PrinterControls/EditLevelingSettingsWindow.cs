@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         List<GuiWidget> listWithValues = new List<GuiWidget>();
 
+        Vector3[] positions = new Vector3[3];
+
         public EditLevelingSettingsWindow()
             : base(360, 360)
         {
@@ -115,15 +117,14 @@ namespace MatterHackers.MatterControl
             // put in the movement edit controls
             Vector2 probeBackCenter = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(0);
 
-            Vector3 position0 = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0);
-            Vector3 position1 = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1);
-            Vector3 position2 = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2);
-
+            positions[0] = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0);
+            positions[1] = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1);
+            positions[2] = ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2);
             
             string[] settingsArray = "{0},{1},{2},{3},{4},{5},{6},{7},{8}".FormatWith(
-                position0.x, position0.y, position0.z,
-                position1.x, position0.y, position1.z,
-                position2.x, position0.y, position2.z).Split(',');
+                positions[0].x, positions[0].y, positions[0].z,
+                positions[1].x, positions[1].y, positions[1].z,
+                positions[2].x, positions[2].y, positions[2].z).Split(',');
             int preset_count = 1;
             int tab_index = 0;
             for (int i = 0; i < settingsArray.Count() - 1; i += 3)
@@ -134,7 +135,7 @@ namespace MatterHackers.MatterControl
                 TextWidget positionLabel;
 
                 string whichPositionText = LocalizedString.Get("Position");
-                positionLabel = new TextWidget(string.Format("{0} {1,-14} x: {2,-10:0.00} y:{3,-10:0.00} z:", whichPositionText, preset_count, settingsArray[i], settingsArray[i + 1]), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                positionLabel = new TextWidget("{0} {1,-14} x: {2,-10:0.00} y:{3,-10:0.00} z:".FormatWith(whichPositionText, preset_count, settingsArray[i], settingsArray[i + 1]), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 
                 positionLabel.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(positionLabel);
@@ -151,22 +152,30 @@ namespace MatterHackers.MatterControl
                 double zPosition = 0;
                 double.TryParse(settingsArray[i + 2], out zPosition);
                 MHNumberEdit valueEdit = new MHNumberEdit(zPosition, allowNegatives:true, allowDecimals: true, minValue: 0, pixelWidth: 60, tabIndex: tab_index++);
+                int insideValue = preset_count-1;
+                valueEdit.ActuallNumberEdit.InternalTextEditWidget.EditComplete += (sender, e) =>
+                {
+                    positions[insideValue].z = valueEdit.ActuallNumberEdit.Value;
+                };
+                
                 valueEdit.Margin = new BorderDouble(3);
                 leftRightEdit.AddChild(valueEdit);
                 listWithValues.Add(valueEdit);
 
                 presetsFormContainer.AddChild(leftRightEdit);
                 preset_count += 1;
+
+                presetsFormContainer.AddChild(new CustomWidgets.HorizontalLine());
             }
 
             textImageButtonFactory.FixedHeight = oldHeight;
 
             ShowAsSystemWindow();
 
-            Button savePresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
+            Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
             savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);
 
-            Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+            Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
             cancelPresetsButton.Click += (sender, e) =>
             {
                 UiThread.RunOnIdle((state) =>
@@ -198,7 +207,14 @@ namespace MatterHackers.MatterControl
 
         void DoSave_Click(object state)
         {
-            throw new NotImplementedException("Make it save the new z positions.");
+            double[] printLevelPositions3x3 =  
+            {
+                positions[0].x, positions[0].y, positions[0].z, 
+                positions[1].x, positions[1].y, positions[1].z, 
+                positions[2].x, positions[2].y, positions[2].z, 
+            };
+
+            ActivePrinterProfile.Instance.SetPrintLevelingMeasuredPositions(printLevelPositions3x3);
 
             PrintLeveling.Instance.SetPrintLevelingEquation(
                 ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0),
@@ -206,18 +222,6 @@ namespace MatterHackers.MatterControl
                 ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2),
                 ActiveSliceSettings.Instance.PrintCenter);
 
-            bool first = true;
-            StringBuilder settingString = new StringBuilder();
-            foreach (GuiWidget valueToAdd in listWithValues)
-            {
-                if (!first)
-                {
-                    settingString.Append(",");
-                }
-
-                settingString.Append(valueToAdd.Text);
-                first = false;
-            }
             Close();
         }
     }
