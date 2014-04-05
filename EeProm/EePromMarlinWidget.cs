@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.EeProm
     public partial class EePromMarlinWidget : SystemWindow
     {
         EePromMarlinSettings currentEePromSettings;
-        bool reinit = true;
 
         MHNumberEdit stepsPerMmX;
         MHNumberEdit stepsPerMmY;
@@ -307,13 +306,11 @@ namespace MatterHackers.MatterControl.EeProm
 
         private void buttonReLoadSettings_Click(object sender, EventArgs e)
         {
-            reinit = false;
             currentEePromSettings.Update();
         }
 
         private void SetToFactorySettings(object sender, EventArgs e)
         {
-            reinit = true;
             currentEePromSettings.SetPrinterToFactorySettings();
             currentEePromSettings.Update();
         }

@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("extrusionMultiplier", "extrusion_multiplier"),
 
             //firstLayerExtrusionWidth=0.8 # The width of the line to extrude for the first layer.
-            new AsPercentOfReferenceOrDirect("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
+            new FirstLayerHeight("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
 
             //firstLayerSpeed=20 # mm/s.
             new AsPercentOfReferenceOrDirect("firstLayerSpeed", "first_layer_speed", "infill_speed"),
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("retractionSpeed", "retract_speed"),
             
             //retractionZHop=0 # The amount to move the extruder up in z after retracting (before a move). mm.
-            new MapItem("retract_lift", "retractionZHop"),
+            new MapItem("retractionZHop", "retract_lift"),
             
             //skirtDistanceFromObject=6 # How far from objects the first skirt loop should be, in millimeters.
             new MapItem("skirtDistanceFromObject", "skirt_distance"),
@@ -259,6 +259,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
 
             return settings.ToString();
+        }
+
+        public class FirstLayerHeight : ScaledSingleNumber
+        {
+            internal string originalReference;
+            public override string MappedValue
+            {
+                get
+                {
+                    string finalValueString = base.MappedValue;
+
+                    if (OriginalValue.Contains("%"))
+                    {
+                        string withoutPercent = OriginalValue.Replace("%", "");
+                        double ratio = double.Parse(withoutPercent) / 100.0;
+                        string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
+                        double valueToModify = double.Parse(originalReferenceString);
+                        double finalValue = valueToModify * ratio * scale;
+                        finalValueString = finalValue.ToString();
+                    }
+
+                    if (finalValueString.Trim() == "0")
+                    {
+                        return ActiveSliceSettings.Instance.GetActiveValue(originalReference);
+                    }
+                    return finalValueString;
+                }
+            }
+
+            public FirstLayerHeight(string mappedKey, string originalKey, string originalReference, double scale = 1)
+                : base(mappedKey, originalKey, scale)
+            {
+                this.originalReference = originalReference;
+            }
         }
 
         public class FanTranslator : MapItem

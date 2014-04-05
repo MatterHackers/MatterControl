@@ -584,29 +584,8 @@ namespace MatterHackers.MatterControl
         }
 
 
-        bool firstDraw = true;
         public override void OnDraw(Graphics2D graphics2D)
         {
-#if false
-            if (firstDraw)
-            {
-                firstDraw = false;
-                SystemWindow testAbout = new SystemWindow(600, 300);
-
-                string path = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "AboutPage.html");
-                string htmlText = File.ReadAllText(path);
-                HTMLCanvas canvas = new HTMLCanvas(htmlText);
-                canvas.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-                canvas.AddReplacementString("textColor", RGBA_Bytes.White.GetAsHTMLString());
-
-                canvas.AnchorAll();
-                testAbout.AddChild(canvas);
-
-                testAbout.ShowAsSystemWindow();
-            }
-#endif
-
             graphics2D.FillRectangle(new RectangleDouble(0, this.Height - 1, this.Width, this.Height), ActiveTheme.Instance.PrimaryTextColor);
             base.OnDraw(graphics2D);
         }

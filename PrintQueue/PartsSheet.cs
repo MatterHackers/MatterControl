@@ -72,7 +72,19 @@ namespace MatterHackers.MatterControl
         public event EventHandler DoneSaving;
         public event EventHandler UpdateRemainingItems;
 
-        List<string> stlFilesToPrint;
+        public class FileNameAndPresentationName
+        {
+            public string fileName;
+            public string presentationName;
+
+            public FileNameAndPresentationName(string fileName, string presentationName)
+            {
+                this.fileName = fileName;
+                this.presentationName = presentationName;
+            }
+        }
+
+        List<FileNameAndPresentationName> stlFilesToPrint;
         List<PartImage> partImagesToPrint = new List<PartImage>();
         const double inchesPerMm = 0.0393701;
 
@@ -149,10 +161,10 @@ namespace MatterHackers.MatterControl
             SheetDpi = 300;
             SheetSizeInches = new Vector2(8.5, 11);
             // make sure we have our own list so it can't get stepped on while we output it.
-            stlFilesToPrint = new List<string>();
+            stlFilesToPrint = new List<FileNameAndPresentationName>();
             foreach(PrintItem stlToCopy in dataSource)
             {
-                stlFilesToPrint.Add(stlToCopy.FileLocation);
+                stlFilesToPrint.Add(new FileNameAndPresentationName(stlToCopy.FileLocation, stlToCopy.Name));
             }
         }
 
@@ -182,9 +194,9 @@ namespace MatterHackers.MatterControl
             currentlySaving = true;
             countThatHaveBeenSaved = 0;
             // first create images for all the parts
-            foreach (string stlFileName in stlFilesToPrint)
+            foreach (FileNameAndPresentationName stlFileNames in stlFilesToPrint)
             {
-                Mesh loadedMesh = StlProcessing.Load(stlFileName);
+                Mesh loadedMesh = StlProcessing.Load(stlFileNames.fileName);
                 if (loadedMesh != null)
                 {
                     AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
@@ -193,8 +205,7 @@ namespace MatterHackers.MatterControl
                     double textSpaceMM = 5;
                     double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
 
-                    string partName = System.IO.Path.GetFileName(System.IO.Path.GetFileName(stlFileName));
-                    TypeFacePrinter typeFacePrinter = new TypeFacePrinter(partName, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
+                    TypeFacePrinter typeFacePrinter = new TypeFacePrinter(stlFileNames.presentationName, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
                     double sizeOfNameX = typeFacePrinter.GetSize().x + PartMarginPixels * 2;
                     Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
 
@@ -219,7 +230,7 @@ namespace MatterHackers.MatterControl
                 countThatHaveBeenSaved++;
                 if (UpdateRemainingItems != null)
                 {
-                    UpdateRemainingItems(this, new StringEventArgs(Path.GetFileName(stlFileName)));
+                    UpdateRemainingItems(this, new StringEventArgs(Path.GetFileName(stlFileNames.presentationName)));
                 }
             }
 
@@ -230,7 +241,6 @@ namespace MatterHackers.MatterControl
             document.Info.Author = "MatterHackers Inc.";
             document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
             document.Info.Keywords = "MatterControl, STL, 3D Printing";
-
 
             int nextPartToPrintIndex = 0;
             int plateNumber = 1;

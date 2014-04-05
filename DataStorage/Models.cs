@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.DataStorage
         /// Gets the 9 {3 * (x, y, z)} positions that were probed during the print leveling setup.
         /// </summary>
         /// <returns></returns>
-        public double[] GetPrintLevelingPositions()
+        public double[] GetPrintLevelingMeasuredPositions()
         {
             double[] positions = new double[9];
 
@@ -402,7 +402,7 @@ namespace MatterHackers.MatterControl.DataStorage
             return positions;
         }
 
-        public void SetPrintLevelingPositions(double[] printLevelingPositions3_xyz)
+        public void SetPrintLevelingMeasuredPositions(double[] printLevelingPositions3_xyz)
         {
             StringBuilder allValues = new StringBuilder();
             bool first = true;

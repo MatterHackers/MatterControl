@@ -52,7 +52,6 @@ namespace MatterHackers.MatterControl
 {
     public class CompactSlidePanel : SlidePanel
     {
-        SimpleTextTabWidget aboutTabView;
         TabControl advancedControlsTabControl;
         TabControl mainControlsTabControl;
         SliceSettingsWidget sliceSettingsWidget;
