@@ -89,6 +89,8 @@
     <Compile Include="PrintHistory\PrintHistoryListItem.cs" />
     <Compile Include="PrintHistory\PrintHistoryWidget.cs" />
     <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
+    <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetDetailWidget.cs" />
+    <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetListWidget.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
