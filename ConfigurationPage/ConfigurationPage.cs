@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl
 
         private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
         {
-            string languageCode = ((DropDownList)sender).SelectedValue;
+            string languageCode = ((DropDownList)sender).SelectedLabel;
             if (languageCode != UserSettings.Instance.get("Language"))
             {
                 UserSettings.Instance.set("Language", languageCode);

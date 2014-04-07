@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         private void ManufacturerDropList_SelectionChanged(object sender, EventArgs e)
         {
-            ActivePrinter.Make = ((DropDownList)sender).SelectedValue;
+            ActivePrinter.Make = ((DropDownList)sender).SelectedLabel;
             ActivePrinter.Model = null;
 
             //reconstruct model selector
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         private void ModelDropList_SelectionChanged(object sender, EventArgs e)
         {
-            ActivePrinter.Model = ((DropDownList)sender).SelectedValue;
+            ActivePrinter.Model = ((DropDownList)sender).SelectedLabel;
             LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);            
             printerModelError.Visible = false;
             SetElementState();
