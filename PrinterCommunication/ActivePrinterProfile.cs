@@ -92,6 +92,82 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public int GetMaterialSetting(int extruderPosition)
+        {
+            int i = 0;
+            if (ActivePrinter != null)
+            {
+                string materialSettings = ActivePrinter.MaterialCollectionIds;
+                string[] materialSettingsList;
+                if (materialSettings != null)
+                {
+                    materialSettingsList = materialSettings.Split(',');
+                    if (materialSettingsList.Count() >= extruderPosition)
+                    {
+                        Int32.TryParse(materialSettingsList[extruderPosition - 1], out i);
+                    }
+                }
+                
+            }
+            return i;            
+        }
+
+        public void SetMaterialSetting(int extruderPosition, int settingId)
+        {
+            string[] newMaterialSettingsArray;
+            string[] currentMaterialSettingsArray;
+            
+            string materialSettings = ActivePrinter.MaterialCollectionIds;
+
+            if (materialSettings != null)
+            {
+                currentMaterialSettingsArray = materialSettings.Split(',');
+            }
+            else
+            {
+                currentMaterialSettingsArray = new string[extruderPosition];
+            }
+
+            //Resize the array of material settings if necessary
+            if (currentMaterialSettingsArray.Count() < extruderPosition)
+            {
+                newMaterialSettingsArray = new string[extruderPosition];
+                for (int i = 0; i < currentMaterialSettingsArray.Length; i++)
+                {                    
+                    newMaterialSettingsArray[i] = currentMaterialSettingsArray[i];
+                }
+            }
+            else
+            {
+                newMaterialSettingsArray = currentMaterialSettingsArray;
+            }
+            newMaterialSettingsArray[extruderPosition - 1] = settingId.ToString();
+
+            ActivePrinter.MaterialCollectionIds = String.Join(",", newMaterialSettingsArray);
+            ActivePrinter.Commit();
+        }
+
+        public int ActiveQualitySettingsID
+        {
+            get
+            {
+                if (ActivePrinter != null)
+                {
+                    return ActivePrinter.QualityCollectionId;
+                }
+                return 0;
+            }
+
+            set
+            {
+                if (ActiveQualitySettingsID != value)
+                {
+                    ActivePrinter.QualityCollectionId = value;
+                    ActivePrinter.Commit();
+                }
+            }
+        }
+
         public SlicingEngineTypes ActiveSliceEngineType
         {
             get

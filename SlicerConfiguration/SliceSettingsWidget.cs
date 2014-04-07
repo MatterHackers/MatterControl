@@ -615,7 +615,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 MenuItem newItem = selectableOptions.AddItem(listItem);
                                 if (newItem.Text == sliceSettingValue)
                                 {
-                                    selectableOptions.SelectedValue = sliceSettingValue;
+                                    selectableOptions.SelectedLabel = sliceSettingValue;
                                 }
 
                                 newItem.Selected += (sender, e) =>

@@ -124,13 +124,62 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             ApplicationWidget.Instance.ReloadBackPanel();
         }
 
+        IEnumerable<DataStorage.SliceSettingsCollection> GetCollections()
+        {
+            IEnumerable<DataStorage.SliceSettingsCollection> results = Enumerable.Empty<DataStorage.SliceSettingsCollection>();
+
+            //Retrieve a list of collections matching from the Datastore
+            string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}';", filterTag);
+            results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
+            return results;
+        }
+
 
         AnchoredDropDownList CreateDropdown()
         {
             AnchoredDropDownList dropDownList = new AnchoredDropDownList("- default -");
             dropDownList.Margin = new BorderDouble(0, 3);
             dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
-            MenuItem defaultMenuItem = dropDownList.AddItem("- default -");
+            MenuItem defaultMenuItem = dropDownList.AddItem("- default -", "0");
+            defaultMenuItem.Selected += (sender, e) =>
+            {
+                MenuItem item = (MenuItem)sender;
+                if (filterTag == "material")
+                {
+                    ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                }
+                else if (filterTag == "quality")
+                {
+                    ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
+                }
+                //Clear presets from active slice layers
+            };
+
+            IEnumerable<DataStorage.SliceSettingsCollection> collections = GetCollections();
+            foreach (DataStorage.SliceSettingsCollection collection in collections)
+            {
+                MenuItem menuItem = dropDownList.AddItem(collection.Name, collection.Id.ToString());
+                menuItem.Selected += (sender, e) =>
+                {
+                    MenuItem item = (MenuItem)sender;
+                    if (filterTag == "material")
+                    {
+                        ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                    }
+                    else if (filterTag == "quality")
+                    {
+                        ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
+                    }
+                };
+            }
+            if (filterTag == "material")
+            {
+                dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(1).ToString();
+            }
+            else if (filterTag == "quality")
+            {
+                dropDownList.SelectedValue = ActivePrinterProfile.Instance.ActiveQualitySettingsID.ToString();
+            }
 
             return dropDownList;
         }
@@ -186,26 +235,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     ApplicationWidget.Instance.ReloadBackPanel();
                 };
 
-                engineMenuDropList.SelectedValue = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
+                engineMenuDropList.SelectedLabel = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
             }
             engineMenuDropList.MinimumSize = new Vector2(engineMenuDropList.LocalBounds.Width, engineMenuDropList.LocalBounds.Height);
             return engineMenuDropList;
-        }
-
-
-
-        void EngineMenuDropList_SelectionChanged(object sender, EventArgs e)
-        {
-            string menuSelection = ((DropDownMenu)sender).SelectedValue;
-            foreach (Tuple<string, Func<bool>> item in engineOptionsMenuItems)
-            {
-                // if the menu we selecti is this one
-                if (item.Item1 == menuSelection)
-                {
-                    // call its function
-                    item.Item2();
-                }
-            }
         }
     }
 
