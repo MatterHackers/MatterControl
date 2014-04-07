@@ -683,8 +683,8 @@ namespace MatterHackers.MatterControl
 
                 lineToWrite = ApplyPrintLeveling(lineToWrite, false, false);
 
+                LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
                 WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
-                LinesToWriteQueue.RemoveAt(0);
                 System.Threading.Thread.Sleep(1);
             }
         }
@@ -1424,23 +1424,24 @@ namespace MatterHackers.MatterControl
 
         public void QueueLineToPrinter(string lineToWrite)
         {
-            //Check line for linebreaks, split and process separate if necessary
-            if (lineToWrite.Contains("\n"))
+            using (TimedLock.Lock(this, "QueueLineToPrinter"))
             {
-                string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-                foreach (string line in lines)
+                //Check line for linebreaks, split and process separate if necessary
+                if (lineToWrite.Contains("\n"))
                 {
-                    QueueLineToPrinter(line);
+                    string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
+                    for (int i = lines.Length - 1; i >= 0; i--)
+                    {
+                        string line = lines[i];
+                        QueueLineToPrinter(line);
+                    }
+                    return;
                 }
-                return;
-            }
 
-            lineToWrite = lineToWrite.Split(';')[0].Trim();
-            if (PrinterIsPrinting)
-            {
-                // insert the command into the printing queue
-                using (TimedLock.Lock(this, "QueueLineToPrinter"))
+                lineToWrite = lineToWrite.Split(';')[0].Trim();
+                if (PrinterIsPrinting)
                 {
+                    // insert the command into the printing queue
                     if (printerCommandQueueIndex >= 0
                         && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count - 1)
                     {
@@ -1450,19 +1451,19 @@ namespace MatterHackers.MatterControl
                         }
                     }
                 }
-            }
-            else
-            {
-                // sometimes we need to send code without buffering (like when we are closing the program).
-                if (ForceImmediateWrites)
-                {
-                    WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
-                }
                 else
                 {
-                    if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
+                    // sometimes we need to send code without buffering (like when we are closing the program).
+                    if (ForceImmediateWrites)
                     {
-                        LinesToWriteQueue.Add(lineToWrite);
+                        WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
+                    }
+                    else
+                    {
+                        if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
+                        {
+                            LinesToWriteQueue.Insert(0, lineToWrite);
+                        }
                     }
                 }
             }
