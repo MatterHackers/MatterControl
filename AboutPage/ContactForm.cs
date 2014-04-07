@@ -238,8 +238,18 @@ namespace MatterHackers.MatterControl.ContactForm
 
         private void AddButtonHandlers()
         {
-            cancelButton.Click += (sender, e) => { Close(); };
-            doneButton.Click += (sender, e) => { Close(); };
+            cancelButton.Click += (sender, e) => {
+                UiThread.RunOnIdle((state) =>
+                {
+                    Close();
+                });
+            };
+            doneButton.Click += (sender, e) => {
+                UiThread.RunOnIdle((state) =>
+                {
+                    Close();
+                });
+            };
             submitButton.Click += new ButtonBase.ButtonEventHandler(SubmitContactForm);
         }
 
