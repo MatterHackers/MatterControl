@@ -353,6 +353,9 @@ namespace MatterHackers.MatterControl.DataStorage
 
         public string CurrentSlicingEngine { get; set; }
 
+        public string MaterialCollectionIds { get; set; } // store id1,id2... (for N extruders)
+        public int QualityCollectionId { get; set; }
+
         /// <summary>
         /// This stores the 3 bed probed positions as a string. 3 * (x, y, z) = 9 values.
         /// </summary>
