@@ -130,6 +130,8 @@ namespace MatterHackers.MatterControl
             ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);
 
+            MinimumSize = new Vector2(590, 540);
+
             ShowAsSystemWindow();
         }
 
@@ -272,7 +274,6 @@ namespace MatterHackers.MatterControl
 
             if (firstDraw)
             {
-                Parent.MinimumSize = new Vector2(590, 540);
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
