@@ -96,11 +96,11 @@ namespace MatterHackers.MatterControl
             {
                 GuiHalWidget.SetClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
 
+                MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();
                 MatterHackers.RayTracer.UnitTests.Run();
                 MatterHackers.Agg.Tests.UnitTests.Run();
                 MatterHackers.VectorMath.Tests.UnitTests.Run();
                 MatterHackers.Agg.UI.Tests.UnitTests.Run();
-                MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();
 
                 // you can turn this on to debug some bounds issues
                 //GuiWidget.DebugBoundsUnderMouse = true;
