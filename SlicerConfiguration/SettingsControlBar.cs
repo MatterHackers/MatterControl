@@ -104,13 +104,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void AddChildElements()
         {
-
             EnhancedSettingsControlBar topRow = new EnhancedSettingsControlBar();
             FlowLayoutWidget bottomRow = new FlowLayoutWidget();
 
             bottomRow.HAnchor = HAnchor.ParentLeftRight;
             bottomRow.Margin = new BorderDouble(bottom:4);
-
 
             FlowLayoutWidget settingsStatusLabelContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             settingsStatusLabelContainer.VAnchor |= VAnchor.ParentTop;

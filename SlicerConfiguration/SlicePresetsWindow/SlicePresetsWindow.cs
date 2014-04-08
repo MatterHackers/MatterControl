@@ -60,12 +60,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             
             this.filterTag = filterTag;
             this.filterLabel = filterLabel;
-            this.MinimumSize = new Vector2(420, 560);
+            
             this.functionToCallOnSave = functionToCallOnSave;
 
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             ChangeToSlicePresetList();
             ShowAsSystemWindow();
+            this.MinimumSize = new Vector2(420, 560);
         }
 
 

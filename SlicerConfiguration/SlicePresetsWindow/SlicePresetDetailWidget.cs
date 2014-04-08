@@ -52,6 +52,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         TextWidget presetNameError;
         MHTextEditWidget presetNameInput;
         Button savePresetButton;
+        Button addSettingButton;
+        Button removeSettingButton;
+        int tabIndexForItem = 0;
 
         public SlicePresetDetailWidget(SlicePresetsWindow windowController)
         {
@@ -123,6 +126,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return metaContainer;
         }
 
+        FlowLayoutWidget addSettingsContainer;
+        FlowLayoutWidget editSettingsContainer;
+
         FlowLayoutWidget GetMiddleRow()
         {
             FlowLayoutWidget container = new FlowLayoutWidget();
@@ -130,6 +136,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             container.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
             container.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
             container.Margin = new BorderDouble(0, 3);
+
+            FlowLayoutWidget topBottomContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            topBottomContainer.AnchorAll();            
+
+            addSettingsContainer = new FlowLayoutWidget();
+            addSettingsContainer.HAnchor = HAnchor.ParentLeftRight;
+            addSettingsContainer.Padding = new BorderDouble(3);
+            PopulateAddSettingRow();
+
+            //This is a placeholder container - populated when the setting is created
+            editSettingsContainer = new FlowLayoutWidget();
+            //editSettingsContainer.VAnchor = Agg.UI.VAnchor.ParentCenter;
+            editSettingsContainer.HAnchor = HAnchor.ParentLeftRight;
+
+
+            topBottomContainer.AddChild(addSettingsContainer);
+
+            container.AddChild(topBottomContainer);
             return container;
         }
 
@@ -153,6 +177,386 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             container.AddChild(cancelButton);
 
             return container;
+        }
+
+        SettingsDropDownList categoryDropDownList;
+        SettingsDropDownList groupDropDownList;
+        SettingsDropDownList settingDropDownList;
+
+        void PopulateAddSettingRow(int categoryDefaultIndex = -1, int groupDefaultIndex = -1,string settingDefaultConfigName = "-1")
+        {   
+            categoryDropDownList = new SettingsDropDownList("- Select Category -");
+            categoryDropDownList.Margin = new BorderDouble(right:3);
+            categoryDropDownList.MinimumSize = new Vector2(categoryDropDownList.LocalBounds.Width, categoryDropDownList.LocalBounds.Height);
+
+            groupDropDownList = new SettingsDropDownList("- Select Group -");
+            groupDropDownList.Margin = new BorderDouble(right: 3);
+            groupDropDownList.MinimumSize = new Vector2(groupDropDownList.LocalBounds.Width, groupDropDownList.LocalBounds.Height);
+
+            settingDropDownList = new SettingsDropDownList("- Select Setting -");
+            settingDropDownList.Margin = new BorderDouble(right: 3);
+            settingDropDownList.MinimumSize = new Vector2(settingDropDownList.LocalBounds.Width, settingDropDownList.LocalBounds.Height);
+
+            string selectedCategoryValue = "{0}:-1:-1".FormatWith(categoryDefaultIndex);
+            string selectedGroupValue = "{0}:{1}:-1".FormatWith(categoryDefaultIndex, groupDefaultIndex);
+            string selectedSettingValue = "{0}:{1}:{2}".FormatWith(categoryDefaultIndex, groupDefaultIndex, settingDefaultConfigName);
+
+            
+            string UserLevel = "Advanced"; //Show all settings
+            for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
+            {               
+                
+                OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
+                
+                //Always add all categories
+                MenuItem categoryMenuItem = categoryDropDownList.AddItem(category.Name, "{0}:-1:-1".FormatWith(categoryIndex));
+                categoryMenuItem.Selected += new EventHandler(OnItemSelected);
+
+                for (int groupIndex = 0; groupIndex < category.GroupsList.Count; groupIndex++)
+                {
+                    
+                    OrganizerGroup group = category.GroupsList[groupIndex];
+                    string groupValue = "{0}:{1}:-1".FormatWith(categoryIndex, groupIndex);
+
+                    //Add groups if within selected category or no category selected
+                    if (categoryIndex == categoryDefaultIndex || categoryDefaultIndex == -1)
+                    {                        
+                        MenuItem groupMenuItem = groupDropDownList.AddItem(group.Name,groupValue);
+                        groupMenuItem.Selected += new EventHandler(OnItemSelected);
+                    }
+
+                    for (int subGroupIndex = 0; subGroupIndex < group.SubGroupsList.Count; subGroupIndex++)
+                    {
+                        OrganizerSubGroup subgroup = group.SubGroupsList[subGroupIndex];
+                        for (int settingIndex = 0; settingIndex < subgroup.SettingDataList.Count; settingIndex++)                        
+                        {
+                            //Add settings if within selected category and group or no category selected
+                            if (selectedGroupValue == groupValue || (groupDefaultIndex == -1 && categoryIndex == categoryDefaultIndex) || categoryDefaultIndex == -1)
+                            {
+                                
+
+                                OrganizerSettingsData setting = subgroup.SettingDataList[settingIndex];
+                                string itemValue = "{0}:{1}:{2}".FormatWith(categoryIndex, groupIndex, setting.SlicerConfigName);
+                                string itemName = setting.PresentationName.Replace("\\n","");
+                                if (setting.ExtraSettings.Trim() != "" && setting.DataEditType != OrganizerSettingsData.DataEditTypes.LIST)
+                                {
+                                    itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\n",""));
+                                }
+
+                                MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
+                                settingMenuItem.Selected += new EventHandler(OnItemSelected);
+                                settingMenuItem.Selected += new EventHandler(OnSettingSelected);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (categoryDefaultIndex != -1)
+            {
+                categoryDropDownList.SelectedValue = selectedCategoryValue;
+            }
+            if (groupDefaultIndex != -1)
+            {
+                groupDropDownList.SelectedValue = selectedGroupValue;
+            }
+            if (settingDefaultConfigName != "-1")
+            {
+                settingDropDownList.SelectedValue = selectedSettingValue;
+            }
+
+            addSettingsContainer.RemoveAllChildren();
+            addSettingsContainer.AddChild(categoryDropDownList);
+            addSettingsContainer.AddChild(groupDropDownList);
+            addSettingsContainer.AddChild(settingDropDownList);
+            addSettingsContainer.AddChild(buttonFactory.Generate("Add"));
+        }
+
+        void OnItemSelected(object sender, EventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            string[] valueArray = item.Value.Split(':');
+            UiThread.RunOnIdle((state) =>
+            {
+                PopulateAddSettingRow(Int32.Parse(valueArray[0]), Int32.Parse(valueArray[1]), valueArray[2]);
+            });
+
+        }
+
+        void OnSettingSelected(object sender, EventArgs e)
+        {
+            //MenuItem item = (MenuItem)sender;
+            //string[] valueArray = item.Value.Split(':');
+            //string configName = valueArray[2];
+            //OrganizerSettingsData settingData = SliceSettingsOrganizer.Instance.GetSettingsData(configName);
+            //PopulateEditSettingsContainer(settingData, 220);
+        }
+
+        
+        private void PopulateEditSettingsContainer(OrganizerSettingsData settingData, double minSettingNameWidth)
+        {
+            editSettingsContainer.RemoveAllChildren();
+            //editSettingsContainer.AddChild(new HorizontalSpacer());
+            
+            if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
+            {
+                int intEditWidth = 60;
+                int doubleEditWidth = 60;
+                int vectorXYEditWidth = 60;
+                int multiLineEditHeight = 60;
+
+                string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);                
+
+                if (settingData.DataEditType != OrganizerSettingsData.DataEditTypes.MULTI_LINE_TEXT)
+                {
+                    string convertedNewLines = settingData.PresentationName.Replace("\\n ", "\n");
+                    convertedNewLines = convertedNewLines.Replace("\\n", "\n");
+                    convertedNewLines = LocalizedString.Get(convertedNewLines);
+                    TextWidget settingName = new TextWidget(convertedNewLines);
+                    settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                    settingName.Width = minSettingNameWidth;
+                    //settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
+                    //editSettingsContainer.AddChild(settingName);
+                }
+
+                switch (settingData.DataEditType)
+                {
+                    case OrganizerSettingsData.DataEditTypes.INT:
+                        {
+                            int currentValue = 0;
+                            int.TryParse(sliceSettingValue, out currentValue);
+                            MHNumberEdit intEditWidget = new MHNumberEdit(currentValue, pixelWidth: intEditWidth, tabIndex: tabIndexForItem++);
+                            intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString()); };
+                            editSettingsContainer.AddChild(intEditWidget);
+                            editSettingsContainer.AddChild(getSettingInfoData(settingData));
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.DOUBLE:
+                        {
+                            double currentValue = 0;
+                            double.TryParse(sliceSettingValue, out currentValue);
+                            MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowNegatives: true, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
+                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString()); };
+                            editSettingsContainer.AddChild(doubleEditWidget);
+                            editSettingsContainer.AddChild(getSettingInfoData(settingData));
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.POSITIVE_DOUBLE:
+                        {
+                            double currentValue = 0;
+                            double.TryParse(sliceSettingValue, out currentValue);
+                            MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
+                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString()); };
+                            editSettingsContainer.AddChild(doubleEditWidget);
+                            editSettingsContainer.AddChild(getSettingInfoData(settingData));
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.OFFSET:
+                        {
+                            double currentValue = 0;
+                            double.TryParse(sliceSettingValue, out currentValue);
+                            MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, allowNegatives: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
+                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString()); };
+                            editSettingsContainer.AddChild(doubleEditWidget);
+                            editSettingsContainer.AddChild(getSettingInfoData(settingData));
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.DOUBLE_OR_PERCENT:
+                        {
+                            MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 60, tabIndex: tabIndexForItem++);
+                            stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
+                            {
+                                TextEditWidget textEditWidget = (TextEditWidget)sender;
+                                string text = textEditWidget.Text;
+                                text = text.Trim();
+                                bool isPercent = text.Contains("%");
+                                if (isPercent)
+                                {
+                                    text = text.Substring(0, text.IndexOf("%"));
+                                }
+                                double result;
+                                double.TryParse(text, out result);
+                                text = result.ToString();
+                                if (isPercent)
+                                {
+                                    text += "%";
+                                }
+                                textEditWidget.Text = text;
+                                SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
+                            };
+
+                            editSettingsContainer.AddChild(stringEdit);
+                            editSettingsContainer.AddChild(getSettingInfoData(settingData));
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.CHECK_BOX:
+                        {
+                            CheckBox checkBoxWidget = new CheckBox("");
+                            checkBoxWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                            checkBoxWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                            checkBoxWidget.Checked = (sliceSettingValue == "1");
+                            checkBoxWidget.CheckedStateChanged += (sender, e) =>
+                            {
+                                if (((CheckBox)sender).Checked)
+                                {
+                                    SaveSetting(settingData.SlicerConfigName, "1");
+                                }
+                                else
+                                {
+                                    SaveSetting(settingData.SlicerConfigName, "0");
+                                }
+                            };
+                            editSettingsContainer.AddChild(checkBoxWidget);
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.STRING:
+                        {
+                            MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++);
+                            stringEdit.ActualTextEditWidget.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text); };
+                            editSettingsContainer.AddChild(stringEdit);
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.MULTI_LINE_TEXT:
+                        {
+                            string convertedNewLines = sliceSettingValue.Replace("\\n", "\n");
+                            MHTextEditWidget stringEdit = new MHTextEditWidget(convertedNewLines, pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndexForItem++);
+                            stringEdit.ActualTextEditWidget.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text.Replace("\n", "\\n")); };
+                            editSettingsContainer.AddChild(stringEdit);
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.LIST:
+                        {
+                            StyledDropDownList selectableOptions = new StyledDropDownList("None", Direction.Down);
+                            selectableOptions.Margin = new BorderDouble();
+
+                            string[] listItems = settingData.ExtraSettings.Split(',');
+                            foreach (string listItem in listItems)
+                            {
+                                MenuItem newItem = selectableOptions.AddItem(listItem);
+                                if (newItem.Text == sliceSettingValue)
+                                {
+                                    selectableOptions.SelectedLabel = sliceSettingValue;
+                                }
+
+                                newItem.Selected += (sender, e) =>
+                                {
+                                    MenuItem menuItem = ((MenuItem)sender);
+                                    SaveSetting(settingData.SlicerConfigName, menuItem.Text);
+                                };
+                            }
+                            editSettingsContainer.AddChild(selectableOptions);
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.VECTOR2:
+                        {
+                            string[] xyValueStrings = sliceSettingValue.Split(',');
+                            if (xyValueStrings.Length != 2)
+                            {
+                                xyValueStrings = new string[] { "0", "0" };
+                            }
+                            double currentXValue = 0;
+                            double.TryParse(xyValueStrings[0], out currentXValue);
+                            MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+
+                            double currentYValue = 0;
+                            double.TryParse(xyValueStrings[1], out currentYValue);
+                            MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+                            {
+                                xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString()); };
+                                editSettingsContainer.AddChild(xEditWidget);
+                                TextWidget xText = new TextWidget("x");
+                                xText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                                xText.Margin = new BorderDouble(5, 0);
+                                editSettingsContainer.AddChild(xText);
+                            }
+                            {
+                                yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString()); };
+                                editSettingsContainer.AddChild(yEditWidget);
+                                TextWidget yText = new TextWidget("y");
+                                yText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                                yText.Margin = new BorderDouble(5, 0);
+                                editSettingsContainer.AddChild(yText);
+                            }
+                        }
+                        break;
+
+                    case OrganizerSettingsData.DataEditTypes.OFFSET2:
+                        {
+                            string[] xyValueStrings = sliceSettingValue.Split('x');
+                            if (xyValueStrings.Length != 2)
+                            {
+                                xyValueStrings = new string[] { "0", "0" };
+                            }
+                            double currentXValue = 0;
+                            double.TryParse(xyValueStrings[0], out currentXValue);
+                            MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+
+                            double currentYValue = 0;
+                            double.TryParse(xyValueStrings[1], out currentYValue);
+                            MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+                            {
+                                xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString()); };
+                                editSettingsContainer.AddChild(xEditWidget);
+                                TextWidget xText = new TextWidget("x");
+                                xText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                                xText.Margin = new BorderDouble(5, 0);
+                                editSettingsContainer.AddChild(xText);
+                            }
+                            {
+                                yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString()); };
+                                editSettingsContainer.AddChild(yEditWidget);
+                                TextWidget yText = new TextWidget("y");
+                                yText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                                yText.Margin = new BorderDouble(5, 0);
+                                editSettingsContainer.AddChild(yText);
+                            }
+                        }
+                        break;
+
+                    default:
+                        TextWidget missingSetting = new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()));
+                        missingSetting.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                        missingSetting.BackgroundColor = RGBA_Bytes.Red;
+                        editSettingsContainer.AddChild(missingSetting);
+                        break;
+                }
+            }
+            else // the setting we think we are adding is not in the config.ini it may have been depricated
+            {
+                TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in config.ini", settingData.SlicerConfigName));
+                settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
+                editSettingsContainer.AddChild(settingName);
+                editSettingsContainer.BackgroundColor = RGBA_Bytes.Red;
+            }
+        }
+
+        private TextWidget getSettingInfoData(OrganizerSettingsData settingData)
+        {
+            string extraSettings = settingData.ExtraSettings;
+            extraSettings = extraSettings.Replace("\\n", "\n");
+            TextWidget dataTypeInfo = new TextWidget(extraSettings, pointSize: 10);
+            dataTypeInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            dataTypeInfo.Margin = new BorderDouble(5, 0);
+            return dataTypeInfo;
+        }
+
+        private void SaveSetting(string slicerConfigName, string value)
+        {
+            //Hacky solution prevents saves when no printer is loaded
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+
+            }
         }
 
         private bool ValidatePresetsForm()
@@ -215,6 +619,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             windowController.ActivePresetLayer.settingsCollectionData.Name = presetNameInput.Text;
             windowController.ActivePresetLayer.settingsCollectionData.Commit();
+        }
+    }
+
+    public class SettingsDropDownList : DropDownList
+    {
+
+        static RGBA_Bytes whiteSemiTransparent = new RGBA_Bytes(255, 255, 255, 100);
+        static RGBA_Bytes whiteTransparent = new RGBA_Bytes(255, 255, 255, 0);
+
+        public SettingsDropDownList(string noSelectionString, Direction direction = Direction.Down)
+            : base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction)
+        {
+            //this.HAnchor = HAnchor.ParentLeftRight;
+            this.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+            this.MenuItemsBorderWidth = 1;
+            this.MenuItemsBackgroundColor = RGBA_Bytes.White;
+            this.MenuItemsBorderColor = ActiveTheme.Instance.SecondaryTextColor;
+            this.MenuItemsPadding = new BorderDouble(10, 4, 10, 6);
+            this.MenuItemsBackgroundHoverColor = ActiveTheme.Instance.PrimaryAccentColor;
+            this.MenuItemsTextHoverColor = ActiveTheme.Instance.PrimaryTextColor;
+            this.BorderWidth = 1;
+            this.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
+            this.HoverColor = whiteSemiTransparent;
+            this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 0);
         }
     }
 }
