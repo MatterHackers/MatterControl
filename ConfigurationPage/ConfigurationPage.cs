@@ -35,6 +35,7 @@ using System.IO.Ports;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
@@ -115,9 +116,15 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(container);
         }
 
+        Button restartButton;
+        Dictionary<string, string> languageDict;
+
         private void AddLanguageControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
+            CreateLanguageDict();
+            
             DisableableWidget container = new DisableableWidget();
+            
             
             GroupBox languageControlsGroupBox = new GroupBox(LocalizedString.Get("Language Settings"));
             languageControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -125,35 +132,81 @@ namespace MatterHackers.MatterControl
             languageControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             languageControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
             languageControlsGroupBox.Height = 78;
-            
 
-            LanguageSelector languageSelector = new LanguageSelector();
-            languageSelector.HAnchor = HAnchor.ParentLeftRight;
+
+            FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
+            controlsContainer.HAnchor = HAnchor.ParentLeftRight;
+
+            string languageCode = UserSettings.Instance.get("Language");
+            string languageVerbose = "Default";
+
+            foreach(KeyValuePair<string, string> entry in languageDict)
+            {
+                if (languageCode == entry.Value)
+                {
+                    languageVerbose = entry.Key;
+                }
+            }
+
+            LanguageSelector languageSelector = new LanguageSelector(languageVerbose);
+            foreach (KeyValuePair<string, string> entry in languageDict)
+            {
+                languageSelector.AddItem(entry.Key,entry.Value);
+            }
+
             languageSelector.Margin = new BorderDouble(0);
-            languageSelector.LanguageDropList.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
+            languageSelector.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
 
-            languageControlsGroupBox.AddChild(languageSelector);
+
+            restartButton = textImageButtonFactory.Generate("Restart");
+            restartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+            restartButton.Visible = false;
+            restartButton.Click += (sender, e) =>
+            {
+                RestartApplication();
+            };
+
+            controlsContainer.AddChild(languageSelector);
+            controlsContainer.AddChild(new HorizontalSpacer());
+            controlsContainer.AddChild(restartButton);
+
+            languageControlsGroupBox.AddChild(controlsContainer);
 
             container.AddChild(languageControlsGroupBox);
 
             controlsTopToBottomLayout.AddChild(container);
         }
 
-        private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
+        private void RestartApplication()
         {
-            string languageVerbose = ((DropDownList)sender).SelectedValue;
-            Dictionary<string, string> languageDict = new Dictionary<string, string>();
+            UiThread.RunOnIdle((state) =>
+            {
+                //horrible hack - to be replaced
+                MatterControlApplication app = (MatterControlApplication)this.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent;
+                app.RestartOnClose = true;
+                app.Close();
+            });
+        }
+
+        private void CreateLanguageDict()
+        {
+            languageDict = new Dictionary<string, string>();
             languageDict["Default"] = "EN";
             languageDict["English"] = "EN";
-            languageDict["Spanish"] = "ES";
+            languageDict["Español"] = "ES";
+            languageDict["Français"] = "FR";
+            languageDict["Deutsch"] = "DE";
+        }
 
-            string languageCode;
-            if (!languageDict.TryGetValue(languageVerbose,out languageCode))
+        private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
+        {
+            string languageCode = ((DropDownList)sender).SelectedLabel;
+            if (languageCode != UserSettings.Instance.get("Language"))
             {
-                languageCode = "EN";
+                UserSettings.Instance.set("Language", languageCode);
+                restartButton.Visible = true;
             }
 
-            UserSettings.Instance.set("Language", languageCode);
         }
 
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -229,13 +282,7 @@ namespace MatterHackers.MatterControl
             return topLine;
         }
 
-        NumberEdit feedRateValue;
-        Slider feedRateRatioSlider;
-        Slider extrusionRatioSlider;
-        NumberEdit extrusionValue;
-        PrintLevelWizardWindow printLevelWizardWindow;
-
-        
+        PrintLevelWizardWindow printLevelWizardWindow;        
 
         public override void OnClosed(EventArgs e)
         {
@@ -246,10 +293,8 @@ namespace MatterHackers.MatterControl
 
             base.OnClosed(e);
         }
-      
 
 		TextWidget printLevelingStatusLabel;
-
         private void AddPrintLevelingControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             printLevelContainer = new DisableableWidget();
@@ -257,10 +302,23 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(printLevelContainer);
         }
 
+        EditLevelingSettingsWindow editLevelingSettingsWindow;
         private GuiWidget CreatePrintLevelingControlsContainer()
         {
-            GroupBox printLevelingControlsContainer;
-            printLevelingControlsContainer = new GroupBox(LocalizedString.Get("Automatic Calibration"));
+            Button editButton;
+            GroupBox printLevelingControlsContainer = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(LocalizedString.Get("Automatic Calibration"), out editButton));
+            editButton.Click += (sender, e) =>
+            {
+                if (editLevelingSettingsWindow == null)
+                {
+                    editLevelingSettingsWindow = new EditLevelingSettingsWindow();
+                    editLevelingSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editLevelingSettingsWindow = null; };
+                }
+                else
+                {
+                    editLevelingSettingsWindow.BringToFront();
+                }
+            };
 
             printLevelingControlsContainer.Margin = new BorderDouble(0);
             printLevelingControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -284,6 +342,11 @@ namespace MatterHackers.MatterControl
 
                 Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
 				ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
+                if (!ActiveTheme.Instance.IsDarkTheme)
+                {
+                    InvertLightness.DoInvertLightness(levelingImage);
+                }
+                
                 ImageWidget levelingIcon = new ImageWidget(levelingImage);
 				levelingIcon.Margin = new BorderDouble (right: 6);
 
@@ -386,7 +449,7 @@ namespace MatterHackers.MatterControl
                     case PrinterCommunication.CommunicationStates.AttemptingToConnect:
                     case PrinterCommunication.CommunicationStates.FailedToConnect:                        
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         break;
 
                     case PrinterCommunication.CommunicationStates.FinishedPrint:

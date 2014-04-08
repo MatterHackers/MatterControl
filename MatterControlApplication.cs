@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
         bool firstDraw = true;
         bool ShowMemoryUsed = false;
         bool DoCGCollectEveryDraw = false;
+        public bool RestartOnClose = false;
 
         public MatterControlApplication(double width, double height)
             : base(width, height)
@@ -95,10 +96,11 @@ namespace MatterHackers.MatterControl
             {
                 GuiHalWidget.SetClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
 
+                MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();
+                MatterHackers.RayTracer.UnitTests.Run();
                 MatterHackers.Agg.Tests.UnitTests.Run();
                 MatterHackers.VectorMath.Tests.UnitTests.Run();
                 MatterHackers.Agg.UI.Tests.UnitTests.Run();
-                MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();
 
                 // you can turn this on to debug some bounds issues
                 //GuiWidget.DebugBoundsUnderMouse = true;
@@ -127,6 +129,8 @@ namespace MatterHackers.MatterControl
 
             ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);
+
+            MinimumSize = new Vector2(590, 540);
 
             ShowAsSystemWindow();
         }
@@ -270,7 +274,6 @@ namespace MatterHackers.MatterControl
 
             if (firstDraw)
             {
-                Parent.MinimumSize = new Vector2(590, 540);
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
@@ -329,7 +332,7 @@ namespace MatterHackers.MatterControl
 
             if (PrinterCommunication.Instance.PrinterIsPrinting)
             {
-                StyledMessageBox.ShowMessageBox("You cannot exit while a print is running.", "Unable to Exit");
+                StyledMessageBox.ShowMessageBox("Oop! You cannot exit while a print is active.", "Unable to Exit");
                 CancelClose = true;
             }
             else if (PartsSheet.IsSaving())

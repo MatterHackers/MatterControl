@@ -51,7 +51,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class GcodeViewBasic : PartPreviewBaseWidget
+    public class GcodeViewBasic : PartPreviewWidget
     {
         public Slider selectLayerSlider;
         public Slider layerStartRenderRatioSlider;
@@ -64,7 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Button generateGCodeButton;
         FlowLayoutWidget buttonBottomPanel;
         FlowLayoutWidget layerSelectionButtonsPannel;
-        FlowLayoutWidget buttonRightPanel;
 
         FlowLayoutWidget modelOptionsContainer;
         FlowLayoutWidget layerOptionsContainer;
@@ -176,43 +175,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             AddProcessingMessage(startingMessage);
 
-            AddViewControls();
-
-            AddHandlers();
-        }
-
-        void AddViewControls()
-        {
-            TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
-
-            FlowLayoutWidget transformTypeSelector = new FlowLayoutWidget();
-            transformTypeSelector.BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-            iconTextImageButtonFactory.FixedHeight = 20;
-            iconTextImageButtonFactory.FixedWidth = 20;
-
-            string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
-            RadioButton translateButton = iconTextImageButtonFactory.GenerateRadioButton("", translateIconPath);
-            translateButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(translateButton);
+            Add2DViewControls();
             translateButton.Click += (sender, e) =>
             {
                 gcodeViewWidget.TransformState = GCodeViewWidget.ETransformState.Move;
             };
-
-            string scaleIconPath = Path.Combine("Icons", "ViewTransformControls", "scale.png");
-            RadioButton scaleButton = iconTextImageButtonFactory.GenerateRadioButton("", scaleIconPath);
-            scaleButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(scaleButton);
             scaleButton.Click += (sender, e) =>
             {
                 gcodeViewWidget.TransformState = GCodeViewWidget.ETransformState.Scale;
             };
 
-            transformTypeSelector.Margin = new BorderDouble(5);
-            transformTypeSelector.HAnchor |= Agg.UI.HAnchor.ParentLeft;
-            transformTypeSelector.VAnchor = Agg.UI.VAnchor.ParentTop;
-            AddChild(transformTypeSelector);
-            translateButton.Checked = true;
+            AddHandlers();
         }
 
         private FlowLayoutWidget CreateRightButtonPannel()

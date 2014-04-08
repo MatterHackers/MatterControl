@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl
         }
     }
 
-    
-
     public class ManualPrinterControls : GuiWidget
     {
         readonly double minExtrutionRatio = .5;
@@ -70,8 +68,6 @@ namespace MatterHackers.MatterControl
         Button homeXButton;
         Button homeYButton;
         Button homeZButton;
-		Button enablePrintLevelingButton;
-		Button disablePrintLevelingButton;
 
         DisableableWidget extruderTemperatureControlWidget;
         DisableableWidget bedTemperatureControlWidget;
@@ -81,7 +77,6 @@ namespace MatterHackers.MatterControl
         DisableableWidget tuningAdjustmentControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
         DisableableWidget sdCardManagerContainer;
-        DisableableWidget printLevelContainer;
         DisableableWidget macroControls;
 
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
@@ -139,7 +134,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        EditManualMovementSpeedsWindow editSettingsWindow;
+        EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
         public ManualPrinterControls()
         {
             SetDisplayAttributes();
@@ -294,17 +289,17 @@ namespace MatterHackers.MatterControl
         private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             Button editButton;
-			GroupBox movementControlsGroupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(LocalizedString.Get("Movement Controls"), out editButton));
+			GroupBox movementControlsGroupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit("Movement Controls".Localize(), out editButton));
             editButton.Click += (sender, e) =>
             {
-                if (editSettingsWindow == null)
+                if (editManualMovementSettingsWindow == null)
                 {
-                    editSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds", GetMovementSpeedsString(), SetMovementSpeeds);
-                    editSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editSettingsWindow = null; };
+                    editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), GetMovementSpeedsString(), SetMovementSpeeds);
+                    editManualMovementSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editManualMovementSettingsWindow = null; };
                 }
                 else
                 {
-                    editSettingsWindow.BringToFront();
+                    editManualMovementSettingsWindow.BringToFront();
                 }
             };
 
@@ -400,7 +395,6 @@ namespace MatterHackers.MatterControl
         Slider feedRateRatioSlider;
         Slider extrusionRatioSlider;
         NumberEdit extrusionValue;
-        PrintLevelWizardWindow printLevelWizardWindow;
 
         private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
@@ -513,102 +507,6 @@ namespace MatterHackers.MatterControl
         {
             feedRateRatioSlider.Value = PrinterCommunication.Instance.FeedRateRatio;
             feedRateValue.Value = ((int)(PrinterCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
-        }
-
-		TextWidget printLevelingStatusLabel;
-
-        private GuiWidget CreatePrintLevelingControlsContainer()
-        {
-            GroupBox printLevelingControlsContainer;
-			printLevelingControlsContainer = new GroupBox(LocalizedString.Get("Automatic Calibration"));
-
-            printLevelingControlsContainer.Margin = new BorderDouble(0);
-            printLevelingControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            printLevelingControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            printLevelingControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            printLevelingControlsContainer.Height = 68;
-
-            {
-                FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-                buttonBar.HAnchor |= HAnchor.ParentLeftRight;
-                buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                buttonBar.Margin = new BorderDouble(0, 0, 0, 0);
-                buttonBar.Padding = new BorderDouble(0);
-
-                this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-
-				Button runPrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
-                runPrintLevelingButton.Margin = new BorderDouble(left:6);
-                runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-                runPrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(runPrintLeveling_Click);
-
-                Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
-				ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
-                ImageWidget levelingIcon = new ImageWidget(levelingImage);
-				levelingIcon.Margin = new BorderDouble (right: 6);
-
-				enablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("ENABLE"));
-				enablePrintLevelingButton.Margin = new BorderDouble(left:6);
-				enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-				enablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(enablePrintLeveling_Click);
-
-				disablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("DISABLE"));
-				disablePrintLevelingButton.Margin = new BorderDouble(left:6);
-				disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-				disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);
-
-				CheckBox doLevelingCheckBox = new CheckBox(LocalizedString.Get("Enable Automatic Print Leveling"));
-                doLevelingCheckBox.Margin = new BorderDouble(left: 3);
-                doLevelingCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                doLevelingCheckBox.VAnchor = VAnchor.ParentCenter;
-                doLevelingCheckBox.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
-
-				printLevelingStatusLabel = new TextWidget ("");
-				printLevelingStatusLabel.AutoExpandBoundsToText = true;
-				printLevelingStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				printLevelingStatusLabel.VAnchor = VAnchor.ParentCenter;
-
-				GuiWidget hSpacer = new GuiWidget ();
-				hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-                buttonBar.AddChild(levelingIcon);
-				//buttonBar.AddChild(doLevelingCheckBox);
-				buttonBar.AddChild (printLevelingStatusLabel);
-				buttonBar.AddChild (hSpacer);
-				buttonBar.AddChild(enablePrintLevelingButton);
-				buttonBar.AddChild(disablePrintLevelingButton);
-                buttonBar.AddChild(runPrintLevelingButton);
-                doLevelingCheckBox.CheckedStateChanged += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.DoPrintLeveling = doLevelingCheckBox.Checked;
-                };
-                ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
-                {
-					SetPrintLevelButtonVisiblity();
-
-                }, ref unregisterEvents);
-
-                printLevelingControlsContainer.AddChild(buttonBar);
-            }
-			SetPrintLevelButtonVisiblity ();
-            return printLevelingControlsContainer;
-        }
-
-        private void OpenPrintLevelWizard()
-        {
-            if (printLevelWizardWindow == null)
-            {
-                printLevelWizardWindow = new PrintLevelWizardWindow();
-                printLevelWizardWindow.Closed += (sender, e) =>
-                {
-                    printLevelWizardWindow = null;
-                };
-                printLevelWizardWindow.ShowAsSystemWindow();
-            }
-            else 
-            {
-                printLevelWizardWindow.BringToFront();
-            }
         }
 
         private GuiWidget CreateTerminalControlsContainer()
@@ -922,31 +820,6 @@ namespace MatterHackers.MatterControl
             //this.Invalidate();
         }
 
-		void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
-		{
-			ActivePrinterProfile.Instance.DoPrintLeveling = true;
-		}
-
-		void disablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
-		{
-			ActivePrinterProfile.Instance.DoPrintLeveling = false;
-		}
-
-		void SetPrintLevelButtonVisiblity()
-		{
-			enablePrintLevelingButton.Visible = !ActivePrinterProfile.Instance.DoPrintLeveling;
-			disablePrintLevelingButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
-
-			if (ActivePrinterProfile.Instance.DoPrintLeveling) {
-				printLevelingStatusLabel.Text = LocalizedString.Get ("Automatic Print Leveling (enabled)");
-			}
-			else
-			{
-				printLevelingStatusLabel.Text = LocalizedString.Get ("Automatic Print Leveling (disabled)");
-			}
-		}
-
-
         void disableMotors_Click(object sender, MouseEventArgs mouseEvent)
         {
             PrinterCommunication.Instance.ReleaseMotors();
@@ -975,11 +848,6 @@ namespace MatterHackers.MatterControl
         public override void OnClosing(out bool CancelClose)
         {
             base.OnClosing(out CancelClose);
-        }
-
-        void runPrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
-        {
-            OpenPrintLevelWizard();
         }
     }
 }

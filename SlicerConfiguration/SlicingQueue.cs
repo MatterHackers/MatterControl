@@ -237,6 +237,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #if DEBUG
                             if (ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {
+                                MatterHackers.MatterSlice.LogOutput.GetLogWrites += (sender, args) =>
+                                {
+                                    string message = sender as string;
+                                    if (message != null)
+                                    {
+                                        message = message.Replace("=>", "").Trim();
+                                        if (message.Contains(".gcode"))
+                                        {
+                                            message = "Saving intermediate file";
+                                        }
+                                        message += "...";
+                                        UiThread.RunOnIdle((state) =>
+                                        {
+                                            itemToSlice.OnSlicingOutputMessage(new StringEventArgs(message));
+                                        });
+                                    }
+                                };
                                 MatterSlice.MatterSlice.ProcessArgs(slicerProcess.StartInfo.Arguments);
                             }
                             else

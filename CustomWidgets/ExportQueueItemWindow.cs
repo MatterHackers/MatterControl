@@ -217,14 +217,17 @@ namespace MatterHackers.MatterControl
 			// windows xp: filePathToSave 'test'
 			
 			string filePathToSave = saveParams.FileName;
-			string extension = Path.GetExtension(filePathToSave);
-			if (extension == "") 
-			{						
-				File.Delete (filePathToSave);
-				filePathToSave += ".stl";
-			}
-			File.Copy (printQueueItem.PrintItemWrapper.FileLocation, filePathToSave, true);
-			ShowFileIfRequested (filePathToSave);
+            if (filePathToSave != null && filePathToSave != "")
+            {
+                string extension = Path.GetExtension(filePathToSave);
+                if (extension == "")
+                {
+                    File.Delete(filePathToSave);
+                    filePathToSave += ".stl";
+                }
+                File.Copy(printQueueItem.PrintItemWrapper.FileLocation, filePathToSave, true);
+                ShowFileIfRequested(filePathToSave);
+            }
         }
 
 

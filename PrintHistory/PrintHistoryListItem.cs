@@ -63,16 +63,17 @@ namespace MatterHackers.MatterControl.PrintHistory
         public bool isActivePrint = false;
         public bool isSelectedItem = false;
         public bool isHoverItem = false;
+        bool showTimestamp;
         TextWidget partLabel;
         Button printAgainLink;
         public CheckBox selectionCheckBox;
         FlowLayoutWidget buttonContainer;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
-        public PrintHistoryListItem(PrintTask printTask)
+        public PrintHistoryListItem(PrintTask printTask, bool showTimestamp)
         {            
             this.printTask = printTask;
-            
+            this.showTimestamp = showTimestamp;
             SetDisplayAttributes();
             AddChildElements();
             AddHandlers();
@@ -80,8 +81,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         void AddChildElements()
         {
-            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;            
             {
                 GuiWidget indicator = new GuiWidget();
                 indicator.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
@@ -97,7 +97,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                 FlowLayoutWidget middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 middleColumn.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
                 middleColumn.Padding = new BorderDouble(6,3);
                 {
                     FlowLayoutWidget labelContainer = new FlowLayoutWidget();
@@ -120,14 +119,28 @@ namespace MatterHackers.MatterControl.PrintHistory
                 buttonContainer.Margin = new BorderDouble(0);
                 buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 {
-                    TextWidget statusIndicator = new TextWidget("STATUS: Completed", pointSize:8);
+                    TextWidget statusIndicator = new TextWidget("Status: Completed", pointSize:8);
                     statusIndicator.Margin = new BorderDouble(right: 3);
                     //buttonContainer.AddChild(statusIndicator);
 
                     TextWidget timeLabel = new TextWidget("PRINT TIME: ", pointSize:8);
                     timeLabel.TextColor = timeTextColor;
 
-                    TextWidget timeIndicator = new TextWidget(string.Format("{0}min", printTask.PrintTimeMinutes), pointSize: 12);
+                    TextWidget timeIndicator;
+                    int minutes = printTask.PrintTimeMinutes;
+                    if (minutes < 0)
+                    {
+                        timeIndicator = new TextWidget("Unknown");
+                    }
+                    else if (minutes > 60)
+                    {
+                        timeIndicator = new TextWidget("{0}hrs {1}min".FormatWith(printTask.PrintTimeMinutes / 60, printTask.PrintTimeMinutes % 60), pointSize: 12);
+                    }
+                    else
+                    {
+                        timeIndicator = new TextWidget(string.Format("{0}min", printTask.PrintTimeMinutes), pointSize: 12);
+                    }
+                    
                     timeIndicator.Margin = new BorderDouble(right: 6);
                     timeIndicator.TextColor = timeTextColor;
 
@@ -146,71 +159,76 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                     buttonContainer.AddChild(printAgainLink);
                     middleColumn.AddChild(buttonContainer);
-                }                
-
-                FlowLayoutWidget rightColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                rightColumn.BackgroundColor = RGBA_Bytes.LightGray;
-                rightColumn.Padding = new BorderDouble(6,0);
-
-                FlowLayoutWidget startTimeContainer = new FlowLayoutWidget();
-                startTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                startTimeContainer.Padding = new BorderDouble(0,3);
-
-                TextWidget startLabel = new TextWidget("START:", pointSize:8);
-                startLabel.TextColor = timeTextColor;
-
-                string startTimeString = printTask.PrintStart.ToString("MMM d yyyy h:mm ") + printTask.PrintStart.ToString("tt").ToLower();
-                TextWidget startDate = new TextWidget(startTimeString, pointSize: 12);
-                startDate.TextColor = timeTextColor;
-
-                startTimeContainer.AddChild(startLabel);
-                startTimeContainer.AddChild(new HorizontalSpacer());
-                startTimeContainer.AddChild(startDate);
-                
-
-                FlowLayoutWidget endTimeContainer = new FlowLayoutWidget();
-                endTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                endTimeContainer.Padding = new BorderDouble(0,3);
-
-                TextWidget endLabel = new TextWidget("END:", pointSize: 8);
-                endLabel.TextColor = timeTextColor;
-
-                string endTimeString;
-                if (printTask.PrintEnd != DateTime.MinValue)
-                {
-                    endTimeString = printTask.PrintEnd.ToString("MMM d yyyy h:mm ") + printTask.PrintEnd.ToString("tt").ToLower() ;
                 }
-                else
-                {
-                    endTimeString = "Unknown";
-                }
-
-                TextWidget endDate = new TextWidget(endTimeString, pointSize: 12);
-                endDate.TextColor = timeTextColor;
-
-                endTimeContainer.AddChild(endLabel);
-                endTimeContainer.AddChild(new HorizontalSpacer());
-                endTimeContainer.AddChild(endDate);
-
-                HorizontalLine horizontalLine = new HorizontalLine();
-                horizontalLine.BackgroundColor = RGBA_Bytes.Gray;
-
-                rightColumn.AddChild(endTimeContainer);
-                rightColumn.AddChild(horizontalLine);
-                rightColumn.AddChild(startTimeContainer);
-                
-                rightColumn.Width = 220;
 
                 this.AddChild(indicator);
                 this.AddChild(middleColumn);
-                this.AddChild(rightColumn);
+
+                
+                if (showTimestamp)
+                {
+                    FlowLayoutWidget rightColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                    rightColumn.BackgroundColor = RGBA_Bytes.LightGray;
+                    rightColumn.Padding = new BorderDouble(6, 0);
+                    
+                    FlowLayoutWidget startTimeContainer = new FlowLayoutWidget();
+                    startTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                    startTimeContainer.Padding = new BorderDouble(0, 3);
+
+                    TextWidget startLabel = new TextWidget("START:", pointSize: 8);
+                    startLabel.TextColor = timeTextColor;
+
+                    string startTimeString = printTask.PrintStart.ToString("MMM d yyyy h:mm ") + printTask.PrintStart.ToString("tt").ToLower();
+                    TextWidget startDate = new TextWidget(startTimeString, pointSize: 12);
+                    startDate.TextColor = timeTextColor;
+
+                    startTimeContainer.AddChild(startLabel);
+                    startTimeContainer.AddChild(new HorizontalSpacer());
+                    startTimeContainer.AddChild(startDate);
+
+
+                    FlowLayoutWidget endTimeContainer = new FlowLayoutWidget();
+                    endTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                    endTimeContainer.Padding = new BorderDouble(0, 3);
+
+                    TextWidget endLabel = new TextWidget("END:", pointSize: 8);
+                    endLabel.TextColor = timeTextColor;
+
+                    string endTimeString;
+                    if (printTask.PrintEnd != DateTime.MinValue)
+                    {
+                        endTimeString = printTask.PrintEnd.ToString("MMM d yyyy h:mm ") + printTask.PrintEnd.ToString("tt").ToLower();
+                    }
+                    else
+                    {
+                        endTimeString = "Unknown";
+                    }
+
+                    TextWidget endDate = new TextWidget(endTimeString, pointSize: 12);
+                    endDate.TextColor = timeTextColor;
+
+                    endTimeContainer.AddChild(endLabel);
+                    endTimeContainer.AddChild(new HorizontalSpacer());
+                    endTimeContainer.AddChild(endDate);
+
+                    HorizontalLine horizontalLine = new HorizontalLine();
+                    horizontalLine.BackgroundColor = RGBA_Bytes.Gray;
+
+                    rightColumn.AddChild(endTimeContainer);
+                    rightColumn.AddChild(horizontalLine);
+                    rightColumn.AddChild(startTimeContainer);
+
+                    rightColumn.Width = 220;
+                    this.AddChild(rightColumn);
+                }
+                
+                
             }
         }
 
         void SetDisplayAttributes()
         {
-            linkButtonFactory.fontSize = 10;
-            
+            linkButtonFactory.fontSize = 10;            
             this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             this.Height = 70;
             this.BackgroundColor = this.WidgetBackgroundColor;

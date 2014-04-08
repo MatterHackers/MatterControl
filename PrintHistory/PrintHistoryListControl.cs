@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PrintHistory
     public class PrintHistoryListControl : ScrollableWidget
     {
         static PrintHistoryListControl instance;
-        private DataStorage.PrintItemCollection libraryCollection;
+        public bool ShowTimestamp;
 
         public static PrintHistoryListControl Instance
         {
@@ -129,8 +129,14 @@ namespace MatterHackers.MatterControl.PrintHistory
         IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
         {
             string query;
-            query = string.Format("SELECT * FROM PrintTask ORDER BY PrintStart DESC LIMIT {0};", recordCount);
-            //query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name DESC;", libraryCollection.Id);
+            if (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true")
+            {                
+                query = string.Format("SELECT * FROM PrintTask WHERE PrintComplete = 1 ORDER BY PrintStart DESC LIMIT {0};", recordCount);
+            }
+            else
+            {
+                query = string.Format("SELECT * FROM PrintTask ORDER BY PrintStart DESC LIMIT {0};", recordCount);
+            }
             IEnumerable<DataStorage.PrintTask> result = (IEnumerable<DataStorage.PrintTask>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintTask>(query);
             return result;
         }
@@ -148,7 +154,7 @@ namespace MatterHackers.MatterControl.PrintHistory
             {
                 foreach (PrintTask part in partFiles)
                 {
-                    PrintHistoryListControl.Instance.AddChild(new PrintHistoryListItem(part));
+                    PrintHistoryListControl.Instance.AddChild(new PrintHistoryListItem(part, ShowTimestamp));
                 }
             }
         }
@@ -169,6 +175,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         public PrintHistoryListControl()
         {
+            ShowTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
+            
             SetDisplayAttributes();
             ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 

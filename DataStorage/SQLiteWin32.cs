@@ -1973,7 +1973,11 @@ namespace SQLiteWin32
             if (SQLite3.Step(stmt) == SQLite3.Result.Row)
             {
                 var colType = SQLite3.ColumnType(stmt, 0);
-                val = (T)ReadCol(stmt, 0, colType, typeof(T));
+                //Check for null columns
+                if (colType != SQLiteWin32.SQLite3.ColType.Null)
+                {
+                    val = (T)ReadCol(stmt, 0, colType, typeof(T));
+                }
             }
             Finalize(stmt);
 

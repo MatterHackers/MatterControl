@@ -71,12 +71,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
     }
 
-    public class View3DTransformPart : PartPreviewBaseWidget
+    public class View3DTransformPart : PartPreview3DWidget
     {
-        MeshViewerWidget meshViewerWidget;
-        Cover buttonRightPanelDisabledCover;
-        FlowLayoutWidget buttonRightPanel;
-
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
         FlowLayoutWidget scaleOptionContainer;
@@ -84,16 +80,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         ProgressControl processingProgressControl;
         FlowLayoutWidget enterEditButtonsContainer;
         FlowLayoutWidget doEdittingButtonsContainer;
-        RadioButton rotateViewButton;
-        GuiWidget viewControlsSeparator;
-        RadioButton partSelectButton;
         bool OpenAddDialogWhenDone = false;
 
         Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
-
-        CheckBox showBedCheckBox;
-        CheckBox showBuildVolumeCheckBox;
-        CheckBox showWireframeCheckBox;
 
         CheckBox expandViewOptions;
         CheckBox expandRotateOptions;
@@ -104,8 +93,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		Button saveAsButton;
         Button closeButton;
         Button applyScaleButton;
-
-		SaveAsWindow saveAs;
 
         PrintItemWrapper printItemWrapper;
 
@@ -426,7 +413,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AnchorAll();
 
             meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-            AddViewControls();
+            Add3DViewControls();
+            viewControlsSeparator.Visible = false;
+            partSelectButton.Visible = false;
 
             AddHandlers();
 
@@ -517,7 +506,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 List<Vertex> faceVertices = new List<Vertex>();
                 foreach (FaceEdge faceEdgeToAdd in face.FaceEdgeIterator())
                 {
-                    Vertex newVertex = copyMesh.CreateVertex(faceEdgeToAdd.vertex.Position, true);
+                    Vertex newVertex = copyMesh.CreateVertex(faceEdgeToAdd.firstVertex.Position, true);
                     faceVertices.Add(newVertex);
                 }
 
@@ -894,62 +883,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             processingProgressControl.PercentComplete = e.ProgressPercentage;
         }
 
-        void AddViewControls()
-        {
-            FlowLayoutWidget transformTypeSelector = new FlowLayoutWidget();
-            transformTypeSelector.BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-            textImageButtonFactory.FixedHeight = 20;
-            textImageButtonFactory.FixedWidth = 20;
-            string rotateIconPath = Path.Combine("Icons", "ViewTransformControls", "rotate.png");
-            rotateViewButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
-            rotateViewButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(rotateViewButton);
-            rotateViewButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-            };
-
-            string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
-            RadioButton translateButton = textImageButtonFactory.GenerateRadioButton("", translateIconPath);
-            translateButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(translateButton);
-            translateButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
-            };
-
-            string scaleIconPath = Path.Combine("Icons", "ViewTransformControls", "scale.png");
-            RadioButton scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
-            scaleButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(scaleButton);
-            scaleButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
-            };
-
-            viewControlsSeparator = new GuiWidget(2, 32);
-            viewControlsSeparator.Visible = false;
-            viewControlsSeparator.BackgroundColor = RGBA_Bytes.White;
-            viewControlsSeparator.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(viewControlsSeparator);
-
-            string partSelectIconPath = Path.Combine("Icons", "ViewTransformControls", "partSelect.png");
-            partSelectButton = textImageButtonFactory.GenerateRadioButton("", partSelectIconPath);
-            partSelectButton.Visible = false;
-            partSelectButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(partSelectButton);
-            partSelectButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
-            };
-
-            transformTypeSelector.Margin = new BorderDouble(5);
-            transformTypeSelector.HAnchor |= Agg.UI.HAnchor.ParentLeft;
-            transformTypeSelector.VAnchor = Agg.UI.VAnchor.ParentTop;
-            AddChild(transformTypeSelector);
-            rotateViewButton.Checked = true;
-        }
-
         private void CreateOptionsContent()
         {
             AddRotateControls(rotateOptionContainer);
@@ -1000,6 +933,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     AddMirrorControls(mirrorOptionContainer);
                 }
 
+#if false // this is not finished yet so it is in here for reference in case we do finish it. LBB 2014/04/04
                 // put in the part info display
                 if(false)
                 {
@@ -1034,6 +968,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     zSizeInfo.AutoExpandBoundsToText = true;
                     PartInfoOptionContainer.AddChild(zSizeInfo);
                 }
+#endif
 
                 // put in the view options
                 {
@@ -1045,22 +980,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     viewOptionContainer.HAnchor = HAnchor.ParentLeftRight;
                     viewOptionContainer.Visible = false;
                     {
-						showBedCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(LocalizedString.Get("Show Print Bed"));
+                        CheckBox showBedCheckBox = new CheckBox(LocalizedString.Get("Show Print Bed"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                         showBedCheckBox.Checked = true;
-                        showBedCheckBox.Margin = buttonMargin;
+                        showBedCheckBox.CheckedStateChanged += (sender, e) =>
+                        {
+                            meshViewerWidget.RenderBed = showBedCheckBox.Checked;
+                        };
                         viewOptionContainer.AddChild(showBedCheckBox);
-
+                        
                         if (buildHeight > 0)
                         {
-							showBuildVolumeCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(LocalizedString.Get("Show Print Area"));
+                            CheckBox showBuildVolumeCheckBox = new CheckBox(LocalizedString.Get("Show Print Area"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                             showBuildVolumeCheckBox.Checked = false;
-                            showBuildVolumeCheckBox.Margin = buttonMargin;
+                            showBuildVolumeCheckBox.CheckedStateChanged += (sender, e) =>
+                            {
+                                meshViewerWidget.RenderBuildVolume = showBuildVolumeCheckBox.Checked;
+                            };
                             viewOptionContainer.AddChild(showBuildVolumeCheckBox);
                         }
 
-						showWireframeCheckBox = checkboxButtonFactory.GenerateCheckBoxButton(LocalizedString.Get("Show Wireframe"));
-                        showWireframeCheckBox.Margin = buttonMargin;
-                        viewOptionContainer.AddChild(showWireframeCheckBox);
+                        viewOptionContainer.AddChild(CreateRenderTypeDropDownMenu());
                     }
                     buttonRightPanel.AddChild(viewOptionContainer);
                 }
@@ -1112,8 +1051,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
             scaleRatioContainer.Padding = new BorderDouble(5);
 
-			string scaleRatioLblTxt = LocalizedString.Get("Ratio");
-			string scaleRatioLblTxtFull = "{0}:".FormatWith(scaleRatioLblTxt);
+            string scaleRatioLblTxt = LocalizedString.Get("Ratio");
+            string scaleRatioLblTxtFull = "{0}:".FormatWith(scaleRatioLblTxt);
             TextWidget scaleRatioLabel = new TextWidget(scaleRatioLblTxtFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
             scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
             scaleRatioContainer.AddChild(scaleRatioLabel);
@@ -1145,7 +1084,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 ApplyScaleFromEditField();
             };
 
-			DropDownMenu presetScaleMenu = new DropDownMenu(LocalizedString.Get("Conversions"), Direction.Down);
+            buttonPanel.AddChild(CreateScaleDropDownMenu());
+
+            applyScaleButton = whiteButtonFactory.Generate(LocalizedString.Get("Apply Scale"), centerText: true);
+            applyScaleButton.Visible = false;
+            applyScaleButton.Cursor = Cursors.Hand;
+            buttonPanel.AddChild(applyScaleButton);
+
+            scaleControls.Add(applyScaleButton);
+            applyScaleButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            {
+                ApplyScaleFromEditField();
+            };
+
+            buttonPanel.AddChild(generateHorizontalRule());
+        }
+
+        private DropDownMenu CreateScaleDropDownMenu()
+        {
+            DropDownMenu presetScaleMenu = new DropDownMenu(LocalizedString.Get("Conversions"), Direction.Down);
             RectangleDouble presetBounds = presetScaleMenu.LocalBounds;
             presetBounds.Inflate(new BorderDouble(5, 10, 10, 10));
             presetScaleMenu.LocalBounds = presetBounds;
@@ -1156,10 +1113,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             presetScaleMenu.AddItem("in to mm (25.4)");
             presetScaleMenu.AddItem("mm to cm (.1)");
             presetScaleMenu.AddItem("cm to mm (10)");
-			string resetLbl = LocalizedString.Get ("reset");
-			string resetLblFull = "{0} (1)".FormatWith(resetLbl);
-			presetScaleMenu.AddItem(resetLblFull);
-
+            string resetLable = LocalizedString.Get("reset");
+            string resetLableFull = "{0} (1)".FormatWith(resetLable);
+            presetScaleMenu.AddItem(resetLableFull);
 
             presetScaleMenu.SelectionChanged += (sender, e) =>
             {
@@ -1187,20 +1143,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 ApplyScaleFromEditField();
             };
 
-            buttonPanel.AddChild(presetScaleMenu);
+            return presetScaleMenu;
+        }
 
-			applyScaleButton = whiteButtonFactory.Generate(LocalizedString.Get("Apply Scale"), centerText: true);
-            applyScaleButton.Visible = false;
-            applyScaleButton.Cursor = Cursors.Hand;
-            buttonPanel.AddChild(applyScaleButton);
+        private DropDownMenu CreateRenderTypeDropDownMenu()
+        {
+            DropDownMenu renderTypeMenu = new DropDownMenu(LocalizedString.Get("Render Type"), Direction.Down);
+            RectangleDouble presetBounds = renderTypeMenu.LocalBounds;
+            presetBounds.Inflate(new BorderDouble(5, 10, 10, 10));
+            renderTypeMenu.LocalBounds = presetBounds;
+            renderTypeMenu.MenuAsWideAsItems = false;
+            renderTypeMenu.HAnchor |= HAnchor.ParentLeftRight;
 
-            scaleControls.Add(applyScaleButton);
-            applyScaleButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            renderTypeMenu.AddItem("Shaded".Localize());
+            renderTypeMenu.AddItem("Outlines".Localize());
+            renderTypeMenu.AddItem("Polygons".Localize());
+
+            renderTypeMenu.SelectionChanged += (sender, e) =>
             {
-                ApplyScaleFromEditField();
+                switch (renderTypeMenu.SelectedIndex)
+                {
+                    case 0:
+                        meshViewerWidget.RenderType = MeshViewerWidget.RenderTypes.Shaded;
+                        break;
+                    case 1:
+                        meshViewerWidget.RenderType = MeshViewerWidget.RenderTypes.Outlines;
+                        break;
+                    case 2:
+                        meshViewerWidget.RenderType = MeshViewerWidget.RenderTypes.Polygons;
+                        break;
+                }
             };
 
-            buttonPanel.AddChild(generateHorizontalRule());
+            return renderTypeMenu;
         }
 
         private GuiWidget generateHorizontalRule()
@@ -1437,18 +1412,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void AddHandlers()
         {
             closeButton.Click += new ButtonBase.ButtonEventHandler(onCloseButton_Click);
-            showBedCheckBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(bedCheckBox_CheckedStateChanged);
-            if (showBuildVolumeCheckBox != null)
-            {
-                showBuildVolumeCheckBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(buildVolumeCheckBox_CheckedStateChanged);
-            }
-            showWireframeCheckBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(wireframeCheckBox_CheckedStateChanged);
 
             expandViewOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandViewOptions_CheckedStateChanged);
             expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
             expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
-
-
 
 			saveAsButton.Click += (sender, e) => 
 			{
@@ -1550,11 +1517,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             scaleOptionContainer.Visible = expandScaleOptions.Checked;
         }
 
-        void buildVolumeCheckBox_CheckedStateChanged(object sender, EventArgs e)
-        {
-            meshViewerWidget.RenderBuildVolume = showBuildVolumeCheckBox.Checked;
-        }
-
         bool scaleQueueMenu_Click()
         {
             return true;
@@ -1563,16 +1525,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         bool rotateQueueMenu_Click()
         {
             return true;
-        }
-
-        void wireframeCheckBox_CheckedStateChanged(object sender, EventArgs e)
-        {
-            meshViewerWidget.ShowWireFrame = showWireframeCheckBox.Checked;
-        }
-
-        void bedCheckBox_CheckedStateChanged(object sender, EventArgs e)
-        {
-            meshViewerWidget.RenderBed = showBedCheckBox.Checked;
         }
 
         private void onCloseButton_Click(object sender, EventArgs e)

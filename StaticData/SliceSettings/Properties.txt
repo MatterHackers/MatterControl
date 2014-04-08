@@ -1,7 +1,7 @@
 avoid_crossing_perimeters|Avoid Crossing Perimeters|CHECK_BOX||Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
 bed_shape|Bed Shape|LIST|rectangular,circular|The shape of the physical print bed.
 bed_size|Bed Size|VECTOR2|mm|The size of the print bed.
-bed_temperature|Bed Other Layers|POSITIVE_DOUBLE|degrees|The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
+bed_temperature|Bed Temperature|POSITIVE_DOUBLE|degrees|The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
 bottom_clip_amount|Bottom Clip|POSITIVE_DOUBLE|mm|The amount to remove from the bottom of the model
 bottom_solid_layers|Number of Solid Layers\n on the Bottom:|INT||How many layers will be solid filled on the bottom surfaces of the object.
 bridge_acceleration|Bridge|POSITIVE_DOUBLE|mm/s²|Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
@@ -11,9 +11,11 @@ bridge_speed|Bridges|POSITIVE_DOUBLE|mm/s|The speed to move when bridging betwee
 brim_width|Brim Width|POSITIVE_DOUBLE|mm|The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
 build_height|Build Height|POSITIVE_DOUBLE|mm|The height of the printable area. If set to 0 the parts height will not be validated.
 cancel_gcode|Cancel G-Code|MULTI_LINE_TEXT||This gcode will be inserted when the print is canceled.
+center_part_on_bed|Center On Bed|CHECK_BOX||This will cause the print to be centered on the bed. Disable this if you know your models have been created where you want them to print.
 complete_objects|Complete Individual Objects|CHECK_BOX||Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
 cool_extruder_lift|Enable Extruder Lift|CHECK_BOX||Moves the extruder up off the part to allow cooling.
 cooling|Enable Auto Cooling|CHECK_BOX||Turns on and off all cooling settings (all settings below this one).
+create_raft|Create Raft|CHECK_BOX||Turns on and off the creation of a raft which can help parts adhear to the bed.
 default_acceleration|Default|POSITIVE_DOUBLE|mm/s²|Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
 disable_fan_first_layers|Disable Fan For The First|INT|Layers|The number of layers for which the fan will be forced to remain off.
 end_gcode|End G-Code|MULTI_LINE_TEXT|| This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
@@ -115,9 +117,10 @@ support_material_speed|Support Material|POSITIVE_DOUBLE|mm/s|The speed to print 
 support_material_threshold|Overhang Threshold|POSITIVE_DOUBLE|degrees|The last angle at which support material will be generated. Larger numbers will result in more support.
 support_material_xy_distance|X and Y Distance|POSITIVE_DOUBLE|mm|The distance the support material will be from the object in the x and y direction.
 support_material_z_distance|Z Distance|POSITIVE_DOUBLE|mm|The distance the support material will be from the object in the z direction.
+support_material_z_gap_layers|Z Gap|INT||The number of layers to skip in z. The gap between the support and the model.
 support_material|Generate Support Material|CHECK_BOX||This turns on and off the generation of support material.
-support_type|Support Type|LIST|NONE, GRID, LINES|The type of support to create for surfaces that need it.
-temperature|Extruder Other Layers|POSITIVE_DOUBLE|degrees|The temperature to set the extruder to after the first layer has been printed.
+support_type|Support Type|LIST|GRID,LINES|The type of support to create for surfaces that need it.
+temperature|Extruder Temperature|POSITIVE_DOUBLE|degrees|The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
 thin_walls|Thin Walls|CHECK_BOX||Detect when walls are too close together and need to be extruded as just one wall.
 threads|Threads|INT||The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 toolchange_gcode|Tool Change G-Code|MULTI_LINE_TEXT||This gcode will be inserted after every tool change.
@@ -129,5 +132,5 @@ use_firmware_retraction|Use Firmware Retraction|CHECK_BOX||Request the firmware 
 use_relative_e_distances|Use Relative E Distances|CHECK_BOX||Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 vibration_limit|Vibration Limit|INT|Hz|This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 wipe|Wipe Before Retract|CHECK_BOX||This will cause the extruder to move while retracting to minimize blobs.
-wipe_shield_distance|Wipe Shield Dist|POSITIVE_DOUBLE|mm|If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+wipe_shield_distance|Wipe Shield Distance|POSITIVE_DOUBLE|mm|If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
 z_offset|Z Offset|OFFSET|mm|This value will be added to all of the z positions of the created gcode.

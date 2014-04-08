@@ -10,6 +10,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -50,6 +51,11 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 ImageBuffer wattermarkImage = new ImageBuffer();
                 ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);
+                //if (!ActiveTheme.Instance.IsDarkTheme)
+                //{
+                //    InvertLightness.DoInvertLightness(wattermarkImage);
+                //}
+
                 GuiWidget watermarkWidget = new ImageWidget(wattermarkImage);
                 watermarkWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 watermarkWidget.HAnchor = Agg.UI.HAnchor.ParentCenter;

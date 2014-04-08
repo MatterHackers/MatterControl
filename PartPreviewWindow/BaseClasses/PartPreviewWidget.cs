@@ -45,14 +45,23 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class PartPreviewBaseWidget : GuiWidget
+    public class PartPreviewWidget : GuiWidget
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory checkboxButtonFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory expandMenuOptionFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
 
-        public PartPreviewBaseWidget()
+        protected RadioButton partSelectButton;
+        protected RadioButton translateButton;
+        protected RadioButton rotateViewButton;
+        protected RadioButton scaleButton;
+        protected GuiWidget viewControlsSeparator;
+
+        protected Cover buttonRightPanelDisabledCover;
+        protected FlowLayoutWidget buttonRightPanel;
+
+        public PartPreviewWidget()
         {
             textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -73,6 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandMenuOptionFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 50);
             expandMenuOptionFactory.pressedFillColor = new RGBA_Bytes(255, 255, 255, 50);
             expandMenuOptionFactory.disabledFillColor = new RGBA_Bytes(255, 255, 255, 50);
+            
 
             checkboxButtonFactory.fontSize = 11;
             checkboxButtonFactory.FixedWidth = 138;
@@ -92,6 +102,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             checkboxButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             BackgroundColor = RGBA_Bytes.White;
+        }
+
+        protected void Add2DViewControls()
+        {
+            TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
+            iconTextImageButtonFactory.AllowThemeToAdjustImage = false;
+
+            FlowLayoutWidget transformTypeSelector = new FlowLayoutWidget();
+            transformTypeSelector.BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
+            iconTextImageButtonFactory.FixedHeight = 20;
+            iconTextImageButtonFactory.FixedWidth = 20;
+
+            string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
+            translateButton = iconTextImageButtonFactory.GenerateRadioButton("", translateIconPath);
+            translateButton.Margin = new BorderDouble(3);
+            transformTypeSelector.AddChild(translateButton);
+
+            string scaleIconPath = Path.Combine("Icons", "ViewTransformControls", "scale.png");
+            scaleButton = iconTextImageButtonFactory.GenerateRadioButton("", scaleIconPath);
+            scaleButton.Margin = new BorderDouble(3);
+            transformTypeSelector.AddChild(scaleButton);
+
+            transformTypeSelector.Margin = new BorderDouble(5);
+            transformTypeSelector.HAnchor |= Agg.UI.HAnchor.ParentLeft;
+            transformTypeSelector.VAnchor = Agg.UI.VAnchor.ParentTop;
+            AddChild(transformTypeSelector);
+            translateButton.Checked = true;
         }
     }
 }

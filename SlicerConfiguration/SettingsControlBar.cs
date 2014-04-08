@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2014, Kevin Pope
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +44,38 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+    public class EnhancedSettingsControlBar : FlowLayoutWidget
+    {   
+        public EnhancedSettingsControlBar()
+        {                     
+            this.HAnchor = HAnchor.ParentLeftRight;
+            //this.AddChild(GetSliceEngineContainer());
+            this.AddChild(new SliceEngineSelector("Slice Engine".Localize(), RGBA_Bytes.YellowGreen));
+            this.AddChild(new GuiWidget(8, 0));
+            this.AddChild(new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Yellow, "material"));
+            this.AddChild(new GuiWidget(8, 0));
+            this.AddChild(new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Orange, "quality"));
+            //this.AddChild(new GuiWidget(6, 0));
+            //this.AddChild(new SliceSelectorWidget("Item", RGBA_Bytes.Violet)); 
+            this.Height = 70;
+        }
+
+        event EventHandler unregisterEvents;
+        void AddHandlers()
+        {
+            //
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+    }
+    
     public class SettingsControlBar : FlowLayoutWidget
     {
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
@@ -23,14 +84,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         Button saveButton;
         Button revertbutton;
 
-        public DropDownMenu SliceOptionsMenuDropList;
+        public DropDownMenu sliceOptionsMenuDropList;
         private TupleList<string, Func<bool>> slicerOptionsMenuItems;
-
-        public StyledDropDownList EngineMenuDropList;
-        private TupleList<string, Func<bool>> engineOptionsMenuItems = new TupleList<string,Func<bool>>();
         
         public SettingsControlBar()
-            : base(FlowDirection.RightToLeft)
+            : base(FlowDirection.TopToBottom)
         {
             SetDisplayAttributes();
             AddChildElements();
@@ -41,20 +99,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {            
             this.HAnchor |= HAnchor.ParentLeftRight;
             this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-            this.Padding = new BorderDouble(3,3,3,6);
-            this.FlowDirection = FlowDirection.LeftToRight;
-            this.Height = 50;
+            this.Padding = new BorderDouble(6,10,6,5);
         }
 
         void AddChildElements()
         {
+            EnhancedSettingsControlBar topRow = new EnhancedSettingsControlBar();
+            FlowLayoutWidget bottomRow = new FlowLayoutWidget();
+
+            bottomRow.HAnchor = HAnchor.ParentLeftRight;
+            bottomRow.Margin = new BorderDouble(bottom:4);
+
             FlowLayoutWidget settingsStatusLabelContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             settingsStatusLabelContainer.VAnchor |= VAnchor.ParentTop;
             settingsStatusLabelContainer.Margin = new BorderDouble(0);
-            {
-				string activeSettingsLabelText = LocalizedString.Get ("Active Settings").ToUpper();
+            {   
+                string activeSettingsLabelText = LocalizedString.Get ("Active Settings").ToUpper();
 				string activeSettingsLabelTextFull = string.Format ("{0}:", activeSettingsLabelText);
-
 
 				TextWidget settingsStatusLabel = new TextWidget(string.Format(activeSettingsLabelTextFull), pointSize: 10);
                 settingsStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -87,81 +148,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             revertbutton.VAnchor = VAnchor.ParentTop;
             revertbutton.Visible = false;
             revertbutton.Margin = new BorderDouble(0,0,0,10);
-            revertbutton.Click += new ButtonBase.ButtonEventHandler(revertbutton_Click);
-
-			SliceOptionsMenuDropList = new DropDownMenu(LocalizedString.Get("Options   "));
-            SliceOptionsMenuDropList.Margin = new BorderDouble(top: 11);
-            SliceOptionsMenuDropList.VAnchor |= VAnchor.ParentTop;
-            SliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
-            SliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
-            SliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
-            SliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
-            this.SliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
-
-            SetMenuItems();
-
-            FlowLayoutWidget sliceEngineContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            sliceEngineContainer.Margin = new BorderDouble(0,0,10,0);
-            sliceEngineContainer.VAnchor |= VAnchor.ParentTop;
-            {
-                string sliceEngineLabelText = LocalizedString.Get("Slice Engine").ToUpper();
-				string sliceEngineLabelTextFull = string.Format ("{0}:", sliceEngineLabelText);
-				TextWidget sliceEngineLabel = new TextWidget(string.Format(sliceEngineLabelTextFull), pointSize: 10);
-                sliceEngineLabel.Margin = new BorderDouble(0);
-                sliceEngineLabel.HAnchor = HAnchor.ParentLeft;
-                sliceEngineLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                
-                EngineMenuDropList = CreateSliceEngineDropdown();                
-
-                sliceEngineContainer.AddChild(sliceEngineLabel);
-                sliceEngineContainer.AddChild(EngineMenuDropList);
-            }
-
-            this.AddChild(sliceEngineContainer);
-            this.AddChild(settingsStatusLabelContainer);
+            revertbutton.Click += new ButtonBase.ButtonEventHandler(revertbutton_Click);		
+            
+            bottomRow.AddChild(settingsStatusLabelContainer);
 
             GuiWidget spacer = new GuiWidget(HAnchor.ParentLeftRight);
-            this.AddChild(spacer);
+            bottomRow.AddChild(spacer);
 
-            this.AddChild(saveButton);
-            this.AddChild(revertbutton);
-            this.AddChild(SliceOptionsMenuDropList);
+            bottomRow.AddChild(saveButton);
+            bottomRow.AddChild(revertbutton);
+            bottomRow.AddChild(GetSliceOptionsMenuDropList());
+
+            this.AddChild(bottomRow);
+            this.AddChild(topRow);
 
             SetStatusDisplay();
         }
 
-        StyledDropDownList CreateSliceEngineDropdown()
+        DropDownMenu GetSliceOptionsMenuDropList()
         {
-            StyledDropDownList engineMenuDropList = new StyledDropDownList("Engine   ");
-            engineMenuDropList.Margin = new BorderDouble(top: 3, left:0);
+            if (sliceOptionsMenuDropList == null)
             {
-                MenuItem slic3rMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.Slic3r.ToString());
-                slic3rMenuItem.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
-                    ApplicationWidget.Instance.ReloadBackPanel();
-                };
+                sliceOptionsMenuDropList = new DropDownMenu(LocalizedString.Get("Options   "));
+                sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
+                sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
+                sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+                sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
+                sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
 
-                MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.CuraEngine.ToString());
-                curaEnginMenuItem.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
-                    ApplicationWidget.Instance.ReloadBackPanel();
-                };
-
-                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.MatterSlice.ToString());
-                matterSliceMenuItem.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
-                    ApplicationWidget.Instance.ReloadBackPanel();
-                };
-
-                engineMenuDropList.SelectedValue = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
+                SetMenuItems();
             }
-            engineMenuDropList.MinimumSize = new Vector2(engineMenuDropList.LocalBounds.Width, engineMenuDropList.LocalBounds.Height);
-            return engineMenuDropList;
-        }
 
+            return sliceOptionsMenuDropList;
+        }
 
         event EventHandler unregisterEvents;
         void AddHandlers()
@@ -178,81 +197,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             base.OnClosed(e);
         }
 
-        void MenuDropList_SelectionChanged(object sender, EventArgs e)
-        {
-            string menuSelection = ((DropDownMenu)sender).SelectedValue;
-            foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-            {
-                // if the menu we selecti is this one
-                if (item.Item1 == menuSelection)
-                {
-                    // call its function
-                    item.Item2();
-                }
-            }
-        }
-
-        void EngineMenuDropList_SelectionChanged(object sender, EventArgs e)
-        {
-            string menuSelection = ((DropDownMenu)sender).SelectedValue;
-            foreach (Tuple<string, Func<bool>> item in engineOptionsMenuItems)
-            {
-                // if the menu we selecti is this one
-                if (item.Item1 == menuSelection)
-                {
-                    // call its function
-                    item.Item2();
-                }
-            }
-        }
-
-        void SetMenuItems()
-        {
-			string importTxt = LocalizedString.Get ("Import");
-			string importTxtFull = string.Format ("{0}", importTxt);
-			string exportTxt = LocalizedString.Get("Export");
-			string exportTxtFull = string.Format ("{0}", exportTxt);
-            //Set the name and callback function of the menu items
-            slicerOptionsMenuItems = new TupleList<string, Func<bool>> 
-            {
-				{importTxtFull, ImportQueueMenu_Click},
-				{exportTxtFull, ExportQueueMenu_Click},
-            };
-
-            //Add the menu items to the menu itself
-            foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-            {
-                SliceOptionsMenuDropList.AddItem(item.Item1);
-            }
-        }
-
-        bool ImportQueueMenu_Click()
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                bool goodLoad = ActiveSliceSettings.Instance.LoadSettingsFromIni();
-                if (goodLoad)
-                {
-                    ApplicationWidget.Instance.ReloadBackPanel();
-                }
-            });
-
-            return true;
-        }
-
-        bool ExportQueueMenu_Click()
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                ActiveSliceSettings.Instance.SaveAs();
-            });
-            return true;
-        }
-
         void onCommitStatusChanged(object sender, EventArgs e)
         {
             SetStatusDisplay();
         }
+
 
         void SetStatusDisplay()
         {            
@@ -290,6 +239,63 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             ActiveSliceSettings.Instance.LoadSettingsForPrinter();
             ApplicationWidget.Instance.ReloadBackPanel();
+        }
+
+        void MenuDropList_SelectionChanged(object sender, EventArgs e)
+        {
+            string menuSelection = ((DropDownMenu)sender).SelectedValue;
+            foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
+            {
+                // if the menu we selecti is this one
+                if (item.Item1 == menuSelection)
+                {
+                    // call its function
+                    item.Item2();
+                }
+            }
+        }
+
+        void SetMenuItems()
+        {
+            string importTxt = LocalizedString.Get("Import");
+            string importTxtFull = string.Format("{0}", importTxt);
+            string exportTxt = LocalizedString.Get("Export");
+            string exportTxtFull = string.Format("{0}", exportTxt);
+            //Set the name and callback function of the menu items
+            slicerOptionsMenuItems = new TupleList<string, Func<bool>> 
+            {
+				{importTxtFull, ImportQueueMenu_Click},
+				{exportTxtFull, ExportQueueMenu_Click},
+            };
+
+            //Add the menu items to the menu itself
+            foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
+            {
+                sliceOptionsMenuDropList.AddItem(item.Item1);
+            }
+        }
+
+        bool ImportQueueMenu_Click()
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                bool goodLoad = ActiveSliceSettings.Instance.LoadSettingsFromIni();
+                if (goodLoad)
+                {
+                    ApplicationWidget.Instance.ReloadBackPanel();
+                }
+            });
+
+            return true;
+        }
+
+        bool ExportQueueMenu_Click()
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                ActiveSliceSettings.Instance.SaveAs();
+            });
+            return true;
         }
     }
 }

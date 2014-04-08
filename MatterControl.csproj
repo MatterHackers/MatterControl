@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -57,7 +57,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
@@ -75,21 +75,28 @@
     <Compile Include="ApplicationView\QueueTabs.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
+    <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
+    <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
     <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
     <Compile Include="ConfigurationPage\ConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
     <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
+    <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
     <Compile Include="PrintHistory\PrintHistoryListControl.cs" />
     <Compile Include="PrintHistory\PrintHistoryListItem.cs" />
     <Compile Include="PrintHistory\PrintHistoryWidget.cs" />
+    <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
+    <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetDetailWidget.cs" />
+    <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetListWidget.cs" />
+    <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
-    <Compile Include="PartPreviewWindow\PartPreviewBaseWidget.cs" />
+    <Compile Include="PartPreviewWindow\BaseClasses\PartPreviewWidget.cs" />
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
     <Compile Include="PartPreviewWindow\ProgressControl.cs" />
     <Compile Include="PartPreviewWindow\View3DTransfromPart.cs" />
@@ -103,7 +110,6 @@
     <Compile Include="PrintLibrary\PluginChooserWindow.cs" />
     <Compile Include="PrintLibrary\ExportLibraryItemWindow.cs" />
     <Compile Include="PrintLibrary\RegisteredCreators.cs" />
-    <Compile Include="PrintQueue\ExportToSdCardProcess.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingCura.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
@@ -254,6 +260,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\agg-sharp\clipper_library\clipper_library.csproj">
+      <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
+      <Name>clipper_library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\agg-sharp\Csg\Csg.csproj">
       <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
       <Name>Csg</Name>
@@ -337,10 +347,6 @@
     <ProjectReference Include="..\agg-sharp\Agg\Agg.csproj">
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MatterSlice\clipper_library\clipper_library.csproj">
-      <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
-      <Name>clipper_library</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

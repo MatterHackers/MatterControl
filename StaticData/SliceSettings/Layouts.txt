@@ -16,6 +16,8 @@ Beginner
       Support Material
         support_material
         support_type
+      Raft
+        create_raft
   Filament
     Filament
       Filament
@@ -110,6 +112,7 @@ Advanced
         support_material_threshold
         support_material_enforce_layers
       Raft
+        create_raft
         raft_layers
       Options
         support_material_pattern
@@ -119,18 +122,16 @@ Advanced
         support_material_interface_spacing
         support_material_xy_distance
         support_material_z_distance
+        support_material_z_gap_layers
         support_material_create_internal_support
     Notes
       Notes
         notes
     Output Options
-<<<<<<< HEAD
-=======
       Center Print
         center_part_on_bed
       Wipe Shield
         wipe_shield_distance
->>>>>>> e08d49595f6bbaa525105c5a4defd1ec3f36d56b
       Sequential Printing
         complete_objects
         extruder_clearance_height

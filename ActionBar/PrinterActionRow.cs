@@ -46,13 +46,13 @@ namespace MatterHackers.MatterControl.ActionBar
         protected override void AddChildElements()
         {
             actionBarButtonFactory.invertImageLocation = false;
-            string connectString = LocalizedString.Get("CONNECT");
+            string connectString = "CONNECT".Localize();
             connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
             connectPrinterButton.Margin = new BorderDouble(0, 0, 3);
             connectPrinterButton.VAnchor = VAnchor.ParentCenter;
             connectPrinterButton.Cursor = Cursors.Hand;
 
-            string disconnectString = LocalizedString.Get("DISCONNECT");
+            string disconnectString = "DISCONNECT".Localize();
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
             disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3);
             disconnectPrinterButton.VAnchor = VAnchor.ParentCenter;

@@ -199,16 +199,16 @@ namespace MatterHackers.MatterControl
             manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
 
             //Add the tab contents for 'Advanced Controls'
-            string printerControlsLabel = LocalizedString.Get("CONTROLS");
+            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 16,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string sliceSettingsLabel = LocalizedString.Get("SLICE SETTINGS");
+            string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string configurationLabel = LocalizedString.Get("CONFIGURATION");
+            string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new ConfigurationPage();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl
             ColumnOne.AddChild(new ActionBarPlus());
             ColumnOne.AddChild(new PrintProgressBar());
             ColumnOne.AddChild(new QueueTab());
-            ColumnOne.Width = 480; //Ordering here matters - must go after children are added                      
+            ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
         }
 
         void LoadColumnThree()
@@ -320,6 +320,7 @@ namespace MatterHackers.MatterControl
             }
             else if (this.Width < ColumnTwoMinWidth && !ColThreeIsHidden)
             {
+                //Queue column and advanced controls columns show
                 if (UiState != 1)
                 {
                     UiState = 1;
@@ -330,6 +331,7 @@ namespace MatterHackers.MatterControl
                     ColumnTwo.Visible = !!ColTwoIsHidden;
                     ColumnThree.Visible = !ColThreeIsHidden;
                     ColumnOne.Visible = true;
+                    ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                     Padding = new BorderDouble(4);
 
                     LeftBorderLine.Visible = false;
@@ -338,6 +340,7 @@ namespace MatterHackers.MatterControl
             }
             else if (ColTwoIsHidden)
             {
+                //Queue column and preview column shown                
                 if (UiState != 2)
                 {
                     UiState = 2;
@@ -358,6 +361,7 @@ namespace MatterHackers.MatterControl
             }
             else
             {
+                //All three columns shown
                 if (UiState != 3)
                 {
                     UiState = 3;
@@ -369,7 +373,7 @@ namespace MatterHackers.MatterControl
                     ColumnTwo.Visible = !ColTwoIsHidden;
 
                     ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                    ColumnOne.Width = 480;
+                    ColumnOne.Width = 500;
                     Padding = new BorderDouble(4);
 
                     ColumnOne.Visible = true;

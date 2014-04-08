@@ -34,12 +34,16 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
     public class SliceSettingsWidget : GuiWidget
     {
+        const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
+        const string SliceSettingsLevelEntry = "SliceSettingsLevel";
+
         public class UiState
         {
             public class WhichItem
@@ -48,8 +52,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 public string name = "";
             }
 
-            public string userLevel = "Beginner";
-            public bool showHelp = false;
             public WhichItem selectedCategory = new WhichItem();
             public WhichItem selectedGroup = new WhichItem();
 
@@ -59,8 +61,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             public UiState(SliceSettingsWidget settingsToCopy)
             {
-				showHelp = settingsToCopy.ShowingHelp;
-                userLevel = settingsToCopy.UserLevel;
                 settingsToCopy.CurrentlyActiveCategory(out selectedCategory.index, out selectedCategory.name);
                 settingsToCopy.CurrentlyActiveGroup(out selectedGroup.index, out selectedGroup.name);
             }
@@ -124,11 +124,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             int minSettingNameWidth = 220;
 
-			showHelpBox = new CheckBox(LocalizedString.Get("Show Help"));
-			showHelpBox.Checked = uiState.showHelp;
+            showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
+            showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
 
-			showAllDetails = new CheckBox(LocalizedString.Get("Show All Settings"));
-            showAllDetails.Checked = uiState.userLevel == "Advanced";
+			showAllDetails = new CheckBox(0, 0,LocalizedString.Get("Show All Settings"), textSize:10);
+            showAllDetails.Checked = UserSettings.Instance.get(SliceSettingsLevelEntry) == "Advanced";            
 
             FlowLayoutWidget pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: Agg.UI.VAnchor.ParentTop);
             pageTopToBottomLayout.AnchorAll();
@@ -242,6 +242,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void RebuildSlicerSettings(object sender, EventArgs e)
         {
+            UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
+            if(showAllDetails.Checked)
+            {
+                UserSettings.Instance.set(SliceSettingsLevelEntry, "Advanced");
+            }
+            else
+            {
+                UserSettings.Instance.set(SliceSettingsLevelEntry, "Beginner");
+            }
+            
             CheckBox checkBox = sender as CheckBox;
             if (checkBox != null)
             {
@@ -605,7 +615,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 MenuItem newItem = selectableOptions.AddItem(listItem);
                                 if (newItem.Text == sliceSettingValue)
                                 {
-                                    selectableOptions.SelectedValue = sliceSettingValue;
+                                    selectableOptions.SelectedLabel = sliceSettingValue;
                                 }
 
                                 newItem.Selected += (sender, e) =>

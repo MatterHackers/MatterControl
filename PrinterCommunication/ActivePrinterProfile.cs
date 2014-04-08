@@ -92,6 +92,82 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public int GetMaterialSetting(int extruderPosition)
+        {
+            int i = 0;
+            if (ActivePrinter != null)
+            {
+                string materialSettings = ActivePrinter.MaterialCollectionIds;
+                string[] materialSettingsList;
+                if (materialSettings != null)
+                {
+                    materialSettingsList = materialSettings.Split(',');
+                    if (materialSettingsList.Count() >= extruderPosition)
+                    {
+                        Int32.TryParse(materialSettingsList[extruderPosition - 1], out i);
+                    }
+                }
+                
+            }
+            return i;            
+        }
+
+        public void SetMaterialSetting(int extruderPosition, int settingId)
+        {
+            string[] newMaterialSettingsArray;
+            string[] currentMaterialSettingsArray;
+            
+            string materialSettings = ActivePrinter.MaterialCollectionIds;
+
+            if (materialSettings != null)
+            {
+                currentMaterialSettingsArray = materialSettings.Split(',');
+            }
+            else
+            {
+                currentMaterialSettingsArray = new string[extruderPosition];
+            }
+
+            //Resize the array of material settings if necessary
+            if (currentMaterialSettingsArray.Count() < extruderPosition)
+            {
+                newMaterialSettingsArray = new string[extruderPosition];
+                for (int i = 0; i < currentMaterialSettingsArray.Length; i++)
+                {                    
+                    newMaterialSettingsArray[i] = currentMaterialSettingsArray[i];
+                }
+            }
+            else
+            {
+                newMaterialSettingsArray = currentMaterialSettingsArray;
+            }
+            newMaterialSettingsArray[extruderPosition - 1] = settingId.ToString();
+
+            ActivePrinter.MaterialCollectionIds = String.Join(",", newMaterialSettingsArray);
+            ActivePrinter.Commit();
+        }
+
+        public int ActiveQualitySettingsID
+        {
+            get
+            {
+                if (ActivePrinter != null)
+                {
+                    return ActivePrinter.QualityCollectionId;
+                }
+                return 0;
+            }
+
+            set
+            {
+                if (ActiveQualitySettingsID != value)
+                {
+                    ActivePrinter.QualityCollectionId = value;
+                    ActivePrinter.Commit();
+                }
+            }
+        }
+
         public SlicingEngineTypes ActiveSliceEngineType
         {
             get
@@ -171,9 +247,9 @@ namespace MatterHackers.MatterControl
                     if (DoPrintLeveling)
                     {
                         PrintLeveling.Instance.SetPrintLevelingEquation(
-                            GetPrintLevelingProbePosition(0),
-                            GetPrintLevelingProbePosition(1),
-                            GetPrintLevelingProbePosition(2),
+                            GetPrintLevelingMeasuredPosition(0),
+                            GetPrintLevelingMeasuredPosition(1),
+                            GetPrintLevelingMeasuredPosition(2),
                             ActiveSliceSettings.Instance.PrintCenter);
                     }
                 }
@@ -181,16 +257,15 @@ namespace MatterHackers.MatterControl
         }
 
         /// <summary>
-        /// This function returns one of the three positions that will be probed when setting
-        /// up print leveling.
+        /// This function returns one of the three positions as it was actually measured
         /// </summary>
         /// <param name="position0To2"></param>
         /// <returns></returns>
-        public Vector3 GetPrintLevelingProbePosition(int position0To2)
+        public Vector3 GetPrintLevelingMeasuredPosition(int position0To2)
         {
             if (ActivePrinter != null)
             {
-                double[] positions = ActivePrinter.GetPrintLevelingPositions();
+                double[] positions = ActivePrinter.GetPrintLevelingMeasuredPositions();
                 switch (position0To2)
                 {
                     case 0:
@@ -207,11 +282,11 @@ namespace MatterHackers.MatterControl
             return Vector3.Zero;
         }
 
-        public void SetPrintLevelingProbePositions(double[] printLevelingPositions3_xyz)
+        public void SetPrintLevelingMeasuredPositions(double[] printLevelingPositions3_xyz)
         {
             if (ActivePrinter != null)
             {
-                ActivePrinter.SetPrintLevelingPositions(printLevelingPositions3_xyz);
+                ActivePrinter.SetPrintLevelingMeasuredPositions(printLevelingPositions3_xyz);
                 ActivePrinter.Commit();
             }
         }

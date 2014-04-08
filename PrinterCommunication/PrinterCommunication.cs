@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+#define USE_FROSTED_SERIAL_PORT
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -183,7 +185,6 @@ namespace MatterHackers.MatterControl
 
                                 activePrintTask.PrintEnd = DateTime.Now;
                                 activePrintTask.PrintComplete = true;
-                                activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
                                 activePrintTask.Commit();
                             }
                             
@@ -219,7 +220,11 @@ namespace MatterHackers.MatterControl
         double targetBedTemperature;
         string printJobDisplayName = null;
         GCodeFile loadedGCode = new GCodeFile();
-        FrostedSerialPort serialPort;
+		#if USE_FROSTED_SERIAL_PORT
+		IFrostedSerialPort serialPort;
+		#else
+		SerialPort serialPort;
+		#endif
         Thread readFromPrinterThread;
         Thread connectThread;
 
@@ -678,8 +683,8 @@ namespace MatterHackers.MatterControl
 
                 lineToWrite = ApplyPrintLeveling(lineToWrite, false, false);
 
+                LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
                 WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
-                LinesToWriteQueue.RemoveAt(0);
                 System.Threading.Thread.Sleep(1);
             }
         }
@@ -1225,28 +1230,28 @@ namespace MatterHackers.MatterControl
 
             if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
             {
-                serialPort = new FrostedSerialPort(serialPortName);
-                serialPort.BaudRate = baudRate;
-                //serialPort.Parity = Parity.None;
-                //serialPort.DataBits = 8;
-                //serialPort.StopBits = StopBits.One;
-                //serialPort.Handshake = Handshake.None;
-                if (PrinterCommunication.Instance.DtrEnableOnConnect)
-                {
-                    serialPort.DtrEnable = true;
-                }
-
-                // Set the read/write timeouts
-                serialPort.ReadTimeout = 500;
-                serialPort.WriteTimeout = 500;
-
                 if (CommunicationState == CommunicationStates.AttemptingToConnect)
                 {
                     try
                     {
-                        serialPort.Open();
+						#if USE_FROSTED_SERIAL_PORT
+						serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, DtrEnableOnConnect);
+						#else
+						serialPort = new SerialPort(serialPortName);
+						serialPort.BaudRate = baudRate;
+						if (DtrEnableOnConnect)
+						{
+						serialPort.DtrEnable = true;
+						}
 
-                        readFromPrinterThread = new Thread(ReadFromPrinter);
+						// Set the read/write timeouts
+						serialPort.ReadTimeout = 500;
+						serialPort.WriteTimeout = 500;
+
+						serialPort.Open();
+						#endif
+
+						readFromPrinterThread = new Thread(ReadFromPrinter);
                         readFromPrinterThread.Name = "Read From Printer";
                         readFromPrinterThread.IsBackground = true;
                         readFromPrinterThread.Start();
@@ -1262,7 +1267,7 @@ namespace MatterHackers.MatterControl
                         OnConnectionFailed(null);
                     }
 
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         OnConnectionFailed(null);
                     }
@@ -1419,23 +1424,24 @@ namespace MatterHackers.MatterControl
 
         public void QueueLineToPrinter(string lineToWrite)
         {
-            //Check line for linebreaks, split and process separate if necessary
-            if (lineToWrite.Contains("\n"))
+            using (TimedLock.Lock(this, "QueueLineToPrinter"))
             {
-                string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-                foreach (string line in lines)
+                //Check line for linebreaks, split and process separate if necessary
+                if (lineToWrite.Contains("\n"))
                 {
-                    QueueLineToPrinter(line);
+                    string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
+                    for (int i = lines.Length - 1; i >= 0; i--)
+                    {
+                        string line = lines[i];
+                        QueueLineToPrinter(line);
+                    }
+                    return;
                 }
-                return;
-            }
 
-            lineToWrite = lineToWrite.Split(';')[0].Trim();
-            if (PrinterIsPrinting)
-            {
-                // insert the command into the printing queue
-                using (TimedLock.Lock(this, "QueueLineToPrinter"))
+                lineToWrite = lineToWrite.Split(';')[0].Trim();
+                if (PrinterIsPrinting)
                 {
+                    // insert the command into the printing queue
                     if (printerCommandQueueIndex >= 0
                         && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count - 1)
                     {
@@ -1445,19 +1451,19 @@ namespace MatterHackers.MatterControl
                         }
                     }
                 }
-            }
-            else
-            {
-                // sometimes we need to send code without buffering (like when we are closing the program).
-                if (ForceImmediateWrites)
-                {
-                    WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
-                }
                 else
                 {
-                    if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
+                    // sometimes we need to send code without buffering (like when we are closing the program).
+                    if (ForceImmediateWrites)
                     {
-                        LinesToWriteQueue.Add(lineToWrite);
+                        WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
+                    }
+                    else
+                    {
+                        if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
+                        {
+                            LinesToWriteQueue.Insert(0, lineToWrite);
+                        }
                     }
                 }
             }
@@ -1526,8 +1532,12 @@ namespace MatterHackers.MatterControl
         public void PulseRtsLow()
         {
             if (serialPort == null && this.ActivePrinter != null)
-            {                
+            {   
+				#if USE_FROSTED_SERIAL_PORT
                 serialPort = new FrostedSerialPort(this.ActivePrinter.ComPort);
+				#else
+				serialPort = new SerialPort(this.ActivePrinter.ComPort);
+				#endif
                 serialPort.BaudRate = this.BaudRate;
                 if (PrinterCommunication.Instance.DtrEnableOnConnect)
                 {
@@ -1826,7 +1836,6 @@ namespace MatterHackers.MatterControl
 
                             activePrintTask.PrintEnd = DateTime.Now;
                             activePrintTask.PrintComplete = false;
-                            activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
                             activePrintTask.Commit();
                         }
                     }
@@ -1847,7 +1856,6 @@ namespace MatterHackers.MatterControl
 
                             activePrintTask.PrintEnd = DateTime.Now;
                             activePrintTask.PrintComplete = false;
-                            activePrintTask.PrintTimeMinutes = printTimeSpan.Minutes;
                             activePrintTask.Commit();
                         }
                     }                    

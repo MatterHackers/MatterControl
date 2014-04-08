@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
                 {LocalizedString.Get("Extra"), null},
                 {LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click},
-					{LocalizedString.Get("  Remove All"), removeAllFromQueueButton_Click},
+					{LocalizedString.Get(" Remove All"), removeAllFromQueueButton_Click},
                 };
             }
 
@@ -119,9 +119,9 @@ namespace MatterHackers.MatterControl.PrintQueue
                 SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
 
 				saveParams.ActionButtonLabel = LocalizedString.Get("Save Parts Sheet");
-				string saveParamsTitleLbl = LocalizedString.Get("MatterContol");
+				string saveParamsTitleLable = "MatterControl".Localize();
 				string saveParamsTitleLblFull = LocalizedString.Get ("Save");
-				saveParams.Title = string.Format("{0}: {1}",saveParamsTitleLbl,saveParamsTitleLblFull);
+				saveParams.Title = string.Format("{0}: {1}",saveParamsTitleLable,saveParamsTitleLblFull);
 
                 System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
 				if (streamToSaveTo != null) 
