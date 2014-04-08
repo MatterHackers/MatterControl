@@ -1,7 +1,7 @@
 avoid_crossing_perimeters|Avoid Crossing Perimeters|CHECK_BOX||Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
 bed_shape|Bed Shape|LIST|rectangular,circular|The shape of the physical print bed.
 bed_size|Bed Size|VECTOR2|mm|The size of the print bed.
-bed_temperature|Bed Other Layers|POSITIVE_DOUBLE|degrees|The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
+bed_temperature|Bed Temperature|POSITIVE_DOUBLE|degrees|The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
 bottom_clip_amount|Bottom Clip|POSITIVE_DOUBLE|mm|The amount to remove from the bottom of the model
 bottom_solid_layers|Number of Solid Layers\n on the Bottom:|INT||How many layers will be solid filled on the bottom surfaces of the object.
 bridge_acceleration|Bridge|POSITIVE_DOUBLE|mm/s²|Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
@@ -120,7 +120,7 @@ support_material_z_distance|Z Distance|POSITIVE_DOUBLE|mm|The distance the suppo
 support_material_z_gap_layers|Z Gap|INT||The number of layers to skip in z. The gap between the support and the model.
 support_material|Generate Support Material|CHECK_BOX||This turns on and off the generation of support material.
 support_type|Support Type|LIST|GRID,LINES|The type of support to create for surfaces that need it.
-temperature|Extruder Other Layers|POSITIVE_DOUBLE|degrees|The temperature to set the extruder to after the first layer has been printed.
+temperature|Extruder Temperature|POSITIVE_DOUBLE|degrees|The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
 thin_walls|Thin Walls|CHECK_BOX||Detect when walls are too close together and need to be extruded as just one wall.
 threads|Threads|INT||The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 toolchange_gcode|Tool Change G-Code|MULTI_LINE_TEXT||This gcode will be inserted after every tool change.

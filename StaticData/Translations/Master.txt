@@ -1815,3 +1815,30 @@ Translated:About
 English:This controls the ratio of material extruder during bridging.Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
 Translated:This controls the ratio of material extruder during bridging.Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
 
+English:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
+
+English:The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
+Translated:The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
+
+English:Macro Editor
+Translated:Macro Editor
+
+English:Macro Presets
+Translated:Macro Presets
+
+English:Edit Macro
+Translated:Edit Macro
+
+English:Macro Name
+Translated:Macro Name
+
+English:Give your macro a name
+Translated:Give your macro a name
+
+English:Macro Commands
+Translated:Macro Commands
+
+English:This should be in 'Gcode'
+Translated:This should be in 'Gcode'
+

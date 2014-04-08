@@ -86,8 +86,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Width = 640;
             Height = 480;
 
-            ShowAsSystemWindow();
             MinimumSize = new Vector2(400, 300);
+            ShowAsSystemWindow();
 
             // We do this after showing the system window so that when we try and take fucus the parent window (the system window)
             // exists and can give the fucus to its child the gecode window.
