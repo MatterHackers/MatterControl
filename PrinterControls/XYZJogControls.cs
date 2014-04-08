@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 
             
 
-			double distanceBetweenControls = 12; //20
+			double distanceBetweenControls = 12; 
             double buttonSeparationDistance = 10;
 
             FlowLayoutWidget allControlsTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);

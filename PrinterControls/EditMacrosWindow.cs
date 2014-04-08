@@ -391,6 +391,7 @@ namespace MatterHackers.MatterControl
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             ChangeToMacroList();
             ShowAsSystemWindow();
+			MinimumSize = new Vector2(360, 420);
         }
 
 

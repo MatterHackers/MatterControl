@@ -1893,3 +1893,27 @@ Translated:You can either
 English:You can also
 Translated:You can also
 
+English:Extruder Temperature Settings
+Translated:Extruder Temperature Settings
+
+English:Temperature Shortcut Presets
+Translated:Temperature Shortcut Presets
+
+English:Label
+Translated:Label
+
+English:Preset
+Translated:Preset
+
+English:Max Temp.
+Translated:Max Temp.
+
+English:Bed Temperature Settings
+Translated:Bed Temperature Settings
+
+English:Movement Speeds
+Translated:Movement Speeds
+
+English:Extruder
+Translated:Extruder
+
