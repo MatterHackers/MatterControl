@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl
 
         TextWidget CreateNextLine(string startText)
         {
-            TextWidget nextLine = new TextWidget(startText, textColor: RGBA_Bytes.White);
+			TextWidget nextLine = new TextWidget(startText, textColor: ActiveTheme.Instance.PrimaryTextColor);
             nextLine.Margin = new BorderDouble(0, 2);
             nextLine.HAnchor = Agg.UI.HAnchor.ParentLeft;
             nextLine.AutoExpandBoundsToText = true;
