@@ -75,15 +75,37 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             GuiWidget vSpacer = new GuiWidget();
             vSpacer.VAnchor = VAnchor.ParentBottomTop;
 
-			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Manual Configuration"));
+			string setupManualConfigurationOrSkipConnectionText = LocalizedString.Get(("You can also")) ;
+			string setupManualConfigurationOrSkipConnectionTextFull = String.Format("{0}:", setupManualConfigurationOrSkipConnectionText);
+			TextWidget setupManualConfigurationOrSkipConnectionWidget = new TextWidget(setupManualConfigurationOrSkipConnectionTextFull, 0, 0, 10);
+			setupManualConfigurationOrSkipConnectionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			setupManualConfigurationOrSkipConnectionWidget.HAnchor = HAnchor.ParentLeftRight;
+			setupManualConfigurationOrSkipConnectionWidget.Margin = elementMargin;
+
+			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Setup Manual Configuration"));
             manualLink.Margin = new BorderDouble(0, 5);
             manualLink.Click += new ButtonBase.ButtonEventHandler(ManualLink_Click);
+
+			string printerMessageFourText = LocalizedString.Get("or");
+			TextWidget printerMessageFour = new TextWidget (printerMessageFourText, 0, 0, 10);
+			printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			printerMessageFour.HAnchor = HAnchor.ParentLeftRight;
+			printerMessageFour.Margin = elementMargin;
+
+			Button skipConnectionLink = linkButtonFactory.Generate(LocalizedString.Get("Skip Printer Connection"));
+			skipConnectionLink.Margin = new BorderDouble(0, 5);
+			skipConnectionLink.Click += new ButtonBase.ButtonEventHandler(SkipConnectionLink_Click);
+
 
             container.AddChild(printerMessageOne);
             container.AddChild(printerMessageTwo);
             container.AddChild(printerMessageThree);
             container.AddChild(vSpacer);
+			container.AddChild(setupManualConfigurationOrSkipConnectionWidget);
             container.AddChild(manualLink);
+			container.AddChild(printerMessageFour);
+			container.AddChild(skipConnectionLink);
+
 
             container.HAnchor = HAnchor.ParentLeftRight;
             return container;            
@@ -110,5 +132,19 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             Parent.AddChild(new SetupStepComPortTwo((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
             Parent.RemoveChild(this);
         }
+
+		void SkipConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+		{
+			PrinterCommunication.Instance.HaltConnectionThread();
+			if (GetPrinterRecordCount () > 0)
+			{
+				this.windowController.ChangeToChoosePrinter ();
+			} 
+			else 
+			{
+				Parent.Close();
+			}
+		}
+
     }
 }
