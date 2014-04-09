@@ -1842,3 +1842,78 @@ Translated:Macro Commands
 English:This should be in 'Gcode'
 Translated:This should be in 'Gcode'
 
+English:3D Printer Setup
+Translated:3D Printer Setup
+
+English:Give your printer a name.
+Translated:Give your printer a name.
+
+English:Select Make
+Translated:Select Make
+
+English:Select the printer manufacturer
+Translated:Select the printer manufacturer
+
+English:Select the printer model
+Translated:Select the printer model
+
+English:Save & Continue
+Translated:Save & Continue
+
+English:MatterControl will now attempt to auto-detect printer.
+Translated:MatterControl will now attempt to auto-detect printer.
+
+English:Disconnect printer
+Translated:Disconnect printer
+
+English:if currently connected
+Translated:if currently connected
+
+English:Press
+Translated:Press
+
+English:Continue
+Translated:Continue
+
+English:Manual Configuration
+Translated:Manual Configuration
+
+English:Setup Manual Configuration
+Translated:Setup Manual Configuration
+
+English:or
+Translated:or
+
+English:Skip Printer Connection
+Translated:Skip Printer Connection
+
+English:You can either
+Translated:You can either
+
+English:You can also
+Translated:You can also
+
+English:Extruder Temperature Settings
+Translated:Extruder Temperature Settings
+
+English:Temperature Shortcut Presets
+Translated:Temperature Shortcut Presets
+
+English:Label
+Translated:Label
+
+English:Preset
+Translated:Preset
+
+English:Max Temp.
+Translated:Max Temp.
+
+English:Bed Temperature Settings
+Translated:Bed Temperature Settings
+
+English:Movement Speeds
+Translated:Movement Speeds
+
+English:Extruder
+Translated:Extruder
+

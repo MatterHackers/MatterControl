@@ -102,7 +102,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     pluginChooserWindow = null;
                 };
-                pluginChooserWindow.ShowAsSystemWindow();
             }
             else
             {
