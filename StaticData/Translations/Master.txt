@@ -1917,3 +1917,6 @@ Translated:Movement Speeds
 English:Extruder
 Translated:Extruder
 
+English:No items to select. Press 'Add' to select a file to print.
+Translated:No items to select. Press 'Add' to select a file to print.
+
