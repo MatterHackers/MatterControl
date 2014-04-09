@@ -171,8 +171,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
                 linkButtonFactory.fontSize = 10;
 
+                int maxLabelWidth = 300;
                 TextWidget materialLabel = new TextWidget(preset.Name, pointSize:14);
+                materialLabel.EllipsisIfClipped = true;
                 materialLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
+                materialLabel.MinimumSize = new Vector2(maxLabelWidth, materialLabel.Height);
+                materialLabel.Width = maxLabelWidth;
 
                 Button materialEditLink = linkButtonFactory.Generate("edit");
                 materialEditLink.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -192,8 +196,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     UiThread.RunOnIdle((state) =>
                     {
+                        //Unwind this setting if it is currently active
+                        if (ActivePrinterProfile.Instance.ActivePrinter != null)
+                        {
+                            if (preset.Id == ActivePrinterProfile.Instance.ActiveQualitySettingsID)
+                            {
+                                ActivePrinterProfile.Instance.ActiveQualitySettingsID = 0;
+                            }
+                            
+                            string[] activeMaterialPresets = ActivePrinterProfile.Instance.ActivePrinter.MaterialCollectionIds.Split(',');
+                            for (int i = 0; i < activeMaterialPresets.Count(); i++)
+                            {
+                                int index = 0;
+                                Int32.TryParse(activeMaterialPresets[i],out index);
+                                if (preset.Id == index)
+                                {
+                                    ActivePrinterProfile.Instance.SetMaterialSetting(i + 1, 0);
+                                }
+                            }
+                        }
                         preset.Delete();
                         windowController.ChangeToSlicePresetList();
+                        ActiveSliceSettings.Instance.LoadAllSettings();
+                        ApplicationWidget.Instance.ReloadBackPanel();
                     });
                 };
 
