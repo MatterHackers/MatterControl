@@ -475,7 +475,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public void CommitChanges()
         {
             foreach (KeyValuePair<String, DataStorage.SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
-            {
+            {                
+                //Ensure that each setting's collection id matches current collection id (ie for new presets)
+                if (item.Value.SettingsCollectionId != windowController.ActivePresetLayer.settingsCollectionData.Id)
+                {
+                    item.Value.SettingsCollectionId = windowController.ActivePresetLayer.settingsCollectionData.Id;                    
+                }
                 item.Value.Commit();
             }
             foreach (SliceSetting item in SliceSettingsToRemoveOnCommit)
