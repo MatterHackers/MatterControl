@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     PrintQueueControl.Instance.AddChild(new PrintQueueItem(Path.GetFileNameWithoutExtension(partFullPath), partFullPath));
                 }
                 PrintQueue.PrintQueueControl.Instance.EnsureSelection();
+                PrintQueueControl.Instance.SaveDefaultQueue();
             }
         }
 

@@ -343,6 +343,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             PartToAddToQueue partToAddToQueue = (PartToAddToQueue)state;
             PrintQueueItem queueItem = new PrintQueueItem(partToAddToQueue.Name, partToAddToQueue.FileLocation);
             PrintQueueControl.Instance.AddChild(queueItem, partToAddToQueue.insertAfterIndex);
+            PrintQueueControl.Instance.SaveDefaultQueue();
         }
 
         public void CreateCopyInQueue()
