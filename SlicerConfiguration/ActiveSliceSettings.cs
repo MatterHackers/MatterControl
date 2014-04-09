@@ -196,7 +196,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public void LoadSettingsForQuality()
         {
-
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+                DataStorage.SliceSettingsCollection collection;
+                if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != 0)
+                {
+                    int materialOneSettingsID = ActivePrinterProfile.Instance.ActiveQualitySettingsID;
+                    collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
+                    SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+                    this.activeSettingsLayers.Add(printerSettingsLayer);
+                }
+            }
         }
 
         public void LoadSettingsForPrinter()

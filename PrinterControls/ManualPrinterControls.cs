@@ -403,13 +403,13 @@ namespace MatterHackers.MatterControl
             adjustmentControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             adjustmentControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             adjustmentControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            adjustmentControlsGroupBox.Height = 93;
+            adjustmentControlsGroupBox.Height = 90;
 
             {
                 FlowLayoutWidget tuningRatiosLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 tuningRatiosLayout.Margin = new BorderDouble(0, 0, 0, 6);
                 tuningRatiosLayout.AnchorAll();
-                tuningRatiosLayout.Padding = new BorderDouble(3, 5, 3, 0);
+                tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0);
                 TextWidget feedRateDescription;
                 {
                     FlowLayoutWidget feedRateLeftToRight;
@@ -420,6 +420,7 @@ namespace MatterHackers.MatterControl
 
 						feedRateDescription = new TextWidget(LocalizedString.Get("Speed Multiplier"));
                         feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                        feedRateDescription.VAnchor = VAnchor.ParentCenter;
                         feedRateLeftToRight.AddChild(feedRateDescription);
                         feedRateRatioSlider = new Slider(new Vector2(), 300, minFeedRateRatio, maxFeedRateRatio);
                         feedRateRatioSlider.Margin = new BorderDouble(5, 0);
@@ -439,8 +440,13 @@ namespace MatterHackers.MatterControl
 
                         feedRateLeftToRight.AddChild(feedRateValue);
                         feedRateValue.Margin = new BorderDouble(0, 0, 5, 0);
+                        feedRateValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
-						feedRateLeftToRight.AddChild(textImageButtonFactory.Generate(LocalizedString.Get("Set")));
+
+                        Button setFeedRateButton = textImageButtonFactory.Generate(LocalizedString.Get("Set"));
+                        setFeedRateButton.VAnchor = VAnchor.ParentCenter;
+
+						feedRateLeftToRight.AddChild(setFeedRateButton);
                     }
 
                     TextWidget extrusionDescription;
@@ -448,9 +454,11 @@ namespace MatterHackers.MatterControl
                         extrusionValue = new NumberEdit(1, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40);
 
                         FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+                        leftToRight.Margin = new BorderDouble(top: 10);
 
 						extrusionDescription = new TextWidget(LocalizedString.Get("Extrusion Multiplier"));
                         extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                        extrusionDescription.VAnchor = VAnchor.ParentCenter;
                         leftToRight.AddChild(extrusionDescription);
                         extrusionRatioSlider = new Slider(new Vector2(), 300, minExtrutionRatio, maxExtrusionRatio);
                         extrusionRatioSlider.Margin = new BorderDouble(5, 0);
@@ -469,8 +477,11 @@ namespace MatterHackers.MatterControl
                         tuningRatiosLayout.AddChild(leftToRight);
                         leftToRight.AddChild(extrusionValue);
                         extrusionValue.Margin = new BorderDouble(0, 0, 5, 0);
+                        extrusionValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
-						leftToRight.AddChild(textImageButtonFactory.Generate(LocalizedString.Get("Set")));
+                        Button setExtrusionButton = textImageButtonFactory.Generate(LocalizedString.Get("Set"));
+                        setExtrusionButton.VAnchor = VAnchor.ParentCenter;
+						leftToRight.AddChild(setExtrusionButton);
                     }
 
                     feedRateDescription.Width = extrusionDescription.Width;

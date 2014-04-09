@@ -8,19 +8,20 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl 
 {
 	public class SaveAsWindow : SystemWindow
 	{
-		Button saveAsButton;
-		Button cancelSaveButton;
-		CheckBox addToLibraryOption;
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory ();
 
-		public SaveAsWindow()
+        public delegate void SetPrintItemWrapperAndSave(PrintItemWrapper printItemWrapper);
+        public SaveAsWindow(SetPrintItemWrapperAndSave functionToCallOnSaveAs)
 			: base (480, 250)
 		{
 			Title = "Save As Window";
@@ -35,7 +36,6 @@ namespace MatterHackers.MatterControl
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
 
 			//Creates Text and adds into header 
 			{
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 			checkBoxHelpFull.Margin = new BorderDouble(5);
 			checkBoxHelpFull.HAnchor = HAnchor.ParentLeftRight;
 
-			addToLibraryOption = new CheckBox("Add to Queue",RGBA_Bytes.White);
+			CheckBox addToLibraryOption = new CheckBox("Add to Queue",RGBA_Bytes.White);
 			addToLibraryOption.Margin = new BorderDouble (5);
 			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
 
@@ -98,7 +98,6 @@ namespace MatterHackers.MatterControl
 			presetsFormContainer.AddChild(addToLibraryOption);
 			topToBottom.AddChild(presetsFormContainer);
 
-
 			//Creates button container on the bottom of window 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			{
@@ -107,27 +106,64 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0,3);
 			}
 				
-			saveAsButton = textImageButtonFactory.Generate("Save As".Localize(), centerText: true);
+			Button saveAsButton = textImageButtonFactory.Generate("Save As".Localize(), centerText: true);
 			saveAsButton.Visible = true;
 			saveAsButton.Cursor = Cursors.Hand;
+            buttonRow.AddChild(saveAsButton);
+            saveAsButton.Click += (sender, e) =>
+            {
+                string newName = textToAddWidget.ActualTextEditWidget.Text;
+                if (newName != "")
+                {
+                    string fileName = "{0}.stl".FormatWith(Path.GetRandomFileName());
+                    string filePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+                    PrintItem printItem = new PrintItem();
+                    printItem.Commit();
+
+                    printItem.Name = newName;
+                    printItem.FileLocation = System.IO.Path.GetFullPath(filePath);
+                    printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
+                    printItem.Commit();
+
+                    PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+
+                    PrintLibraryListItem libraryItem = new PrintLibraryListItem(printItemWrapper);
+
+                    PrintLibraryListControl.Instance.AddChild(libraryItem);
+                    PrintLibraryListControl.Instance.Invalidate();
+                    PrintLibraryListControl.Instance.SaveLibraryItems();
+
+                    if (addToLibraryOption.Checked)
+                    {
+                        PrintQueueItem queueItem = new PrintQueueItem(printItemWrapper);
+                        PrintQueueControl.Instance.AddChild(queueItem);
+                        PrintQueueControl.Instance.SaveDefaultQueue();
+                    }
+
+                    functionToCallOnSaveAs(printItemWrapper);
+                    CloseOnIdle();
+                }
+            };
 
 			//Adds SaveAs and Close Button to button container
 			GuiWidget hButtonSpacer = new GuiWidget();
 			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
+            buttonRow.AddChild(hButtonSpacer);
 
-			cancelSaveButton = textImageButtonFactory.Generate ("Cancel", centerText: true);
-			cancelSaveButton.Visible = true;
-			cancelSaveButton.Cursor = Cursors.Hand;
+			Button cancelButton = textImageButtonFactory.Generate ("Cancel", centerText: true);
+			cancelButton.Visible = true;
+			cancelButton.Cursor = Cursors.Hand;
+            buttonRow.AddChild(cancelButton);
+            cancelButton.Click += (sender, e) =>
+            {
+                CloseOnIdle();
+            };
 
-			buttonRow.AddChild(saveAsButton);
-			buttonRow.AddChild(hButtonSpacer);
-			buttonRow.AddChild(cancelSaveButton);
 			topToBottom.AddChild(buttonRow);
 
 			ShowAsSystemWindow ();
-
 		}
-			
 	}
 }
 
