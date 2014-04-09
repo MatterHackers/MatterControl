@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget enterEditButtonsContainer;
         FlowLayoutWidget doEdittingButtonsContainer;
         bool OpenAddDialogWhenDone = false;
-
+        
         Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
 
         CheckBox expandViewOptions;
@@ -1024,22 +1024,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private FlowLayoutWidget CreateSaveButtons()
         {
-            FlowLayoutWidget saveButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            //Create Save As Button 	
-            Button saveAsButton = whiteButtonFactory.Generate("Save As".Localize(), centerText: true);
-            saveAsButton.Cursor = Cursors.Hand;
-            saveButtons.AddChild(saveAsButton);
-            saveAsButton.Click += (sender, e) =>
-            {
-                new SaveAsWindow(MergeAndSavePartsToStl);
-            };
+            TextImageButtonFactory saveButtonFactory = new TextImageButtonFactory();
+            saveButtonFactory.FixedWidth = 56;
+            saveButtonFactory.FixedHeight = 40;
+            saveButtonFactory.normalFillColor = RGBA_Bytes.White;
+            saveButtonFactory.normalTextColor = RGBA_Bytes.Black;
+            saveButtonFactory.hoverTextColor = RGBA_Bytes.Black;
+            saveButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
 
-            Button saveButton = whiteButtonFactory.Generate(LocalizedString.Get("Save"), centerText: true);
+            FlowLayoutWidget saveButtons = new FlowLayoutWidget();
+
+            //Create Save Button
+            Button saveButton = saveButtonFactory.Generate(LocalizedString.Get("Save"), centerText: true);
             saveButton.Cursor = Cursors.Hand;
             saveButtons.AddChild(saveButton);
             saveButton.Click += (sender, e) =>
             {
                 MergeAndSavePartsToStl();
+            };
+
+            //Create Save As Button 	
+            saveButtonFactory.FixedWidth = SideBarButtonWidth - saveButtonFactory.FixedWidth - 2;
+            Button saveAsButton = saveButtonFactory.Generate("Save As".Localize(), centerText: true);
+            saveAsButton.Cursor = Cursors.Hand;
+            saveButtons.AddChild(saveAsButton);
+            saveAsButton.Click += (sender, e) =>
+            {
+                new SaveAsWindow(MergeAndSavePartsToStl);
             };
 
             saveButtons.Visible = false;
