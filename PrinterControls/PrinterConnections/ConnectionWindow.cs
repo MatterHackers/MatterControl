@@ -37,9 +37,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 ChangeToAddPrinter();
             }
 
+            BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
             this.ShowAsSystemWindow();
             MinimumSize = new Vector2(350, 400);
-            
         }
 
         public override void OnMouseUp(MouseEventArgs mouseEvent)
