@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void revertbutton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            ActiveSliceSettings.Instance.LoadSettingsForPrinter();
+            ActiveSliceSettings.Instance.LoadAllSettings();
             ApplicationWidget.Instance.ReloadBackPanel();
         }
 
