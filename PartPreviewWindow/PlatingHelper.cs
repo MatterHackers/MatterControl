@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
                         foreach (FaceEdge faceEdgeToAdd in face.FaceEdgeIterator())
                         {
                             // we allow duplicates (the true) to make sure we are not changing the loaded models acuracy.
-                            Vertex newVertex = allPolygons.CreateVertex(faceEdgeToAdd.firstVertex.Position, true);
+                            Vertex newVertex = allPolygons.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
                             faceVertices.Add(newVertex);
                         }
 
@@ -91,6 +91,8 @@ namespace MatterHackers.MatterControl
                     int nextPercent = startPercent + (i + 1) * lengthPercent / meshesToMerge.Count;
                     backgroundWorker.ReportProgress(nextPercent);
                 }
+
+                allPolygons.CleanAndMergMesh();
             }
 
             return allPolygons;
