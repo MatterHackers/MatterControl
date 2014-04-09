@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
             public string fileName;
             public string presentationName;
 
-			public FileNameAndPresentationName(string fileName, string presentationName)
+            public FileNameAndPresentationName(string fileName, string presentationName)
             {
                 this.fileName = fileName;
                 this.presentationName = presentationName;
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 
         public int SheetDpi { get; set; }
 
-		public PartsSheet(List<PrintItem> dataSource, string pathAndFileToSaveTo)
+        public PartsSheet(List<PrintItem> dataSource, string pathAndFileToSaveTo)
         {
             this.pathAndFileToSaveTo = pathAndFileToSaveTo;
             SheetDpi = 300;
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl
             stlFilesToPrint = new List<FileNameAndPresentationName>();
             foreach(PrintItem stlToCopy in dataSource)
             {
-				stlFilesToPrint.Add(new FileNameAndPresentationName(stlToCopy.FileLocation, stlToCopy.Name));
+                stlFilesToPrint.Add(new FileNameAndPresentationName(stlToCopy.FileLocation, stlToCopy.Name));
             }
         }
 
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl
         {
             if (DoneSaving != null)
             {
-				DoneSaving(this, new StringEventArgs(Path.GetFileName("Saving to PDF")));
+                DoneSaving(this, new StringEventArgs(Path.GetFileName("Saving to PDF")));
             }
         }
 
@@ -319,16 +319,16 @@ namespace MatterHackers.MatterControl
             }
 
             // print the last line of parts
-			foreach (PartImage partToDraw in partsOnLine)
+            foreach (PartImage partToDraw in partsOnLine)
             {
                 plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.y - tallestHeight);
             }
 
-			TypeFacePrinter printer = new TypeFacePrinter(string.Format("{0}", Path.GetFileNameWithoutExtension(pathAndFileToSaveTo)), 32, justification: Justification.Center);
+            TypeFacePrinter printer = new TypeFacePrinter(string.Format("{0}", Path.GetFileNameWithoutExtension(pathAndFileToSaveTo)), 32, justification: Justification.Center);
             printer.Origin = new Vector2(plateGraphics.DestImage.Width/2, 110);
             plateGraphics.Render(printer, RGBA_Bytes.Black);
 
-			printer = new TypeFacePrinter(string.Format("Page {0}", plateNumber), 28, justification: Justification.Center);
+            printer = new TypeFacePrinter(string.Format("Page {0}", plateNumber), 28, justification: Justification.Center);
             printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 60);
             plateGraphics.Render(printer, RGBA_Bytes.Black);
 
@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl
 
         private double PrintTopOfPage(ImageBuffer plateInventoryImage, Graphics2D plateGraphics)
         {
-			plateGraphics.Clear(RGBA_Bytes.White);
+            plateGraphics.Clear(RGBA_Bytes.White);
 
             double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginMM.Top * PixelPerMM;
 

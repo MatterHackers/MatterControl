@@ -53,9 +53,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public SettingsLayer ActivePresetLayer;        
 
         public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag)
-            : base(420, 560)
-        {
-            
+            : base(640, 480)
+        {            
             Title = LocalizedString.Get("Slice Presets Editor");
             
             this.filterTag = filterTag;
@@ -66,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             ChangeToSlicePresetList();
             ShowAsSystemWindow();
-            this.MinimumSize = new Vector2(420, 560);
+            this.MinimumSize = new Vector2(640, 480);
         }
 
 

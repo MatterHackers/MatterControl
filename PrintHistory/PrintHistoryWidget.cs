@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                 showOnlyCompletedCheckbox.Margin = new BorderDouble(top: 8);
                 bool showOnlyCompleted = (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true");
                 showOnlyCompletedCheckbox.Checked = showOnlyCompleted;
+                showOnlyCompletedCheckbox.Width = 200;
 
                 completedStatsContainer.AddChild(new TextWidget("Completed Prints: ", pointSize: 10, textColor: historyPanelTextColor));
                 completedStatsContainer.AddChild(new TextWidget(GetCompletedPrints().ToString(), pointSize: 14, textColor: historyPanelTextColor));
@@ -89,6 +90,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                 //showTimestampCheckbox.Margin = new BorderDouble(top: 8);
                 bool showTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
                 showTimestampCheckbox.Checked = showTimestamp;
+                showTimestampCheckbox.Width = 200;
 
                 historyStatsContainer.AddChild(new TextWidget("Total Print Time: ", pointSize: 10, textColor: historyPanelTextColor));
                 historyStatsContainer.AddChild(new TextWidget(GetPrintTimeString(), pointSize: 14, textColor: historyPanelTextColor));
@@ -98,7 +100,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                 FlowLayoutWidget searchPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
                 searchPanel.HAnchor = HAnchor.ParentLeftRight;
-                searchPanel.Padding = new BorderDouble(0,2);
+                searchPanel.Padding = new BorderDouble(0,6,0,2);
 
                 searchPanel.AddChild(completedStatsContainer);
                 searchPanel.AddChild(historyStatsContainer);

@@ -293,7 +293,7 @@ namespace MatterHackers.MatterControl
             topToBottom.AddChild(presetsFormContainer);
 
             IEnumerable<DataStorage.CustomCommands> macroList = GetMacros();
-            foreach (DataStorage.CustomCommands m in macroList)
+            foreach (DataStorage.CustomCommands currentCommand in macroList)
             {                
                 FlowLayoutWidget macroRow = new FlowLayoutWidget();
                 macroRow.Margin = new BorderDouble(3, 0, 3, 3);
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl
                 macroRow.Padding = new BorderDouble(3);
                 macroRow.BackgroundColor = RGBA_Bytes.White;
 
-                TextWidget buttonLabel = new TextWidget(m.Name);
+                TextWidget buttonLabel = new TextWidget(currentCommand.Name);
                 macroRow.AddChild(buttonLabel);
 
                 FlowLayoutWidget hSpacer = new FlowLayoutWidget();
@@ -310,16 +310,19 @@ namespace MatterHackers.MatterControl
 
                 Button editLink = linkButtonFactory.Generate(LocalizedString.Get("edit"));
                 editLink.Margin = new BorderDouble(right: 5);
+                // You can't pass a foreach variable into a link function or it wall always be the last item.
+                // So we make a local variable copy of it and pass that. This will get the right one.
+                DataStorage.CustomCommands currentCommandForLinkFunction = currentCommand;
                 editLink.Click += (sender, e) =>
                 {
-                    windowController.ChangeToMacroDetail(m);
+                    windowController.ChangeToMacroDetail(currentCommandForLinkFunction);
                 };
                 macroRow.AddChild(editLink);
 
                 Button removeLink = linkButtonFactory.Generate(LocalizedString.Get("remove"));
                 removeLink.Click += (sender, e) => 
                 {
-                    m.Delete();
+                    currentCommandForLinkFunction.Delete();
                     windowController.functionToCallOnSave(this, null);
                     windowController.ChangeToMacroList();
                 };

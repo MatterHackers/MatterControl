@@ -73,7 +73,11 @@ namespace MatterHackers.MatterControl
                 if (activePrinter != value)
                 {
                     PrinterCommunication.Instance.Disable();
+
                     activePrinter = value;
+                    ValidateMaterialSettings();
+                    ValidateQualitySettings();
+
                     globalInstance.OnActivePrinterChanged(null);
                 }
             } 
@@ -92,6 +96,37 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        void ValidateQualitySettings()
+        {
+            int index = activePrinter.QualityCollectionId;
+            SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == index).Take(1).FirstOrDefault();
+            if (collection == null)
+            {
+                ActivePrinterProfile.Instance.ActiveQualitySettingsID = 0;
+            }
+        }
+
+        void ValidateMaterialSettings()
+        {
+            if (activePrinter.MaterialCollectionIds != null)
+            {
+                string[] activeMaterialPresets = activePrinter.MaterialCollectionIds.Split(',');
+                for (int i = 0; i < activeMaterialPresets.Count(); i++)
+                {
+                    int index = 0;
+                    Int32.TryParse(activeMaterialPresets[i], out index);
+                    if (index != 0)
+                    {
+                        SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == index).Take(1).FirstOrDefault();
+                        if (collection == null)
+                        {
+                            ActivePrinterProfile.Instance.SetMaterialSetting(i + 1, 0);
+                        }
+                    }
+                }
+            }
+        }
+
         public int GetMaterialSetting(int extruderPosition)
         {
             int i = 0;
@@ -106,8 +141,7 @@ namespace MatterHackers.MatterControl
                     {
                         Int32.TryParse(materialSettingsList[extruderPosition - 1], out i);
                     }
-                }
-                
+                }                
             }
             return i;            
         }

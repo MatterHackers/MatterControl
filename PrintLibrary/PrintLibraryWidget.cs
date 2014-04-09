@@ -159,6 +159,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
             PrintLibraryListControl.Instance.ClearSelectedItems();
             PrintQueue.PrintQueueControl.Instance.EnsureSelection();
+            PrintQueueControl.Instance.SaveDefaultQueue();
         }
 
         private void onLibraryItemsSelected(object sender, EventArgs e)

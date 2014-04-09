@@ -394,7 +394,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             double helpPointSize = 10;
 
-            string[] wrappedText = TypeFacePrinter.WrapText(settingInfo.HelpText, textRegionWidth - allText.Padding.Width, helpPointSize);
+            EnglishTextWrapping wrapper = new EnglishTextWrapping(helpPointSize);
+            string[] wrappedText = wrapper.WrapText(settingInfo.HelpText, textRegionWidth - allText.Padding.Width);
             foreach(string line in wrappedText)
             {
                 GuiWidget helpWidget = new TextWidget(line, pointSize: helpPointSize, textColor: RGBA_Bytes.White);

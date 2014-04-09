@@ -146,12 +146,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 MenuItem item = (MenuItem)sender;
                 if (filterTag == "material")
                 {
-                    ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                    if (ActivePrinterProfile.Instance.GetMaterialSetting(1) != Int32.Parse(item.Value))
+                    {
+                        ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                    }
                 }
                 else if (filterTag == "quality")
                 {
-                    ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
+                    if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != Int32.Parse(item.Value))
+                    {
+                        ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
+                    }
                 }
+                ActiveSliceSettings.Instance.LoadAllSettings();
+                ApplicationWidget.Instance.ReloadBackPanel();
                 //Clear presets from active slice layers
             };
 
@@ -164,12 +172,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     MenuItem item = (MenuItem)sender;
                     if (filterTag == "material")
                     {
-                        ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                        if (ActivePrinterProfile.Instance.GetMaterialSetting(1) != Int32.Parse(item.Value))
+                        {
+                            ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                        }
                     }
                     else if (filterTag == "quality")
                     {
-                        ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
+                        if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != Int32.Parse(item.Value))
+                        {
+                            ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
+                        }
                     }
+                    ActiveSliceSettings.Instance.LoadAllSettings();
+                    ApplicationWidget.Instance.ReloadBackPanel();
                 };
             }
             if (filterTag == "material")

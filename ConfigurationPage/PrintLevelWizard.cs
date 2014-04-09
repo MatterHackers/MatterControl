@@ -69,7 +69,8 @@ namespace MatterHackers.MatterControl
             GuiWidget spacer = new GuiWidget(10, pixelsFromLast);
             topToBottomControls.AddChild(spacer);
 
-            string wrappedInstructions = TypeFacePrinter.InsertCRs(instructionsText, 400, 12);
+            EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
+            string wrappedInstructions = wrapper.InsertCRs(instructionsText, 400);
             string wrappedInstructionsTabsToSpaces = wrappedInstructions.Replace("\t", "    ");
 			TextWidget instructionsWidget = new TextWidget(wrappedInstructionsTabsToSpaces, textColor: ActiveTheme.Instance.PrimaryTextColor);
             instructionsWidget.HAnchor = Agg.UI.HAnchor.ParentCenter;

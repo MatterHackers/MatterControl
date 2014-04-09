@@ -108,12 +108,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 if (globalInstance == null)
                 {
                     globalInstance = new ActiveSliceSettings();
-                    globalInstance.LoadSettingsForPrinter();
+                    globalInstance.LoadAllSettings();
                 }
 
                 return globalInstance;
             }
         }
+
+
 
         /// <summary>
         /// This returns one of the three positions that should be probed when leveling
@@ -157,18 +159,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public void LoadSettingsForPrinter()
+        public void LoadAllSettings()
         {
             this.activeSettingsLayers = new List<SettingsLayer>();
+            globalInstance.LoadSettingsForPrinter();
+            globalInstance.LoadSettingsForMaterial(1);
+            globalInstance.LoadSettingsForQuality();
 
-            //Load default settings from the .ini file as first layer
-            LoadDefaultConfigrationSettings();
-
-            //Load printer settings from database as second layer
-            LoadPrinterConfigurationSettings();
-#if false
-            SetBedLevelEquation(0, 0, 0);
-#else
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 PrintLeveling.Instance.SetPrintLevelingEquation(
@@ -177,10 +174,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2),
                     ActiveSliceSettings.Instance.PrintCenter);
             }
-#endif
             OnSettingsChanged();
 
             this.HasUncommittedChanges = false;
+        }
+
+        public void LoadSettingsForMaterial(int extruderIndex)
+        {
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+                DataStorage.SliceSettingsCollection collection;
+                if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex) != 0)
+                {
+                    int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex);
+                    collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
+                    SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+                    this.activeSettingsLayers.Add(printerSettingsLayer);
+                }                
+            }
+        }
+
+        public void LoadSettingsForQuality()
+        {
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+                DataStorage.SliceSettingsCollection collection;
+                if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != 0)
+                {
+                    int materialOneSettingsID = ActivePrinterProfile.Instance.ActiveQualitySettingsID;
+                    collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
+                    SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+                    this.activeSettingsLayers.Add(printerSettingsLayer);
+                }
+            }
+        }
+
+        public void LoadSettingsForPrinter()
+        {
+            //Load default settings from the .ini file as first layer
+            LoadDefaultConfigrationSettings();
+
+            //Load printer settings from database as second layer
+            LoadPrinterConfigurationSettings();
+
         }
 
         public Dictionary<string, DataStorage.SliceSetting> DefaultSettings
