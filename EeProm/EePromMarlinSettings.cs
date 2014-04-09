@@ -231,15 +231,15 @@ namespace MatterHackers.MatterControl.EeProm
             string cmdho = "M206 X" + hox + " Y" + hoy + " Z" + hoz;
             string cmdpid = "M301 P" + ppid + " I" + ipid + " D" + dpid;
 
-            PrinterCommunication.Instance.QueueLineToPrinter(cmdsteps);
-            PrinterCommunication.Instance.QueueLineToPrinter(cmdfeed);
-            PrinterCommunication.Instance.QueueLineToPrinter(cmdmacc);
-            PrinterCommunication.Instance.QueueLineToPrinter(cmdacc);
-            PrinterCommunication.Instance.QueueLineToPrinter(cmdav);
-            PrinterCommunication.Instance.QueueLineToPrinter(cmdho);
+            PrinterCommunication.Instance.SendLineToPrinterNow(cmdsteps);
+            PrinterCommunication.Instance.SendLineToPrinterNow(cmdfeed);
+            PrinterCommunication.Instance.SendLineToPrinterNow(cmdmacc);
+            PrinterCommunication.Instance.SendLineToPrinterNow(cmdacc);
+            PrinterCommunication.Instance.SendLineToPrinterNow(cmdav);
+            PrinterCommunication.Instance.SendLineToPrinterNow(cmdho);
             if (hasPID)
             {
-                PrinterCommunication.Instance.QueueLineToPrinter(cmdpid);
+                PrinterCommunication.Instance.SendLineToPrinterNow(cmdpid);
             }
 
             changed = false;
@@ -395,14 +395,14 @@ namespace MatterHackers.MatterControl.EeProm
 
         public void SaveToEeProm()
         {
-            PrinterCommunication.Instance.QueueLineToPrinter("M500");
+            PrinterCommunication.Instance.SendLineToPrinterNow("M500");
         }
 
         // this does not save them to eeprom
         public void SetPrinterToFactorySettings()
         {
             hasPID = false;
-            PrinterCommunication.Instance.QueueLineToPrinter("M502");
+            PrinterCommunication.Instance.SendLineToPrinterNow("M502");
         }
 
         public void Add(object sender, EventArgs e)
@@ -426,7 +426,7 @@ namespace MatterHackers.MatterControl.EeProm
         public void Update()
         {
             hasPID = false;
-            PrinterCommunication.Instance.QueueLineToPrinter("M503");
+            PrinterCommunication.Instance.SendLineToPrinterNow("M503");
         }
     }
 }

@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.EeProm
             string cmd = "M206 T" + type + " P" + position + " ";
             if (type == 3) cmd += "X" + val;
             else cmd += "S" + val;
-            PrinterCommunication.Instance.QueueLineToPrinter(cmd);
+            PrinterCommunication.Instance.SendLineToPrinterNow(cmd);
             changed = false;
         }
 

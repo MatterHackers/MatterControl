@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.EeProm
 
         public void AskPrinterForSettings()
         {
-            PrinterCommunication.Instance.QueueLineToPrinter("M205");
+            PrinterCommunication.Instance.SendLineToPrinterNow("M205");
         }
     }
 }
