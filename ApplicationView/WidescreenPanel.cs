@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl
 
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
         {
-            ActiveSliceSettings.Instance.LoadSettingsForPrinter();
+            ActiveSliceSettings.Instance.LoadAllSettings();
             ApplicationWidget.Instance.ReloadBackPanel();
         }
     }
