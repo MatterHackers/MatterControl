@@ -20,7 +20,8 @@ namespace MatterHackers.MatterControl
 
         public static bool ShowMessageBox(String message, string caption, MessageType messageType = MessageType.OK)
         {
-            string wrappedMessage = TypeFacePrinter.InsertCRs(message, 350, 12);
+            EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
+            string wrappedMessage = wrapper.InsertCRs(message, 350);
             StyledMessageBox messageBox = new StyledMessageBox(wrappedMessage, caption, messageType, null, 400, 300);
             bool okClicked = false;
             messageBox.ClickedOk += (sender, e) => { okClicked = true; };
@@ -30,7 +31,8 @@ namespace MatterHackers.MatterControl
 
         public static bool ShowMessageBox(string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType)
         {
-            string wrappedMessage = TypeFacePrinter.InsertCRs(message, 300, 12);
+            EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
+            string wrappedMessage = wrapper.InsertCRs(message, 300);
             StyledMessageBox messageBox = new StyledMessageBox(wrappedMessage, caption, messageType, extraWidgetsToAdd, 400, 300);
             bool okClicked = false;
             messageBox.ClickedOk += (sender, e) => { okClicked = true; };

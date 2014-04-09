@@ -199,6 +199,7 @@ namespace MatterHackers.MatterControl
             textImageButtonFactory.FixedHeight = oldHeight;
 
             ShowAsSystemWindow();
+			MinimumSize = new Vector2(360, 300);
 
             Button savePresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
             savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);

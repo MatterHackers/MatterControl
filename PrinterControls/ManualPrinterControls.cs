@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
 
                 FlowLayoutWidget rightColumnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 rightColumnContainer.AddChild(terminalCommunicationsContainer);
-				rightColumnContainer.Width = 220;
+				rightColumnContainer.Width = 200;
                 rightColumnContainer.VAnchor |= VAnchor.ParentTop;
 
                 AddFanControls(rightColumnContainer);
@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Padding = new BorderDouble(3, 0, 0, 5);
 
-			TextWidget fanSpeedDescription = new TextWidget(LocalizedString.Get("Fan Speed:"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			TextWidget fanSpeedDescription = new TextWidget(LocalizedString.Get("Fan Speed:"), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
             fanSpeedDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
             leftToRight.AddChild(fanSpeedDescription);
 
