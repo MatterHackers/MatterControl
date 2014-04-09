@@ -143,28 +143,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             container.HAnchor = HAnchor.ParentLeftRight;
             container.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
             container.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-            container.Margin = new BorderDouble(3);
 
             FlowLayoutWidget topBottomContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topBottomContainer.AnchorAll();
 
             FlowLayoutWidget addContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            addContainer.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+            addContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             addContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            addContainer.Padding = new BorderDouble(3);
 
             TextWidget errorMessage = new TextWidget("Oops! Please select a setting first.", pointSize:10);            
             errorMessage.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
 
             errorMessageContainer = new FlowLayoutWidget();
-            errorMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;            
+            errorMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            errorMessageContainer.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
             errorMessageContainer.Visible = false;
+            errorMessageContainer.Padding = new BorderDouble(3);
 
             errorMessageContainer.AddChild(new HorizontalSpacer());
             errorMessageContainer.AddChild(errorMessage);
             errorMessageContainer.AddChild(new HorizontalSpacer());
 
             addSettingsContainer = new FlowLayoutWidget();
+            addSettingsContainer.Padding = new BorderDouble(3);
+            addSettingsContainer.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
             addSettingsContainer.HAnchor = HAnchor.ParentLeftRight;            
             
             PopulateAddSettingRow();
@@ -220,9 +222,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
                 return settingLayoutData;
             }
-        }
-
-        
+        }        
 
         void PopulateLayoutDictionary()
         {
@@ -278,8 +278,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             
             string UserLevel = "Advanced"; //Show all settings
             for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
-            {               
-                
+            {      
                 OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
                 
                 //Always add all categories
