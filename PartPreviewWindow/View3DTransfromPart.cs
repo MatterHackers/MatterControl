@@ -89,8 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         CheckBox expandScaleOptions;
 
         Button autoArrangeButton;
-		Button saveButton;
-		Button saveAsButton;
+        FlowLayoutWidget saveButtons;
         Button closeButton;
         Button applyScaleButton;
 
@@ -242,8 +241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 && meshSelectInfo.downOnPart
                 && meshSelectInfo.lastMoveDelta != Vector3.Zero)
             {
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
             }
 
             meshSelectInfo.downOnPart = false;
@@ -482,7 +480,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             UnlockEditControls();
             PullMeshDataFromAsynchLists();
-            saveButton.Visible = true;
+            saveButtons.Visible = true;
             partSelectButton.ClickButton(null);
 
             // now set the selection to the new copy
@@ -676,7 +674,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void arrangePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             UnlockEditControls();
-            saveButton.Visible = true;
+            saveButtons.Visible = true;
             partSelectButton.ClickButton(null);
 
             PullMeshDataFromAsynchLists();
@@ -685,7 +683,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             UnlockEditControls();
-            saveButton.Visible = true;
+            saveButtons.Visible = true;
             partSelectButton.ClickButton(null);
 
             if (asynchMeshesList.Count == Meshes.Count + 1)
@@ -799,8 +797,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshExtraData.RemoveAt(SelectedMeshIndex);
                 MeshTransforms.RemoveAt(SelectedMeshIndex);
                 SelectedMeshIndex = Math.Min(SelectedMeshIndex, Meshes.Count - 1);
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             }
         }
@@ -896,7 +893,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-				expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Rotate"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Rotate"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandRotateOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandRotateOptions);
 
@@ -905,7 +902,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 rotateOptionContainer.Visible = false;
                 buttonRightPanel.AddChild(rotateOptionContainer);
 
-				expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Scale"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Scale"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandScaleOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandScaleOptions);
 
@@ -916,7 +913,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in the mirror options
                 {
-					CheckBox expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Mirror"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                    CheckBox expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Mirror"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandMirrorOptions);
 
@@ -972,7 +969,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in the view options
                 {
-					expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Display"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                    expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Display"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandViewOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandViewOptions);
 
@@ -987,7 +984,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             meshViewerWidget.RenderBed = showBedCheckBox.Checked;
                         };
                         viewOptionContainer.AddChild(showBedCheckBox);
-                        
+
                         if (buildHeight > 0)
                         {
                             CheckBox showBuildVolumeCheckBox = new CheckBox(LocalizedString.Get("Show Print Area"), textColor: ActiveTheme.Instance.PrimaryTextColor);
@@ -1004,7 +1001,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     buttonRightPanel.AddChild(viewOptionContainer);
                 }
 
-				autoArrangeButton = whiteButtonFactory.Generate(LocalizedString.Get("Auto-Arrange"), centerText: true);
+                autoArrangeButton = whiteButtonFactory.Generate(LocalizedString.Get("Auto-Arrange"), centerText: true);
                 autoArrangeButton.Visible = false;
                 autoArrangeButton.Cursor = Cursors.Hand;
                 buttonRightPanel.AddChild(autoArrangeButton);
@@ -1013,16 +1010,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
                 buttonRightPanel.AddChild(verticalSpacer);
 
-				//Create Save As Button 	
-				saveAsButton = whiteButtonFactory.Generate("Save As".Localize(), centerText: true);
-				saveAsButton.Visible = false;
-				saveAsButton.Cursor = Cursors.Hand;
-				buttonRightPanel.AddChild (saveAsButton);
-
-				saveButton = whiteButtonFactory.Generate(LocalizedString.Get("Save"), centerText: true);
-                saveButton.Visible = false;
-                saveButton.Cursor = Cursors.Hand;
-                buttonRightPanel.AddChild(saveButton);
+                saveButtons = CreateSaveButtons();
+                buttonRightPanel.AddChild(saveButtons);
             }
 
             buttonRightPanel.Padding = new BorderDouble(6, 6);
@@ -1031,6 +1020,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonRightPanel.VAnchor = VAnchor.ParentBottomTop;
 
             return buttonRightPanel;
+        }
+
+        private FlowLayoutWidget CreateSaveButtons()
+        {
+            FlowLayoutWidget saveButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            //Create Save As Button 	
+            Button saveAsButton = whiteButtonFactory.Generate("Save As".Localize(), centerText: true);
+            saveAsButton.Cursor = Cursors.Hand;
+            saveButtons.AddChild(saveAsButton);
+            saveAsButton.Click += (sender, e) =>
+            {
+                new SaveAsWindow(MergeAndSavePartsToStl);
+            };
+
+            Button saveButton = whiteButtonFactory.Generate(LocalizedString.Get("Save"), centerText: true);
+            saveButton.Cursor = Cursors.Hand;
+            saveButtons.AddChild(saveButton);
+            saveButton.Click += (sender, e) =>
+            {
+                MergeAndSavePartsToStl();
+            };
+
+            saveButtons.Visible = false;
+
+            return saveButtons;
         }
 
         private void SetMeshViewerDisplayTheme()
@@ -1207,8 +1221,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
                 MeshExtraData[SelectedMeshIndex].currentScale = scale;
                 applyScaleButton.Visible = false;
@@ -1264,8 +1277,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and shift it back so the new center is where the old center was
                 SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             };
 
@@ -1288,8 +1300,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and shift it back so the new center is where the old center was
                 SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             };
 
@@ -1311,8 +1322,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
                 // and shift it back so the new center is where the old center was
                 SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             };
 
@@ -1326,8 +1336,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 MakeLowestFaceFlat(SelectedMeshIndex);
 
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             };
 
@@ -1359,8 +1368,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 totalTransfrom *= Matrix4X4.CreateTranslation(center);
 
                 SelectedMeshTransform *= totalTransfrom;
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             };
 
@@ -1378,8 +1386,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 totalTransfrom *= Matrix4X4.CreateTranslation(center);
 
                 SelectedMeshTransform *= totalTransfrom;
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             };
 
@@ -1399,8 +1406,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 SelectedMeshTransform *= totalTransfrom;
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
 
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             };
             buttonPanel.AddChild(buttonContainer);
@@ -1417,24 +1423,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
             expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
 
-			saveAsButton.Click += (sender, e) => 
-			{
-				new SaveAsWindow();
-
-			};
-
-            saveButton.Click += (sender, e) =>
-            {
-                MergeAndSavePartsToStl();
-            };
-
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
         }
 
 
         bool partSelectButtonWasClicked = false;
-        private void MergeAndSavePartsToStl()
+        private void MergeAndSavePartsToStl(PrintItemWrapper printItemWarpperToSwitchTo = null)
         {
+            if (printItemWarpperToSwitchTo != null)
+            {
+                printItemWrapper = printItemWarpperToSwitchTo;
+            }
+
             if (Meshes.Count > 0)
             {
                 partSelectButtonWasClicked = partSelectButton.Checked;
@@ -1494,7 +1494,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             UnlockEditControls();
             // NOTE: we do not pull the data back out of the asynch lists.
-            saveButton.Visible = false;
+            saveButtons.Visible = false;
 
             if (partSelectButtonWasClicked)
             {
@@ -1620,8 +1620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and shift it back so the new center is where the old center was
                 MeshTransforms[indexToLayFlat] *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
-				saveAsButton.Visible = true;
-                saveButton.Visible = true;
+                saveButtons.Visible = true;
                 Invalidate();
             }
         }

@@ -366,6 +366,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     {
                         PrintQueueItem queueItem = new PrintQueueItem(this.printItem.Name, this.printItem.FileLocation);
                         PrintQueueControl.Instance.AddChild(queueItem);
+                        PrintQueueControl.Instance.SaveDefaultQueue();
                     };
 
 					viewLink = linkButtonFactory.Generate(LocalizedString.Get("View"));
