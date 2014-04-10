@@ -1950,3 +1950,6 @@ Translated:Configure
 English:Disable
 Translated:Disable
 
+English:Est. Weight
+Translated:Est. Weight
+
