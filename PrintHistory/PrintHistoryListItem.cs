@@ -119,18 +119,20 @@ namespace MatterHackers.MatterControl.PrintHistory
                 buttonContainer.Margin = new BorderDouble(0);
                 buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 {
-                    TextWidget statusIndicator = new TextWidget("Status: Completed", pointSize:8);
+                    TextWidget statusIndicator = new TextWidget("Status: Completed".Localize(), pointSize:8);
                     statusIndicator.Margin = new BorderDouble(right: 3);
                     //buttonContainer.AddChild(statusIndicator);
 
-                    TextWidget timeLabel = new TextWidget("PRINT TIME: ", pointSize:8);
+                    string printTimeLabel = "Print Time".Localize().ToUpper();
+                    string printTimeLabelFull = string.Format("{0}: ", printTimeLabel);
+                    TextWidget timeLabel = new TextWidget(printTimeLabelFull, pointSize: 8);
                     timeLabel.TextColor = timeTextColor;
 
                     TextWidget timeIndicator;
                     int minutes = printTask.PrintTimeMinutes;
                     if (minutes < 0)
                     {
-                        timeIndicator = new TextWidget("Unknown");
+                        timeIndicator = new TextWidget("Unknown".Localize());
                     }
                     else if (minutes > 60)
                     {
@@ -147,7 +149,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                     buttonContainer.AddChild(timeLabel);
                     buttonContainer.AddChild(timeIndicator);
                     
-                    printAgainLink = linkButtonFactory.Generate(LocalizedString.Get("Print Again"));
+                    printAgainLink = linkButtonFactory.Generate("Print Again".Localize());
                     printAgainLink.Margin = new BorderDouble(left: 0, right: 10);
                     printAgainLink.VAnchor = VAnchor.ParentCenter;
 
@@ -176,7 +178,8 @@ namespace MatterHackers.MatterControl.PrintHistory
                     startTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                     startTimeContainer.Padding = new BorderDouble(0, 3);
 
-                    TextWidget startLabel = new TextWidget("START:", pointSize: 8);
+                    string startLabelFull = "{0}:".FormatWith("Start".Localize().ToUpper());
+                    TextWidget startLabel = new TextWidget(startLabelFull, pointSize: 8);
                     startLabel.TextColor = timeTextColor;
 
                     string startTimeString = printTask.PrintStart.ToString("MMM d yyyy h:mm ") + printTask.PrintStart.ToString("tt").ToLower();
@@ -192,7 +195,8 @@ namespace MatterHackers.MatterControl.PrintHistory
                     endTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                     endTimeContainer.Padding = new BorderDouble(0, 3);
 
-                    TextWidget endLabel = new TextWidget("END:", pointSize: 8);
+                    string endLabelFull = "{0}:".FormatWith("End".Localize().ToUpper());
+                    TextWidget endLabel = new TextWidget(endLabelFull, pointSize: 8);
                     endLabel.TextColor = timeTextColor;
 
                     string endTimeString;
@@ -202,7 +206,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                     }
                     else
                     {
-                        endTimeString = "Unknown";
+                        endTimeString = "Unknown".Localize();
                     }
 
                     TextWidget endDate = new TextWidget(endTimeString, pointSize: 12);

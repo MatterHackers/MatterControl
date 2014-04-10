@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
-                    Button openEePromWindow = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
+                    Button openEePromWindow = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
                     openEePromWindow.Click += (sender, e) =>
                     {
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl
 
                 this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-                Button runPrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
+                Button runPrintLevelingButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
                 runPrintLevelingButton.Margin = new BorderDouble(left:6);
                 runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
                 runPrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(runPrintLeveling_Click);
@@ -326,12 +326,12 @@ namespace MatterHackers.MatterControl
                 ImageWidget levelingIcon = new ImageWidget(levelingImage);
 				levelingIcon.Margin = new BorderDouble (right: 6);
 
-                enablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("ENABLE"));
+                enablePrintLevelingButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
 				enablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				enablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(enablePrintLeveling_Click);
 
-                disablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("DISABLE"));
+                disablePrintLevelingButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
 				disablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);

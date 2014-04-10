@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
-					Button openEePromWindow = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
+                    Button openEePromWindow = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
                     openEePromWindow.Click += (sender, e) =>
                     {
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.

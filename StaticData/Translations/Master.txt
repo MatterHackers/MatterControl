@@ -1935,3 +1935,18 @@ Translated:Edit Preset
 English:Slice-Engine
 Translated:Slice-Engine
 
+English:Status: Completed
+Translated:Status: Completed
+
+English:Unlock
+Translated:Unlock
+
+English:Show Terminal
+Translated:Show Terminal
+
+English:Configure
+Translated:Configure
+
+English:Disable
+Translated:Disable
+
