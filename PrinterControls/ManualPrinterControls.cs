@@ -565,14 +565,14 @@ namespace MatterHackers.MatterControl
 
         private GuiWidget CreateSdCardManagerContainer()
         {
-            GroupBox terminalControlsContainer;
-            terminalControlsContainer = new GroupBox("SD Card Printing");
+            GroupBox sdCardControlsContainer;
+            sdCardControlsContainer = new GroupBox("SD Card Printing");
 
-            terminalControlsContainer.Margin = new BorderDouble(top: 10);
-            terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            terminalControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            terminalControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            terminalControlsContainer.Height = 68;
+            sdCardControlsContainer.Margin = new BorderDouble(top: 10);
+            sdCardControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            sdCardControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+            sdCardControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            sdCardControlsContainer.Height = 68;
 
             {
                 FlowLayoutWidget buttonBar = new FlowLayoutWidget();
@@ -583,7 +583,7 @@ namespace MatterHackers.MatterControl
 
                 this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-                Button showSDPrintingPannel = textImageButtonFactory.Generate("SD CARD MANAGER");
+                Button showSDPrintingPannel = textImageButtonFactory.Generate("SD Card Manager".ToUpper());
                 showSDPrintingPannel.Margin = new BorderDouble(left: 10);
                 showSDPrintingPannel.Click += (sender, e) =>
                 {
@@ -591,10 +591,10 @@ namespace MatterHackers.MatterControl
                 };
                 buttonBar.AddChild(showSDPrintingPannel);
 
-                terminalControlsContainer.AddChild(buttonBar);
+                sdCardControlsContainer.AddChild(buttonBar);
             }
 
-            return terminalControlsContainer;
+            return sdCardControlsContainer;
         }
 
         private void SetDisplayAttributes()
@@ -623,7 +623,7 @@ namespace MatterHackers.MatterControl
                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                 sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }

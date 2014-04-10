@@ -274,6 +274,13 @@ namespace MatterHackers.MatterControl
 
             if (firstDraw)
             {
+                string desktopPosition = ApplicationSettings.Instance.get("DesktopPosition");
+                if (desktopPosition != null && desktopPosition != "")
+                {
+                    string[] sizes = desktopPosition.Split(',');
+                    DesktopPosition = new Point2D(int.Parse(sizes[0]), int.Parse(sizes[1]));
+                }
+                
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
@@ -317,6 +324,7 @@ namespace MatterHackers.MatterControl
         {
             // save the last size of the window so we can restore it next time.
             ApplicationSettings.Instance.set("WindowSize", string.Format("{0},{1}", Width, Height));
+            ApplicationSettings.Instance.set("DesktopPosition", string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
             PrinterCommunication.Instance.Disable();
             //Close connection to the local datastore
             Datastore.Instance.Exit();
