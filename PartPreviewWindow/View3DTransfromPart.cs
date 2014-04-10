@@ -90,7 +90,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         Button autoArrangeButton;
         FlowLayoutWidget saveButtons;
-        Button closeButton;
         Button applyScaleButton;
 
         PrintItemWrapper printItemWrapper;
@@ -249,7 +248,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnMouseUp(mouseEvent);
         }
 
-        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape)
+        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, bool addCloseButton)
         {
             MeshExtraData = new List<PlatingMeshData>();
             MeshExtraData.Add(new PlatingMeshData());
@@ -402,8 +401,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             leftRightSpacer.HAnchor = HAnchor.ParentLeftRight;
             buttonBottomPanel.AddChild(leftRightSpacer);
 
-			closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
-            buttonBottomPanel.AddChild(closeButton);
+            if (addCloseButton)
+            {
+                Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+                buttonBottomPanel.AddChild(closeButton);
+                closeButton.Click += (sender, e) =>
+                {
+                    CloseOnIdle();
+                };
+            }
+
 
             mainContainerTopToBottom.AddChild(buttonBottomPanel);
 
@@ -1428,8 +1435,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
-            closeButton.Click += new ButtonBase.ButtonEventHandler(onCloseButton_Click);
-
             expandViewOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandViewOptions_CheckedStateChanged);
             expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
             expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
@@ -1536,16 +1541,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         bool rotateQueueMenu_Click()
         {
             return true;
-        }
-
-        private void onCloseButton_Click(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle(CloseOnIdle);
-        }
-
-        void CloseOnIdle(object state)
-        {
-            Close();
         }
 
         private void MakeLowestFaceFlat(int indexToLayFlat)

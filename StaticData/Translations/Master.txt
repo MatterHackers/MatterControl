@@ -1929,3 +1929,6 @@ Translated:Connection succeeded
 English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
 Translated:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
 
+English:Edit Preset
+Translated:Edit Preset
+

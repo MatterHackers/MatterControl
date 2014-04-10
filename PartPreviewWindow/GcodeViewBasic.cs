@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         TextWidget gcodeProcessingStateInfoText;
         GCodeViewWidget gcodeViewWidget;
         PrintItemWrapper printItem;
-        Button closeButton;
         bool startedSliceFromGenerateButton = false;
         Button generateGCodeButton;
         FlowLayoutWidget buttonBottomPanel;
@@ -77,11 +76,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         GetSizeFunction bedSizeFunction;
         GetSizeFunction bedCenterFunction;
+        bool widgetHasCloseButton;
 
         public delegate Vector2 GetSizeFunction();
 
-        public GcodeViewBasic(PrintItemWrapper printItem, GetSizeFunction bedSizeFunction, GetSizeFunction bedCenterFunction)
+        public GcodeViewBasic(PrintItemWrapper printItem, GetSizeFunction bedSizeFunction, GetSizeFunction bedCenterFunction, bool addCloseButton)
         {
+            widgetHasCloseButton = addCloseButton;
             this.printItem = printItem;
 
             this.bedSizeFunction = bedSizeFunction;
@@ -111,9 +112,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerSelectionButtonsPannel.HAnchor = HAnchor.ParentLeftRight;
             layerSelectionButtonsPannel.Padding = new BorderDouble(0);
 
-			closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+            GuiWidget holdPannelOpen = new GuiWidget(1, generateGCodeButton.Height);
+            layerSelectionButtonsPannel.AddChild(holdPannelOpen);
 
-            layerSelectionButtonsPannel.AddChild(closeButton);
+            if (widgetHasCloseButton)
+            {
+                Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+                layerSelectionButtonsPannel.AddChild(closeButton);
+                closeButton.Click += (sender, e) =>
+                {
+                    CloseOnIdle();
+                };
+            }
 
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
             centerPartPreviewAndControls.AnchorAll();
@@ -574,7 +584,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddHandlers()
         {
-            closeButton.Click += onCloseButton_Click;
             expandModelOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandModelOptions_CheckedStateChanged);
             expandLayerOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
             expandDisplayOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandMirrorOptions_CheckedStateChanged);
@@ -593,16 +602,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
         {
             layerOptionsContainer.Visible = expandLayerOptions.Checked;
-        }
-
-        private void onCloseButton_Click(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle(CloseOnIdle);
-        }
-
-        void CloseOnIdle(object state)
-        {
-            Close();
         }
 
         public override void OnClosed(EventArgs e)
