@@ -130,9 +130,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
-            string startingMessage = LocalizedString.Get("No GCode Available...");
+            string startingMessage = "";
             if (printItem != null)
             {
+                startingMessage = LocalizedString.Get("No GCode Available...");
                 startingMessage = LocalizedString.Get("Loading GCode...");
                 if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
                 {

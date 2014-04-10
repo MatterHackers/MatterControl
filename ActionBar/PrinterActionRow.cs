@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 if (ActivePrinterProfile.Instance.ActivePrinter == null)
                 {
-                    OpenConnectionWindow();
+                    OpenConnectionWindow(ConnectToActivePrinter);
                 }
                 else
                 {
@@ -159,12 +159,15 @@ namespace MatterHackers.MatterControl.ActionBar
             OpenConnectionWindow();
         }
 
-        void OpenConnectionWindow()
+        public delegate void ConnectOnSelectFunction();
+        ConnectOnSelectFunction functionToCallOnSelect;
+        void OpenConnectionWindow(ConnectOnSelectFunction functionToCallOnSelect = null)
         {
             if (this.connectionWindowIsOpen == false)
             {
                 connectionWindow = new ConnectionWindow();
                 this.connectionWindowIsOpen = true;
+                this.functionToCallOnSelect = functionToCallOnSelect;
                 connectionWindow.Closed += new EventHandler(ConnectionWindow_Closed);
             }
             else
@@ -188,7 +191,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onActivePrinterChanged(object sender, EventArgs e)
         {
-            connectPrinterButton.Enabled = true;            
+            connectPrinterButton.Enabled = true;
+            if (functionToCallOnSelect != null)
+            {
+                functionToCallOnSelect();
+                functionToCallOnSelect = null;
+            }
         }
 
         void onDisconnectButtonClick(object sender, MouseEventArgs e)
