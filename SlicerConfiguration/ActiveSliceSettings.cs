@@ -183,14 +183,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
+                SettingsLayer printerSettingsLayer;
                 DataStorage.SliceSettingsCollection collection;
                 if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex) != 0)
                 {
                     int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex);
                     collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
-                    SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
-                    this.activeSettingsLayers.Add(printerSettingsLayer);
-                }                
+                    printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+                }
+                else
+                {
+                    printerSettingsLayer = new SettingsLayer(new SliceSettingsCollection(),new Dictionary<string, SliceSetting>());
+                }
+                this.activeSettingsLayers.Add(printerSettingsLayer);
             }
         }
 
@@ -198,15 +203,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
+                SettingsLayer printerSettingsLayer;
                 DataStorage.SliceSettingsCollection collection;
                 if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != 0)
                 {
                     int materialOneSettingsID = ActivePrinterProfile.Instance.ActiveQualitySettingsID;
                     collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
-                    SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
-                    this.activeSettingsLayers.Add(printerSettingsLayer);
+                    printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);                    
                 }
-            }
+                else
+                {
+                    printerSettingsLayer = new SettingsLayer(new SliceSettingsCollection(), new Dictionary<string, SliceSetting>());
+                }
+                this.activeSettingsLayers.Add(printerSettingsLayer);
+            }           
         }
 
         public void LoadSettingsForPrinter()

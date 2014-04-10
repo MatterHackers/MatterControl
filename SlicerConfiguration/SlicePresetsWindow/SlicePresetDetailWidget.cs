@@ -52,8 +52,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         TextWidget presetNameError;
         MHTextEditWidget presetNameInput;
         Button savePresetButton;
-        Button addSettingButton;
-        Button removeSettingButton;
         int tabIndexForItem = 0;
 
         public SlicePresetDetailWidget(SlicePresetsWindow windowController)
@@ -67,6 +65,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             linkButtonFactory.fontSize = 10;
             linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
+
+            buttonFactory = new TextImageButtonFactory();
+            buttonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonFactory.borderWidth = 0;
 
             AddElements();
             AddHandlers();
@@ -191,6 +196,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             FlowLayoutWidget container = new FlowLayoutWidget();
             container.HAnchor = HAnchor.ParentLeftRight;
+            container.Margin = new BorderDouble(top: 3);
 
             savePresetButton = buttonFactory.Generate(LocalizedString.Get("Save"));
             Button cancelButton = buttonFactory.Generate(LocalizedString.Get("Cancel"));
@@ -340,6 +346,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             Button addButton = buttonFactory.Generate("Add");
             addButton.Click += new ButtonBase.ButtonEventHandler(OnAddSettingClick);
+            addButton.Margin = new BorderDouble(right: 3);
 
             addSettingsContainer.RemoveAllChildren();
             addSettingsContainer.AddChild(categoryDropDownList);
