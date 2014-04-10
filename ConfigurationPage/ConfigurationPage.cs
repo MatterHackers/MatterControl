@@ -117,14 +117,10 @@ namespace MatterHackers.MatterControl
         }
 
         Button restartButton;
-        Dictionary<string, string> languageDict;
 
         private void AddLanguageControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            CreateLanguageDict();
-            
             DisableableWidget container = new DisableableWidget();
-            
             
             GroupBox languageControlsGroupBox = new GroupBox(LocalizedString.Get("Language Settings"));
             languageControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -137,22 +133,7 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
             controlsContainer.HAnchor = HAnchor.ParentLeftRight;
 
-            string languageCode = UserSettings.Instance.get("Language");
-            string languageVerbose = "Default";
-
-            foreach(KeyValuePair<string, string> entry in languageDict)
-            {
-                if (languageCode == entry.Value)
-                {
-                    languageVerbose = entry.Key;
-                }
-            }
-
-            LanguageSelector languageSelector = new LanguageSelector(languageVerbose);
-            foreach (KeyValuePair<string, string> entry in languageDict)
-            {
-                languageSelector.AddItem(entry.Key,entry.Value);
-            }
+            LanguageSelector languageSelector = new LanguageSelector();
 
             languageSelector.Margin = new BorderDouble(0);
             languageSelector.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
@@ -182,20 +163,15 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle((state) =>
             {
                 //horrible hack - to be replaced
-                MatterControlApplication app = (MatterControlApplication)this.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent;
+                GuiWidget parent = this;
+                while (parent as MatterControlApplication == null)
+                {
+                    parent = parent.Parent;
+                }
+                MatterControlApplication app = parent as MatterControlApplication;
                 app.RestartOnClose = true;
                 app.Close();
             });
-        }
-
-        private void CreateLanguageDict()
-        {
-            languageDict = new Dictionary<string, string>();
-            languageDict["Default"] = "EN";
-            languageDict["English"] = "EN";
-            languageDict["Español"] = "ES";
-            languageDict["Français"] = "FR";
-            languageDict["Deutsch"] = "DE";
         }
 
         private void LanguageDropList_SelectionChanged(object sender, EventArgs e)

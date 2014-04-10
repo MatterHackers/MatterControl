@@ -322,6 +322,19 @@ namespace MatterHackers.MatterControl
             Datastore.Instance.Exit();
             PrinterCommunication.Instance.HaltConnectionThread();
             SlicingQueue.Instance.ShutDownSlicingThread();
+            if (RestartOnClose)
+            {
+                string appPathAndFile = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string pathToAppFolder = Path.GetDirectoryName(appPathAndFile);
+
+                ProcessStartInfo runAppLauncherStartInfo = new ProcessStartInfo();
+                runAppLauncherStartInfo.Arguments = "\"{0}\" \"{1}\"".FormatWith(appPathAndFile, 1000);
+                runAppLauncherStartInfo.FileName = Path.Combine(pathToAppFolder, "Launcher.exe");
+                runAppLauncherStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                runAppLauncherStartInfo.CreateNoWindow = true;
+
+                Process.Start(runAppLauncherStartInfo);
+            }
             base.OnClosed(e);
         }
 

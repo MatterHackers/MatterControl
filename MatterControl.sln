@@ -58,6 +58,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutlineCreator", "..\Matter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterSlice", "..\MatterSlice\MatterSlice.csproj", "{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Launcher\Launcher.csproj", "{3DF4CB3D-9A03-4256-9A81-70523AAD828B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -224,6 +226,12 @@ Global
 		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release|x86.ActiveCfg = Release|Any CPU
+		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

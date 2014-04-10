@@ -10,17 +10,15 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 
-
 namespace MatterHackers.MatterControl
 {
     public class LanguageSelector : StyledDropDownList
-    {        
+    {
+        Dictionary<string, string> languageDict;
 
-        public LanguageSelector(string selection)
-            : base(selection)
+        public LanguageSelector()
+            : base("Default")
         {            
-
-
             //string pathToModels = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", manufacturer);
             //if (Directory.Exists(pathToModels))
             //{
@@ -32,7 +30,34 @@ namespace MatterHackers.MatterControl
             //}
 
             this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
+
+            CreateLanguageDict();
+
+            string languageCode = UserSettings.Instance.get("Language");
+
+            foreach (KeyValuePair<string, string> entry in languageDict)
+            {
+                AddItem(entry.Key, entry.Value);
+            }
+
+            foreach (KeyValuePair<string, string> entry in languageDict)
+            {
+                if (languageCode == entry.Value)
+                {
+                    SelectedLabel = entry.Key;
+                    break;
+                }
+            }
+        }
+
+        private void CreateLanguageDict()
+        {
+            languageDict = new Dictionary<string, string>();
+            languageDict["Default"] = "EN";
+            languageDict["English"] = "EN";
+            languageDict["Español"] = "ES";
+            languageDict["Français"] = "FR";
+            languageDict["Deutsch"] = "DE";
         }
     }
-       
 }
