@@ -128,6 +128,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             buttonFactory.FixedHeight = 20;
             buttonFactory.fontSize = 10;
             buttonFactory.normalFillColor = RGBA_Bytes.White;
+            buttonFactory.normalTextColor = RGBA_Bytes.DarkGray;
 
             showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
             showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
