@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl
 
         protected void SentCommandToPrinter(string command)
         {
-            PrinterCommunication.Instance.QueueLineToPrinter(command);
+            PrinterCommunication.Instance.SendLineToPrinterNow(command);
         }
     }
 }

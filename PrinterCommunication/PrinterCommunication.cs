@@ -660,7 +660,7 @@ namespace MatterHackers.MatterControl
             {
                 if (MonitorPrinterTemperature)
                 {
-                    QueueLineToPrinter("M105");
+                    SendLineToPrinterNow("M105");
                 }
                 temperatureRequestTimer.Restart();
             }
@@ -701,7 +701,7 @@ namespace MatterHackers.MatterControl
                 {
                     targetExtruderTemperature = value;
                     OnExtruderTemperatureSet(new TemperatureEventArgs(TargetExtruderTemperature));
-                    QueueLineToPrinter("M104 S{0}".FormatWith(targetExtruderTemperature));
+                    SendLineToPrinterNow("M104 S{0}".FormatWith(targetExtruderTemperature));
                 }
             }
         }
@@ -718,7 +718,9 @@ namespace MatterHackers.MatterControl
         {
             if (ActivePrinter.DoPrintLeveling)
             {
+                ForceImmediateWrites = true;
                 ReadPosition();
+                ForceImmediateWrites = false;
             }
         }
 
@@ -752,7 +754,7 @@ namespace MatterHackers.MatterControl
             {
                 fanSpeed = Math.Max(0, Math.Min(255, value));
                 OnFanSpeedSet(null);
-                QueueLineToPrinter("M106 S{0}".FormatWith(fanSpeed));
+                SendLineToPrinterNow("M106 S{0}".FormatWith(fanSpeed));
             }
         }
 
@@ -768,7 +770,7 @@ namespace MatterHackers.MatterControl
                 {
                     targetBedTemperature = value;
                     OnBedTemperatureSet(new TemperatureEventArgs(TargetBedTemperature));
-                    QueueLineToPrinter("M140 S{0}".FormatWith(targetBedTemperature));
+                    SendLineToPrinterNow("M140 S{0}".FormatWith(targetBedTemperature));
                 }
             }
         }
@@ -1258,8 +1260,8 @@ namespace MatterHackers.MatterControl
 
                         // let's check if the printer will talk to us
                         ReadPosition();
-                        QueueLineToPrinter("M105");
-                        QueueLineToPrinter("M115");
+                        SendLineToPrinterNow("M105");
+                        SendLineToPrinterNow("M115");
                     }
                     catch (System.ArgumentOutOfRangeException)
                     {
@@ -1422,7 +1424,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public void QueueLineToPrinter(string lineToWrite)
+        public void SendLineToPrinterNow(string lineToWrite)
         {
             using (TimedLock.Lock(this, "QueueLineToPrinter"))
             {
@@ -1430,10 +1432,21 @@ namespace MatterHackers.MatterControl
                 if (lineToWrite.Contains("\n"))
                 {
                     string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-                    for (int i = lines.Length - 1; i >= 0; i--)
+                    if (ForceImmediateWrites && !PrinterIsPrinting)
                     {
-                        string line = lines[i];
-                        QueueLineToPrinter(line);
+                        for (int i = 0; i < lines.Length; i++)
+                        {
+                            string line = lines[i];
+                            SendLineToPrinterNow(line);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = lines.Length - 1; i >= 0; i--)
+                        {
+                            string line = lines[i];
+                            SendLineToPrinterNow(line);
+                        }
                     }
                     return;
                 }
@@ -1441,7 +1454,7 @@ namespace MatterHackers.MatterControl
                 lineToWrite = lineToWrite.Split(';')[0].Trim();
                 if (PrinterIsPrinting)
                 {
-                    // insert the command into the printing queue
+                    // insert the command into the printing queue at the head
                     if (printerCommandQueueIndex >= 0
                         && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count - 1)
                     {
@@ -1460,9 +1473,10 @@ namespace MatterHackers.MatterControl
                     }
                     else
                     {
+                        // try not to write the exact same command twice (like M105)
                         if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
                         {
-                            LinesToWriteQueue.Insert(0, lineToWrite);
+                            LinesToWriteQueue.Add(lineToWrite);
                         }
                     }
                 }
@@ -2013,7 +2027,7 @@ namespace MatterHackers.MatterControl
 
         public void ReleaseMotors()
         {
-            QueueLineToPrinter("M84");
+            SendLineToPrinterNow("M84");
         }
 
         [Flags]
@@ -2034,18 +2048,18 @@ namespace MatterHackers.MatterControl
                 command += " Z0";
             }
 
-            QueueLineToPrinter(command);
+            SendLineToPrinterNow(command);
             ReadPosition();
         }
 
         public void SetMovementToAbsolute()
         {
-            PrinterCommunication.Instance.QueueLineToPrinter("G90");
+            PrinterCommunication.Instance.SendLineToPrinterNow("G90");
         }
 
         public void SetMovementToRelative()
         {
-            PrinterCommunication.Instance.QueueLineToPrinter("G91");
+            PrinterCommunication.Instance.SendLineToPrinterNow("G91");
         }
 
         public void MoveRelative(Axis axis, double moveAmountMm, double feedRateMmPerMinute)
@@ -2053,8 +2067,8 @@ namespace MatterHackers.MatterControl
             if (moveAmountMm != 0)
             {
                 SetMovementToRelative();
-                PrinterCommunication.Instance.QueueLineToPrinter("G1 F{0}".FormatWith(feedRateMmPerMinute));
-                PrinterCommunication.Instance.QueueLineToPrinter("G1 {0}{1}".FormatWith(axis, moveAmountMm));
+                PrinterCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
+                PrinterCommunication.Instance.SendLineToPrinterNow("G1 {0}{1}".FormatWith(axis, moveAmountMm));
                 SetMovementToAbsolute();
             }
         }
@@ -2062,20 +2076,20 @@ namespace MatterHackers.MatterControl
         public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
         {
             SetMovementToAbsolute();
-            PrinterCommunication.Instance.QueueLineToPrinter("G1 F{0}".FormatWith(feedRateMmPerMinute));
-            PrinterCommunication.Instance.QueueLineToPrinter("G1 {0}{1}".FormatWith(axis, axisPositionMm));
+            PrinterCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
+            PrinterCommunication.Instance.SendLineToPrinterNow("G1 {0}{1}".FormatWith(axis, axisPositionMm));
         }
 
         public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
         {
             SetMovementToAbsolute();
-            PrinterCommunication.Instance.QueueLineToPrinter("G1 F{0}".FormatWith(feedRateMmPerMinute));
-            PrinterCommunication.Instance.QueueLineToPrinter("G1 X{0}Y{1}Z{2}".FormatWith(position.x, position.y, position.z));
+            PrinterCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
+            PrinterCommunication.Instance.SendLineToPrinterNow("G1 X{0}Y{1}Z{2}".FormatWith(position.x, position.y, position.z));
         }
 
         public void ReadPosition()
         {
-            QueueLineToPrinter("M114");
+            SendLineToPrinterNow("M114");
         }
     }
 }

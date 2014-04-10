@@ -47,6 +47,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class PartPreviewWidget : GuiWidget
     {
+        protected readonly int ShortButtonHeight = 25;
+        protected readonly int SideBarButtonWidth = 138;
+
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory checkboxButtonFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory expandMenuOptionFactory = new TextImageButtonFactory();
@@ -68,13 +71,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            whiteButtonFactory.FixedWidth = 138;
+            whiteButtonFactory.FixedWidth = SideBarButtonWidth;
+            whiteButtonFactory.FixedHeight = ShortButtonHeight;
             whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
             whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
             whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
             whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
 
-            expandMenuOptionFactory.FixedWidth = 138;
+            expandMenuOptionFactory.FixedWidth = SideBarButtonWidth;
             expandMenuOptionFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
             expandMenuOptionFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
             expandMenuOptionFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -85,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             
 
             checkboxButtonFactory.fontSize = 11;
-            checkboxButtonFactory.FixedWidth = 138;
+            checkboxButtonFactory.FixedWidth = SideBarButtonWidth;
             checkboxButtonFactory.borderWidth = 3;
 
             checkboxButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;

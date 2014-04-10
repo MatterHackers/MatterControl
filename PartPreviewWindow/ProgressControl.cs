@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public ProgressControl(string message)
         {
-            textWidget = new TextWidget(message, textColor: RGBA_Bytes.White);
+            textWidget = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
             textWidget.AutoExpandBoundsToText = true;
             textWidget.Margin = new BorderDouble(5, 0);
             AddChild(textWidget);
