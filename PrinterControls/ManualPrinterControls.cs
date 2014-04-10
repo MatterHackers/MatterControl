@@ -547,7 +547,7 @@ namespace MatterHackers.MatterControl
 				ImageWidget terminalIcon = new ImageWidget(terminalImage);
 				terminalIcon.Margin = new BorderDouble (right: 6);
 
-				Button showTerminal = textImageButtonFactory.Generate(LocalizedString.Get("SHOW TERMINAL"));
+				Button showTerminal = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
                 showTerminal.Margin = new BorderDouble(0);
                 showTerminal.Click += (sender, e) =>
                 {
@@ -738,7 +738,7 @@ namespace MatterHackers.MatterControl
             GuiWidget spacer = new GuiWidget();
             spacer.HAnchor = HAnchor.ParentLeftRight;
 
-			disableMotors = textImageButtonFactory.Generate(LocalizedString.Get("UNLOCK"));
+			disableMotors = textImageButtonFactory.Generate("Unlock".Localize().ToUpper());
             disableMotors.Margin = new BorderDouble(0);
             disableMotors.Click += new ButtonBase.ButtonEventHandler(disableMotors_Click);
 
