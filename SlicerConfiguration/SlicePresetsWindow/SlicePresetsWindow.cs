@@ -82,7 +82,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.MinimumSize = new Vector2(640, 480);
         }
 
-
         public void ChangeToSlicePresetList()
         {
             this.ActivePresetLayer = null;
@@ -130,7 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return result;
         }
 
-        IEnumerable<DataStorage.SliceSetting> GetCollectionSettings(int collectionId)
+        public IEnumerable<DataStorage.SliceSetting> GetCollectionSettings(int collectionId)
         {
             //Retrieve a list of slice settings from the Datastore
             string query = string.Format("SELECT * FROM SliceSetting WHERE SettingsCollectionID = {0};", collectionId);
