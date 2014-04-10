@@ -128,8 +128,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             IEnumerable<DataStorage.SliceSettingsCollection> results = Enumerable.Empty<DataStorage.SliceSettingsCollection>();
 
             //Retrieve a list of collections matching from the Datastore
-            string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}';", filterTag);
-            results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+                string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1};", filterTag, ActivePrinterProfile.Instance.ActivePrinter.Id);
+                results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
+            }
             return results;
         }
 
@@ -193,16 +196,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 menuItem.Selected += new EventHandler(onItemSelect);
             }
 
-            MenuItem addNewPreset = dropDownList.AddItem("<< Add New >>", "new");
+            MenuItem addNewPreset = dropDownList.AddItem("<< Add >>", "new");
             addNewPreset.Selected += new EventHandler(onNewItemSelect);
 
             if (filterTag == "material")
             {
-                dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(1).ToString();
+                try
+                {
+                    dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(1).ToString();
+                }
+                catch
+                {
+                    //Unable to set selected value
+                }
             }
             else if (filterTag == "quality")
             {
-                dropDownList.SelectedValue = ActivePrinterProfile.Instance.ActiveQualitySettingsID.ToString();
+                try
+                {
+                    dropDownList.SelectedValue = ActivePrinterProfile.Instance.ActiveQualitySettingsID.ToString();
+                }
+                catch
+                {
+                    //Unable to set selected value
+                }
             }
 
             return dropDownList;
