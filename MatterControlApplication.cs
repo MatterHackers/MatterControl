@@ -274,6 +274,13 @@ namespace MatterHackers.MatterControl
 
             if (firstDraw)
             {
+                string desktopPosition = ApplicationSettings.Instance.get("DesktopPosition");
+                if (desktopPosition != null && desktopPosition != "")
+                {
+                    string[] sizes = desktopPosition.Split(',');
+                    DesktopPosition = new Point2D(int.Parse(sizes[0]), int.Parse(sizes[1]));
+                }
+                
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
@@ -317,11 +324,25 @@ namespace MatterHackers.MatterControl
         {
             // save the last size of the window so we can restore it next time.
             ApplicationSettings.Instance.set("WindowSize", string.Format("{0},{1}", Width, Height));
+            ApplicationSettings.Instance.set("DesktopPosition", string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
             PrinterCommunication.Instance.Disable();
             //Close connection to the local datastore
             Datastore.Instance.Exit();
             PrinterCommunication.Instance.HaltConnectionThread();
             SlicingQueue.Instance.ShutDownSlicingThread();
+            if (RestartOnClose)
+            {
+                string appPathAndFile = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string pathToAppFolder = Path.GetDirectoryName(appPathAndFile);
+
+                ProcessStartInfo runAppLauncherStartInfo = new ProcessStartInfo();
+                runAppLauncherStartInfo.Arguments = "\"{0}\" \"{1}\"".FormatWith(appPathAndFile, 1000);
+                runAppLauncherStartInfo.FileName = Path.Combine(pathToAppFolder, "Launcher.exe");
+                runAppLauncherStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                runAppLauncherStartInfo.CreateNoWindow = true;
+
+                Process.Start(runAppLauncherStartInfo);
+            }
             base.OnClosed(e);
         }
 

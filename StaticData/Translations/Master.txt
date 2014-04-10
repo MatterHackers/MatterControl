@@ -1932,3 +1932,24 @@ Translated:You cannot move any lower. This position on your bed is too low for t
 English:Edit Preset
 Translated:Edit Preset
 
+English:Slice-Engine
+Translated:Slice-Engine
+
+English:Status: Completed
+Translated:Status: Completed
+
+English:Unlock
+Translated:Unlock
+
+English:Show Terminal
+Translated:Show Terminal
+
+English:Configure
+Translated:Configure
+
+English:Disable
+Translated:Disable
+
+English:Est. Weight
+Translated:Est. Weight
+
