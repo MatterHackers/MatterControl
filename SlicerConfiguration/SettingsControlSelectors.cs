@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //Retrieve a list of collections matching from the Datastore
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
-                string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1};", filterTag, ActivePrinterProfile.Instance.ActivePrinter.Id);
+                string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1} ORDER BY Name;", filterTag, ActivePrinterProfile.Instance.ActivePrinter.Id);
                 results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
             }
             return results;
