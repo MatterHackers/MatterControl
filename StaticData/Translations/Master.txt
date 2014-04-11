@@ -1953,3 +1953,6 @@ Translated:Disable
 English:Est. Weight
 Translated:Est. Weight
 
+English:Downloading updates...
+Translated:Downloading updates...
+
