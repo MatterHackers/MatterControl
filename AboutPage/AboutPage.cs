@@ -90,6 +90,7 @@ namespace MatterHackers.MatterControl
         Button checkUpdateLink;
         Button installUpdateLink;
         int downloadPercent = 0;
+        int downloadSize = 0;
         TextWidget updateStatusText;
         RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
@@ -257,7 +258,6 @@ namespace MatterHackers.MatterControl
                 System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
                 request.Method = "HEAD";
 
-                int downloadSize;
                 try
                 {
                     WebResponse response = request.GetResponse();
@@ -285,8 +285,11 @@ namespace MatterHackers.MatterControl
 
         void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            this.downloadPercent = e.ProgressPercentage; //This doesn't work currently
-            updateStatusText.Text = string.Format("Downloading updates...".Localize());
+            if(downloadSize > 0)
+            {
+                this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
+            }
+            updateStatusText.Text = "{0} {1}%".FormatWith("Downloading updates...".Localize(), downloadPercent);
         }
 
         void DownloadCompleted(object sender, EventArgs e)

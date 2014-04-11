@@ -1932,3 +1932,9 @@ Translated:You cannot move any lower. This position on your bed is too low for t
 English:Edit Preset
 Translated:Edit Preset
 
+English:Downloading updates...
+Translated:Downloading updates...
+
+English:Oops! Unable to install update.
+Translated:Oops! Unable to install update.
+
