@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     public class ActiveSliceSettings
     {
         static ActiveSliceSettings globalInstance = null;
-        static string configFileExtension = "ini";
+        static string configFileExtension = "slice";
         private List<SettingsLayer> activeSettingsLayers;
         public RootedObjectEventHandler CommitStatusChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler SettingsChanged = new RootedObjectEventHandler();
@@ -480,7 +480,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public bool LoadSettingsFromIni()
         {
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Configuration|*." + configFileExtension);
+            OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Configuration|*.slice;*.ini");
 			openParams.ActionButtonLabel = "Load Configuration";
 			openParams.Title = "MatterControl: Select A File";
 

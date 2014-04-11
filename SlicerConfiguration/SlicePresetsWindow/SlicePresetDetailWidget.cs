@@ -51,7 +51,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         SlicePresetsWindow windowController;
         TextWidget presetNameError;
         MHTextEditWidget presetNameInput;
+
         Button savePresetButton;
+        Button duplicatePresetButton;
+        Button importPresetButton;
+        Button exportPresetButton;
+
         int tabIndexForItem = 0;
 
         public SlicePresetDetailWidget(SlicePresetsWindow windowController)
@@ -79,7 +84,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void AddHandlers()
         {
-            savePresetButton.Click += savePresets_Click;
+            savePresetButton.Click += new ButtonBase.ButtonEventHandler(savePresets_Click);
+            duplicatePresetButton.Click += new ButtonBase.ButtonEventHandler(duplicatePresets_Click);
+            importPresetButton.Click += new ButtonBase.ButtonEventHandler(importPresets_Click);
+            exportPresetButton.Click += new ButtonBase.ButtonEventHandler(exportPresets_Click);
         }
 
 
@@ -199,6 +207,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             container.Margin = new BorderDouble(top: 3);
 
             savePresetButton = buttonFactory.Generate(LocalizedString.Get("Save"));
+            duplicatePresetButton = buttonFactory.Generate(LocalizedString.Get("Duplicate"));
+            importPresetButton = buttonFactory.Generate(LocalizedString.Get("Import"));
+            exportPresetButton = buttonFactory.Generate(LocalizedString.Get("Export"));
+
             Button cancelButton = buttonFactory.Generate(LocalizedString.Get("Cancel"));
             cancelButton.Click += (sender, e) =>
             {
@@ -209,9 +221,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             };
 
             container.AddChild(savePresetButton);
+            //Only show duplicate/import/export buttons if setting has been saved.
+            if (windowController.ActivePresetLayer.settingsCollectionData.Id != 0)
+            {
+                container.AddChild(duplicatePresetButton);
+                container.AddChild(importPresetButton);
+                container.AddChild(exportPresetButton);                
+            }
             container.AddChild(new HorizontalSpacer());
             container.AddChild(cancelButton);
-
             return container;
         }
 
@@ -344,15 +362,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 settingDropDownList.SelectedValue = selectedSettingValue;
             }
 
-            Button addButton = buttonFactory.Generate("Add");
-            addButton.Click += new ButtonBase.ButtonEventHandler(OnAddSettingClick);
-            addButton.Margin = new BorderDouble(right: 3);
-
             addSettingsContainer.RemoveAllChildren();
             addSettingsContainer.AddChild(categoryDropDownList);
             addSettingsContainer.AddChild(groupDropDownList);
             addSettingsContainer.AddChild(settingDropDownList);
-            addSettingsContainer.AddChild(addButton);
+            //addSettingsContainer.AddChild(addButton);
         }
 
         void OnItemSelected(object sender, EventArgs e)
@@ -390,10 +404,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             MenuItem item = (MenuItem)sender;
             string[] valueArray = item.Value.Split(':');
             string configName = valueArray[2];
-            addRowSettingData = SliceSettingsOrganizer.Instance.GetSettingsData(configName);            
+            addRowSettingData = SliceSettingsOrganizer.Instance.GetSettingsData(configName);
+            AddSettingToPreset();
         }
 
-        void OnAddSettingClick(object sender, EventArgs e)
+        void AddSettingToPreset()
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -801,8 +816,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
             DataStorage.SliceSettingsCollection collection = new DataStorage.SliceSettingsCollection();
 
-            collection.Name = string.Format("{0} ({1})", windowController.filterLabel, noExistingPresets.ToString());
-            collection.Tag = windowController.filterTag;
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+                collection.Name = string.Format("{0} ({1})", windowController.filterLabel, noExistingPresets.ToString());
+                collection.Tag = windowController.filterTag;
+                collection.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+            }
 
             windowController.ActivePresetLayer = new SettingsLayer(collection, settingsDictionary);
         }
@@ -829,6 +848,112 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             });
         }
 
+
+        void duplicatePresets_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            UiThread.RunOnIdle((state) =>
+            {                 
+                DataStorage.SliceSettingsCollection duplicateCollection = new SliceSettingsCollection();
+                duplicateCollection.Name = string.Format("{0} (copy)".FormatWith(windowController.ActivePresetLayer.settingsCollectionData.Name));
+                duplicateCollection.Tag = windowController.ActivePresetLayer.settingsCollectionData.Tag;
+                duplicateCollection.PrinterId = windowController.ActivePresetLayer.settingsCollectionData.PrinterId;
+
+
+                Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
+                IEnumerable<DataStorage.SliceSetting> settingsList = this.windowController.GetCollectionSettings(windowController.ActivePresetLayer.settingsCollectionData.Id);
+                foreach (DataStorage.SliceSetting s in settingsList)
+                {
+                    settingsDictionary[s.Name] = s;
+                }
+                SettingsLayer duplicateLayer = new SettingsLayer(duplicateCollection, settingsDictionary);
+                windowController.ActivePresetLayer = duplicateLayer;
+                windowController.ChangeToSlicePresetDetail();
+            });
+        }
+
+
+        string configFileExtension = "slice";
+        void importPresets_Click(object sender, MouseEventArgs mouseEvent)
+        {   
+            OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
+            openParams.ActionButtonLabel = "Load Slice Preset";
+            openParams.Title = "MatterControl: Select A File";
+
+            FileDialog.OpenFileDialog(ref openParams);
+            if (openParams.FileNames != null)
+            {
+                Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
+                try
+                {
+                    if (File.Exists(openParams.FileName))
+                    {
+                        string[] lines = System.IO.File.ReadAllLines(openParams.FileName);
+                        foreach (string line in lines)
+                        {
+                            //Ignore commented lines
+                            if (!line.StartsWith("#"))
+                            {
+                                string[] settingLine = line.Split('=');
+                                string keyName = settingLine[0].Trim();
+                                string settingDefaultValue = settingLine[1].Trim();
+
+                                DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+                                sliceSetting.Name = keyName;
+                                sliceSetting.Value = settingDefaultValue;
+                                sliceSetting.SettingsCollectionId = windowController.ActivePresetLayer.settingsCollectionData.Id;
+
+                                settingsDictionary.Add(keyName, sliceSetting);
+                            }
+                        }
+                        windowController.ActivePresetLayer.settingsDictionary = settingsDictionary;
+                        LoadSettingsRows();
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Error loading configuration
+                }
+            }
+        }
+
+
+
+
+        void exportPresets_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            SaveAs();
+        }
+
+        public void SaveAs()
+        {
+            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension, documentsPath);
+
+            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
+            if (streamToSaveTo != null)
+            {
+                streamToSaveTo.Close();
+                GenerateConfigFile(saveParams.FileName);
+            }
+        }
+
+        public void GenerateConfigFile(string fileName)
+        {
+            List<string> configFileAsList = new List<string>();
+
+            foreach (KeyValuePair<String, DataStorage.SliceSetting> setting in windowController.ActivePresetLayer.settingsDictionary)
+            {
+                string settingString = string.Format("{0} = {1}", setting.Value.Name, setting.Value.Value);
+                configFileAsList.Add(settingString);
+            }
+            string configFileAsString = string.Join("\n", configFileAsList.ToArray());
+
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            StreamWriter sw = new System.IO.StreamWriter(fs);
+            sw.Write(configFileAsString);
+            sw.Close();
+        }
+
         void saveActivePresets()
         {
             windowController.ActivePresetLayer.settingsCollectionData.Name = presetNameInput.Text;
@@ -839,7 +964,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
     public class SettingsDropDownList : DropDownList
     {
-
         static RGBA_Bytes whiteSemiTransparent = new RGBA_Bytes(255, 255, 255, 100);
         static RGBA_Bytes whiteTransparent = new RGBA_Bytes(255, 255, 255, 0);
 

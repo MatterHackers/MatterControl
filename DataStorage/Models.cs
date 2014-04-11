@@ -164,6 +164,7 @@ namespace MatterHackers.MatterControl.DataStorage
     {
         public string Name { get; set; }
         public string Tag { get; set; } //ex. 'material' or 'quality'
+        public int PrinterId { get; set; }
     }
 
     public class SliceSetting : Entity

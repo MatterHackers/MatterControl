@@ -117,14 +117,10 @@ namespace MatterHackers.MatterControl
         }
 
         Button restartButton;
-        Dictionary<string, string> languageDict;
 
         private void AddLanguageControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            CreateLanguageDict();
-            
             DisableableWidget container = new DisableableWidget();
-            
             
             GroupBox languageControlsGroupBox = new GroupBox(LocalizedString.Get("Language Settings"));
             languageControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -137,22 +133,7 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
             controlsContainer.HAnchor = HAnchor.ParentLeftRight;
 
-            string languageCode = UserSettings.Instance.get("Language");
-            string languageVerbose = "Default";
-
-            foreach(KeyValuePair<string, string> entry in languageDict)
-            {
-                if (languageCode == entry.Value)
-                {
-                    languageVerbose = entry.Key;
-                }
-            }
-
-            LanguageSelector languageSelector = new LanguageSelector(languageVerbose);
-            foreach (KeyValuePair<string, string> entry in languageDict)
-            {
-                languageSelector.AddItem(entry.Key,entry.Value);
-            }
+            LanguageSelector languageSelector = new LanguageSelector();
 
             languageSelector.Margin = new BorderDouble(0);
             languageSelector.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
@@ -182,20 +163,15 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle((state) =>
             {
                 //horrible hack - to be replaced
-                MatterControlApplication app = (MatterControlApplication)this.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent;
+                GuiWidget parent = this;
+                while (parent as MatterControlApplication == null)
+                {
+                    parent = parent.Parent;
+                }
+                MatterControlApplication app = parent as MatterControlApplication;
                 app.RestartOnClose = true;
                 app.Close();
             });
-        }
-
-        private void CreateLanguageDict()
-        {
-            languageDict = new Dictionary<string, string>();
-            languageDict["Default"] = "EN";
-            languageDict["English"] = "EN";
-            languageDict["Español"] = "ES";
-            languageDict["Français"] = "FR";
-            languageDict["Deutsch"] = "DE";
         }
 
         private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
@@ -231,7 +207,7 @@ namespace MatterHackers.MatterControl
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
-                    Button openEePromWindow = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
+                    Button openEePromWindow = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
                     openEePromWindow.Click += (sender, e) =>
                     {
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
@@ -335,7 +311,7 @@ namespace MatterHackers.MatterControl
 
                 this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-                Button runPrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("CONFIGURE"));
+                Button runPrintLevelingButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
                 runPrintLevelingButton.Margin = new BorderDouble(left:6);
                 runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
                 runPrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(runPrintLeveling_Click);
@@ -350,12 +326,12 @@ namespace MatterHackers.MatterControl
                 ImageWidget levelingIcon = new ImageWidget(levelingImage);
 				levelingIcon.Margin = new BorderDouble (right: 6);
 
-                enablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("ENABLE"));
+                enablePrintLevelingButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
 				enablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				enablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(enablePrintLeveling_Click);
 
-                disablePrintLevelingButton = textImageButtonFactory.Generate(LocalizedString.Get("DISABLE"));
+                disablePrintLevelingButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
 				disablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);
