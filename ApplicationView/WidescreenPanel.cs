@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 
@@ -95,8 +96,8 @@ namespace MatterHackers.MatterControl
                 //ColumnTwo.Padding = new BorderDouble(4, 0);
                 //ColumnThree.Padding = new BorderDouble(4);
 
-                LeftBorderLine = CreateBorderLine();
-                RightBorderLine = CreateBorderLine();
+                LeftBorderLine = new PanelSeparator();
+                RightBorderLine = new PanelSeparator();
                 
                 LoadColumnTwo();                
                 
@@ -115,16 +116,6 @@ namespace MatterHackers.MatterControl
             AddHandlers();
             SetVisibleStatus();
             
-        }
-
-        private static ClickWidget CreateBorderLine()
-        {
-            ClickWidget topLine = new ClickWidget(3, 1);
-            topLine.BackgroundColor = new RGBA_Bytes(200,200,200);
-            topLine.VAnchor = VAnchor.ParentBottomTop;
-            topLine.Margin = new BorderDouble(8, 0);
-            topLine.Cursor = Cursors.Hand;
-            return topLine;
         }
 
         void onBoundsChanges(Object sender, EventArgs e)

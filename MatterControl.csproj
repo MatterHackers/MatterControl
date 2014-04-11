@@ -75,6 +75,7 @@
     <Compile Include="ApplicationView\QueueTabs.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
+    <Compile Include="CustomWidgets\PanelSeparator.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
