@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
             if (File.Exists("RunUnitTests.txt"))
 #endif
             {
-                GuiHalWidget.SetClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
+                Clipboard.SetSystemClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
 
                 MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();
                 MatterHackers.RayTracer.UnitTests.Run();
