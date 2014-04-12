@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
             if (File.Exists("RunUnitTests.txt"))
 #endif
             {
-                GuiHalWidget.SetClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
+                Clipboard.SetSystemClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
 
                 MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();
                 MatterHackers.RayTracer.UnitTests.Run();
@@ -131,6 +131,13 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(CheckOnPrinter);
 
             MinimumSize = new Vector2(590, 540);
+
+            string desktopPosition = ApplicationSettings.Instance.get("DesktopPosition");
+            if (desktopPosition != null && desktopPosition != "")
+            {
+                string[] sizes = desktopPosition.Split(',');
+                DesktopPosition = new Point2D(int.Parse(sizes[0]), int.Parse(sizes[1]));
+            }
 
             ShowAsSystemWindow();
         }
@@ -274,13 +281,6 @@ namespace MatterHackers.MatterControl
 
             if (firstDraw)
             {
-                string desktopPosition = ApplicationSettings.Instance.get("DesktopPosition");
-                if (desktopPosition != null && desktopPosition != "")
-                {
-                    string[] sizes = desktopPosition.Split(',');
-                    DesktopPosition = new Point2D(int.Parse(sizes[0]), int.Parse(sizes[1]));
-                }
-                
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
@@ -316,7 +316,7 @@ namespace MatterHackers.MatterControl
                 width = int.Parse(sizes[0]);
                 height = int.Parse(sizes[1]);
             }
-            //MessageBox.ShowMessageBox(timerInfo, "Timing", MessageBox.MessageType.OK);
+            
             new MatterControlApplication(width, height);
         }
 

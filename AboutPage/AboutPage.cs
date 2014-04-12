@@ -285,11 +285,14 @@ namespace MatterHackers.MatterControl
 
         void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
+            string newText = "Downloading updates...".Localize();
             if(downloadSize > 0)
             {
                 this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
+                newText = "{0} {1}%".FormatWith(newText, downloadPercent);
             }
-            updateStatusText.Text = "{0} {1}%".FormatWith("Downloading updates...".Localize(), downloadPercent);
+
+            updateStatusText.Text = newText;
         }
 
         void DownloadCompleted(object sender, EventArgs e)
