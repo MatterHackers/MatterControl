@@ -1,4 +1,32 @@
-﻿using System;
+﻿/*
+Copyright (c) 2014, Kevin Pope
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -192,35 +220,30 @@ namespace MatterHackers.MatterControl
             //Generate a list of available theme definitions
             List<Theme> themeList = new List<Theme>();
 
-            themeList.Add(new Theme("Dark Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190)));
-            themeList.Add(new Theme("Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190), false));
-            
+            //Dark themes
+            themeList.Add(new Theme("Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190)));                        
             themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204)));
-            themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204), false));    
-
             themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32)));
-            themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32), false));
-
             themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255)));
-            themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255), false));
-
-            themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76)));
-            themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76), false));
-
+            themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76)));           
             themeList.Add(new Theme("Purple", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229)));
-            themeList.Add(new Theme("Purple", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229), false));
-
             themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77)));
-            themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77), false));
-
             themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203)));
-            themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203), false));
-
             themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114)));
-            themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114), false));
-
             themeList.Add(new Theme("Pink", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188,0,200)));
+
+            //Light themes
+            themeList.Add(new Theme("Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190),false));
+            themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204), false));
+            themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32), false));
+            themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255), false));
+            themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76), false));
+            themeList.Add(new Theme("Purple", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229), false));
+            themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77), false));
+            themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203), false));
+            themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114), false));
             themeList.Add(new Theme("Pink", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188, 0, 200), false));
+
 			return themeList;
         }
     }
