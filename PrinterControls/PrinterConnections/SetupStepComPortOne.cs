@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			setupManualConfigurationOrSkipConnectionWidget.HAnchor = HAnchor.ParentLeftRight;
 			setupManualConfigurationOrSkipConnectionWidget.Margin = elementMargin;
 
-			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Setup Manual Configuration"));
+			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Manually Configure Connection"));
             manualLink.Margin = new BorderDouble(0, 5);
             manualLink.Click += new ButtonBase.ButtonEventHandler(ManualLink_Click);
 
@@ -92,8 +92,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerMessageFour.HAnchor = HAnchor.ParentLeftRight;
 			printerMessageFour.Margin = elementMargin;
 
-			Button skipConnectionLink = linkButtonFactory.Generate(LocalizedString.Get("Skip Printer Connection"));
-			skipConnectionLink.Margin = new BorderDouble(0, 5);
+			Button skipConnectionLink = linkButtonFactory.Generate(LocalizedString.Get("Skip Connection Setup"));
+			skipConnectionLink.Margin = new BorderDouble(0, 8);
 			skipConnectionLink.Click += new ButtonBase.ButtonEventHandler(SkipConnectionLink_Click);
 
 
