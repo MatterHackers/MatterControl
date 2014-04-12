@@ -185,8 +185,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerModelError.Visible = false;
             SetElementState();
         }
-        
 
+        string defaultMaterialPreset;
+        string defaultQualityPreset;
         private void LoadSetupSettings(string make, string model)
         {
             Dictionary<string, string> settingsDict = LoadPrinterSetupFromFile(make, model);
@@ -209,6 +210,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     ActivePrinter.CurrentSlicingEngine = defaultSliceEngine;
                 }
             }
+
+            settingsDict.TryGetValue("default_material_presets", out defaultMaterialPreset);
+            settingsDict.TryGetValue("default_quality_preset", out defaultQualityPreset);
 
             string defaultMacros;
             printerCustomCommands = new List<CustomCommands>();
@@ -250,7 +254,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        
+
 
         private Dictionary<string, string> LoadPrinterSetupFromFile(string make, string model)
         {
@@ -283,10 +287,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return settingsDict;
         }
 
-        private SliceSettingsCollection GetSliceSettings(string make, string model)
+        private SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
         {
             SliceSettingsCollection collection = null;
-            Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(make, model);
+            Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(GetDefaultPrinterSlicePath(make, model));
             
             if (settingsDict.Count > 0)
             {
@@ -295,26 +299,76 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 collection.Commit();
 
                 this.ActivePrinter.DefaultSettingsCollectionId = collection.Id;
-                this.ActivePrinter.Commit();
 
-                foreach (KeyValuePair<string, string> item in settingsDict)
-                {
-                    DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
-                    sliceSetting.Name = item.Key;
-                    sliceSetting.Value = item.Value;
-                    sliceSetting.SettingsCollectionId = collection.Id;
-                    sliceSetting.Commit();
-                }
+                CommitSliceSettings(settingsDict, collection.Id);
             }
             return collection;
-
         }
 
-        private Dictionary<string, string> LoadSliceSettingsFromFile(string make, string model)
+        private void LoadSlicePresets(string make, string model, string tag)
         {
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "config.ini");
-            Dictionary<string, string> settingsDict = new Dictionary<string, string>();
+            string[] slicePresetPaths = GetSlicePresets(make, model, tag);
 
+            foreach (string filePath in slicePresetPaths)
+            {
+                SliceSettingsCollection collection = null;
+                Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(filePath);
+
+                if (settingsDict.Count > 0)
+                {
+                    collection = new DataStorage.SliceSettingsCollection();
+                    collection.Name = Path.GetFileNameWithoutExtension(filePath);
+                    collection.PrinterId = ActivePrinter.Id;
+                    collection.Tag = tag;
+                    collection.Commit();
+
+                    if (tag == "material" && defaultMaterialPreset != null && collection.Name == defaultMaterialPreset)
+                    {
+                        ActivePrinter.MaterialCollectionIds = collection.Id.ToString();
+                        ActivePrinter.Commit();
+                    }
+                    else if (tag == "quality"  && defaultQualityPreset != null && collection.Name == defaultQualityPreset)
+                    {
+                        ActivePrinter.QualityCollectionId = collection.Id;
+                        ActivePrinter.Commit();
+                    }
+
+                    CommitSliceSettings(settingsDict, collection.Id);
+                }
+            }
+        }
+
+        private void CommitSliceSettings(Dictionary<string, string> settingsDict, int collectionId)
+        {
+            foreach (KeyValuePair<string, string> item in settingsDict)
+            {
+                DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+                sliceSetting.Name = item.Key;
+                sliceSetting.Value = item.Value;
+                sliceSetting.SettingsCollectionId = collectionId;
+                sliceSetting.Commit();
+            }
+        }
+
+        private string[] GetSlicePresets(string make, string model, string tag)
+        {
+            string[] presetPaths = new string[]{};
+            string folderPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, tag);
+            if (Directory.Exists(folderPath))
+            {
+                presetPaths = Directory.GetFiles(folderPath);
+            }
+            return presetPaths;
+        }
+
+        private string GetDefaultPrinterSlicePath(string make, string model)
+        {
+            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "config.ini");
+        }
+
+        private Dictionary<string, string> LoadSliceSettingsFromFile(string setupSettingsPathAndFile)
+        {            
+            Dictionary<string, string> settingsDict = new Dictionary<string, string>();
             if (System.IO.File.Exists(setupSettingsPathAndFile))
             {
                 try
@@ -373,6 +427,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
+        void LoadSlicePresets()
+        {
+
+        }
+
         bool OnSave()
         {
             if (printerNameInput.Text != "")
@@ -385,13 +444,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 else
                 {
                     //Load the default slice settings for the make and model combination - if they exist
-                    SliceSettingsCollection collection = GetSliceSettings(this.ActivePrinter.Make, this.ActivePrinter.Model);
-                    if (collection != null)
-                    {
-                        this.ActivePrinter.DefaultSettingsCollectionId = collection.Id;
-                    }
+                    SliceSettingsCollection collection = LoadDefaultSliceSettings(this.ActivePrinter.Make, this.ActivePrinter.Model);
+
+                    //Ordering matters - need to get Id for printer prior to loading slice presets
                     this.ActivePrinter.AutoConnectFlag = true;
                     this.ActivePrinter.Commit();
+
+                    LoadSlicePresets(this.ActivePrinter.Make, this.ActivePrinter.Model, "material");
+                    LoadSlicePresets(this.ActivePrinter.Make, this.ActivePrinter.Model, "quality");
+
+                    
 
                     foreach (CustomCommands customCommand in printerCustomCommands)
                     {
