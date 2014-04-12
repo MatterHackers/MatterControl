@@ -52,9 +52,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //this.AddChild(GetSliceEngineContainer());
             this.AddChild(new SliceEngineSelector("Slice Engine".Localize(), RGBA_Bytes.YellowGreen));
             this.AddChild(new GuiWidget(8, 0));
-            this.AddChild(new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Yellow, "material"));
+            this.AddChild(new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality"));
             this.AddChild(new GuiWidget(8, 0));
-            this.AddChild(new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Orange, "quality"));
+            this.AddChild(new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material"));
             //this.AddChild(new GuiWidget(6, 0));
             //this.AddChild(new SliceSelectorWidget("Item", RGBA_Bytes.Violet)); 
             this.Height = 70;

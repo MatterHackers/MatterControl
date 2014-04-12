@@ -332,7 +332,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                         ActivePrinter.QualityCollectionId = collection.Id;
                         ActivePrinter.Commit();
                     }
-
                     CommitSliceSettings(settingsDict, collection.Id);
                 }
             }

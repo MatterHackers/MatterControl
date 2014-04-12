@@ -483,8 +483,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             bool addQualityOverlay = false;
             bool addMaterialOverlay = false;
 
-            RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 127, 0, 40);
-            RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 255, 0, 40);  
+            RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 40);
+            RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 40);
 
             if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
             {
@@ -510,11 +510,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
                     {
-                        addQualityOverlay = true;
+                        addMaterialOverlay = true; 
                     }
                     else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
                     {
-                        addMaterialOverlay = true;
+                        addQualityOverlay = true;
                     }
                     
                     settingName.Width = minSettingNameWidth;

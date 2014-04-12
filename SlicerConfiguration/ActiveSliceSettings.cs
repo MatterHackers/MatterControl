@@ -163,8 +163,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             this.activeSettingsLayers = new List<SettingsLayer>();
             globalInstance.LoadSettingsForPrinter();
-            globalInstance.LoadSettingsForMaterial(1);
+            
+            //Ordering matters - Material presets trump Quality
             globalInstance.LoadSettingsForQuality();
+            globalInstance.LoadSettingsForMaterial(1);
 
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
