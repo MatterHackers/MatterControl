@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
@@ -43,6 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     {
         const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
         const string SliceSettingsLevelEntry = "SliceSettingsLevel";
+        TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
         public class UiState
         {
@@ -123,6 +125,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         void AddControls(UiState uiState)
         {
             int minSettingNameWidth = 220;
+            buttonFactory.FixedHeight = 20;
+            buttonFactory.fontSize = 10;
+            buttonFactory.normalFillColor = RGBA_Bytes.White;
+            buttonFactory.normalTextColor = RGBA_Bytes.DarkGray;
 
             showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
             showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
@@ -142,7 +148,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+            noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             noConnectionMessageContainer.Height = 80;
 
 			TextWidget noConnectionMessage = new TextWidget(LocalizedString.Get("No printer is currently selected. Select printer to edit slice settings."));
@@ -320,8 +326,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 tabIndexForItem = 0;
 				string groupTabLbl = LocalizedString.Get (group.Name);
 				TabPage groupTabPage = new TabPage(groupTabLbl);
+                groupTabPage.HAnchor = HAnchor.ParentLeftRight;
+
                 SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, 14,
                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
+                groupTabWidget.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
                 FlowLayoutWidget subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 subGroupLayoutTopToBottom.AnchorAll();
@@ -331,7 +340,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     bool addedSettingToSubGroup = false;
                     FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                    topToBottomSettings.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+                    topToBottomSettings.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
                     foreach (OrganizerSettingsData settingInfo in subGroup.SettingDataList)
                     {
@@ -356,8 +365,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.AddChild(topToBottomSettings);
-
-                        groupBox.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+                        groupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
                         subGroupLayoutTopToBottom.AddChild(groupBox);
                     }
@@ -365,10 +373,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                 if (needToAddSubGroup)
                 {
-                    ScrollableWidget scrollOnGroupTab = new ScrollableWidget(true);
-                    scrollOnGroupTab.AnchorAll();
-                    subGroupLayoutTopToBottom.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+                    SliceSettingListControl scrollOnGroupTab = new SliceSettingListControl();
+
                     subGroupLayoutTopToBottom.VAnchor = VAnchor.FitToChildren;
+                    subGroupLayoutTopToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                    
                     //subGroupLayoutTopToBottom.DebugShowBounds = true;
                     //scrollOnGroupTab.DebugShowBounds = true;
                     scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
@@ -448,7 +457,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                 subGroupLayoutTopToBottom.AddChild(groupBox);
 
-                ScrollableWidget scrollOnGroupTab = new ScrollableWidget(true);
+                SliceSettingListControl scrollOnGroupTab = new SliceSettingListControl();
                 scrollOnGroupTab.AnchorAll();
                 scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
                 groupTabPage.AddChild(scrollOnGroupTab);
@@ -468,7 +477,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth)
         {
+            GuiWidget container = new GuiWidget();            
             FlowLayoutWidget leftToRightLayout = new FlowLayoutWidget();
+
+            bool addQualityOverlay = false;
+            bool addMaterialOverlay = false;
+
+            RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 40);
+            RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 40);
+
             if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
             {
                 int intEditWidth = 60;
@@ -476,9 +493,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 int vectorXYEditWidth = 60;
                 int multiLineEditHeight = 60;
 
+                              
+
                 string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
-                leftToRightLayout.Margin = new BorderDouble(0, 5);
-                leftToRightLayout.HAnchor |= Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+                leftToRightLayout.Margin = new BorderDouble(0, 2);
+                leftToRightLayout.Padding = new BorderDouble(3);
+                leftToRightLayout.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
                 if (settingData.DataEditType != OrganizerSettingsData.DataEditTypes.MULTI_LINE_TEXT)
                 {
@@ -487,6 +507,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					convertedNewLines = LocalizedString.Get (convertedNewLines);
                     TextWidget settingName = new TextWidget(convertedNewLines);
                     settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+                    if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+                    {
+                        addMaterialOverlay = true; 
+                    }
+                    else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
+                    {
+                        addQualityOverlay = true;
+                    }
+                    
                     settingName.Width = minSettingNameWidth;
                     //settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
                     leftToRightLayout.AddChild(settingName);
@@ -712,7 +742,95 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 leftToRightLayout.BackgroundColor = RGBA_Bytes.Red;
             }
 
-            return leftToRightLayout;
+            container.HAnchor = HAnchor.ParentLeftRight;
+            container.VAnchor = VAnchor.FitToChildren;
+
+            container.AddChild(leftToRightLayout);
+
+            if (addQualityOverlay || addMaterialOverlay)
+            {              
+                SettingPresetOverlay overlay = new SettingPresetOverlay();
+                overlay.HAnchor = HAnchor.ParentLeftRight;
+                overlay.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+
+                SettingPresetClick clickToEdit = new SettingPresetClick();
+                clickToEdit.HAnchor = HAnchor.ParentLeftRight;
+                clickToEdit.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+                clickToEdit.Visible = false;
+
+                Button editButton = buttonFactory.Generate("Edit Preset".Localize().ToUpper());
+                editButton.HAnchor = Agg.UI.HAnchor.ParentCenter;
+                editButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+
+                clickToEdit.AddChild(editButton);
+
+                if (addQualityOverlay)
+                {
+                    overlay.OverlayColor = qualityOverlayColor;
+                    clickToEdit.OverlayColor = qualityOverlayColor;
+                    editButton.Click += (sender, e) =>
+                    {
+                        if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
+                        {
+                            ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
+                            ApplicationWidget.Instance.EditSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditSlicePresetsWindow = null; };
+                        }
+                        else
+                        {
+                            ApplicationWidget.Instance.EditSlicePresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
+                            ApplicationWidget.Instance.EditSlicePresetsWindow.BringToFront();
+                        }
+                    };
+                }
+                else if (addMaterialOverlay)
+                {
+                    overlay.OverlayColor = materialOverlayColor;
+                    clickToEdit.OverlayColor = materialOverlayColor;
+                    editButton.Click += (sender, e) =>
+                    {                        
+                        if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
+                        {
+                            ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
+                            ApplicationWidget.Instance.EditSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditSlicePresetsWindow = null; };
+                        }
+                        else
+                        {
+                            ApplicationWidget.Instance.EditSlicePresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
+                            ApplicationWidget.Instance.EditSlicePresetsWindow.BringToFront();
+                        }                        
+                    };
+                }                
+
+                container.MouseEnterBounds += (sender, e) =>
+                {
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        overlay.Visible = false;
+                        clickToEdit.Visible = true;
+                    });
+                };
+
+                container.MouseLeaveBounds += (sender, e) =>
+                {
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        overlay.Visible = true;
+                        clickToEdit.Visible = false;
+                    });
+                };
+
+                container.AddChild(overlay);
+                container.AddChild(clickToEdit);    
+            }
+
+
+
+            return container;
+        }
+
+        protected void ReloadOptions(object sender, EventArgs e)
+        {
+            ApplicationWidget.Instance.ReloadBackPanel();
         }
 
         private void SaveSetting(string slicerConfigName, string value)
@@ -727,6 +845,63 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public override void OnDraw(Graphics2D graphics2D)
         {            
             base.OnDraw(graphics2D);
+        }
+    }
+
+    class SettingPresetClick : ClickWidget
+    {
+        public RGBA_Bytes OverlayColor;
+
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            
+            RoundedRect rect = new RoundedRect(LocalBounds, 0);
+            graphics2D.Render(rect, new RGBA_Bytes(OverlayColor, 220));
+            base.OnDraw(graphics2D);
+
+        }
+    }
+
+    class SettingPresetOverlay : GuiWidget
+    {
+        public RGBA_Bytes OverlayColor;
+        
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            base.OnDraw(graphics2D);
+            RoundedRect rect = new RoundedRect(LocalBounds,0);
+            graphics2D.Render(rect,new RGBA_Bytes(OverlayColor, 50));
+            graphics2D.Render(new Stroke(rect, 3),OverlayColor);
+
+        }
+    }
+
+    class SliceSettingListControl : ScrollableWidget
+    {
+        FlowLayoutWidget topToBottomItemList;
+
+        public SliceSettingListControl()
+        {
+            this.AnchorAll();
+            this.AutoScroll = true;
+            this.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+
+            topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+            topToBottomItemList.Margin = new BorderDouble(top: 3);
+
+            base.AddChild(topToBottomItemList);
+        }
+
+        public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
+        {
+            FlowLayoutWidget itemHolder = new FlowLayoutWidget();
+            itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
+            itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+            itemHolder.AddChild(child);
+            itemHolder.VAnchor = VAnchor.FitToChildren;
+
+            topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
         }
     }
 }

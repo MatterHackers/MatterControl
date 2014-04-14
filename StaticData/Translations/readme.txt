@@ -6,3 +6,6 @@ should appear at the bottom of that file.
 There is a folder for each langage. The names of these folders 
 match the ISO 639 standard which can be found at:
 http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
+Special thanks to:
+Filip Bartoszek - original German Translation

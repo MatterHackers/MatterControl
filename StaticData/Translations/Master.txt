@@ -1929,3 +1929,33 @@ Translated:Connection succeeded
 English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
 Translated:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
 
+English:Edit Preset
+Translated:Edit Preset
+
+English:Slice-Engine
+Translated:Slice-Engine
+
+English:Status: Completed
+Translated:Status: Completed
+
+English:Unlock
+Translated:Unlock
+
+English:Show Terminal
+Translated:Show Terminal
+
+English:Configure
+Translated:Configure
+
+English:Disable
+Translated:Disable
+
+English:Est. Weight
+Translated:Est. Weight
+
+English:Downloading updates...
+Translated:Downloading updates...
+
+English:Duplicate
+Translated:Duplicate
+

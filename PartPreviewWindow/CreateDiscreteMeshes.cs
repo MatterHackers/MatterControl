@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
             {
                 bool faceDone = false;
                 // figure out which area one or more of the vertices are in add the face to the right new mesh
-                foreach (FaceEdge faceEdge in face.FaceEdgeIterator())
+                foreach (FaceEdge faceEdge in face.FaceEdges())
                 {
                     Vector2 position = new Vector2(faceEdge.firstVertex.Position.x, faceEdge.firstVertex.Position.y);
                     position += renderOffset;
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl
                         if (PointInPolygon(discreteAreas[areaIndex], new IntPoint((int)position.x, (int)position.y)))
                         {
                             List<Vertex> faceVertices = new List<Vertex>();
-                            foreach (FaceEdge faceEdgeToAdd in face.FaceEdgeIterator())
+                            foreach (FaceEdge faceEdgeToAdd in face.FaceEdges())
                             {
                                 Vertex newVertex = discreteMeshes[areaIndex].CreateVertex(faceEdgeToAdd.firstVertex.Position);
                                 faceVertices.Add(newVertex);

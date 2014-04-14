@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         TextWidget gcodeProcessingStateInfoText;
         GCodeViewWidget gcodeViewWidget;
         PrintItemWrapper printItem;
-        Button closeButton;
         bool startedSliceFromGenerateButton = false;
         Button generateGCodeButton;
         FlowLayoutWidget buttonBottomPanel;
@@ -77,11 +76,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         GetSizeFunction bedSizeFunction;
         GetSizeFunction bedCenterFunction;
+        bool widgetHasCloseButton;
 
         public delegate Vector2 GetSizeFunction();
 
-        public GcodeViewBasic(PrintItemWrapper printItem, GetSizeFunction bedSizeFunction, GetSizeFunction bedCenterFunction)
+        public GcodeViewBasic(PrintItemWrapper printItem, GetSizeFunction bedSizeFunction, GetSizeFunction bedCenterFunction, bool addCloseButton)
         {
+            widgetHasCloseButton = addCloseButton;
             this.printItem = printItem;
 
             this.bedSizeFunction = bedSizeFunction;
@@ -111,18 +112,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerSelectionButtonsPannel.HAnchor = HAnchor.ParentLeftRight;
             layerSelectionButtonsPannel.Padding = new BorderDouble(0);
 
-			closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+            GuiWidget holdPannelOpen = new GuiWidget(1, generateGCodeButton.Height);
+            layerSelectionButtonsPannel.AddChild(holdPannelOpen);
 
-            layerSelectionButtonsPannel.AddChild(closeButton);
+            if (widgetHasCloseButton)
+            {
+                Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+                layerSelectionButtonsPannel.AddChild(closeButton);
+                closeButton.Click += (sender, e) =>
+                {
+                    CloseOnIdle();
+                };
+            }
 
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
             centerPartPreviewAndControls.AnchorAll();
 
             gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
-            string startingMessage = LocalizedString.Get("No GCode Available...");
+            string startingMessage = "";
             if (printItem != null)
             {
+                startingMessage = LocalizedString.Get("No GCode Available...");
                 startingMessage = LocalizedString.Get("Loading GCode...");
                 if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
                 {
@@ -195,7 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-                string label = LocalizedString.Get("MODEL");
+                string label = "MODEL".Localize().ToUpper();
 				expandModelOptions = expandMenuOptionFactory.GenerateCheckBoxButton(label, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandModelOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandModelOptions);
@@ -206,7 +217,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 //modelOptionsContainer.Visible = false;
                 buttonRightPanel.AddChild(modelOptionsContainer);
 
-				expandLayerOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("LAYER"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandLayerOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Layer".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandLayerOptions.Margin = new BorderDouble(bottom: 2);
                 //buttonRightPanel.AddChild(expandLayerOptions);
 
@@ -215,7 +226,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 layerOptionsContainer.Visible = false;
                 buttonRightPanel.AddChild(layerOptionsContainer);
 
-				expandDisplayOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("DISPLAY"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandDisplayOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandDisplayOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandDisplayOptions);
                 expandDisplayOptions.Checked = true;
@@ -253,10 +264,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             modelInfoContainer.HAnchor = HAnchor.ParentLeftRight;
             modelInfoContainer.Padding = new BorderDouble(5);
 
-			string printTimeLbl = LocalizedString.Get ("PRINT TIME");
-			string printTimeLblFull = string.Format ("{0}:", printTimeLbl);
+			string printTimeLabel = "Print Time".Localize().ToUpper();
+			string printTimeLabelFull = string.Format ("{0}:", printTimeLabel);
             // put in the print time
-            modelInfoContainer.AddChild(new TextWidget(printTimeLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10));
+            modelInfoContainer.AddChild(new TextWidget(printTimeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10));
             {
                 string timeRemainingText = "---";
 
@@ -284,7 +295,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             //modelInfoContainer.AddChild(new TextWidget("Size:", textColor: ActiveTheme.Instance.PrimaryTextColor));
             
-			string filamentLengthLbl = LocalizedString.Get ("FILAMENT LENGTH");
+			string filamentLengthLbl = "Filament Length".Localize().ToUpper();
 			string filamentLengthLblFull = string.Format ("{0}:", filamentLengthLbl);
             // show the filament used
             modelInfoContainer.AddChild(new TextWidget(filamentLengthLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
@@ -297,9 +308,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 modelInfoContainer.AddChild(estimatedPrintTime);
             }
 
-			string filamentVolumeLbl = LocalizedString.Get ("FILAMENT VOLUME");
-			string filamentVolumeLblFull = string.Format("{0}:", filamentVolumeLbl);
-            modelInfoContainer.AddChild(new TextWidget(filamentVolumeLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			string filamentVolumeLabel = "Filament Volume".Localize().ToUpper();
+			string filamentVolumeLabelFull = string.Format("{0}:", filamentVolumeLabel);
+            modelInfoContainer.AddChild(new TextWidget(filamentVolumeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
             {
                 double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.FilamentDiameter);
 
@@ -309,9 +320,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 modelInfoContainer.AddChild(estimatedPrintTime);
             }
 
-			string weightLbl = LocalizedString.Get("EST. WEIGHT");
-			string weightLblFull = string.Format("{0}:", weightLbl);
-            modelInfoContainer.AddChild(new TextWidget(weightLblFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			string weightLabel = "Est. Weight".Localize().ToUpper();
+			string weightLabelFull = string.Format("{0}:", weightLabel);
+            modelInfoContainer.AddChild(new TextWidget(weightLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
             {
                 var density = 1.0;
                 string filamentType = "PLA";
@@ -574,7 +585,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddHandlers()
         {
-            closeButton.Click += onCloseButton_Click;
             expandModelOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandModelOptions_CheckedStateChanged);
             expandLayerOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
             expandDisplayOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandMirrorOptions_CheckedStateChanged);
@@ -593,16 +603,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
         {
             layerOptionsContainer.Visible = expandLayerOptions.Checked;
-        }
-
-        private void onCloseButton_Click(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle(CloseOnIdle);
-        }
-
-        void CloseOnIdle(object state)
-        {
-            Close();
         }
 
         public override void OnClosed(EventArgs e)

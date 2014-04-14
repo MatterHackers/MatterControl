@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 
@@ -69,12 +70,9 @@ namespace MatterHackers.MatterControl
         View3DTransformPart part3DView;
         GcodeViewBasic partGcodeView;
 
-        ClickWidget RightBorderLine;
-        ClickWidget LeftBorderLine;
-
-        bool ColTwoIsHidden = false;
-        bool ColThreeIsHidden = false;
-
+        PanelSeparator RightBorderLine;
+        PanelSeparator LeftBorderLine;
+        
         public WidescreenPanel()
             : base(FlowDirection.LeftToRight)
         {
@@ -95,8 +93,8 @@ namespace MatterHackers.MatterControl
                 //ColumnTwo.Padding = new BorderDouble(4, 0);
                 //ColumnThree.Padding = new BorderDouble(4);
 
-                LeftBorderLine = CreateBorderLine();
-                RightBorderLine = CreateBorderLine();
+                LeftBorderLine = new PanelSeparator();
+                RightBorderLine = new PanelSeparator();
                 
                 LoadColumnTwo();                
                 
@@ -115,16 +113,6 @@ namespace MatterHackers.MatterControl
             AddHandlers();
             SetVisibleStatus();
             
-        }
-
-        private static ClickWidget CreateBorderLine()
-        {
-            ClickWidget topLine = new ClickWidget(3, 1);
-            topLine.BackgroundColor = new RGBA_Bytes(200,200,200);
-            topLine.VAnchor = VAnchor.ParentBottomTop;
-            topLine.Margin = new BorderDouble(8, 0);
-            topLine.Cursor = Cursors.Hand;
-            return topLine;
         }
 
         void onBoundsChanges(Object sender, EventArgs e)
@@ -229,14 +217,14 @@ namespace MatterHackers.MatterControl
         }
 
         void onRightBorderClick(object sender, EventArgs e)
-        {            
-            ColThreeIsHidden = ColumnThree.Visible;
+        {
+            RightBorderLine.Hidden = !RightBorderLine.Hidden;
             SetVisibleStatus(true);
         }
 
         void onLeftBorderClick(object sender, EventArgs e)
-        {            
-            ColTwoIsHidden = ColumnTwo.Visible;
+        {
+            LeftBorderLine.Hidden = !LeftBorderLine.Hidden;
             SetVisibleStatus(true);
         }
 
@@ -250,11 +238,11 @@ namespace MatterHackers.MatterControl
             ColumnTwo.RemoveAllChildren();
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-            part3DView = new View3DTransformPart(PrinterCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape);
+            part3DView = new View3DTransformPart(PrinterCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, false);
             part3DView.Margin = new BorderDouble(bottom: 4);
             part3DView.AnchorAll();
 
-            partGcodeView = new GcodeViewBasic(PrinterCommunication.Instance.ActivePrintItem, ActiveSliceSettings.Instance.GetBedSize, ActiveSliceSettings.Instance.GetBedCenter);
+            partGcodeView = new GcodeViewBasic(PrinterCommunication.Instance.ActivePrintItem, ActiveSliceSettings.Instance.GetBedSize, ActiveSliceSettings.Instance.GetBedCenter, false);
             partGcodeView.AnchorAll();
 
             ColumnTwo.AddChild(part3DView);
@@ -318,7 +306,7 @@ namespace MatterHackers.MatterControl
                 }
 
             }
-            else if (this.Width < ColumnTwoMinWidth && !ColThreeIsHidden)
+            else if (this.Width < ColumnTwoMinWidth && !RightBorderLine.Hidden)
             {
                 //Queue column and advanced controls columns show
                 if (UiState != 1)
@@ -327,9 +315,9 @@ namespace MatterHackers.MatterControl
                     ApplicationWidget.Instance.WidescreenMode = true;
 
                     LoadColumnOne();
-                    
-                    ColumnTwo.Visible = !!ColTwoIsHidden;
-                    ColumnThree.Visible = !ColThreeIsHidden;
+
+                    ColumnTwo.Visible = !!LeftBorderLine.Hidden;
+                    ColumnThree.Visible = !RightBorderLine.Hidden;
                     ColumnOne.Visible = true;
                     ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                     Padding = new BorderDouble(4);
@@ -338,7 +326,7 @@ namespace MatterHackers.MatterControl
                     RightBorderLine.Visible = true;
                 }
             }
-            else if (ColTwoIsHidden)
+            else if (LeftBorderLine.Hidden)
             {
                 //Queue column and preview column shown                
                 if (UiState != 2)
@@ -346,9 +334,9 @@ namespace MatterHackers.MatterControl
                     UiState = 2;
                     ApplicationWidget.Instance.WidescreenMode = true;
 
-                    LoadColumnOne();                    
-                    ColumnThree.Visible = !ColThreeIsHidden;
-                    ColumnTwo.Visible = !ColTwoIsHidden;
+                    LoadColumnOne();
+                    ColumnThree.Visible = !RightBorderLine.Hidden;
+                    ColumnTwo.Visible = !LeftBorderLine.Hidden;
                     ColumnOne.AnchorAll();
 
                     Padding = new BorderDouble(4);
@@ -368,9 +356,9 @@ namespace MatterHackers.MatterControl
                     ApplicationWidget.Instance.WidescreenMode = true;
 
                     LoadColumnOne();
-                    
-                    ColumnThree.Visible = !ColThreeIsHidden;
-                    ColumnTwo.Visible = !ColTwoIsHidden;
+
+                    ColumnThree.Visible = !RightBorderLine.Hidden;
+                    ColumnTwo.Visible = !LeftBorderLine.Hidden;
 
                     ColumnOne.HAnchor = Agg.UI.HAnchor.None;
                     ColumnOne.Width = 500;
@@ -402,9 +390,7 @@ namespace MatterHackers.MatterControl
             ActiveSliceSettings.Instance.LoadAllSettings();
             ApplicationWidget.Instance.ReloadBackPanel();
         }
-    }
-
-    
+    }    
 
     class NotificationWidget : GuiWidget
     {

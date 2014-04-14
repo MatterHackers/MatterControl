@@ -49,8 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     public class SliceSelectorWidget : FlowLayoutWidget
     {
         Button editButton;
-        ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
-        SlicePresetsWindow editSlicePresetsWindow;
+        ImageButtonFactory imageButtonFactory = new ImageButtonFactory();        
 
         string filterTag;
         string filterLabel;
@@ -103,14 +102,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             editButton.Margin = new BorderDouble(right:6);
             editButton.Click += (sender, e) =>
             {
-                if (editSlicePresetsWindow == null)
+                if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
                 {
-                    editSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
-                    editSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editSlicePresetsWindow = null; };
+                    ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
+                    ApplicationWidget.Instance.EditSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditSlicePresetsWindow = null; };
                 }
                 else
                 {
-                    editSlicePresetsWindow.BringToFront();
+                    ApplicationWidget.Instance.EditSlicePresetsWindow.BringToFront();
                 }
             };
 
@@ -129,9 +128,56 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             IEnumerable<DataStorage.SliceSettingsCollection> results = Enumerable.Empty<DataStorage.SliceSettingsCollection>();
 
             //Retrieve a list of collections matching from the Datastore
-            string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}';", filterTag);
-            results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+                string query = string.Format("SELECT * FROM SliceSettingsCollection WHERE Tag = '{0}' AND PrinterId = {1} ORDER BY Name;", filterTag, ActivePrinterProfile.Instance.ActivePrinter.Id);
+                results = (IEnumerable<DataStorage.SliceSettingsCollection>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.SliceSettingsCollection>(query);
+            }
             return results;
+        }
+
+        void onItemSelect(object sender, EventArgs e)
+        {
+            
+            MenuItem item = (MenuItem)sender;
+            if (filterTag == "material")
+            {
+                if (ActivePrinterProfile.Instance.GetMaterialSetting(1) != Int32.Parse(item.Value))
+                {
+                    ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                }
+            }
+            else if (filterTag == "quality")
+            {
+                if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != Int32.Parse(item.Value))
+                {
+                    ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
+                }
+            }
+            UiThread.RunOnIdle((state) =>
+            {
+                ActiveSliceSettings.Instance.LoadAllSettings();
+                ApplicationWidget.Instance.ReloadBackPanel();
+            });
+        }
+
+        void onNewItemSelect(object sender, EventArgs e)
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                ActiveSliceSettings.Instance.LoadAllSettings();
+                ApplicationWidget.Instance.ReloadBackPanel();
+                if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
+                {
+                    ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
+                    ApplicationWidget.Instance.EditSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditSlicePresetsWindow = null; };
+                }
+                else
+                {
+                    ApplicationWidget.Instance.EditSlicePresetsWindow.ChangeToSlicePresetFromID(0);
+                    ApplicationWidget.Instance.EditSlicePresetsWindow.BringToFront();
+                }                
+            });
         }
 
 
@@ -141,60 +187,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             dropDownList.Margin = new BorderDouble(0, 3);
             dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
             MenuItem defaultMenuItem = dropDownList.AddItem("- default -", "0");
-            defaultMenuItem.Selected += (sender, e) =>
-            {
-                MenuItem item = (MenuItem)sender;
-                if (filterTag == "material")
-                {
-                    if (ActivePrinterProfile.Instance.GetMaterialSetting(1) != Int32.Parse(item.Value))
-                    {
-                        ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
-                    }
-                }
-                else if (filterTag == "quality")
-                {
-                    if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != Int32.Parse(item.Value))
-                    {
-                        ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
-                    }
-                }
-                ActiveSliceSettings.Instance.LoadAllSettings();
-                ApplicationWidget.Instance.ReloadBackPanel();
-                //Clear presets from active slice layers
-            };
+            defaultMenuItem.Selected += new EventHandler(onItemSelect);
 
             IEnumerable<DataStorage.SliceSettingsCollection> collections = GetCollections();
             foreach (DataStorage.SliceSettingsCollection collection in collections)
             {
                 MenuItem menuItem = dropDownList.AddItem(collection.Name, collection.Id.ToString());
-                menuItem.Selected += (sender, e) =>
-                {
-                    MenuItem item = (MenuItem)sender;
-                    if (filterTag == "material")
-                    {
-                        if (ActivePrinterProfile.Instance.GetMaterialSetting(1) != Int32.Parse(item.Value))
-                        {
-                            ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
-                        }
-                    }
-                    else if (filterTag == "quality")
-                    {
-                        if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != Int32.Parse(item.Value))
-                        {
-                            ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
-                        }
-                    }
-                    ActiveSliceSettings.Instance.LoadAllSettings();
-                    ApplicationWidget.Instance.ReloadBackPanel();
-                };
+                menuItem.Selected += new EventHandler(onItemSelect);
             }
+
+            MenuItem addNewPreset = dropDownList.AddItem("<< Add >>", "new");
+            addNewPreset.Selected += new EventHandler(onNewItemSelect);
+
             if (filterTag == "material")
             {
-                dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(1).ToString();
+                try
+                {
+                    dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(1).ToString();
+                }
+                catch
+                {
+                    //Unable to set selected value
+                }
             }
             else if (filterTag == "quality")
             {
-                dropDownList.SelectedValue = ActivePrinterProfile.Instance.ActiveQualitySettingsID.ToString();
+                try
+                {
+                    dropDownList.SelectedValue = ActivePrinterProfile.Instance.ActiveQualitySettingsID.ToString();
+                }
+                catch
+                {
+                    //Unable to set selected value
+                }
             }
 
             return dropDownList;

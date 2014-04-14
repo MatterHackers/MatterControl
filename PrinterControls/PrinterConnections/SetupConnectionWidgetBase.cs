@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 this.ActivePrinter = new Printer();
                 this.ActivePrinter.Make = null;
                 this.ActivePrinter.Model = null;
-                this.ActivePrinter.Name = "Default Printer";
+                this.ActivePrinter.Name = "Default Printer ({0})".FormatWith(ExistingPrinterCount() + 1);
                 this.ActivePrinter.BaudRate = null;
                 this.ActivePrinter.ComPort = null;
             }
@@ -42,6 +42,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 this.ActivePrinter = printer;
             }
+        }
+
+        public int ExistingPrinterCount()
+        {
+            string query = string.Format("SELECT COUNT(*) FROM Printer;");
+            string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
+            return Convert.ToInt32(result);
         }
 
         public void LoadCalibrationPrints()

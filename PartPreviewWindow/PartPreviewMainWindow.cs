@@ -64,10 +64,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string part3DViewLblBeg = ("3D");
 			string part3DViewLblEnd = LocalizedString.Get ("View");
 			string part3DViewLblFull = string.Format("{0} {1} ", part3DViewLblBeg, part3DViewLblEnd);
-            part3DView = new View3DTransformPart(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape);
+            part3DView = new View3DTransformPart(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, true);
 			TabPage partPreview3DView = new TabPage(part3DView, part3DViewLblFull);
 
-            partGcodeView = new GcodeViewBasic(printItem, ActiveSliceSettings.Instance.GetBedSize, ActiveSliceSettings.Instance.GetBedCenter);
+            partGcodeView = new GcodeViewBasic(printItem, ActiveSliceSettings.Instance.GetBedSize, ActiveSliceSettings.Instance.GetBedCenter, true);
 			TabPage layerView = new TabPage(partGcodeView, LocalizedString.Get("Layer View"));
 
             //part3DGcodeView = new PartPreview3DGcode(printItem.FileLocation, bedXSize, bedYSize);

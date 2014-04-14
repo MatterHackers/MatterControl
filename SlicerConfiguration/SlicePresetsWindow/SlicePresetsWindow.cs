@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public string filterLabel;
         public SettingsLayer ActivePresetLayer;        
 
-        public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag)
+        public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag, bool showList=true, int collectionID=0)
             : base(640, 480)
         {            
             Title = LocalizedString.Get("Slice Presets Editor");
@@ -63,11 +63,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.functionToCallOnSave = functionToCallOnSave;
 
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            ChangeToSlicePresetList();
+            if (showList)
+            {
+                ChangeToSlicePresetList();
+            }
+            else
+            {
+                if (collectionID == 0)
+                {
+                    ChangeToSlicePresetDetail();
+                }
+                else
+                {
+                    ChangeToSlicePresetDetail(GetCollection(collectionID));
+                }
+            }
             ShowAsSystemWindow();
             this.MinimumSize = new Vector2(640, 480);
         }
-
 
         public void ChangeToSlicePresetList()
         {
@@ -81,6 +94,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.RemoveAllChildren();
             this.AddChild(slicePresetWidget);
             this.Invalidate();
+        }
+
+        public void ChangeToSlicePresetFromID(int collectionId)
+        {
+            ChangeToSlicePresetDetail(GetCollection(collectionId));
         }
 
         public void ChangeToSlicePresetDetail(SliceSettingsCollection collection = null)
@@ -98,6 +116,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             UiThread.RunOnIdle(DoChangeToSlicePresetDetail);
         }
 
+        DataStorage.SliceSettingsCollection GetCollection(int collectionId)
+        {
+            return DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == collectionId).Take(1).FirstOrDefault();
+        }
+
         IEnumerable<DataStorage.SliceSettingsCollection> GetPresets(string filterTag)
         {
             //Retrieve a list of presets from the Datastore
@@ -106,7 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return result;
         }
 
-        IEnumerable<DataStorage.SliceSetting> GetCollectionSettings(int collectionId)
+        public IEnumerable<DataStorage.SliceSetting> GetCollectionSettings(int collectionId)
         {
             //Retrieve a list of slice settings from the Datastore
             string query = string.Format("SELECT * FROM SliceSetting WHERE SettingsCollectionID = {0};", collectionId);

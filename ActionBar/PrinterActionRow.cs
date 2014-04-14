@@ -46,13 +46,13 @@ namespace MatterHackers.MatterControl.ActionBar
         protected override void AddChildElements()
         {
             actionBarButtonFactory.invertImageLocation = false;
-            string connectString = "CONNECT".Localize();
+            string connectString = "Connect".Localize().ToUpper();
             connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
             connectPrinterButton.Margin = new BorderDouble(0, 0, 3);
             connectPrinterButton.VAnchor = VAnchor.ParentCenter;
             connectPrinterButton.Cursor = Cursors.Hand;
 
-            string disconnectString = "DISCONNECT".Localize();
+            string disconnectString = "Disconnect".Localize().ToUpper();
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
             disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3);
             disconnectPrinterButton.VAnchor = VAnchor.ParentCenter;
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Margin = new BorderDouble(5, 0);
-            string optionsString = LocalizedString.Get("OPTIONS");
+            string optionsString = "Options".Localize().ToUpper();
             TextWidget optionsText = new TextWidget(optionsString, textColor: ActiveTheme.Instance.PrimaryTextColor);
             optionsText.VAnchor = Agg.UI.VAnchor.ParentCenter;
             optionsText.Margin = new BorderDouble(0, 0, 3, 0);
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 if (ActivePrinterProfile.Instance.ActivePrinter == null)
                 {
-                    OpenConnectionWindow();
+                    OpenConnectionWindow(ConnectToActivePrinter);
                 }
                 else
                 {
@@ -159,12 +159,15 @@ namespace MatterHackers.MatterControl.ActionBar
             OpenConnectionWindow();
         }
 
-        void OpenConnectionWindow()
+        public delegate void ConnectOnSelectFunction();
+        ConnectOnSelectFunction functionToCallOnSelect;
+        void OpenConnectionWindow(ConnectOnSelectFunction functionToCallOnSelect = null)
         {
             if (this.connectionWindowIsOpen == false)
             {
                 connectionWindow = new ConnectionWindow();
                 this.connectionWindowIsOpen = true;
+                this.functionToCallOnSelect = functionToCallOnSelect;
                 connectionWindow.Closed += new EventHandler(ConnectionWindow_Closed);
             }
             else
@@ -188,7 +191,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onActivePrinterChanged(object sender, EventArgs e)
         {
-            connectPrinterButton.Enabled = true;            
+            connectPrinterButton.Enabled = true;
+            if (functionToCallOnSelect != null)
+            {
+                functionToCallOnSelect();
+                functionToCallOnSelect = null;
+            }
         }
 
         void onDisconnectButtonClick(object sender, MouseEventArgs e)

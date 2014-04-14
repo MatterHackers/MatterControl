@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     public class ActiveSliceSettings
     {
         static ActiveSliceSettings globalInstance = null;
-        static string configFileExtension = "ini";
+        static string configFileExtension = "slice";
         private List<SettingsLayer> activeSettingsLayers;
         public RootedObjectEventHandler CommitStatusChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler SettingsChanged = new RootedObjectEventHandler();
@@ -163,8 +163,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             this.activeSettingsLayers = new List<SettingsLayer>();
             globalInstance.LoadSettingsForPrinter();
-            globalInstance.LoadSettingsForMaterial(1);
+            
+            //Ordering matters - Material presets trump Quality
             globalInstance.LoadSettingsForQuality();
+            globalInstance.LoadSettingsForMaterial(1);
 
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
@@ -183,14 +185,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
+                SettingsLayer printerSettingsLayer;
                 DataStorage.SliceSettingsCollection collection;
                 if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex) != 0)
                 {
                     int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex);
                     collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
-                    SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
-                    this.activeSettingsLayers.Add(printerSettingsLayer);
-                }                
+                    printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+                }
+                else
+                {
+                    printerSettingsLayer = new SettingsLayer(new SliceSettingsCollection(),new Dictionary<string, SliceSetting>());
+                }
+                this.activeSettingsLayers.Add(printerSettingsLayer);
             }
         }
 
@@ -198,15 +205,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
+                SettingsLayer printerSettingsLayer;
                 DataStorage.SliceSettingsCollection collection;
                 if (ActivePrinterProfile.Instance.ActiveQualitySettingsID != 0)
                 {
                     int materialOneSettingsID = ActivePrinterProfile.Instance.ActiveQualitySettingsID;
                     collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
-                    SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
-                    this.activeSettingsLayers.Add(printerSettingsLayer);
+                    printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);                    
                 }
-            }
+                else
+                {
+                    printerSettingsLayer = new SettingsLayer(new SliceSettingsCollection(), new Dictionary<string, SliceSetting>());
+                }
+                this.activeSettingsLayers.Add(printerSettingsLayer);
+            }           
         }
 
         public void LoadSettingsForPrinter()
@@ -470,7 +482,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public bool LoadSettingsFromIni()
         {
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Configuration|*." + configFileExtension);
+            OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Configuration|*.slice;*.ini");
 			openParams.ActionButtonLabel = "Load Configuration";
 			openParams.Title = "MatterControl: Select A File";
 
