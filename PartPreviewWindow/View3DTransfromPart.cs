@@ -509,7 +509,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 Face face = asynchMeshesList[SelectedMeshIndex].Faces[i];
                 List<Vertex> faceVertices = new List<Vertex>();
-                foreach (FaceEdge faceEdgeToAdd in face.FaceEdgeIterator())
+                foreach (FaceEdge faceEdgeToAdd in face.FaceEdges())
                 {
                     Vertex newVertex = copyMesh.CreateVertex(faceEdgeToAdd.firstVertex.Position, true);
                     faceVertices.Add(newVertex);
@@ -1196,13 +1196,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 switch (renderTypeMenu.SelectedIndex)
                 {
                     case 0:
-                        meshViewerWidget.RenderType = MeshViewerWidget.RenderTypes.Shaded;
+                        meshViewerWidget.RenderType = RenderTypes.Shaded;
                         break;
                     case 1:
-                        meshViewerWidget.RenderType = MeshViewerWidget.RenderTypes.Outlines;
+                        meshViewerWidget.RenderType = RenderTypes.Outlines;
                         break;
                     case 2:
-                        meshViewerWidget.RenderType = MeshViewerWidget.RenderTypes.Polygons;
+                        meshViewerWidget.RenderType = RenderTypes.Polygons;
                         break;
                 }
             };
@@ -1563,10 +1563,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Face faceToLayFlat = null;
             double lowestAngleOfAnyFace = double.MaxValue;
             // Check all the faces that are connected to the lowest point to find out which one to lay flat.
-            foreach (Face face in lowestVertex.ConnectedFacesIterator())
+            foreach (Face face in lowestVertex.ConnectedFaces())
             {
                 double biggestAngleToFaceVertex = double.MinValue;
-                foreach (Vertex faceVertex in face.VertexIterator())
+                foreach (Vertex faceVertex in face.Vertices())
                 {
                     if (faceVertex != lowestVertex)
                     {
@@ -1590,7 +1590,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             double maxDistFrom0 = 0;
             List<Vector3> faceVertexes = new List<Vector3>();
-            foreach (Vertex vertex in faceToLayFlat.VertexIterator())
+            foreach (Vertex vertex in faceToLayFlat.Vertices())
             {
                 Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshTransforms[indexToLayFlat]);
                 faceVertexes.Add(vertexPosition);

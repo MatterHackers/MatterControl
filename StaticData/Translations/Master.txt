@@ -1956,3 +1956,6 @@ Translated:Est. Weight
 English:Downloading updates...
 Translated:Downloading updates...
 
+English:Duplicate
+Translated:Duplicate
+

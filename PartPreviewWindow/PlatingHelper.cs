@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
                     foreach (Face face in mesh.Faces)
                     {
                         List<Vertex> faceVertices = new List<Vertex>();
-                        foreach (FaceEdge faceEdgeToAdd in face.FaceEdgeIterator())
+                        foreach (FaceEdge faceEdgeToAdd in face.FaceEdges())
                         {
                             // we allow duplicates (the true) to make sure we are not changing the loaded models acuracy.
                             Vertex newVertex = allPolygons.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl
                 foreach (Face face in meshes[i].Faces)
                 {
                     positions.Clear();
-                    foreach (Vertex vertex in face.VertexIterator())
+                    foreach (Vertex vertex in face.Vertices())
                     {
                         positions.Add(vertex.Position);
                     }
