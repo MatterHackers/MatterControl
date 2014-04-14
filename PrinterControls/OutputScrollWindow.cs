@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl
             }
             commandHistory.Add(textToSend);
             commandHistoryIndex = commandHistory.Count;
-            PrinterCommunication.Instance.QueueLineToPrinter(textToSend);
+            PrinterCommunication.Instance.SendLineToPrinterNow(textToSend);
             if (!filterOutput.Checked)
             {
                 outputScrollWidget.WriteLine(this, new StringEventArgs(textToSend));
