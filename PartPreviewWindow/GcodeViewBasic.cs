@@ -626,7 +626,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void DoGenerateButton_Click(object state)
         {
-            if (ActiveSliceSettings.Instance.IsValid())
+            if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
             {
                 ((Button)state).Visible = false;
                 SlicingQueue.Instance.QueuePartForSlicing(printItem);
