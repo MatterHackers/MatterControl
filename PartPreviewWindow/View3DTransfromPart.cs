@@ -93,6 +93,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Button applyScaleButton;
 
         PrintItemWrapper printItemWrapper;
+		bool saveAsWindowIsOpen = false;
+		SaveAsWindow saveAsWindow;
 
         List<Mesh> asynchMeshesList = new List<Mesh>();
         List<Matrix4X4> asynchMeshTransforms = new List<Matrix4X4>();
@@ -1057,13 +1059,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             saveButtons.AddChild(saveAsButton);
             saveAsButton.Click += (sender, e) =>
             {
-                new SaveAsWindow(MergeAndSavePartsToStl);
+				if(saveAsWindowIsOpen == false)
+				{
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToStl);
+				this.saveAsWindowIsOpen = true;
+				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
+				}
+				else
+				{
+					if(saveAsWindowIsOpen != null)
+					{
+						saveAsWindow.BringToFront();
+					}
+				}
             };
 
             saveButtons.Visible = false;
 
             return saveButtons;
         }
+
+		void SaveAsWindow_Closed(object sender, EventArgs e)
+		{
+			this.saveAsWindowIsOpen = false;
+		}
 
         private void SetMeshViewerDisplayTheme()
         {
