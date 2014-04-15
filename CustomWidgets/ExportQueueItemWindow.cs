@@ -73,6 +73,9 @@ namespace MatterHackers.MatterControl
 
 			Button cancelButton = textImageButtonFactory.Generate ("Cancel");
 			cancelButton.Padding = new BorderDouble(0);
+			cancelButton.Click += ( sender, e) => {
+				CloseOnIdle ();
+			};
 
 			GuiWidget gDSpacer = new GuiWidget ();
 			gDSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -254,5 +257,10 @@ namespace MatterHackers.MatterControl
             sliceItem.Done -= new EventHandler(sliceItem_Done);
             SaveGCodeToNewLocation(sliceItem.GCodePathAndFileName, pathAndFilenameToSave);
         }
+
+		public void CloseOnIdle()
+		{
+			UiThread.RunOnIdle((state) => { Close(); });
+		}
     }
 }

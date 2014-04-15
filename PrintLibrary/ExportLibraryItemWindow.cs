@@ -50,20 +50,39 @@ namespace MatterHackers.MatterControl.PrintLibrary
             this.RemoveAllChildren();
             TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            topToBottom.Padding = new BorderDouble(10);
+			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
             topToBottom.AnchorAll();
+
+
+			FlowLayoutWidget headerContainer = new FlowLayoutWidget (FlowDirection.LeftToRight);
+			headerContainer.HAnchor = HAnchor.ParentLeftRight;
+			headerContainer.Padding = new BorderDouble (0, 3, 0, 3);
+			headerContainer.Margin = new BorderDouble (0, 3, 0, 0);
+			headerContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
 
             string fileExportLabelTxt = LocalizedString.Get("File export options");
 			TextWidget exportLabel = new TextWidget(string.Format("{0}:", fileExportLabelTxt));
             exportLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            topToBottom.AddChild(exportLabel);
+			headerContainer.AddChild(exportLabel);
+			topToBottom.AddChild(headerContainer);
 
-            GuiWidget dividerLine = new GuiWidget();
-            dividerLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            dividerLine.Height = 1;
-            dividerLine.Margin = new BorderDouble(0, 3);
-            dividerLine.BackgroundColor = RGBA_Bytes.White;
-            topToBottom.AddChild(dividerLine);
+
+			FlowLayoutWidget exportStlGcodeButtonsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			exportStlGcodeButtonsContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			exportStlGcodeButtonsContainer.HAnchor = HAnchor.ParentLeftRight;
+			exportStlGcodeButtonsContainer.VAnchor = VAnchor.ParentBottomTop;
+			exportStlGcodeButtonsContainer.Padding = new BorderDouble (5);
+
+			Button cancelButton = textImageButtonFactory.Generate ("Cancel");
+			cancelButton.Padding = new BorderDouble (0);
+			cancelButton.Click += (sender, e) => {
+				CloseOnIdle();
+			};
+
+			GuiWidget gDSpacer = new GuiWidget ();
+			gDSpacer.HAnchor = HAnchor.ParentLeftRight;
+
 
             if (!partIsGCode)
             {
@@ -72,8 +91,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				Button exportAsSTLButton = textImageButtonFactory.Generate(exportSTLTxtFull);
 				exportAsSTLButton.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
-                //exportSTL.HAnchor = Agg.UI.HAnchor.ParentCenter;
-				topToBottom.AddChild(exportAsSTLButton);
+				exportStlGcodeButtonsContainer.AddChild(exportAsSTLButton);
             }
 
             bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
@@ -84,30 +102,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				string exportGCodeTextFull = string.Format ("{0} GCode", exportGCodeText);
 
 				Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
-
-                //exportGCode.HAnchor = Agg.UI.HAnchor.ParentCenter;
 				exportGCode.Click += new ButtonBase.ButtonEventHandler(exportGCode_Click);
-				topToBottom.AddChild(exportGCode);
+				exportStlGcodeButtonsContainer.AddChild(exportGCode);
             }
 
             GuiWidget vSpacer = new GuiWidget();
             vSpacer.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-            topToBottom.AddChild(vSpacer);
+			exportStlGcodeButtonsContainer.AddChild(vSpacer);
 
             if (!showExportGCodeButton)
             {
                 string noGCodeMessageText = LocalizedString.Get("Note");
                 string noGCodeMessageTextFull = LocalizedString.Get("To enable GCode export, select a printer profile");
 				TextWidget noGCodeMessage = new TextWidget(string.Format("{0}: {1}.", noGCodeMessageText, noGCodeMessageTextFull), textColor: RGBA_Bytes.White, pointSize: 10);
-                topToBottom.AddChild(noGCodeMessage);
+				exportStlGcodeButtonsContainer.AddChild(noGCodeMessage);
             }
+
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget (FlowDirection.LeftToRight);
+			buttonRow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Padding = new BorderDouble(0);
 
             // TODO: make this work on the mac and then delete this if
             if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Windows)
             {
-                showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), RGBA_Bytes.White, 10);
+				showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), ActiveTheme.Instance.PrimaryTextColor, 10);
                 showInFolderAfterSave.Margin = new BorderDouble(top: 10);
-                topToBottom.AddChild(showInFolderAfterSave);
+				exportStlGcodeButtonsContainer.AddChild(showInFolderAfterSave);
+				buttonRow.AddChild(gDSpacer);
+				buttonRow.AddChild(cancelButton);
+				topToBottom.AddChild (exportStlGcodeButtonsContainer);
+				topToBottom.AddChild(buttonRow);
             }
 
             this.AddChild(topToBottom);
@@ -164,7 +189,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 else if (partIsGCode)
                 {
                     Close();
-					SaveGCodeToNewLocation(printQueueItem.printItem.FileLocation,filePathToSave);//saveParams.FileName
+					SaveGCodeToNewLocation(printQueueItem.printItem.FileLocation,filePathToSave);
                 }
             }
         }
@@ -267,5 +292,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
             sliceItem.Done -= new EventHandler(sliceItem_Done);
             SaveGCodeToNewLocation(sliceItem.GCodePathAndFileName, pathAndFilenameToSave);
         }
+
+		public void CloseOnIdle()
+		{
+			UiThread.RunOnIdle((state) => { Close(); });
+		}
+
+
     }
 }
