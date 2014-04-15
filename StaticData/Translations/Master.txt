@@ -1959,3 +1959,9 @@ Translated:Downloading updates...
 English:Duplicate
 Translated:Duplicate
 
+English:Manually Configure Connection
+Translated:Manually Configure Connection
+
+English:Skip Connection Setup
+Translated:Skip Connection Setup
+
