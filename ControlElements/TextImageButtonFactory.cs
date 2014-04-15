@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl
             return buffer;
         }
 
-        public GuiWidget GenerateGroupBoxLableWithEdit(string label, out Button editButton)
+        public GuiWidget GenerateGroupBoxLabelWithEdit(string label, out Button editButton)
         {
             FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 

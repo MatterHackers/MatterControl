@@ -63,8 +63,8 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                string movementSpeedsLbl = LocalizedString.Get("Movement Speeds Presets".Localize());
-				TextWidget elementHeader = new TextWidget(string.Format("{0}:",movementSpeedsLbl), pointSize: 14);
+                string movementSpeedsLabel = LocalizedString.Get("Movement Speeds Presets".Localize());
+                TextWidget elementHeader = new TextWidget(string.Format("{0}:", movementSpeedsLabel), pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -133,13 +133,13 @@ namespace MatterHackers.MatterControl
                 if (settingsArray[i].StartsWith("e"))
                 {
                     int extruderIndex = (int)double.Parse(settingsArray[i].Substring(1)) + 1;
-                    string extruderLblTxt = LocalizedString.Get("Extruder");
-					axisLabel = new TextWidget(string.Format("{0} {1}",extruderLblTxt ,extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                    string extruderLabelTxt = LocalizedString.Get("Extruder");
+                    axisLabel = new TextWidget(string.Format("{0} {1}", extruderLabelTxt, extruderIndex), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 }
                 else
                 {
-                    string axisLblText = LocalizedString.Get("Axis");
-					axisLabel = new TextWidget(string.Format("{0} {1}",axisLblText, settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                    string axisLabelText = LocalizedString.Get("Axis");
+                    axisLabel = new TextWidget(string.Format("{0} {1}", axisLabelText, settingsArray[i]), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 }
                 axisLabel.VAnchor = VAnchor.ParentCenter;
                 leftRightEdit.AddChild(axisLabel);

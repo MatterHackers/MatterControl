@@ -146,10 +146,10 @@ namespace MatterHackers.MatterControl.ActionBar
             printerNameText.HAnchor = HAnchor.ParentCenter;
             printerNameText.TextColor = textColor;
 
-            string printerStatusTxtBeg = LocalizedString.Get("Status");
-            string printerStatusTxtEnd = LocalizedString.Get("Connected");
-			string printerStatusTxtFull = string.Format("{0}: {1}", printerStatusTxtBeg, printerStatusTxtEnd);
-			printerStatusText = new TextWidget(printerStatusTxtFull, pointSize:statusTextHeight);
+            string printerStatusTextBeg = LocalizedString.Get("Status");
+            string printerStatusTextEnd = LocalizedString.Get("Connected");
+			string printerStatusTextFull = string.Format("{0}: {1}", printerStatusTextBeg, printerStatusTextEnd);
+			printerStatusText = new TextWidget(printerStatusTextFull, pointSize:statusTextHeight);
             printerStatusText.AutoExpandBoundsToText = true;
             printerStatusText.HAnchor = HAnchor.ParentCenter;
             printerStatusText.TextColor = textColor;
@@ -207,15 +207,15 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 if (GetPrinterRecordCount() > 0)
                 {
-                    string printerNameLbl = LocalizedString.Get("Select Printer");
-					string printerNameLblFull = string.Format("- {0} -", printerNameLbl);
-					printerNameText.Text = (printerNameLblFull);
+                    string printerNameLabel = LocalizedString.Get("Select Printer");
+					string printerNameLabelFull = string.Format("- {0} -", printerNameLabel);
+					printerNameText.Text = (printerNameLabelFull);
                 }
                 else
                 {
-                    string addPrinterLbl = LocalizedString.Get("Add Printer");
-					string addPrinterLblFull = string.Format ("- {0} -", addPrinterLbl);
-					printerNameText.Text = (addPrinterLblFull);
+                    string addPrinterLabel = LocalizedString.Get("Add Printer");
+					string addPrinterLabelFull = string.Format ("- {0} -", addPrinterLabel);
+					printerNameText.Text = (addPrinterLabelFull);
                 }
             }
         }

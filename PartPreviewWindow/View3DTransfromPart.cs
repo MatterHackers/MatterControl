@@ -289,10 +289,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 FlowLayoutWidget editToolBar = new FlowLayoutWidget();
 
-                string progressFindPartsLbl = LocalizedString.Get("Finding Parts");
-                string progressFindPartsLblFull = "{0}:".FormatWith(progressFindPartsLbl);
+                string progressFindPartsLabel = LocalizedString.Get("Finding Parts");
+                string progressFindPartsLabelFull = "{0}:".FormatWith(progressFindPartsLabel);
 
-                processingProgressControl = new ProgressControl(progressFindPartsLblFull);
+                processingProgressControl = new ProgressControl(progressFindPartsLabelFull);
                 processingProgressControl.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 editToolBar.AddChild(processingProgressControl);
                 editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
@@ -958,9 +958,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     };
 
                     PartInfoOptionContainer.Margin = new BorderDouble(8, 3);
-					string sizeInfoLbl = LocalizedString.Get("Size");
-					string sizeInfoLblFull = "{0}:".FormatWith(sizeInfoLbl);
-					TextWidget sizeInfo = new TextWidget(sizeInfoLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
+					string sizeInfoLabel = LocalizedString.Get("Size");
+					string sizeInfoLabelFull = "{0}:".FormatWith(sizeInfoLabel);
+					TextWidget sizeInfo = new TextWidget(sizeInfoLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
                     PartInfoOptionContainer.AddChild(sizeInfo);
                     TextWidget xSizeInfo = new TextWidget("  x 10.1", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
                     xSizeInfo.AutoExpandBoundsToText = true;
@@ -1102,9 +1102,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
             scaleRatioContainer.Padding = new BorderDouble(5);
 
-            string scaleRatioLblTxt = LocalizedString.Get("Ratio");
-            string scaleRatioLblTxtFull = "{0}:".FormatWith(scaleRatioLblTxt);
-            TextWidget scaleRatioLabel = new TextWidget(scaleRatioLblTxtFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            string scaleRatioLabelText = LocalizedString.Get("Ratio");
+            string scaleRatioLabelTextFull = "{0}:".FormatWith(scaleRatioLabelText);
+            TextWidget scaleRatioLabel = new TextWidget(scaleRatioLabelTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
             scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
             scaleRatioContainer.AddChild(scaleRatioLabel);
 
@@ -1279,9 +1279,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             GuiWidget horizontalSpacer = new GuiWidget();
             horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-			string degreesLabelTxt = LocalizedString.Get("Degrees");
-			string degreesLabelTxtFull = "{0}:".FormatWith(degreesLabelTxt);
-            TextWidget degreesLabel = new TextWidget(degreesLabelTxt, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			string degreesLabelText = LocalizedString.Get("Degrees");
+			string degreesLabelTextFull = "{0}:".FormatWith(degreesLabelText);
+            TextWidget degreesLabel = new TextWidget(degreesLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
             degreesContainer.AddChild(degreesLabel);
             degreesContainer.AddChild(horizontalSpacer);
 
@@ -1474,9 +1474,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 partSelectButtonWasClicked = partSelectButton.Checked;
 
-				string progressSavingPartslbl = LocalizedString.Get ("Saving");
-				string progressSavingPartsLblFull = "{0}:".FormatWith(progressSavingPartslbl);
-				processingProgressControl.textWidget.Text = progressSavingPartsLblFull;
+                string progressSavingPartsLabel = LocalizedString.Get("Saving");
+                string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
+                processingProgressControl.textWidget.Text = progressSavingPartsLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();

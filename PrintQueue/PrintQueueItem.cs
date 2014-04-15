@@ -90,11 +90,11 @@ namespace MatterHackers.MatterControl.PrintQueue
                     partLabel.TextColor = WidgetTextColor;
                     partLabel.MinimumSize = new Vector2(1, 16);
 
-					string partStatusLblTxt = LocalizedString.Get ("Status").ToUpper();     
-					string partStatusLblTxtTest = LocalizedString.Get ("Queued to Print");
-					string partStatusLblTxtFull = "{0}: {1}".FormatWith(partStatusLblTxt,partStatusLblTxtTest);
+					string partStatusLabelTxt = LocalizedString.Get ("Status").ToUpper();     
+					string partStatusLabelTxtTest = LocalizedString.Get ("Queued to Print");
+					string partStatusLabelTxtFull = "{0}: {1}".FormatWith(partStatusLabelTxt,partStatusLabelTxtTest);
 
-					partStatus = new TextWidget(partStatusLblTxtFull, pointSize: 10);
+					partStatus = new TextWidget(partStatusLabelTxtFull, pointSize: 10);
                     partStatus.AutoExpandBoundsToText = true;
                     partStatus.TextColor = WidgetTextColor;
                     partStatus.MinimumSize = new Vector2(50, 12);
@@ -425,8 +425,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 				string notFoundMessage = LocalizedString.Get("Oops! Could not find this file");
 				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
 				string message = "{0}:\n'{1}'\n\n{2}?".FormatWith(notFoundMessage, maxLengthName,notFoundMessageEnd);
-				string titleLbl = LocalizedString.Get("Item not Found");
-					if (StyledMessageBox.ShowMessageBox(message, titleLbl, StyledMessageBox.MessageType.YES_NO))
+				string titleLabel = LocalizedString.Get("Item not Found");
+					if (StyledMessageBox.ShowMessageBox(message, titleLabel, StyledMessageBox.MessageType.YES_NO))
                 {
                     PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.GetIndex(printItem));
                 }

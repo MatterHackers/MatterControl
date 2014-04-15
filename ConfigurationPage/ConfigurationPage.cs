@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl
         private GuiWidget CreatePrintLevelingControlsContainer()
         {
             Button editButton;
-            GroupBox printLevelingControlsContainer = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(LocalizedString.Get("Automatic Calibration"), out editButton));
+            GroupBox printLevelingControlsContainer = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(LocalizedString.Get("Automatic Calibration"), out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editLevelingSettingsWindow == null)

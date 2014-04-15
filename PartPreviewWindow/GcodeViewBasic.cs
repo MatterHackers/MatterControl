@@ -295,10 +295,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             //modelInfoContainer.AddChild(new TextWidget("Size:", textColor: ActiveTheme.Instance.PrimaryTextColor));
             
-			string filamentLengthLbl = "Filament Length".Localize().ToUpper();
-			string filamentLengthLblFull = string.Format ("{0}:", filamentLengthLbl);
+			string filamentLengthLabel = "Filament Length".Localize().ToUpper();
+			string filamentLengthLabelFull = string.Format ("{0}:", filamentLengthLabel);
             // show the filament used
-            modelInfoContainer.AddChild(new TextWidget(filamentLengthLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+            modelInfoContainer.AddChild(new TextWidget(filamentLengthLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
             {
                 double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.NozzleDiameter);
 

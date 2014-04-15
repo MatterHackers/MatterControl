@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl
         private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             Button editButton;
-			GroupBox movementControlsGroupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit("Movement Controls".Localize(), out editButton));
+			GroupBox movementControlsGroupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit("Movement Controls".Localize(), out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editManualMovementSettingsWindow == null)

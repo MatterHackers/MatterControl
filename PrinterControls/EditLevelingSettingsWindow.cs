@@ -64,8 +64,8 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                string movementSpeedsLbl = LocalizedString.Get("Sampled Positions".Localize());
-                TextWidget elementHeader = new TextWidget(string.Format("{0}:", movementSpeedsLbl), pointSize: 14);
+                string movementSpeedsLabel = LocalizedString.Get("Sampled Positions".Localize());
+                TextWidget elementHeader = new TextWidget(string.Format("{0}:", movementSpeedsLabel), pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;

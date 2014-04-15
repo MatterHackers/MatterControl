@@ -71,10 +71,10 @@ namespace MatterHackers.MatterControl.CreatorPlugins
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-				string elementHeaderLblBeg = LocalizedString.Get("Select a Design Tool");
-				string elementHeaderLblFull = string.Format("{0}:", elementHeaderLblBeg);
-				string elementHeaderLbl = elementHeaderLblFull;
-				TextWidget elementHeader = new TextWidget(string.Format(elementHeaderLbl), pointSize: 14);
+				string elementHeaderLabelBeg = LocalizedString.Get("Select a Design Tool");
+				string elementHeaderLabelFull = string.Format("{0}:", elementHeaderLabelBeg);
+				string elementHeaderLabel = elementHeaderLabelFull;
+				TextWidget elementHeader = new TextWidget(string.Format(elementHeaderLabel), pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
