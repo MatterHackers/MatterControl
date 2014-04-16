@@ -88,6 +88,13 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     SelectedIndex = Count - 1;
                 }
+
+                // force a refresh of the ui in the case where we are still on the same index but have changed items.
+                SelectedIndex = SelectedIndex;
+            }
+            else
+            {
+                SelectedIndex = -1;
             }
         }
 
@@ -124,7 +131,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 if (SelectedIndex >= 0)
                 {
-                    return new PrintItemWrapper(QueueData.Instance.GetPrintItem(SelectedIndex));
+                    return QueueData.Instance.GetPrintItem(SelectedIndex);
                 }
                 else
                 {
@@ -218,6 +225,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                     Invalidate();
                 }
+
+                if (QueueData.Instance.Count == 0)
+                {
+                    PrinterCommunication.Instance.ActivePrintItem = null;
+                }
             }
         }
 
@@ -292,6 +304,13 @@ namespace MatterHackers.MatterControl.PrintQueue
             topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             base.AddChild(topToBottomItemList);
 
+            for (int i = 0; i < QueueData.Instance.Count; i++)
+            {
+                PrintItemWrapper item = QueueData.Instance.GetPrintItem(i);
+                RowItem queueItem = new RowItem(item, this);
+                AddChild(queueItem);
+            }
+
             QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
             QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToQueue, ref unregisterEvents);
             QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
@@ -299,14 +318,38 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void ItemAddedToQueue(object sender, EventArgs e)
         {
+            QueueData.IndexArgs addedIndexArgs = e as QueueData.IndexArgs;
+            PrintItemWrapper item = QueueData.Instance.GetPrintItem(addedIndexArgs.Index);
+            RowItem queueItem = new RowItem(item, this);
+            AddChild(queueItem, addedIndexArgs.Index);
+
+            EnsureSelection();
         }
 
         void ItemRemovedFromToQueue(object sender, EventArgs e)
         {
+            QueueData.IndexArgs removeIndexArgs = e as QueueData.IndexArgs;
+            topToBottomItemList.RemoveChild(removeIndexArgs.Index);
+            EnsureSelection();
+            if (QueueData.Instance.Count > 0)
+            {
+                SelectedIndex = Math.Max(SelectedIndex - 1, 0);
+            }
         }
 
         void QueueOrderChanged(object sender, EventArgs e)
         {
+        }
+
+        bool firstDraw = true;
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            if (firstDraw)
+            {
+                firstDraw = false;
+                EnsureSelection();
+            }
+            base.OnDraw(graphics2D);
         }
 
         public override void OnClosed(EventArgs e)

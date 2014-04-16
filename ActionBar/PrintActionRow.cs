@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 foreach (string loadedFileName in openParams.FileNames)
                 {
-                    QueueData.Instance.AddItem(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName)));
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
                 }
             }
         }

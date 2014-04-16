@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             foreach (PrintLibraryListItem item in PrintLibraryListControl.Instance.SelectedItems)
             {
-                QueueData.Instance.AddItem(item.printItem.PrintItem);
+                QueueData.Instance.AddItem(item.printItem);
             }
             PrintLibraryListControl.Instance.ClearSelectedItems();
         }

@@ -45,8 +45,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
     public class QueueData
     {
-        private List<PrintItem> printItems = new List<PrintItem>();
-        private List<PrintItem> PrintItems
+        private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
+        private List<PrintItemWrapper> PrintItems
         {
             get { return printItems; }
         }
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 && indexB >= 0 && indexB < Count
                 && indexA != indexB)
             {
-                PrintItem hold = PrintItems[indexA];
+                PrintItemWrapper hold = PrintItems[indexA];
                 PrintItems[indexA] = PrintItems[indexB];
                 PrintItems[indexB] = hold;
 
@@ -98,16 +98,18 @@ namespace MatterHackers.MatterControl.PrintQueue
             OrderChanged.CallEvents(this, e);
         }
 
-        class IndexArgs : EventArgs
+        public class IndexArgs : EventArgs
         {
             internal int index;
+
+            public int Index { get { return index; } }
             internal IndexArgs(int index)
             {
                 this.index = index;
             }
         }
 
-        class SwapIndexArgs : EventArgs
+        public class SwapIndexArgs : EventArgs
         {
             internal int indexA;
             internal int indexB;
@@ -149,7 +151,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             ItemRemoved.CallEvents(this, e);
         }
 
-        public PrintItem GetPrintItem(int index)
+        public PrintItemWrapper GetPrintItem(int index)
         {
             if (index >= 0 && index < PrintItems.Count)
             {
@@ -159,7 +161,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             return null;
         }
 
-        public int GetIndex(PrintItem printItem)
+        public int GetIndex(PrintItemWrapper printItem)
         {
             return PrintItems.IndexOf(printItem);
         }
@@ -180,15 +182,19 @@ namespace MatterHackers.MatterControl.PrintQueue
             List<PrintItem> listToReturn = new List<PrintItem>();
             for (int i = 0; i < Count; i++)
             {
-                listToReturn.Add(GetPrintItem(i));
+                listToReturn.Add(GetPrintItem(i).PrintItem);
             }
             return listToReturn;
         }
 
-        public void AddItem(PrintItem item)
+        public void AddItem(PrintItemWrapper item, int indexToInsert = -1)
         {
-            PrintItems.Add(item);
-            OnItemAdded(new IndexArgs(PrintItems.Count - 1));
+            if (indexToInsert == -1)
+            {
+                indexToInsert = PrintItems.Count;
+            }
+            PrintItems.Insert(indexToInsert, item);
+            OnItemAdded(new IndexArgs(indexToInsert));
         }
 
         public void LoadDefaultQueue()
@@ -200,7 +206,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 foreach (PrintItem item in partFiles)
                 {
-                    AddItem(item);
+                    AddItem(new PrintItemWrapper(item));
                 }
             }
         }

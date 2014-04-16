@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 foreach (string partFile in calibrationPrints)
                 {
                     string partFullPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "SampleParts", partFile);
-                    QueueData.Instance.AddItem(new PrintItem(Path.GetFileNameWithoutExtension(partFullPath), partFullPath));
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(partFullPath), partFullPath)));
                 }
             }
         }

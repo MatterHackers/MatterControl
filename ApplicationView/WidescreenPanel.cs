@@ -72,6 +72,8 @@ namespace MatterHackers.MatterControl
 
         PanelSeparator RightBorderLine;
         PanelSeparator LeftBorderLine;
+
+        QueueDataView queueDataView = null;
         
         public WidescreenPanel()
             : base(FlowDirection.LeftToRight)
@@ -233,19 +235,43 @@ namespace MatterHackers.MatterControl
             LoadColumnTwo();
         }
 
+        int lastSelectedIndex = -1;
+        void StoreQueueIndex()
+        {
+            lastSelectedIndex = -1;
+            if (queueDataView != null)
+            {
+                lastSelectedIndex = queueDataView.SelectedIndex;
+            }
+        }
+
+        void RestoreQueueIndex()
+        {
+            if (lastSelectedIndex > -1)
+            {
+                queueDataView.SelectedIndex = lastSelectedIndex;
+            }
+        }
+
         void LoadCompactView()
         {
-            QueueDataView queueDataView = new QueueDataView();
+            StoreQueueIndex();
+
+            queueDataView = new QueueDataView();
             
             ColumnOne.RemoveAllChildren();
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
             ColumnOne.AddChild(new CompactSlidePanel(queueDataView));
             ColumnOne.AnchorAll();
+
+            RestoreQueueIndex();
         }
 
         void LoadColumnOne()
         {
-            QueueDataView queueDataView = new QueueDataView();
+            StoreQueueIndex();
+
+            queueDataView = new QueueDataView();
 
             ColumnOne.RemoveAllChildren();
             ColumnOne.VAnchor = VAnchor.ParentBottomTop;
@@ -253,6 +279,8 @@ namespace MatterHackers.MatterControl
             ColumnOne.AddChild(new PrintProgressBar());
             ColumnOne.AddChild(new QueueTab(queueDataView));
             ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
+
+            RestoreQueueIndex();
         }
 
         void LoadColumnTwo()

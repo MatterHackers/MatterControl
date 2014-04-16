@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 QueueData.Instance.RemoveAll();
                 foreach (PrintItem part in partFiles)
                 {
-                    QueueData.Instance.AddItem(new PrintItem(part.Name, part.FileLocation));
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
                 }
             }
         }
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
                 if (extension == ".STL" || extension == ".GCODE")
                 {
-                    QueueData.Instance.AddItem(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName)));
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
                 }
             }
 
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 foreach (string loadedFileName in openParams.FileNames)
                 {
-                    QueueData.Instance.AddItem(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName)));
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
                 }
             }
         }

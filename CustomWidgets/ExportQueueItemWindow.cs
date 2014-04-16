@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl
     public class ExportQueueItemWindow : SystemWindow
     {
         CheckBox showInFolderAfterSave;
-        private PrintQueue.RowItem printQueueItem;
+        private RowItem printQueueItem;
         string pathAndFilenameToSave;
         bool partIsGCode = false;
 

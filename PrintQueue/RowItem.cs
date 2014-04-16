@@ -38,13 +38,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 		bool viewWindowIsOpen = false;
         QueueDataView queueDataViewThisIsIn;
 
-        public RowItem(string displayName, string fileLocation, QueueDataView queueDataViewThisIsIn)
+        public RowItem(PrintItemWrapper printItemWrapper, QueueDataView queueDataViewThisIsIn)
         {
             this.queueDataViewThisIsIn = queueDataViewThisIsIn;
-            PrintItem printItem = new PrintItem();
-            printItem.Name = displayName;
-            printItem.FileLocation = fileLocation;
-            this.PrintItemWrapper = new PrintItemWrapper(printItem);
+            this.PrintItemWrapper = printItemWrapper;
             ConstructPrintQueueItem();
         }
 
@@ -245,7 +242,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         Button moveUp = linkButtonFactory.Generate(" ^ ");
                         moveUp.Click += (sender, e) =>
                         {
-                            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper.PrintItem);
+                            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
                             QueueData.Instance.SwapItemsOnIdle(thisIndexInQueue, thisIndexInQueue - 1);
                         };
                         topToBottom.AddChild(moveUp);
@@ -256,7 +253,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         Button moveDown = linkButtonFactory.Generate(" v ");
                         moveDown.Click += (sender, e) =>
                         {
-                            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper.PrintItem);
+                            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
                             QueueData.Instance.SwapItemsOnIdle(thisIndexInQueue, thisIndexInQueue + 1);
                         };
                         topToBottom.AddChild(moveDown);
@@ -336,12 +333,12 @@ namespace MatterHackers.MatterControl.PrintQueue
         void AddPartToQueue(object state)
         {
             PartToAddToQueue partToAddToQueue = (PartToAddToQueue)state;
-            QueueData.Instance.AddItem(new PrintItem(partToAddToQueue.Name, partToAddToQueue.FileLocation));
+            QueueData.Instance.AddItem(new PrintItemWrapper( new PrintItem(partToAddToQueue.Name, partToAddToQueue.FileLocation)), partToAddToQueue.insertAfterIndex);
         }
 
         public void CreateCopyInQueue()
         {
-            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper.PrintItem);
+            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
             if (thisIndexInQueue != -1)
             {
                 string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
@@ -398,7 +395,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public void DeletePartFromQueue()
         {
-            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper.PrintItem);
+            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
             QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);
         }
 
@@ -421,7 +418,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				string titleLabel = LocalizedString.Get("Item not Found");
 					if (StyledMessageBox.ShowMessageBox(message, titleLabel, StyledMessageBox.MessageType.YES_NO))
                 {
-                    QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(printItemWrapper.PrintItem));
+                    QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(printItemWrapper));
                 }
             });
         }

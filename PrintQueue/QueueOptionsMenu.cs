@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 QueueData.Instance.RemoveAll();
                 foreach (PrintItem part in partFiles)
                 {
-                    QueueData.Instance.AddItem(new PrintItem(part.Name, part.FileLocation));
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
                 }
             }
         }

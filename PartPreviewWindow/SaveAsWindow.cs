@@ -117,9 +117,9 @@ namespace MatterHackers.MatterControl
                     printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
                     printItem.Commit();
 
-                    QueueData.Instance.AddItem(printItem);
-
                     PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+                    QueueData.Instance.AddItem(printItemWrapper);
+
                     if (addToLibraryOption.Checked)
                     {
                         PrintLibraryListItem libraryItem = new PrintLibraryListItem(printItemWrapper);

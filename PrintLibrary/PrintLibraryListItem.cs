@@ -364,7 +364,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
                     addToQueueLink.Click += (sender, e) =>
                     {
-                        QueueData.Instance.AddItem(new PrintItem(this.printItem.Name, this.printItem.FileLocation));
+                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(this.printItem.Name, this.printItem.FileLocation)));
                     };
 
 					viewLink = linkButtonFactory.Generate(LocalizedString.Get("View"));
