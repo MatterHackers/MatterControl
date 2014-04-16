@@ -123,14 +123,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                             var driverInstallerProcess = new Process();
                             // Prepare the process to run
                             // Enter in the command line arguments, everything you would enter after the executable name itself
-                            driverInstallerProcess.StartInfo.Arguments = System.IO.Path.GetFullPath(fileName);
+                            driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
                             // Enter the executable to run, including the complete path
                             string printerDriverInstallerExePathAndFileName = Path.Combine(".", "InfInstaller.exe");
 
                             driverInstallerProcess.StartInfo.CreateNoWindow = true;
                             driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-                            driverInstallerProcess.StartInfo.FileName = System.IO.Path.GetFullPath(printerDriverInstallerExePathAndFileName);
+                            driverInstallerProcess.StartInfo.FileName = Path.GetFullPath(printerDriverInstallerExePathAndFileName);
                             driverInstallerProcess.StartInfo.Verb = "runas";
                             driverInstallerProcess.StartInfo.UseShellExecute = true;
 

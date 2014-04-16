@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 }
                 else
                 {
-                    PrintQueueItem.ShowCantFindFileMessage(printItem);
+                    RowItem.ShowCantFindFileMessage(printItem);
                 }
             }
         }
@@ -364,9 +364,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
                     addToQueueLink.Click += (sender, e) =>
                     {
-                        PrintQueueItem queueItem = new PrintQueueItem(this.printItem.Name, this.printItem.FileLocation);
-                        PrintQueueControl.Instance.AddChild(queueItem);
-                        PrintQueueControl.Instance.SaveDefaultQueue();
+                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(this.printItem.Name, this.printItem.FileLocation)));
                     };
 
 					viewLink = linkButtonFactory.Generate(LocalizedString.Get("View"));

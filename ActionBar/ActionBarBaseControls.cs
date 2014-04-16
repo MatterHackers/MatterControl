@@ -48,7 +48,6 @@ namespace MatterHackers.MatterControl.ActionBar
         }
     }
 
-
     //Base widget for use in ButtonViewStates
     public class ControlButtonViewBase : GuiWidget
     {

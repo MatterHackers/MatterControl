@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl
                 }
                 else
                 {
-                    PrintQueueItem.ShowCantFindFileMessage(printItem);
+                    RowItem.ShowCantFindFileMessage(printItem);
                 }
             }
         }

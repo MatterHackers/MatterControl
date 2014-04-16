@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
     {
         public enum SlicingEngineTypes { Slic3r, CuraEngine, MatterSlice };
 
-        static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.Slic3r;
+        static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.MatterSlice;
         static ActivePrinterProfile globalInstance = null;
 
         public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();

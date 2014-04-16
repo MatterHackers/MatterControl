@@ -155,9 +155,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                     printAgainLink.Click += (sender, e) =>
                     {
-                        PrintQueueItem queueItem = new PrintQueueItem(new PrintItemWrapper(printTask.PrintItemId));
-                        PrintQueueControl.Instance.AddChild(queueItem);
-                        PrintQueueControl.Instance.SaveDefaultQueue();
+                        QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId));
                     };
 
                     buttonContainer.AddChild(printAgainLink);

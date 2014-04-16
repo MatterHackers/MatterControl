@@ -334,7 +334,7 @@ namespace MatterHackers.MatterControl
 
             string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
             string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "plateImages");
-            string jpegFileName = System.IO.Path.Combine(folderToSavePrintsTo, plateNumber.ToString() + ".jpeg");
+            string jpegFileName = Path.Combine(folderToSavePrintsTo, plateNumber.ToString() + ".jpeg");
 
             if (!Directory.Exists(folderToSavePrintsTo))
             {

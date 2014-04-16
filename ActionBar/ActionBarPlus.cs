@@ -19,9 +19,12 @@ namespace MatterHackers.MatterControl
 {
     public class ActionBarPlus : FlowLayoutWidget
     {
-        public ActionBarPlus()
+        QueueDataView queueDataView;
+
+        public ActionBarPlus(QueueDataView queueDataView)
             : base(FlowDirection.TopToBottom)
-        {            
+        {
+            this.queueDataView = queueDataView;
             this.Create();
         }
 
@@ -42,7 +45,7 @@ namespace MatterHackers.MatterControl
 
             // Add Child Elements
             this.AddChild(new ActionBar.PrinterActionRow());
-            this.AddChild(new PrintStatusRow());            
+            this.AddChild(new PrintStatusRow(queueDataView));
 
             // Add Handlers
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);

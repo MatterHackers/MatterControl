@@ -18,11 +18,11 @@ namespace MatterHackers.MatterControl
     public class ExportQueueItemWindow : SystemWindow
     {
         CheckBox showInFolderAfterSave;
-        private PrintQueue.PrintQueueItem printQueueItem;
+        private RowItem printQueueItem;
         string pathAndFilenameToSave;
         bool partIsGCode = false;
 
-        public ExportQueueItemWindow(PrintQueue.PrintQueueItem printQueueItem)
+        public ExportQueueItemWindow(PrintQueue.RowItem printQueueItem)
             : base(400, 250)
         {
             if (Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".GCODE")

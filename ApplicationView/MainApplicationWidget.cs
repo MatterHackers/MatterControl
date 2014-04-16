@@ -44,7 +44,6 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.ToolsPage;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 

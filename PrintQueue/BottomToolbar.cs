@@ -18,13 +18,16 @@ using MatterHackers.MatterControl.CreatorPlugins;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-    public class QueueControlsWidget : GuiWidget
+    public class BottomToolbar : GuiWidget
     {
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         PluginChooserWindow pluginChooserWindow;
+        QueueDataView queueDataView;
 
-        public QueueControlsWidget()
+        public BottomToolbar(QueueDataView queueDataView)
         {
+            this.queueDataView = queueDataView;
+
             SetDisplayAttributes();
 
             textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -40,7 +43,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     // Ensure the form opens with no rows selected.
                     //ActiveQueueList.Instance.ClearSelected();
 
-                    allControls.AddChild(PrintQueueControl.Instance);
+                    allControls.AddChild(queueDataView);
                 }
 
                 FlowLayoutWidget buttonPanel1 = new FlowLayoutWidget();
@@ -51,7 +54,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					Button addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     buttonPanel1.AddChild(addToQueueButton);
                     addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
-                    addToQueueButton.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
+                    addToQueueButton.Click += new ButtonBase.ButtonEventHandler(addToQueueButton_Click);
 
                     Button runCreator = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
                     buttonPanel1.AddChild(runCreator);
@@ -74,7 +77,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     spacer2.HAnchor = HAnchor.ParentLeftRight;
                     buttonPanel1.AddChild(spacer2);
 
-                    GuiWidget queueMenu = new PrintQueueMenu();
+                    GuiWidget queueMenu = new QueueOptionsMenu();
                     queueMenu.VAnchor = VAnchor.ParentTop;
                     buttonPanel1.AddChild(queueMenu);
                 }
@@ -91,7 +94,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.AnchorAll();
         }
-
 
         private void OpenPluginChooserWindow()
         {
@@ -111,7 +113,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void createPartsSheetsButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            List<PrintItem> parts = PrintQueueControl.Instance.CreateReadOnlyPartList();
+            List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
 
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
 
@@ -137,7 +139,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void exportQueueButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            List<PrintItem> partList = PrintQueueControl.Instance.CreateReadOnlyPartList();
+            List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
             ProjectFileHandler project = new ProjectFileHandler(partList);
             project.SaveAs();
         }
@@ -148,21 +150,17 @@ namespace MatterHackers.MatterControl.PrintQueue
             List<PrintItem> partFiles = project.OpenFromDialog();
             if (partFiles != null)
             {
-                PrintQueueControl.Instance.RemoveAllChildren();
+                QueueData.Instance.RemoveAll();
                 foreach (PrintItem part in partFiles)
                 {
-                    PrintQueueControl.Instance.AddChild(new PrintQueueItem(part.Name, part.FileLocation));
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
                 }
-                PrintQueueControl.Instance.EnsureSelection();
-                PrintQueueControl.Instance.Invalidate();
-                PrintQueueControl.Instance.SaveDefaultQueue();
             }
         }
 
         void deleteAllFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrintQueueControl.Instance.RemoveAllChildren();
-            PrintQueueControl.Instance.SaveDefaultQueue();
+            QueueData.Instance.RemoveAll();
         }
 
         public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
@@ -198,23 +196,19 @@ namespace MatterHackers.MatterControl.PrintQueue
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
                 if (extension == ".STL" || extension == ".GCODE")
                 {
-                    PrintQueueItem queueItem = new PrintQueueItem(System.IO.Path.GetFileNameWithoutExtension(droppedFileName), System.IO.Path.GetFullPath(droppedFileName));
-                    PrintQueueControl.Instance.AddChild(queueItem);
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
                 }
-                PrintQueueControl.Instance.EnsureSelection();
-                PrintQueueControl.Instance.Invalidate();
             }
-            PrintQueueControl.Instance.SaveDefaultQueue();
 
             base.OnDragDrop(fileDropEventArgs);
         }
 
-        void loadFile_Click(object sender, MouseEventArgs mouseEvent)
+        void addToQueueButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            UiThread.RunOnIdle(LoadFileOnIdle);
+            UiThread.RunOnIdle(AddItemsToQueue);
         }
 
-        void LoadFileOnIdle(object state)
+        void AddItemsToQueue(object state)
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode", multiSelect: true);
 			openParams.ActionButtonLabel = "Add to Queue";
@@ -225,17 +219,9 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 foreach (string loadedFileName in openParams.FileNames)
                 {
-					PrintQueueItem queueItem = new PrintQueueItem(System.IO.Path.GetFileNameWithoutExtension(loadedFileName), System.IO.Path.GetFullPath(loadedFileName));
-					PrintQueueControl.Instance.AddChild(queueItem);
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
                 }
-                if (PrintQueueControl.Instance.Count > 0)
-                {
-                    PrintQueueControl.Instance.SelectedIndex = PrintQueueControl.Instance.Count - 1;
-                }
-                //PrintQueueControl.Instance.EnsureSelection();
-                PrintQueueControl.Instance.Invalidate();
             }
-            PrintQueueControl.Instance.SaveDefaultQueue();
         }
     }
 }

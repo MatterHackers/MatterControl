@@ -62,7 +62,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("center_part_on_bed");
                     hideItems.Add("infill_overlap_perimeter");
                     hideItems.Add("support_type");
+                    hideItems.Add("infill_type");
                     hideItems.Add("create_raft");
+                    hideItems.Add("z_gap");
                 }
                 return instance;
             }

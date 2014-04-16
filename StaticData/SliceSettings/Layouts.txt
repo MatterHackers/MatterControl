@@ -9,6 +9,7 @@ Beginner
       Infill
         fill_density
         fill_pattern
+        infill_type
     Skirt and Brim
       Skirt
         skirt_distance
@@ -65,6 +66,7 @@ Advanced
       Infill
         fill_density
         fill_pattern
+        infill_type
         solid_fill_pattern
       Advanced
         infill_every_layers
