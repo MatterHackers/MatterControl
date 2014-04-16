@@ -1965,3 +1965,6 @@ Translated:Manually Configure Connection
 English:Skip Connection Setup
 Translated:Skip Connection Setup
 
+English:Release Options
+Translated:Release Options
+
