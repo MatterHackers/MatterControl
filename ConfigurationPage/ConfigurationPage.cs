@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl
 		Button disablePrintLevelingButton;
 
         DisableableWidget eePromControlsContainer;
+        DisableableWidget terminalCommunicationsContainer;
         DisableableWidget printLevelContainer;
 
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
@@ -79,8 +80,16 @@ namespace MatterHackers.MatterControl
             mainLayoutContainer.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             mainLayoutContainer.VAnchor = Agg.UI.VAnchor.FitToChildren;
             mainLayoutContainer.Padding = new BorderDouble(3, 0, 3, 10);
-            
-            AddEePromControls(mainLayoutContainer);
+
+            FlowLayoutWidget terminalControls = new FlowLayoutWidget();
+            terminalControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+            mainLayoutContainer.AddChild(terminalControls);
+
+            AddEePromControls(terminalControls);
+            AddTerminalControls(terminalControls);
+
+
             AddPrintLevelingControls(mainLayoutContainer);
 
             FlowLayoutWidget settingsControls = new FlowLayoutWidget();
@@ -138,6 +147,10 @@ namespace MatterHackers.MatterControl
             languageSelector.Margin = new BorderDouble(0);
             languageSelector.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
 
+            TextWidget experimentalWidget = new TextWidget("Experimental", pointSize:10);
+            experimentalWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
+            experimentalWidget.Margin = new BorderDouble(left: 4);
+            experimentalWidget.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
 
             restartButton = textImageButtonFactory.Generate("Restart");
             restartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -148,6 +161,7 @@ namespace MatterHackers.MatterControl
             };
 
             controlsContainer.AddChild(languageSelector);
+            controlsContainer.AddChild(experimentalWidget);
             controlsContainer.AddChild(new HorizontalSpacer());
             controlsContainer.AddChild(restartButton);
 
@@ -183,6 +197,53 @@ namespace MatterHackers.MatterControl
                 restartButton.Visible = true;
             }
 
+        }
+
+
+        private void AddTerminalControls(FlowLayoutWidget controlsTopToBottomLayout)
+        {
+            GroupBox terminalControlsContainer;
+            terminalControlsContainer = new GroupBox(LocalizedString.Get("Communications"));
+
+            terminalControlsContainer.Margin = new BorderDouble(0);
+            terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            terminalControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+            terminalControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            terminalControlsContainer.Height = 68;
+
+            OutputScrollWindow.HookupPrinterOutput();
+
+            {
+                FlowLayoutWidget buttonBar = new FlowLayoutWidget();
+                buttonBar.HAnchor |= HAnchor.ParentLeftRight;
+                buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+                buttonBar.Margin = new BorderDouble(3, 0, 3, 6);
+                buttonBar.Padding = new BorderDouble(0);
+
+                this.textImageButtonFactory.FixedHeight = TallButtonHeight;
+
+                Agg.Image.ImageBuffer terminalImage = new Agg.Image.ImageBuffer();
+                ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "terminal-24x24.png"), terminalImage);
+                ImageWidget terminalIcon = new ImageWidget(terminalImage);
+                terminalIcon.Margin = new BorderDouble(right: 6);
+
+                Button showTerminal = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
+                showTerminal.Margin = new BorderDouble(0);
+                showTerminal.Click += (sender, e) =>
+                {
+                    OutputScrollWindow.Show();
+                };
+
+                //buttonBar.AddChild(terminalIcon);
+                buttonBar.AddChild(showTerminal);
+
+                terminalControlsContainer.AddChild(buttonBar);
+            }
+
+            terminalCommunicationsContainer = new DisableableWidget();
+            terminalCommunicationsContainer.AddChild(terminalControlsContainer);
+
+            controlsTopToBottomLayout.AddChild(terminalCommunicationsContainer);
         }
 
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -413,6 +474,7 @@ namespace MatterHackers.MatterControl
             {
                 // no printer selected                         
                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                 printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
             else // we at least have a printer selected
@@ -426,12 +488,14 @@ namespace MatterHackers.MatterControl
                     case PrinterCommunication.CommunicationStates.FailedToConnect:                        
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     case PrinterCommunication.CommunicationStates.FinishedPrint:
                     case PrinterCommunication.CommunicationStates.Connected:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     case PrinterCommunication.CommunicationStates.PreparingToPrint:
@@ -445,6 +509,7 @@ namespace MatterHackers.MatterControl
 
                                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                                terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 break;
 
                             default:
@@ -455,6 +520,7 @@ namespace MatterHackers.MatterControl
                     case PrinterCommunication.CommunicationStates.Paused:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     default:

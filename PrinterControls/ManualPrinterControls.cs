@@ -158,16 +158,12 @@ namespace MatterHackers.MatterControl
 
             // put in the terminal communications
             {
-                terminalCommunicationsContainer = new DisableableWidget();
-                terminalCommunicationsContainer.AddChild(CreateTerminalControlsContainer());
+                
 
                 FlowLayoutWidget rightColumnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                rightColumnContainer.AddChild(terminalCommunicationsContainer);
-				rightColumnContainer.Width = 200;
-                rightColumnContainer.VAnchor |= VAnchor.ParentTop;
-
                 AddFanControls(rightColumnContainer);
-
+                rightColumnContainer.Width = 200;
+                rightColumnContainer.VAnchor |= VAnchor.ParentTop;
                 centerControlsContainer.AddChild(rightColumnContainer);
             }
 
@@ -214,6 +210,7 @@ namespace MatterHackers.MatterControl
             }
 
             fanControlsContainer = new DisableableWidget();
+            fanControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             fanControlsContainer.AddChild(fanControlsGroupBox);
 
             if (ActivePrinterProfile.Instance.ActivePrinter == null
@@ -518,50 +515,7 @@ namespace MatterHackers.MatterControl
         {
             feedRateRatioSlider.Value = PrinterCommunication.Instance.FeedRateRatio;
             feedRateValue.Value = ((int)(PrinterCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
-        }
-
-        private GuiWidget CreateTerminalControlsContainer()
-        {
-            GroupBox terminalControlsContainer;
-			terminalControlsContainer = new GroupBox(LocalizedString.Get("Communications"));
-
-            terminalControlsContainer.Margin = new BorderDouble(0);
-            terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            terminalControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            terminalControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            terminalControlsContainer.Height = 68;
-
-            OutputScrollWindow.HookupPrinterOutput();
-
-            {
-                FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-                buttonBar.HAnchor |= HAnchor.ParentLeftRight;
-                buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-				buttonBar.Margin = new BorderDouble(3, 0, 3, 6);
-                buttonBar.Padding = new BorderDouble(0);
-
-                this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-
-				Agg.Image.ImageBuffer terminalImage = new Agg.Image.ImageBuffer();
-				ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "terminal-24x24.png"), terminalImage);
-				ImageWidget terminalIcon = new ImageWidget(terminalImage);
-				terminalIcon.Margin = new BorderDouble (right: 6);
-
-				Button showTerminal = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
-                showTerminal.Margin = new BorderDouble(0);
-                showTerminal.Click += (sender, e) =>
-                {
-                    OutputScrollWindow.Show();
-                };
-
-				//buttonBar.AddChild(terminalIcon);
-                buttonBar.AddChild(showTerminal);
-
-                terminalControlsContainer.AddChild(buttonBar);
-            }
-
-            return terminalControlsContainer;
-        }
+        }       
 
         private GuiWidget CreateSdCardManagerContainer()
         {
@@ -623,7 +577,7 @@ namespace MatterHackers.MatterControl
                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+				
                 sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
@@ -640,8 +594,7 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);                        
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         break;
@@ -651,8 +604,7 @@ namespace MatterHackers.MatterControl
                         extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                        
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
@@ -670,8 +622,7 @@ namespace MatterHackers.MatterControl
                                 bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                                
                                 sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 break;
@@ -686,8 +637,7 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                        
                         sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
