@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.VersionManagement
                 ApplicationSettings.Instance.set("UpdateFeedType", feedType);
             }
             requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
-            requestValues["FeedType"] = feedType;
+            requestValues["UpdateFeedType"] = feedType;
             uri = "https://mattercontrol.appspot.com/api/1/get-current-release-version";
         }
 
