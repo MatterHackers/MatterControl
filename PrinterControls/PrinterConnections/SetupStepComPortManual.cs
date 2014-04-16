@@ -267,6 +267,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				string printerComPortErrorLabel = LocalizedString.Get("Attempting to connect");
 				string printerComPortErrorLabelFull = string.Format("{0}...",printerComPortErrorLabel);
 				printerComPortError.Text = printerComPortErrorLabelFull;
+                printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
                 ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
                 PrinterCommunication.Instance.ConnectToActivePrinter();
                 connectButton.Visible = false;
@@ -283,7 +285,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void NextButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            Parent.Close();
+            UiThread.RunOnIdle((state) =>
+            {
+                Parent.Close();
+            });
         }
 
         private string GetSelectedSerialPort()
