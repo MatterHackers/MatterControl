@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
         GuiWidget addedUpdateMark = null;
         QueueDataView queueDataView;
+        event EventHandler unregisterEvents;
 
         public QueueTab(QueueDataView queueDataView)
         {
@@ -92,6 +93,9 @@ namespace MatterHackers.MatterControl
             NumQueueItemsChanged(this, null);
             SetUpdateNotification(this, null);
 
+            QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
+            QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
+            ApplicationWidget.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
         }
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
@@ -101,13 +105,12 @@ namespace MatterHackers.MatterControl
             QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
         }
 
-        event EventHandler unregisterEvents;
-        void AddHandlers()
+        public override void OnClosed(EventArgs e)
         {
-            QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            ApplicationWidget.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
-
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
         }
 
         public void SetUpdateNotification(object sender, EventArgs widgetEvent)

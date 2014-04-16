@@ -125,11 +125,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
             
-            //infillOverlapPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
-            new MapItem("infillOverlapPerimeter", "infill_overlap_perimeter"),
+            //infillExtendIntoPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
+            new MapItem("infillExtendIntoPerimeter", "infill_overlap_perimeter"),
             
             //infillPercent=20 # The percent of filled space to open space while infilling.
             new ScaledSingleNumber("infillPercent", "fill_density", 100),
+            //infillType=GRID # Available Values: GRID, LINES
+            new MapItem("infillType", "infill_type"),
 
             //infillSpeed=50 # mm/s.
             new MapItem("infillSpeed", "infill_speed"),

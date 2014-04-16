@@ -54,6 +54,7 @@ infill_first|Do Infill Before Perimeters|CHECK_BOX||Sets infill to happen before
 infill_only_where_needed|Only Infill Where Needed|CHECK_BOX||Creates infill only where it will be used as internal support.
 infill_overlap_perimeter|Infill Overlap|POSITIVE_DOUBLE|mm|The amount the infill edge will push into the preimiter. Helps ensure the infill is connected to the edge.
 infill_speed|Infill|POSITIVE_DOUBLE|mm/s|The speed to print infill. 
+infill_type|Infill Type|LIST|GRID,LINES|The type of support to create inside of parts.
 layer_gcode|Layer Change G-Code|MULTI_LINE_TEXT||This gcode will be inserted right after the change in z height for the next layer.
 layer_height|Layer Height|POSITIVE_DOUBLE|mm|Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.
 max_fan_speed|Max Fan Speed|INT|%|This is the maximum speed that your fan can run at.
