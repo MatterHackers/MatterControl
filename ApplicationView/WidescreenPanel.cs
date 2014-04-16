@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
-        int ColumnTwoMinWidth = 1390;
+        int ColumnTwoMinWidth = 1590;
         FlowLayoutWidget ColumnThree;
         int ColumnThreeMinWidth = 990;
 
