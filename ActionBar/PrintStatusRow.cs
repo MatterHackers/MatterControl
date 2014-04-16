@@ -40,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-    class PrintStatusRow : ActionRowBase
+    class PrintStatusRow : FlowLayoutWidget
     {
         Stopwatch timeSinceLastDrawTime = new Stopwatch();
         event EventHandler unregisterEvents;
@@ -53,10 +53,20 @@ namespace MatterHackers.MatterControl.ActionBar
         TextWidget activePrintStatus;
 
         QueueDataView queueDataView;
+        PartThumbnailWidget activePrintPreviewImage;
 
         public PrintStatusRow(QueueDataView queueDataView)
         {
+            Initialize();
+            
+            this.HAnchor = HAnchor.ParentLeftRight;
+
+            AddChildElements();
+            AddHandlers();
+
             this.queueDataView = queueDataView;
+
+            onActivePrintItemChanged(null, null);
         }
 
         string ActivePrintStatusText
@@ -70,13 +80,12 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        protected override void Initialize()
+        protected void Initialize()
         {
             UiThread.RunOnIdle(OnIdle);
             this.Margin = new BorderDouble(6, 3, 6, 6);
         }
 
-        PartThumbnailWidget activePrintPreviewImage;
         void onActivePrintItemChanged(object sender, EventArgs e)
         {
             // first we have to remove any link to an old part (the part currently in the view)
@@ -102,7 +111,7 @@ namespace MatterHackers.MatterControl.ActionBar
             ActivePrintStatusText = message.Data;
         }
 
-        override protected void AddChildElements()
+        void AddChildElements()
         {            
             activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", new Vector2(115, 115));
             activePrintPreviewImage.VAnchor = VAnchor.ParentTop;
@@ -112,8 +121,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
             FlowLayoutWidget temperatureWidgets = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
-                IndicatorWidget extruderTemperatureWidget = new ExtruderTemperatureWidget();
-                IndicatorWidget bedTemperatureWidget = new BedTemperatureWidget();
+                TemperatureWidgetBase extruderTemperatureWidget = new TemperatureWidgetExtruder();
+                TemperatureWidgetBase bedTemperatureWidget = new TemperatureWidgetBed();
 
                 temperatureWidgets.AddChild(extruderTemperatureWidget);
                 temperatureWidgets.AddChild(bedTemperatureWidget);
@@ -206,7 +215,7 @@ namespace MatterHackers.MatterControl.ActionBar
             return container;
         }
 
-        protected override void AddHandlers()
+        protected void AddHandlers()
         {
             PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onPrintItemChanged, ref unregisterEvents);
             PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
@@ -386,178 +395,6 @@ namespace MatterHackers.MatterControl.ActionBar
             widget.AutoExpandBoundsToText = true;
             widget.MinimumSize = new Vector2(widget.Width, widget.Height);
             return widget;
-        }
-    }
-
-    class ExtruderTemperatureWidget : IndicatorWidget
-    {
-        public ExtruderTemperatureWidget()
-            : base("150.3°")
-        {
-            AddHandlers();
-            setToCurrentTemperature();
-
-
-        }
-
-        event EventHandler unregisterEvents;
-        void AddHandlers()
-        {
-            PrinterCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-            this.MouseEnterBounds += onMouseEnterBounds;
-            this.MouseLeaveBounds += onMouseLeaveBounds;
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-
-        void onMouseEnterBounds(Object sender, EventArgs e)
-        {
-			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("Extruder Temperature"));
-        }
-
-        void onMouseLeaveBounds(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.HideHoverText();
-        }
-
-        void setToCurrentTemperature()
-        {
-            string tempDirectionIndicator = "";
-            if (PrinterCommunication.Instance.TargetExtruderTemperature > 0)
-            {
-                if ((int)(PrinterCommunication.Instance.TargetExtruderTemperature + 0.5) < (int)(PrinterCommunication.Instance.ActualExtruderTemperature + 0.5))
-                {
-                    tempDirectionIndicator = "↓";
-                }
-                else if ((int)(PrinterCommunication.Instance.TargetExtruderTemperature + 0.5) > (int)(PrinterCommunication.Instance.ActualExtruderTemperature + 0.5))
-                {
-                    tempDirectionIndicator = "↑";
-                }
-            }
-            this.IndicatorValue = string.Format("{0:0.#}°{1}", PrinterCommunication.Instance.ActualExtruderTemperature, tempDirectionIndicator);
-        }
-
-        void onTemperatureRead(Object sender, EventArgs e)
-        {
-            setToCurrentTemperature();
-        }
-    }
-
-    class BedTemperatureWidget : IndicatorWidget
-    {
-        //Not currently hooked up to anything
-        public BedTemperatureWidget()
-            : base("150.3°")
-        {
-            AddHandlers();
-            setToCurrentTemperature();
-        }
-
-        event EventHandler unregisterEvents;
-        void AddHandlers()
-        {
-            PrinterCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-            this.MouseEnterBounds += onMouseEnterBounds;
-            this.MouseLeaveBounds += onMouseLeaveBounds;
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-
-        void onMouseEnterBounds(Object sender, EventArgs e)
-        {
-			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("Bed Temperature"));
-        }
-
-        void onMouseLeaveBounds(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.HideHoverText();
-
-        }
-
-        void setToCurrentTemperature()
-        {
-            this.IndicatorValue = string.Format("{0:0.#}°", PrinterCommunication.Instance.ActualBedTemperature);
-        }
-
-        void onTemperatureRead(Object sender, EventArgs e)
-        {
-            setToCurrentTemperature();
-        }
-    }
-
-    class IndicatorWidget : GuiWidget
-    {
-        TextWidget indicatorTextWidget;
-        RGBA_Bytes borderColor = new RGBA_Bytes(255, 255, 255);
-        int borderWidth = 2;
-
-        public string IndicatorValue
-        {
-            get
-            {
-                return indicatorTextWidget.Text;
-            }
-            set
-            {
-                if (indicatorTextWidget.Text != value)
-                {
-                    indicatorTextWidget.Text = value;
-                }
-            }
-        }
-
-        event EventHandler unregisterEvents;
-        public IndicatorWidget(string textValue)
-            : base(52, 52)
-        {
-            this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
-            indicatorTextWidget = new TextWidget(textValue, pointSize: 11);
-            indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-            indicatorTextWidget.HAnchor = HAnchor.ParentCenter;
-            indicatorTextWidget.VAnchor = VAnchor.ParentCenter;
-            indicatorTextWidget.AutoExpandBoundsToText = true;
-            this.Margin = new BorderDouble(0, 2);
-            this.AddChild(indicatorTextWidget);
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-
-        private void onThemeChanged(object sender, EventArgs e)
-        {
-            this.indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-            this.Invalidate();
-        }
-
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            base.OnDraw(graphics2D);
-
-            RectangleDouble Bounds = LocalBounds;
-            RoundedRect borderRect = new RoundedRect(this.LocalBounds, 0);
-            Stroke strokeRect = new Stroke(borderRect, borderWidth);
-            graphics2D.Render(strokeRect, borderColor);
         }
     }
 }

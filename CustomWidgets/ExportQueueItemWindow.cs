@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
                 {
                     Close();
                     SlicingQueue.Instance.QueuePartForSlicing(printQueueItem.PrintItemWrapper);
-                    printQueueItem.PrintItemWrapper.Done += new EventHandler(sliceItem_Done);
+                    printQueueItem.PrintItemWrapper.SlicingDone += new EventHandler(sliceItem_Done);
                 }
                 else if (partIsGCode)
                 {
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl
         {
             PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
-            sliceItem.Done -= new EventHandler(sliceItem_Done);
+            sliceItem.SlicingDone -= new EventHandler(sliceItem_Done);
             SaveGCodeToNewLocation(sliceItem.GCodePathAndFileName, pathAndFilenameToSave);
         }
 

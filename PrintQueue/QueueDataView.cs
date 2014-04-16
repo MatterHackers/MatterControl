@@ -202,9 +202,13 @@ namespace MatterHackers.MatterControl.PrintQueue
                         ((RowItem)child.Children[0]).isSelectedItem = true;
                         if (!PrinterCommunication.Instance.PrinterIsPrinting && !PrinterCommunication.Instance.PrinterIsPaused)
                         {
-                            
                             ((RowItem)child.Children[0]).isActivePrint = true;
                             PrinterCommunication.Instance.ActivePrintItem = ((RowItem)child.Children[0]).PrintItemWrapper;
+                        }
+                        else if (((RowItem)child.Children[0]).PrintItemWrapper == PrinterCommunication.Instance.ActivePrintItem)
+                        {
+                            // the selection must be the active print item
+                            ((RowItem)child.Children[0]).isActivePrint = true;
                         }
                     }
                     else

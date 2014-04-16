@@ -46,8 +46,7 @@ namespace MatterHackers.MatterControl.PrintQueue
     public class PrintItemWrapper
     {
         public event EventHandler SlicingOutputMessage;
-        public event EventHandler Done;
-
+        public event EventHandler SlicingDone;
         public event EventHandler FileHasChanged;
 
         public PrintItem PrintItem { get; set; }
@@ -116,9 +115,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                         OnSlicingOutputMessage(new StringEventArgs(message));
 
-                        if (Done != null)
+                        if (SlicingDone != null)
                         {
-                            Done(this, null);
+                            SlicingDone(this, null);
                         }
                     }
                 }
