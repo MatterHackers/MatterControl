@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         public ExportLibraryItemWindow(PrintLibraryListItem printLibraryItem)
             : base(400, 250)
         {
-            if (System.IO.Path.GetExtension(printLibraryItem.printItem.FileLocation).ToUpper() == ".GCODE")
+            if (Path.GetExtension(printLibraryItem.printItem.FileLocation).ToUpper() == ".GCODE")
             {
                 partIsGCode = true;
             }
@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					filePathToSave += ".gcode";
 				}
 
-                if (System.IO.Path.GetExtension(printQueueItem.printItem.FileLocation).ToUpper() == ".STL")
+                if (Path.GetExtension(printQueueItem.printItem.FileLocation).ToUpper() == ".STL")
                 {
                     pathAndFilenameToSave = saveParams.FileName;
                     Close();

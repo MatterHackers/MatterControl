@@ -872,7 +872,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             RoundedRect rect = new RoundedRect(LocalBounds,0);
             graphics2D.Render(rect,new RGBA_Bytes(OverlayColor, 50));
             graphics2D.Render(new Stroke(rect, 3),OverlayColor);
-
         }
     }
 

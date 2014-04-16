@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl
 {
     class QueueTab : TabControl
     {
-
         TabPage QueueTabPage;
         TabPage LibraryTabPage;
         TabPage HistoryTabPage;
@@ -61,9 +60,11 @@ namespace MatterHackers.MatterControl
         SimpleTextTabWidget AboutTabView;
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
         GuiWidget addedUpdateMark = null;
+        QueueDataView queueDataView;
 
-        public QueueTab()
+        public QueueTab(QueueDataView queueDataView)
         {
+            this.queueDataView = queueDataView;
             this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
             this.TabBar.Margin = new BorderDouble(0, 0);
@@ -71,7 +72,7 @@ namespace MatterHackers.MatterControl
 
             this.Margin = new BorderDouble(top: 4);
 
-            QueueTabPage = new TabPage(new QueueControlsWidget(), LocalizedString.Get("Queue").ToUpper());
+            QueueTabPage = new TabPage(new BottomToolbar(queueDataView), LocalizedString.Get("Queue").ToUpper());
             this.AddTab(new SimpleTextTabWidget(QueueTabPage, 15,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
@@ -96,15 +97,15 @@ namespace MatterHackers.MatterControl
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
         {
             string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
-            string queueString = string.Format("{1} ({0})", PrintQueue.PrintQueueControl.Instance.Count, queueStringBeg);
-            QueueTabPage.Text = string.Format(queueString, PrintQueue.PrintQueueControl.Instance.Count);
+            string queueString = string.Format("{1} ({0})", QueueData.Instance.Count, queueStringBeg);
+            QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
         }
 
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            PrintQueue.PrintQueueControl.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            PrintQueue.PrintQueueControl.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
+            QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
+            QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             ApplicationWidget.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
         }

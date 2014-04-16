@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			{
 				if (this.applicationPath == null) 
 				{
-					applicationPath = System.IO.Path.GetDirectoryName (System.Reflection.Assembly.GetExecutingAssembly ().Location);
+                    applicationPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 				}
 				return applicationPath;
 			}
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.DataStorage
         /// <returns></returns>
         public string DatastorePath
         {
-            get { return System.IO.Path.Combine(ApplicationUserDataPath, datastoreName); }
+            get { return Path.Combine(ApplicationUserDataPath, datastoreName); }
         }
 
         public override string  ToString()

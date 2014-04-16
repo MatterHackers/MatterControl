@@ -113,16 +113,13 @@ namespace MatterHackers.MatterControl
 
                     PrintItem printItem = new PrintItem();
                     printItem.Name = newName;
-                    printItem.FileLocation = System.IO.Path.GetFullPath(fileNameAndPath);
+                    printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
                     printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
                     printItem.Commit();
 
+                    QueueData.Instance.AddItem(printItem);
+
                     PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-
-                    PrintQueueItem queueItem = new PrintQueueItem(printItemWrapper);
-                    PrintQueueControl.Instance.AddChild(queueItem);
-                    PrintQueueControl.Instance.SaveDefaultQueue();
-
                     if (addToLibraryOption.Checked)
                     {
                         PrintLibraryListItem libraryItem = new PrintLibraryListItem(printItemWrapper);

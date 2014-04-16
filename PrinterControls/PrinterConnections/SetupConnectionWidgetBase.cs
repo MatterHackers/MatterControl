@@ -59,10 +59,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 foreach (string partFile in calibrationPrints)
                 {
                     string partFullPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "SampleParts", partFile);
-                    PrintQueueControl.Instance.AddChild(new PrintQueueItem(Path.GetFileNameWithoutExtension(partFullPath), partFullPath));
+                    QueueData.Instance.AddItem(new PrintItem(Path.GetFileNameWithoutExtension(partFullPath), partFullPath));
                 }
-                PrintQueue.PrintQueueControl.Instance.EnsureSelection();
-                PrintQueueControl.Instance.SaveDefaultQueue();
             }
         }
 

@@ -1959,3 +1959,6 @@ Translated:Downloading updates...
 English:Duplicate
 Translated:Duplicate
 
+English:End
+Translated:End
+

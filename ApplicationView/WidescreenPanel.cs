@@ -233,6 +233,28 @@ namespace MatterHackers.MatterControl
             LoadColumnTwo();
         }
 
+        void LoadCompactView()
+        {
+            QueueDataView queueDataView = new QueueDataView();
+            
+            ColumnOne.RemoveAllChildren();
+            ColumnOne.AddChild(new ActionBarPlus(queueDataView));
+            ColumnOne.AddChild(new CompactSlidePanel(queueDataView));
+            ColumnOne.AnchorAll();
+        }
+
+        void LoadColumnOne()
+        {
+            QueueDataView queueDataView = new QueueDataView();
+
+            ColumnOne.RemoveAllChildren();
+            ColumnOne.VAnchor = VAnchor.ParentBottomTop;
+            ColumnOne.AddChild(new ActionBarPlus(queueDataView));
+            ColumnOne.AddChild(new PrintProgressBar());
+            ColumnOne.AddChild(new QueueTab(queueDataView));
+            ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
+        }
+
         void LoadColumnTwo()
         {            
             ColumnTwo.RemoveAllChildren();
@@ -251,30 +273,11 @@ namespace MatterHackers.MatterControl
             SetVisibleStatus();
         }
 
-        void LoadColumnZero()
-        {
-            ColumnOne.RemoveAllChildren();
-            ColumnOne.AddChild(new ActionBarPlus());
-            ColumnOne.AddChild(new CompactSlidePanel());
-            ColumnOne.AnchorAll();
-        }
-
-        void LoadColumnOne()
-        {
-            ColumnOne.RemoveAllChildren();
-            ColumnOne.VAnchor = VAnchor.ParentBottomTop;
-            ColumnOne.AddChild(new ActionBarPlus());
-            ColumnOne.AddChild(new PrintProgressBar());
-            ColumnOne.AddChild(new QueueTab());
-            ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
-        }
-
         void LoadColumnThree()
         {
             advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
             ColumnThree.AddChild(advancedControlsTabControl);
             ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
-            
         }
 
         int UiState = -1;
@@ -292,7 +295,7 @@ namespace MatterHackers.MatterControl
                     UiState = 0;
                     ApplicationWidget.Instance.WidescreenMode = false;
 
-                    LoadColumnZero();                   
+                    LoadCompactView();                   
 
                     ColumnThree.Visible = false;
                     ColumnTwo.Visible = false;

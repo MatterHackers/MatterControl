@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
-
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ActionBar
@@ -41,6 +34,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
         TooltipButton reprintButton;
         TooltipButton doneWithCurrentPartButton;
+
+        QueueDataView queueDataView;
+
+        public PrintActionRow(QueueDataView queueDataView)
+        {
+            this.queueDataView = queueDataView;
+        }
 
         protected override void Initialize()
         {
@@ -177,14 +177,9 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 foreach (string loadedFileName in openParams.FileNames)
                 {
-                    PrintQueueItem queueItem = new PrintQueueItem(System.IO.Path.GetFileNameWithoutExtension(loadedFileName), System.IO.Path.GetFullPath(loadedFileName));
-                    PrintQueueControl.Instance.AddChild(queueItem);
+                    QueueData.Instance.AddItem(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName)));
                 }
-                
-                PrintQueueControl.Instance.EnsureSelection();
-                PrintQueueControl.Instance.Invalidate();
             }
-            PrintQueueControl.Instance.SaveDefaultQueue();
         }
 
         void partToPrint_SliceDone(object sender, EventArgs e)
@@ -267,7 +262,7 @@ namespace MatterHackers.MatterControl.ActionBar
                     string message = String.Format(removeFromQueueMessage, pathAndFile);
                     if (StyledMessageBox.ShowMessageBox(message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO))
                     {
-                        PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.SelectedIndex);
+                        QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
                     }
                 }
             }
@@ -280,9 +275,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onSkipButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            if (PrintQueueControl.Instance.Count > 1)
+            if (QueueData.Instance.Count > 1)
             {
-                PrintQueueControl.Instance.MoveToNext();
+                queueDataView.MoveToNext();
             }
         }
 
@@ -296,8 +291,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onRemoveButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.SelectedIndex);
-            PrintQueueControl.Instance.SaveDefaultQueue();
+            QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
         }
 
         void onPauseButton_Click(object sender, MouseEventArgs mouseEvent)
@@ -333,8 +327,7 @@ namespace MatterHackers.MatterControl.ActionBar
         void onDoneWithCurrentPartButton_Click(object sender, MouseEventArgs mouseEvent)
         {
             PrinterCommunication.Instance.ResetToReadyState();
-            PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.SelectedIndex);
-            PrintQueueControl.Instance.SaveDefaultQueue();
+            QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
             // We don't have to change the selected index because we should be on the next one as we deleted the one 
             // we were on.
         }
@@ -412,7 +405,7 @@ namespace MatterHackers.MatterControl.ActionBar
                         this.activePrintButtons.Add(startButton);
 
                         //Show 'skip' button if there are more items in queue
-                        if (PrintQueueControl.Instance.Count > 1)
+                        if (QueueData.Instance.Count > 1)
                         {
                             this.activePrintButtons.Add(skipButton);
                         }                        

@@ -349,7 +349,7 @@ namespace MatterHackers.MatterControl
         public override void OnClosing(out bool CancelClose)
         {
             //Save a snapshot of the prints in queue
-            PrintQueueControl.Instance.SaveDefaultQueue();
+            QueueData.Instance.SaveDefaultQueue();
 
             if (PrinterCommunication.Instance.PrinterIsPrinting)
             {
