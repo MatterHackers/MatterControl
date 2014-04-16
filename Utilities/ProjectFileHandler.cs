@@ -162,8 +162,8 @@ namespace MatterHackers.MatterControl
         }
 
         static string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-        static string defaultManifestPathAndFileName = System.IO.Path.Combine(applicationDataPath,"data", "temp", "project-assembly", "manifest.json");
-        static string defaultProjectPathAndFileName = System.IO.Path.Combine(applicationDataPath,"data", "default.zip");
+        static string defaultManifestPathAndFileName = Path.Combine(applicationDataPath, "data", "temp", "project-assembly", "manifest.json");
+        static string defaultProjectPathAndFileName = Path.Combine(applicationDataPath, "data", "default.zip");
 
         public static void EmptyFolder(System.IO.DirectoryInfo directory)
         {   
@@ -290,8 +290,8 @@ namespace MatterHackers.MatterControl
                     }
 
                     if (zipEntry.Name == "manifest.json"
-                        || System.IO.Path.GetExtension(zipEntry.Name).ToUpper() == ".STL"
-                        || System.IO.Path.GetExtension(zipEntry.Name).ToUpper() == ".GCODE")
+                        || Path.GetExtension(zipEntry.Name).ToUpper() == ".STL"
+                        || Path.GetExtension(zipEntry.Name).ToUpper() == ".GCODE")
                     {
                         string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
 

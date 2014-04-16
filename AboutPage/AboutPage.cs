@@ -186,15 +186,15 @@ namespace MatterHackers.MatterControl
         }
 
         static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
-        static string updateFileLocation = System.IO.Path.Combine(applicationDataPath, "updates");
+        static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
 
         public void InstallUpdate(object sender, MouseEventArgs e)
         {
             string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 
-            string updateFileName = System.IO.Path.Combine(updateFileLocation, "{0}.{1}".FormatWith(downloadToken, InstallerExtension));
+            string updateFileName = Path.Combine(updateFileLocation, "{0}.{1}".FormatWith(downloadToken, InstallerExtension));
             string releaseVersion = ApplicationSettings.Instance.get("CurrentReleaseVersion");
-            string friendlyFileName = System.IO.Path.Combine(updateFileLocation, "MatterControlSetup-{0}.{1}".FormatWith(releaseVersion, InstallerExtension));
+            string friendlyFileName = Path.Combine(updateFileLocation, "MatterControlSetup-{0}.{1}".FormatWith(releaseVersion, InstallerExtension));
 
             if (System.IO.File.Exists(friendlyFileName))
             {
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl
                     System.IO.Directory.CreateDirectory(updateFileLocation);
                 }
 
-                string updateFileName = System.IO.Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
+                string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
 
                 WebClient webClient = new WebClient();
                 webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl
         void CheckVersionStatus()
         {
             string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string updateFileName = System.IO.Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
+            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
 
             string applicationBuildToken = VersionInfo.Instance.BuildToken;
 
@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl
         {
             this.updateInitiated = false;
             string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string updateFileName = System.IO.Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
+            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
 
             string applicationBuildToken = VersionInfo.Instance.BuildToken;
 

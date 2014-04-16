@@ -44,7 +44,6 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.ToolsPage;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 
@@ -63,6 +62,8 @@ namespace MatterHackers.MatterControl
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
         public EventHandler AdvancedControlsLoaded;
 
+        QueueDataView queueDataView;
+
         GuiWidget LeftPanel
         {
             get { return GetPannel(0); }
@@ -73,9 +74,10 @@ namespace MatterHackers.MatterControl
             get { return GetPannel(1); }
         }
 
-        public CompactSlidePanel()
+        public CompactSlidePanel(QueueDataView queueDataView)
             : base(2)
         {
+            this.queueDataView = queueDataView;
             AddElements();
         }
 
@@ -89,7 +91,7 @@ namespace MatterHackers.MatterControl
                 this.LeftPanel.AddChild(new PrintProgressBar());
 
                 // construct the main controls tab control
-                mainControlsTabControl = new QueueTab();
+                mainControlsTabControl = new QueueTab(queueDataView);
 
                 advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;

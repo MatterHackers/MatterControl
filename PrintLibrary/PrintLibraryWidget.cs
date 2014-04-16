@@ -154,12 +154,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             foreach (PrintLibraryListItem item in PrintLibraryListControl.Instance.SelectedItems)
             {
-                PrintQueue.PrintQueueItem queueItem = new PrintQueue.PrintQueueItem(item.printItem);
-                PrintQueue.PrintQueueControl.Instance.AddChild(queueItem);
+                QueueData.Instance.AddItem(item.printItem);
             }
             PrintLibraryListControl.Instance.ClearSelectedItems();
-            PrintQueue.PrintQueueControl.Instance.EnsureSelection();
-            PrintQueueControl.Instance.SaveDefaultQueue();
         }
 
         private void onLibraryItemsSelected(object sender, EventArgs e)
@@ -223,8 +220,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 if (extension == ".STL" || extension == ".GCODE")
                 {
                     PrintItem printItem = new PrintItem();
-                    printItem.Name = System.IO.Path.GetFileNameWithoutExtension(droppedFileName);
-                    printItem.FileLocation = System.IO.Path.GetFullPath(droppedFileName);
+                    printItem.Name = Path.GetFileNameWithoutExtension(droppedFileName);
+                    printItem.FileLocation = Path.GetFullPath(droppedFileName);
                     printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
                     printItem.Commit();
 
@@ -247,8 +244,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 foreach (string loadedFileName in openParams.FileNames)
                 {
                     PrintItem printItem = new PrintItem();
-                    printItem.Name = System.IO.Path.GetFileNameWithoutExtension(loadedFileName);
-                    printItem.FileLocation = System.IO.Path.GetFullPath(loadedFileName);
+                    printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
+                    printItem.FileLocation = Path.GetFullPath(loadedFileName);
                     printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
                     printItem.Commit();
 

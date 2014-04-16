@@ -28,38 +28,23 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Threading;
-
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.PolygonMesh.Csg;
-using MatterHackers.MarchingSquares;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl;
+using MatterHackers.Localizations; //Added Namespace
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
-using MatterHackers.Localizations; //Added Namespace
-
-
-using ClipperLib;
-
-using OpenTK.Graphics.OpenGL;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -738,7 +723,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     int subLength = nextPercent - lastPercent;
 
                     string loadedFileName = filesToLoad[i];
-                    Mesh copyMesh = StlProcessing.Load(System.IO.Path.GetFullPath(loadedFileName));
+                    Mesh copyMesh = StlProcessing.Load(Path.GetFullPath(loadedFileName));
                     if (copyMesh != null)
                     {
                         int halfNextPercent = (nextPercent - lastPercent) / 2;

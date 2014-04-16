@@ -213,8 +213,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 if (System.IO.File.Exists(partFullPath))
                 {
                     PrintItem printItem = new PrintItem();
-                    printItem.Name = System.IO.Path.GetFileNameWithoutExtension(partFullPath);
-                    printItem.FileLocation = System.IO.Path.GetFullPath(partFullPath);
+                    printItem.Name = Path.GetFileNameWithoutExtension(partFullPath);
+                    printItem.FileLocation = Path.GetFullPath(partFullPath);
                     printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
                     printItem.Commit();
                 }

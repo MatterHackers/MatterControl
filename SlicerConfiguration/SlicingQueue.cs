@@ -113,9 +113,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 string slic3rRelativePath = Path.Combine("..", "Slic3r", "slic3r.exe");
                                 if (!File.Exists(slic3rRelativePath))
                                 {
-                                    slic3rRelativePath = System.IO.Path.Combine(".", "Slic3r", "slic3r.exe");
+                                    slic3rRelativePath = Path.Combine(".", "Slic3r", "slic3r.exe");
                                 }
-                                return System.IO.Path.GetFullPath(slic3rRelativePath);
+                                return Path.GetFullPath(slic3rRelativePath);
                             }
 
                         case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
@@ -123,15 +123,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 string curaEngineRelativePath = Path.Combine("..", "CuraEngine.exe");
                                 if (!File.Exists(curaEngineRelativePath))
                                 {
-                                    curaEngineRelativePath = System.IO.Path.Combine(".", "CuraEngine.exe");
+                                    curaEngineRelativePath = Path.Combine(".", "CuraEngine.exe");
                                 }
-                                return System.IO.Path.GetFullPath(curaEngineRelativePath);
+                                return Path.GetFullPath(curaEngineRelativePath);
                             }
 
                         case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
                             {
                                 string materSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
-                                return System.IO.Path.GetFullPath(materSliceRelativePath);
+                                return Path.GetFullPath(materSliceRelativePath);
                             }
 
                         default:
@@ -144,17 +144,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
                             {
                                 //string parentLocation = Directory.GetParent (ApplicationDataStorage.Instance.ApplicationPath).ToString ();
-                                string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "Slic3r.app", "Contents", "MacOS", "slic3r");
+                                string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "Slic3r.app", "Contents", "MacOS", "slic3r");
                                 return applicationPath;
                             }
                         case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
                             {
-                                string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
+                                string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
                                 return applicationPath;
                             }
                         case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
                             {
-                                string applicationPath = System.IO.Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "MatterSlice");
+                                string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "MatterSlice");
                                 return applicationPath;
                             }
 

@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public void Start()
         {
-            if (PrintQueueControl.Instance.Count > 0)
+            if (QueueData.Instance.Count > 0)
             {
                 if (StartingNextPart != null)
                 {
@@ -69,17 +69,17 @@ namespace MatterHackers.MatterControl.PrintQueue
                 }
 
                 savedGCodeFileNames = new List<string>();
-                allFilesToExport = PrintQueueControl.Instance.CreateReadOnlyPartList();
+                allFilesToExport = QueueData.Instance.CreateReadOnlyPartList();
                 foreach (PrintItem part in allFilesToExport)
                 {
                     PrintItemWrapper printItemWrapper = new PrintItemWrapper(part);
-                    if (System.IO.Path.GetExtension(part.FileLocation).ToUpper() == ".STL")
+                    if (Path.GetExtension(part.FileLocation).ToUpper() == ".STL")
                     {
                         SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
                         printItemWrapper.Done += new EventHandler(sliceItem_Done);
                         printItemWrapper.SlicingOutputMessage += printItemWrapper_SlicingOutputMessage;
                     }
-                    else if (System.IO.Path.GetExtension(part.FileLocation).ToUpper() == ".GCODE")
+                    else if (Path.GetExtension(part.FileLocation).ToUpper() == ".GCODE")
                     {
                         sliceItem_Done(printItemWrapper, null);
                     }

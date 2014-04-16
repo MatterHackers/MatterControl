@@ -17,14 +17,14 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-    public class PrintQueueMenu : GuiWidget
+    public class QueueOptionsMenu : GuiWidget
     {
         public DropDownMenu MenuDropList;
         private TupleList<string, Func<bool>> menuItems;
 
 		ExportToFolderFeedbackWindow exportingWindow = null;
 
-        public PrintQueueMenu()
+        public QueueOptionsMenu()
         {
 			MenuDropList = new DropDownMenu(LocalizedString.Get("Queue Options"), Direction.Up);
             MenuDropList.HAnchor |= HAnchor.ParentLeft;
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void PartSheetClickOnIdle(object state)
         {
-            List<PrintItem> parts = PrintQueueControl.Instance.CreateReadOnlyPartList();
+            List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
             if (parts.Count > 0)
             {
                 SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             string path = FileDialog.SelectFolderDialog(ref selectParams);
             if (path != null && path != "")
             {
-                List<PrintItem> parts = PrintQueueControl.Instance.CreateReadOnlyPartList();
+                List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
                 if (parts.Count > 0)
                 {
                     if (exportingWindow == null)
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void ExportQueueToZipOnIdle(object state)
         {
-            List<PrintItem> partList = PrintQueueControl.Instance.CreateReadOnlyPartList();
+            List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
             ProjectFileHandler project = new ProjectFileHandler(partList);
             project.SaveAs();
         }
@@ -225,14 +225,11 @@ namespace MatterHackers.MatterControl.PrintQueue
             List<PrintItem> partFiles = project.OpenFromDialog();
             if (partFiles != null)
             {
-                PrintQueueControl.Instance.RemoveAllChildren();
+                QueueData.Instance.RemoveAll();
                 foreach (PrintItem part in partFiles)
                 {
-                    PrintQueueControl.Instance.AddChild(new PrintQueueItem(part.Name, part.FileLocation));
+                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
                 }
-                PrintQueueControl.Instance.EnsureSelection();
-                PrintQueueControl.Instance.Invalidate();
-                PrintQueueControl.Instance.SaveDefaultQueue();
             }
         }
 
@@ -244,21 +241,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		void removeAllPrintsFromQueue (object state)
 		{
-
-			PrintQueueControl.Instance.RemoveAllChildren ();
-			PrintQueueControl.Instance.SaveDefaultQueue ();
+			QueueData.Instance.RemoveAll();
 		}
-       
-		void deleteFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
-        {
-            PrintQueueControl.Instance.RemoveIndex(PrintQueueControl.Instance.SelectedIndex);
-            PrintQueueControl.Instance.SaveDefaultQueue();
-        }
-
-        void deleteAllFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
-        {
-            PrintQueueControl.Instance.RemoveAllChildren();
-            PrintQueueControl.Instance.SaveDefaultQueue();
-        }
     }
 }

@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
     {
         public enum SlicingEngineTypes { Slic3r, CuraEngine, MatterSlice };
 
-        static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.Slic3r;
+        static readonly SlicingEngineTypes defaultEngineType = SlicingEngineTypes.MatterSlice;
         static ActivePrinterProfile globalInstance = null;
 
         public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
@@ -98,17 +98,20 @@ namespace MatterHackers.MatterControl
 
         void ValidateQualitySettings()
         {
-            int index = activePrinter.QualityCollectionId;
-            SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == index).Take(1).FirstOrDefault();
-            if (collection == null)
+            if (activePrinter != null)
             {
-                ActivePrinterProfile.Instance.ActiveQualitySettingsID = 0;
+                int index = activePrinter.QualityCollectionId;
+                SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == index).Take(1).FirstOrDefault();
+                if (collection == null)
+                {
+                    ActivePrinterProfile.Instance.ActiveQualitySettingsID = 0;
+                }
             }
         }
 
         void ValidateMaterialSettings()
         {
-            if (activePrinter.MaterialCollectionIds != null)
+            if (activePrinter != null && activePrinter.MaterialCollectionIds != null)
             {
                 string[] activeMaterialPresets = activePrinter.MaterialCollectionIds.Split(',');
                 for (int i = 0; i < activeMaterialPresets.Count(); i++)

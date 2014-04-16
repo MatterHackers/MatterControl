@@ -1959,12 +1959,12 @@ Translated:Downloading updates...
 English:Duplicate
 Translated:Duplicate
 
-English:Manually Configure Connection
-Translated:Manually Configure Connection
+English:End
+Translated:End
 
-English:Skip Connection Setup
-Translated:Skip Connection Setup
+English:The type of support to create inside of parts.
+Translated:The type of support to create inside of parts.
 
-English:Release Options
-Translated:Release Options
+English:Infill Type
+Translated:Infill Type
 

@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2014, Kevin Pope
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,25 +43,9 @@ using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-    public class PrintQueueControl : ScrollableWidget
+    public class QueueDataView : ScrollableWidget
     {
-        public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
-        public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
-
-        static PrintQueueControl instance;
-        public static PrintQueueControl Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new PrintQueueControl();
-                    instance.LoadDefaultQueue();
-                    instance.EnsureSelection();
-                }
-                return instance;
-            }
-        }
+        event EventHandler unregisterEvents;
 
         // make this private so it can only be built from the Instance
 		private void SetDisplayAttributes()
@@ -75,42 +88,13 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     SelectedIndex = Count - 1;
                 }
+
+                // force a refresh of the ui in the case where we are still on the same index but have changed items.
+                SelectedIndex = SelectedIndex;
             }
-        }
-
-        public void SwapItemsDurringUiAction(int indexA, int indexB)
-        {
-            UiThread.RunOnIdle(SwapItems, new SwapIndexArgs(indexA, indexB));
-        }
-
-        void SwapItems(object state)
-        {
-            int indexA = ((SwapIndexArgs)state).indexA;
-            int indexB = ((SwapIndexArgs)state).indexB;
-            int selectedAtEnd = indexB;
-            // make sure indexA is the smaller index
-            if (indexA > indexB)
+            else
             {
-                int temp = indexA;
-                indexA = indexB;
-                indexB = temp;
-            }
-
-            if (indexA >= 0 && indexA < Count
-                && indexB >= 0 && indexB < Count
-                && indexA != indexB)
-            {
-                GuiWidget itemA = topToBottomItemList.Children[indexA];
-                GuiWidget itemB = topToBottomItemList.Children[indexB];
-                topToBottomItemList.RemoveChild(indexB);
-                topToBottomItemList.RemoveChild(indexA);
-                topToBottomItemList.AddChild(itemB, indexA);
-                topToBottomItemList.AddChild(itemA, indexB);
-
-                AddItemHandlers(itemA);
-                AddItemHandlers(itemB);
-
-                this.SelectedIndex = selectedAtEnd;
+                SelectedIndex = -1;
             }
         }
 
@@ -135,60 +119,9 @@ namespace MatterHackers.MatterControl.PrintQueue
             if (SelectedIndex >= 0 && SelectedIndex < Count)
             {
                 int currentIndex = SelectedIndex;
-                PrintQueueItem replacementItem = new PrintQueueItem(PrintQueueControl.Instance.SelectedPart.Name, PrintQueueControl.Instance.SelectedPart.FileLocation);
-                this.RemoveChild(SelectedIndex);
-                this.AddChild(replacementItem);
+                PrintItem replacementItem = new PrintItem(SelectedPart.Name, SelectedPart.FileLocation);
+                QueueData.Instance.RemoveAt(SelectedIndex);
                 this.SelectedIndex = currentIndex;
-            }
-        }
-
-        class RemoveIndexArgs
-        {
-            internal int index;
-            internal RemoveIndexArgs(int index)
-            {
-                this.index = index;
-            }
-        }
-
-        class SwapIndexArgs
-        {
-            internal int indexA;
-            internal int indexB;
-            internal SwapIndexArgs(int indexA, int indexB)
-            {
-                this.indexA = indexA;
-                this.indexB = indexB;
-            }
-        }
-
-        public void RemoveIndex(int index)
-        {
-            UiThread.RunOnIdle(RemoveIndexAfterEvent, new RemoveIndexArgs(index));
-        }
-
-        void RemoveIndexAfterEvent(object state)
-        {
-            RemoveIndexArgs removeArgs = state as RemoveIndexArgs;
-            if (removeArgs != null & removeArgs.index >= 0 && removeArgs.index < Count)
-            {
-                int currentIndex = removeArgs.index;
-
-                //If the item to be removed is the active print item, set the active print item to null.
-                GuiWidget itemHolder = topToBottomItemList.Children[currentIndex];
-                PrintQueueItem child = (PrintQueueItem)itemHolder.Children[0];
-                if (child.isActivePrint)
-                {
-                    if (PrinterCommunication.Instance.PrinterIsPrinting)
-                    {
-                        return;
-                    }
-                    PrinterCommunication.Instance.ActivePrintItem = null;
-                }
-                RemoveChild(currentIndex);
-                SelectedIndex = System.Math.Min(SelectedIndex, Count - 1);
-
-                SaveDefaultQueue();
             }
         }
 
@@ -198,7 +131,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 if (SelectedIndex >= 0)
                 {
-                    return GetSTLToPrint(SelectedIndex);
+                    return QueueData.Instance.GetPrintItem(SelectedIndex);
                 }
                 else
                 {
@@ -207,87 +140,17 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public PrintQueueItem GetPrintQueueItem(int index)
+        public RowItem GetPrintQueueItem(int index)
         {
             if (index >= 0 && index < topToBottomItemList.Children.Count)
             {
                 GuiWidget itemHolder = topToBottomItemList.Children[index];
-                PrintQueueItem child = (PrintQueueItem)itemHolder.Children[0];
+                RowItem child = (RowItem)itemHolder.Children[0];
 
                 return child;
             }
 
             return null;
-        }
-
-        public int GetIndex(PrintItemWrapper printItem)
-        {
-            for (int i = 0; i < topToBottomItemList.Children.Count; i++)
-            {
-                PrintQueueItem queueItem = GetPrintQueueItem(i);
-                if (queueItem != null && queueItem.PrintItemWrapper == printItem)
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        public string[] GetItemNames()
-        {
-            List<string> itemNames = new List<string>(); ;
-            for (int i = 0; i < topToBottomItemList.Children.Count; i++)
-            {
-                PrintQueueItem queueItem = GetPrintQueueItem(i);
-                if (queueItem != null)
-                {
-                    itemNames.Add(queueItem.PrintItemWrapper.Name);
-                }
-            }
-
-            return itemNames.ToArray();
-        }
-
-        public PrintItemWrapper GetSTLToPrint(int index)
-        {
-            if(index >= 0 && index < Count)
-            {
-                return GetPrintQueueItem(index).PrintItemWrapper;
-            }
-
-            return null;
-        }
-
-        public List<PrintItem> CreateReadOnlyPartList()
-        {
-            List<PrintItem> listToReturn = new List<PrintItem>();
-            for (int i = 0; i < Count; i++)
-            {
-                listToReturn.Add(GetSTLToPrint(i).PrintItem);
-            }
-            return listToReturn;
-        }
-
-        public void LoadDefaultQueue()
-        {
-            RemoveAllChildren();
-            ManifestFileHandler manifest = new ManifestFileHandler(null);
-            List<PrintItem> partFiles = manifest.ImportFromJson();
-            if (partFiles != null)
-            {
-                foreach (PrintItem part in partFiles)
-                {
-                    PrintQueueControl.Instance.AddChild(new PrintQueueItem(part.Name, part.FileLocation));
-                }
-            }
-        }
-
-        public void SaveDefaultQueue()
-        {
-            List<PrintItem> partList = PrintQueueControl.Instance.CreateReadOnlyPartList();
-            ManifestFileHandler manifest = new ManifestFileHandler(partList);
-            manifest.ExportToJson();
         }
 
         public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
@@ -336,31 +199,36 @@ namespace MatterHackers.MatterControl.PrintQueue
                     GuiWidget child = topToBottomItemList.Children[index];
                     if (index == selectedIndex)
                     {
-                        ((PrintQueueItem)child.Children[0]).isSelectedItem = true;
+                        ((RowItem)child.Children[0]).isSelectedItem = true;
                         if (!PrinterCommunication.Instance.PrinterIsPrinting && !PrinterCommunication.Instance.PrinterIsPaused)
                         {
                             
-                            ((PrintQueueItem)child.Children[0]).isActivePrint = true;
-                            PrinterCommunication.Instance.ActivePrintItem = ((PrintQueueItem)child.Children[0]).PrintItemWrapper;
+                            ((RowItem)child.Children[0]).isActivePrint = true;
+                            PrinterCommunication.Instance.ActivePrintItem = ((RowItem)child.Children[0]).PrintItemWrapper;
                         }
                     }
                     else
                     {
-                        if (((PrintQueueItem)child.Children[0]).isSelectedItem)
+                        if (((RowItem)child.Children[0]).isSelectedItem)
                         {
-                            ((PrintQueueItem)child.Children[0]).isSelectedItem = false;
+                            ((RowItem)child.Children[0]).isSelectedItem = false;
                         }
                         if (!PrinterCommunication.Instance.PrinterIsPrinting && !PrinterCommunication.Instance.PrinterIsPaused)
                         {
-                            if (((PrintQueueItem)child.Children[0]).isActivePrint)
+                            if (((RowItem)child.Children[0]).isActivePrint)
                             {
-                                ((PrintQueueItem)child.Children[0]).isActivePrint = false;
+                                ((RowItem)child.Children[0]).isActivePrint = false;
                             }
                         }
                     }
                     child.Invalidate();
 
                     Invalidate();
+                }
+
+                if (QueueData.Instance.Count == 0)
+                {
+                    PrinterCommunication.Instance.ActivePrintItem = null;
                 }
             }
         }
@@ -408,11 +276,11 @@ namespace MatterHackers.MatterControl.PrintQueue
                         GuiWidget child = topToBottomItemList.Children[index];
                         if (index == HoverIndex)
                         {                            
-                            ((PrintQueueItem)child.Children[0]).isHoverItem = true;
+                            ((RowItem)child.Children[0]).isHoverItem = true;
                         }
-                        else if (((PrintQueueItem)child.Children[0]).isHoverItem == true)
+                        else if (((RowItem)child.Children[0]).isHoverItem == true)
                         {
-                            ((PrintQueueItem)child.Children[0]).isHoverItem = false;
+                            ((RowItem)child.Children[0]).isHoverItem = false;
                         }
                         child.Invalidate();
                     }
@@ -422,7 +290,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public PrintQueueControl()
+        public QueueDataView()
         {
             Name = "PrintQueueControl";
 
@@ -435,6 +303,62 @@ namespace MatterHackers.MatterControl.PrintQueue
             topToBottomItemList.Name = "PrintQueueControl TopToBottom";
             topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             base.AddChild(topToBottomItemList);
+
+            for (int i = 0; i < QueueData.Instance.Count; i++)
+            {
+                PrintItemWrapper item = QueueData.Instance.GetPrintItem(i);
+                RowItem queueItem = new RowItem(item, this);
+                AddChild(queueItem);
+            }
+
+            QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
+            QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToQueue, ref unregisterEvents);
+            QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
+        }
+
+        void ItemAddedToQueue(object sender, EventArgs e)
+        {
+            QueueData.IndexArgs addedIndexArgs = e as QueueData.IndexArgs;
+            PrintItemWrapper item = QueueData.Instance.GetPrintItem(addedIndexArgs.Index);
+            RowItem queueItem = new RowItem(item, this);
+            AddChild(queueItem, addedIndexArgs.Index);
+
+            EnsureSelection();
+        }
+
+        void ItemRemovedFromToQueue(object sender, EventArgs e)
+        {
+            QueueData.IndexArgs removeIndexArgs = e as QueueData.IndexArgs;
+            topToBottomItemList.RemoveChild(removeIndexArgs.Index);
+            EnsureSelection();
+            if (QueueData.Instance.Count > 0)
+            {
+                SelectedIndex = Math.Max(SelectedIndex - 1, 0);
+            }
+        }
+
+        void QueueOrderChanged(object sender, EventArgs e)
+        {
+        }
+
+        bool firstDraw = true;
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            if (firstDraw)
+            {
+                firstDraw = false;
+                EnsureSelection();
+            }
+            base.OnDraw(graphics2D);
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
         }
 
         public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
@@ -448,8 +372,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
 
             AddItemHandlers(itemHolder);
-
-            ItemAdded.CallEvents(this, new GuiWidgetEventArgs(childToAdd));
         }
 
         private void AddItemHandlers(GuiWidget itemHolder)
@@ -458,38 +380,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             itemHolder.MouseLeaveBounds += new EventHandler(itemToAdd_MouseLeaveBounds);
             itemHolder.MouseDownInBounds += new MouseEventHandler(itemHolder_MouseDownInBounds);
             itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
-        }
-
-        public override void RemoveAllChildren()
-        {
-            for (int i = topToBottomItemList.Children.Count-1; i >= 0; i--)
-            {
-                RemoveIndex(i);
-            }
-        }
-
-        public override void RemoveChild(int index)
-        {
-            GuiWidget childToRemove = topToBottomItemList.Children[index];
-            RemoveChild(childToRemove);
-        }
-
-        public override void RemoveChild(GuiWidget childToRemove)
-        {
-            for (int i = topToBottomItemList.Children.Count - 1; i >= 0; i--)
-            {
-                GuiWidget itemHolder = topToBottomItemList.Children[i];
-                if (itemHolder == childToRemove || itemHolder.Children[0] == childToRemove)
-                {
-                    topToBottomItemList.RemoveChild(itemHolder);
-                    OnItemRemoved(new GuiWidgetEventArgs(childToRemove));
-                }
-            }
-        }
-
-        private void OnItemRemoved(GuiWidgetEventArgs e)
-        {
-            ItemRemoved.CallEvents(this, e);
         }
 
         bool settingLocalBounds = false;
@@ -622,7 +512,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public PrintQueueItem SelectedPrintQueueItem()
+        public RowItem SelectedPrintQueueItem()
         {
             return GetPrintQueueItem(SelectedIndex);
         }

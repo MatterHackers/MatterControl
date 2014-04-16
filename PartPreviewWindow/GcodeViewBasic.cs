@@ -28,26 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.ComponentModel;
-
+using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
 using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
