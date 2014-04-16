@@ -63,9 +63,9 @@ namespace MatterHackers.MatterControl
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
             {
-                string tempShortcutPresetLbl = LocalizedString.Get("Temperature Shortcut Presets");
-				string tempShortcutPresetLblFull = string.Format ("{0}:", tempShortcutPresetLbl);
-				TextWidget elementHeader = new TextWidget(tempShortcutPresetLblFull, pointSize: 14);
+                string tempShortcutPresetLabel = LocalizedString.Get("Temperature Shortcut Presets");
+                string tempShortcutPresetLabelFull = string.Format("{0}:", tempShortcutPresetLabel);
+                TextWidget elementHeader = new TextWidget(tempShortcutPresetLabelFull, pointSize: 14);
                 elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 elementHeader.HAnchor = HAnchor.ParentLeftRight;
                 elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;

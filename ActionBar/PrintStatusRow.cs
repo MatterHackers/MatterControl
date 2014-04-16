@@ -151,9 +151,9 @@ namespace MatterHackers.MatterControl.ActionBar
             topRow.Name = "PrintStatusRow.ActivePrinterInfo.TopRow";
             topRow.HAnchor = HAnchor.ParentLeftRight;
 
-			string nextPrintLbl = LocalizedString.Get("Next Print");
-			string nextPrintLblFull = string.Format("{0}:", nextPrintLbl);       
-			activePrintLabel = getPrintStatusLabel(nextPrintLblFull, pointSize: 11);
+			string nextPrintLabel = LocalizedString.Get("Next Print");
+			string nextPrintLabelFull = string.Format("{0}:", nextPrintLabel);       
+			activePrintLabel = getPrintStatusLabel(nextPrintLabelFull, pointSize: 11);
             activePrintLabel.VAnchor = VAnchor.ParentTop;
 
             topRow.AddChild(activePrintLabel);
@@ -276,15 +276,15 @@ namespace MatterHackers.MatterControl.ActionBar
                 //GC.WaitForFullGCComplete();
 
                 string printPercentRemainingText;
-				string printPercentCompleteTxt = LocalizedString.Get("complete");
-				printPercentRemainingText = string.Format("{0:0.0}% {1}", PrinterCommunication.Instance.PercentComplete,printPercentCompleteTxt);
+				string printPercentCompleteText = LocalizedString.Get("complete");
+				printPercentRemainingText = string.Format("{0:0.0}% {1}", PrinterCommunication.Instance.PercentComplete,printPercentCompleteText);
 
                 switch (PrinterCommunication.Instance.CommunicationState)
                 {
 				case PrinterCommunication.CommunicationStates.PreparingToPrint:
-						string preparingPrintLbl = LocalizedString.Get("Preparing To Print");
-						string preparingPrintLblFull = string.Format("{0}:", preparingPrintLbl);
-						activePrintLabel.Text = preparingPrintLblFull;
+						string preparingPrintLabel = LocalizedString.Get("Preparing To Print");
+						string preparingPrintLabelFull = string.Format("{0}:", preparingPrintLabel);
+						activePrintLabel.Text = preparingPrintLabelFull;
                         //ActivePrintStatusText = ""; // set by slicer
                         activePrintInfo.Text = "";
                         break;
@@ -298,25 +298,25 @@ namespace MatterHackers.MatterControl.ActionBar
 
                     case PrinterCommunication.CommunicationStates.Paused:
                         {
-							string activePrintLblTxt = LocalizedString.Get ("Printing Paused");
-							string activePrintLblTxtFull = string.Format("{0}:", activePrintLblTxt);
-							activePrintLabel.Text = activePrintLblTxtFull;
+							string activePrintLabelText = LocalizedString.Get ("Printing Paused");
+							string activePrintLabelTextFull = string.Format("{0}:", activePrintLabelText);
+							activePrintLabel.Text = activePrintLabelTextFull;
                             ActivePrintStatusText = totalPrintTimeText;
                         }
                         break;
 
 				case PrinterCommunication.CommunicationStates.FinishedPrint:
-					string donePrintingTxt = LocalizedString.Get ("Done Printing");
-					string donePrintingTxtFull = string.Format ("{0}:", donePrintingTxt);
-					activePrintLabel.Text = donePrintingTxtFull;
+					string donePrintingText = LocalizedString.Get ("Done Printing");
+					string donePrintingTextFull = string.Format ("{0}:", donePrintingText);
+					activePrintLabel.Text = donePrintingTextFull;
                     ActivePrintStatusText = totalPrintTimeText;
                         break;
 
 				default:
-						string nextPrintLblActive = LocalizedString.Get ("Next Print");
-						string nextPrintLblActiveFull = string.Format("{0}: ", nextPrintLblActive);
+						string nextPrintLabelActive = LocalizedString.Get ("Next Print");
+						string nextPrintLabelActiveFull = string.Format("{0}: ", nextPrintLabelActive);
 
-						activePrintLabel.Text = nextPrintLblActiveFull;
+						activePrintLabel.Text = nextPrintLabelActiveFull;
                         ActivePrintStatusText = "";
                         activePrintInfo.Text = "";
                         break;

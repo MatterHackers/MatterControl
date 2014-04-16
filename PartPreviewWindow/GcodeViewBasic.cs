@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
-            string startingMessage = "";
+            string startingMessage = "Press 'Add' to select an item.";
             if (printItem != null)
             {
                 startingMessage = LocalizedString.Get("No GCode Available...");
@@ -169,6 +169,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         startingMessage = string.Format("{0}\n'{1}'", LocalizedString.Get("File not found on disk."), printItem.Name);
                     }
                 }
+            }
+            else
+            {
+                generateGCodeButton.Visible = false;
             }
 
             centerPartPreviewAndControls.AddChild(gcodeDispalyWidget);
@@ -295,10 +299,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             //modelInfoContainer.AddChild(new TextWidget("Size:", textColor: ActiveTheme.Instance.PrimaryTextColor));
             
-			string filamentLengthLbl = "Filament Length".Localize().ToUpper();
-			string filamentLengthLblFull = string.Format ("{0}:", filamentLengthLbl);
+			string filamentLengthLabel = "Filament Length".Localize().ToUpper();
+			string filamentLengthLabelFull = string.Format ("{0}:", filamentLengthLabel);
             // show the filament used
-            modelInfoContainer.AddChild(new TextWidget(filamentLengthLblFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+            modelInfoContainer.AddChild(new TextWidget(filamentLengthLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
             {
                 double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.NozzleDiameter);
 

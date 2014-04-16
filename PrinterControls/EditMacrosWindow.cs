@@ -144,9 +144,9 @@ namespace MatterHackers.MatterControl
             macroNameInput = new MHTextEditWidget(windowController.ActiveMacro.Name);
             macroNameInput.HAnchor = HAnchor.ParentLeftRight;
 
-            string giveMacroANameLbl = LocalizedString.Get("Give your macro a name");
-			string giveMacroANameLblFull = string.Format ("{0}.", giveMacroANameLbl);
-			macroNameError = new TextWidget(giveMacroANameLblFull, 0, 0, 10);
+            string giveMacroANameLabel = LocalizedString.Get("Give your macro a name");
+            string giveMacroANameLabelFull = string.Format("{0}.", giveMacroANameLabel);
+            macroNameError = new TextWidget(giveMacroANameLabelFull, 0, 0, 10);
 			macroNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             macroNameError.HAnchor = HAnchor.ParentLeftRight;
             macroNameError.Margin = elementMargin;
@@ -164,9 +164,9 @@ namespace MatterHackers.MatterControl
             container.Margin = new BorderDouble(0, 5);
             BorderDouble elementMargin = new BorderDouble(top: 3);
 
-            string macroCommandLblTxt = LocalizedString.Get("Macro Commands");
-			string macroCommandLblTxtFull = string.Format ("{0}:", macroCommandLblTxt);
-			TextWidget macroCommandLabel = new TextWidget(macroCommandLblTxtFull, 0, 0, 12);
+            string macroCommandLabelTxt = LocalizedString.Get("Macro Commands");
+            string macroCommandLabelTxtFull = string.Format("{0}:", macroCommandLabelTxt);
+            TextWidget macroCommandLabel = new TextWidget(macroCommandLabelTxtFull, 0, 0, 12);
             macroCommandLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             macroCommandLabel.HAnchor = HAnchor.ParentLeftRight;
             macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
@@ -174,9 +174,9 @@ namespace MatterHackers.MatterControl
             macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.Value, pixelHeight: 120, multiLine: true);
             macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
 
-            string shouldBeGCodeLbl = LocalizedString.Get("This should be in 'Gcode'");
-			string shouldBeGCodeLblFull = string.Format("{0}.", shouldBeGCodeLbl);
-			macroCommandError = new TextWidget(shouldBeGCodeLblFull, 0, 0, 10);
+            string shouldBeGCodeLabel = LocalizedString.Get("This should be in 'Gcode'");
+            string shouldBeGCodeLabelFull = string.Format("{0}.", shouldBeGCodeLabel);
+            macroCommandError = new TextWidget(shouldBeGCodeLabelFull, 0, 0, 10);
 			macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             macroCommandError.HAnchor = HAnchor.ParentLeftRight;
             macroCommandError.Margin = elementMargin;

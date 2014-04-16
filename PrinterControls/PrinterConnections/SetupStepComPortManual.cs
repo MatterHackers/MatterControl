@@ -264,9 +264,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 this.ActivePrinter.Commit();
                 printerComPortHelpLink.Visible = false;
                 printerComPortError.TextColor = RGBA_Bytes.White;
-				string printerComPortErrorLbl = LocalizedString.Get("Attempting to connect");
-				string printerComPortErrorLblFull = string.Format("{0}...",printerComPortErrorLbl);
-				printerComPortError.Text = printerComPortErrorLblFull;
+				string printerComPortErrorLabel = LocalizedString.Get("Attempting to connect");
+				string printerComPortErrorLabelFull = string.Format("{0}...",printerComPortErrorLabel);
+				printerComPortError.Text = printerComPortErrorLabelFull;
                 ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
                 PrinterCommunication.Instance.ConnectToActivePrinter();
                 connectButton.Visible = false;

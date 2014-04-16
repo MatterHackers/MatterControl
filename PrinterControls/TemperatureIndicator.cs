@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
         void AddChildElements()
         {
             Button editButton;
-            GroupBox groupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLableWithEdit(label, out editButton));
+            GroupBox groupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(label, out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editSettingsWindow == null)

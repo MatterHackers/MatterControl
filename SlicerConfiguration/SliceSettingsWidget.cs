@@ -167,8 +167,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
             {
                 OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
-				string categoryPageLbl = LocalizedString.Get (category.Name);
-				TabPage categoryPage = new TabPage(categoryPageLbl);
+				string categoryPageLabel = LocalizedString.Get (category.Name);
+				TabPage categoryPage = new TabPage(categoryPageLabel);
                 SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, 16,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
                 categoryPage.AnchorAll();
@@ -324,8 +324,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             foreach (OrganizerGroup group in category.GroupsList)
             {
                 tabIndexForItem = 0;
-				string groupTabLbl = LocalizedString.Get (group.Name);
-				TabPage groupTabPage = new TabPage(groupTabLbl);
+				string groupTabLabel = LocalizedString.Get (group.Name);
+				TabPage groupTabPage = new TabPage(groupTabLabel);
                 groupTabPage.HAnchor = HAnchor.ParentLeftRight;
 
                 SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, 14,
@@ -360,8 +360,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     if (addedSettingToSubGroup)
                     {
                         needToAddSubGroup = true;
-						string groupBoxLbl = LocalizedString.Get (subGroup.Name);
-						GroupBox groupBox = new GroupBox (groupBoxLbl);
+						string groupBoxLabel = LocalizedString.Get (subGroup.Name);
+						GroupBox groupBox = new GroupBox (groupBoxLabel);
                         groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.AddChild(topToBottomSettings);

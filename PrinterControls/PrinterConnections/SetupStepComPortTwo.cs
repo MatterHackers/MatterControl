@@ -161,16 +161,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             if (candidatePort == null)
             {
                 printerErrorMessage.TextColor = RGBA_Bytes.Red;
-				string printerErrorMessageLblFull = LocalizedString.Get ("Oops! Printer could not be detected ");
-				printerErrorMessage.Text = printerErrorMessageLblFull;                
+				string printerErrorMessageLabelFull = LocalizedString.Get ("Oops! Printer could not be detected ");
+				printerErrorMessage.Text = printerErrorMessageLabelFull;                
             }
             else
             {
                 ActivePrinter.ComPort = candidatePort;
 				printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				string printerErrorMessageLblTwo = LocalizedString.Get ("Attempting to connect");
-				string printerErrorMessageLblTwoFull = string.Format("{0}...",printerErrorMessageLblTwo);
-				printerErrorMessage.Text = printerErrorMessageLblTwoFull;
+				string printerErrorMessageLabelTwo = LocalizedString.Get ("Attempting to connect");
+				string printerErrorMessageLabelTwoFull = string.Format("{0}...",printerErrorMessageLabelTwo);
+				printerErrorMessage.Text = printerErrorMessageLabelTwoFull;
                 this.ActivePrinter.Commit();
                 ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
                 PrinterCommunication.Instance.ConnectToActivePrinter();
@@ -202,9 +202,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         void onConnectionSuccess()
         {
 			printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			string printerErrorMessageLblThree = LocalizedString.Get ("Connection succeeded");
-			string printerErrorMessageLblThreeFull = string.Format ("{0}!", printerErrorMessageLblThree);
-			printerErrorMessage.Text = printerErrorMessageLblThreeFull;
+			string printerErrorMessageLabelThree = LocalizedString.Get ("Connection succeeded");
+			string printerErrorMessageLabelThreeFull = string.Format ("{0}!", printerErrorMessageLabelThree);
+			printerErrorMessage.Text = printerErrorMessageLabelThreeFull;
             nextButton.Visible = true;
             connectButton.Visible = false;
         }

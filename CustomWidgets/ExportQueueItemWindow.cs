@@ -58,9 +58,9 @@ namespace MatterHackers.MatterControl
 			headerContainer.Margin = new BorderDouble (0, 3, 0, 0);
 			headerContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			string exportLblTxt = LocalizedString.Get ("File export options");
-			string exportLblTxtFull = string.Format ("{0}:", exportLblTxt);
-			TextWidget exportLabel = new TextWidget(exportLblTxtFull);
+			string exportLabelText = LocalizedString.Get ("File export options");
+			string exportLabelTextFull = string.Format ("{0}:", exportLabelText);
+			TextWidget exportLabel = new TextWidget(exportLabelTextFull);
             exportLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			headerContainer.AddChild (exportLabel);
 			topToBottom.AddChild(headerContainer);
@@ -82,10 +82,10 @@ namespace MatterHackers.MatterControl
 
             if (!partIsGCode)
             {
-				string exportStlTxt = LocalizedString.Get("Export as");
-				string exportStlTxtFull = string.Format("{0} STL", exportStlTxt);
+				string exportStlText = LocalizedString.Get("Export as");
+				string exportStlTextFull = string.Format("{0} STL", exportStlText);
 
-				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTxtFull);
+				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
                 exportAsStlButton.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
 				exportSTLGCodeButtonsContainer.AddChild (exportAsStlButton);
             }
@@ -108,10 +108,10 @@ namespace MatterHackers.MatterControl
 
             if (!showExportGCodeButton)
             {
-				string noGCodeMessageTxtBeg = LocalizedString.Get("Note");
-				string noGCodeMessageTxtEnd = LocalizedString.Get ("To enable GCode export, select a printer profile.");
-				string noGCodeMessageTxtFull = string.Format ("{0}: {1}", noGCodeMessageTxtBeg, noGCodeMessageTxtEnd);
-				TextWidget noGCodeMessage = new TextWidget(noGCodeMessageTxtFull, textColor:ActiveTheme.Instance.PrimaryTextColor, pointSize: 10); 
+				string noGCodeMessageTextBeg = LocalizedString.Get("Note");
+				string noGCodeMessageTextEnd = LocalizedString.Get ("To enable GCode export, select a printer profile.");
+				string noGCodeMessageTextFull = string.Format ("{0}: {1}", noGCodeMessageTextBeg, noGCodeMessageTextEnd);
+				TextWidget noGCodeMessage = new TextWidget(noGCodeMessageTextFull, textColor:ActiveTheme.Instance.PrimaryTextColor, pointSize: 10); 
 				exportSTLGCodeButtonsContainer.AddChild(noGCodeMessage);
 			}
 
