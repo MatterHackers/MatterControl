@@ -1965,3 +1965,6 @@ Translated:End
 English:The type of support to create inside of parts.
 Translated:The type of support to create inside of parts.
 
+English:Infill Type
+Translated:Infill Type
+

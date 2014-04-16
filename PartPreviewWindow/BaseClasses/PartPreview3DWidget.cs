@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
 
             string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
-            RadioButton translateButton = textImageButtonFactory.GenerateRadioButton("", translateIconPath);
+            translateButton = textImageButtonFactory.GenerateRadioButton("", translateIconPath);
             translateButton.Margin = new BorderDouble(3);
             transformTypeSelector.AddChild(translateButton);
             translateButton.Click += (sender, e) =>
