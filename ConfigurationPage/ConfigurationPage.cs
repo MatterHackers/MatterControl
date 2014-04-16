@@ -89,7 +89,6 @@ namespace MatterHackers.MatterControl
             AddEePromControls(terminalControls);
             AddTerminalControls(terminalControls);
 
-
             AddPrintLevelingControls(mainLayoutContainer);
 
             FlowLayoutWidget settingsControls = new FlowLayoutWidget();
@@ -98,7 +97,15 @@ namespace MatterHackers.MatterControl
             AddThemeControls(settingsControls);
             AddLanguageControls(settingsControls);            
 
+			FlowLayoutWidget releaseControls = new FlowLayoutWidget();
+			releaseControls.Margin = new BorderDouble (right: 10);
+			releaseControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+
+			AddReleaseOptions (releaseControls);
+
             mainLayoutContainer.AddChild(settingsControls);
+			mainLayoutContainer.AddChild(releaseControls);
 
             AddChild(mainLayoutContainer);
 
@@ -198,6 +205,34 @@ namespace MatterHackers.MatterControl
             }
 
         }
+
+		private void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
+		{
+			GroupBox releaseOptionsContainer = new GroupBox(LocalizedString.Get ("Release Options"));
+
+			releaseOptionsContainer.Margin = new BorderDouble (0);
+			releaseOptionsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			releaseOptionsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			releaseOptionsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			releaseOptionsContainer.Height = 78;
+
+			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
+			controlsContainer.HAnchor = HAnchor.ParentLeftRight;
+
+			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Options");
+			releaseOptionsDropList.Margin = new BorderDouble (0, 3);
+			//releaseOptionsDropList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem ("Pre-Release");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem ("Release");
+			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem ("Development");
+
+
+			controlsContainer.AddChild(releaseOptionsDropList);
+			releaseOptionsContainer.AddChild(controlsContainer);
+			controlsTopToBottom.AddChild(releaseOptionsContainer);
+
+		}
+
 
 
         private void AddTerminalControls(FlowLayoutWidget controlsTopToBottomLayout)
