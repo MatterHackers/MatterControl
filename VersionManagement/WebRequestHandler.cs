@@ -270,8 +270,14 @@ namespace MatterHackers.MatterControl.VersionManagement
     {
         public RequestLatestVersion()
         {
+            string feedType = ApplicationSettings.Instance.get("UpdateFeedType");
+            if (feedType == null)
+            {
+                feedType = "release";
+                ApplicationSettings.Instance.set("UpdateFeedType", feedType);
+            }
             requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
-            requestValues["FeedType"] = "pre-release";
+            requestValues["FeedType"] = feedType;
             uri = "https://mattercontrol.appspot.com/api/1/get-current-release-version";
         }
 
