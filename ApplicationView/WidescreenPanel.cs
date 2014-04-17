@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl
 
         void onActivePrintItemChanged(object sender, EventArgs e)
         {
-            LoadColumnTwo();
+            UiThread.RunOnIdle(LoadColumnTwo);
         }
 
         int lastSelectedIndex = -1;
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl
             RestoreQueueIndex();
         }
 
-        void LoadColumnTwo()
+        void LoadColumnTwo(object state = null)
         {            
             ColumnTwo.RemoveAllChildren();
 
