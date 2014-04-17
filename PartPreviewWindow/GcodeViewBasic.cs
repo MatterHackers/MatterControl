@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
-            string startingMessage = "Press 'Add' to select an item.";
+            string startingMessage = "Press 'Add' to select an item.".Localize();
             if (printItem != null)
             {
                 startingMessage = LocalizedString.Get("No GCode Available...");
