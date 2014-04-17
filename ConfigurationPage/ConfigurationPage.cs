@@ -101,7 +101,6 @@ namespace MatterHackers.MatterControl
 			releaseControls.Margin = new BorderDouble (right: 10);
 			releaseControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-
 			AddReleaseOptions (releaseControls);
 
             mainLayoutContainer.AddChild(settingsControls);
@@ -144,7 +143,6 @@ namespace MatterHackers.MatterControl
             languageControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             languageControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
             languageControlsGroupBox.Height = 78;
-
 
             FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
             controlsContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -203,7 +201,6 @@ namespace MatterHackers.MatterControl
                 UserSettings.Instance.set("Language", languageCode);
                 restartButton.Visible = true;
             }
-
         }
 
 		private void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
@@ -226,14 +223,10 @@ namespace MatterHackers.MatterControl
 			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem ("Release");
 			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem ("Development");
 
-
 			controlsContainer.AddChild(releaseOptionsDropList);
 			releaseOptionsContainer.AddChild(controlsContainer);
 			controlsTopToBottom.AddChild(releaseOptionsContainer);
-
 		}
-
-
 
         private void AddTerminalControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
@@ -342,8 +335,6 @@ namespace MatterHackers.MatterControl
 
             controlsTopToBottomLayout.AddChild(eePromControlsContainer);
         }
-
-       
 
         private static GuiWidget CreateSeparatorLine()
         {
@@ -563,8 +554,6 @@ namespace MatterHackers.MatterControl
                 }
             }
         }
-
-       
 
         event EventHandler unregisterEvents;
         private void AddHandlers()
