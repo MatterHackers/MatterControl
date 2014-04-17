@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl
         private void AddThemeControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             DisableableWidget container = new DisableableWidget();   
+			container.DebugShowBounds = true;
             
             GroupBox themeControlsGroupBox = new GroupBox(LocalizedString.Get("Theme Settings"));
             themeControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -123,12 +124,18 @@ namespace MatterHackers.MatterControl
             themeControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             themeControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
             themeControlsGroupBox.Height = 78;            
+			themeControlsGroupBox.DebugShowBounds = true;
 
             ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
             themeControlsGroupBox.AddChild(themeSelector);
 
-            container.AddChild(themeControlsGroupBox);
+			FlowLayoutWidget colorSquare = new FlowLayoutWidget();
+			colorSquare.DebugShowBounds = true;
+			colorSquare.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			colorSquare.BackgroundColor = RGBA_Bytes.White
 
+			themeControlsGroupBox.AddChild(colorSquare)
+            container.AddChild(themeControlsGroupBox);
             controlsTopToBottomLayout.AddChild(container);
         }
 
@@ -208,13 +215,13 @@ namespace MatterHackers.MatterControl
 
 		private void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
 		{
-			GroupBox releaseOptionsContainer = new GroupBox(LocalizedString.Get ("Release Options"));
+			GroupBox releaseOptionsGroupBox = new GroupBox(LocalizedString.Get ("Release Options"));
 
-			releaseOptionsContainer.Margin = new BorderDouble (0);
-			releaseOptionsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			releaseOptionsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			releaseOptionsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			releaseOptionsContainer.Height = 78;
+			releaseOptionsGroupBox.Margin = new BorderDouble (0);
+			releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			releaseOptionsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			releaseOptionsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			releaseOptionsGroupBox.Height = 78;
 
 			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
 			controlsContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -222,14 +229,18 @@ namespace MatterHackers.MatterControl
 			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Options");
 			releaseOptionsDropList.Margin = new BorderDouble (0, 3);
 			//releaseOptionsDropList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem ("Pre-Release");
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem ("Release");
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem ("Release");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem ("Pre-Release");
 			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem ("Development");
+
+			GuiWidget hSpacer = new GuiWidget();
+			hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
 
 			controlsContainer.AddChild(releaseOptionsDropList);
-			releaseOptionsContainer.AddChild(controlsContainer);
-			controlsTopToBottom.AddChild(releaseOptionsContainer);
+			releaseOptionsGroupBox.AddChild(controlsContainer);
+			controlsTopToBottom.AddChild(releaseOptionsGroupBox);
+			controlsTopToBottom.AddChild(hSpacer);
 
 		}
 
@@ -621,4 +632,22 @@ namespace MatterHackers.MatterControl
             OpenPrintLevelWizard();
         }
     }
+
+	class RequestCurrentVersion
+	{
+		protected Dictionary<string, string> requestValues;
+		protected string uri;
+		public RequestCurrentVersion()
+		{
+			string feedType = ApplicationSettings.Instance.get ("Update");
+			if(feedType == null) 
+			{
+				feedType = "release";
+				ApplicationSettings.Instance.set("Update", feedType);
+			}
+			requestValues["Request Token"] =  "ekshdsd5d5ssss5kels";
+			requestValues["UpdateFeedType"] = feedType;
+			uri = "https://mattercontrol.appspot.com/api/1/get-current-release-version";
+		}
+	}
 }
