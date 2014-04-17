@@ -270,11 +270,11 @@ namespace MatterHackers.MatterControl.VersionManagement
     {
         public RequestLatestVersion()
         {
-            string feedType = ApplicationSettings.Instance.get("UpdateFeedType");
+            string feedType = UserSettings.Instance.get("UpdateFeedType");
             if (feedType == null)
             {
                 feedType = "release";
-                ApplicationSettings.Instance.set("UpdateFeedType", feedType);
+                UserSettings.Instance.set("UpdateFeedType", feedType);
             }
             requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
             requestValues["UpdateFeedType"] = feedType;
