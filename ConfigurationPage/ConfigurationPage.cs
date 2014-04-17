@@ -101,7 +101,6 @@ namespace MatterHackers.MatterControl
 			releaseControls.Margin = new BorderDouble (right: 10);
 			releaseControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-
 			AddReleaseOptions (releaseControls);
 
             mainLayoutContainer.AddChild(settingsControls);
@@ -128,12 +127,12 @@ namespace MatterHackers.MatterControl
 			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
 
 			ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
-			themeSelector.HAnchor = HAnchor.ParentLeftRight;
 			themeSelector.Margin = new BorderDouble(right: 5);
 
 			GuiWidget currentColorThemeBorder = new GuiWidget();
 			currentColorThemeBorder.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			currentColorThemeBorder.VAnchor = VAnchor.ParentBottomTop;
+			currentColorThemeBorder.Margin = new BorderDouble (top: 2, bottom: 2);
 			currentColorThemeBorder.Padding = new BorderDouble(4);
 			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.White;
 
@@ -241,20 +240,26 @@ namespace MatterHackers.MatterControl
 			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem ("Release");
 			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem ("Pre-Release");
 			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem ("Development");
+			releaseOptionsDropList.SelectionChanged += new EventHandler (ReleaseOptionsDropList_SelectionChanged);
 
 			GuiWidget hSpacer = new GuiWidget();
 			hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 
 			controlsContainer.AddChild(releaseOptionsDropList);
 			releaseOptionsGroupBox.AddChild(controlsContainer);
 			controlsTopToBottom.AddChild(releaseOptionsGroupBox);
 			controlsTopToBottom.AddChild(hSpacer);
-
 		}
 
-
-
+		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
+		{
+			string releaseCode = ((DropDownList)sender).SelectedLabel;
+			if(releaseCode != UserSettings.Instance.get("UpdateFeedType"));
+			{
+				UserSettings.Instance.set ("UpdateFeedType", releaseCode);
+			}
+		}
+			
         private void AddTerminalControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             GroupBox terminalControlsContainer;
