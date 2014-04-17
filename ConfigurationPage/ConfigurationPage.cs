@@ -121,17 +121,31 @@ namespace MatterHackers.MatterControl
             themeControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             themeControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             themeControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            themeControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-            themeControlsGroupBox.Height = 78;            
+		    themeControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
+            themeControlsGroupBox.Height = 78;   
 
-            ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
-            themeControlsGroupBox.AddChild(themeSelector);
+			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
 
-			FlowLayoutWidget colorSquare = new FlowLayoutWidget();
-			colorSquare.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			colorSquare.BackgroundColor = RGBA_Bytes.White;
+			ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
+			themeSelector.HAnchor = HAnchor.ParentLeftRight;
+			themeSelector.Margin = new BorderDouble(right: 5);
 
-			themeControlsGroupBox.AddChild (colorSquare);
+			GuiWidget currentColorThemeBorder = new GuiWidget();
+			currentColorThemeBorder.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			currentColorThemeBorder.VAnchor = VAnchor.ParentBottomTop;
+			currentColorThemeBorder.Padding = new BorderDouble(4);
+			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.White;
+
+			GuiWidget currentColorTheme = new GuiWidget();
+			currentColorTheme.HAnchor = HAnchor.ParentLeftRight;
+			currentColorTheme.VAnchor = VAnchor.ParentBottomTop;
+			currentColorTheme.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+
+			themeControlsGroupBox.AddChild(colorSelectorContainer);
+			colorSelectorContainer.AddChild(themeSelector);
+			colorSelectorContainer.AddChild(currentColorThemeBorder);
+			currentColorThemeBorder.AddChild(currentColorTheme);
             container.AddChild(themeControlsGroupBox);
             controlsTopToBottomLayout.AddChild(container);
         }
@@ -148,7 +162,6 @@ namespace MatterHackers.MatterControl
             languageControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             languageControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
             languageControlsGroupBox.Height = 78;
-
 
             FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
             controlsContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -225,7 +238,6 @@ namespace MatterHackers.MatterControl
 
 			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Options");
 			releaseOptionsDropList.Margin = new BorderDouble (0, 3);
-			//releaseOptionsDropList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
 			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem ("Release");
 			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem ("Pre-Release");
 			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem ("Development");
@@ -629,22 +641,4 @@ namespace MatterHackers.MatterControl
             OpenPrintLevelWizard();
         }
     }
-
-	class RequestCurrentVersion
-	{
-		protected Dictionary<string, string> requestValues;
-		protected string uri;
-		public RequestCurrentVersion()
-		{
-			string feedType = ApplicationSettings.Instance.get ("Update");
-			if(feedType == null) 
-			{
-				feedType = "release";
-				ApplicationSettings.Instance.set("Update", feedType);
-			}
-			requestValues["Request Token"] =  "ekshdsd5d5ssss5kels";
-			requestValues["UpdateFeedType"] = feedType;
-			uri = "https://mattercontrol.appspot.com/api/1/get-current-release-version";
-		}
-	}
 }
