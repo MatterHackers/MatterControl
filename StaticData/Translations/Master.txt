@@ -1968,9 +1968,12 @@ Translated:The type of support to create inside of parts.
 English:Infill Type
 Translated:Infill Type
 
-English:Unknown
-Translated:Unknown
-
 English:Release Options
 Translated:Release Options
+
+English:No items to select. Press 'Add' to select a file to print.
+Translated:No items to select. Press 'Add' to select a file to print.
+
+English:Unknown
+Translated:Unknown
 
