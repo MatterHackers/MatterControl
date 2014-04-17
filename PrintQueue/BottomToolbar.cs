@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections;
 using System.IO;
-using System.Diagnostics;
-using System.Threading;
-
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -51,23 +43,47 @@ namespace MatterHackers.MatterControl.PrintQueue
                 buttonPanel1.Padding = new BorderDouble(0, 3);
 
                 {
-					Button addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+                    Button addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     buttonPanel1.AddChild(addToQueueButton);
                     addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
                     addToQueueButton.Click += new ButtonBase.ButtonEventHandler(addToQueueButton_Click);
 
-                    Button runCreator = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
-                    buttonPanel1.AddChild(runCreator);
-                    runCreator.Margin = new BorderDouble(0, 0, 3, 0);
-                    runCreator.Click += (sender, e) =>
+                    // put in the creator button
                     {
-                        OpenPluginChooserWindow();
-                    };
+                        Button runCreator = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
+                        buttonPanel1.AddChild(runCreator);
+                        runCreator.Margin = new BorderDouble(0, 0, 3, 0);
+                        runCreator.Click += (sender, e) =>
+                        {
+                            OpenPluginChooserWindow();
+                        };
+                    }
 
-					Button deleteAllFromQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Remove All"));
+                    // hack: put in a store button
+                    {
+                        Button runStore = textImageButtonFactory.Generate(LocalizedString.Get("Shop"), "icon_shopping_cart_32x32.png");
+                        buttonPanel1.AddChild(runStore);
+                        runStore.Margin = new BorderDouble(0, 0, 3, 0);
+                        runStore.Click += (sender, e) =>
+                        {
+                            double activeFilamentDiameter = 0;
+                            if(ActivePrinterProfile.Instance.ActivePrinter != null)
+                            {
+                                activeFilamentDiameter = 3;
+                                if (ActiveSliceSettings.Instance.FilamentDiameter < 2)
+                                {
+                                    activeFilamentDiameter = 1.75;
+                                }
+                            }
+
+                            System.Diagnostics.Process.Start("http://www.matterhackers.com/mc/store/redirect?d={0}".FormatWith(activeFilamentDiameter));
+                        };
+                    }
+
+                    Button deleteAllFromQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Remove All"));
                     deleteAllFromQueueButton.Margin = new BorderDouble(3, 0);
                     deleteAllFromQueueButton.Click += new ButtonBase.ButtonEventHandler(deleteAllFromQueueButton_Click);
-					//buttonPanel1.AddChild(deleteAllFromQueueButton);
+                    //buttonPanel1.AddChild(deleteAllFromQueueButton);
 
                     GuiWidget spacer1 = new GuiWidget();
                     spacer1.HAnchor = HAnchor.ParentLeftRight;
