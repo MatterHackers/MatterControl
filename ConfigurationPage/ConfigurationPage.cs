@@ -126,6 +126,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
 
+
 			ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
 			themeSelector.Margin = new BorderDouble(right: 5);
 
@@ -140,6 +141,7 @@ namespace MatterHackers.MatterControl
 			currentColorTheme.HAnchor = HAnchor.ParentLeftRight;
 			currentColorTheme.VAnchor = VAnchor.ParentBottomTop;
 			currentColorTheme.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+
 
 			themeControlsGroupBox.AddChild(colorSelectorContainer);
 			colorSelectorContainer.AddChild(themeSelector);
@@ -219,12 +221,11 @@ namespace MatterHackers.MatterControl
                 UserSettings.Instance.set("Language", languageCode);
                 restartButton.Visible = true;
             }
-
         }
-
-		private void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
+			
+		public void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
 		{
-			GroupBox releaseOptionsGroupBox = new GroupBox(LocalizedString.Get ("Release Options"));
+			GroupBox releaseOptionsGroupBox = new GroupBox(LocalizedString.Get("Release Options"));
 
 			releaseOptionsGroupBox.Margin = new BorderDouble (0);
 			releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -237,10 +238,22 @@ namespace MatterHackers.MatterControl
 
 			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Options");
 			releaseOptionsDropList.Margin = new BorderDouble (0, 3);
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem ("Release");
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem ("Pre-Release");
-			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem ("Development");
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Release", "release");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Pre-Release", "pre-release");
+			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Development", "development");
+
+			List<string> acceptableUpdateFeedTypeValues = new List<string> (){ "release", "pre-release", "development" };
+			string currentUpdateFeedType = UserSettings.Instance.get ("UpdateFeedType");
+
+			if (acceptableUpdateFeedTypeValues.IndexOf (currentUpdateFeedType) == -1) 
+			{
+				UserSettings.Instance.set ("UpdateFeedType", "release");
+			}
+
+			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get ("UpdateFeedType");
+
 			releaseOptionsDropList.SelectionChanged += new EventHandler (ReleaseOptionsDropList_SelectionChanged);
+
 
 			GuiWidget hSpacer = new GuiWidget();
 			hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -253,10 +266,10 @@ namespace MatterHackers.MatterControl
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string releaseCode = ((DropDownList)sender).SelectedLabel;
-			if(releaseCode != UserSettings.Instance.get("UpdateFeedType"));
+			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+			if(releaseCode != UserSettings.Instance.get("UpdateFeedType"))
 			{
-				UserSettings.Instance.set ("UpdateFeedType", releaseCode);
+				UserSettings.Instance.set("UpdateFeedType", releaseCode);
 			}
 		}
 			
@@ -367,9 +380,7 @@ namespace MatterHackers.MatterControl
 
             controlsTopToBottomLayout.AddChild(eePromControlsContainer);
         }
-
-       
-
+			
         private static GuiWidget CreateSeparatorLine()
         {
             GuiWidget topLine = new GuiWidget(10, 1);
@@ -510,8 +521,7 @@ namespace MatterHackers.MatterControl
                 printLevelWizardWindow.BringToFront();
             }
         }
-
-
+			
         private void SetDisplayAttributes()
         {
             //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -588,9 +598,7 @@ namespace MatterHackers.MatterControl
                 }
             }
         }
-
-       
-
+			
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
@@ -606,10 +614,10 @@ namespace MatterHackers.MatterControl
         }
 
         private void onThemeChanged(object sender, EventArgs e)
-        {
-            //this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            //SetVisibleControls();
-            //this.Invalidate();
+		{	
+			//this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+			// SetVisibleControls();
+			//this.Invalidate();
         }
 
 		void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
