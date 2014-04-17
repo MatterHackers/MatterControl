@@ -195,6 +195,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
             PrintItems.Insert(indexToInsert, item);
             OnItemAdded(new IndexArgs(indexToInsert));
+            SaveDefaultQueue();
         }
 
         public void LoadDefaultQueue()

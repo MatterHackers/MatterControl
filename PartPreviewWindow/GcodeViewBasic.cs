@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
-            string startingMessage = "Press 'Add' to select an item.";
+            string startingMessage = "Press 'Add' to select an item.".Localize();
             if (printItem != null)
             {
                 startingMessage = LocalizedString.Get("No GCode Available...");
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                         // we only hook these up to make sure we can regenerate the gcode when we want
                         printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-                        printItem.Done += new EventHandler(sliceItem_Done);
+                        printItem.SlicingDone += new EventHandler(sliceItem_Done);
                     }
                     else
                     {
@@ -603,7 +603,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (printItem != null)
             {
                 printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-                printItem.Done -= new EventHandler(sliceItem_Done);
+                printItem.SlicingDone -= new EventHandler(sliceItem_Done);
                 if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
                 {
                     SlicingQueue.Instance.CancelCurrentSlicing();
@@ -646,7 +646,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // So we need to make sure we only have it added once. This will be ok to run when
             // not added or when added and will ensure we only have one hook.
             printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-            printItem.Done -= sliceItem_Done;
+            printItem.SlicingDone -= sliceItem_Done;
 
             UiThread.RunOnIdle(CreateAndAddChildren);
             startedSliceFromGenerateButton = false;

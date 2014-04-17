@@ -67,10 +67,13 @@
   <ItemGroup>
     <Compile Include="ActionBar\ActionBarBaseControls.cs" />
     <Compile Include="ActionBar\ActionBarPlus.cs" />
+    <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ActionBar\HelpTextWidget.cs" />
     <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterActionRow.cs" />
     <Compile Include="ActionBar\PrintStatusRow.cs" />
+    <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
+    <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="ApplicationView\QueueTabs.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />

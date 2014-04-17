@@ -89,7 +89,6 @@ namespace MatterHackers.MatterControl
             AddEePromControls(terminalControls);
             AddTerminalControls(terminalControls);
 
-
             AddPrintLevelingControls(mainLayoutContainer);
 
             FlowLayoutWidget settingsControls = new FlowLayoutWidget();
@@ -98,7 +97,15 @@ namespace MatterHackers.MatterControl
             AddThemeControls(settingsControls);
             AddLanguageControls(settingsControls);            
 
+			FlowLayoutWidget releaseControls = new FlowLayoutWidget();
+			releaseControls.Margin = new BorderDouble (right: 10);
+			releaseControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+
+			AddReleaseOptions (releaseControls);
+
             mainLayoutContainer.AddChild(settingsControls);
+			mainLayoutContainer.AddChild(releaseControls);
 
             AddChild(mainLayoutContainer);
 
@@ -120,8 +127,12 @@ namespace MatterHackers.MatterControl
             ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
             themeControlsGroupBox.AddChild(themeSelector);
 
-            container.AddChild(themeControlsGroupBox);
+			FlowLayoutWidget colorSquare = new FlowLayoutWidget();
+			colorSquare.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			colorSquare.BackgroundColor = RGBA_Bytes.White;
 
+			themeControlsGroupBox.AddChild (colorSquare);
+            container.AddChild(themeControlsGroupBox);
             controlsTopToBottomLayout.AddChild(container);
         }
 
@@ -198,6 +209,38 @@ namespace MatterHackers.MatterControl
             }
 
         }
+
+		private void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
+		{
+			GroupBox releaseOptionsGroupBox = new GroupBox(LocalizedString.Get ("Release Options"));
+
+			releaseOptionsGroupBox.Margin = new BorderDouble (0);
+			releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			releaseOptionsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			releaseOptionsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			releaseOptionsGroupBox.Height = 78;
+
+			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
+			controlsContainer.HAnchor = HAnchor.ParentLeftRight;
+
+			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Options");
+			releaseOptionsDropList.Margin = new BorderDouble (0, 3);
+			//releaseOptionsDropList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem ("Release");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem ("Pre-Release");
+			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem ("Development");
+
+			GuiWidget hSpacer = new GuiWidget();
+			hSpacer.HAnchor = HAnchor.ParentLeftRight;
+
+
+			controlsContainer.AddChild(releaseOptionsDropList);
+			releaseOptionsGroupBox.AddChild(controlsContainer);
+			controlsTopToBottom.AddChild(releaseOptionsGroupBox);
+			controlsTopToBottom.AddChild(hSpacer);
+
+		}
+
 
 
         private void AddTerminalControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -586,4 +629,22 @@ namespace MatterHackers.MatterControl
             OpenPrintLevelWizard();
         }
     }
+
+	class RequestCurrentVersion
+	{
+		protected Dictionary<string, string> requestValues;
+		protected string uri;
+		public RequestCurrentVersion()
+		{
+			string feedType = ApplicationSettings.Instance.get ("Update");
+			if(feedType == null) 
+			{
+				feedType = "release";
+				ApplicationSettings.Instance.set("Update", feedType);
+			}
+			requestValues["Request Token"] =  "ekshdsd5d5ssss5kels";
+			requestValues["UpdateFeedType"] = feedType;
+			uri = "https://mattercontrol.appspot.com/api/1/get-current-release-version";
+		}
+	}
 }

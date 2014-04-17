@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     if (Path.GetExtension(part.FileLocation).ToUpper() == ".STL")
                     {
                         SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                        printItemWrapper.Done += new EventHandler(sliceItem_Done);
+                        printItemWrapper.SlicingDone += new EventHandler(sliceItem_Done);
                         printItemWrapper.SlicingOutputMessage += printItemWrapper_SlicingOutputMessage;
                     }
                     else if (Path.GetExtension(part.FileLocation).ToUpper() == ".GCODE")
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
-            sliceItem.Done -= new EventHandler(sliceItem_Done);
+            sliceItem.SlicingDone -= new EventHandler(sliceItem_Done);
             sliceItem.SlicingOutputMessage -= printItemWrapper_SlicingOutputMessage;
             if (File.Exists(sliceItem.FileLocation))
             {

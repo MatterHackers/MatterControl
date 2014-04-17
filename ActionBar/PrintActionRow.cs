@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.ActionBar
             PrintItemWrapper partToPrint = sender as PrintItemWrapper;
             if (partToPrint != null)
             {
-                partToPrint.Done -= new EventHandler(partToPrint_SliceDone);
+                partToPrint.SlicingDone -= new EventHandler(partToPrint_SliceDone);
                 string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
                 if (gcodePathAndFileName != "")
                 {
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.ActionBar
                     PrinterCommunication.Instance.CommunicationState = PrinterCommunication.CommunicationStates.PreparingToPrint;
                     PrintItemWrapper partToPrint = PrinterCommunication.Instance.ActivePrintItem;
                     SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-                    partToPrint.Done += new EventHandler(partToPrint_SliceDone);
+                    partToPrint.SlicingDone += new EventHandler(partToPrint_SliceDone);
 
                 }
                 else
