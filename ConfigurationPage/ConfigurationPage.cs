@@ -116,7 +116,6 @@ namespace MatterHackers.MatterControl
         private void AddThemeControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             DisableableWidget container = new DisableableWidget();   
-			container.DebugShowBounds = true;
             
             GroupBox themeControlsGroupBox = new GroupBox(LocalizedString.Get("Theme Settings"));
             themeControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -124,17 +123,15 @@ namespace MatterHackers.MatterControl
             themeControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             themeControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
             themeControlsGroupBox.Height = 78;            
-			themeControlsGroupBox.DebugShowBounds = true;
 
             ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
             themeControlsGroupBox.AddChild(themeSelector);
 
 			FlowLayoutWidget colorSquare = new FlowLayoutWidget();
-			colorSquare.DebugShowBounds = true;
 			colorSquare.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			colorSquare.BackgroundColor = RGBA_Bytes.White
+			colorSquare.BackgroundColor = RGBA_Bytes.White;
 
-			themeControlsGroupBox.AddChild(colorSquare)
+			themeControlsGroupBox.AddChild (colorSquare);
             container.AddChild(themeControlsGroupBox);
             controlsTopToBottomLayout.AddChild(container);
         }
