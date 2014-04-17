@@ -1974,3 +1974,12 @@ Translated:Release Options
 English:No items to select. Press 'Add' to select a file to print.
 Translated:No items to select. Press 'Add' to select a file to print.
 
+English:Unknown
+Translated:Unknown
+
+English:Press 'Add' to select an item.
+Translated:Press 'Add' to select an item.
+
+English:Shop
+Translated:Shop
+

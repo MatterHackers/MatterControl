@@ -119,11 +119,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
-            string startingMessage = "Press 'Add' to select an item.";
+            SetProcessingMessage("Press 'Add' to select an item.".Localize());
             if (printItem != null)
             {
-                startingMessage = LocalizedString.Get("No GCode Available...");
-                startingMessage = LocalizedString.Get("Loading GCode...");
+                SetProcessingMessage(LocalizedString.Get("Loading GCode..."));
                 if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
                 {
                     gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
@@ -135,13 +134,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         string gcodePathAndFileName = printItem.GCodePathAndFileName;
                         bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
 
-                        if (gcodeProcessingStateInfoText != null && gcodeProcessingStateInfoText.Text == "Slicing Error")
+                        if (gcodeProcessingStateInfoText.Text == "Slicing Error")
                         {
-                            startingMessage = LocalizedString.Get("Slicing Error. Please review your slice settings.");
+                            SetProcessingMessage(LocalizedString.Get("Slicing Error. Please review your slice settings."));
                         }
                         else
                         {
-                            startingMessage = LocalizedString.Get("Press 'generate' to view layers");
+                            SetProcessingMessage(LocalizedString.Get("Press 'generate' to view layers"));
                         }
 
                         if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
@@ -151,11 +150,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                         // we only hook these up to make sure we can regenerate the gcode when we want
                         printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-                        printItem.Done += new EventHandler(sliceItem_Done);
+                        printItem.SlicingDone += new EventHandler(sliceItem_Done);
                     }
                     else
                     {
-                        startingMessage = string.Format("{0}\n'{1}'", LocalizedString.Get("File not found on disk."), printItem.Name);
+                        SetProcessingMessage(string.Format("{0}\n'{1}'", LocalizedString.Get("File not found on disk."), printItem.Name));
                     }
                 }
             }
@@ -176,8 +175,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
             mainContainerTopToBottom.AddChild(buttonBottomPanel);
             this.AddChild(mainContainerTopToBottom);
-
-            AddProcessingMessage(startingMessage);
 
             Add2DViewControls();
             translateButton.Click += (sender, e) =>
@@ -458,29 +455,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void AddProcessingMessage(string message)
+        private void SetProcessingMessage(string message)
         {
-            gcodeProcessingStateInfoText = new TextWidget(message);
-            gcodeProcessingStateInfoText.HAnchor = HAnchor.ParentCenter;
-            gcodeProcessingStateInfoText.VAnchor = VAnchor.ParentCenter;
-            gcodeProcessingStateInfoText.AutoExpandBoundsToText = true;
+            if (gcodeProcessingStateInfoText == null)
+            {
+                gcodeProcessingStateInfoText = new TextWidget(message);
+                gcodeProcessingStateInfoText.HAnchor = HAnchor.ParentCenter;
+                gcodeProcessingStateInfoText.VAnchor = VAnchor.ParentCenter;
+                gcodeProcessingStateInfoText.AutoExpandBoundsToText = true;
 
-            GuiWidget labelContainer = new GuiWidget();
-            labelContainer.AnchorAll();
-            labelContainer.AddChild(gcodeProcessingStateInfoText);
-            labelContainer.Selectable = false;
+                GuiWidget labelContainer = new GuiWidget();
+                labelContainer.AnchorAll();
+                labelContainer.AddChild(gcodeProcessingStateInfoText);
+                labelContainer.Selectable = false;
 
-            gcodeDispalyWidget.AddChild(labelContainer);
+                gcodeDispalyWidget.AddChild(labelContainer);
+            }
+
+            if (message == "")
+            {
+                gcodeProcessingStateInfoText.BackgroundColor = new RGBA_Bytes();
+            }
+            else
+            {
+                gcodeProcessingStateInfoText.BackgroundColor = RGBA_Bytes.White;
+            }
+
+            gcodeProcessingStateInfoText.Text = message;
         }
 
         void LoadingProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            gcodeProcessingStateInfoText.Text = string.Format("Loading GCode {0}%...", e.ProgressPercentage);
+            SetProcessingMessage(string.Format("Loading GCode {0}%...", e.ProgressPercentage));
         }
 
         void DoneLoadingGCode(object sender, EventArgs e)
         {
-            gcodeProcessingStateInfoText.Text = "";
+            SetProcessingMessage("");
             if (gcodeViewWidget != null
                 && gcodeViewWidget.LoadedGCode != null
                 && gcodeViewWidget.LoadedGCode.GCodeCommandQueue.Count > 0
@@ -603,7 +614,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (printItem != null)
             {
                 printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-                printItem.Done -= new EventHandler(sliceItem_Done);
+                printItem.SlicingDone -= new EventHandler(sliceItem_Done);
                 if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
                 {
                     SlicingQueue.Instance.CancelCurrentSlicing();
@@ -632,11 +643,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             StringEventArgs message = e as StringEventArgs;
             if (message != null && message.Data != null)
             {
-                gcodeProcessingStateInfoText.Text = message.Data;
+                SetProcessingMessage(message.Data);
             }
             else
             {
-                gcodeProcessingStateInfoText.Text = "";
+                SetProcessingMessage("");
             }
         }
 
@@ -646,7 +657,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // So we need to make sure we only have it added once. This will be ok to run when
             // not added or when added and will ensure we only have one hook.
             printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-            printItem.Done -= sliceItem_Done;
+            printItem.SlicingDone -= sliceItem_Done;
 
             UiThread.RunOnIdle(CreateAndAddChildren);
             startedSliceFromGenerateButton = false;

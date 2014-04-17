@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             GuiWidget viewArea = new GuiWidget();
             viewArea.AnchorAll();
             {
-                meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape);
+                meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "Press 'Add' to select an item.".Localize());
                 SetMeshViewerDisplayTheme();
                 meshViewerWidget.AnchorAll();
             }

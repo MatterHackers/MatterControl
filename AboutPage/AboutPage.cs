@@ -41,6 +41,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.VersionManagement;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
@@ -181,7 +182,6 @@ namespace MatterHackers.MatterControl
                 {
                     return "exe";
                 }
-
             }
         }
 
@@ -239,8 +239,6 @@ namespace MatterHackers.MatterControl
                     System.IO.File.Delete(friendlyFileName);
                 }
             }
-
-
         }
 
         public void DownloadUpdate(object sender, MouseEventArgs e)
@@ -497,7 +495,10 @@ namespace MatterHackers.MatterControl
 
             Button learnMoreLink = linkButtonFactory.Generate("www.matterhackers.com");
             learnMoreLink.Margin = new BorderDouble(right: 12);
-            learnMoreLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("http://www.matterhackers.com?clk=mc"); };
+            learnMoreLink.Click += (sender, mouseEvent) => {
+                //openBrowser(new Uri("http://www.matterhackers.com"));
+                System.Diagnostics.Process.Start("http://www.matterhackers.com?clk=mc"); 
+            };
             learnMoreLink.HAnchor = HAnchor.ParentCenter;
             learnMoreLink.Margin = new BorderDouble(0, 5);
             topToBottom.AddChild(learnMoreLink);
@@ -531,6 +532,37 @@ namespace MatterHackers.MatterControl
             matterControlDonateLink.OriginRelativeParent = new VectorMath.Vector2(matterControlDonateLink.OriginRelativeParent.x, matterControlDonateLink.OriginRelativeParent.y + donateStartText.Printer.TypeFaceStyle.DescentInPixels);
             matterControlDonateLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("http://www.matterhackers.com/store/printer-accessories/mattercontrol-donation"); };
             return matterControlDonateLink;
+        }
+
+        System.Windows.Forms.WebBrowser browser;
+        private void openBrowser(Uri url)
+        {
+            //SystemWindow browser = new SystemWindow(600,600);
+
+            System.Windows.Forms.Form test = new System.Windows.Forms.Form();
+            test.Icon = new System.Drawing.Icon(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "application.ico"));
+            test.Height = 480;
+            test.Width = 640;
+            test.Text = "MatterControl";
+
+            browser = new System.Windows.Forms.WebBrowser();
+            browser.DocumentCompleted += browser_DocumentCompleted;
+            browser.Navigate(url);
+            browser.Dock = System.Windows.Forms.DockStyle.Fill;
+
+            test.Controls.Add(browser);
+            test.Show();
+            //browser.AddChild(br);
+            //browser.ShowAsSystemWindow();
+        }
+
+        void browser_DocumentCompleted(object sender, System.Windows.Forms.WebBrowserDocumentCompletedEventArgs e)
+        {            
+            if (browser.Url == e.Url)
+            {                
+                Console.WriteLine("Navigated to {0}", e.Url);
+            }
+            browser.Show();
         }
 
         public static void InsertAttributionText(GuiWidget topToBottom, LinkButtonFactory linkButtonFactory)
