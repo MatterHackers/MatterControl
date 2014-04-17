@@ -1980,3 +1980,6 @@ Translated:Unknown
 English:Press 'Add' to select an item.
 Translated:Press 'Add' to select an item.
 
+English:Shop
+Translated:Shop
+

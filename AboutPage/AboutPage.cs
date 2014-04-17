@@ -239,8 +239,6 @@ namespace MatterHackers.MatterControl
                     System.IO.File.Delete(friendlyFileName);
                 }
             }
-
-
         }
 
         public void DownloadUpdate(object sender, MouseEventArgs e)
