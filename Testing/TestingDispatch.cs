@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.Testing
             try { MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined(); }
             catch (Exception e) { DumpException(e); }
 
-            try { MatterHackers.RenderOpenGl.GLMeshPlugin.AssertDebugNotDefined(); }
+            try { MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined(); }
             catch (Exception e) { DumpException(e); }
 
             if (!HadErrors)
