@@ -2004,3 +2004,6 @@ Translated:Alessandro Ranellucci for
 English:David Braam and Ultimaker BV for 
 Translated:David Braam and Ultimaker BV for 
 
+English:To enable GCode export, select a printer profile
+Translated:To enable GCode export, select a printer profile
+

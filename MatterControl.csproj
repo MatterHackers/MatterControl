@@ -85,8 +85,8 @@
     <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
     <Compile Include="ConfigurationPage\ConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
-    <Compile Include="CustomWidgets\ExportQueueItemWindow.cs" />
-    <Compile Include="CustomWidgets\ExportToFolderFeedbackWindow.cs" />
+    <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
+    <Compile Include="PrintQueue\OptionsMenue\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
     <Compile Include="PrintHistory\PrintHistoryListControl.cs" />
@@ -112,9 +112,8 @@
     <Compile Include="PrinterControls\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
     <Compile Include="PrinterControls\EditMacrosWindow.cs" />
-    <Compile Include="PrintLibrary\PluginChooserWindow.cs" />
-    <Compile Include="PrintLibrary\ExportLibraryItemWindow.cs" />
-    <Compile Include="PrintLibrary\RegisteredCreators.cs" />
+    <Compile Include="CustomWidgets\PluginChooserWindow.cs" />
+    <Compile Include="ControlElements\RegisteredCreators.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingCura.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
@@ -125,14 +124,14 @@
     <Compile Include="ConfigurationPage\PrintLevelWizard.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />
     <Compile Include="CustomWidgets\ClickWidget.cs">
-      <DependentUpon>ExportQueueItemWindow.cs</DependentUpon>
+      <DependentUpon>ExportPrintItemWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
     <Compile Include="CustomWidgets\PrintProgressBarWidget.cs" />
-    <Compile Include="CustomWidgets\ExportToSdCardFeedbackWindow.cs" />
+    <Compile Include="PrintQueue\OptionsMenue\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="CustomWidgets\StyledDropDownList.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
@@ -151,7 +150,7 @@
     <Compile Include="ControlElements\MHTextEditWidget.cs" />
     <Compile Include="PartPreviewWindow\GcodeViewBasic.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
-    <Compile Include="PrintQueue\PartsSheetCreator.cs" />
+    <Compile Include="PrintQueue\OptionsMenue\PartsSheetCreator.cs" />
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
     <Compile Include="PrinterCommunication\PrinterCommunication.cs" />
     <Compile Include="PrinterControls\PrintLeveling.cs" />
@@ -174,19 +173,19 @@
     <Compile Include="PrinterControls\TemperatureIndicator.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
     <Compile Include="PrintLibrary\PrintLibraryListControl.cs" />
-    <Compile Include="PrintLibrary\PrintLibraryListItem.cs" />
+    <Compile Include="PrintLibrary\LibraryRowItem.cs" />
     <Compile Include="PrintLibrary\PrintLibraryWidget.cs" />
-    <Compile Include="PrintQueue\ExportToFolderProcess.cs" />
+    <Compile Include="PrintQueue\OptionsMenue\ExportToFolderProcess.cs" />
     <Compile Include="CustomWidgets\PartThumbnailWidget.cs" />
     <Compile Include="PrintQueue\PrintItemWrapper.cs" />
-    <Compile Include="PrintQueue\RowItem.cs" />
+    <Compile Include="PrintQueue\QueueRowItem.cs" />
     <Compile Include="MatterControlApplication.cs" />
     <Compile Include="PrintQueue\QueueDataView.cs" />
-    <Compile Include="PrintQueue\QueueOptionsMenu.cs" />
+    <Compile Include="PrintQueue\OptionsMenue\QueueOptionsMenu.cs" />
     <Compile Include="Utilities\ProjectFileHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\WebUtilities\RequestManager.cs" />
-    <Compile Include="PrintQueue\BottomToolbar.cs" />
+    <Compile Include="PrintQueue\QueueBottomToolbar.cs" />
     <Compile Include="SettingsManagement\ApplicationSettings.cs" />
     <Compile Include="SettingsManagement\UserSettings.cs" />
     <Compile Include="SlicerConfiguration\ActiveSliceSettings.cs" />

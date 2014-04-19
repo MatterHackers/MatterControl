@@ -15,17 +15,19 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-    public class ExportQueueItemWindow : SystemWindow
+    public class ExportPrintItemWindow : SystemWindow
     {
         CheckBox showInFolderAfterSave;
-        private RowItem printQueueItem;
+        private PrintItemWrapper printItemWrapper;
         string pathAndFilenameToSave;
         bool partIsGCode = false;
 
-        public ExportQueueItemWindow(PrintQueue.RowItem printQueueItem)
+        public ExportPrintItemWindow(PrintItemWrapper printItemWraper)
             : base(400, 250)
         {
-            if (Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".GCODE")
+            this.printItemWrapper = printItemWraper;
+
+            if (Path.GetExtension(printItemWraper.FileLocation).ToUpper() == ".GCODE")
             {
                 partIsGCode = true;
             }
@@ -37,9 +39,6 @@ namespace MatterHackers.MatterControl
 			this.Title = McExportFileTitleFull;
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             
-            // TODO: Complete member initialization
-            this.printQueueItem = printQueueItem;
-
             doLayout();
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(reloadAfterPrinterProfileChanged, ref unregisterEvents);
         }
@@ -159,16 +158,16 @@ namespace MatterHackers.MatterControl
                     pathAndFilenameToSave += ".gcode";
 				}
 
-                if (Path.GetExtension(printQueueItem.PrintItemWrapper.FileLocation).ToUpper() == ".STL")
+                if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
                 {
                     Close();
-                    SlicingQueue.Instance.QueuePartForSlicing(printQueueItem.PrintItemWrapper);
-                    printQueueItem.PrintItemWrapper.SlicingDone += new EventHandler(sliceItem_Done);
+                    SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+                    printItemWrapper.SlicingDone += new EventHandler(sliceItem_Done);
                 }
                 else if (partIsGCode)
                 {
                     Close();
-                    SaveGCodeToNewLocation(printQueueItem.PrintItemWrapper.FileLocation, pathAndFilenameToSave);
+                    SaveGCodeToNewLocation(printItemWrapper.FileLocation, pathAndFilenameToSave);
                 }
             }
         }
@@ -220,7 +219,6 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(DoExportSTL_Click);
         }
 
-
         void DoExportSTL_Click(object state)
         {
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");  
@@ -244,7 +242,7 @@ namespace MatterHackers.MatterControl
                     File.Delete(filePathToSave);
                     filePathToSave += ".stl";
                 }
-                File.Copy(printQueueItem.PrintItemWrapper.FileLocation, filePathToSave, true);
+                File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
                 ShowFileIfRequested(filePathToSave);
             }
         }

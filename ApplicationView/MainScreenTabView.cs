@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 
             this.Margin = new BorderDouble(top: 4);
 
-            QueueTabPage = new TabPage(new BottomToolbar(queueDataView), LocalizedString.Get("Queue").ToUpper());
+            QueueTabPage = new TabPage(new QueueBottomToolbar(queueDataView), LocalizedString.Get("Queue").ToUpper());
             this.AddTab(new SimpleTextTabWidget(QueueTabPage, 15,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 

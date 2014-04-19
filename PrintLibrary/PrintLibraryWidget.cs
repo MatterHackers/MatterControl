@@ -152,16 +152,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         private void addToQueueButton_Click(object sender, MouseEventArgs e)
         {
-            foreach (PrintLibraryListItem item in PrintLibraryListControl.Instance.SelectedItems)
+            foreach (LibraryRowItem item in PrintLibraryListControl.Instance.SelectedItems)
             {
-                QueueData.Instance.AddItem(item.printItem);
+                QueueData.Instance.AddItem(item.printItemWrapper);
             }
             PrintLibraryListControl.Instance.ClearSelectedItems();
         }
 
         private void onLibraryItemsSelected(object sender, EventArgs e)
         {
-            List<PrintLibraryListItem> selectedItemsList = (List<PrintLibraryListItem>)sender;
+            List<LibraryRowItem> selectedItemsList = (List<LibraryRowItem>)sender;
             if (selectedItemsList.Count > 0)
             {
                 addToQueueButton.Visible = true;
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
                     printItem.Commit();
 
-                    PrintLibraryListItem queueItem = new PrintLibraryListItem(new PrintItemWrapper(printItem));
+                    LibraryRowItem queueItem = new LibraryRowItem(new PrintItemWrapper(printItem));
                     PrintLibraryListControl.Instance.AddChild(queueItem);
                 }
                 PrintLibraryListControl.Instance.Invalidate();
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
                     printItem.Commit();
 
-                    PrintLibraryListItem queueItem = new PrintLibraryListItem(new PrintItemWrapper(printItem));
+                    LibraryRowItem queueItem = new LibraryRowItem(new PrintItemWrapper(printItem));
                     PrintLibraryListControl.Instance.AddChild(queueItem);
                 }
                 PrintLibraryListControl.Instance.Invalidate();

@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 
                     if (addToLibraryOption.Checked)
                     {
-                        PrintLibraryListItem libraryItem = new PrintLibraryListItem(printItemWrapper);
+                        LibraryRowItem libraryItem = new LibraryRowItem(printItemWrapper);
 
                         PrintLibraryListControl.Instance.AddChild(libraryItem);
                         PrintLibraryListControl.Instance.Invalidate();

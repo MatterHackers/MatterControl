@@ -42,7 +42,6 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.CreatorPlugins
 {
-    
     public class PluginChooserWindow : SystemWindow
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();

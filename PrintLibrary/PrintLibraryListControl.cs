@@ -138,8 +138,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
             if(index >= 0 && index < Count)
             {
                 GuiWidget itemHolder = topToBottomItemList.Children[index];
-                PrintLibraryListItem child = (PrintLibraryListItem)itemHolder.Children[0];
-                return new PrintItem(child.printItem.Name, child.printItem.FileLocation);
+                LibraryRowItem child = (LibraryRowItem)itemHolder.Children[0];
+                return new PrintItem(child.printItemWrapper.Name, child.printItemWrapper.FileLocation);
             }
 
             return null;
@@ -245,13 +245,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         public void ClearSelectedItems()
         {
-            List<PrintLibraryListItem> itemsToClear = new List<PrintLibraryListItem>();
+            List<LibraryRowItem> itemsToClear = new List<LibraryRowItem>();
             
-            foreach(PrintLibraryListItem item in instance.SelectedItems)
+            foreach(LibraryRowItem item in instance.SelectedItems)
             {
                 itemsToClear.Add(item);                
             }            
-            foreach (PrintLibraryListItem item in itemsToClear)
+            foreach (LibraryRowItem item in itemsToClear)
             {
                 item.isSelectedItem = false;
                 item.selectionCheckBox.Checked = false;
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             {
                 foreach (PrintItem part in partFiles)
                 {
-                    PrintLibraryListControl.Instance.AddChild(new PrintLibraryListItem(new PrintItemWrapper(part)));
+                    PrintLibraryListControl.Instance.AddChild(new LibraryRowItem(new PrintItemWrapper(part)));
                 }
             }
         }
@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
         RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
 
-        public SelectedPrintItems<PrintLibraryListItem> SelectedItems = new SelectedPrintItems<PrintLibraryListItem>();
+        public SelectedPrintItems<LibraryRowItem> SelectedItems = new SelectedPrintItems<LibraryRowItem>();
         int selectedIndex = -1;
         int hoverIndex = -1;
         int dragIndex = -1;
@@ -362,11 +362,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
                         GuiWidget child = topToBottomItemList.Children[index];
                         if (index == HoverIndex)
                         {
-                            ((PrintLibraryListItem)child.Children[0]).isHoverItem = true;
+                            ((LibraryRowItem)child.Children[0]).isHoverItem = true;
                         }
-                        else if (((PrintLibraryListItem)child.Children[0]).isHoverItem == true)
+                        else if (((LibraryRowItem)child.Children[0]).isHoverItem == true)
                         {
-                            ((PrintLibraryListItem)child.Children[0]).isHoverItem = false;
+                            ((LibraryRowItem)child.Children[0]).isHoverItem = false;
                         }
                         child.Invalidate();
                     }
@@ -447,10 +447,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         public void RemoveSelectedItems()
         {
-            foreach (PrintLibraryListItem item in instance.SelectedItems)
+            foreach (LibraryRowItem item in instance.SelectedItems)
             {
                 RemoveChild(item);
-                item.printItem.Delete();
+                item.printItemWrapper.Delete();
             }
         }
 
