@@ -100,7 +100,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             int index = PrintItems.IndexOf(printItemWrapper);
             if (index < 0)
             {
-                throw new Exception("item not in library");
+                // It may be possible to have the same item in the remove list twice.
+                // so if it is not in the PrintItems then ignore it.
+                return;
             }
             PrintItems.RemoveAt(index);
             

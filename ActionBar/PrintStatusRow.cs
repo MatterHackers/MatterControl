@@ -193,28 +193,29 @@ namespace MatterHackers.MatterControl.ActionBar
         private Button GetAutoLevelIndicator()
         {
             ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
-			string notifyIconPath = Path.Combine("Icons", "PrintStatusControls", "leveling-16x16.png");
+            imageButtonFactory.invertImageColor = false;
+            string notifyIconPath = Path.Combine("Icons", "PrintStatusControls", "leveling-16x16.png");
 			string notifyHoverIconPath = Path.Combine("Icons", "PrintStatusControls", "leveling-16x16.png");
-            Button notifyButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
-            notifyButton.Cursor = Cursors.Hand;
-            notifyButton.Margin = new Agg.BorderDouble(top: 3);
-            notifyButton.MouseEnterBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.ShowHoverText("Print leveling is enabled."); };
-            notifyButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
-            notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+            Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
+            autoLevelButton.Cursor = Cursors.Hand;
+            autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
+            autoLevelButton.MouseEnterBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.ShowHoverText("Print leveling is enabled."); };
+            autoLevelButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
+            autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
 
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, e) =>
             {
-                notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+                autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
 
             }, ref unregisterEvents);
 
             ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
             {
-                notifyButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+                autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
 
             }, ref unregisterEvents);
 
-            return notifyButton;
+            return autoLevelButton;
         }
 
         private FlowLayoutWidget CreateActivePrinterInfoWidget()
