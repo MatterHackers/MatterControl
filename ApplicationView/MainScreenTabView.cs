@@ -51,8 +51,10 @@ using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl
 {
-    class QueueTab : TabControl
+    class MainScreenTabView : TabControl
     {
+        static int tabStateBeforeClose = 0;
+
         TabPage QueueTabPage;
         TabPage LibraryTabPage;
         TabPage HistoryTabPage;
@@ -63,7 +65,7 @@ namespace MatterHackers.MatterControl
         QueueDataView queueDataView;
         event EventHandler unregisterEvents;
 
-        public QueueTab(QueueDataView queueDataView)
+        public MainScreenTabView(QueueDataView queueDataView)
         {
             this.queueDataView = queueDataView;
             this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;

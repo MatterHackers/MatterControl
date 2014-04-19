@@ -58,14 +58,14 @@ namespace MatterHackers.MatterControl
             VAnchor = VAnchor.FitToChildren;
         }
 
-        public override void SendToChildren(EventArgs eventToRout)
+        public override void SendToChildren(object objectToRout)
         {
-            ChangeTextColorEventArgs changeColorEvent = eventToRout as ChangeTextColorEventArgs;
+            ChangeTextColorEventArgs changeColorEvent = objectToRout as ChangeTextColorEventArgs;
             if (changeColorEvent != null)
             {
                 buttonText.TextColor = changeColorEvent.color;
             }
-            base.SendToChildren(eventToRout);
+            base.SendToChildren(objectToRout);
         }
 
         public override void OnDraw(Agg.Graphics2D graphics2D)

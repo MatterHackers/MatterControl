@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
                 this.LeftPanel.AddChild(new PrintProgressBar());
 
                 // construct the main controls tab control
-                mainControlsTabControl = new QueueTab(queueDataView);
+                mainControlsTabControl = new MainScreenTabView(queueDataView);
 
                 advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;

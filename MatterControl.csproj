@@ -75,7 +75,7 @@
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
-    <Compile Include="ApplicationView\QueueTabs.cs" />
+    <Compile Include="ApplicationView\MainScreenTabView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
