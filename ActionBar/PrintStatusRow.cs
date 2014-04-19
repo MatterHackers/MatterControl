@@ -55,6 +55,25 @@ namespace MatterHackers.MatterControl.ActionBar
         QueueDataView queueDataView;
         PartThumbnailWidget activePrintPreviewImage;
 
+        static FlowLayoutWidget iconContainer;
+
+        public delegate void AddIconToPrintStatusRowDelegate(GuiWidget iconContainer);
+        private static event AddIconToPrintStatusRowDelegate privateAddIconToPrintStatusRow;
+        public static event AddIconToPrintStatusRowDelegate AddIconToPrintStatusRow
+        {
+            add
+            {
+                privateAddIconToPrintStatusRow += value;
+                // and call it right away
+                value(iconContainer);
+            }
+
+            remove
+            {
+                privateAddIconToPrintStatusRow -= value;
+            }
+        }
+
         public PrintStatusRow(QueueDataView queueDataView)
         {
             Initialize();
@@ -67,6 +86,11 @@ namespace MatterHackers.MatterControl.ActionBar
             this.queueDataView = queueDataView;
 
             onActivePrintItemChanged(null, null);
+
+            if (privateAddIconToPrintStatusRow != null)
+            {
+                privateAddIconToPrintStatusRow(iconContainer);
+            }
         }
 
         string ActivePrintStatusText
@@ -110,19 +134,7 @@ namespace MatterHackers.MatterControl.ActionBar
             StringEventArgs message = e as StringEventArgs;
             ActivePrintStatusText = message.Data;
         }
-
-        static FlowLayoutWidget iconContainer;
-        public delegate void OpenNotificationsWindow();
-        public static OpenNotificationsWindow openNotificationsWindowFunction = null;
-        public static OpenNotificationsWindow OpenNotificationsWindowFunction 
-        {
-            get { return openNotificationsWindowFunction; }
-            set
-            {
-                openNotificationsWindowFunction = value;
-                AddNotificationButton(iconContainer);
-            }
-        }
+        
 
         TemperatureWidgetBase extruderTemperatureWidget;
         TemperatureWidgetBase bedTemperatureWidget;
@@ -152,10 +164,6 @@ namespace MatterHackers.MatterControl.ActionBar
             iconContainer.Name = "PrintStatusRow.IconContainer";
             iconContainer.VAnchor |= VAnchor.ParentTop;
             iconContainer.Margin = new BorderDouble(top: 3);
-            if (OpenNotificationsWindowFunction != null)
-            {
-                AddNotificationButton(iconContainer);
-            }
             iconContainer.AddChild(GetAutoLevelIndicator());
 
             this.AddChild(activePrintPreviewImage);
@@ -180,22 +188,6 @@ namespace MatterHackers.MatterControl.ActionBar
                     bedTemperatureWidget.Visible = false;
                 }
             }
-        }
-
-        private static void AddNotificationButton(FlowLayoutWidget iconContainer)
-        {
-            ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
-            imageButtonFactory.invertImageColor = false;
-            string notifyIconPath = Path.Combine("Icons", "PrintStatusControls", "notify.png");
-            string notifyHoverIconPath = Path.Combine("Icons", "PrintStatusControls", "notify-hover.png");
-            Button notifyButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
-            notifyButton.Cursor = Cursors.Hand;
-            notifyButton.Margin = new Agg.BorderDouble(top: 3);
-            notifyButton.Click += (sender, mouseEvent) => { OpenNotificationsWindowFunction(); };
-            notifyButton.MouseEnterBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.ShowHoverText("Edit notification settings"); };
-            notifyButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
-
-            iconContainer.AddChild(notifyButton);
         }
 
         private Button GetAutoLevelIndicator()

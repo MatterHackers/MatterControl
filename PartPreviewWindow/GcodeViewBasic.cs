@@ -54,11 +54,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget layerSelectionButtonsPannel;
 
         FlowLayoutWidget modelOptionsContainer;
-        FlowLayoutWidget layerOptionsContainer;
         FlowLayoutWidget displayOptionsContainer;
 
         CheckBox expandModelOptions;
-        CheckBox expandLayerOptions;
         CheckBox expandDisplayOptions;
 
         GuiWidget gcodeDispalyWidget;
@@ -80,9 +78,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             CreateAndAddChildren(null);
         }
 
+        static string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
+        static string pressGenerateMessage = "Press 'generate' to view layers".Localize();
+        static string fileNotFoundMessage = "File not found on disk.".Localize();
         void CreateAndAddChildren(object state)
         {
             RemoveAllChildren();
+            gcodeViewWidget = null;
+            gcodeProcessingStateInfoText = null;
 
             FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
@@ -134,13 +137,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         string gcodePathAndFileName = printItem.GCodePathAndFileName;
                         bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
 
-                        if (gcodeProcessingStateInfoText.Text == "Slicing Error")
+                        if (printItem.SlicingHadError)
                         {
-                            SetProcessingMessage(LocalizedString.Get("Slicing Error. Please review your slice settings."));
+                            SetProcessingMessage(slicingErrorMessage);
                         }
                         else
                         {
-                            SetProcessingMessage(LocalizedString.Get("Press 'generate' to view layers"));
+                            SetProcessingMessage(pressGenerateMessage);
                         }
 
                         if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
@@ -154,7 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                     else
                     {
-                        SetProcessingMessage(string.Format("{0}\n'{1}'", LocalizedString.Get("File not found on disk."), printItem.Name));
+                        SetProcessingMessage(string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name));
                     }
                 }
             }
@@ -196,7 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 BorderDouble buttonMargin = new BorderDouble(top: 3);
 
-                string label = "MODEL".Localize().ToUpper();
+                string label = "Model".Localize().ToUpper();
 				expandModelOptions = expandMenuOptionFactory.GenerateCheckBoxButton(label, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandModelOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandModelOptions);
@@ -206,15 +209,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 modelOptionsContainer.HAnchor = HAnchor.ParentLeftRight;
                 //modelOptionsContainer.Visible = false;
                 buttonRightPanel.AddChild(modelOptionsContainer);
-
-				expandLayerOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Layer".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-                expandLayerOptions.Margin = new BorderDouble(bottom: 2);
-                //buttonRightPanel.AddChild(expandLayerOptions);
-
-                layerOptionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                layerOptionsContainer.HAnchor = HAnchor.ParentLeftRight;
-                layerOptionsContainer.Visible = false;
-                buttonRightPanel.AddChild(layerOptionsContainer);
 
 				expandDisplayOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandDisplayOptions.Margin = new BorderDouble(bottom: 2);
@@ -242,7 +236,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void CreateOptionsContent()
         {
             AddModelInfo(modelOptionsContainer);
-            //AddLayerInfo(layerOptionsContainer);
             AddDisplayControls(displayOptionsContainer);
         }
 
@@ -590,8 +583,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void AddHandlers()
         {
             expandModelOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandModelOptions_CheckedStateChanged);
-            expandLayerOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
-            expandDisplayOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandMirrorOptions_CheckedStateChanged);
+            expandDisplayOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandDisplayOptions_CheckedStateChanged);
         }
 
         void expandModelOptions_CheckedStateChanged(object sender, EventArgs e)
@@ -599,14 +591,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             modelOptionsContainer.Visible = expandModelOptions.Checked;
         }
 
-        void expandMirrorOptions_CheckedStateChanged(object sender, EventArgs e)
+        void expandDisplayOptions_CheckedStateChanged(object sender, EventArgs e)
         {
             displayOptionsContainer.Visible = expandDisplayOptions.Checked;
-        }
-
-        void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
-        {
-            layerOptionsContainer.Visible = expandLayerOptions.Checked;
         }
 
         public override void OnClosed(EventArgs e)

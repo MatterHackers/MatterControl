@@ -1983,3 +1983,24 @@ Translated:Press 'Add' to select an item.
 English:Shop
 Translated:Shop
 
+English:Slicing Error
+Translated:Slicing Error
+
+English:Ready to Print
+Translated:Ready to Print
+
+English:File Not Found\n'{0}'
+Translated:File Not Found\n'{0}'
+
+English:Slicing Error.\nPlease review your slice settings.
+Translated:Slicing Error.\nPlease review your slice settings.
+
+English:Special thanks to:
+Translated:Special thanks to:
+
+English:Alessandro Ranellucci for 
+Translated:Alessandro Ranellucci for 
+
+English:David Braam and Ultimaker BV for 
+Translated:David Braam and Ultimaker BV for 
+

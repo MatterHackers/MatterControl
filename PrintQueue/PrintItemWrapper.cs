@@ -36,6 +36,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+using MatterHackers.Localizations;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
@@ -63,7 +64,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public bool CurrentlySlicing { get; set; }
 
-         public PrintItemWrapper(DataStorage.PrintItem printItem)
+        bool slicingHadError = false;
+        public bool SlicingHadError { get { return slicingHadError; } }
+        
+        public PrintItemWrapper(DataStorage.PrintItem printItem)
         {
             this.PrintItem = printItem;
             this.fileType = Path.GetExtension(printItem.FileLocation).ToUpper();
@@ -80,6 +84,9 @@ namespace MatterHackers.MatterControl.PrintQueue
         }
 
         bool doneSlicing;
+        static string slicingError = "Slicing Error".Localize();
+        static string readyToPrint = "Ready to Print".Localize();
+        static string fileNotFound = "File Not Found\n'{0}'".Localize();
         public bool DoneSlicing
         {
             get
@@ -94,7 +101,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                     doneSlicing = value;
                     if (doneSlicing)
                     {
-                        string message = "Slicing Error";
+                        string message = slicingError;
+                        slicingHadError = true;
                         if (File.Exists(FileLocation))
                         {
                             string gcodePathAndFileName = GetGCodePathAndFileName();
@@ -104,13 +112,14 @@ namespace MatterHackers.MatterControl.PrintQueue
                                 // This is really just to make sure it is bigger than nothing.
                                 if (info.Length > 10)
                                 {
-                                    message = "Ready to Print";
+                                    message = readyToPrint;
+                                    slicingHadError = false;
                                 }
                             }
                         }
                         else
                         {
-                            message = string.Format("File Not Found\n'{0}'", FileLocation);
+                            message = string.Format(fileNotFound, FileLocation);
                         }
 
                         OnSlicingOutputMessage(new StringEventArgs(message));
