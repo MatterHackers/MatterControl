@@ -116,7 +116,6 @@ namespace MatterHackers.MatterControl
             AnchorAll();
             AddHandlers();
             SetVisibleStatus();
-            
         }
 
         void onBoundsChanges(Object sender, EventArgs e)
@@ -160,18 +159,14 @@ namespace MatterHackers.MatterControl
 
         void DoChangePanel(object state)
         {
-            // remember which tab we were on
-            int topTabIndex = this.advancedControlsTabControl.SelectedTabIndex;
-
-            // remove the advance control and replace it with new ones build for the selected printer
+            // remove the advance control and replace it with new ones built for the selected printer
             int advancedControlsWidgetIndex = ColumnThree.GetChildIndex(this.advancedControlsTabControl);
             ColumnThree.RemoveChild(advancedControlsWidgetIndex);
             this.advancedControlsTabControl = CreateNewAdvancedControlsTab(sliceSettingsUiState);
             ColumnThree.AddChild(this.advancedControlsTabControl, advancedControlsWidgetIndex);
             ColumnThree.Width = 590;
 
-            // set the selected tab back to the one it was before we replace the control
-            this.advancedControlsTabControl.SelectTab(topTabIndex);
+            RestoreUiState();
         }
 
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
@@ -205,6 +200,8 @@ namespace MatterHackers.MatterControl
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
+            RestoreUiState();
+
             return advancedControls;
         }
 
@@ -217,7 +214,6 @@ namespace MatterHackers.MatterControl
             this.BoundsChanged += new EventHandler(onBoundsChanges);
             RightBorderLine.Click += new ClickWidget.ButtonEventHandler(onRightBorderClick);
             LeftBorderLine.Click += new ClickWidget.ButtonEventHandler(onLeftBorderClick);
-            
         }
 
         void onRightBorderClick(object sender, EventArgs e)
@@ -239,40 +235,48 @@ namespace MatterHackers.MatterControl
 
         internal class Pannel1UiState
         {
-            internal int lastSelectedTab = -1;
+            internal int lastMainScreenTab = -1;
             internal int lastSelectedIndex = -1;
+            internal int lastAdvancedControlsTab = -1;
         }
 
-        Pannel1UiState uiState = new Pannel1UiState();
+        static Pannel1UiState uiState = new Pannel1UiState();
 
-        void StorePannel1UiState()
+        public void StoreUiState()
         {
-            uiState.lastSelectedIndex = -1;
-            if (queueDataView != null)
+            if (queueDataView != null && queueDataView.SelectedIndex != -1)
             {
                 uiState.lastSelectedIndex = queueDataView.SelectedIndex;
             }
-            if (mainScreenTabView != null)
+            if (mainScreenTabView != null && mainScreenTabView.SelectedTabIndex != -1)
             {
-                uiState.lastSelectedTab = mainScreenTabView.SelectedTabIndex;
+                uiState.lastMainScreenTab = mainScreenTabView.SelectedTabIndex;
+            }
+            if (advancedControls != null && advancedControls.SelectedTabIndex != -1)
+            {
+                uiState.lastAdvancedControlsTab = advancedControls.SelectedTabIndex;
             }
         }
 
-        void RestorePannel1UiState()
+        void RestoreUiState()
         {
-            if (uiState.lastSelectedIndex > -1)
+            if (uiState.lastSelectedIndex > -1 && queueDataView != null)
             {
                 queueDataView.SelectedIndex = uiState.lastSelectedIndex;
             }
-            if (uiState.lastSelectedTab > -1)
+            if (uiState.lastMainScreenTab > -1 && mainScreenTabView != null)
             {
-                mainScreenTabView.SelectedTabIndex = uiState.lastSelectedTab;
+                mainScreenTabView.SelectedTabIndex = uiState.lastMainScreenTab;
+            }
+            if (uiState.lastAdvancedControlsTab > -1 && advancedControls != null)
+            {
+                advancedControls.SelectedTabIndex = uiState.lastAdvancedControlsTab;
             }
         }
 
         void LoadCompactView()
         {
-            StorePannel1UiState();
+            StoreUiState();
 
             queueDataView = new QueueDataView();
             
@@ -281,12 +285,12 @@ namespace MatterHackers.MatterControl
             ColumnOne.AddChild(new CompactSlidePanel(queueDataView));
             ColumnOne.AnchorAll();
 
-            RestorePannel1UiState();
+            RestoreUiState();
         }
 
         void LoadColumnOne()
         {
-            StorePannel1UiState();
+            StoreUiState();
 
             queueDataView = new QueueDataView();
 
@@ -298,7 +302,7 @@ namespace MatterHackers.MatterControl
             ColumnOne.AddChild(mainScreenTabView);
             ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
 
-            RestorePannel1UiState();
+            RestoreUiState();
         }
 
         void LoadColumnTwo(object state = null)

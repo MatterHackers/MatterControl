@@ -83,10 +83,12 @@ namespace MatterHackers.MatterControl
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ReloadAll, ref unregisterEvents);
         }
 
+        WidescreenPanel widescreenPanel;
         public void AddElements()
         {
             //this.AddChild(new CompactSlidePanel());
-            this.AddChild(new WidescreenPanel());
+            widescreenPanel = new WidescreenPanel();
+            this.AddChild(widescreenPanel);
             this.AnchorAll();
             SetUpdateNotification(this, null);
         }
@@ -94,9 +96,11 @@ namespace MatterHackers.MatterControl
         public void ReloadAll(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
-            {                            
+            {
+                widescreenPanel.StoreUiState();
                 this.RemoveAllChildren();
-                this.AddChild(new WidescreenPanel());
+                widescreenPanel = new WidescreenPanel();
+                this.AddChild(widescreenPanel);
             });
         }
 
