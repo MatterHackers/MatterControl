@@ -123,6 +123,9 @@ namespace MatterHackers.MatterControl.ActionBar
                 AddNotificationButton(iconContainer);
             }
         }
+
+        TemperatureWidgetBase extruderTemperatureWidget;
+        TemperatureWidgetBase bedTemperatureWidget;
         void AddChildElements()
         {            
             activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", new Vector2(115, 115));
@@ -133,8 +136,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
             FlowLayoutWidget temperatureWidgets = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
-                TemperatureWidgetBase extruderTemperatureWidget = new TemperatureWidgetExtruder();
-                TemperatureWidgetBase bedTemperatureWidget = new TemperatureWidgetBed();
+                extruderTemperatureWidget = new TemperatureWidgetExtruder();
+                bedTemperatureWidget = new TemperatureWidgetBed();
 
                 temperatureWidgets.AddChild(extruderTemperatureWidget);
                 temperatureWidgets.AddChild(bedTemperatureWidget);
@@ -162,6 +165,21 @@ namespace MatterHackers.MatterControl.ActionBar
 
             UpdatePrintStatus();
             UpdatePrintItemName();
+        }
+
+        private void SetVisibleStatus()
+        {
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+                if (ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasHeatedBed())
+                {
+                    bedTemperatureWidget.Visible = true;
+                }
+                else
+                {
+                    bedTemperatureWidget.Visible = false;
+                }
+            }
         }
 
         private static void AddNotificationButton(FlowLayoutWidget iconContainer)
