@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		bool viewWindowIsOpen = false;
 		PartPreviewMainWindow viewingWindow;
 		ExportPrintItemWindow exportingWindow;
+        LibraryDataView libraryDataView;
 
 		private void OpenExportWindow()
 		{
@@ -97,8 +98,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.exportWindowIsOpen = false;
 		}
 
-        public LibraryRowItem(PrintItemWrapper printItem)
+        public LibraryRowItem(PrintItemWrapper printItem, LibraryDataView libraryDataView)
         {
+            this.libraryDataView = libraryDataView;
             this.printItemWrapper = printItem;
             linkButtonFactory.fontSize = 10;
             linkButtonFactory.textColor = RGBA_Bytes.White;
@@ -233,7 +235,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             if (this.isSelectedItem == false)
             {
                 this.isSelectedItem = true;
-                PrintLibraryListControl.Instance.SelectedItems.Add(this);
+                libraryDataView.SelectedItems.Add(this);
             }
         }
 
@@ -242,12 +244,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
             if (selectionCheckBox.Checked == true)
             {
                 this.isSelectedItem = true;
-                PrintLibraryListControl.Instance.SelectedItems.Add(this);
+                libraryDataView.SelectedItems.Add(this);
             }
             else
             {
                 this.isSelectedItem = false;
-                PrintLibraryListControl.Instance.SelectedItems.Remove(this);
+                libraryDataView.SelectedItems.Remove(this);
             }
         }
 
@@ -257,7 +259,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void RemoveThisFromPrintLibrary(object state)
         {
-            PrintLibraryListControl.Instance.RemoveChild(this);
+            libraryDataView.RemoveChild(this);
             this.printItemWrapper.Delete();
         }
 
@@ -309,7 +311,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the queue?", pathAndFile);
                 if (StyledMessageBox.ShowMessageBox(message, "Item not found", StyledMessageBox.MessageType.YES_NO))
                 {
-                    PrintLibraryListControl.Instance.RemoveChild(this);
+                    libraryDataView.RemoveChild(this);
                 }
             }
         }

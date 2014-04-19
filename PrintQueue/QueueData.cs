@@ -43,6 +43,28 @@ using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
+    public class IndexArgs : EventArgs
+    {
+        internal int index;
+
+        public int Index { get { return index; } }
+        internal IndexArgs(int index)
+        {
+            this.index = index;
+        }
+    }
+
+    public class SwapIndexArgs : EventArgs
+    {
+        internal int indexA;
+        internal int indexB;
+        internal SwapIndexArgs(int indexA, int indexB)
+        {
+            this.indexA = indexA;
+            this.indexB = indexB;
+        }
+    }
+
     public class QueueData
     {
         private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
@@ -98,28 +120,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             OrderChanged.CallEvents(this, e);
         }
 
-        public class IndexArgs : EventArgs
-        {
-            internal int index;
-
-            public int Index { get { return index; } }
-            internal IndexArgs(int index)
-            {
-                this.index = index;
-            }
-        }
-
-        public class SwapIndexArgs : EventArgs
-        {
-            internal int indexA;
-            internal int indexB;
-            internal SwapIndexArgs(int indexA, int indexB)
-            {
-                this.indexA = indexA;
-                this.indexB = indexB;
-            }
-        }
-
         public void RemoveIndexOnIdle(int index)
         {
             UiThread.RunOnIdle(RemoveIndex, new IndexArgs(index));
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             ItemRemoved.CallEvents(this, e);
         }
 
-        public PrintItemWrapper GetPrintItem(int index)
+        public PrintItemWrapper GetPrintItemWrapper(int index)
         {
             if (index >= 0 && index < PrintItems.Count)
             {
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             List<PrintItem> listToReturn = new List<PrintItem>();
             for (int i = 0; i < Count; i++)
             {
-                listToReturn.Add(GetPrintItem(i).PrintItem);
+                listToReturn.Add(GetPrintItemWrapper(i).PrintItem);
             }
             return listToReturn;
         }

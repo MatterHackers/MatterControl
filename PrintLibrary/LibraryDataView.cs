@@ -43,7 +43,6 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-
     public class SelectedPrintItems<T> : List<T>
     {
         public event EventHandler OnAdd;
@@ -68,39 +67,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
         }
     }
     
-    public class PrintLibraryListControl : ScrollableWidget
+    public class LibraryDataView : ScrollableWidget
     {
-        static PrintLibraryListControl instance;
-        string keywordFilter;
-        private DataStorage.PrintItemCollection libraryCollection;
-
-        public static PrintLibraryListControl Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new PrintLibraryListControl();
-                    instance.LoadLibraryItems();
-                }
-                return instance;
-            }
-        }
-
-        public string KeywordFilter 
-        {
-            get { return keywordFilter; }
-            set 
-            {
-                if (this.keywordFilter != value)
-                {
-                    this.keywordFilter = value;
-                    LoadLibraryItems();
-                }
-            }            
-        }
-
-		private void SetDisplayAttributes()
+        event EventHandler unregisterEvents;
+        
+        private void SetDisplayAttributes()
 		{
 			this.MinimumSize = new Vector2(0, 200);
 			this.AnchorAll();
@@ -117,14 +88,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-
-        public PrintItem SelectedPart
+        public PrintItemWrapper SelectedPart
         {
             get
             {
                 if (SelectedIndex >= 0)
                 {
-                    return GetSTLToPrint(SelectedIndex);
+                    return LibraryData.Instance.GetPrintItemWrapper(SelectedIndex);
                 }
                 else
                 {
@@ -133,121 +103,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        public PrintItem GetSTLToPrint(int index)
-        {
-            if(index >= 0 && index < Count)
-            {
-                GuiWidget itemHolder = topToBottomItemList.Children[index];
-                LibraryRowItem child = (LibraryRowItem)itemHolder.Children[0];
-                return new PrintItem(child.printItemWrapper.Name, child.printItemWrapper.FileLocation);
-            }
-
-            return null;
-        }
-
-        public List<PrintItem> CreateReadOnlyPartList()
-        {
-            List<PrintItem> listToReturn = new List<PrintItem>();
-            for (int i = 0; i < Count; i++)
-            {
-                listToReturn.Add(GetSTLToPrint(i));
-            }
-            return listToReturn;
-        }
-
-        public DataStorage.PrintItemCollection LibraryCollection
-        {
-            get 
-            {
-                //Retrieve a list of saved printers from the Datastore            
-                if (libraryCollection == null)
-                {
-                    libraryCollection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
-                }
-
-
-                if (libraryCollection == null)
-                {
-                    libraryCollection = new PrintItemCollection();
-                    libraryCollection.Name = "_library";
-                    libraryCollection.Commit();
-                    PreloadLibrary();
-                }
-                return libraryCollection;
-            }
-        }
-
-        private List<string> GetLibraryParts()
-        {
-            List<string> libraryFilesToPreload = new List<string>();
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "PreloadedLibraryFiles.txt");
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
-            {
-                try
-                {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
-                    {
-                        //Ignore commented lines
-                        if (!line.StartsWith("#"))
-                        {
-                            string settingLine = line.Trim();
-                            libraryFilesToPreload.Add(settingLine);
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            return libraryFilesToPreload;
-        }
-
-        void PreloadLibrary()
-        {
-            List<string> calibrationPrints = GetLibraryParts();
-            foreach (string partFile in calibrationPrints)
-            {
-                string partFullPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "SampleParts", partFile);
-                if (System.IO.File.Exists(partFullPath))
-                {
-                    PrintItem printItem = new PrintItem();
-                    printItem.Name = Path.GetFileNameWithoutExtension(partFullPath);
-                    printItem.FileLocation = Path.GetFullPath(partFullPath);
-                    printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
-                    printItem.Commit();
-                }
-            }
-        }
-
-        IEnumerable<DataStorage.PrintItem> GetLibraryItems(string keyphrase = null)
-        {   
-            if (LibraryCollection == null)
-            {
-                return null;
-            }
-            else
-            {
-                string query;
-                if (keyphrase == null)
-                {
-                    query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", libraryCollection.Id);
-                }
-                else
-                {
-                    query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} AND Name LIKE '%{1}%' ORDER BY Name ASC;", libraryCollection.Id, keyphrase);
-                }
-                IEnumerable<DataStorage.PrintItem> result = (IEnumerable<DataStorage.PrintItem>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintItem>(query);
-                return result;
-            }            
-        }
-
         public void ClearSelectedItems()
         {
             List<LibraryRowItem> itemsToClear = new List<LibraryRowItem>();
             
-            foreach(LibraryRowItem item in instance.SelectedItems)
+            foreach(LibraryRowItem item in SelectedItems)
             {
                 itemsToClear.Add(item);                
             }            
@@ -256,26 +116,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 item.isSelectedItem = false;
                 item.selectionCheckBox.Checked = false;
             }
-        }
-
-        public void LoadLibraryItems()
-        {
-            RemoveAllChildren();
-            IEnumerable<DataStorage.PrintItem> partFiles = GetLibraryItems(instance.KeywordFilter);
-            if (partFiles != null)
-            {
-                foreach (PrintItem part in partFiles)
-                {
-                    PrintLibraryListControl.Instance.AddChild(new LibraryRowItem(new PrintItemWrapper(part)));
-                }
-            }
-        }
-
-
-
-        public void SaveLibraryItems()
-        {
-            //
         }
 
         public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
@@ -294,7 +134,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         int hoverIndex = -1;
         int dragIndex = -1;
 
-        public int Count
+        int Count
         {
             get
             {
@@ -316,26 +156,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 }                
                 selectedIndex = value;                
                 OnSelectedIndexChanged();                
-            }
-        }
-
-        public int DragIndex
-        {
-            get
-            {
-                return dragIndex;
-            }
-            set
-            {
-                if (value < -1 || value >= topToBottomItemList.Children.Count)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-
-                if (value != dragIndex)
-                {
-                    dragIndex = value;
-                }
             }
         }
 
@@ -376,7 +196,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        public PrintLibraryListControl()
+        public LibraryDataView()
         {
             SetDisplayAttributes();
             ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
@@ -386,12 +206,41 @@ namespace MatterHackers.MatterControl.PrintLibrary
             topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             base.AddChild(topToBottomItemList);
 
-            AddHandlers();
+            for (int i = 0; i < LibraryData.Instance.Count; i++)
+            {
+                PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(i);
+                LibraryRowItem queueItem = new LibraryRowItem(item, this);
+                AddChild(queueItem);
+            }
+
+            this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
+            LibraryData.Instance.ItemAdded.RegisterEvent(ItemAddedToLibrary, ref unregisterEvents);
+            LibraryData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
+            LibraryData.Instance.OrderChanged.RegisterEvent(LibraryOrderChanged, ref unregisterEvents);
         }
 
-        void AddHandlers()
+        void ItemAddedToLibrary(object sender, EventArgs e)
         {
-            this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);            
+            IndexArgs addedIndexArgs = e as IndexArgs;
+            PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
+            LibraryRowItem libraryItem = new LibraryRowItem(item, this);
+            AddChild(libraryItem, addedIndexArgs.Index);
+        }
+
+        void ItemRemovedFromToLibrary(object sender, EventArgs e)
+        {
+            IndexArgs removeIndexArgs = e as IndexArgs;
+            topToBottomItemList.RemoveChild(removeIndexArgs.Index);
+
+            if (LibraryData.Instance.Count > 0)
+            {
+                SelectedIndex = Math.Max(SelectedIndex - 1, 0);
+            }
+        }
+
+        void LibraryOrderChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
@@ -447,7 +296,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         public void RemoveSelectedItems()
         {
-            foreach (LibraryRowItem item in instance.SelectedItems)
+            foreach (LibraryRowItem item in SelectedItems)
             {
                 RemoveChild(item);
                 item.printItemWrapper.Delete();

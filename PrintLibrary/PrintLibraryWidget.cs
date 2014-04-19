@@ -54,7 +54,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
         Button deleteFromLibraryButton;
         Button addToQueueButton;
         Button searchButton;
-        MHTextEditWidget searchInput;        
+        MHTextEditWidget searchInput;
+        LibraryDataView libraryDataView;
 
         public PrintLibraryWidget()
         {
@@ -114,7 +115,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 }
 
                 allControls.AddChild(searchPanel);
-                allControls.AddChild(PrintLibraryListControl.Instance);
+                libraryDataView = new LibraryDataView();
+                allControls.AddChild(libraryDataView);
                 allControls.AddChild(buttonPanel);
             }
             allControls.AnchorAll();
@@ -127,8 +129,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         private void AddHandlers()
         {
-            PrintLibraryListControl.Instance.SelectedItems.OnAdd += onLibraryItemsSelected;
-            PrintLibraryListControl.Instance.SelectedItems.OnRemove += onLibraryItemsSelected;
+            libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
+            libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
             searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
             searchButton.Click += searchButtonClick;
             searchInput.ActualTextEditWidget.KeyUp += searchInputKeyUp;
@@ -147,16 +149,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
         void searchButtonClick(object sender, MouseEventArgs mouseEvent)
         {
             string textToSend = searchInput.Text.Trim();
-            PrintLibraryListControl.Instance.KeywordFilter = textToSend;
+            LibraryData.Instance.KeywordFilter = textToSend;
         }
 
         private void addToQueueButton_Click(object sender, MouseEventArgs e)
         {
-            foreach (LibraryRowItem item in PrintLibraryListControl.Instance.SelectedItems)
+            foreach (LibraryRowItem item in libraryDataView.SelectedItems)
             {
                 QueueData.Instance.AddItem(item.printItemWrapper);
             }
-            PrintLibraryListControl.Instance.ClearSelectedItems();
+            libraryDataView.ClearSelectedItems();
         }
 
         private void onLibraryItemsSelected(object sender, EventArgs e)
@@ -183,7 +185,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void deleteFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrintLibraryListControl.Instance.RemoveSelectedItems();
+            libraryDataView.RemoveSelectedItems();
         }
 
         public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
@@ -222,15 +224,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     PrintItem printItem = new PrintItem();
                     printItem.Name = Path.GetFileNameWithoutExtension(droppedFileName);
                     printItem.FileLocation = Path.GetFullPath(droppedFileName);
-                    printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
+                    printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
                     printItem.Commit();
 
-                    LibraryRowItem queueItem = new LibraryRowItem(new PrintItemWrapper(printItem));
-                    PrintLibraryListControl.Instance.AddChild(queueItem);
+                    LibraryData.Instance.AddItem(new PrintItemWrapper(printItem));
                 }
-                PrintLibraryListControl.Instance.Invalidate();
             }
-            PrintLibraryListControl.Instance.SaveLibraryItems();
 
             base.OnDragDrop(fileDropEventArgs);
         }
@@ -246,15 +245,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     PrintItem printItem = new PrintItem();
                     printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
                     printItem.FileLocation = Path.GetFullPath(loadedFileName);
-                    printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
+                    printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
                     printItem.Commit();
 
-                    LibraryRowItem queueItem = new LibraryRowItem(new PrintItemWrapper(printItem));
-                    PrintLibraryListControl.Instance.AddChild(queueItem);
+                    LibraryData.Instance.AddItem(new PrintItemWrapper(printItem));
                 }
-                PrintLibraryListControl.Instance.Invalidate();
             }
-            PrintLibraryListControl.Instance.SaveLibraryItems();
         }
     }
 }

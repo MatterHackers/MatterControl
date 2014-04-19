@@ -86,6 +86,7 @@
     <Compile Include="ConfigurationPage\ConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
+    <Compile Include="PrintLibrary\LibraryData.cs" />
     <Compile Include="PrintQueue\OptionsMenue\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
@@ -172,7 +173,7 @@
     <Compile Include="PrinterControls\PrinterConnections\SetupConnectionWidgetBase.cs" />
     <Compile Include="PrinterControls\TemperatureIndicator.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
-    <Compile Include="PrintLibrary\PrintLibraryListControl.cs" />
+    <Compile Include="PrintLibrary\LibraryDataView.cs" />
     <Compile Include="PrintLibrary\LibraryRowItem.cs" />
     <Compile Include="PrintLibrary\PrintLibraryWidget.cs" />
     <Compile Include="PrintQueue\OptionsMenue\ExportToFolderProcess.cs" />

@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 if (SelectedIndex >= 0)
                 {
-                    return QueueData.Instance.GetPrintItem(SelectedIndex);
+                    return QueueData.Instance.GetPrintItemWrapper(SelectedIndex);
                 }
                 else
                 {
@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             for (int i = 0; i < QueueData.Instance.Count; i++)
             {
-                PrintItemWrapper item = QueueData.Instance.GetPrintItem(i);
+                PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(i);
                 QueueRowItem queueItem = new QueueRowItem(item, this);
                 AddChild(queueItem);
             }
@@ -322,8 +322,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void ItemAddedToQueue(object sender, EventArgs e)
         {
-            QueueData.IndexArgs addedIndexArgs = e as QueueData.IndexArgs;
-            PrintItemWrapper item = QueueData.Instance.GetPrintItem(addedIndexArgs.Index);
+            IndexArgs addedIndexArgs = e as IndexArgs;
+            PrintItemWrapper item = QueueData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
             QueueRowItem queueItem = new QueueRowItem(item, this);
             AddChild(queueItem, addedIndexArgs.Index);
 
@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void ItemRemovedFromToQueue(object sender, EventArgs e)
         {
-            QueueData.IndexArgs removeIndexArgs = e as QueueData.IndexArgs;
+            IndexArgs removeIndexArgs = e as IndexArgs;
             topToBottomItemList.RemoveChild(removeIndexArgs.Index);
             EnsureSelection();
             if (QueueData.Instance.Count > 0)
@@ -343,6 +343,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void QueueOrderChanged(object sender, EventArgs e)
         {
+            throw new NotImplementedException();
         }
 
         bool firstDraw = true;

@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 // add to library button
                 {
-                    if (this.PrintItemWrapper.PrintItem.PrintItemCollectionID == PrintLibraryListControl.Instance.LibraryCollection.Id)
+                    if (this.PrintItemWrapper.PrintItem.PrintItemCollectionID == LibraryData.Instance.LibraryCollection.Id)
                     {
                         //rightColumnOptions.AddChild(new TextWidget("Libary Item"));
                     }

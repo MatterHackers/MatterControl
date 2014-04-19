@@ -123,8 +123,6 @@ namespace MatterHackers.MatterControl.PrintHistory
             return libraryFilesToPreload;
         }
 
-
-
         int RecordLimit = 20;
         IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
         {

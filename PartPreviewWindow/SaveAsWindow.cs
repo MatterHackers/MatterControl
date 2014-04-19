@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
                     PrintItem printItem = new PrintItem();
                     printItem.Name = newName;
                     printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
-                    printItem.PrintItemCollectionID = PrintLibraryListControl.Instance.LibraryCollection.Id;
+                    printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
                     printItem.Commit();
 
                     PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
@@ -122,11 +122,7 @@ namespace MatterHackers.MatterControl
 
                     if (addToLibraryOption.Checked)
                     {
-                        LibraryRowItem libraryItem = new LibraryRowItem(printItemWrapper);
-
-                        PrintLibraryListControl.Instance.AddChild(libraryItem);
-                        PrintLibraryListControl.Instance.Invalidate();
-                        PrintLibraryListControl.Instance.SaveLibraryItems();
+                        LibraryData.Instance.AddItem(printItemWrapper);
                     }
 
                     functionToCallOnSaveAs(printItemWrapper);
