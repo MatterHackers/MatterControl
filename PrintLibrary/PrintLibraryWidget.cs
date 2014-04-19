@@ -236,6 +236,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void loadFile_Click(object sender, MouseEventArgs mouseEvent)
         {
+            UiThread.RunOnIdle(loadFile_ClickOnIdle);
+        }
+
+        void loadFile_ClickOnIdle(object state)
+        {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode", multiSelect: true);
             FileDialog.OpenFileDialog(ref openParams);
             if (openParams.FileNames != null)

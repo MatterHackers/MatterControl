@@ -259,8 +259,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void RemoveThisFromPrintLibrary(object state)
         {
-            libraryDataView.RemoveChild(this);
-            this.printItemWrapper.Delete();
+            LibraryData.Instance.RemoveItem(this.printItemWrapper);
         }
 
         private void onRemoveLinkClick(object sender, MouseEventArgs e)

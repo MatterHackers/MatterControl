@@ -95,6 +95,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
             OnItemAdded(new IndexArgs(indexToInsert));
         }
 
+        public void RemoveItem(PrintItemWrapper printItemWrapper)
+        {
+            int index = PrintItems.IndexOf(printItemWrapper);
+            if (index < 0)
+            {
+                throw new Exception("item not in library");
+            }
+            PrintItems.RemoveAt(index);
+            
+            // and remove it from the data base
+            printItemWrapper.Delete();
+
+            OnItemRemoved(new IndexArgs(index));
+        }
+
         public PrintItemWrapper GetPrintItemWrapper(int index)
         {
             if(index >= 0 && index < Count)
@@ -220,6 +235,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
         public void OnItemAdded(EventArgs e)
         {
             ItemAdded.CallEvents(this, e);
+        }
+
+        public void OnItemRemoved(EventArgs e)
+        {
+            ItemRemoved.CallEvents(this, e);
         }
 
         public void SaveLibraryItems()

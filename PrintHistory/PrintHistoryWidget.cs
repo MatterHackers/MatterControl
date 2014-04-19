@@ -109,15 +109,6 @@ namespace MatterHackers.MatterControl.PrintHistory
                 buttonPanel.HAnchor = HAnchor.ParentLeftRight;
                 buttonPanel.Padding = new BorderDouble(0, 3);
                 {
-                    Button addToLibrary = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
-                    //buttonPanel.AddChild(addToLibrary);
-                    addToLibrary.Margin = new BorderDouble(0, 0, 3, 0);
-
-                    deleteFromLibraryButton = textImageButtonFactory.Generate("Remove");
-                    deleteFromLibraryButton.Margin = new BorderDouble(3, 0);
-                    deleteFromLibraryButton.Visible = false;
-                    //buttonPanel.AddChild(deleteFromLibraryButton);
-
                     GuiWidget spacer = new GuiWidget();
                     spacer.HAnchor = HAnchor.ParentLeftRight;
                     buttonPanel.AddChild(spacer);

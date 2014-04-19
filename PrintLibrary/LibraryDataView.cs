@@ -298,8 +298,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             foreach (LibraryRowItem item in SelectedItems)
             {
-                RemoveChild(item);
-                item.printItemWrapper.Delete();
+                LibraryData.Instance.RemoveItem(item.printItemWrapper);
             }
         }
 
