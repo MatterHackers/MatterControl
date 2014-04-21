@@ -62,13 +62,13 @@ namespace MatterHackers.MatterControl
             {
                 if (printItem != null)
                 {
-                    printItem.FileHasChanged -= item_FileHasChanged;
+                    printItem.FileHasChanged.UnregisterEvent(item_FileHasChanged, ref unregisterEvents);
                 }
                 printItem = value;
                 thumbNailHasBeenRequested = false;
                 if (printItem != null)
                 {
-                    printItem.FileHasChanged += item_FileHasChanged;
+                    printItem.FileHasChanged.RegisterEvent(item_FileHasChanged, ref unregisterEvents);
                 }
             }
         }
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl
             }
             if (printItem != null)
             {
-                printItem.FileHasChanged -= item_FileHasChanged;
+                printItem.FileHasChanged.UnregisterEvent(item_FileHasChanged, ref unregisterEvents);
             }
             base.OnClosed(e);
         }

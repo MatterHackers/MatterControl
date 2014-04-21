@@ -76,54 +76,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public SliceSettingsWidget(UiState uiState)
         {
-            AddControls(uiState);
-        }
-
-        public bool ShowingHelp
-        {
-            get { return showHelpBox.Checked; }
-        }
-
-        public string UserLevel
-        {
-            get 
-            {
-                if (showAllDetails.Checked)
-                {
-                    return "Advanced";
-                }
-
-                return "Beginner"; 
-            }
-        }
-
-        public void CurrentlyActiveCategory(out int index, out string name)
-        {
-            index = categoryTabs.SelectedTabIndex;
-            name = categoryTabs.SelectedTabName;
-        }
-
-        public void CurrentlyActiveGroup(out int index, out string name)
-        {
-            index = 0;
-            name = "";
-
-            TabPage currentPage = categoryTabs.GetActivePage();
-            TabControl currentGroup = null;
-
-            if (currentPage.Children.Count > 0)
-            {
-                currentGroup = currentPage.Children[0] as TabControl;
-            }
-            if (currentGroup != null)
-            {
-                index = currentGroup.SelectedTabIndex;
-                name = currentGroup.SelectedTabName;
-            }
-        }
-
-        void AddControls(UiState uiState)
-        {
             int minSettingNameWidth = 220;
             buttonFactory.FixedHeight = 20;
             buttonFactory.fontSize = 10;
@@ -133,8 +85,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
             showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
 
-			showAllDetails = new CheckBox(0, 0,LocalizedString.Get("Show All Settings"), textSize:10);
-            showAllDetails.Checked = UserSettings.Instance.get(SliceSettingsLevelEntry) == "Advanced";            
+            showAllDetails = new CheckBox(0, 0, LocalizedString.Get("Show All Settings"), textSize: 10);
+            showAllDetails.Checked = UserSettings.Instance.get(SliceSettingsLevelEntry) == "Advanced";
 
             FlowLayoutWidget pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: Agg.UI.VAnchor.ParentTop);
             pageTopToBottomLayout.AnchorAll();
@@ -144,14 +96,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsControlBar = new SettingsControlBar();
             pageTopToBottomLayout.AddChild(settingsControlBar);
 
-			noConnectionMessageContainer = new GroupBox(LocalizedString.Get("No Printer Selected"));
+            noConnectionMessageContainer = new GroupBox(LocalizedString.Get("No Printer Selected"));
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             noConnectionMessageContainer.Height = 80;
 
-			TextWidget noConnectionMessage = new TextWidget(LocalizedString.Get("No printer is currently selected. Select printer to edit slice settings."));
+            TextWidget noConnectionMessage = new TextWidget(LocalizedString.Get("No printer is currently selected. Select printer to edit slice settings."));
             noConnectionMessage.Margin = new BorderDouble(5);
             noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessage.VAnchor = VAnchor.ParentCenter;
@@ -167,8 +119,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
             {
                 OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
-				string categoryPageLabel = LocalizedString.Get (category.Name);
-				TabPage categoryPage = new TabPage(categoryPageLabel);
+                string categoryPageLabel = LocalizedString.Get(category.Name);
+                TabPage categoryPage = new TabPage(categoryPageLabel);
                 SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, 16,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
                 categoryPage.AnchorAll();
@@ -233,7 +185,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 showHelpBox.Cursor = Cursors.Hand;
                 showHelpBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(RebuildSlicerSettings);
 
-				categoryTabs.TabBar.AddChild(showHelpBox);
+                categoryTabs.TabBar.AddChild(showHelpBox);
             }
 
             pageTopToBottomLayout.AddChild(categoryTabs);
@@ -243,6 +195,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             if (!categoryTabs.SelectTab(uiState.selectedCategory.name))
             {
                 categoryTabs.SelectTab(uiState.selectedCategory.index);
+            }
+        }
+
+        public bool ShowingHelp
+        {
+            get { return showHelpBox.Checked; }
+        }
+
+        public string UserLevel
+        {
+            get 
+            {
+                if (showAllDetails.Checked)
+                {
+                    return "Advanced";
+                }
+
+                return "Beginner"; 
+            }
+        }
+
+        public void CurrentlyActiveCategory(out int index, out string name)
+        {
+            index = categoryTabs.SelectedTabIndex;
+            name = categoryTabs.SelectedTabName;
+        }
+
+        public void CurrentlyActiveGroup(out int index, out string name)
+        {
+            index = 0;
+            name = "";
+
+            TabPage currentPage = categoryTabs.GetActivePage();
+            TabControl currentGroup = null;
+
+            if (currentPage.Children.Count > 0)
+            {
+                currentGroup = currentPage.Children[0] as TabControl;
+            }
+            if (currentGroup != null)
+            {
+                index = currentGroup.SelectedTabIndex;
+                name = currentGroup.SelectedTabName;
             }
         }
 
@@ -279,7 +274,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         private void AddHandlers()
         {
             PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(APP_onPrinterStatusChanged, ref unregisterEvents);
             PrinterCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
 
@@ -294,6 +289,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         }
 
         private void onPrinterStatusChanged(object sender, EventArgs e)
+        {
+            SetVisibleControls();
+            this.Invalidate();
+        }
+
+        private void APP_onPrinterStatusChanged(object sender, EventArgs e)
         {
             SetVisibleControls();
             this.Invalidate();

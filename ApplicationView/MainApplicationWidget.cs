@@ -126,10 +126,5 @@ namespace MatterHackers.MatterControl
         {
             ReloadPanelTrigger.CallEvents(this, null);
         }
-
-        void OnReloadBackPanel(EventArgs e)
-        {
-            ReloadPanelTrigger.CallEvents(this, e);
-        }
     }
 }

@@ -88,6 +88,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             itemCountBeingWorkedOn = 0;
         }
 
+        EventHandler unregisterEvents;
         public void Start()
         {
             if (QueueData.Instance.Count > 0)
@@ -105,8 +106,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                     if (Path.GetExtension(part.FileLocation).ToUpper() == ".STL")
                     {
                         SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                        printItemWrapper.SlicingDone += new EventHandler(sliceItem_Done);
-                        printItemWrapper.SlicingOutputMessage += printItemWrapper_SlicingOutputMessage;
+                        printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+                        printItemWrapper.SlicingOutputMessage.RegisterEvent(printItemWrapper_SlicingOutputMessage, ref unregisterEvents);
                     }
                     else if (Path.GetExtension(part.FileLocation).ToUpper() == ".GCODE")
                     {
@@ -129,8 +130,8 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
-            sliceItem.SlicingDone -= new EventHandler(sliceItem_Done);
-            sliceItem.SlicingOutputMessage -= printItemWrapper_SlicingOutputMessage;
+            sliceItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
+            sliceItem.SlicingOutputMessage.UnregisterEvent(printItemWrapper_SlicingOutputMessage, ref unregisterEvents);
             if (File.Exists(sliceItem.FileLocation))
             {
                 savedGCodeFileNames.Add(sliceItem.GCodePathAndFileName);

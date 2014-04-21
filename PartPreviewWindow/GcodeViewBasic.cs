@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         GetSizeFunction bedSizeFunction;
         GetSizeFunction bedCenterFunction;
+        EventHandler unregisterEvents;
         bool widgetHasCloseButton;
 
         public delegate Vector2 GetSizeFunction();
@@ -152,8 +153,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         }
 
                         // we only hook these up to make sure we can regenerate the gcode when we want
-                        printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-                        printItem.SlicingDone += new EventHandler(sliceItem_Done);
+                        printItem.SlicingOutputMessage.RegisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
+                        printItem.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
                     }
                     else
                     {
@@ -610,10 +611,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             parent.KeyDown -= Parent_KeyDown;
 
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+
             if (printItem != null)
             {
-                printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-                printItem.SlicingDone -= new EventHandler(sliceItem_Done);
+                printItem.SlicingOutputMessage.UnregisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
+                printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
                 if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
                 {
                     SlicingQueue.Instance.CancelCurrentSlicing();
@@ -655,8 +661,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // We can add this while we have it open (when we are done loading).
             // So we need to make sure we only have it added once. This will be ok to run when
             // not added or when added and will ensure we only have one hook.
-            printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-            printItem.SlicingDone -= sliceItem_Done;
+            printItem.SlicingOutputMessage.UnregisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
+            printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
 
             UiThread.RunOnIdle(CreateAndAddChildren);
             startedSliceFromGenerateButton = false;

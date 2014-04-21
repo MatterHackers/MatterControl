@@ -46,19 +46,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
     public class PrintItemWrapper
     {
-        public event EventHandler SlicingOutputMessage;
-        public event EventHandler SlicingDone;
-        public event EventHandler FileHasChanged;
+        public RootedObjectEventHandler SlicingOutputMessage = new RootedObjectEventHandler();
+        public RootedObjectEventHandler SlicingDone = new RootedObjectEventHandler();
+        public RootedObjectEventHandler FileHasChanged = new RootedObjectEventHandler();
 
         public PrintItem PrintItem { get; set; }
-        //public event EventHandler PreparationStatusChanged;
-
-        //public enum GcodeStatuses { Prepared, Slicing, NotPrepared, SliceFailed };
-        //GcodeStatuses gcodeStatus = GcodeStatuses.NotPrepared;
-        //String gcodeProcessingMessage;
         String fileType;
 
-        //String gcodePathAndFileName;
         int stlFileHashCode;
         long writeTime = 0;
 
@@ -71,10 +65,6 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             this.PrintItem = printItem;
             this.fileType = Path.GetExtension(printItem.FileLocation).ToUpper();
-            //if (this.fileType == ".GCODE")
-            //{
-                //gcodeStatus = GcodeStatuses.Prepared;
-            //}
         }
 
         public PrintItemWrapper(int printItemId)
@@ -124,10 +114,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                         OnSlicingOutputMessage(new StringEventArgs(message));
 
-                        if (SlicingDone != null)
-                        {
-                            SlicingDone(this, null);
-                        }
+                        SlicingDone.CallEvents(this, null);
                     }
                 }
             }
@@ -138,7 +125,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             StringEventArgs message = e as StringEventArgs;
             if (SlicingOutputMessage != null)
             {
-                SlicingOutputMessage(this, message);
+                SlicingOutputMessage.CallEvents(this, message);
             }
         }
 
@@ -266,7 +253,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             if (FileHasChanged != null)
             {
-                FileHasChanged(this, null);
+                FileHasChanged.CallEvents(this, null);
             }
         }
     }

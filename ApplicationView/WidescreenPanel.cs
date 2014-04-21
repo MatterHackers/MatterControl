@@ -55,7 +55,6 @@ namespace MatterHackers.MatterControl
     {
         MainScreenTabView mainScreenTabView;
 
-        TabControl advancedControlsTabControl;
         SliceSettingsWidget sliceSettingsWidget;
         TabControl advancedControls;
         public TabPage AboutTabPage;
@@ -160,10 +159,8 @@ namespace MatterHackers.MatterControl
         void DoChangePanel(object state)
         {
             // remove the advance control and replace it with new ones built for the selected printer
-            int advancedControlsWidgetIndex = ColumnThree.GetChildIndex(this.advancedControlsTabControl);
-            ColumnThree.RemoveChild(advancedControlsWidgetIndex);
-            this.advancedControlsTabControl = CreateNewAdvancedControlsTab(sliceSettingsUiState);
-            ColumnThree.AddChild(this.advancedControlsTabControl, advancedControlsWidgetIndex);
+            ColumnThree.RemoveAllChildren();
+            ColumnThree.AddChild(CreateNewAdvancedControlsTab(sliceSettingsUiState));
             ColumnThree.Width = 590;
 
             RestoreUiState();
@@ -325,8 +322,8 @@ namespace MatterHackers.MatterControl
 
         void LoadColumnThree()
         {
-            advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
-            ColumnThree.AddChild(advancedControlsTabControl);
+            RemoveAllChildren();
+            ColumnThree.AddChild(CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState()));
             ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
         }
 

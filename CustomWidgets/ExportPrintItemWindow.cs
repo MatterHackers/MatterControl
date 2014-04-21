@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl
                 {
                     Close();
                     SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                    printItemWrapper.SlicingDone += new EventHandler(sliceItem_Done);
+                    printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
                 }
                 else if (partIsGCode)
                 {
@@ -247,18 +247,12 @@ namespace MatterHackers.MatterControl
             }
         }
 
-
         void sliceItem_Done(object sender, EventArgs e)
         {
             PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
-            sliceItem.SlicingDone -= new EventHandler(sliceItem_Done);
+            printItemWrapper.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
             SaveGCodeToNewLocation(sliceItem.GCodePathAndFileName, pathAndFilenameToSave);
         }
-
-		public void CloseOnIdle()
-		{
-			UiThread.RunOnIdle((state) => { Close(); });
-		}
     }
 }

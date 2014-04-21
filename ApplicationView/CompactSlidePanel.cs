@@ -78,12 +78,6 @@ namespace MatterHackers.MatterControl
             : base(2)
         {
             this.queueDataView = queueDataView;
-            AddElements();
-        }
-
-        public void AddElements()
-        {
-            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
 
             // do the front panel stuff
             {
@@ -253,8 +247,6 @@ namespace MatterHackers.MatterControl
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 14,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-
-
             return advancedControls;
         }
 
@@ -290,12 +282,6 @@ namespace MatterHackers.MatterControl
         {
             sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
             UiThread.RunOnIdle(DoChangePanel);
-        }
-
-        public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
-        {
-            ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationWidget.Instance.ReloadBackPanel();
         }
     }
 }

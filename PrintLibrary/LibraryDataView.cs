@@ -219,6 +219,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
             LibraryData.Instance.OrderChanged.RegisterEvent(LibraryOrderChanged, ref unregisterEvents);
         }
 
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+
         void ItemAddedToLibrary(object sender, EventArgs e)
         {
             IndexArgs addedIndexArgs = e as IndexArgs;

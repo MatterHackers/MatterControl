@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public override void OnClosed(EventArgs e)
         {
-            PrintItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
+            PrintItemWrapper.SlicingOutputMessage.UnregisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
             if (unregisterEvents != null)
             {
                 unregisterEvents(this, null);
@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
 
-            PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
+            PrintItemWrapper.SlicingOutputMessage.RegisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
 
             MouseEnterBounds += new EventHandler(PrintQueueItem_MouseEnterBounds);
             MouseLeaveBounds += new EventHandler(PrintQueueItem_MouseLeaveBounds);
