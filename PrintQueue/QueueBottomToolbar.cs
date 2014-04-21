@@ -45,6 +45,26 @@ namespace MatterHackers.MatterControl.PrintQueue
         PluginChooserWindow pluginChooserWindow;
         QueueDataView queueDataView;
 
+        public static int affiliateCode = 0;
+        static bool showShopButton = true;
+        static Button shopButton;
+        public static bool ShowShopButton
+        {
+            get
+            {
+                return showShopButton;
+            }
+
+            set
+            {
+                showShopButton = value;
+                if (shopButton != null)
+                {
+                    shopButton.Visible = showShopButton;
+                }
+            }
+        }
+
         public QueueBottomToolbar(QueueDataView queueDataView)
         {
             this.queueDataView = queueDataView;
@@ -88,12 +108,12 @@ namespace MatterHackers.MatterControl.PrintQueue
                         };
                     }
 
-                    // hack: put in a store button
+                    if(ShowShopButton)
                     {
-                        Button runStore = textImageButtonFactory.Generate(LocalizedString.Get("Shop"), "icon_shopping_cart_32x32.png");
-                        buttonPanel1.AddChild(runStore);
-                        runStore.Margin = new BorderDouble(0, 0, 3, 0);
-                        runStore.Click += (sender, e) =>
+                        shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Shop"), "icon_shopping_cart_32x32.png");
+                        buttonPanel1.AddChild(shopButton);
+                        shopButton.Margin = new BorderDouble(0, 0, 3, 0);
+                        shopButton.Click += (sender, e) =>
                         {
                             double activeFilamentDiameter = 0;
                             if(ActivePrinterProfile.Instance.ActivePrinter != null)
@@ -105,7 +125,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                                 }
                             }
 
-                            int affiliateCode = 1;
                             System.Diagnostics.Process.Start("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, affiliateCode));
                         };
                     }
