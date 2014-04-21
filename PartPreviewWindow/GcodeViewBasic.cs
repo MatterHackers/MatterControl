@@ -419,7 +419,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (!hookedParentKeyDown)
             {
-                Parent.Parent.Parent.KeyDown += new KeyEventHandler(Parent_KeyDown);
+                GuiWidget parent = Parent;
+                while (parent as SystemWindow == null)
+                {
+                    parent = parent.Parent;
+                }
+                parent.KeyDown += Parent_KeyDown;
                 hookedParentKeyDown = true;
             }
             if (partToStartLoadingOnFirstDraw != null)
@@ -598,6 +603,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnClosed(EventArgs e)
         {
+            GuiWidget parent = Parent;
+            while (parent as SystemWindow == null)
+            {
+                parent = parent.Parent;
+            }
+            parent.KeyDown -= Parent_KeyDown;
+
             if (printItem != null)
             {
                 printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
