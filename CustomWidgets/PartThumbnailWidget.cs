@@ -186,7 +186,6 @@ namespace MatterHackers.MatterControl
                         if (image50x50 == null)
                         {
                             thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
-                            thumbnailWidget.Invalidate();
                         }
                     }
                     if (image115x115 == null)
@@ -196,7 +195,6 @@ namespace MatterHackers.MatterControl
                         if (image115x115 == null)
                         {
                             thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
-                            thumbnailWidget.Invalidate();
                         }
                     }
                 }
