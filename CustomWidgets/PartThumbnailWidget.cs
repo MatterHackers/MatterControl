@@ -88,17 +88,37 @@ namespace MatterHackers.MatterControl
 
         bool thumbNailHasBeenRequested = false;
 
+        public enum ImageSizes { Size50x50, Size115x115 };
+
+        public ImageSizes Size { get; set; }
+
         event EventHandler unregisterEvents;
-        public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, Vector2 size)
+        public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, ImageSizes size)
         {
             this.PrintItem = item;
 
             // Set Display Attributes
             this.Margin = new BorderDouble(0);
             this.Padding = new BorderDouble(5);
-            this.Width = size.x;
-            this.Height = size.y;
-            this.MinimumSize = size;
+            Size = size;
+            switch(size)
+            {
+                case ImageSizes.Size50x50:
+                    this.Width = 50;
+                    this.Height = 50;
+                    this.MinimumSize = new Vector2(50, 50);
+                    break;
+
+                case ImageSizes.Size115x115:
+                    this.Width = 115;
+                    this.Height = 115;
+                    this.MinimumSize = new Vector2(115, 115);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
             this.BackgroundColor = normalBackgroundColor;
             this.Cursor = Cursors.Hand;
 
@@ -141,52 +161,131 @@ namespace MatterHackers.MatterControl
             PartThumbnailWidget thumbnailWidget = e.Argument as PartThumbnailWidget;
             if (thumbnailWidget != null)
             {
+                ImageBuffer image50x50;
+                ImageBuffer image115x115;
+
                 if (thumbnailWidget.printItem == null)
                 {
                     thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
-                }
-                else // generate the image
-                {
-                    Mesh loadedMesh = StlProcessing.Load(thumbnailWidget.printItem.FileLocation);
-
-                    thumbnailWidget.image = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
                     thumbnailWidget.Invalidate();
+                    return;
+                }
+                
+                string stlHashCode = thumbnailWidget.PrintItem.StlFileHashCode.ToString();
 
-                    if (loadedMesh != null)
+                image50x50 = LoadImageFromDisk(thumbnailWidget, stlHashCode, new Point2D(50, 50));
+                image115x115 = LoadImageFromDisk(thumbnailWidget, stlHashCode, new Point2D(115, 115));
+                if (image50x50 == null || image115x115 == null)
+                {
+                    Mesh loadedMesh = StlProcessing.Load(thumbnailWidget.PrintItem.FileLocation);
+
+                    if (image50x50 == null)
                     {
-                        ImageBuffer tempImage = new ImageBuffer(thumbnailWidget.image.Width, thumbnailWidget.image.Height, 32, new BlenderBGRA());
-                        Graphics2D partGraphics2D = tempImage.NewGraphics2D();
-
-                        List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
-                        if (nonManifoldEdges.Count > 0)
+                        thumbnailWidget.image = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
+                        image50x50 = BuildImageFromSTL(loadedMesh, stlHashCode, new Point2D(50, 50));
+                        if (image50x50 == null)
                         {
-                            if (File.Exists("RunUnitTests.txt"))
-                            {
-                                partGraphics2D.Circle(4, 4, 4, RGBA_Bytes.Red);
-                            }
+                            thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
+                            thumbnailWidget.Invalidate();
                         }
-                        nonManifoldEdges = null;
-
-                        AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
-                        double maxSize = Math.Max(aabb.XSize, aabb.YSize);
-                        double scale = thumbnailWidget.image.Width / (maxSize * 1.2);
-                        RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
-                        PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
-                            new Vector2((thumbnailWidget.image.Width / scale - bounds2D.Width) / 2 - bounds2D.Left,
-                                (thumbnailWidget.image.Height / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
-                            scale,
-                            thumbnailWidget.FillColor);
-
-                        thumbnailWidget.image = new ImageBuffer(tempImage);
-                        loadedMesh = new Mesh();
                     }
-                    else
+                    if (image115x115 == null)
                     {
-                        thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
+                        thumbnailWidget.image = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
+                        image115x115 = BuildImageFromSTL(loadedMesh, stlHashCode, new Point2D(115, 115));
+                        if (image115x115 == null)
+                        {
+                            thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
+                            thumbnailWidget.Invalidate();
+                        }
                     }
                 }
+
+                switch (thumbnailWidget.Size)
+                {
+                    case ImageSizes.Size50x50:
+                        if (image50x50 != null)
+                        {
+                            thumbnailWidget.image = new ImageBuffer(image50x50);
+                        }
+                        break;
+
+                    case ImageSizes.Size115x115:
+                        if (image115x115 != null)
+                        {
+                            thumbnailWidget.image = new ImageBuffer(image115x115);
+                        }
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+
                 thumbnailWidget.Invalidate();
             }
+        }
+
+        private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)
+        {
+            ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
+            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+            string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
+            string pngFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
+
+            if (File.Exists(pngFileName))
+            {
+                if (ImageIO.LoadImageData(pngFileName, tempImage))
+                {
+                    return tempImage;
+                }
+            }
+
+            return null;
+        }
+
+        private static ImageBuffer BuildImageFromSTL(Mesh loadedMesh, string stlHashCode, Point2D size)
+        {
+            if(loadedMesh != null)
+            {
+                ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
+                Graphics2D partGraphics2D = tempImage.NewGraphics2D();
+                partGraphics2D.Clear(new RGBA_Bytes());
+
+                List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
+                if (nonManifoldEdges.Count > 0)
+                {
+                    if (File.Exists("RunUnitTests.txt"))
+                    {
+                        partGraphics2D.Circle(4, 4, 4, RGBA_Bytes.Red);
+                    }
+                }
+                nonManifoldEdges = null;
+
+                AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
+                double maxSize = Math.Max(aabb.XSize, aabb.YSize);
+                double scale = size.x / (maxSize * 1.2);
+                RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
+                PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
+                    new Vector2((size.x / scale - bounds2D.Width) / 2 - bounds2D.Left,
+                        (size.y / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
+                    scale, RGBA_Bytes.White);
+
+                // and save it to disk
+                string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+                string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
+                string pngFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
+
+                if (!Directory.Exists(folderToSavePrintsTo))
+                {
+                    Directory.CreateDirectory(folderToSavePrintsTo);
+                }
+                ImageIO.SaveImageData(pngFileName, tempImage);
+
+                // and give it back
+                return tempImage;
+            }
+
+            return null;
         }
 
         void createThumbnailWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

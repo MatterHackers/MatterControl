@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
                 mainContainer.AddChild(selectionCheckBoxContainer);
                 {
-                    PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(printItem, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", new Vector2(50, 50));                    
+                    PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(printItem, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
                     mainContainer.AddChild(thumbnailWidget);
                 }
                 mainContainer.AddChild(leftColumn);

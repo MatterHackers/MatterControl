@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             get { return this.PrintItem.FileLocation; }
         }
 
-        int StlFileHashCode
+        public int StlFileHashCode
         {
             get
             {

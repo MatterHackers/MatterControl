@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 FlowLayoutWidget leftColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 leftColumn.VAnchor = VAnchor.ParentTop | Agg.UI.VAnchor.FitToChildren;
                 {
-                    PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(PrintItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", new Vector2(50, 50));
+                    PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(PrintItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
                     leftColumn.AddChild(thumbnailWidget);
                 }
 

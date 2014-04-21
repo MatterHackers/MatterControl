@@ -139,8 +139,8 @@ namespace MatterHackers.MatterControl.ActionBar
         TemperatureWidgetBase extruderTemperatureWidget;
         TemperatureWidgetBase bedTemperatureWidget;
         void AddChildElements()
-        {            
-            activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", new Vector2(115, 115));
+        {
+            activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", PartThumbnailWidget.ImageSizes.Size115x115);
             activePrintPreviewImage.VAnchor = VAnchor.ParentTop;
             activePrintPreviewImage.Padding = new BorderDouble(0);
             activePrintPreviewImage.HoverBackgroundColor = new RGBA_Bytes();
