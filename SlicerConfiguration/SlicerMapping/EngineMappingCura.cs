@@ -91,6 +91,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
             new ScaledSingleNumber("skirtDistance", "skirt_distance", 1000),
 
+            new ScaledSingleNumber("objectSink", "bottom_clip_amount", 1000),
+
             new MapItem("fanSpeedMin", "max_fan_speed"),
             new MapItem("fanSpeedMax", "min_fan_speed"),
 
