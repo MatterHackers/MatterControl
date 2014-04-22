@@ -158,12 +158,12 @@ namespace MatterHackers.MatterControl
 
         void DoChangePanel(object state)
         {
+            int tabIndex = advancedControls.SelectedTabIndex;
             // remove the advance control and replace it with new ones built for the selected printer
             ColumnThree.RemoveAllChildren();
             ColumnThree.AddChild(CreateNewAdvancedControlsTab(sliceSettingsUiState));
             ColumnThree.Width = 590;
-
-            RestoreUiState();
+            advancedControls.SelectedTabIndex = tabIndex;
         }
 
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
