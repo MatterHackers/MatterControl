@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         PluginChooserWindow pluginChooserWindow;
         QueueDataView queueDataView;
 
-        public static int affiliateCode = 0;
+        public static string affiliateCode = "5NEP8W";
         static bool showShopButton = true;
         static Button shopButton;
         public static bool ShowShopButton
