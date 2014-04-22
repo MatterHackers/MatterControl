@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl
 
         static string GetMovementSpeedsString()
         {
-            string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,y,z,e1,e2,e3,...
+            string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
             if (PrinterCommunication.Instance != null && ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;

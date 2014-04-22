@@ -379,7 +379,7 @@ namespace MatterHackers.MatterControl.DataStorage
         // features
         public string _features { get; set; }
 
-        public string ManualMovementSpeeds { get; set; } // stored x,y,z,e1,e2,e3,...
+        public string ManualMovementSpeeds { get; set; } // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
 
         public string CurrentSlicingEngine { get; set; }
 

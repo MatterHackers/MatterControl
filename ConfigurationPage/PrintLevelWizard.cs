@@ -193,6 +193,18 @@ namespace MatterHackers.MatterControl
             return zButtons;
         }
 
+        internal double ZMovementSpeed()
+        {
+            double zSpeed = 315;
+            string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;
+            if (savedSettings != null && savedSettings != "")
+            {
+                zSpeed = double.Parse(savedSettings.Split(',')[5]);
+            }
+
+            return zSpeed;
+        }
+
         static string zIsTooLowMessage = "You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.".Localize();
         static string zTooLowTitle = "Waring Moving Too Low".Localize();
         void zMinusControl_Click(object sender, MouseEventArgs mouseEvent)
@@ -205,13 +217,13 @@ namespace MatterHackers.MatterControl
                     return;
                 }
             }
-            PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, -moveAmount, 1000);
+            PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, -moveAmount, ZMovementSpeed());
             PrinterCommunication.Instance.ReadPosition();
         }
 
         void zPlusControl_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, moveAmount, 1000);
+            PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, moveAmount, ZMovementSpeed());
             PrinterCommunication.Instance.ReadPosition();
         }
     }
@@ -299,7 +311,7 @@ namespace MatterHackers.MatterControl
         {
             if (haveDrawn)
             {
-                PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, 1, 1000);
+                PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, 1, ZMovementSpeed());
             }
             base.PageIsBecomingInactive();
         }
