@@ -209,5 +209,14 @@ namespace MatterHackers.MatterControl.HtmlParsing
                 }
             }
         }
+
+        public static string UrlDecode(string htmlContent)
+        {
+            string decoded = htmlContent.Replace("&trade;", "™");
+            decoded = decoded.Replace("&nbsp;", " ");
+            decoded = decoded.Replace("&copy;", "©");
+
+            return decoded;
+        }
     }
 }

@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl
 {
     public class AboutPage : GuiWidget
     {
-        static string htmlContent = null;
+        string htmlContent = null;
 
         GuiWidget htmlWidget;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
@@ -71,6 +72,7 @@ namespace MatterHackers.MatterControl
 
             customInfoTopToBottom.AddChild(new UpdateControl());
             //AddMatterHackersInfo(customInfoTopToBottom);
+            customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
 
             HtmlParser htmlParser = new HtmlParser();
 
@@ -85,7 +87,7 @@ namespace MatterHackers.MatterControl
             htmlWidget.HAnchor |= HAnchor.ParentCenter;
 
             htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
-            
+
             customInfoTopToBottom.AddChild(htmlWidget);
 
             this.AddChild(customInfoTopToBottom);
@@ -95,9 +97,21 @@ namespace MatterHackers.MatterControl
         private void AddContent(HtmlParser htmlParser, string htmlContent)
         {
             ElementState elementState = htmlParser.CurrentElementState;
+            string decodedHtml = HtmlParser.UrlDecode(htmlContent);
             switch (elementState.TypeName)
             {
                 case "a":
+                    {
+                        Button linkButton = linkButtonFactory.Generate(decodedHtml);
+                        StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
+                        double descentInPixels = styled.DescentInPixels;
+                        linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
+                        linkButton.Click += (sender, mouseEvent) => 
+                        {
+                            System.Diagnostics.Process.Start(elementState.Href); 
+                        };
+                        currentRow.AddChild(linkButton);
+                    }
                     break;
 
                 case "table":
@@ -107,8 +121,51 @@ namespace MatterHackers.MatterControl
                 case "span":
                     GuiWidget widgetToAdd;
 
-                    TextWidget content = new TextWidget(htmlContent, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
-                    widgetToAdd = content;
+                    if (elementState.Classes.Contains("translate"))
+                    {
+                        decodedHtml = decodedHtml.Localize();
+                    }
+                    if (elementState.Classes.Contains("toUpper"))
+                    {
+                        decodedHtml = decodedHtml.ToUpper();
+                    }
+                    if (elementState.Classes.Contains("versionNumber"))
+                    {
+                        decodedHtml = "*release*" + VersionInfo.Instance.ReleaseVersion;
+                    }
+                    if (elementState.Classes.Contains("buildNumber"))
+                    {
+                        decodedHtml = "*build*" + VersionInfo.Instance.BuildVersion;
+                    }
+
+                    if (elementState.Classes.Contains("centeredButton"))
+                    {
+                        Button feedbackLink = textImageButtonFactory.Generate(decodedHtml);
+                        feedbackLink.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
+                        widgetToAdd = feedbackLink;
+                    }
+                    else if (elementState.Classes.Contains("linkButton"))
+                    {
+                        double oldFontSize = linkButtonFactory.fontSize;
+                        linkButtonFactory.fontSize = elementState.PointSize;
+                        Button deleteCacheLink = linkButtonFactory.Generate(decodedHtml);
+                        StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
+                        double descentInPixels = styled.DescentInPixels;
+                        deleteCacheLink.OriginRelativeParent = new VectorMath.Vector2(deleteCacheLink.OriginRelativeParent.x, deleteCacheLink.OriginRelativeParent.y + descentInPixels);
+                        deleteCacheLink.Click += (sender, mouseEvent) => { DeleteCacheData(); };
+                        widgetToAdd = deleteCacheLink;
+                        linkButtonFactory.fontSize = oldFontSize;
+                    }
+                    else
+                    {
+                        TextWidget content = new TextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                        widgetToAdd = content;
+                    }
+
+                    if (elementState.VerticalAlignment == ElementState.VerticalAlignType.top)
+                    {
+                        widgetToAdd.VAnchor = VAnchor.ParentTop;
+                    }
 
                     currentRow.AddChild(widgetToAdd);
                     break;
