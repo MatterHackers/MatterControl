@@ -28,359 +28,23 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Text;
-using System.Threading;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
-using MatterHackers.MatterControl.VersionManagement;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
-    public class HTMLCanvas : GuiWidget
-    {
-        Dictionary<string, string> TemplateValue = new Dictionary<string, string>();
-
-        public HTMLCanvas()
-        {
-        }
-
-        public HTMLCanvas(string htmlContent)
-        {
-            LoadHTML(htmlContent);
-        }
-
-        public void AddReplacementString(string key, string value)
-        {
-            TemplateValue.Add("{{" + key + "}}", value);
-        }
-
-        public void LoadHTML(string htmlContent)
-        {
-            htmlContent = DoTemplateReplacements(htmlContent);
-            TextWidget textwdigt = new TextWidget("some test text");
-            textwdigt.AnchorCenter();
-            AddChild(textwdigt);
-        }
-
-        public string DoTemplateReplacements(string htmlContent)
-        {
-            StringBuilder sb = new StringBuilder(htmlContent);
-
-            foreach (KeyValuePair<string, string> replacement in TemplateValue)
-            {
-                sb.Replace(replacement.Key, replacement.Value);
-            }
-
-            return sb.ToString();
-        }
-    }
-
-    public class UpdateControl : FlowLayoutWidget
-    {
-        bool updateInitiated = false;
-        Button downloadUpdateLink;
-        Button checkUpdateLink;
-        Button installUpdateLink;
-        int downloadPercent = 0;
-        int downloadSize = 0;
-        TextWidget updateStatusText;
-        RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
-        TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-        public UpdateControl()
-        {
-            textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-            HAnchor = HAnchor.ParentLeftRight;
-            BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-            Padding = new BorderDouble(6, 5);
-            {
-				updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                updateStatusText.AutoExpandBoundsToText = true;
-                updateStatusText.VAnchor = VAnchor.ParentCenter;
-
-                GuiWidget horizontalSpacer = new GuiWidget();
-                horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-                checkUpdateLink = textImageButtonFactory.Generate("Check for Update".Localize());
-                checkUpdateLink.VAnchor = VAnchor.ParentCenter;
-                checkUpdateLink.Click += CheckForUpdate;
-                checkUpdateLink.Visible = false;
-
-                downloadUpdateLink = textImageButtonFactory.Generate("Download Update".Localize());
-                downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
-                downloadUpdateLink.Click += DownloadUpdate;
-                downloadUpdateLink.Visible = false;
-
-
-                installUpdateLink = textImageButtonFactory.Generate("Install Update".Localize());
-                installUpdateLink.VAnchor = VAnchor.ParentCenter;
-                installUpdateLink.Click += InstallUpdate;
-                installUpdateLink.Visible = false;
-
-                AddChild(updateStatusText);
-                AddChild(horizontalSpacer);
-                AddChild(checkUpdateLink);
-                AddChild(downloadUpdateLink);
-                AddChild(installUpdateLink);
-            }
-
-            CheckVersionStatus();
-            if (ApplicationSettings.Instance.get("ClientToken") != null)
-            {
-                //If we have already requested an update once, check on load
-                CheckForUpdate(this, null);
-            }
-            else
-            {
-                DataStorage.ApplicationSession firstSession;
-                firstSession = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.ApplicationSession>().OrderBy(v => v.SessionStart).Take(1).FirstOrDefault();
-                if (firstSession != null
-                    && DateTime.Compare(firstSession.SessionStart.AddDays(7), DateTime.Now) < 0)
-                {
-                    NeedToCheckForUpdateFirstTimeEver = true;
-                }
-            }
-        }
-
-        public static bool NeedToCheckForUpdateFirstTimeEver { get; set; }
-
-        public void CheckForUpdate(object sender, MouseEventArgs e)
-        {
-            if (!updateInitiated)
-            {
-                updateStatusText.Text = "Checking for updates...".Localize();
-                checkUpdateLink.Visible = false;
-
-                updateInitiated = true;
-                RequestLatestVersion request = new RequestLatestVersion();
-                request.RequestSucceeded += new EventHandler(onVersionRequestSucceeded);
-                request.RequestFailed += new EventHandler(onVersionRequestFailed);
-                request.Request();
-            }
-        }
-
-        string InstallerExtension
-        {
-            get
-            {
-                if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Mac)
-                {
-                    return "pkg";
-                }
-                else
-                {
-                    return "exe";
-                }
-            }
-        }
-
-        static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
-        static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
-
-        public void InstallUpdate(object sender, MouseEventArgs e)
-        {
-            string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-
-            string updateFileName = Path.Combine(updateFileLocation, "{0}.{1}".FormatWith(downloadToken, InstallerExtension));
-            string releaseVersion = ApplicationSettings.Instance.get("CurrentReleaseVersion");
-            string friendlyFileName = Path.Combine(updateFileLocation, "MatterControlSetup-{0}.{1}".FormatWith(releaseVersion, InstallerExtension));
-
-            if (System.IO.File.Exists(friendlyFileName))
-            {
-                System.IO.File.Delete(friendlyFileName);
-            }
-
-            try
-            {
-                //Change download file to friendly file name
-                System.IO.File.Move(updateFileName, friendlyFileName);
-
-                int tries = 0;
-                do
-                {
-                    Thread.Sleep(10);
-                } while (tries++ < 100 && !File.Exists(friendlyFileName));
-
-                //Run installer file
-                Process installUpdate = new Process();
-                installUpdate.StartInfo.FileName = friendlyFileName;
-                installUpdate.Start();
-
-                GuiWidget parent = Parent;
-                while (parent != null && parent as SystemWindow == null)
-                {
-                    parent = parent.Parent;
-                }
-
-                //Attempt to close current application
-                SystemWindow topSystemWindow = parent as SystemWindow;
-                if (topSystemWindow != null)
-                {
-                    topSystemWindow.Close();
-                }
-            }
-            catch
-            {
-                installUpdateLink.Visible = false;
-                updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
-                if (System.IO.File.Exists(friendlyFileName))
-                {
-                    System.IO.File.Delete(friendlyFileName);
-                }
-            }
-        }
-
-        public void DownloadUpdate(object sender, MouseEventArgs e)
-        {
-            if (!updateInitiated)
-            {
-                downloadUpdateLink.Visible = false;
-                updateStatusText.Text = string.Format("Downloading updates...".Localize());
-                updateInitiated = true;
-
-                string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
-                string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-
-                //Make HEAD request to determine the size of the download (required by GAE)
-                System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
-                request.Method = "HEAD";
-
-                try
-                {
-                    WebResponse response = request.GetResponse();
-                    downloadSize = (int)response.ContentLength;
-                }
-                catch
-                {
-                    //Unknown download size
-                    downloadSize = 0;
-                }
-
-                if (!System.IO.Directory.Exists(updateFileLocation))
-                {
-                    System.IO.Directory.CreateDirectory(updateFileLocation);
-                }
-
-                string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
-
-                WebClient webClient = new WebClient();
-                webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
-                webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-                webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
-            }
-        }
-
-        void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            string newText = "Downloading updates...".Localize();
-            if(downloadSize > 0)
-            {
-                this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
-                newText = "{0} {1}%".FormatWith(newText, downloadPercent);
-            }
-
-            updateStatusText.Text = newText;
-        }
-
-        void DownloadCompleted(object sender, EventArgs e)
-        {
-            this.updateInitiated = false;
-            updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
-            downloadUpdateLink.Visible = false;
-            installUpdateLink.Visible = true;
-            checkUpdateLink.Visible = false;
-        }
-
-        void CheckVersionStatus()
-        {
-            string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
-
-            string applicationBuildToken = VersionInfo.Instance.BuildToken;
-
-            if (applicationBuildToken == currentBuildToken || currentBuildToken == null)
-            {
-                updateStatusText.Text = string.Format("New updates may be available.".Localize());
-                checkUpdateLink.Visible = true;
-            }
-            else if (System.IO.File.Exists(updateFileName))
-            {
-                updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
-                installUpdateLink.Visible = true;
-                checkUpdateLink.Visible = false;
-            }
-            else
-            {
-                //updateStatusText.Text = string.Format("New version available: {0}", ApplicationSettings.Instance.get("CurrentReleaseVersion"));
-                updateStatusText.Text = string.Format("There are updates available.".Localize());
-                downloadUpdateLink.Visible = true;
-                checkUpdateLink.Visible = false;
-            }
-        }
-
-        void onVersionRequestSucceeded(object sender, EventArgs e)
-        {
-            this.updateInitiated = false;
-            string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
-
-            string applicationBuildToken = VersionInfo.Instance.BuildToken;
-
-            if (applicationBuildToken == currentBuildToken)
-            {
-                updateStatusText.Text = string.Format("Your application is up-to-date.".Localize());
-                downloadUpdateLink.Visible = false;
-                installUpdateLink.Visible = false;
-                checkUpdateLink.Visible = true;
-
-            }
-            else if (System.IO.File.Exists(updateFileName))
-            {
-                updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
-                downloadUpdateLink.Visible = false;
-                installUpdateLink.Visible = true;
-                checkUpdateLink.Visible = false;
-
-            }
-            else
-            {
-                updateStatusText.Text = string.Format("There is a recommended update available.".Localize());
-                //updateStatusText.Text = string.Format("New version available: {0}", ApplicationSettings.Instance.get("CurrentReleaseVersion"));
-                downloadUpdateLink.Visible = true;
-                installUpdateLink.Visible = false;
-                checkUpdateLink.Visible = false;
-            }
-
-            //MainSlidePanel.Instance.SetUpdateNotification(this, null);
-        }
-
-        void onVersionRequestFailed(object sender, EventArgs e)
-        {
-            this.updateInitiated = false;
-            updateStatusText.Text = string.Format("No updates are currently available.".Localize());
-            checkUpdateLink.Visible = true;
-            downloadUpdateLink.Visible = false;
-            installUpdateLink.Visible = false;
-        }
-    }
-
     public class AboutPage : GuiWidget
     {
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
-        
+
         public AboutPage()
         {
             this.HAnchor = HAnchor.ParentLeftRight;
@@ -402,145 +66,79 @@ namespace MatterHackers.MatterControl
             customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
 
             customInfoTopToBottom.AddChild(new UpdateControl());
-            AddMatterHackersInfo(customInfoTopToBottom);
+            //AddMatterHackersInfo(customInfoTopToBottom);
+
+            WidgetFromHtml creator = new WidgetFromHtml();
+
+            creator.AddMapping("translate", DoTranslate);
+            creator.AddMapping("toUpper", DoToUpper);
+            creator.AddMapping("versionNumber", GetVersionString);
+            creator.AddMapping("buildNumber", GetBuildString);
+            creator.AddMapping("linkButton", CreateLinkButton);
+            creator.AddMapping("centeredButton", CreateCenteredButton);
+
+            string aboutHtmlFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "AboutPage.html");
+            string htmlContent = File.ReadAllText(aboutHtmlFile);
+            GuiWidget htmlWidget = creator.CreateWidget(htmlContent);
+            
+            customInfoTopToBottom.AddChild(htmlWidget);
 
             this.AddChild(customInfoTopToBottom);
         }
 
-        private void AddMatterHackersInfo(FlowLayoutWidget topToBottom)
+        public string DoTranslate(string content)
         {
-            FlowLayoutWidget headerContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            headerContainer.Margin = new BorderDouble(0, 0, 0, 10);
-            headerContainer.HAnchor = HAnchor.ParentLeftRight;
+            throw new NotImplementedException();
+        }
+
+        public string DoToUpper(string content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetVersionString(string content)
+        {
+            return VersionInfo.Instance.ReleaseVersion;
+        }
+
+        public string GetBuildString(string content)
+        {
+            return VersionInfo.Instance.BuildVersion;
+        }
+
+        public string CreateLinkButton(string content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string CreateCenteredButton(string content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void DeleteCacheData()
+        {
+            // delete everything in the GCodeOutputPath
+            //   AppData\Local\MatterControl\data\gcode
+            // delete everything in the temp data that is not in use
+            //   AppData\Local\MatterControl\data\temp
+            //     plateImages
+            //     project-assembly
+            //     project-extract
+            //     stl
+
+            // first AppData\Local\MatterControl\data\gcode
+            string gcodeOutputPath = DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath;
+            try
             {
-                FlowLayoutWidget MatterControlWithTM = new FlowLayoutWidget();
-                MatterControlWithTM.AddChild(new TextWidget(string.Format("   MatterControl"), textColor: aboutTextColor, pointSize: 20));
-                TextWidget tm = new TextWidget(string.Format("™"), textColor: aboutTextColor, pointSize: 10);
-                tm.VAnchor = VAnchor.ParentTop;
-                MatterControlWithTM.AddChild(tm);
-                MatterControlWithTM.HAnchor = HAnchor.ParentCenter;
-                headerContainer.AddChild(MatterControlWithTM);
-
-                TextWidget versionText = new TextWidget(string.Format("Version {0}".Localize(), VersionInfo.Instance.ReleaseVersion).ToUpper(), textColor: aboutTextColor, pointSize: 10);
-                versionText.MinimumSize = new VectorMath.Vector2(versionText.Width, versionText.Height);
-                versionText.HAnchor = HAnchor.ParentCenter;
-                headerContainer.AddChild(versionText);
-
-                FlowLayoutWidget developedByContainer = new FlowLayoutWidget();
-                developedByContainer.Margin = new BorderDouble(top: 5);
-                developedByContainer.HAnchor = HAnchor.ParentLeftRight;
-
-                TextWidget developedByText = new TextWidget("Developed By: ".Localize().ToUpper(), pointSize:10, textColor: aboutTextColor);
-                                
-                developedByText.MinimumSize = new VectorMath.Vector2(developedByText.Width, developedByText.Height);
-
-                TextWidget MatterHackersText = new TextWidget("MatterHackers", pointSize: 14, textColor: aboutTextColor);
-
-
-                developedByContainer.AddChild(new HorizontalSpacer());
-                developedByContainer.AddChild(developedByText);
-                developedByContainer.AddChild(MatterHackersText);
-                developedByContainer.AddChild(new HorizontalSpacer());
-
-                headerContainer.AddChild(developedByContainer);
+                Directory.Delete(gcodeOutputPath, true);
             }
-            topToBottom.AddChild(headerContainer);
-
-            GuiWidget topSpacer = new GuiWidget();
-            topSpacer.VAnchor = VAnchor.ParentBottomTop;
-            topToBottom.AddChild(topSpacer);
-
-            // Slicer and agg thanks
+            catch (Exception)
             {
-                // donate to mc
-                {
-                    FlowLayoutWidget donateTextContanier = new FlowLayoutWidget();
-                    donateTextContanier.HAnchor = HAnchor.ParentLeftRight;
-
-                    TextWidget donateStartText = new TextWidget("Please consider ".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                    TextWidget donateEndText = new TextWidget(" to help support MatterControl.".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-
-                    donateTextContanier.AddChild(new HorizontalSpacer());
-                    donateTextContanier.AddChild(donateStartText);
-                    donateTextContanier.AddChild(getDonateLink(donateStartText));
-                    donateTextContanier.AddChild(donateEndText);
-                    donateTextContanier.AddChild(new HorizontalSpacer());
-
-                    topToBottom.AddChild(donateTextContanier);
-                }
-
-                // spacer
-                topToBottom.AddChild(new GuiWidget(10, 15));
-
-                GuiWidget centerSpacer = new GuiWidget();
-                centerSpacer.VAnchor = VAnchor.ParentBottomTop;
-                topToBottom.AddChild(centerSpacer);
-
-                InsertAttributionText(topToBottom, linkButtonFactory);
-            }
-
-            GuiWidget bottomSpacer = new GuiWidget();
-            bottomSpacer.VAnchor = VAnchor.ParentBottomTop;
-            topToBottom.AddChild(bottomSpacer);
-
-            FlowLayoutWidget feedbackButtons = new FlowLayoutWidget();
-            feedbackButtons.Margin = new BorderDouble(bottom: 10);
-            {
-                feedbackButtons.HAnchor |= HAnchor.ParentCenter;
-
-                Button feedbackLink = textImageButtonFactory.Generate("Send Feedback".Localize());
-			
-
-                feedbackLink.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
-                feedbackButtons.AddChild(feedbackLink);
-
-                GuiWidget buttonSpacer = new GuiWidget(10, 10);
-                feedbackButtons.AddChild(buttonSpacer);
-            }
-
-            topToBottom.AddChild(feedbackButtons);
-
-            Button learnMoreLink = linkButtonFactory.Generate("www.matterhackers.com");
-            learnMoreLink.Margin = new BorderDouble(right: 12);
-            learnMoreLink.Click += (sender, mouseEvent) => {
-                //openBrowser(new Uri("http://www.matterhackers.com"));
-                System.Diagnostics.Process.Start("http://www.matterhackers.com?clk=mc"); 
-            };
-            learnMoreLink.HAnchor = HAnchor.ParentCenter;
-            learnMoreLink.Margin = new BorderDouble(0, 5);
-            topToBottom.AddChild(learnMoreLink);
-
-            TextWidget copyrightText = new TextWidget(string.Format("Copyright © 2014 MatterHackers, Inc."), textColor: aboutTextColor);
-            copyrightText.HAnchor = HAnchor.ParentCenter;
-            topToBottom.AddChild(copyrightText);
-
-            {
-                FlowLayoutWidget leftToRightBuildInfo = new FlowLayoutWidget();
-                leftToRightBuildInfo.HAnchor |= HAnchor.ParentCenter;
-
-                TextWidget buildText = new TextWidget(string.Format("Build: {0} | ".Localize(), VersionInfo.Instance.BuildVersion), textColor: aboutTextColor, pointSize: 10);
-                leftToRightBuildInfo.AddChild(buildText);
-
-                double oldFontSize = linkButtonFactory.fontSize;
-                linkButtonFactory.fontSize = 10;
-                Button deleteCacheLink = linkButtonFactory.Generate("Clear Cache".Localize());
-                linkButtonFactory.fontSize = oldFontSize;
-                deleteCacheLink.OriginRelativeParent = new VectorMath.Vector2(deleteCacheLink.OriginRelativeParent.x, deleteCacheLink.OriginRelativeParent.y + buildText.Printer.TypeFaceStyle.DescentInPixels);
-                deleteCacheLink.Click += (sender, mouseEvent) => { DeleteCacheData(); };
-                leftToRightBuildInfo.AddChild(deleteCacheLink);
-
-                topToBottom.AddChild(leftToRightBuildInfo);
             }
         }
 
-        Button getDonateLink(TextWidget donateStartText )
-        {
-            Button matterControlDonateLink = linkButtonFactory.Generate("donating".Localize());
-            matterControlDonateLink.OriginRelativeParent = new VectorMath.Vector2(matterControlDonateLink.OriginRelativeParent.x, matterControlDonateLink.OriginRelativeParent.y + donateStartText.Printer.TypeFaceStyle.DescentInPixels);
-            matterControlDonateLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("http://www.matterhackers.com/store/printer-accessories/mattercontrol-donation"); };
-            return matterControlDonateLink;
-        }
-
+#if false // kevin code 2014 04 22
         System.Windows.Forms.WebBrowser browser;
         private void openBrowser(Uri url)
         {
@@ -571,72 +169,6 @@ namespace MatterHackers.MatterControl
             }
             browser.Show();
         }
-
-        public static void InsertAttributionText(GuiWidget topToBottom, LinkButtonFactory linkButtonFactory)
-        {
-            TextWidget ThanksSection = new TextWidget("Special thanks to:".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-            ThanksSection.HAnchor = HAnchor.ParentCenter;
-            topToBottom.AddChild(ThanksSection);
-
-            // slicer credit
-            {
-                FlowLayoutWidget donateTextContainer = new FlowLayoutWidget();
-                TextWidget thanksText = new TextWidget("Alessandro Ranellucci for ".Localize() ,textColor: ActiveTheme.Instance.PrimaryTextColor);
-                
-                donateTextContainer.AddChild(thanksText);
-                Button slic3rOrgLink = linkButtonFactory.Generate("Slic3r");
-                //slic3rOrgLink.VAnchor = VAnchor.Bottom;
-                slic3rOrgLink.OriginRelativeParent = new VectorMath.Vector2(slic3rOrgLink.OriginRelativeParent.x, slic3rOrgLink.OriginRelativeParent.y + thanksText.Printer.TypeFaceStyle.DescentInPixels);
-                slic3rOrgLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("https://github.com/alexrj/Slic3r"); };
-                donateTextContainer.AddChild(slic3rOrgLink);
-                donateTextContainer.HAnchor = HAnchor.ParentCenter;
-                topToBottom.AddChild(donateTextContainer);
-            }
-
-            // cura engine credit
-            {
-                FlowLayoutWidget curaEngineTextContanier = new FlowLayoutWidget();
-                TextWidget donateStartText = new TextWidget("David Braam and Ultimaker BV for ".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                curaEngineTextContanier.AddChild(donateStartText);
-
-                Button curaEngineSourceLink = linkButtonFactory.Generate("CuraEngine");
-                curaEngineSourceLink.OriginRelativeParent = new VectorMath.Vector2(curaEngineSourceLink.OriginRelativeParent.x, curaEngineSourceLink.OriginRelativeParent.y + donateStartText.Printer.TypeFaceStyle.DescentInPixels);
-                curaEngineSourceLink.Click += (sender, mouseEvent) => { System.Diagnostics.Process.Start("https://github.com/Ultimaker/CuraEngine"); };
-                curaEngineTextContanier.AddChild(curaEngineSourceLink);
-                curaEngineTextContanier.AddChild(new TextWidget(".", textColor: ActiveTheme.Instance.PrimaryTextColor));
-
-                curaEngineTextContanier.HAnchor = HAnchor.ParentCenter;
-                topToBottom.AddChild(curaEngineTextContanier);
-            }
-        }
-
-        public static void DeleteCacheData()
-        {
-            // delete everything in the GCodeOutputPath
-            //   AppData\Local\MatterControl\data\gcode
-            // delete everything in the temp data that is not in use
-            //   AppData\Local\MatterControl\data\temp
-            //     plateImages
-            //     project-assembly
-            //     project-extract
-            //     stl
-
-            // first AppData\Local\MatterControl\data\gcode
-            string gcodeOutputPath = DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath;
-            try
-            {
-                Directory.Delete(gcodeOutputPath, true);
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            graphics2D.FillRectangle(new RectangleDouble(0, this.Height - 1, this.Width, this.Height), ActiveTheme.Instance.PrimaryTextColor);
-            base.OnDraw(graphics2D);
-        }
+#endif
     }
 }
