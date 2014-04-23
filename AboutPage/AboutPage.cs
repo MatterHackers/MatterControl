@@ -36,11 +36,15 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.HtmlParsing;
 
 namespace MatterHackers.MatterControl
 {
     public class AboutPage : GuiWidget
     {
+        static string htmlContent = null;
+
+        GuiWidget htmlWidget;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -68,22 +72,89 @@ namespace MatterHackers.MatterControl
             customInfoTopToBottom.AddChild(new UpdateControl());
             //AddMatterHackersInfo(customInfoTopToBottom);
 
-            WidgetFromHtml creator = new WidgetFromHtml();
+            HtmlParser htmlParser = new HtmlParser();
 
-            creator.AddMapping("translate", DoTranslate);
-            creator.AddMapping("toUpper", DoToUpper);
-            creator.AddMapping("versionNumber", GetVersionString);
-            creator.AddMapping("buildNumber", GetBuildString);
-            creator.AddMapping("linkButton", CreateLinkButton);
-            creator.AddMapping("centeredButton", CreateCenteredButton);
+            if (htmlContent == null)
+            {
+                string aboutHtmlFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "AboutPage.html");
+                htmlContent = File.ReadAllText(aboutHtmlFile);
+            }
+            
+            htmlWidget = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            htmlWidget.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+            htmlWidget.HAnchor |= HAnchor.ParentCenter;
 
-            string aboutHtmlFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "AboutPage.html");
-            string htmlContent = File.ReadAllText(aboutHtmlFile);
-            GuiWidget htmlWidget = creator.CreateWidget(htmlContent);
+            htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
             
             customInfoTopToBottom.AddChild(htmlWidget);
 
             this.AddChild(customInfoTopToBottom);
+        }
+
+        FlowLayoutWidget currentRow;
+        private void AddContent(HtmlParser htmlParser, string htmlContent)
+        {
+            ElementState elementState = htmlParser.CurrentElementState;
+            switch (elementState.TypeName)
+            {
+                case "a":
+                    break;
+
+                case "table":
+                    break;
+
+                case "td":
+                case "span":
+                    GuiWidget widgetToAdd;
+
+                    TextWidget content = new TextWidget(htmlContent, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                    widgetToAdd = content;
+
+                    currentRow.AddChild(widgetToAdd);
+                    break;
+
+                case "tr":
+                    currentRow = new FlowLayoutWidget();
+                    if (elementState.HeightPercent == 100)
+                    {
+                        currentRow.VAnchor = VAnchor.ParentBottomTop;
+                    }
+                    if (elementState.Alignment == ElementState.AlignType.center)
+                    {
+                        currentRow.HAnchor |= HAnchor.ParentCenter;
+                    }
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+        
+        private void CloseContent(HtmlParser htmlParser, string htmlContent)
+        {
+            ElementState elementState = htmlParser.CurrentElementState;
+            switch (elementState.TypeName)
+            {
+                case "a":
+                    break;
+
+                case "table":
+                    break;
+
+                case "span":
+                    break;
+
+                case "tr":
+                    htmlWidget.AddChild(currentRow);
+                    currentRow = null;
+                    break;
+
+                case "td":
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public string DoTranslate(string content)

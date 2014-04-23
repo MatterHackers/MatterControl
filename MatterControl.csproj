@@ -82,7 +82,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AboutPage\UpdateControl.cs" />
-    <Compile Include="AboutPage\WidgetFromHtml.cs" />
+    <Compile Include="AboutPage\HtmlParser.cs" />
     <Compile Include="ActionBar\ActionBarBaseControls.cs" />
     <Compile Include="ActionBar\ActionBarPlus.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
