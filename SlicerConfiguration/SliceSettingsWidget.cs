@@ -409,6 +409,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             foreach(string line in wrappedText)
             {
                 GuiWidget helpWidget = new TextWidget(line, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
+                helpWidget.HAnchor = HAnchor.ParentLeft;
                 allText.AddChild(helpWidget);
             }
 
