@@ -51,10 +51,15 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
+    public class Pannel1UiState
+    {
+        public int lastMainScreenTabIndex = 0;
+        public int lastSelectedIndex = -1;
+        public int lastAdvancedControlsTab = -1;
+    }
+
     public class WidescreenPanel : FlowLayoutWidget
     {
-        MainScreenTabView mainScreenTabView;
-
         SliceSettingsWidget sliceSettingsWidget;
         TabControl advancedControls;
         public TabPage AboutTabPage;
@@ -230,13 +235,6 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(LoadColumnTwo);
         }
 
-        internal class Pannel1UiState
-        {
-            internal int lastMainScreenTab = -1;
-            internal int lastSelectedIndex = -1;
-            internal int lastAdvancedControlsTab = -1;
-        }
-
         static Pannel1UiState uiState = new Pannel1UiState();
 
         public void StoreUiState()
@@ -244,10 +242,6 @@ namespace MatterHackers.MatterControl
             if (queueDataView != null && queueDataView.SelectedIndex != -1)
             {
                 uiState.lastSelectedIndex = queueDataView.SelectedIndex;
-            }
-            if (mainScreenTabView != null && mainScreenTabView.SelectedTabIndex != -1)
-            {
-                uiState.lastMainScreenTab = mainScreenTabView.SelectedTabIndex;
             }
             if (advancedControls != null && advancedControls.SelectedTabIndex != -1)
             {
@@ -260,10 +254,6 @@ namespace MatterHackers.MatterControl
             if (uiState.lastSelectedIndex > -1 && queueDataView != null)
             {
                 queueDataView.SelectedIndex = uiState.lastSelectedIndex;
-            }
-            if (uiState.lastMainScreenTab > -1 && mainScreenTabView != null)
-            {
-                mainScreenTabView.SelectedTabIndex = uiState.lastMainScreenTab;
             }
             if (uiState.lastAdvancedControlsTab > -1 && advancedControls != null)
             {
@@ -279,7 +269,7 @@ namespace MatterHackers.MatterControl
             
             ColumnOne.RemoveAllChildren();
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-            ColumnOne.AddChild(new CompactSlidePanel(queueDataView));
+            ColumnOne.AddChild(new CompactSlidePanel(queueDataView, uiState));
             ColumnOne.AnchorAll();
 
             RestoreUiState();
@@ -295,8 +285,7 @@ namespace MatterHackers.MatterControl
             ColumnOne.VAnchor = VAnchor.ParentBottomTop;
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
             ColumnOne.AddChild(new PrintProgressBar());
-            mainScreenTabView = new MainScreenTabView(queueDataView);
-            ColumnOne.AddChild(mainScreenTabView);
+            ColumnOne.AddChild(new MainScreenTabView(queueDataView, uiState));
             ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
 
             RestoreUiState();

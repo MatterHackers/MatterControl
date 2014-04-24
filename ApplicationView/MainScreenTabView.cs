@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
         QueueDataView queueDataView;
         event EventHandler unregisterEvents;
 
-        public MainScreenTabView(QueueDataView queueDataView)
+        public MainScreenTabView(QueueDataView queueDataView, Pannel1UiState uiState)
         {
             this.queueDataView = queueDataView;
             this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -98,6 +98,8 @@ namespace MatterHackers.MatterControl
             QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             ApplicationWidget.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
+
+            SelectedTabIndex = tabStateBeforeClose;
         }
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
@@ -109,6 +111,7 @@ namespace MatterHackers.MatterControl
 
         public override void OnClosed(EventArgs e)
         {
+            tabStateBeforeClose = SelectedTabIndex;
             if (unregisterEvents != null)
             {
                 unregisterEvents(this, null);

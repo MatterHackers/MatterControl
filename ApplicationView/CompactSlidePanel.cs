@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
             get { return GetPannel(1); }
         }
 
-        public CompactSlidePanel(QueueDataView queueDataView)
+        public CompactSlidePanel(QueueDataView queueDataView, Pannel1UiState uiState)
             : base(2)
         {
             this.queueDataView = queueDataView;
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
                 this.LeftPanel.AddChild(new PrintProgressBar());
 
                 // construct the main controls tab control
-                mainControlsTabControl = new MainScreenTabView(queueDataView);
+                mainControlsTabControl = new MainScreenTabView(queueDataView, uiState);
 
                 advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
