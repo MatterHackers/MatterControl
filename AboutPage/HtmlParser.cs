@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.HtmlParsing
                                 string[] classes = splitOnEquals[1].Split(' ');
                                 foreach (string className in classes)
                                 {
-                                    style.classes.Add(className);
+                                    style.classes.Add(new Regex("[^']*").Match(className).Value);
                                 }
                             }
                             break;
@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.HtmlParsing
                             break;
 
                         case "id":
-                            style.id = splitOnEquals[1].Substring(0, splitOnEquals[1].Length - 1);
+                            style.id = splitOnEquals[1];
                             break;
 
                         default:

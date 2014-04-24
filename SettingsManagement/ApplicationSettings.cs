@@ -6,6 +6,7 @@ using System.Text;
 
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl
 {
@@ -33,15 +34,14 @@ namespace MatterHackers.MatterControl
         {
             if (oemName == null)
             {
-                string pathToWhitelist = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "PrinterSettingsWhitelist.txt");
-                string[] oemWhiteListSettings = File.ReadAllLines(pathToWhitelist);
-                if (oemWhiteListSettings.Length > 1)
+                string[] printerWhiteListStrings = OemSettings.Instance.PrinterWhiteList.ToArray();
+                if (printerWhiteListStrings.Length > 1)
                 {
                     oemName = "MatterHackers";
                 }
                 else
                 {
-                    oemName = oemWhiteListSettings[0];
+                    oemName = printerWhiteListStrings[0];
                 }
             }
 

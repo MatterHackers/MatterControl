@@ -131,35 +131,46 @@ namespace MatterHackers.MatterControl
                     }
                     if (elementState.Classes.Contains("versionNumber"))
                     {
-                        decodedHtml = "*release*" + VersionInfo.Instance.ReleaseVersion;
+                        decodedHtml = VersionInfo.Instance.ReleaseVersion;
                     }
                     if (elementState.Classes.Contains("buildNumber"))
                     {
-                        decodedHtml = "*build*" + VersionInfo.Instance.BuildVersion;
+                        decodedHtml = VersionInfo.Instance.BuildVersion;
                     }
 
+                    Button createdButton = null;
                     if (elementState.Classes.Contains("centeredButton"))
                     {
-                        Button feedbackLink = textImageButtonFactory.Generate(decodedHtml);
-                        feedbackLink.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
-                        widgetToAdd = feedbackLink;
+                        createdButton = textImageButtonFactory.Generate(decodedHtml);
+                        widgetToAdd = createdButton;
                     }
                     else if (elementState.Classes.Contains("linkButton"))
                     {
                         double oldFontSize = linkButtonFactory.fontSize;
                         linkButtonFactory.fontSize = elementState.PointSize;
-                        Button deleteCacheLink = linkButtonFactory.Generate(decodedHtml);
+                        createdButton = linkButtonFactory.Generate(decodedHtml);
                         StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
                         double descentInPixels = styled.DescentInPixels;
-                        deleteCacheLink.OriginRelativeParent = new VectorMath.Vector2(deleteCacheLink.OriginRelativeParent.x, deleteCacheLink.OriginRelativeParent.y + descentInPixels);
-                        deleteCacheLink.Click += (sender, mouseEvent) => { DeleteCacheData(); };
-                        widgetToAdd = deleteCacheLink;
+                        createdButton.OriginRelativeParent = new VectorMath.Vector2(createdButton.OriginRelativeParent.x, createdButton.OriginRelativeParent.y + descentInPixels);
+                        widgetToAdd = createdButton;
                         linkButtonFactory.fontSize = oldFontSize;
                     }
                     else
                     {
                         TextWidget content = new TextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
                         widgetToAdd = content;
+                    }
+
+                    if (createdButton != null)
+                    {
+                        if (elementState.Id == "sendFeedback")
+                        {
+                            createdButton.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
+                        }
+                        else if (elementState.Id == "clearCache")
+                        {
+                            createdButton.Click += (sender, mouseEvent) => { DeleteCacheData(); };
+                        }
                     }
 
                     if (elementState.VerticalAlignment == ElementState.VerticalAlignType.top)
@@ -183,7 +194,7 @@ namespace MatterHackers.MatterControl
                     break;
 
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("Don't know what to do with {0}".FormatWith(elementState.TypeName));
             }
         }
         

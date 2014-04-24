@@ -2037,3 +2037,15 @@ Translated:Your Email Address*
 English:Your Name*
 Translated:Your Name*
 
+English:Version 
+Translated:Version 
+
+English:Developed by:
+Translated:Developed by:
+
+English:Send FeedBack
+Translated:Send FeedBack
+
+English:Build: 
+Translated:Build: 
+

@@ -8,6 +8,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl
 {
@@ -21,8 +22,7 @@ namespace MatterHackers.MatterControl
             string defaultManufacturerLabelFull = string.Format("- {0} -", defaultManufacturerLabel);
             ManufacturerDropList = new StyledDropDownList(defaultManufacturerLabelFull);            
             bool addOther = false;
-            string pathToWhitelist = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "PrinterSettingsWhitelist.txt");
-            string[] folderWhitelist = File.ReadAllLines(pathToWhitelist);
+            string[] printerWhiteListStrings = OemSettings.Instance.PrinterWhiteList.ToArray();
             string pathToManufacturers = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings");
             if (Directory.Exists(pathToManufacturers))
             {
@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl
                 foreach (string manufacturerDirectory in Directory.EnumerateDirectories(pathToManufacturers))
                 {
                     string folderName = new System.IO.DirectoryInfo(manufacturerDirectory).Name;
-                    if (folderWhitelist.Contains(folderName))
+                    if (printerWhiteListStrings.Contains(folderName))
                     {
                         string manufacturer = Path.GetFileName(manufacturerDirectory);
                         if (manufacturer == "Other")

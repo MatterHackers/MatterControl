@@ -36,6 +36,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -45,25 +46,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         PluginChooserWindow pluginChooserWindow;
         QueueDataView queueDataView;
 
-        public static string affiliateCode = "5NEP8W";
-        static bool showShopButton = true;
         static Button shopButton;
-        public static bool ShowShopButton
-        {
-            get
-            {
-                return showShopButton;
-            }
-
-            set
-            {
-                showShopButton = value;
-                if (shopButton != null)
-                {
-                    shopButton.Visible = showShopButton;
-                }
-            }
-        }
 
         public QueueBottomToolbar(QueueDataView queueDataView)
         {
@@ -108,7 +91,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         };
                     }
 
-                    if(ShowShopButton)
+                    if(OemSettings.Instance.ShowShopButton)
                     {
                         shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Shop"), "icon_shopping_cart_32x32.png");
                         buttonPanel1.AddChild(shopButton);
@@ -125,7 +108,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                                 }
                             }
 
-                            System.Diagnostics.Process.Start("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, affiliateCode));
+                            System.Diagnostics.Process.Start("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
                         };
                     }
 
