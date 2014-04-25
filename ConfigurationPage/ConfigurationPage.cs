@@ -73,23 +73,17 @@ namespace MatterHackers.MatterControl
         {
             SetDisplayAttributes();
 
-            HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+            HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             VAnchor = Agg.UI.VAnchor.FitToChildren;
 
             FlowLayoutWidget mainLayoutContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            mainLayoutContainer.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+            mainLayoutContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             mainLayoutContainer.VAnchor = Agg.UI.VAnchor.FitToChildren;
             mainLayoutContainer.Padding = new BorderDouble(3, 0, 3, 10);
 
             FlowLayoutWidget terminalControls = new FlowLayoutWidget();
             terminalControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-
-            mainLayoutContainer.AddChild(terminalControls);
-
-            AddEePromControls(terminalControls);
-            AddTerminalControls(terminalControls);
-
-            AddPrintLevelingControls(mainLayoutContainer);
+            terminalControls.Padding = new BorderDouble(right: 15);
 
             FlowLayoutWidget settingsControls = new FlowLayoutWidget();
             settingsControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -97,14 +91,20 @@ namespace MatterHackers.MatterControl
             AddThemeControls(settingsControls);
             AddLanguageControls(settingsControls);            
 
-			FlowLayoutWidget releaseControls = new FlowLayoutWidget();
-			releaseControls.Margin = new BorderDouble (right: 10);
-			releaseControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			//FlowLayoutWidget releaseControls = new FlowLayoutWidget();
+			//releaseControls.Margin = new BorderDouble (right: 10);
+			//releaseControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-			AddReleaseOptions (releaseControls);
+            
+            AddTerminalControls(terminalControls);
+            AddEePromControls(terminalControls);
+            AddReleaseOptions(terminalControls);
 
             mainLayoutContainer.AddChild(settingsControls);
-			mainLayoutContainer.AddChild(releaseControls);
+            mainLayoutContainer.AddChild(terminalControls);
+            AddPrintLevelingControls(mainLayoutContainer);            
+            
+			//mainLayoutContainer.AddChild(releaseControls);
 
             AddChild(mainLayoutContainer);
 
@@ -225,22 +225,25 @@ namespace MatterHackers.MatterControl
 			
 		public void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
 		{
-			GroupBox releaseOptionsGroupBox = new GroupBox(LocalizedString.Get("Release Options"));
-
-			releaseOptionsGroupBox.Margin = new BorderDouble (0);
-			releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			releaseOptionsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			releaseOptionsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			releaseOptionsGroupBox.Height = 78;
+			GroupBox releaseOptionsGroupBox = new GroupBox(LocalizedString.Get("Update Feed"));
+            
+            releaseOptionsGroupBox.Margin = new BorderDouble(0);
+            releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            releaseOptionsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+            releaseOptionsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            releaseOptionsGroupBox.Height = 68;
 
 			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
-			controlsContainer.HAnchor = HAnchor.ParentLeftRight;
+			controlsContainer.HAnchor |= HAnchor.ParentCenter;
 
-			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Options");
-			releaseOptionsDropList.Margin = new BorderDouble (0, 3);
+            AnchoredDropDownList releaseOptionsDropList = new AnchoredDropDownList("Development");			
+            releaseOptionsDropList.Margin = new BorderDouble (0, 3);
+                       
 			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Release", "release");
 			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Pre-Release", "pre-release");
 			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Development", "development");
+
+            releaseOptionsDropList.MinimumSize = new Vector2(releaseOptionsDropList.LocalBounds.Width, releaseOptionsDropList.LocalBounds.Height); 
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string> (){ "release", "pre-release", "development" };
 			string currentUpdateFeedType = UserSettings.Instance.get ("UpdateFeedType");
@@ -254,14 +257,9 @@ namespace MatterHackers.MatterControl
 
 			releaseOptionsDropList.SelectionChanged += new EventHandler (ReleaseOptionsDropList_SelectionChanged);
 
-
-			GuiWidget hSpacer = new GuiWidget();
-			hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
 			controlsContainer.AddChild(releaseOptionsDropList);
 			releaseOptionsGroupBox.AddChild(controlsContainer);
 			controlsTopToBottom.AddChild(releaseOptionsGroupBox);
-			controlsTopToBottom.AddChild(hSpacer);
 		}
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
@@ -277,7 +275,7 @@ namespace MatterHackers.MatterControl
         {
             GroupBox terminalControlsContainer;
             terminalControlsContainer = new GroupBox(LocalizedString.Get("Communications"));
-
+            
             terminalControlsContainer.Margin = new BorderDouble(0);
             terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             terminalControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -288,7 +286,7 @@ namespace MatterHackers.MatterControl
 
             {
                 FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-                buttonBar.HAnchor |= HAnchor.ParentLeftRight;
+                buttonBar.HAnchor |= HAnchor.ParentCenter;
                 buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
                 buttonBar.Margin = new BorderDouble(3, 0, 3, 6);
                 buttonBar.Padding = new BorderDouble(0);
@@ -322,16 +320,16 @@ namespace MatterHackers.MatterControl
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             GroupBox eePromControlsGroupBox = new GroupBox(LocalizedString.Get("EEProm Settings"));
-
+            
 			eePromControlsGroupBox.Margin = new BorderDouble(0);
             eePromControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             eePromControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            eePromControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+            eePromControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             eePromControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			eePromControlsGroupBox.Height = 68;
             {
 				FlowLayoutWidget eePromControlsLayout = new FlowLayoutWidget();
-				eePromControlsLayout.HAnchor |= HAnchor.ParentLeftRight;
+                eePromControlsLayout.HAnchor |= HAnchor.ParentCenter;
 				eePromControlsLayout.VAnchor |= Agg.UI.VAnchor.ParentCenter;
 				eePromControlsLayout.Margin = new BorderDouble(3, 0, 3, 6);
 				eePromControlsLayout.Padding = new BorderDouble(0);

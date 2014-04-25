@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterControl.csproj", "{0B8D6F56-BD7F-4426-B858-D9292B084656}"
 	ProjectSection(ProjectDependencies) = postProject
 		{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B} = {657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}
@@ -408,10 +408,10 @@ Global
 		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release|x64.ActiveCfg = Release|Any CPU
 		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release|x86.ActiveCfg = Release|Any CPU
-		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release64|Any CPU.ActiveCfg = Release64|Any CPU
-		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release64|Any CPU.Build.0 = Release64|Any CPU
-		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release64|x64.ActiveCfg = Release64|Any CPU
-		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release64|x86.ActiveCfg = Release64|Any CPU
+		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release64|Any CPU.ActiveCfg = Release|Any CPU
+		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release64|Any CPU.Build.0 = Release|Any CPU
+		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release64|x64.ActiveCfg = Release|Any CPU
+		{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}.Release64|x86.ActiveCfg = Release|Any CPU
 		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DF4CB3D-9A03-4256-9A81-70523AAD828B}.Debug|x64.ActiveCfg = Debug|Any CPU

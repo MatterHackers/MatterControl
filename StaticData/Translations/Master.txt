@@ -2049,3 +2049,6 @@ Translated:Send FeedBack
 English:Build: 
 Translated:Build: 
 
+English:Update Feed
+Translated:Update Feed
+
