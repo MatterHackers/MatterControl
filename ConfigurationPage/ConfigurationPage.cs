@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+            string releaseCode = ((AnchoredDropDownList)sender).SelectedValue;
 			if(releaseCode != UserSettings.Instance.get("UpdateFeedType"))
 			{
 				UserSettings.Instance.set("UpdateFeedType", releaseCode);
