@@ -42,7 +42,12 @@ namespace MatterHackers.MatterControl.ActionBar
 {
     class TemperatureWidgetBase : GuiWidget
     {
-        TextWidget indicatorTextWidget;
+        protected TextWidget indicatorTextWidget;
+        protected TextWidget labelTextWidget;
+        protected Button preheatButton;
+
+        protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
+
         RGBA_Bytes borderColor = new RGBA_Bytes(255, 255, 255);
         int borderWidth = 2;
 
@@ -65,15 +70,63 @@ namespace MatterHackers.MatterControl.ActionBar
         public TemperatureWidgetBase(string textValue)
             : base(52, 52)
         {
+
+            whiteButtonFactory.FixedHeight = 18;
+            whiteButtonFactory.fontSize = 7;
+            whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
+            whiteButtonFactory.normalTextColor = RGBA_Bytes.DarkGray;
+
+            FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            container.AnchorAll();
+
             this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
+            this.Margin = new BorderDouble(0, 2);
+
+            GuiWidget labelContainer = new GuiWidget();
+            labelContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            labelContainer.Height = 18;
+
+            labelTextWidget = new TextWidget("", pointSize:8);
+            labelTextWidget.AutoExpandBoundsToText = true;
+            labelTextWidget.HAnchor = HAnchor.ParentCenter;
+            labelTextWidget.VAnchor = VAnchor.ParentCenter;
+            labelTextWidget.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
+            labelTextWidget.Visible = false;
+
+            labelContainer.AddChild(labelTextWidget);
+
+            GuiWidget indicatorContainer = new GuiWidget();
+            indicatorContainer.AnchorAll();
+
             indicatorTextWidget = new TextWidget(textValue, pointSize: 11);
             indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
             indicatorTextWidget.HAnchor = HAnchor.ParentCenter;
             indicatorTextWidget.VAnchor = VAnchor.ParentCenter;
             indicatorTextWidget.AutoExpandBoundsToText = true;
-            this.Margin = new BorderDouble(0, 2);
-            this.AddChild(indicatorTextWidget);
+
+            indicatorContainer.AddChild(indicatorTextWidget);
+
+            GuiWidget buttonContainer = new GuiWidget();
+            buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            buttonContainer.Height = 18;
+
+            preheatButton = whiteButtonFactory.Generate("PREHEAT");
+            preheatButton.Cursor = Cursors.Hand;
+            preheatButton.Visible = false;
+
+            buttonContainer.AddChild(preheatButton);
+            
+            container.AddChild(labelContainer);
+            container.AddChild(indicatorContainer);
+            container.AddChild(buttonContainer);
+
+
+            this.AddChild(container);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+
+            this.MouseEnterBounds += onEnterBounds;
+            this.MouseLeaveBounds += onLeaveBounds;
+            this.preheatButton.Click += onPreheatButtonClick;
         }
 
         public override void OnClosed(EventArgs e)
@@ -91,6 +144,22 @@ namespace MatterHackers.MatterControl.ActionBar
             this.Invalidate();
         }
 
+        void onEnterBounds(Object sender, EventArgs e)
+        {
+            labelTextWidget.Visible = true;
+            if (PrinterCommunication.Instance.PrinterIsConnected && !PrinterCommunication.Instance.PrinterIsPrinting)
+            {
+                preheatButton.Visible = true;
+            }
+            preheatButton.Visible = true;
+        }
+
+        void onLeaveBounds(Object sender, EventArgs e)
+        {
+            labelTextWidget.Visible = false;
+            preheatButton.Visible = false;
+        }
+
         public override void OnDraw(Graphics2D graphics2D)
         {
             base.OnDraw(graphics2D);
@@ -99,6 +168,16 @@ namespace MatterHackers.MatterControl.ActionBar
             RoundedRect borderRect = new RoundedRect(this.LocalBounds, 0);
             Stroke strokeRect = new Stroke(borderRect, borderWidth);
             graphics2D.Render(strokeRect, borderColor);
+        }
+
+        void onPreheatButtonClick(object sender, EventArgs e)
+        {
+            SetTargetTemperature();
+        }
+
+        protected virtual void SetTargetTemperature()
+        {
+            
         }
     }
 }

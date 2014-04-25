@@ -36,6 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ActionBar
@@ -45,6 +46,7 @@ namespace MatterHackers.MatterControl.ActionBar
         public TemperatureWidgetExtruder()
             : base("150.3°")
         {
+            labelTextWidget.Text = "Extruder";
             AddHandlers();
             setToCurrentTemperature();
         }
@@ -90,12 +92,33 @@ namespace MatterHackers.MatterControl.ActionBar
                     tempDirectionIndicator = "↑";
                 }
             }
-            this.IndicatorValue = string.Format("{0:0.#}°{1}", PrinterCommunication.Instance.ActualExtruderTemperature, tempDirectionIndicator);
+            this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterCommunication.Instance.ActualExtruderTemperature, tempDirectionIndicator);
         }
 
         void onTemperatureRead(Object sender, EventArgs e)
         {
             setToCurrentTemperature();
+        }        
+
+        protected override void SetTargetTemperature()
+        {
+            double targetTemp;
+            if (double.TryParse(ActiveSliceSettings.Instance.GetActiveValue("first_layer_temperature"), out targetTemp))
+            {
+                double goalTemp = (int)(targetTemp + .5);
+                if (PrinterCommunication.Instance.PrinterIsPrinting
+                    && PrinterCommunication.Instance.PrintingState == PrinterCommunication.DetailedPrintingState.HeatingExtruder
+                    && goalTemp != PrinterCommunication.Instance.TargetExtruderTemperature)
+                {
+                    string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
+                    string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterCommunication.Instance.TargetExtruderTemperature, sliceSettingsNote);
+                    StyledMessageBox.ShowMessageBox(message, "Waiting For Extruder To Heat");
+                }
+                else
+                {
+                    PrinterCommunication.Instance.TargetExtruderTemperature = (int)(targetTemp + .5);
+                }
+            }
         }
     }
 }
