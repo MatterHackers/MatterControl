@@ -228,11 +228,11 @@ namespace MatterHackers.MatterControl
             ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
             string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
             string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
-            string pngFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
+            string tgaFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.tga".FormatWith(stlHashCode, size.x, size.y));
 
-            if (File.Exists(pngFileName))
+            if (File.Exists(tgaFileName))
             {
-                if (ImageIO.LoadImageData(pngFileName, tempImage))
+                if (ImageTgaIO.LoadImageData(tgaFileName, tempImage))
                 {
                     return tempImage;
                 }
@@ -271,13 +271,13 @@ namespace MatterHackers.MatterControl
                 // and save it to disk
                 string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
                 string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
-                string pngFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
+                string tgaFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.tga".FormatWith(stlHashCode, size.x, size.y));
 
                 if (!Directory.Exists(folderToSavePrintsTo))
                 {
                     Directory.CreateDirectory(folderToSavePrintsTo);
                 }
-                ImageIO.SaveImageData(pngFileName, tempImage);
+                ImageTgaIO.SaveImageData(tgaFileName, tempImage);
 
                 // and give it back
                 return tempImage;
