@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
             SetUpdateNotificationTrigger.CallEvents(this, null);
         }
 
-        public void ReloadBackPanel()
+        public void ReloadAdvancedControlsPanel()
         {
             ReloadPanelTrigger.CallEvents(this, null);
         }

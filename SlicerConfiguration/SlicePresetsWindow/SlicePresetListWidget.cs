@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         preset.Delete();
                         windowController.ChangeToSlicePresetList();
                         ActiveSliceSettings.Instance.LoadAllSettings();
-                        ApplicationWidget.Instance.ReloadBackPanel();
+                        ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
                     });
                 };
 

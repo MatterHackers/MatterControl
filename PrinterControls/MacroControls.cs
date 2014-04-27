@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 
         protected void ReloadMacros(object sender, EventArgs e)
         {
-            ApplicationWidget.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
         }
 
         

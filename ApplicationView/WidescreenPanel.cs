@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
         public TabPage AboutTabPage;
         TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-        SliceSettingsWidget.UiState sliceSettingsUiState;
+        SliceSettingsWidget.UiState sliceSettingsUiState = new SliceSettingsWidget.UiState();
 
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
             PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
+            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanel, ref unregisterEvents);
             this.BoundsChanged += new EventHandler(onBoundsChanges);
         }
 
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl
             
             ColumnOne.RemoveAllChildren();
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-            ColumnOne.AddChild(new CompactSlidePanel(queueDataView));
+            ColumnOne.AddChild(new CompactSlidePanel(queueDataView, sliceSettingsUiState));
             ColumnOne.AnchorAll();
         }
 
@@ -253,9 +253,10 @@ namespace MatterHackers.MatterControl
             ColumnTwo.AnchorAll();
         }
 
-        void LoadColumnThree()
+        void LoadColumnThree(object state = null)
         {
-            ColumnThree.AddChild(CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState()));
+            ColumnThree.RemoveAllChildren();
+            ColumnThree.AddChild(CreateNewAdvancedControlsTab(sliceSettingsUiState));
             ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
         }
 
@@ -398,17 +399,16 @@ namespace MatterHackers.MatterControl
             LeftBorderLine.Click += new ClickWidget.ButtonEventHandler(onLeftBorderClick);
         }
 
-        public void ReloadBackPanel(object sender, EventArgs widgetEvent)
+        public void ReloadAdvancedControlsPanel(object sender, EventArgs widgetEvent)
         {
-            lastNumberVisible = 0;
             sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
-            UiThread.RunOnIdle(RecreateAllPannels);
+            UiThread.RunOnIdle(LoadColumnThree);
         }
 
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
         {
             ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationWidget.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
         }
     }    
 

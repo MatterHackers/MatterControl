@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         protected void ReloadOptions(object sender, EventArgs e)
         {
-            ApplicationWidget.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
         }
 
         IEnumerable<DataStorage.SliceSettingsCollection> GetCollections()
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             UiThread.RunOnIdle((state) =>
             {
                 ActiveSliceSettings.Instance.LoadAllSettings();
-                ApplicationWidget.Instance.ReloadBackPanel();
+                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
             });
         }
 
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             UiThread.RunOnIdle((state) =>
             {
                 ActiveSliceSettings.Instance.LoadAllSettings();
-                ApplicationWidget.Instance.ReloadBackPanel();
+                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
                 if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
                 {
                     ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
@@ -259,21 +259,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 slic3rMenuItem.Selected += (sender, e) =>
                 {
                     ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
-                    ApplicationWidget.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
                 };
 
                 MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.CuraEngine.ToString());
                 curaEnginMenuItem.Selected += (sender, e) =>
                 {
                     ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
-                    ApplicationWidget.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
                 };
 
                 MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.MatterSlice.ToString());
                 matterSliceMenuItem.Selected += (sender, e) =>
                 {
                     ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
-                    ApplicationWidget.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
                 };
 
                 engineMenuDropList.SelectedLabel = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();

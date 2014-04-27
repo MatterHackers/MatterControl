@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         void revertbutton_Click(object sender, MouseEventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationWidget.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
         }
 
         void MenuDropList_SelectionChanged(object sender, EventArgs e)
@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 bool goodLoad = ActiveSliceSettings.Instance.LoadSettingsFromIni();
                 if (goodLoad)
                 {
-                    ApplicationWidget.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
                 }
             });
 

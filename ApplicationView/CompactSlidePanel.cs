@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 
         static int lastPannelIndexOnClose = 0;
         static int lastAdvanceControlsIndex = 0;
-        public CompactSlidePanel(QueueDataView queueDataView)
+        public CompactSlidePanel(QueueDataView queueDataView, SliceSettingsWidget.UiState sliceSettingsUiState)
             : base(2)
         {
             this.queueDataView = queueDataView;
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 
             // do the back panel
             {
-                CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
+                CreateNewAdvancedControlsTab(sliceSettingsUiState);
                 
                 this.RightPanel.AddChild(new PrintProgressBar());
                 this.RightPanel.AddChild(advancedControlsTabControl);

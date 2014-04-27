@@ -843,7 +843,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     windowController.functionToCallOnSave(this, null);
                     windowController.ChangeToSlicePresetList();
                     ActiveSliceSettings.Instance.LoadAllSettings();
-                    ApplicationWidget.Instance.ReloadBackPanel();
+                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
                 }
             });
         }
