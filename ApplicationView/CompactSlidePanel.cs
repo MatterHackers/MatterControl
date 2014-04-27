@@ -54,7 +54,6 @@ namespace MatterHackers.MatterControl
         TabControl advancedControlsTabControl;
         TabControl mainControlsTabControl;
         SliceSettingsWidget sliceSettingsWidget;
-        TabControl advancedControls;
         private delegate void ReloadPanel();
         public TabPage QueueTabPage;
         public TabPage AboutTabPage;
@@ -74,7 +73,9 @@ namespace MatterHackers.MatterControl
             get { return GetPannel(1); }
         }
 
-        public CompactSlidePanel(QueueDataView queueDataView, Pannel1UiState uiState)
+        static int lastPannelIndexOnClose = 0;
+        static int lastAdvanceControlsIndex = 0;
+        public CompactSlidePanel(QueueDataView queueDataView)
             : base(2)
         {
             this.queueDataView = queueDataView;
@@ -85,7 +86,7 @@ namespace MatterHackers.MatterControl
                 this.LeftPanel.AddChild(new PrintProgressBar());
 
                 // construct the main controls tab control
-                mainControlsTabControl = new MainScreenTabView(queueDataView, uiState);
+                mainControlsTabControl = new MainScreenTabView(queueDataView);
 
                 advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -112,19 +113,20 @@ namespace MatterHackers.MatterControl
                 mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
 
                 this.LeftPanel.AddChild(mainControlsTabControl);
-
-
             }
 
             // do the back panel
             {
-                advancedControlsTabControl = CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
+                CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState());
                 
                 this.RightPanel.AddChild(new PrintProgressBar());
                 this.RightPanel.AddChild(advancedControlsTabControl);
                 
             }
             AddHandlers();
+
+            SetPannelIndexImediate(lastPannelIndexOnClose);
+            advancedControlsTabControl.SelectedTabIndex = lastAdvanceControlsIndex;
         }
 
         void AdvancedControlsButton_Click(object sender, MouseEventArgs mouseEvent)
@@ -161,6 +163,8 @@ namespace MatterHackers.MatterControl
 
         public override void OnClosed(EventArgs e)
         {
+            lastPannelIndexOnClose = PannelIndex;
+            lastAdvanceControlsIndex = advancedControlsTabControl.SelectedTabIndex;
             if (unregisterEvents != null)
             {
                 unregisterEvents(this, null);
@@ -191,7 +195,7 @@ namespace MatterHackers.MatterControl
             int advancedControlsWidgetIndex = RightPanel.GetChildIndex(this.advancedControlsTabControl);
             RightPanel.RemoveChild(advancedControlsWidgetIndex);
 
-            this.advancedControlsTabControl = CreateNewAdvancedControlsTab(sliceSettingsUiState);
+            CreateNewAdvancedControlsTab(sliceSettingsUiState);
 
             RightPanel.AddChild(this.advancedControlsTabControl, advancedControlsWidgetIndex);
 
@@ -207,13 +211,13 @@ namespace MatterHackers.MatterControl
 
         }
 
-        TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
+        void CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
         {
-            advancedControls = new TabControl();
-            advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            advancedControls.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
-            advancedControls.TabBar.Margin = new BorderDouble(0, 0);
-            advancedControls.TabBar.Padding = new BorderDouble(0, 2);
+            advancedControlsTabControl = new TabControl();
+            advancedControlsTabControl.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            advancedControlsTabControl.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
+            advancedControlsTabControl.TabBar.Margin = new BorderDouble(0, 0);
+            advancedControlsTabControl.TabBar.Padding = new BorderDouble(0, 2);
 
             advancedControlsButtonFactory.invertImageLocation = false;
             Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Print\nQueue"), "icon_arrow_left_32x32.png");
@@ -224,7 +228,7 @@ namespace MatterHackers.MatterControl
             advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsPrintQueueLink);
             advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsPrintQueueLink);
 
-            advancedControls.TabBar.AddChild(advancedControlsLinkButton);
+            advancedControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
 
             GuiWidget manualPrinterControls = new ManualPrinterControls();
             ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
@@ -234,20 +238,18 @@ namespace MatterHackers.MatterControl
 
             //Add the tab contents for 'Advanced Controls'
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 14,
+            advancedControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), 14,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 14,
+            advancedControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), 14,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new ConfigurationPage();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 14,
+            advancedControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), 14,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-            return advancedControls;
         }
 
         bool UpdateIsAvailable()
@@ -274,8 +276,8 @@ namespace MatterHackers.MatterControl
 
         private void onThemeChanged(object sender, EventArgs e)
         {
-            this.advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            this.advancedControls.Invalidate();
+            this.advancedControlsTabControl.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            this.advancedControlsTabControl.Invalidate();
         }
 
         public void ReloadBackPanel(object sender, EventArgs widgetEvent)

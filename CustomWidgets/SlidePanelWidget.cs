@@ -49,6 +49,12 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public void SetPannelIndexImediate(int index)
+        {
+            desiredPannelIndex = index;
+            SetSlidePosition();
+        }
+
         public GuiWidget GetPannel(int index)
         {
             return pannels[index];
