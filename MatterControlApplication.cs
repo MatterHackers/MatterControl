@@ -143,9 +143,12 @@ namespace MatterHackers.MatterControl
             if (desktopPosition != null && desktopPosition != "")
             {
                 string[] sizes = desktopPosition.Split(',');
-                DesktopPosition = new Point2D(int.Parse(sizes[0]), int.Parse(sizes[1]));
-            }
 
+                //If the desktop position is less than -10,-10, override
+                int xpos = Math.Max(int.Parse(sizes[0]), -10);                
+                int ypos = Math.Max(int.Parse(sizes[1]), -10);
+                DesktopPosition = new Point2D(xpos, ypos);
+            }
             ShowAsSystemWindow();
         }
 
@@ -244,29 +247,6 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        private GuiWidget CreateMenues()
-        {
-            Menu dropListMenu = new Menu(new TextWidget("Action v"));
-            dropListMenu.Name = "ListMenu Down";
-            AddMenu(dropListMenu, "Walk");
-            AddMenu(dropListMenu, "Jog");
-            AddMenu(dropListMenu, "Run");
-            return dropListMenu;
-        }
-
-        private void AddMenu(Menu listMenuToAddTo, string name)
-        {
-            GuiWidget normal = new TextWidget("-" + name);
-            normal.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            normal.BackgroundColor = RGBA_Bytes.White;
-            GuiWidget hover = new TextWidget("-" + name);
-            hover.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            hover.BackgroundColor = RGBA_Bytes.LightGray;
-            MenuItem menuItem = new MenuItem(new MenuItemStatesView(normal, hover));
-            menuItem.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            listMenuToAddTo.MenuItems.Add(menuItem);
-        }
-
         Stopwatch totalDrawTime = new Stopwatch();
         int drawCount = 0;
 
@@ -320,8 +300,8 @@ namespace MatterHackers.MatterControl
             if (windowSize != null && windowSize != "")
             {
                 string[] sizes = windowSize.Split(',');
-                width = int.Parse(sizes[0]);
-                height = int.Parse(sizes[1]);
+                width = Math.Max(int.Parse(sizes[0]), 600);
+                height = Math.Max(int.Parse(sizes[1]), 600);
             }
             
             new MatterControlApplication(width, height);
