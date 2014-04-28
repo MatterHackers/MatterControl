@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 
             AddChild(MenuDropList);
             this.Width = 44;
-            this.Height = 20;
+            this.Height = 22;
             this.Margin = new BorderDouble(0);
             this.Padding = new BorderDouble(0);
             this.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -174,11 +174,7 @@ namespace MatterHackers.MatterControl
                 app.Close();
             });
             return true;
-        }
-
-      
-
-    
+        }    
     }
 
     public class MenuOptionHelp : GuiWidget
@@ -196,8 +192,8 @@ namespace MatterHackers.MatterControl
             SetMenuItems();
 
             AddChild(MenuDropList);
-            this.Width = 46;
-            this.Height = 20;
+            this.Width = 48;
+            this.Height = 22;
             this.Margin = new BorderDouble(0);
             this.Padding = new BorderDouble(0);
             this.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -243,9 +239,5 @@ namespace MatterHackers.MatterControl
         {
             return true;
         }
-
-
-
-
     }
 }

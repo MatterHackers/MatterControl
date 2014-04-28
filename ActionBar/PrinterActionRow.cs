@@ -48,13 +48,13 @@ namespace MatterHackers.MatterControl.ActionBar
             actionBarButtonFactory.invertImageLocation = false;
             string connectString = "Connect".Localize().ToUpper();
             connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
-            connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 6);
+            connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
             connectPrinterButton.VAnchor = VAnchor.ParentTop;
             connectPrinterButton.Cursor = Cursors.Hand;
 
             string disconnectString = "Disconnect".Localize().ToUpper();
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
-            disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 6);
+            disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
             disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
             disconnectPrinterButton.Visible = false;
             disconnectPrinterButton.Cursor = Cursors.Hand;
@@ -64,11 +64,11 @@ namespace MatterHackers.MatterControl.ActionBar
             selectActivePrinterButton.Cursor = Cursors.Hand;
             if (ApplicationWidget.Instance.WidescreenMode)
             {
-                selectActivePrinterButton.Margin = new BorderDouble(0, 6);
+                selectActivePrinterButton.Margin = new BorderDouble(0, 6,0,3);
             }
             else
             {
-                selectActivePrinterButton.Margin = new BorderDouble(0, 6, 6, 6);
+                selectActivePrinterButton.Margin = new BorderDouble(0, 6, 6, 3);
             }
             
 

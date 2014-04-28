@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.ActionBar
     public class PrinterSelectButton : Button
     {
         double width = 180;
-        double height = 39;
+        double height = 40;
         double borderRadius = 0;
         double borderWidth = 1;
         double fontSize = 14;
