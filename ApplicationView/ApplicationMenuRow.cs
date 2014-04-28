@@ -220,9 +220,9 @@ namespace MatterHackers.MatterControl
         {
             menuItems = new TupleList<string, Func<bool>> 
             {                
-                {LocalizedString.Get("Getting Started"), doSomething_Click},
-                {LocalizedString.Get("View Help"), doSomething_Click},
-                {LocalizedString.Get("About"), doSomething_Click},
+                {LocalizedString.Get("Getting Started"), gettingStarted_Click},
+                {LocalizedString.Get("View Help"), help_Click},
+                {LocalizedString.Get("About"), about_Click},
             };
 
             BorderDouble padding = MenuDropList.MenuItemsPadding;
@@ -235,8 +235,31 @@ namespace MatterHackers.MatterControl
             MenuDropList.Padding = padding;
         }
 
-        bool doSomething_Click()
+        bool help_Click()
         {
+            UiThread.RunOnIdle((state) =>
+            {   
+                System.Diagnostics.Process.Start("http://www.mattercontrol.com/articles");
+            });
+            return true;
+        }
+
+        bool about_Click()
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                System.Diagnostics.Process.Start("http://www.mattercontrol.com/");
+            });
+            return true;
+        }
+
+        bool gettingStarted_Click()
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                System.Diagnostics.Process.Start("http://www.mattercontrol.com/articles/mattercontrol-getting-started");
+            });
+            
             return true;
         }
     }
