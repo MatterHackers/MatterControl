@@ -49,9 +49,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class PartPreview3DWidget : PartPreviewWidget
     {
         protected MeshViewerWidget meshViewerWidget;
+        event EventHandler unregisterEvents;
 
         public PartPreview3DWidget()
         {
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
         }
 
         protected void Add3DViewControls()
@@ -108,6 +110,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             transformTypeSelector.VAnchor = Agg.UI.VAnchor.ParentTop;
             AddChild(transformTypeSelector);
             rotateViewButton.Checked = true;
+
+            SetMeshViewerDisplayTheme();
+            partSelectButton.CheckedStateChanged += SetMeshViewerDisplayTheme;
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+
+        void Instance_ThemeChanged(object sender, EventArgs e)
+        {
+            SetMeshViewerDisplayTheme();
+            Invalidate();
+        }
+
+        protected void SetMeshViewerDisplayTheme(object sender = null, EventArgs e = null)
+        {
+            meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            //if (partSelectButton.Checked)
+            {
+                meshViewerWidget.PartColor = RGBA_Bytes.White;
+                meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
+            }
+#if false
+            else
+            {
+                meshViewerWidget.PartColor = ActiveTheme.Instance.PrimaryAccentColor;
+                meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
+            }
+#endif
+            meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
+            meshViewerWidget.BuildVolumeColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor.Red0To255, ActiveTheme.Instance.PrimaryAccentColor.Green0To255, ActiveTheme.Instance.PrimaryAccentColor.Blue0To255, 50);
         }
     }
 }
