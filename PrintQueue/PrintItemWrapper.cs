@@ -149,34 +149,38 @@ namespace MatterHackers.MatterControl.PrintQueue
             get
             {
                 long currentWriteTime = File.GetLastWriteTime(this.FileLocation).ToBinary();
-                if (this.stlFileHashCode == 0 || writeTime != currentWriteTime)
+                bool fileExists = System.IO.File.Exists(this.FileLocation);
+                if (fileExists)
                 {
-                    writeTime = currentWriteTime;
-                    using (FileStream fileStream = new FileStream(this.FileLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    if (this.stlFileHashCode == 0 || writeTime != currentWriteTime)
                     {
-                        long sizeOfFile = fileStream.Length;
-                        int sizeOfRead = 1 << 16;
-                        byte[] readData = new byte[sizeOfRead * 3];
-
-                        // get a chuck from the begining
-                        fileStream.Read(readData, sizeOfRead, sizeOfRead);
-
-                        // the middle
-                        fileStream.Seek(sizeOfFile / 2, SeekOrigin.Begin);
-                        fileStream.Read(readData, sizeOfRead * 1, sizeOfRead);
-
-                        // and the end
-                        fileStream.Seek(Math.Max(0, sizeOfFile - sizeOfRead), SeekOrigin.Begin);
-                        fileStream.Read(readData, sizeOfRead * 2, sizeOfRead);
-
-                        // push the file size into the first bytes
-                        byte[] fileSizeAsBytes = BitConverter.GetBytes(sizeOfFile);
-                        for (int i = 0; i < fileSizeAsBytes.Length; i++)
+                        writeTime = currentWriteTime;
+                        using (FileStream fileStream = new FileStream(this.FileLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
-                            readData[i] = fileSizeAsBytes[i];
-                        }
+                            long sizeOfFile = fileStream.Length;
+                            int sizeOfRead = 1 << 16;
+                            byte[] readData = new byte[sizeOfRead * 3];
 
-                        this.stlFileHashCode = agg_basics.ComputeHash(readData);
+                            // get a chuck from the begining
+                            fileStream.Read(readData, sizeOfRead, sizeOfRead);
+
+                            // the middle
+                            fileStream.Seek(sizeOfFile / 2, SeekOrigin.Begin);
+                            fileStream.Read(readData, sizeOfRead * 1, sizeOfRead);
+
+                            // and the end
+                            fileStream.Seek(Math.Max(0, sizeOfFile - sizeOfRead), SeekOrigin.Begin);
+                            fileStream.Read(readData, sizeOfRead * 2, sizeOfRead);
+
+                            // push the file size into the first bytes
+                            byte[] fileSizeAsBytes = BitConverter.GetBytes(sizeOfFile);
+                            for (int i = 0; i < fileSizeAsBytes.Length; i++)
+                            {
+                                readData[i] = fileSizeAsBytes[i];
+                            }
+
+                            this.stlFileHashCode = agg_basics.ComputeHash(readData);
+                        }
                     }
                 }
 
