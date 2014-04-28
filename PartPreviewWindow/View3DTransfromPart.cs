@@ -253,7 +253,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             viewArea.AnchorAll();
             {
                 meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "Press 'Add' to select an item.".Localize());
-                SetMeshViewerDisplayTheme();
                 meshViewerWidget.AnchorAll();
             }
             viewArea.AddChild(meshViewerWidget);
@@ -1069,14 +1068,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.saveAsWindowIsOpen = false;
 		}
 
-        private void SetMeshViewerDisplayTheme()
-        {
-            meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            meshViewerWidget.PartColor = RGBA_Bytes.White;
-            meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
-            meshViewerWidget.BuildVolumeColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor.Red0To255, ActiveTheme.Instance.PrimaryAccentColor.Green0To255, ActiveTheme.Instance.PrimaryAccentColor.Blue0To255, 50);
-        }
-
         MHNumberEdit scaleRatioControl;
         private void AddScaleControls(FlowLayoutWidget buttonPanel)
         {
@@ -1436,14 +1427,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.FixedWidth = 0;
         }
 
-        event EventHandler unregisterEvents;
         private void AddHandlers()
         {
             expandViewOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandViewOptions_CheckedStateChanged);
             expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
             expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
-
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
         }
 
 
@@ -1633,21 +1621,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 saveButtons.Visible = true;
                 Invalidate();
             }
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-
-        void Instance_ThemeChanged(object sender, EventArgs e)
-        {
-            SetMeshViewerDisplayTheme();
-            Invalidate();
         }
     }
 }

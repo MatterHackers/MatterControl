@@ -91,14 +91,13 @@ namespace MatterHackers.MatterControl
             container.AddChild(widescreenPanel);
 
             this.AddChild(container);
-            
-            
         }
 
         public void ReloadAll(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
+                widescreenPanel.StoreUiState();
                 this.RemoveAllChildren();
                 AddElements();
             });

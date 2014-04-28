@@ -2070,3 +2070,24 @@ Translated:Getting Started
 English:View Help
 Translated:View Help
 
+English:Manually Configure Connection
+Translated:Manually Configure Connection
+
+English:Skip Connection Setup
+Translated:Skip Connection Setup
+
+English:Currently available serial ports.
+Translated:Currently available serial ports.
+
+English:What's this?
+Translated:What's this?
+
+English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+Translated:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+
+English:Connection succeeded!
+Translated:Connection succeeded!
+
+English:Oops! Unable to install update.
+Translated:Oops! Unable to install update.
+
