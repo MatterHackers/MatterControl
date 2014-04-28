@@ -65,15 +65,15 @@ namespace MatterHackers.MatterControl
 
         GuiWidget LeftPanel
         {
-            get { return GetPannel(0); }
+            get { return GetPanel(0); }
         }
 
         GuiWidget RightPanel
         {
-            get { return GetPannel(1); }
+            get { return GetPanel(1); }
         }
 
-        static int lastPannelIndexOnClose = 0;
+        static int lastPanelIndexOnClose = 0;
         static int lastAdvanceControlsIndex = 0;
         public CompactSlidePanel(QueueDataView queueDataView, SliceSettingsWidget.UiState sliceSettingsUiState)
             : base(2)
@@ -125,19 +125,19 @@ namespace MatterHackers.MatterControl
             }
             AddHandlers();
 
-            SetPannelIndexImediate(lastPannelIndexOnClose);
+            SetPanelIndexImediate(lastPanelIndexOnClose);
             advancedControlsTabControl.SelectedTabIndex = lastAdvanceControlsIndex;
         }
 
         void AdvancedControlsButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            if (this.PannelIndex == 0)
+            if (this.PanelIndex == 0)
             {
-                this.PannelIndex = 1;
+                this.PanelIndex = 1;
             }
             else
             {
-                this.PannelIndex = 0;
+                this.PanelIndex = 0;
             }
         }
 
@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
 
         public override void OnClosed(EventArgs e)
         {
-            lastPannelIndexOnClose = PannelIndex;
+            lastPanelIndexOnClose = PanelIndex;
             lastAdvanceControlsIndex = advancedControlsTabControl.SelectedTabIndex;
             if (unregisterEvents != null)
             {

@@ -93,16 +93,16 @@ namespace MatterHackers.MatterControl
         public override void OnParentChanged(EventArgs e)
         {
             lastNumberVisible = 0;
-            RecreateAllPannels();
+            RecreateAllPanels();
             base.OnParentChanged(e);
         }
 
         static int lastNumberVisible;
         void onBoundsChanges(Object sender, EventArgs e)
         {
-            if (NumberOfVisiblePannels() != lastNumberVisible)
+            if (NumberOfVisiblePanels() != lastNumberVisible)
             {
-                RecreateAllPannels();
+                RecreateAllPanels();
             }
         }
 
@@ -177,13 +177,13 @@ namespace MatterHackers.MatterControl
         void onRightBorderClick(object sender, EventArgs e)
         {
             RightBorderLine.Hidden = !RightBorderLine.Hidden;
-            UiThread.RunOnIdle(RecreateAllPannels);
+            UiThread.RunOnIdle(SetPanelVisblilityForBorderLines);
         }
 
         void onLeftBorderClick(object sender, EventArgs e)
         {
             LeftBorderLine.Hidden = !LeftBorderLine.Hidden;
-            UiThread.RunOnIdle(RecreateAllPannels);
+            UiThread.RunOnIdle(SetPanelVisblilityForBorderLines);
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl
             ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
         }
 
-        int NumberOfVisiblePannels()
+        int NumberOfVisiblePanels()
         {
             if (this.Width < Max1ColumnWidth)
             {
@@ -276,25 +276,51 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        void RecreateAllPannels(object state = null)
+        void RecreateAllPanels(object state = null)
         {
             if (Width == 0)
             {
                 return;
             }
             StoreUiState();
-            RemovePannelsAndCreateEmpties();
+            RemovePanelsAndCreateEmpties();
 
-            int numberOfPannels = NumberOfVisiblePannels();
+            int numberOfPanels = NumberOfVisiblePanels();
 
-            switch (numberOfPannels)
+            switch (numberOfPanels)
             {
                 case 1:
                     {
                         ApplicationWidget.Instance.WidescreenMode = false;
 
                         LoadCompactView();
+                    }
+                    break;
 
+                case 2:
+                case 3:
+                    ApplicationWidget.Instance.WidescreenMode = true;
+
+                    LoadColumnOne();
+                    LoadColumnTwo();
+                    LoadColumnThree();
+                    break;
+            }
+
+            SetPanelVisblilityForBorderLines(state);
+
+            RestoreUiState();
+            lastNumberVisible = numberOfPanels;
+        }
+
+        void SetPanelVisblilityForBorderLines(object state = null)
+        {
+            int numberOfPanels = NumberOfVisiblePanels();
+
+            switch (numberOfPanels)
+            {
+                case 1:
+                    {
                         ColumnThree.Visible = false;
                         ColumnTwo.Visible = false;
                         ColumnOne.Visible = true;
@@ -308,20 +334,11 @@ namespace MatterHackers.MatterControl
 
                 case 2:
                 case 3:
-                    {
-                        ApplicationWidget.Instance.WidescreenMode = true;
-
-                        LoadColumnOne();
-                        LoadColumnTwo();
-                        LoadColumnThree();
-                    }
-
-                    if (numberOfPannels == 2)
+                    if (numberOfPanels == 2)
                     {
                         if (this.Width < Max2ColumnWidth && !RightBorderLine.Hidden)
                         {
                             //Queue column and advanced controls columns show
-
                             ColumnTwo.Visible = LeftBorderLine.Hidden;
                             ColumnThree.Visible = !RightBorderLine.Hidden;
                             ColumnOne.Visible = true;
@@ -334,8 +351,6 @@ namespace MatterHackers.MatterControl
                         else if (LeftBorderLine.Hidden)
                         {
                             //Queue column and preview column shown                
-                            ApplicationWidget.Instance.WidescreenMode = true;
-
                             ColumnThree.Visible = !RightBorderLine.Hidden;
                             ColumnTwo.Visible = !LeftBorderLine.Hidden;
                             ColumnOne.AnchorAll();
@@ -348,11 +363,9 @@ namespace MatterHackers.MatterControl
                             RightBorderLine.Visible = true;
                         }
                     }
-                    else // number of pannels == 3
+                    else // number of panels == 3
                     {
                         //All three columns shown
-                        ApplicationWidget.Instance.WidescreenMode = true;
-
                         ColumnThree.Visible = !RightBorderLine.Hidden;
                         ColumnTwo.Visible = !LeftBorderLine.Hidden;
 
@@ -367,9 +380,6 @@ namespace MatterHackers.MatterControl
                     }
                     break;
             }
-
-            RestoreUiState();
-            lastNumberVisible = numberOfPannels;
         }
 
         public override void OnDraw(Graphics2D graphics2D)
@@ -377,7 +387,7 @@ namespace MatterHackers.MatterControl
             base.OnDraw(graphics2D);
         }
 
-        private void RemovePannelsAndCreateEmpties()
+        private void RemovePanelsAndCreateEmpties()
         {
             RemoveAllChildren();
 

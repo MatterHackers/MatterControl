@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonBottomPanel.Padding = new BorderDouble(3, 3);
             buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            buttonRightPanel = CreateRightButtonPannel(viewerVolume.y);
+            buttonRightPanel = CreateRightButtonPanel(viewerVolume.y);
 
             CreateOptionsContent();
 
@@ -880,7 +880,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             AddScaleControls(scaleOptionContainer);
         }
 
-        private FlowLayoutWidget CreateRightButtonPannel(double buildHeight)
+        private FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
         {
             FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
             buttonRightPanel.Width = 200;

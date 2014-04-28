@@ -537,13 +537,13 @@ namespace MatterHackers.MatterControl
 
                 this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-                Button showSDPrintingPannel = textImageButtonFactory.Generate("SD Card Manager".ToUpper());
-                showSDPrintingPannel.Margin = new BorderDouble(left: 10);
-                showSDPrintingPannel.Click += (sender, e) =>
+                Button showSDPrintingPanel = textImageButtonFactory.Generate("SD Card Manager".ToUpper());
+                showSDPrintingPanel.Margin = new BorderDouble(left: 10);
+                showSDPrintingPanel.Click += (sender, e) =>
                 {
                     SDCardManager.Show();
                 };
-                buttonBar.AddChild(showSDPrintingPannel);
+                buttonBar.AddChild(showSDPrintingPanel);
 
                 sdCardControlsContainer.AddChild(buttonBar);
             }
