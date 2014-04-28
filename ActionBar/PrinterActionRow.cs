@@ -48,14 +48,14 @@ namespace MatterHackers.MatterControl.ActionBar
             actionBarButtonFactory.invertImageLocation = false;
             string connectString = "Connect".Localize().ToUpper();
             connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
-            connectPrinterButton.Margin = new BorderDouble(0, 0, 3);
-            connectPrinterButton.VAnchor = VAnchor.ParentCenter;
+            connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 6);
+            connectPrinterButton.VAnchor = VAnchor.ParentTop;
             connectPrinterButton.Cursor = Cursors.Hand;
 
             string disconnectString = "Disconnect".Localize().ToUpper();
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
-            disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3);
-            disconnectPrinterButton.VAnchor = VAnchor.ParentCenter;
+            disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 6);
+            disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
             disconnectPrinterButton.Visible = false;
             disconnectPrinterButton.Cursor = Cursors.Hand;
 
@@ -78,33 +78,6 @@ namespace MatterHackers.MatterControl.ActionBar
             this.AddChild(disconnectPrinterButton);
             this.AddChild(selectActivePrinterButton);
             //this.AddChild(CreateOptionsMenu());
-        }
-
-        GuiWidget CreateOptionsMenu()
-        {
-            ImageBuffer gearImage = new ImageBuffer();
-            string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "gear_icon.png");
-            ImageIO.LoadImageData(imagePathAndFile, gearImage);
-
-            FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-            leftToRight.Margin = new BorderDouble(5, 0);
-            string optionsString = "Options".Localize().ToUpper();
-            TextWidget optionsText = new TextWidget(optionsString, textColor: ActiveTheme.Instance.PrimaryTextColor);
-            optionsText.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            optionsText.Margin = new BorderDouble(0, 0, 3, 0);
-            leftToRight.AddChild(optionsText);
-            GuiWidget gearWidget = new ImageWidget(gearImage);
-            gearWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            leftToRight.AddChild(gearWidget);
-            leftToRight.HAnchor = HAnchor.FitToChildren;
-            leftToRight.VAnchor = VAnchor.FitToChildren;
-
-            Menu optionMenu = new Menu(leftToRight);
-            optionMenu.OpenOffset = new Vector2(-2, -10);
-            optionMenu.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            optionMenu.MenuItems.Add(new MenuItem(new ThemeColorSelectorWidget()));
-
-            return optionMenu;
         }
 
         event EventHandler unregisterEvents;
