@@ -26,6 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+//#define RUN_MATTER_SLICE_IN_PROCESS
 
 using System;
 using System.IO;
@@ -188,60 +189,53 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                         if (!File.Exists(gcodePathAndFileName) || !gcodeFileIsComplete)
                         {
-                            slicerProcess = new Process();
+                            string commandArgs = "";
 
                             switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                             {
                                 case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
-                                    slicerProcess.StartInfo.Arguments = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-                                    slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                     //Debug.Write(slicerProcess.StartInfo.Arguments);
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-                                    slicerProcess.StartInfo.Arguments = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingsMatterSlice.GetMatterSliceCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingsMatterSlice.GetMatterSliceCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
                                     break;
                             }
 
-                            string slicerFullPath = getSlicerFullPath();
-
-                            slicerProcess.StartInfo.CreateNoWindow = true;
-                            slicerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                            slicerProcess.StartInfo.RedirectStandardError = true;
-                            slicerProcess.StartInfo.RedirectStandardOutput = true;
-
-                            slicerProcess.StartInfo.FileName = slicerFullPath;
-                            slicerProcess.StartInfo.UseShellExecute = false;
-
-                            slicerProcess.OutputDataReceived += (sender, args) =>
-                            {
-                                if (args.Data != null)
-                                {
-                                    string message = args.Data;
-                                    message = message.Replace("=>", "").Trim();
-                                    if (message.Contains(".gcode"))
-                                    {
-                                        message = "Saving intermediate file";
-                                    }
-                                    message += "...";
-                                    UiThread.RunOnIdle((state) =>
-                                    {
-                                        itemToSlice.OnSlicingOutputMessage(new StringEventArgs(message));
-                                    });
-                                }
-                            };
-
-#if DEBUG
+#if RUN_MATTER_SLICE_IN_PROCESS
                             if (ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {
-                                MatterHackers.MatterSlice.LogOutput.GetLogWrites += (sender, args) =>
+                                itemCurrentlySlicing = itemToSlice;
+                                MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;
+                                MatterSlice.MatterSlice.ProcessArgs(commandArgs);
+                                MatterHackers.MatterSlice.LogOutput.GetLogWrites -= SendProgressToItem;
+                                itemCurrentlySlicing = null;
+                            }
+                            else
+#endif
+                            {
+                                slicerProcess = new Process();
+                                slicerProcess.StartInfo.Arguments = commandArgs;
+                                string slicerFullPath = getSlicerFullPath();
+
+                                slicerProcess.StartInfo.CreateNoWindow = true;
+                                slicerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                slicerProcess.StartInfo.RedirectStandardError = true;
+                                slicerProcess.StartInfo.RedirectStandardOutput = true;
+
+                                slicerProcess.StartInfo.FileName = slicerFullPath;
+                                slicerProcess.StartInfo.UseShellExecute = false;
+
+                                slicerProcess.OutputDataReceived += (sender, args) =>
                                 {
-                                    string message = sender as string;
-                                    if (message != null)
+                                    if (args.Data != null)
                                     {
+                                        string message = args.Data;
                                         message = message.Replace("=>", "").Trim();
                                         if (message.Contains(".gcode"))
                                         {
@@ -254,11 +248,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                         });
                                     }
                                 };
-                                MatterSlice.MatterSlice.ProcessArgs(slicerProcess.StartInfo.Arguments);
-                            }
-                            else
-#endif
-                            {
+
                                 slicerProcess.Start();
                                 slicerProcess.BeginOutputReadLine();
                                 string stdError = slicerProcess.StandardError.ReadToEnd();
@@ -285,6 +275,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
 
                 Thread.Sleep(100);
+            }
+        }
+
+        static PrintItemWrapper itemCurrentlySlicing;
+        static void SendProgressToItem(object sender, EventArgs args)
+        {
+            string message = sender as string;
+            if (message != null)
+            {
+                message = message.Replace("=>", "").Trim();
+                if (message.Contains(".gcode"))
+                {
+                    message = "Saving intermediate file";
+                }
+                message += "...";
+                UiThread.RunOnIdle((state) =>
+                {
+                    if (itemCurrentlySlicing != null)
+                    {
+                        itemCurrentlySlicing.OnSlicingOutputMessage(new StringEventArgs(message));
+                    }
+                });
             }
         }
 
