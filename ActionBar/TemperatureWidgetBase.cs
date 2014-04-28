@@ -151,7 +151,6 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 preheatButton.Visible = true;
             }
-            preheatButton.Visible = true;
         }
 
         void onLeaveBounds(Object sender, EventArgs e)
