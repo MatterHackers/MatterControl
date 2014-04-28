@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+
+
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -11,7 +14,9 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.Font;
 using MatterHackers.VectorMath;
 
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
@@ -121,8 +126,8 @@ namespace MatterHackers.MatterControl
         {
             menuItems = new TupleList<string, Func<bool>> 
             {                
-                {LocalizedString.Get("Import File"), doSomething_Click},
-                {LocalizedString.Get("Exit"), doSomething_Click},
+                {LocalizedString.Get("Import File"), importFile_Click},
+                {LocalizedString.Get("Exit"), exit_Click},
             };
 
             BorderDouble padding = MenuDropList.MenuItemsPadding;
@@ -135,8 +140,39 @@ namespace MatterHackers.MatterControl
             MenuDropList.Padding = padding;
         }
 
-        bool doSomething_Click()
+        bool importFile_Click()
         {
+            UiThread.RunOnIdle((state) =>
+            {  
+                OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode", multiSelect: true);
+                openParams.ActionButtonLabel = "Add to Queue";
+                openParams.Title = "MatterControl: Select A File";
+
+                FileDialog.OpenFileDialog(ref openParams);
+                if (openParams.FileNames != null)
+                {
+                    foreach (string loadedFileName in openParams.FileNames)
+                    {
+                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
+                    }
+                }
+            });
+            return true;
+        }
+
+        bool exit_Click()
+        {
+            UiThread.RunOnIdle((state) =>
+            {                
+                GuiWidget parent = this;
+                while (parent as MatterControlApplication == null)
+                {
+                    parent = parent.Parent;
+                }
+                MatterControlApplication app = parent as MatterControlApplication;
+                app.RestartOnClose = false;
+                app.Close();
+            });
             return true;
         }
 
