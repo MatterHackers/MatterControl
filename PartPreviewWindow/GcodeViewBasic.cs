@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         bool startedSliceFromGenerateButton = false;
         Button generateGCodeButton;
         FlowLayoutWidget buttonBottomPanel;
-        FlowLayoutWidget layerSelectionButtonsPannel;
+        FlowLayoutWidget layerSelectionButtonsPanel;
 
         FlowLayoutWidget modelOptionsContainer;
         FlowLayoutWidget displayOptionsContainer;
@@ -101,17 +101,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             generateGCodeButton.Click += new ButtonBase.ButtonEventHandler(generateButton_Click);
             buttonBottomPanel.AddChild(generateGCodeButton);
 
-            layerSelectionButtonsPannel = new FlowLayoutWidget(FlowDirection.RightToLeft);
-            layerSelectionButtonsPannel.HAnchor = HAnchor.ParentLeftRight;
-            layerSelectionButtonsPannel.Padding = new BorderDouble(0);
+            layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft);
+            layerSelectionButtonsPanel.HAnchor = HAnchor.ParentLeftRight;
+            layerSelectionButtonsPanel.Padding = new BorderDouble(0);
 
-            GuiWidget holdPannelOpen = new GuiWidget(1, generateGCodeButton.Height);
-            layerSelectionButtonsPannel.AddChild(holdPannelOpen);
+            GuiWidget holdPanelOpen = new GuiWidget(1, generateGCodeButton.Height);
+            layerSelectionButtonsPanel.AddChild(holdPanelOpen);
 
             if (widgetHasCloseButton)
             {
                 Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
-                layerSelectionButtonsPannel.AddChild(closeButton);
+                layerSelectionButtonsPanel.AddChild(closeButton);
                 closeButton.Click += (sender, e) =>
                 {
                     CloseOnIdle();
@@ -169,12 +169,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             centerPartPreviewAndControls.AddChild(gcodeDispalyWidget);
 
-            buttonRightPanel = CreateRightButtonPannel();
+            buttonRightPanel = CreateRightButtonPanel();
             centerPartPreviewAndControls.AddChild(buttonRightPanel);
 
             // add in a spacer
-            layerSelectionButtonsPannel.AddChild(new GuiWidget(HAnchor.ParentLeftRight));
-            buttonBottomPanel.AddChild(layerSelectionButtonsPannel);
+            layerSelectionButtonsPanel.AddChild(new GuiWidget(HAnchor.ParentLeftRight));
+            buttonBottomPanel.AddChild(layerSelectionButtonsPanel);
 
             mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
             mainContainerTopToBottom.AddChild(buttonBottomPanel);
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             AddHandlers();
         }
 
-        private FlowLayoutWidget CreateRightButtonPannel()
+        private FlowLayoutWidget CreateRightButtonPanel()
         {
             FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
             buttonRightPanel.Width = 200;
@@ -500,11 +500,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 SetLayerWidget setLayerWidget = new SetLayerWidget(gcodeViewWidget);
                 setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
-                layerSelectionButtonsPannel.AddChild(setLayerWidget);
+                layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
                 LayerNavigationWidget navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
                 navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
-                layerSelectionButtonsPannel.AddChild(navigationWidget);
+                layerSelectionButtonsPanel.AddChild(navigationWidget);
 
                 selectLayerSlider = new Slider(new Vector2(), 10, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);

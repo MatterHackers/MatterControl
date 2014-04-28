@@ -45,6 +45,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
+    public static class MainScreenUiState
+    {
+        public static int lastMainScreenTabIndex = 0;
+        public static int lastSelectedIndex = -1;
+        public static int lastAdvancedControlsTab = -1;
+    }
+
     public class MatterControlApplication : SystemWindow
     {
         string[] commandLineArgs = null;

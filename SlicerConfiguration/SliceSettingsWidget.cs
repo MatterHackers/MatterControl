@@ -63,8 +63,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             public UiState(SliceSettingsWidget settingsToCopy)
             {
-                settingsToCopy.CurrentlyActiveCategory(out selectedCategory.index, out selectedCategory.name);
-                settingsToCopy.CurrentlyActiveGroup(out selectedGroup.index, out selectedGroup.name);
+                if (settingsToCopy != null)
+                {
+                    settingsToCopy.CurrentlyActiveCategory(out selectedCategory.index, out selectedCategory.name);
+                    settingsToCopy.CurrentlyActiveGroup(out selectedGroup.index, out selectedGroup.name);
+                }
             }
         }
 
@@ -256,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             CheckBox checkBox = sender as CheckBox;
             if (checkBox != null)
             {
-                ApplicationWidget.Instance.ReloadBackPanel();
+                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
             }
         }
 
@@ -833,7 +836,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         protected void ReloadOptions(object sender, EventArgs e)
         {
-            ApplicationWidget.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
         }
 
         private void SaveSetting(string slicerConfigName, string value)

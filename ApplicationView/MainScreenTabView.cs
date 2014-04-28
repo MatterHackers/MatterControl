@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
         QueueDataView queueDataView;
         event EventHandler unregisterEvents;
 
-        public MainScreenTabView(QueueDataView queueDataView, Pannel1UiState uiState)
+        public MainScreenTabView(QueueDataView queueDataView)
         {
             this.queueDataView = queueDataView;
             this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;

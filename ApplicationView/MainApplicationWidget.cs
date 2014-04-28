@@ -58,25 +58,9 @@ namespace MatterHackers.MatterControl
 
         public SlicePresetsWindow EditSlicePresetsWindow { get; set;} 
 
-        bool widescreenMode;
         event EventHandler unregisterEvents;
 
-        public bool WidescreenMode
-        { 
-            get 
-            { 
-                return widescreenMode; 
-            }
-            set 
-            { 
-                if (value != widescreenMode)
-                {
-                    widescreenMode = value;
-                    ApplicationWidget.Instance.ReloadBackPanel();
-                }
-            }
-        }
-
+        public bool WidescreenMode { get; set; }
 
         public ApplicationWidget()
         {
@@ -115,7 +99,6 @@ namespace MatterHackers.MatterControl
         {
             UiThread.RunOnIdle((state) =>
             {
-                widescreenPanel.StoreUiState();
                 this.RemoveAllChildren();
                 AddElements();
             });
@@ -146,7 +129,7 @@ namespace MatterHackers.MatterControl
             SetUpdateNotificationTrigger.CallEvents(this, null);
         }
 
-        public void ReloadBackPanel()
+        public void ReloadAdvancedControlsPanel()
         {
             ReloadPanelTrigger.CallEvents(this, null);
         }

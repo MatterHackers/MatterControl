@@ -240,8 +240,13 @@ namespace MatterHackers.MatterControl
             releaseOptionsDropList.Margin = new BorderDouble (0, 3);
                        
 			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Release", "release");
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Pre-Release", "pre-release");
-			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Development", "development");
+            releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
+            
+            MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Pre-Release", "pre-release");
+            preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
+			
+            MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Development", "development");
+            developmentDropDownItem.Selected += new EventHandler(FixTabDot);
 
             releaseOptionsDropList.MinimumSize = new Vector2(releaseOptionsDropList.LocalBounds.Width, releaseOptionsDropList.LocalBounds.Height); 
 
@@ -261,6 +266,11 @@ namespace MatterHackers.MatterControl
 			releaseOptionsGroupBox.AddChild(controlsContainer);
 			controlsTopToBottom.AddChild(releaseOptionsGroupBox);
 		}
+
+        void FixTabDot(object sender, EventArgs e)
+        {
+            ApplicationWidget.Instance.ReloadAll(this, null);
+        }
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{

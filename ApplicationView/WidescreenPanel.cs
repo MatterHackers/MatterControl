@@ -51,13 +51,6 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
-    public class Pannel1UiState
-    {
-        public int lastMainScreenTabIndex = 0;
-        public int lastSelectedIndex = -1;
-        public int lastAdvancedControlsTab = -1;
-    }
-
     public class WidescreenPanel : FlowLayoutWidget
     {
         SliceSettingsWidget sliceSettingsWidget;
@@ -65,13 +58,13 @@ namespace MatterHackers.MatterControl
         public TabPage AboutTabPage;
         TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-        SliceSettingsWidget.UiState sliceSettingsUiState;
+        SliceSettingsWidget.UiState sliceSettingsUiState = new SliceSettingsWidget.UiState();
 
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
-        int ColumnTwoMinWidth = 1590;
         FlowLayoutWidget ColumnThree;
-        int ColumnThreeMinWidth = 990;
+        int Max1ColumnWidth = 990;
+        int Max2ColumnWidth = 1590;
 
         View3DTransformPart part3DView;
         GcodeViewBasic partGcodeView;
@@ -79,52 +72,38 @@ namespace MatterHackers.MatterControl
         PanelSeparator RightBorderLine;
         PanelSeparator LeftBorderLine;
 
+        event EventHandler unregisterEvents;
+
         QueueDataView queueDataView = null;
         
         public WidescreenPanel()
             : base(FlowDirection.LeftToRight)
         {
             Name = "WidescreenPanel";
-            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
-            {
-                //PrintQueueControl.Instance.Initialize();
-                BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-                Padding = new BorderDouble(4);
-
-                ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                ColumnThree = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-
-                
-                //ColumnOne.Padding = new BorderDouble(4);
-                //ColumnTwo.Padding = new BorderDouble(4, 0);
-                //ColumnThree.Padding = new BorderDouble(4);
-
-                LeftBorderLine = new PanelSeparator();
-                RightBorderLine = new PanelSeparator();
-                
-                LoadColumnTwo();                
-                
-                ColumnThree.VAnchor = VAnchor.ParentBottomTop;
-                
-                LoadColumnThree();
-
-                AddChild(ColumnOne);
-                AddChild(LeftBorderLine);
-                AddChild(ColumnTwo);
-                AddChild(RightBorderLine);
-                AddChild(ColumnThree);                
-            }
-
             AnchorAll();
-            AddHandlers();
-            SetVisibleStatus();
+            BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            Padding = new BorderDouble(4);
+
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
+            PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanel, ref unregisterEvents);
+            this.BoundsChanged += new EventHandler(onBoundsChanges);
         }
 
+        public override void OnParentChanged(EventArgs e)
+        {
+            lastNumberVisible = 0;
+            RecreateAllPanels();
+            base.OnParentChanged(e);
+        }
+
+        static int lastNumberVisible;
         void onBoundsChanges(Object sender, EventArgs e)
         {
-            SetVisibleStatus();
+            if (NumberOfVisiblePanels() != lastNumberVisible)
+            {
+                RecreateAllPanels();
+            }
         }
 
         void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
@@ -156,24 +135,12 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        void DoNotChangePanel()
-        {
-            //Empty function used as placeholder
-        }
-
-        void DoChangePanel(object state)
-        {
-            int tabIndex = advancedControls.SelectedTabIndex;
-            // remove the advance control and replace it with new ones built for the selected printer
-            ColumnThree.RemoveAllChildren();
-            ColumnThree.AddChild(CreateNewAdvancedControlsTab(sliceSettingsUiState));
-            ColumnThree.Width = 590;
-            advancedControls.SelectedTabIndex = tabIndex;
-        }
-
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
         {
+            StoreUiState();
+
             advancedControls = new TabControl();
+            advancedControls.AnchorAll();
             advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             advancedControls.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
             advancedControls.TabBar.Margin = new BorderDouble(0, 0);
@@ -185,7 +152,7 @@ namespace MatterHackers.MatterControl
             ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
             manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             manualPrinterControlsScrollArea.AnchorAll();
-            manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
+            manualPrinterControlsScrollArea.AddChild(manualPrinterControls);  
 
             //Add the tab contents for 'Advanced Controls'
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
@@ -207,27 +174,16 @@ namespace MatterHackers.MatterControl
             return advancedControls;
         }
 
-        event EventHandler unregisterEvents;
-        void AddHandlers()
-        {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
-            this.BoundsChanged += new EventHandler(onBoundsChanges);
-            RightBorderLine.Click += new ClickWidget.ButtonEventHandler(onRightBorderClick);
-            LeftBorderLine.Click += new ClickWidget.ButtonEventHandler(onLeftBorderClick);
-        }
-
         void onRightBorderClick(object sender, EventArgs e)
         {
             RightBorderLine.Hidden = !RightBorderLine.Hidden;
-            SetVisibleStatus(true);
+            UiThread.RunOnIdle(SetPanelVisblilityForBorderLines);
         }
 
         void onLeftBorderClick(object sender, EventArgs e)
         {
             LeftBorderLine.Hidden = !LeftBorderLine.Hidden;
-            SetVisibleStatus(true);
+            UiThread.RunOnIdle(SetPanelVisblilityForBorderLines);
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -235,64 +191,53 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(LoadColumnTwo);
         }
 
-        static Pannel1UiState uiState = new Pannel1UiState();
-
         public void StoreUiState()
         {
             if (queueDataView != null && queueDataView.SelectedIndex != -1)
             {
-                uiState.lastSelectedIndex = queueDataView.SelectedIndex;
+                MainScreenUiState.lastSelectedIndex = queueDataView.SelectedIndex;
             }
             if (advancedControls != null && advancedControls.SelectedTabIndex != -1)
             {
-                uiState.lastAdvancedControlsTab = advancedControls.SelectedTabIndex;
+                MainScreenUiState.lastAdvancedControlsTab = advancedControls.SelectedTabIndex;
             }
         }
 
         void RestoreUiState()
         {
-            if (uiState.lastSelectedIndex > -1 && queueDataView != null)
+            if (MainScreenUiState.lastSelectedIndex > -1 && queueDataView != null)
             {
-                queueDataView.SelectedIndex = uiState.lastSelectedIndex;
+                queueDataView.SelectedIndex = MainScreenUiState.lastSelectedIndex;
             }
-            if (uiState.lastAdvancedControlsTab > -1 && advancedControls != null)
+            if (MainScreenUiState.lastAdvancedControlsTab > -1 && advancedControls != null)
             {
-                advancedControls.SelectedTabIndex = uiState.lastAdvancedControlsTab;
+                advancedControls.SelectedTabIndex = MainScreenUiState.lastAdvancedControlsTab;
             }
         }
 
         void LoadCompactView()
         {
-            StoreUiState();
-
             queueDataView = new QueueDataView();
             
             ColumnOne.RemoveAllChildren();
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-            ColumnOne.AddChild(new CompactSlidePanel(queueDataView, uiState));
+            ColumnOne.AddChild(new CompactSlidePanel(queueDataView, sliceSettingsUiState));
             ColumnOne.AnchorAll();
-
-            RestoreUiState();
         }
 
         void LoadColumnOne()
         {
-            StoreUiState();
-
             queueDataView = new QueueDataView();
 
-            ColumnOne.RemoveAllChildren();
             ColumnOne.VAnchor = VAnchor.ParentBottomTop;
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
             ColumnOne.AddChild(new PrintProgressBar());
-            ColumnOne.AddChild(new MainScreenTabView(queueDataView, uiState));
+            ColumnOne.AddChild(new MainScreenTabView(queueDataView));
             ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
-
-            RestoreUiState();
         }
 
         void LoadColumnTwo(object state = null)
-        {            
+        {
             ColumnTwo.RemoveAllChildren();
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
@@ -306,128 +251,174 @@ namespace MatterHackers.MatterControl
             ColumnTwo.AddChild(part3DView);
             ColumnTwo.AddChild(partGcodeView);
             ColumnTwo.AnchorAll();
-            SetVisibleStatus();
         }
 
-        void LoadColumnThree()
+        void LoadColumnThree(object state = null)
         {
-            RemoveAllChildren();
-            ColumnThree.AddChild(CreateNewAdvancedControlsTab(new SliceSettingsWidget.UiState()));
+            ColumnThree.RemoveAllChildren();
+            ColumnThree.AddChild(CreateNewAdvancedControlsTab(sliceSettingsUiState));
             ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
         }
 
-        int UiState = -1;
-        void SetVisibleStatus(bool forceReset = false)
+        int NumberOfVisiblePanels()
         {
-            if (forceReset)
+            if (this.Width < Max1ColumnWidth)
             {
-                UiState = -1;
+                return 1;
             }
-
-            if (this.Width < ColumnThreeMinWidth)
+            else if (this.Width < Max2ColumnWidth)
             {
-                if (UiState != 0)
-                {
-                    UiState = 0;
-                    ApplicationWidget.Instance.WidescreenMode = false;
-
-                    LoadCompactView();                   
-
-                    ColumnThree.Visible = false;
-                    ColumnTwo.Visible = false;
-                    ColumnOne.Visible = true;
-                    
-                    
-                    Padding = new BorderDouble(0);
-
-                    LeftBorderLine.Visible = false;
-                    RightBorderLine.Visible = false;
-                }
-
-            }
-            else if (this.Width < ColumnTwoMinWidth && !RightBorderLine.Hidden)
-            {
-                //Queue column and advanced controls columns show
-                if (UiState != 1)
-                {
-                    UiState = 1;
-                    ApplicationWidget.Instance.WidescreenMode = true;
-
-                    LoadColumnOne();
-
-                    ColumnTwo.Visible = !!LeftBorderLine.Hidden;
-                    ColumnThree.Visible = !RightBorderLine.Hidden;
-                    ColumnOne.Visible = true;
-                    ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                    Padding = new BorderDouble(4);
-
-                    LeftBorderLine.Visible = false;
-                    RightBorderLine.Visible = true;
-                }
-            }
-            else if (LeftBorderLine.Hidden)
-            {
-                //Queue column and preview column shown                
-                if (UiState != 2)
-                {
-                    UiState = 2;
-                    ApplicationWidget.Instance.WidescreenMode = true;
-
-                    LoadColumnOne();
-                    ColumnThree.Visible = !RightBorderLine.Hidden;
-                    ColumnTwo.Visible = !LeftBorderLine.Hidden;
-                    ColumnOne.AnchorAll();
-
-                    Padding = new BorderDouble(4);
-
-                    ColumnOne.Visible = true;
-
-                    LeftBorderLine.Visible = true;
-                    RightBorderLine.Visible = true;
-                }
+                return 2;
             }
             else
             {
-                //All three columns shown
-                if (UiState != 3)
-                {
-                    UiState = 3;
-                    ApplicationWidget.Instance.WidescreenMode = true;
-
-                    LoadColumnOne();
-
-                    ColumnThree.Visible = !RightBorderLine.Hidden;
-                    ColumnTwo.Visible = !LeftBorderLine.Hidden;
-
-                    ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                    ColumnOne.Width = 500;
-                    Padding = new BorderDouble(4);
-
-                    ColumnOne.Visible = true;
-
-                    LeftBorderLine.Visible = true;
-                    RightBorderLine.Visible = true;
-                }
+                return 3;
             }
         }
 
-
-        private void onThemeChanged(object sender, EventArgs e)
+        void RecreateAllPanels(object state = null)
         {
-            //this.advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            this.advancedControls.Invalidate();
+            if (Width == 0)
+            {
+                return;
+            }
+            StoreUiState();
+            RemovePanelsAndCreateEmpties();
+
+            int numberOfPanels = NumberOfVisiblePanels();
+
+            switch (numberOfPanels)
+            {
+                case 1:
+                    {
+                        ApplicationWidget.Instance.WidescreenMode = false;
+
+                        LoadCompactView();
+                    }
+                    break;
+
+                case 2:
+                case 3:
+                    ApplicationWidget.Instance.WidescreenMode = true;
+
+                    LoadColumnOne();
+                    LoadColumnTwo();
+                    LoadColumnThree();
+                    break;
+            }
+
+            SetPanelVisblilityForBorderLines(state);
+
+            RestoreUiState();
+            lastNumberVisible = numberOfPanels;
         }
 
-        public void ReloadBackPanel(object sender, EventArgs widgetEvent)
+        void SetPanelVisblilityForBorderLines(object state = null)
+        {
+            int numberOfPanels = NumberOfVisiblePanels();
+
+            switch (numberOfPanels)
+            {
+                case 1:
+                    {
+                        ColumnThree.Visible = false;
+                        ColumnTwo.Visible = false;
+                        ColumnOne.Visible = true;
+
+                        Padding = new BorderDouble(0);
+
+                        LeftBorderLine.Visible = false;
+                        RightBorderLine.Visible = false;
+                    }
+                    break;
+
+                case 2:
+                case 3:
+                    if (numberOfPanels == 2)
+                    {
+                        if (this.Width < Max2ColumnWidth && !RightBorderLine.Hidden)
+                        {
+                            //Queue column and advanced controls columns show
+                            ColumnTwo.Visible = LeftBorderLine.Hidden;
+                            ColumnThree.Visible = !RightBorderLine.Hidden;
+                            ColumnOne.Visible = true;
+                            ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                            Padding = new BorderDouble(4);
+
+                            LeftBorderLine.Visible = false;
+                            RightBorderLine.Visible = true;
+                        }
+                        else if (LeftBorderLine.Hidden)
+                        {
+                            //Queue column and preview column shown                
+                            ColumnThree.Visible = !RightBorderLine.Hidden;
+                            ColumnTwo.Visible = !LeftBorderLine.Hidden;
+                            ColumnOne.AnchorAll();
+
+                            Padding = new BorderDouble(4);
+
+                            ColumnOne.Visible = true;
+
+                            LeftBorderLine.Visible = true;
+                            RightBorderLine.Visible = true;
+                        }
+                    }
+                    else // number of panels == 3
+                    {
+                        //All three columns shown
+                        ColumnThree.Visible = !RightBorderLine.Hidden;
+                        ColumnTwo.Visible = !LeftBorderLine.Hidden;
+
+                        ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                        ColumnOne.Width = 500;
+                        Padding = new BorderDouble(4);
+
+                        ColumnOne.Visible = true;
+
+                        LeftBorderLine.Visible = true;
+                        RightBorderLine.Visible = true;
+                    }
+                    break;
+            }
+        }
+
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            base.OnDraw(graphics2D);
+        }
+
+        private void RemovePanelsAndCreateEmpties()
+        {
+            RemoveAllChildren();
+
+            ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            ColumnThree = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            ColumnThree.VAnchor = VAnchor.ParentBottomTop;
+
+            LeftBorderLine = new PanelSeparator();
+            RightBorderLine = new PanelSeparator();
+
+            AddChild(ColumnOne);
+            AddChild(LeftBorderLine);
+            AddChild(ColumnTwo);
+            AddChild(RightBorderLine);
+            AddChild(ColumnThree);
+
+            RightBorderLine.Click += new ClickWidget.ButtonEventHandler(onRightBorderClick);
+            LeftBorderLine.Click += new ClickWidget.ButtonEventHandler(onLeftBorderClick);
+        }
+
+        public void ReloadAdvancedControlsPanel(object sender, EventArgs widgetEvent)
         {
             sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
-            UiThread.RunOnIdle(DoChangePanel);
+            UiThread.RunOnIdle(LoadColumnThree);
         }
 
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
         {
             ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationWidget.Instance.ReloadBackPanel();
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
         }
     }    
 

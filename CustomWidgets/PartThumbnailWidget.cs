@@ -161,9 +161,6 @@ namespace MatterHackers.MatterControl
             PartThumbnailWidget thumbnailWidget = e.Argument as PartThumbnailWidget;
             if (thumbnailWidget != null)
             {
-                ImageBuffer image50x50;
-                ImageBuffer image115x115;
-
                 if (thumbnailWidget.printItem == null)
                 {
                     thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
@@ -173,45 +170,48 @@ namespace MatterHackers.MatterControl
                 
                 string stlHashCode = thumbnailWidget.PrintItem.StlFileHashCode.ToString();
 
-                image50x50 = LoadImageFromDisk(thumbnailWidget, stlHashCode, new Point2D(50, 50));
-                image115x115 = LoadImageFromDisk(thumbnailWidget, stlHashCode, new Point2D(115, 115));
-                if (image50x50 == null || image115x115 == null)
+                Point2D bigRenderSize = new Point2D(460, 460);
+                ImageBuffer bigRender = LoadImageFromDisk(thumbnailWidget, stlHashCode, bigRenderSize);
+                if (bigRender == null)
                 {
                     Mesh loadedMesh = StlProcessing.Load(thumbnailWidget.PrintItem.FileLocation);
 
-                    if (image50x50 == null)
+                    thumbnailWidget.image = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
+                    thumbnailWidget.image.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+                    bigRender = BuildImageFromSTL(loadedMesh, stlHashCode, bigRenderSize);
+                    if (bigRender == null)
                     {
-                        thumbnailWidget.image = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
-                        image50x50 = BuildImageFromSTL(loadedMesh, stlHashCode, new Point2D(50, 50));
-                        if (image50x50 == null)
-                        {
-                            thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
-                        }
-                    }
-                    if (image115x115 == null)
-                    {
-                        thumbnailWidget.image = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
-                        image115x115 = BuildImageFromSTL(loadedMesh, stlHashCode, new Point2D(115, 115));
-                        if (image115x115 == null)
-                        {
-                            thumbnailWidget.image = new ImageBuffer(thumbnailWidget.noThumbnailImage);
-                        }
+                        bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
                     }
                 }
 
                 switch (thumbnailWidget.Size)
                 {
                     case ImageSizes.Size50x50:
-                        if (image50x50 != null)
                         {
-                            thumbnailWidget.image = new ImageBuffer(image50x50);
+                            ImageBuffer halfWay1 = new ImageBuffer(200, 200, 32, new BlenderBGRA());
+                            halfWay1.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+                            halfWay1.NewGraphics2D().Render(bigRender, 0, 0, 0, (double)halfWay1.Width / bigRender.Width, (double)halfWay1.Height / bigRender.Height);
+
+                            ImageBuffer halfWay2 = new ImageBuffer(100, 100, 32, new BlenderBGRA());
+                            halfWay2.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+                            halfWay2.NewGraphics2D().Render(halfWay1, 0, 0, 0, (double)halfWay2.Width / halfWay1.Width, (double)halfWay2.Height / halfWay1.Height);
+
+                            thumbnailWidget.image = new ImageBuffer(50, 50, 32, new BlenderBGRA());
+                            thumbnailWidget.image.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+                            thumbnailWidget.image.NewGraphics2D().Render(halfWay2, 0, 0, 0, (double)thumbnailWidget.image.Width / halfWay2.Width, (double)thumbnailWidget.image.Height / halfWay2.Height);
                         }
                         break;
 
                     case ImageSizes.Size115x115:
-                        if (image115x115 != null)
                         {
-                            thumbnailWidget.image = new ImageBuffer(image115x115);
+                            ImageBuffer halfWay1 = new ImageBuffer(230, 230, 32, new BlenderBGRA());
+                            halfWay1.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+                            halfWay1.NewGraphics2D().Render(bigRender, 0, 0, 0, (double)halfWay1.Width / bigRender.Width, (double)halfWay1.Height / bigRender.Height);
+
+                            thumbnailWidget.image = new ImageBuffer(115, 115, 32, new BlenderBGRA());
+                            thumbnailWidget.image.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+                            thumbnailWidget.image.NewGraphics2D().Render(halfWay1, 0, 0, 0, (double)thumbnailWidget.image.Width / halfWay1.Width, (double)thumbnailWidget.image.Height / halfWay1.Height);
                         }
                         break;
 
