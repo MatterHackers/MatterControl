@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
@@ -68,13 +69,30 @@ namespace MatterHackers.MatterControl
         }
 
         WidescreenPanel widescreenPanel;
-        public void AddElements()
+        void AddElements()
         {
-            //this.AddChild(new CompactSlidePanel());
+            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            
+            FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            container.AnchorAll();
+
+            ApplicationMenuRow menuRow = new ApplicationMenuRow();
+            container.AddChild(menuRow);
+
+            GuiWidget menuSeparator = new GuiWidget();
+            menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
+            menuSeparator.Height = 2;
+            menuSeparator.HAnchor = HAnchor.ParentLeftRight;
+            menuSeparator.Margin = new BorderDouble(3, 0);
+
+            container.AddChild(menuSeparator);
+
             widescreenPanel = new WidescreenPanel();
-            this.AddChild(widescreenPanel);
-            this.AnchorAll();
-            SetUpdateNotification(this, null);
+            container.AddChild(widescreenPanel);
+
+            this.AddChild(container);
+            
+            
         }
 
         public void ReloadAll(object sender, EventArgs e)
@@ -82,9 +100,14 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle((state) =>
             {
                 this.RemoveAllChildren();
-                widescreenPanel = new WidescreenPanel();
-                this.AddChild(widescreenPanel);
+                AddElements();
             });
+        }
+
+        void Initialize()
+        {
+            this.AnchorAll();
+            SetUpdateNotification(this, null);            
         }
 
         public static ApplicationWidget Instance
@@ -93,8 +116,9 @@ namespace MatterHackers.MatterControl
             {
                 if (globalInstance == null)
                 {
-                    globalInstance = new ApplicationWidget();
+                    globalInstance = new ApplicationWidget();                    
                     globalInstance.AddElements();
+                    globalInstance.Initialize();
                 }
                 return globalInstance;
             }

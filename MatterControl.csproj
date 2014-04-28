@@ -92,6 +92,7 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
+    <Compile Include="ApplicationView\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="ApplicationView\MainScreenTabView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
@@ -105,7 +106,7 @@
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
     <Compile Include="PrintLibrary\LibraryData.cs" />
-    <Compile Include="PrintQueue\OptionsMenue\ExportToFolderFeedbackWindow.cs" />
+    <Compile Include="PrintQueue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
     <Compile Include="PrintHistory\PrintHistoryListControl.cs" />
@@ -151,7 +152,7 @@
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
     <Compile Include="CustomWidgets\PrintProgressBarWidget.cs" />
-    <Compile Include="PrintQueue\OptionsMenue\ExportToSdCardFeedbackWindow.cs" />
+    <Compile Include="PrintQueue\OptionsMenu\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="CustomWidgets\StyledDropDownList.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
@@ -170,7 +171,7 @@
     <Compile Include="ControlElements\MHTextEditWidget.cs" />
     <Compile Include="PartPreviewWindow\GcodeViewBasic.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
-    <Compile Include="PrintQueue\OptionsMenue\PartsSheetCreator.cs" />
+    <Compile Include="PrintQueue\OptionsMenu\PartsSheetCreator.cs" />
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
     <Compile Include="PrinterCommunication\PrinterCommunication.cs" />
     <Compile Include="PrinterControls\PrintLeveling.cs" />
@@ -195,13 +196,13 @@
     <Compile Include="PrintLibrary\LibraryDataView.cs" />
     <Compile Include="PrintLibrary\LibraryRowItem.cs" />
     <Compile Include="PrintLibrary\PrintLibraryWidget.cs" />
-    <Compile Include="PrintQueue\OptionsMenue\ExportToFolderProcess.cs" />
+    <Compile Include="PrintQueue\OptionsMenu\ExportToFolderProcess.cs" />
     <Compile Include="CustomWidgets\PartThumbnailWidget.cs" />
     <Compile Include="PrintQueue\PrintItemWrapper.cs" />
     <Compile Include="PrintQueue\QueueRowItem.cs" />
     <Compile Include="MatterControlApplication.cs" />
     <Compile Include="PrintQueue\QueueDataView.cs" />
-    <Compile Include="PrintQueue\OptionsMenue\QueueOptionsMenu.cs" />
+    <Compile Include="PrintQueue\OptionsMenu\QueueOptionsMenu.cs" />
     <Compile Include="Utilities\ProjectFileHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\WebUtilities\RequestManager.cs" />

@@ -2052,3 +2052,21 @@ Translated:Build:
 English:Update Feed
 Translated:Update Feed
 
+English:File
+Translated:File
+
+English:Import File
+Translated:Import File
+
+English:Exit
+Translated:Exit
+
+English:Help
+Translated:Help
+
+English:Getting Started
+Translated:Getting Started
+
+English:View Help
+Translated:View Help
+

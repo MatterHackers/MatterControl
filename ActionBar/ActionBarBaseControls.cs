@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.ActionBar
         protected double borderWidth;
         protected double borderRadius;
         protected double padding;
-        protected double statusTextHeight = 10;
+        protected double statusTextHeight = 8;
         TextWidget printerStatusText;
         TextWidget printerNameText;
 
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.ActionBar
             this.fillColor = fillColor;
             this.borderColor = borderColor;
             this.padding = padding;
-            this.Padding = new BorderDouble(10, 5);
+            this.Padding = new BorderDouble(10, 3);
             this.HAnchor = HAnchor.ParentLeftRight;
 
             FlowLayoutWidget textContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -240,10 +240,10 @@ namespace MatterHackers.MatterControl.ActionBar
     public class PrinterSelectButton : Button
     {
         double width = 180;
-        double height = 48;
+        double height = 40;
         double borderRadius = 0;
         double borderWidth = 1;
-        double fontSize = 16;
+        double fontSize = 14;
         double padding = 3;
         BorderDouble margin = new BorderDouble(0, 0);
         
