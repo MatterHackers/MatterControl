@@ -1183,7 +1183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             renderTypeMenu.HAnchor |= HAnchor.ParentLeftRight;
 
             renderTypeMenu.AddItem("Shaded".Localize());
-            renderTypeMenu.AddItem("Outlines".Localize());
+            //renderTypeMenu.AddItem("Outlines".Localize());
             renderTypeMenu.AddItem("Polygons".Localize());
 
             renderTypeMenu.SelectionChanged += (sender, e) =>
