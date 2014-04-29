@@ -128,6 +128,11 @@ namespace MatterHackers.MatterControl
                     addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.Width - 25, 7);
                     AboutTabView.AddChild(addedUpdateMark);
                 }
+                addedUpdateMark.Visible = true;
+            }
+            else if (addedUpdateMark != null)
+            {
+                addedUpdateMark.Visible = false;
             }
         }
     }
