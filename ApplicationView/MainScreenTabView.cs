@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
 
             QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            ApplicationWidget.Instance.SetUpdateNotificationTrigger.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
+            UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
             SelectedTabIndex = tabStateBeforeClose;
         }
@@ -120,42 +120,14 @@ namespace MatterHackers.MatterControl
 
         public void SetUpdateNotification(object sender, EventArgs widgetEvent)
         {
-            if (this.UpdateIsAvailable() || UpdateControl.NeedToCheckForUpdateFirstTimeEver)
+            if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
             {
-#if true
                 if (addedUpdateMark == null)
                 {
-                    UpdateControl.NeedToCheckForUpdateFirstTimeEver = false;
                     addedUpdateMark = new NotificationWidget();
-                    addedUpdateMark.OriginRelativeParent = new Vector2(68, 7);
+                    addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.Width - 25, 7);
                     AboutTabView.AddChild(addedUpdateMark);
                 }
-#else
-                AboutTabPage.Text = string.Format("About (!)");
-#endif
-            }
-            else
-            {
-                if (addedUpdateMark != null)
-                {
-                    addedUpdateMark.Visible = false;
-                }
-                AboutTabPage.Text = string.Format("About").ToUpper();
-            }
-        }
-
-        bool UpdateIsAvailable()
-        {
-            string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string applicationBuildToken = VersionInfo.Instance.BuildToken;
-
-            if (applicationBuildToken == currentBuildToken || currentBuildToken == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
             }
         }
     }

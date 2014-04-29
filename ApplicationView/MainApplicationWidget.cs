@@ -54,7 +54,6 @@ namespace MatterHackers.MatterControl
     {
         static ApplicationWidget globalInstance;
         public RootedObjectEventHandler ReloadPanelTrigger = new RootedObjectEventHandler();
-        public RootedObjectEventHandler SetUpdateNotificationTrigger = new RootedObjectEventHandler();        
 
         public SlicePresetsWindow EditSlicePresetsWindow { get; set;} 
 
@@ -106,7 +105,6 @@ namespace MatterHackers.MatterControl
         void Initialize()
         {
             this.AnchorAll();
-            SetUpdateNotification(this, null);            
         }
 
         public static ApplicationWidget Instance
@@ -121,11 +119,6 @@ namespace MatterHackers.MatterControl
                 }
                 return globalInstance;
             }
-        }
-
-        public void SetUpdateNotification(object sender, EventArgs widgetEvent)
-        {
-            SetUpdateNotificationTrigger.CallEvents(this, null);
         }
 
         public void ReloadAdvancedControlsPanel()

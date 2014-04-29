@@ -1936,3 +1936,162 @@ Translated:Edit Preset
 English:Slice-Engine
 Translated:Slice-Engine
 
+English:Status: Completed
+Translated:Status: Completed
+
+English:Unlock
+Translated:Unlock
+
+English:Show Terminal
+Translated:Show Terminal
+
+English:Configure
+Translated:Configure
+
+English:Disable
+Translated:Disable
+
+English:Est. Weight
+Translated:Est. Weight
+
+English:Downloading updates...
+Translated:Downloading updates...
+
+English:Duplicate
+Translated:Duplicate
+
+English:End
+Translated:End
+
+English:The type of support to create inside of parts.
+Translated:The type of support to create inside of parts.
+
+English:Infill Type
+Translated:Infill Type
+
+English:Release Options
+Translated:Release Options
+
+English:No items to select. Press 'Add' to select a file to print.
+Translated:No items to select. Press 'Add' to select a file to print.
+
+English:Unknown
+Translated:Unknown
+
+English:Press 'Add' to select an item.
+Translated:Press 'Add' to select an item.
+
+English:Shop
+Translated:Shop
+
+English:Slicing Error
+Translated:Slicing Error
+
+English:Ready to Print
+Translated:Ready to Print
+
+English:File Not Found\n'{0}'
+Translated:File Not Found\n'{0}'
+
+English:Slicing Error.\nPlease review your slice settings.
+Translated:Slicing Error.\nPlease review your slice settings.
+
+English:Special thanks to:
+Translated:Special thanks to:
+
+English:Alessandro Ranellucci for 
+Translated:Alessandro Ranellucci for 
+
+English:David Braam and Ultimaker BV for 
+Translated:David Braam and Ultimaker BV for 
+
+English:To enable GCode export, select a printer profile
+Translated:To enable GCode export, select a printer profile
+
+English:MatterControl: Submit an Issue
+Translated:MatterControl: Submit an Issue
+
+English:Submit
+Translated:Submit
+
+English:How can we help?
+Translated:How can we help?
+
+English:Submitting your information...
+Translated:Submitting your information...
+
+English:Question*
+Translated:Question*
+
+English:Briefly describe your question
+Translated:Briefly describe your question
+
+English:Details*
+Translated:Details*
+
+English:Fill in the details here
+Translated:Fill in the details here
+
+English:Your Email Address*
+Translated:Your Email Address*
+
+English:Your Name*
+Translated:Your Name*
+
+English:Version 
+Translated:Version 
+
+English:Developed by:
+Translated:Developed by:
+
+English:Send FeedBack
+Translated:Send FeedBack
+
+English:Build: 
+Translated:Build: 
+
+English:Update Feed
+Translated:Update Feed
+
+English:File
+Translated:File
+
+English:Import File
+Translated:Import File
+
+English:Exit
+Translated:Exit
+
+English:Help
+Translated:Help
+
+English:Getting Started
+Translated:Getting Started
+
+English:View Help
+Translated:View Help
+
+English:Manually Configure Connection
+Translated:Manually Configure Connection
+
+English:Skip Connection Setup
+Translated:Skip Connection Setup
+
+English:Currently available serial ports.
+Translated:Currently available serial ports.
+
+English:What's this?
+Translated:What's this?
+
+English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+Translated:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
+
+English:Connection succeeded!
+Translated:Connection succeeded!
+
+English:Oops! Unable to install update.
+Translated:Oops! Unable to install update.
+
+English:Motor de Capas
+Translated:Motor de Capas
+

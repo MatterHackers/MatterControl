@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.VersionManagement;
 
 namespace MatterHackers.MatterControl
 {
-    public class UpdateControl : FlowLayoutWidget
+    public class UpdateControlView : FlowLayoutWidget
     {
         bool updateInitiated = false;
         Button downloadUpdateLink;
@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
         RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-        public UpdateControl()
+        public UpdateControlView()
         {
             textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
             textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -104,12 +104,10 @@ namespace MatterHackers.MatterControl
                 if (firstSession != null
                     && DateTime.Compare(firstSession.SessionStart.AddDays(7), DateTime.Now) < 0)
                 {
-                    NeedToCheckForUpdateFirstTimeEver = true;
+                    UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpdateAvailable;
                 }
             }
         }
-
-        public static bool NeedToCheckForUpdateFirstTimeEver { get; set; }
 
         public void CheckForUpdate(object sender, MouseEventArgs e)
         {
@@ -316,6 +314,7 @@ namespace MatterHackers.MatterControl
                 downloadUpdateLink.Visible = true;
                 installUpdateLink.Visible = false;
                 checkUpdateLink.Visible = false;
+                UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpdateAvailable;
             }
 
             //MainSlidePanel.Instance.SetUpdateNotification(this, null);
