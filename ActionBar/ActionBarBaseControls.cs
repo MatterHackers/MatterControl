@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.ActionBar
             this.fillColor = fillColor;
             this.borderColor = borderColor;
             this.padding = padding;
-            this.Padding = new BorderDouble(10, 3);
+            this.Padding = new BorderDouble(10, 5);
             this.HAnchor = HAnchor.ParentLeftRight;
 
             FlowLayoutWidget textContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
