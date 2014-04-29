@@ -2097,3 +2097,15 @@ Translated:Motor de Capas
 English:Your application is up-to-date.
 Translated:Your application is up-to-date.
 
+English:Install Communication Driver
+Translated:Install Communication Driver
+
+English:This printer requires a driver for communication.
+Translated:This printer requires a driver for communication.
+
+English:Driver located. Would you like to install?
+Translated:Driver located. Would you like to install?
+
+English:Install Driver
+Translated:Install Driver
+
