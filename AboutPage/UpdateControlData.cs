@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 {
     public class UpdateControlData
     {
-        public enum UpdateStatusStates { Unknown, UpdateAvailable, UpdateDownloading, UpdateDownloaded }; 
+        public enum UpdateStatusStates { Unknown, UpdateAvailable, UpdateDownloading, UpdateDownloaded, UpToDate }; 
         public RootedObjectEventHandler UpdateStatusChanged = new RootedObjectEventHandler();
 
         UpdateStatusStates updateStatus;

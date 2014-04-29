@@ -120,19 +120,27 @@ namespace MatterHackers.MatterControl
 
         public void SetUpdateNotification(object sender, EventArgs widgetEvent)
         {
-            if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
+            switch (UpdateControlData.Instance.UpdateStatus)
             {
-                if (addedUpdateMark == null)
-                {
-                    addedUpdateMark = new NotificationWidget();
-                    addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.Width - 25, 7);
-                    AboutTabView.AddChild(addedUpdateMark);
-                }
-                addedUpdateMark.Visible = true;
-            }
-            else if (addedUpdateMark != null)
-            {
-                addedUpdateMark.Visible = false;
+                case UpdateControlData.UpdateStatusStates.Unknown:
+                case UpdateControlData.UpdateStatusStates.UpdateAvailable:
+                case UpdateControlData.UpdateStatusStates.UpdateDownloaded:
+                case UpdateControlData.UpdateStatusStates.UpdateDownloading:
+                    if (addedUpdateMark == null)
+                    {
+                        addedUpdateMark = new NotificationWidget();
+                        addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.Width - 25, 7);
+                        AboutTabView.AddChild(addedUpdateMark);
+                    }
+                    addedUpdateMark.Visible = true;
+                    break;
+
+                case UpdateControlData.UpdateStatusStates.UpToDate:
+                    addedUpdateMark.Visible = false;
+                    break;
+
+                default:
+                    throw new NotImplementedException();
             }
         }
     }

@@ -2094,3 +2094,6 @@ Translated:Oops! Unable to install update.
 English:Motor de Capas
 Translated:Motor de Capas
 
+English:Your application is up-to-date.
+Translated:Your application is up-to-date.
+

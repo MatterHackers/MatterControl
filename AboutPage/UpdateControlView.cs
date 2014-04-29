@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl
 
         public UpdateControlView()
         {
+            UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.Unknown;
+
             textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
             textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
@@ -297,7 +299,7 @@ namespace MatterHackers.MatterControl
                 downloadUpdateLink.Visible = false;
                 installUpdateLink.Visible = false;
                 checkUpdateLink.Visible = true;
-
+                UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpToDate;
             }
             else if (System.IO.File.Exists(updateFileName))
             {
@@ -305,7 +307,7 @@ namespace MatterHackers.MatterControl
                 downloadUpdateLink.Visible = false;
                 installUpdateLink.Visible = true;
                 checkUpdateLink.Visible = false;
-
+                UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpdateDownloaded;
             }
             else
             {
@@ -324,6 +326,7 @@ namespace MatterHackers.MatterControl
         {
             this.updateInitiated = false;
             updateStatusText.Text = string.Format("No updates are currently available.".Localize());
+            UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpToDate;
             checkUpdateLink.Visible = true;
             downloadUpdateLink.Visible = false;
             installUpdateLink.Visible = false;
