@@ -86,9 +86,10 @@ namespace MatterHackers.MatterControl.VersionManagement
                 responseValues = new JsonResponseDictionary();
                 responseValues["Status"] = "error";
                 responseValues["ErrorMessage"] = "Unable to connect to server";
+                responseValues["ErrorCode"] = "00";
             }
             else
-            {
+            {                
                 responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
             }
 
