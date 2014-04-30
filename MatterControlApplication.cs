@@ -47,9 +47,10 @@ namespace MatterHackers.MatterControl
 {
     public static class MainScreenUiState
     {
+        public static readonly int EmpytValue = -2;
         public static int lastMainScreenTabIndex = 0;
-        public static int lastSelectedIndex = -1;
-        public static int lastAdvancedControlsTab = -1;
+        public static int lastSelectedIndex = EmpytValue;
+        public static int lastAdvancedControlsTab = EmpytValue;
     }
 
     public class MatterControlApplication : SystemWindow
