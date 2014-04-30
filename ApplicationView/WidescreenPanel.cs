@@ -193,11 +193,11 @@ namespace MatterHackers.MatterControl
 
         public void StoreUiState()
         {
-            if (queueDataView != null && queueDataView.SelectedIndex != -1)
+            if (queueDataView != null)
             {
                 MainScreenUiState.lastSelectedIndex = queueDataView.SelectedIndex;
             }
-            if (advancedControls != null && advancedControls.SelectedTabIndex != -1)
+            if (advancedControls != null)
             {
                 MainScreenUiState.lastAdvancedControlsTab = advancedControls.SelectedTabIndex;
             }
@@ -205,11 +205,11 @@ namespace MatterHackers.MatterControl
 
         void RestoreUiState()
         {
-            if (MainScreenUiState.lastSelectedIndex > -1 && queueDataView != null)
+            if (MainScreenUiState.lastSelectedIndex != MainScreenUiState.EmpytValue && queueDataView != null)
             {
                 queueDataView.SelectedIndex = MainScreenUiState.lastSelectedIndex;
             }
-            if (MainScreenUiState.lastAdvancedControlsTab > -1 && advancedControls != null)
+            if (MainScreenUiState.lastAdvancedControlsTab != MainScreenUiState.EmpytValue && advancedControls != null)
             {
                 advancedControls.SelectedTabIndex = MainScreenUiState.lastAdvancedControlsTab;
             }
@@ -302,6 +302,8 @@ namespace MatterHackers.MatterControl
                     ApplicationWidget.Instance.WidescreenMode = true;
 
                     LoadColumnOne();
+                    // make sure we restore the state of column one because LoadColumnThree is going to save it.
+                    RestoreUiState();
                     LoadColumnTwo();
                     LoadColumnThree();
                     break;
