@@ -205,7 +205,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
             else
             {
-                Parent.Close();
+                UiThread.RunOnIdle((state) =>
+                {
+                    Parent.Close();
+                });
             }
         }
     }
