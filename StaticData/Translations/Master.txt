@@ -2109,3 +2109,6 @@ Translated:Driver located. Would you like to install?
 English:Install Driver
 Translated:Install Driver
 
+English:Apply
+Translated:Apply
+

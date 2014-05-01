@@ -130,6 +130,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Invalidate();
         }
 
+        protected static Slider InseretUiForSlider(FlowLayoutWidget wordOptionContainer, string header, double min = 0, double max = .5)
+        {
+            double scrollBarWidth = 100;
+            TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            spacingText.Margin = new BorderDouble(10, 3, 3, 5);
+            spacingText.HAnchor = HAnchor.ParentLeft;
+            wordOptionContainer.AddChild(spacingText);
+            Slider namedSlider = new Slider(new Vector2(), scrollBarWidth, 0, 1);
+            namedSlider.Minimum = min;
+            namedSlider.Maximum = max;
+            namedSlider.Margin = new BorderDouble(3, 5, 3, 3);
+            namedSlider.HAnchor = HAnchor.ParentCenter;
+            namedSlider.View.BackgroundColor = new RGBA_Bytes();
+            wordOptionContainer.AddChild(namedSlider);
+
+            return namedSlider;
+        }
+
         protected void SetMeshViewerDisplayTheme(object sender = null, EventArgs e = null)
         {
             meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
