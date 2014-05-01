@@ -125,6 +125,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new ScaledSingleNumber("supportXYDistance", "support_material_xy_distance", 1000),
             new ScaledSingleNumber("supportZDistance", "support_material_z_distance", 1000),
 
+            new SupportTypeMapping("supportType", "support_type"),
+
             new MapItem("minimalLayerTime", "slowdown_below_layer_time"),
 
             new InfillTranslator("sparseInfillLineDistance", "fill_density"),
@@ -198,6 +200,29 @@ enableOozeShield = 0;
             }
 
             public FanTranslator(string cura, string slicer)
+                : base(cura, slicer)
+            {
+            }
+        }
+
+        public class SupportTypeMapping : MapItem
+        {
+            public override string MappedValue
+            {
+                get
+                {
+                    switch (base.MappedValue)
+                    {
+                        case "LINES":
+                            return "1"; // the lines setting from curaengine
+
+                        default:
+                            return "0"; // the grid setting from curaengine
+                    }
+                }
+            }
+
+            public SupportTypeMapping(string cura, string slicer)
                 : base(cura, slicer)
             {
             }
