@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnMouseUp(mouseEvent);
         }
 
-        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, bool addCloseButton)
+        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, bool standAloneWindow)
         {
             MeshExtraData = new List<PlatingMeshData>();
             MeshExtraData.Add(new PlatingMeshData());
@@ -282,6 +282,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
                 processingProgressControl.Visible = false;
 
+                // If the window is embeded (in the center pannel) and there is no item loaded then don't show the add button
                 enterEditButtonsContainer = new FlowLayoutWidget();
                 {
                     Button addButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
@@ -387,7 +388,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             leftRightSpacer.HAnchor = HAnchor.ParentLeftRight;
             buttonBottomPanel.AddChild(leftRightSpacer);
 
-            if (addCloseButton)
+            if (standAloneWindow)
             {
                 Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
                 buttonBottomPanel.AddChild(closeButton);
@@ -418,6 +419,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             UiThread.RunOnIdle(AutoSpin);
+
+            if (printItemWrapper == null && !standAloneWindow)
+            {
+                enterEditButtonsContainer.Visible = false;
+            }
         }
 
         bool hasDrawn = false;
