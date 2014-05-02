@@ -2112,3 +2112,6 @@ Translated:Install Driver
 English:Apply
 Translated:Apply
 
+English:Buy Materials
+Translated:Buy Materials
+
