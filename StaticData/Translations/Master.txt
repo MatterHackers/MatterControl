@@ -2112,3 +2112,9 @@ Translated:Install Driver
 English:Apply
 Translated:Apply
 
+English:Buy Materials
+Translated:Buy Materials
+
+English:Select an STL file
+Translated:Select an STL file
+

@@ -80,10 +80,10 @@ namespace MatterHackers.MatterControl.ActionBar
             
             this.HAnchor = HAnchor.ParentLeftRight;
 
+            this.queueDataView = queueDataView;
+
             AddChildElements();
             AddHandlers();
-
-            this.queueDataView = queueDataView;
 
             onActivePrintItemChanged(null, null);
 
