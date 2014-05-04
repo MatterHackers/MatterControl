@@ -371,8 +371,15 @@ namespace MatterHackers.MatterControl
                         ColumnThree.Visible = !RightBorderLine.Hidden;
                         ColumnTwo.Visible = !LeftBorderLine.Hidden;
 
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                        ColumnOne.Width = 500;
+                        if (LeftBorderLine.Hidden)
+                        {
+                            ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                        }
+                        else
+                        {
+                            ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                            ColumnOne.Width = 500;
+                        }
                         Padding = new BorderDouble(4);
 
                         ColumnOne.Visible = true;
