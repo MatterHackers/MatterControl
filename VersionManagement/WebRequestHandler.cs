@@ -72,13 +72,22 @@ namespace MatterHackers.MatterControl.VersionManagement
             requestValues = new Dictionary<string, string>();
         }
 
+        protected virtual string getJsonToSend()
+        {
+            return SerializeObject(requestValues);
+        }
+
+        protected string SerializeObject(object requestObject)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(requestObject);
+        }
+
         protected void SendRequest(object sender, DoWorkEventArgs e)
         {
             JsonResponseDictionary responseValues;
 
             RequestManager requestManager = new RequestManager();
-
-            string jsonToSend = Newtonsoft.Json.JsonConvert.SerializeObject(requestValues);
+            string jsonToSend = getJsonToSend();
 
             requestManager.SendPOSTRequest(uri, jsonToSend, "", "", false);
             if (requestManager.LastResponse == null)
@@ -89,8 +98,18 @@ namespace MatterHackers.MatterControl.VersionManagement
                 responseValues["ErrorCode"] = "00";
             }
             else
-            {                
-                responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
+            {
+                try
+                {
+                    responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
+                }
+                catch
+                {
+                    responseValues = new JsonResponseDictionary();
+                    responseValues["Status"] = "error";
+                    responseValues["ErrorMessage"] = "Unexpected response";
+                    responseValues["ErrorCode"] = "01";
+                }
             }
 
             e.Result = responseValues;
