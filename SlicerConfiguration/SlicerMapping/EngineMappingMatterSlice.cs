@@ -187,8 +187,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
             
+            new MapItem("retractionOnTravel", "retract_length"),
             //retractionOnTravel=4.5
-            new MapItem("retractionOnTravel", "retract_before_travel"),
+            //new MapItem("retractionOnTravel", "retract_before_travel"),
 
             //retractionSpeed=45 # mm/s.
             new MapItem("retractionSpeed", "retract_speed"),

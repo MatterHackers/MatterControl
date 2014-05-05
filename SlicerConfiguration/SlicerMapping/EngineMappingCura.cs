@@ -99,7 +99,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("fanSpeedMin", "max_fan_speed"),
             new MapItem("fanSpeedMax", "min_fan_speed"),
 
-
             new FanTranslator("fanFullOnLayerNr", "disable_fan_first_layers"),
             new MapItem("coolHeadLift", "cool_extruder_lift"),
 
@@ -107,6 +106,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("retractionSpeed", "retract_speed"),
             new ScaledSingleNumber("retractionMinimalDistance", "retract_before_travel", 1000),
             new ScaledSingleNumber("minimalExtrusionBeforeRetraction", "min_extrusion_before_retract", 1000),
+
+            new ScaledSingleNumber("retractionZHop", "retract_lift", 1000),
 
             new MapItem("spiralizeMode", "spiral_vase"),
 
