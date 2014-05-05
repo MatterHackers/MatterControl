@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
         {
             menuItems = new TupleList<string, Func<bool>> 
             {                
-                {LocalizedString.Get("Import File"), importFile_Click},
+                {LocalizedString.Get("Add File"), importFile_Click},
                 {LocalizedString.Get("Exit"), exit_Click},
             };
 
