@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
             this.AnchorAll();
 
             UseOpenGL = true;
-            Title = "MatterControl (beta)";
+            Title = "MatterControl 1.1";
 
             ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);

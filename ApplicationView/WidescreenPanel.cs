@@ -177,13 +177,15 @@ namespace MatterHackers.MatterControl
         void onRightBorderClick(object sender, EventArgs e)
         {
             RightBorderLine.Hidden = !RightBorderLine.Hidden;
-            UiThread.RunOnIdle(SetPanelVisblilityForBorderLines);
+            UiThread.RunOnIdle(SetColumnVisibility);
+            UiThread.RunOnIdle(RightBorderLine.SetDisplayState);
         }
 
         void onLeftBorderClick(object sender, EventArgs e)
         {
             LeftBorderLine.Hidden = !LeftBorderLine.Hidden;
-            UiThread.RunOnIdle(SetPanelVisblilityForBorderLines);
+            UiThread.RunOnIdle(SetColumnVisibility);
+            UiThread.RunOnIdle(LeftBorderLine.SetDisplayState);
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -309,13 +311,13 @@ namespace MatterHackers.MatterControl
                     break;
             }
 
-            SetPanelVisblilityForBorderLines(state);
+            SetColumnVisibility(state);
 
             RestoreUiState();
             lastNumberVisible = numberOfPanels;
         }
 
-        void SetPanelVisblilityForBorderLines(object state = null)
+        void SetColumnVisibility(object state = null)
         {
             int numberOfPanels = NumberOfVisiblePanels();
 
@@ -335,51 +337,56 @@ namespace MatterHackers.MatterControl
                     break;
 
                 case 2:
-                case 3:
-                    if (numberOfPanels == 2)
+                    Padding = new BorderDouble(4);
+                    RightBorderLine.Visible = true;                    
+                    ColumnOne.Visible = true;
+
+                    if (RightBorderLine.Hidden)
                     {
-                        if (this.Width < Max2ColumnWidth && !RightBorderLine.Hidden)
+                        LeftBorderLine.Visible = true;
+                        if (LeftBorderLine.Hidden)
                         {
-                            //Queue column and advanced controls columns show
-                            ColumnTwo.Visible = LeftBorderLine.Hidden;
-                            ColumnThree.Visible = !RightBorderLine.Hidden;
-                            ColumnOne.Visible = true;
+                            ColumnThree.Visible = false;
+                            ColumnTwo.Visible = false;
                             ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                            Padding = new BorderDouble(4);
-
-                            LeftBorderLine.Visible = false;
-                            RightBorderLine.Visible = true;
+                            
                         }
-                        else if (LeftBorderLine.Hidden)
-                        {
-                            //Queue column and preview column shown                
-                            ColumnThree.Visible = !RightBorderLine.Hidden;
-                            ColumnTwo.Visible = !LeftBorderLine.Hidden;
-                            ColumnOne.AnchorAll();
-
-                            Padding = new BorderDouble(4);
-
-                            ColumnOne.Visible = true;
-
-                            LeftBorderLine.Visible = true;
-                            RightBorderLine.Visible = true;
+                        else
+                        {                            
+                            ColumnThree.Visible = false;
+                            ColumnTwo.Visible = true;
+                            ColumnOne.HAnchor = Agg.UI.HAnchor.None;  
                         }
-                    }
-                    else // number of panels == 3
+                    }                    
+                    else
                     {
-                        //All three columns shown
-                        ColumnThree.Visible = !RightBorderLine.Hidden;
-                        ColumnTwo.Visible = !LeftBorderLine.Hidden;
+                        LeftBorderLine.Visible = false;
+                        ColumnThree.Visible = true;
+                        ColumnTwo.Visible = false;
+                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;   
+                    }
+                    break;
+                case 3:                    
+                    //All three columns shown
+                    Padding = new BorderDouble(4);                    
 
+                    //If the middle column is hidden, left/right anchor the left column
+                    if (LeftBorderLine.Hidden)
+                    {
+                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                    }
+                    else
+                    {
                         ColumnOne.HAnchor = Agg.UI.HAnchor.None;
                         ColumnOne.Width = 500;
-                        Padding = new BorderDouble(4);
-
-                        ColumnOne.Visible = true;
-
-                        LeftBorderLine.Visible = true;
-                        RightBorderLine.Visible = true;
                     }
+
+                    ColumnOne.Visible = true;
+                    LeftBorderLine.Visible = true;
+                    RightBorderLine.Visible = true;
+                    ColumnThree.Visible = !RightBorderLine.Hidden;
+                    ColumnTwo.Visible = !LeftBorderLine.Hidden;
+
                     break;
             }
         }

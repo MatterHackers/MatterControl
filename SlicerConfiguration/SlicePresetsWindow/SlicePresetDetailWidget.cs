@@ -429,6 +429,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     addRowSettingData = null;
                     PopulateAddSettingRow(-1, -1, "-1");
                     LoadSettingsRows();
+
+                    duplicatePresetButton.Visible = false;
+                    exportPresetButton.Visible = false;
+                    
                 }
                 else
                 {

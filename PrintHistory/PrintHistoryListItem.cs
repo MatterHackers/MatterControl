@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                     statusIndicator.Margin = new BorderDouble(right: 3);
                     //buttonContainer.AddChild(statusIndicator);
 
-                    string printTimeLabel = "Print Time".Localize().ToUpper();
+                    string printTimeLabel = "Time".Localize().ToUpper();
                     string printTimeLabelFull = string.Format("{0}: ", printTimeLabel);
                     TextWidget timeLabel = new TextWidget(printTimeLabelFull, pointSize: 8);
                     timeLabel.TextColor = timeTextColor;
@@ -149,8 +149,8 @@ namespace MatterHackers.MatterControl.PrintHistory
                     buttonContainer.AddChild(timeLabel);
                     buttonContainer.AddChild(timeIndicator);
                     
-                    printAgainLink = linkButtonFactory.Generate("Print Again".Localize());
-                    printAgainLink.Margin = new BorderDouble(left: 0, right: 10);
+                    printAgainLink = linkButtonFactory.Generate("Reprint".Localize());
+                    printAgainLink.Margin = new BorderDouble(left: 0, right: 0);
                     printAgainLink.VAnchor = VAnchor.ParentCenter;
 
                     printAgainLink.Click += (sender, e) =>
@@ -158,6 +158,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                         QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId));
                     };
 
+                    buttonContainer.AddChild(new HorizontalSpacer());
                     buttonContainer.AddChild(printAgainLink);
                     middleColumn.AddChild(buttonContainer);
                 }

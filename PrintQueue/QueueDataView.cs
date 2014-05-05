@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             IndexArgs removeIndexArgs = e as IndexArgs;
             topToBottomItemList.RemoveChild(removeIndexArgs.Index);
             EnsureSelection();
-            if (QueueData.Instance.Count > 0)
+            if (QueueData.Instance.Count > 0 && SelectedIndex > QueueData.Instance.Count - 1)
             {
                 SelectedIndex = Math.Max(SelectedIndex - 1, 0);
             }

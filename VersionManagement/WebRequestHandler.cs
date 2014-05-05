@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.VersionManagement
         public event EventHandler RequestFailed;
         public event EventHandler RequestComplete;
 
-        void OnRequestSuceeded()
+        protected void OnRequestSuceeded()
         {
             if (RequestSucceeded != null)
             {
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.VersionManagement
         }
 
         //This gets called after failure or success
-        void OnRequestComplete()            
+        protected void OnRequestComplete()            
         {
             if (RequestComplete != null)
             {
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.VersionManagement
             }
         }
 
-        void OnRequestFailed()
+        protected void OnRequestFailed()
         {
             if (RequestFailed != null)
             {
@@ -72,13 +72,22 @@ namespace MatterHackers.MatterControl.VersionManagement
             requestValues = new Dictionary<string, string>();
         }
 
-        protected void SendRequest(object sender, DoWorkEventArgs e)
+        protected virtual string getJsonToSend()
+        {
+            return SerializeObject(requestValues);
+        }
+
+        protected string SerializeObject(object requestObject)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(requestObject);
+        }
+
+        protected virtual void SendRequest(object sender, DoWorkEventArgs e)
         {
             JsonResponseDictionary responseValues;
 
             RequestManager requestManager = new RequestManager();
-
-            string jsonToSend = Newtonsoft.Json.JsonConvert.SerializeObject(requestValues);
+            string jsonToSend = getJsonToSend();
 
             requestManager.SendPOSTRequest(uri, jsonToSend, "", "", false);
             if (requestManager.LastResponse == null)
@@ -89,14 +98,24 @@ namespace MatterHackers.MatterControl.VersionManagement
                 responseValues["ErrorCode"] = "00";
             }
             else
-            {                
-                responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
+            {
+                try
+                {
+                    responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
+                }
+                catch
+                {
+                    responseValues = new JsonResponseDictionary();
+                    responseValues["Status"] = "error";
+                    responseValues["ErrorMessage"] = "Unexpected response";
+                    responseValues["ErrorCode"] = "01";
+                }
             }
 
             e.Result = responseValues;
         }
 
-        protected void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
+        protected virtual void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
         {
             JsonResponseDictionary responseValues = e.Result as JsonResponseDictionary;
 

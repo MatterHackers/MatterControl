@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
             menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
             menuSeparator.Height = 2;
             menuSeparator.HAnchor = HAnchor.ParentLeftRight;
-            menuSeparator.Margin = new BorderDouble(3, 0);
+            menuSeparator.Margin = new BorderDouble(3, 6,3,3);
 
             container.AddChild(menuSeparator);
 

@@ -25,19 +25,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
         public bool Hidden 
         { 
             get { return hidden; }
-            set 
+            set { hidden = value; }
+        }
+
+        public void SetDisplayState(object state = null)
+        {
+            if (hidden)
             {
-                hidden = value;
-                if (hidden)
-                {
-                    this.Width = 24;
-                    arrowIndicator.Visible = true;
-                }
-                else
-                {
-                    this.Width = 4;
-                    arrowIndicator.Visible = false;
-                }
+                this.Width = 24;
+                arrowIndicator.Visible = true;
+            }
+            else
+            {
+                this.Width = 4;
+                arrowIndicator.Visible = false;
             }
         }
         
@@ -63,6 +64,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
             this.VAnchor = VAnchor.ParentBottomTop;
             this.Margin = new BorderDouble(8, 0);
             this.Cursor = Cursors.Hand;
+
+            SetDisplayState();
         }
 
         void AddHandlers()

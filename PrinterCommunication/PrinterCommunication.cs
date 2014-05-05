@@ -701,7 +701,11 @@ namespace MatterHackers.MatterControl
                 {
                     targetExtruderTemperature = value;
                     OnExtruderTemperatureSet(new TemperatureEventArgs(TargetExtruderTemperature));
-                    SendLineToPrinterNow("M104 S{0}".FormatWith(targetExtruderTemperature));
+                    if (PrinterIsConnected)
+                    {
+                        SendLineToPrinterNow("M104 S{0}".FormatWith(targetExtruderTemperature));
+                    }
+                    
                 }
             }
         }
@@ -754,7 +758,10 @@ namespace MatterHackers.MatterControl
             {
                 fanSpeed = Math.Max(0, Math.Min(255, value));
                 OnFanSpeedSet(null);
-                SendLineToPrinterNow("M106 S{0}".FormatWith(fanSpeed));
+                if (PrinterIsConnected)
+                {
+                    SendLineToPrinterNow("M106 S{0}".FormatWith(fanSpeed));
+                }
             }
         }
 
@@ -770,7 +777,11 @@ namespace MatterHackers.MatterControl
                 {
                     targetBedTemperature = value;
                     OnBedTemperatureSet(new TemperatureEventArgs(TargetBedTemperature));
-                    SendLineToPrinterNow("M140 S{0}".FormatWith(targetBedTemperature));
+                    if (PrinterIsConnected)
+                    {
+                        SendLineToPrinterNow("M140 S{0}".FormatWith(targetBedTemperature));
+                    }
+                    
                 }
             }
         }
@@ -1602,6 +1613,13 @@ namespace MatterHackers.MatterControl
                 serialPort = null;
                 CommunicationState = CommunicationStates.Disconnected;
                 LinesToWriteQueue.Clear();
+            }
+            else
+            {
+                //Need to reset UI - even if manual disconnect                
+                TargetExtruderTemperature = 0;
+                TargetBedTemperature = 0;
+                FanSpeed = 0;
             }
             OnEnabledChanged(null);
         }

@@ -142,6 +142,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
             pauseButton.Click += new ButtonBase.ButtonEventHandler(onPauseButton_Click);
             cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
+            cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
             reprintButton.Click += new ButtonBase.ButtonEventHandler(onReprintButton_Click);
             doneWithCurrentPartButton.Click += new ButtonBase.ButtonEventHandler(onDoneWithCurrentPartButton_Click);
 
@@ -314,6 +315,11 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
+        void CancelConnectionButton_Click(object state)
+        {
+            CancelPrinting();
+        }
+
         private void CancelPrinting()
         {
             if (PrinterCommunication.Instance.CommunicationState == PrinterCommunication.CommunicationStates.PreparingToPrint)
@@ -344,7 +350,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
         protected TooltipButton makeButton(string buttonText, string buttonToolTip = "")
         {
-
             TooltipButton button = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(buttonText);
             button.tooltipText = buttonToolTip;
             button.Margin = new BorderDouble(0, 6, 6, 3);

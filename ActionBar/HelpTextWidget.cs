@@ -119,37 +119,37 @@ namespace MatterHackers.MatterControl
 
         private string getHelpMessageFromStatus()
         {
-            if (ActivePrinterProfile.Instance.ActivePrinter == null)
-            {
-				return LocalizedString.Get("No printer selected.  Press 'Connect' to choose a printer.");
-            }
-            else
-            {
-
-                switch (PrinterCommunication.Instance.CommunicationState)
-                {
-                    case PrinterCommunication.CommunicationStates.Disconnected:
-						return LocalizedString.Get("Not connected. Press 'Connect' to enable printing.");
-					case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-						string attemptToConnect = LocalizedString.Get ("Attempting to Connect");
-						string attemptToConnectFull = string.Format ("{0}...", attemptToConnect);
-						return  attemptToConnectFull;               
-                    case PrinterCommunication.CommunicationStates.ConnectionLost:
-                    case PrinterCommunication.CommunicationStates.FailedToConnect:
-						return LocalizedString.Get("Unable to communicate with printer.");
-                    case PrinterCommunication.CommunicationStates.Connected:
-                        if (PrinterCommunication.Instance.ActivePrintItem != null)
-                        {
-							return LocalizedString.Get("Item selected. Press 'Start' to begin your print.");
-                        }
-                        else
-                        {
-							return LocalizedString.Get("No items to select. Press 'Add' to select a file to print.");
-                        }
-                    default:
-                        return "";
-                }
-            }
+            return "";
+            //if (ActivePrinterProfile.Instance.ActivePrinter == null)
+            //{
+            //    return LocalizedString.Get("Press 'Connect' to choose a printer.");
+            //}
+            //else
+            //{
+            //    switch (PrinterCommunication.Instance.CommunicationState)
+            //    {
+            //        case PrinterCommunication.CommunicationStates.Disconnected:
+            //            return LocalizedString.Get("Not connected. Press 'Connect' to enable printing.");
+            //        case PrinterCommunication.CommunicationStates.AttemptingToConnect:
+            //            string attemptToConnect = LocalizedString.Get ("Attempting to Connect");
+            //            string attemptToConnectFull = string.Format ("{0}...", attemptToConnect);
+            //            return  attemptToConnectFull;               
+            //        case PrinterCommunication.CommunicationStates.ConnectionLost:
+            //        case PrinterCommunication.CommunicationStates.FailedToConnect:
+            //            return LocalizedString.Get("Unable to communicate with printer.");
+            //        case PrinterCommunication.CommunicationStates.Connected:
+            //            if (PrinterCommunication.Instance.ActivePrintItem != null)
+            //            {
+            //                return LocalizedString.Get("Press 'Start' to begin your print.");
+            //            }
+            //            else
+            //            {
+            //                return LocalizedString.Get("No items to select. Press 'Add' to select a file to print.");
+            //            }
+            //        default:
+            //            return "";
+            //    }
+            //}
         }
     }
 }

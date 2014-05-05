@@ -99,11 +99,10 @@ namespace MatterHackers.MatterControl
             AddTerminalControls(terminalControls);
             AddEePromControls(terminalControls);
             AddReleaseOptions(terminalControls);
-
-            mainLayoutContainer.AddChild(settingsControls);
-            mainLayoutContainer.AddChild(terminalControls);
-            AddPrintLevelingControls(mainLayoutContainer);            
             
+            mainLayoutContainer.AddChild(terminalControls);
+            AddPrintLevelingControls(mainLayoutContainer);
+            mainLayoutContainer.AddChild(settingsControls);
 			//mainLayoutContainer.AddChild(releaseControls);
 
             AddChild(mainLayoutContainer);

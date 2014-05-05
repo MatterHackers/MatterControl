@@ -109,6 +109,7 @@ namespace MatterHackers.MatterControl
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
+                
                 mainControlsTabControl.TabBar.AddChild(hSpacer);
                 mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
 
@@ -230,6 +231,11 @@ namespace MatterHackers.MatterControl
 
             advancedControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
 
+            GuiWidget hSpacer = new GuiWidget();
+            hSpacer.HAnchor = HAnchor.ParentLeftRight;
+
+            advancedControlsTabControl.TabBar.AddChild(hSpacer);
+
             GuiWidget manualPrinterControls = new ManualPrinterControls();
             ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
             manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
@@ -269,15 +275,8 @@ namespace MatterHackers.MatterControl
 
         event EventHandler unregisterEvents;
         void AddHandlers()
-        {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+        {            
             ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
-        }
-
-        private void onThemeChanged(object sender, EventArgs e)
-        {
-            this.advancedControlsTabControl.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            this.advancedControlsTabControl.Invalidate();
         }
 
         public void ReloadBackPanel(object sender, EventArgs widgetEvent)

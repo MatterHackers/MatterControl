@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PrintHistory
             }
             else if (seconds > 86400)
             {
-                timeString = "{0}days {1}hrs {2}min".FormatWith(span.Days, span.Hours, span.Minutes);
+                timeString = "{0}d {1}hrs {2}min".FormatWith(span.Days, span.Hours, span.Minutes);
             }
             else if (seconds > 3600)
             {

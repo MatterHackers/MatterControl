@@ -36,6 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ActionBar
@@ -221,7 +222,7 @@ namespace MatterHackers.MatterControl.ActionBar
         private FlowLayoutWidget CreateActivePrinterInfoWidget()
         {
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            container.Margin = new BorderDouble(6, 0,6,3);
+            container.Margin = new BorderDouble(6, 0,6,0);
             container.HAnchor = HAnchor.ParentLeftRight;
             container.VAnchor |= VAnchor.ParentTop;
 
@@ -253,6 +254,7 @@ namespace MatterHackers.MatterControl.ActionBar
             container.AddChild(activePrintStatus);
             //container.AddChild(activePrintInfo);
             container.AddChild(printActionRow);
+            container.AddChild(new VerticalSpacer());
             container.AddChild(new MessageActionRow());
 
             return container;
@@ -359,10 +361,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
                 switch (PrinterCommunication.Instance.CommunicationState)
                 {
-				case PrinterCommunication.CommunicationStates.PreparingToPrint:
-						string preparingPrintLabel = LocalizedString.Get("Preparing To Print");
-						string preparingPrintLabelFull = string.Format("{0}:", preparingPrintLabel);
-						activePrintLabel.Text = preparingPrintLabelFull;
+				    case PrinterCommunication.CommunicationStates.PreparingToPrint:
+					    string preparingPrintLabel = LocalizedString.Get("Preparing To Print");
+					    string preparingPrintLabelFull = string.Format("{0}:", preparingPrintLabel);
+					    activePrintLabel.Text = preparingPrintLabelFull;
                         //ActivePrintStatusText = ""; // set by slicer
                         activePrintInfo.Text = "";
                         break;
@@ -376,27 +378,26 @@ namespace MatterHackers.MatterControl.ActionBar
 
                     case PrinterCommunication.CommunicationStates.Paused:
                         {
-							string activePrintLabelText = LocalizedString.Get ("Printing Paused");
-							string activePrintLabelTextFull = string.Format("{0}:", activePrintLabelText);
-							activePrintLabel.Text = activePrintLabelTextFull;
+						    string activePrintLabelText = LocalizedString.Get ("Printing Paused");
+						    string activePrintLabelTextFull = string.Format("{0}:", activePrintLabelText);
+						    activePrintLabel.Text = activePrintLabelTextFull;
                             ActivePrintStatusText = totalPrintTimeText;
                         }
                         break;
 
-				case PrinterCommunication.CommunicationStates.FinishedPrint:
-					string donePrintingText = LocalizedString.Get ("Done Printing");
-					string donePrintingTextFull = string.Format ("{0}:", donePrintingText);
-					activePrintLabel.Text = donePrintingTextFull;
-                    ActivePrintStatusText = totalPrintTimeText;
-                        break;
+				    case PrinterCommunication.CommunicationStates.FinishedPrint:
+					    string donePrintingText = LocalizedString.Get ("Done Printing");
+					    string donePrintingTextFull = string.Format ("{0}:", donePrintingText);
+					    activePrintLabel.Text = donePrintingTextFull;
+                        ActivePrintStatusText = totalPrintTimeText;
+                            break;
 
 				default:
 						string nextPrintLabelActive = LocalizedString.Get ("Next Print");
 						string nextPrintLabelActiveFull = string.Format("{0}: ", nextPrintLabelActive);
 
 						activePrintLabel.Text = nextPrintLabelActiveFull;
-                        ActivePrintStatusText = "";
-                        activePrintInfo.Text = "";
+                        ActivePrintStatusText = getConnectionMessage();
                         break;
                 }
             }
@@ -407,7 +408,31 @@ namespace MatterHackers.MatterControl.ActionBar
 
 				activePrintLabel.Text = nextPrintLabelFull;
 				ActivePrintStatusText = string.Format(LocalizedString.Get("Press 'Add' to choose an item to print"));
-                activePrintInfo.Text = "";
+            }
+        }
+
+        private string getConnectionMessage()
+        {
+            if (ActivePrinterProfile.Instance.ActivePrinter == null)
+            {
+                return LocalizedString.Get("Press 'Connect' to select a printer.");
+            }
+            else
+            {
+                switch (PrinterCommunication.Instance.CommunicationState)
+                {
+                    case PrinterCommunication.CommunicationStates.Disconnected:
+                        return LocalizedString.Get("Not connected. Press 'Connect' to enable printing.");
+                    case PrinterCommunication.CommunicationStates.AttemptingToConnect:
+                        string attemptToConnect = LocalizedString.Get("Attempting to Connect");
+                        string attemptToConnectFull = string.Format("{0}...", attemptToConnect);
+                        return attemptToConnectFull;
+                    case PrinterCommunication.CommunicationStates.ConnectionLost:
+                    case PrinterCommunication.CommunicationStates.FailedToConnect:
+                        return LocalizedString.Get("Unable to communicate with printer.");
+                    default:
+                        return "";
+                }
             }
         }
 

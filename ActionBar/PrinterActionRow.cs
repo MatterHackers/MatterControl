@@ -38,6 +38,8 @@ namespace MatterHackers.MatterControl.ActionBar
             actionBarButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
+            actionBarButtonFactory.hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
             actionBarButtonFactory.invertImageLocation = true;
             actionBarButtonFactory.borderWidth = 0;
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -46,15 +48,40 @@ namespace MatterHackers.MatterControl.ActionBar
         protected override void AddChildElements()
         {
             actionBarButtonFactory.invertImageLocation = false;
+            actionBarButtonFactory.borderWidth = 1;
+            if (ActiveTheme.Instance.IsDarkTheme)
+            {
+                actionBarButtonFactory.normalBorderColor = new RGBA_Bytes(77, 77, 77);
+            }
+            else
+            {
+                actionBarButtonFactory.normalBorderColor = new RGBA_Bytes(190, 190, 190);
+            }
+            actionBarButtonFactory.hoverBorderColor = new RGBA_Bytes(128, 128, 128);
+
             string connectString = "Connect".Localize().ToUpper();
             connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
-            connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
+            if (ApplicationWidget.Instance.WidescreenMode)
+            {
+                connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
+            }
+            else
+            {
+                connectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
+            }
             connectPrinterButton.VAnchor = VAnchor.ParentTop;
             connectPrinterButton.Cursor = Cursors.Hand;
 
             string disconnectString = "Disconnect".Localize().ToUpper();
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
-            disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
+            if (ApplicationWidget.Instance.WidescreenMode)
+            {
+                disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
+            }
+            else
+            {
+                disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
+            }
             disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
             disconnectPrinterButton.Visible = false;
             disconnectPrinterButton.Cursor = Cursors.Hand;
@@ -181,7 +208,7 @@ namespace MatterHackers.MatterControl.ActionBar
             bool doCancel = true;
             if (PrinterCommunication.Instance.PrinterIsPrinting)
             {
-                if (StyledMessageBox.ShowMessageBox("Disconnect and cancel the current print?", "WARNING: Disconneccting will cancel the current print.\n\nDo you want to disconnect?", StyledMessageBox.MessageType.YES_NO))
+                if (StyledMessageBox.ShowMessageBox("Disconnect and cancel the current print?", "WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?", StyledMessageBox.MessageType.YES_NO))
                 {
                     PrinterCommunication.Instance.Stop();
                 }

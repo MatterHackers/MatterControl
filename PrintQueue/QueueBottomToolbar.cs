@@ -197,8 +197,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             ProjectFileHandler project = new ProjectFileHandler(null);
             List<PrintItem> partFiles = project.OpenFromDialog();
             if (partFiles != null)
-            {
-                QueueData.Instance.RemoveAll();
+            {                
                 foreach (PrintItem part in partFiles)
                 {
                     QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));

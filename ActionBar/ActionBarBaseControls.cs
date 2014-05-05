@@ -293,8 +293,16 @@ namespace MatterHackers.MatterControl.ActionBar
 
         private PrinterSelectViewBase getButtonWidgetHover()
         {
+            RGBA_Bytes borderColor;
             RGBA_Bytes fillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            RGBA_Bytes borderColor = new RGBA_Bytes(77, 77, 77);
+            if (ActiveTheme.Instance.IsDarkTheme)
+            {
+                borderColor = new RGBA_Bytes(128, 128, 128);
+            }
+            else
+            {
+                borderColor = new RGBA_Bytes(128, 128, 128);
+            }
             RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
             PrinterSelectViewBase widget = new PrinterSelectViewBase(
                                                                this.width,
@@ -313,7 +321,16 @@ namespace MatterHackers.MatterControl.ActionBar
         {
 
             RGBA_Bytes fillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            RGBA_Bytes borderColor = new RGBA_Bytes(128,128,128);
+            RGBA_Bytes borderColor;
+            if (ActiveTheme.Instance.IsDarkTheme)
+            {
+                borderColor = new RGBA_Bytes(77, 77, 77);
+            }
+            else
+            {
+                borderColor = new RGBA_Bytes(190, 190, 190);
+            }
+            
             RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
             PrinterSelectViewBase widget = new PrinterSelectViewBase(
                                                                this.width,
