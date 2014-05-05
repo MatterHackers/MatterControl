@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.ActionBar
         private FlowLayoutWidget CreateActivePrinterInfoWidget()
         {
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            container.Margin = new BorderDouble(6, 0,6,3);
+            container.Margin = new BorderDouble(6, 0,6,0);
             container.HAnchor = HAnchor.ParentLeftRight;
             container.VAnchor |= VAnchor.ParentTop;
 
@@ -256,7 +256,6 @@ namespace MatterHackers.MatterControl.ActionBar
             container.AddChild(printActionRow);
             container.AddChild(new VerticalSpacer());
             container.AddChild(new MessageActionRow());
-            container.VAnchor = VAnchor.ParentBottomTop;
 
             return container;
         }

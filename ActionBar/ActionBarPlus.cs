@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl
             // Add Child Elements
             this.AddChild(new ActionBar.PrinterActionRow());
             this.AddChild(new PrintStatusRow(queueDataView));
+            this.Padding = new BorderDouble(bottom: 6);
 
             // Add Handlers
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
