@@ -31,14 +31,6 @@ namespace MatterHackers.MatterControl
         event EventHandler unregisterEvents;
         public void Create()
         {
-            // These are used as descriptions to tell you what the code is doin,g but there is not code to see what is happening.
-            // If you want to know what happens, you have to go read the functions.
-            //SetDisplayAttributes();
-            //AddChildElements();
-            //AddHandlers();
-            // I think it is a better design to just write the comments and have the code here.
-            // This way we have the six lines of functional code right here.  We can read it and see what this constructor actually does.
-
             // Set Display Attributes
             this.HAnchor = HAnchor.ParentLeftRight;
             this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;

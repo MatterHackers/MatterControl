@@ -36,6 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ActionBar
@@ -253,6 +254,7 @@ namespace MatterHackers.MatterControl.ActionBar
             container.AddChild(activePrintStatus);
             //container.AddChild(activePrintInfo);
             container.AddChild(printActionRow);
+            container.AddChild(new VerticalSpacer());
             container.AddChild(new MessageActionRow());
 
             return container;

@@ -121,11 +121,10 @@ namespace MatterHackers.MatterControl
         {
             if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
-				return LocalizedString.Get("No printer selected.  Press 'Connect' to choose a printer.");
+				return LocalizedString.Get("Press 'Connect' to choose a printer.");
             }
             else
             {
-
                 switch (PrinterCommunication.Instance.CommunicationState)
                 {
                     case PrinterCommunication.CommunicationStates.Disconnected:
@@ -140,7 +139,7 @@ namespace MatterHackers.MatterControl
                     case PrinterCommunication.CommunicationStates.Connected:
                         if (PrinterCommunication.Instance.ActivePrintItem != null)
                         {
-							return LocalizedString.Get("Item selected. Press 'Start' to begin your print.");
+							return LocalizedString.Get("Press 'Start' to begin your print.");
                         }
                         else
                         {
