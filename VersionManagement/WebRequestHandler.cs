@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.VersionManagement
         public event EventHandler RequestFailed;
         public event EventHandler RequestComplete;
 
-        void OnRequestSuceeded()
+        protected void OnRequestSuceeded()
         {
             if (RequestSucceeded != null)
             {
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.VersionManagement
         }
 
         //This gets called after failure or success
-        void OnRequestComplete()            
+        protected void OnRequestComplete()            
         {
             if (RequestComplete != null)
             {
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.VersionManagement
             }
         }
 
-        void OnRequestFailed()
+        protected void OnRequestFailed()
         {
             if (RequestFailed != null)
             {
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.VersionManagement
             return Newtonsoft.Json.JsonConvert.SerializeObject(requestObject);
         }
 
-        protected void SendRequest(object sender, DoWorkEventArgs e)
+        protected virtual void SendRequest(object sender, DoWorkEventArgs e)
         {
             JsonResponseDictionary responseValues;
 
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.VersionManagement
             e.Result = responseValues;
         }
 
-        protected void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
+        protected virtual void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
         {
             JsonResponseDictionary responseValues = e.Result as JsonResponseDictionary;
 
