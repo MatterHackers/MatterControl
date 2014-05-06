@@ -2178,3 +2178,6 @@ Translated:Make Settings Active
 English:Make Settings Active\nAnd Save To Default
 Translated:Make Settings Active\nAnd Save To Default
 
+English:Design Add-ons
+Translated:Design Add-ons
+
