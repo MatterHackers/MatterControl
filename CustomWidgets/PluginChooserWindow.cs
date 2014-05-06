@@ -59,6 +59,37 @@ namespace MatterHackers.MatterControl.CreatorPlugins
         public PluginChooserWindow()
             : base(360, 300)
         {
+            AddElements();
+            ShowAsSystemWindow();
+            MinimumSize = new Vector2(360, 300);
+            AddHandlers();
+        }
+
+        event EventHandler unregisterEvents;
+        protected void AddHandlers()
+        {
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
+        }
+
+
+        protected void Instance_ThemeChanged(object sender, EventArgs e)
+        {
+            UiThread.RunOnIdle(Reload);
+        }
+
+        public void TriggerReload(object sender, EventArgs e)
+        {
+            UiThread.RunOnIdle(Reload);
+        }
+
+        public void Reload(object state)
+        {
+            this.RemoveAllChildren();
+            this.AddElements();
+        }
+
+        public void AddElements()
+        {
 			Title = LocalizedString.Get("Design Add-ons");            
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -69,7 +100,6 @@ namespace MatterHackers.MatterControl.CreatorPlugins
             headerRow.HAnchor = HAnchor.ParentLeftRight;
             headerRow.Margin = new BorderDouble(0, 3, 0, 0);
             headerRow.Padding = new BorderDouble(0, 3, 0, 3);
-
             {
 				string elementHeaderLabelBeg = LocalizedString.Get("Select a Design Tool");
 				string elementHeaderLabelFull = string.Format("{0}:", elementHeaderLabelBeg);
@@ -85,7 +115,6 @@ namespace MatterHackers.MatterControl.CreatorPlugins
             topToBottom.AddChild(headerRow);
 
             GuiWidget presetsFormContainer = new GuiWidget();
-            //ListBox printerListContainer = new ListBox();
             {
                 presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
                 presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
@@ -189,14 +218,14 @@ namespace MatterHackers.MatterControl.CreatorPlugins
                 }
 
                 pluginRowContainer.AddChild(pluginListingContainer);
+                if (callCorrectFunctionHold.unlockRegisterFunction != null)
+                {
+                    callCorrectFunctionHold.unlockRegisterFunction(TriggerReload, ref unregisterEvents);
+                }
             }
 
             topToBottom.AddChild(presetsFormContainer);
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-
-            ShowAsSystemWindow();
-			MinimumSize = new Vector2(360, 300);
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
             cancelPresetsButton.Click += (sender, e) => {

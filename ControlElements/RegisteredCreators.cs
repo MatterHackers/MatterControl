@@ -40,21 +40,27 @@ namespace MatterHackers.MatterControl.CreatorPlugins
         public UnlockFunction unlockFunction;
         public delegate bool PermissionFunction();
         public PermissionFunction permissionFunction;
+        public delegate void UnlockRegisterFunction(EventHandler functionToCallOnEvent, ref EventHandler functionThatWillBeCalledToUnregisterEvent);
+        public UnlockRegisterFunction unlockRegisterFunction;
         public EventHandler functionToLaunchCreator;
         public string iconPath;
         public string description;
         public bool paidAddOnFlag;
-        public string permissionKey;
-        public string productKey;
 
-        public CreatorInformation(EventHandler functionToLaunchCreator, string iconPath, string description, bool paidAddOnFlag = false, UnlockFunction unlockFunction = null, PermissionFunction permissionFunction = null)
+        public CreatorInformation(EventHandler functionToLaunchCreator, 
+            string iconPath, string description, 
+            bool paidAddOnFlag = false, 
+            UnlockFunction unlockFunction = null,
+            PermissionFunction permissionFunction = null, 
+            UnlockRegisterFunction unlockRegisterFunction = null)
         {
             this.functionToLaunchCreator = functionToLaunchCreator;
             this.iconPath = iconPath;
             this.description = description;
             this.paidAddOnFlag = paidAddOnFlag;
             this.unlockFunction = unlockFunction;
-            this.permissionFunction = permissionFunction;            
+            this.permissionFunction = permissionFunction;
+            this.unlockRegisterFunction = unlockRegisterFunction;
         }
     }
 
