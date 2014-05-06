@@ -2118,3 +2118,12 @@ Translated:Buy Materials
 English:Select an STL file
 Translated:Select an STL file
 
+English:Add File
+Translated:Add File
+
+English:Time
+Translated:Time
+
+English:Press 'Connect' to select a printer.
+Translated:Press 'Connect' to select a printer.
+
