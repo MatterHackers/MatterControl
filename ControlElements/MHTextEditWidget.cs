@@ -15,7 +15,7 @@ namespace MatterHackers.MatterControl
     {
         Stopwatch timeSinceLastTextChanged = new Stopwatch();
         protected TextEditWidget actuallTextEditWidget;
-        TextWidget noContentFieldDescription = null;
+        protected TextWidget noContentFieldDescription = null;
         public TextEditWidget ActualTextEditWidget
         {
             get { return actuallTextEditWidget; }
@@ -129,6 +129,9 @@ namespace MatterHackers.MatterControl
             {
                 passwordCoverText.Text = new string('●', actuallTextEditWidget.Text.Length);
             };
+
+            RemoveChild(noContentFieldDescription);
+            AddChild(noContentFieldDescription);
         }
     }
 
