@@ -751,7 +751,7 @@ namespace MatterHackers.MatterControl
         }
 
         int fanSpeed;
-        public int FanSpeed
+        public int FanSpeed0To255
         {
             get { return fanSpeed; }
             set
@@ -842,7 +842,7 @@ namespace MatterHackers.MatterControl
                 try
                 {
                     int fanSpeedBeingSet = int.Parse(fanSpeedString);
-                    if (FanSpeed != fanSpeedBeingSet)
+                    if (FanSpeed0To255 != fanSpeedBeingSet)
                     {
                         fanSpeed = fanSpeedBeingSet;
                         OnFanSpeedSet(null);
@@ -1600,7 +1600,7 @@ namespace MatterHackers.MatterControl
                 ReleaseMotors();
                 TargetExtruderTemperature = 0;
                 TargetBedTemperature = 0;
-                FanSpeed = 0;
+                FanSpeed0To255 = 0;
                 ForceImmediateWrites = false;
 
                 CommunicationState = CommunicationStates.Disconnecting;
@@ -1619,7 +1619,7 @@ namespace MatterHackers.MatterControl
                 //Need to reset UI - even if manual disconnect                
                 TargetExtruderTemperature = 0;
                 TargetBedTemperature = 0;
-                FanSpeed = 0;
+                FanSpeed0To255 = 0;
             }
             OnEnabledChanged(null);
         }

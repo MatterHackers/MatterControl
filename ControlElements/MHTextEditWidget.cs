@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl
     public class MHTextEditWidget : GuiWidget
     {
         Stopwatch timeSinceLastTextChanged = new Stopwatch();
-        TextEditWidget actuallTextEditWidget;
+        protected TextEditWidget actuallTextEditWidget;
         TextWidget noContentFieldDescription = null;
         public TextEditWidget ActualTextEditWidget
         {
@@ -108,6 +108,27 @@ namespace MatterHackers.MatterControl
             {
                 actuallTextEditWidget.Text = value;
             }
+        }
+    }
+
+    public class MHPasswordTextEditWidget : MHTextEditWidget
+    {
+        TextEditWidget passwordCoverText;
+
+        public MHPasswordTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "")
+            : base(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex, messageWhenEmptyAndNotSelected)
+        {
+            passwordCoverText = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine);
+            passwordCoverText.Selectable = false;
+            passwordCoverText.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.x, pixelWidth), Math.Max(passwordCoverText.MinimumSize.y, pixelHeight));
+            passwordCoverText.VAnchor = Agg.UI.VAnchor.ParentBottom;
+            AddChild(passwordCoverText);
+
+            actuallTextEditWidget.TextChanged += (sender, e) =>
+            {
+                passwordCoverText.Text = new string('●', actuallTextEditWidget.Text.Length);
+            };
         }
     }
 
