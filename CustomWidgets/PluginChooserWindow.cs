@@ -45,7 +45,8 @@ namespace MatterHackers.MatterControl.CreatorPlugins
     public class PluginChooserWindow : SystemWindow
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        List<GuiWidget> listWithValues = new List<GuiWidget>();
+        protected TextImageButtonFactory unlockButtonFactory = new TextImageButtonFactory();
+        List<GuiWidget> listWithValues = new List<GuiWidget>();        
 
         ImageBuffer LoadImage(string imageName)
         {
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
         public PluginChooserWindow()
             : base(360, 300)
         {
-			Title = LocalizedString.Get("Installed Plugins");            
+			Title = LocalizedString.Get("Design Add-ons");            
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -93,16 +94,26 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 
             FlowLayoutWidget pluginRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             pluginRowContainer.AnchorAll();
-            presetsFormContainer.AddChild(pluginRowContainer);
+            presetsFormContainer.AddChild(pluginRowContainer);            
+            
+            unlockButtonFactory.Margin = new BorderDouble(10,0);            
+            unlockButtonFactory.normalFillColor = new RGBA_Bytes(0, 0, 0, 50);
+            unlockButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 50);
+            unlockButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 100);
+            unlockButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 100);            
 
             foreach(CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
             {
-                ClickWidget pluginRow = new ClickWidget();         
-                pluginRow.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                FlowLayoutWidget pluginListingContainer = new FlowLayoutWidget();
+                pluginListingContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                pluginListingContainer.BackgroundColor = RGBA_Bytes.White;
+                pluginListingContainer.Padding = new BorderDouble(0);
+                pluginListingContainer.Margin = new BorderDouble(6, 0, 6, 6);                
+                
+                ClickWidget pluginRow = new ClickWidget();
+                pluginRow.Margin = new BorderDouble(6, 0, 6, 0);        
                 pluginRow.Height = 38;
-			    pluginRow.BackgroundColor = RGBA_Bytes.White;
-                pluginRow.Padding = new BorderDouble(3);
-                pluginRow.Margin = new BorderDouble(6,0,6,6);                
+                pluginRow.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
                 GuiWidget overlay = new GuiWidget();
                 overlay.AnchorAll();
@@ -116,14 +127,35 @@ namespace MatterHackers.MatterControl.CreatorPlugins
                 {
                     ImageBuffer imageBuffer = LoadImage(creatorInfo.iconPath);
                     ImageWidget imageWidget = new ImageWidget(imageBuffer);
+                    imageWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
                     macroRow.AddChild(imageWidget);
                 }
 
-                TextWidget buttonLabel = new TextWidget(creatorInfo.description, pointSize: 14);
+                bool userHasPermission;
+                if (!creatorInfo.paidAddOnFlag)
+                {
+                    userHasPermission = true;
+                }
+                else
+                {
+                    userHasPermission = creatorInfo.permissionFunction();
+                }
 
+                string addOnDescription;
+                addOnDescription = creatorInfo.description;
+                TextWidget buttonLabel = new TextWidget(addOnDescription, pointSize: 14);
                 buttonLabel.Margin = new BorderDouble(left: 10);
-                buttonLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;                
+                buttonLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 macroRow.AddChild(buttonLabel);
+
+                if (!userHasPermission)
+                {                    
+                    TextWidget demoLabel = new TextWidget("(demo)", pointSize: 10);
+
+                    demoLabel.Margin = new BorderDouble(left: 4);
+                    demoLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
+                    macroRow.AddChild(demoLabel);
+                }
 
                 FlowLayoutWidget hSpacer = new FlowLayoutWidget();
                 hSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -138,9 +170,25 @@ namespace MatterHackers.MatterControl.CreatorPlugins
                     }
                     UiThread.RunOnIdle(CloseOnIdle);
                 };
+
                 pluginRow.AddChild(macroRow);
                 pluginRow.AddChild(overlay);
-                pluginRowContainer.AddChild(pluginRow);
+
+                pluginListingContainer.AddChild(pluginRow);
+
+                if (!userHasPermission)
+                {
+                    Button unlockButton = unlockButtonFactory.Generate("Unlock");
+                    unlockButton.Margin = new BorderDouble(0);
+                    unlockButton.Cursor = Cursors.Hand;
+                    unlockButton.Click += (sender, e) =>
+                    {
+                        callCorrectFunctionHold.unlockFunction();
+                    };
+                    pluginListingContainer.AddChild(unlockButton);
+                }
+
+                pluginRowContainer.AddChild(pluginListingContainer);
             }
 
             topToBottom.AddChild(presetsFormContainer);
