@@ -361,22 +361,26 @@ namespace MatterHackers.MatterControl
             fanSpeedDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
             leftToRight.AddChild(fanSpeedDescription);
 
-            fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, PrinterCommunication.Instance.FanSpeed.ToString(), "255");
+            fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, PrinterCommunication.Instance.FanSpeed0To255.ToString(), "100");
             fanSpeedDisplay.EditComplete += (sender, e) =>
             {
-                PrinterCommunication.Instance.FanSpeed = (int)fanSpeedDisplay.GetValue();
+                PrinterCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
             };
 
             leftToRight.AddChild(fanSpeedDisplay);
+
+            TextWidget fanSpeedPercent = new TextWidget("%", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            fanSpeedPercent.VAnchor = Agg.UI.VAnchor.ParentCenter;
+            leftToRight.AddChild(fanSpeedPercent);
 
             return leftToRight;
         }
 
         void FanSpeedChanged_Event(object sender, EventArgs e)
         {
-            int printerFanSpeed = PrinterCommunication.Instance.FanSpeed;
+            int printerFanSpeed = PrinterCommunication.Instance.FanSpeed0To255;
 
-            fanSpeedDisplay.SetDisplayString(printerFanSpeed.ToString());
+            fanSpeedDisplay.SetDisplayString(((int)(printerFanSpeed * 100.5 / 255)).ToString());
         }
 
         private static GuiWidget CreateSeparatorLine()
