@@ -36,15 +36,25 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 {
     public class CreatorInformation
     {
+        public delegate void UnlockFunction();
+        public UnlockFunction unlockFunction;
+        public delegate bool PermissionFunction();
+        public PermissionFunction permissionFunction;
         public EventHandler functionToLaunchCreator;
         public string iconPath;
         public string description;
+        public bool paidAddOnFlag;
+        public string permissionKey;
+        public string productKey;
 
-        public CreatorInformation(EventHandler functionToLaunchCreator, string iconPath, string description)
+        public CreatorInformation(EventHandler functionToLaunchCreator, string iconPath, string description, bool paidAddOnFlag = false, UnlockFunction unlockFunction = null, PermissionFunction permissionFunction = null)
         {
             this.functionToLaunchCreator = functionToLaunchCreator;
             this.iconPath = iconPath;
             this.description = description;
+            this.paidAddOnFlag = paidAddOnFlag;
+            this.unlockFunction = unlockFunction;
+            this.permissionFunction = permissionFunction;            
         }
     }
 
