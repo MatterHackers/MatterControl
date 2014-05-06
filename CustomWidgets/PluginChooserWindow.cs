@@ -125,11 +125,21 @@ namespace MatterHackers.MatterControl.CreatorPlugins
             pluginRowContainer.AnchorAll();
             presetsFormContainer.AddChild(pluginRowContainer);            
             
-            unlockButtonFactory.Margin = new BorderDouble(10,0);            
-            unlockButtonFactory.normalFillColor = new RGBA_Bytes(0, 0, 0, 50);
-            unlockButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 50);
-            unlockButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 100);
-            unlockButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 100);            
+            unlockButtonFactory.Margin = new BorderDouble(10,0);
+            if (ActiveTheme.Instance.IsDarkTheme)
+            {
+                unlockButtonFactory.normalFillColor = new RGBA_Bytes(0, 0, 0, 100);
+                unlockButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 100);
+                unlockButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 50);
+                unlockButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 50);
+            }
+            else
+            {
+                unlockButtonFactory.normalFillColor = new RGBA_Bytes(0, 0, 0, 50);
+                unlockButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 50);
+                unlockButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 100);
+                unlockButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 100);
+            }
 
             foreach(CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
             {
