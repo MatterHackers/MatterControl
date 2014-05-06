@@ -2127,3 +2127,54 @@ Translated:Time
 English:Press 'Connect' to select a printer.
 Translated:Press 'Connect' to select a printer.
 
+English:Marlin Firmware EEPROM Settings
+Translated:Marlin Firmware EEPROM Settings
+
+English:Re-Load Default Settings
+Translated:Re-Load Default Settings
+
+English:Set Default To Factory Settings
+Translated:Set Default To Factory Settings
+
+English:Steps per mm:
+Translated:Steps per mm:
+
+English:Maximum feedrates [mm/s]:
+Translated:Maximum feedrates [mm/s]:
+
+English:Maximum Acceleration [mm/s²]:
+Translated:Maximum Acceleration [mm/s²]:
+
+English:Acceleration:
+Translated:Acceleration:
+
+English:Retract Acceleration:
+Translated:Retract Acceleration:
+
+English:PID settings:
+Translated:PID settings:
+
+English:Homing Offset:
+Translated:Homing Offset:
+
+English:Min feedrate [mm/s]:
+Translated:Min feedrate [mm/s]:
+
+English:Min travel feedrate [mm/s]:
+Translated:Min travel feedrate [mm/s]:
+
+English:Minimum segment time [ms]:
+Translated:Minimum segment time [ms]:
+
+English:Maximum X-Y jerk [mm/s]:
+Translated:Maximum X-Y jerk [mm/s]:
+
+English:Maximum Z jerk [mm/s]:
+Translated:Maximum Z jerk [mm/s]:
+
+English:Make Settings Active
+Translated:Make Settings Active
+
+English:Make Settings Active\nAnd Save To Default
+Translated:Make Settings Active\nAnd Save To Default
+
