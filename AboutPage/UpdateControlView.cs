@@ -212,10 +212,12 @@ namespace MatterHackers.MatterControl
                 System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
                 request.Method = "HEAD";
 
+
                 try
                 {
                     WebResponse response = request.GetResponse();
                     downloadSize = (int)response.ContentLength;
+
                 }
                 catch
                 {
@@ -311,12 +313,24 @@ namespace MatterHackers.MatterControl
             }
             else
             {
-                updateStatusText.Text = string.Format("There is a recommended update available.".Localize());
-                //updateStatusText.Text = string.Format("New version available: {0}", ApplicationSettings.Instance.get("CurrentReleaseVersion"));
-                downloadUpdateLink.Visible = true;
-                installUpdateLink.Visible = false;
-                checkUpdateLink.Visible = false;
-                UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpdateAvailable;
+                if (downloadHasZeroSize())
+                {
+                    this.updateInitiated = false;
+                    updateStatusText.Text = string.Format("No updates are currently available.".Localize());
+                    UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpToDate;
+                    checkUpdateLink.Visible = true;
+                    downloadUpdateLink.Visible = false;
+                    installUpdateLink.Visible = false;                    
+                }
+                else
+                {
+                    updateStatusText.Text = string.Format("There is a recommended update available.".Localize());
+                    //updateStatusText.Text = string.Format("New version available: {0}", ApplicationSettings.Instance.get("CurrentReleaseVersion"));
+                    downloadUpdateLink.Visible = true;
+                    installUpdateLink.Visible = false;
+                    checkUpdateLink.Visible = false;
+                    UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpdateAvailable;
+                }
             }
 
             //MainSlidePanel.Instance.SetUpdateNotification(this, null);
@@ -330,6 +344,35 @@ namespace MatterHackers.MatterControl
             checkUpdateLink.Visible = true;
             downloadUpdateLink.Visible = false;
             installUpdateLink.Visible = false;
+        }
+
+        bool downloadHasZeroSize()
+        {
+            bool zeroSizeDownload = false;
+            string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
+            string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+
+            //Make HEAD request to determine the size of the download (required by GAE)
+            System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
+            request.Method = "HEAD";
+
+
+            try
+            {
+                WebResponse response = request.GetResponse();
+                downloadSize = (int)response.ContentLength;
+                if (downloadSize == 0)
+                {
+                    zeroSizeDownload = true;
+                }
+
+            }
+            catch
+            {
+                //Unknown download size
+                downloadSize = 0;
+            }
+            return zeroSizeDownload;
         }
     }
 }
