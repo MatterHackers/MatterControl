@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MatterHackers.MatterControl;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -38,6 +39,98 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public NotPassedItem(string mappedKey, string originalKey)
             : base(mappedKey, originalKey)
         {
+        }
+    }
+
+    public class MapStartGCode : InjectGCodeCommands
+    {
+        public override string MappedValue
+        {
+            get
+            {
+                StringBuilder newStartGCode = new StringBuilder();
+                foreach (string line in PreStartGCode())
+                {
+                    newStartGCode.Append(line + "\n");
+                }
+
+                newStartGCode.Append(ReplaceMacroValues(base.MappedValue));
+
+                bool first = true;
+                foreach (string line in PostStartGCode())
+                {
+                    if (!first)
+                    {
+                        newStartGCode.Append("\n");
+                    }
+                    newStartGCode.Append(line);
+                    first = false;
+                }
+
+                return newStartGCode.ToString();
+            }
+        }
+
+        string[] replaceWithSettingsStrings = new string[] 
+        {
+            "first_layer_temperature",
+            "temperature", 
+            "first_layer_bed_temperature",
+            "bed_temperature",
+        };
+
+        private string ReplaceMacroValues(string gcodeWithMacros)
+        {
+            foreach (string name in replaceWithSettingsStrings)
+            {
+                string thingToReplace = "{" + "{0}.FormatWith(name)" + "}";
+                gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
+            }
+
+            return gcodeWithMacros;
+        }
+
+        public MapStartGCode(string mappedKey, string originalKey)
+            : base(mappedKey, originalKey)
+        {
+        }
+
+        public List<string> PreStartGCode()
+        {
+            string startGCode = ActiveSliceSettings.Instance.GetActiveValue("start_gcode");
+            string[] preStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            List<string> preStartGCode = new List<string>();
+            preStartGCode.Add("; automatic settings before start_gcode");
+            AddDefaultIfNotPresent(preStartGCode, "G21", preStartGCodeLines, "set units to millimeters");
+            AddDefaultIfNotPresent(preStartGCode, "M107", preStartGCodeLines, "fan off");
+            double bed_temperature = double.Parse(ActiveSliceSettings.Instance.GetActiveValue("bed_temperature"));
+            if (bed_temperature > 0)
+            {
+                string setBedTempString = string.Format("M190 S{0}", bed_temperature);
+                AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
+            }
+            string setTempString = string.Format("M104 S{0}", ActiveSliceSettings.Instance.GetActiveValue("temperature"));
+            AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, "set temperature");
+            preStartGCode.Add("; settings from start_gcode");
+
+            return preStartGCode;
+        }
+
+        public List<string> PostStartGCode()
+        {
+            string startGCode = ActiveSliceSettings.Instance.GetActiveValue("start_gcode");
+            string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            List<string> postStartGCode = new List<string>();
+            postStartGCode.Add("; automatic settings after start_gcode");
+            string setTempString = "M109 S{0}".FormatWith(ActiveSliceSettings.Instance.GetActiveValue("temperature"));
+            AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, "wait for temperature");
+            AddDefaultIfNotPresent(postStartGCode, "G90", postStartGCodeLines, "use absolute coordinates");
+            postStartGCode.Add(string.Format("{0} ; {1}", "G92 E0", "reset the expected extruder position"));
+            AddDefaultIfNotPresent(postStartGCode, "M82", postStartGCodeLines, "use absolute distance for extrusion");
+
+            return postStartGCode;
         }
     }
 
