@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             get { return printItems; }
         }
 
+        public RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
         public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
         public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
         public RootedObjectEventHandler OrderChanged = new RootedObjectEventHandler();
@@ -229,9 +230,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 foreach (PrintItem part in partFiles)
                 {
                     PrintItems.Add(new PrintItemWrapper(part));
-                    OnItemAdded(new IndexArgs(PrintItems.Count - 1));
+                    
                 }
             }
+            OnDataReloaded(null);
+        }
+
+        public void OnDataReloaded(EventArgs e)
+        {
+            DataReloaded.CallEvents(this, e);
         }
 
         public void OnItemAdded(EventArgs e)
