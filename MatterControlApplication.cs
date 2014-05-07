@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PluginSystem;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -133,7 +134,8 @@ namespace MatterHackers.MatterControl
             this.AnchorAll();
 
             UseOpenGL = true;
-            Title = "MatterControl 1.1";
+            string version = "1.1";
+            Title = "MatterControl{0} {1}".FormatWith(OemSettings.Instance.WindowTitleExtra, version);
 
             ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);

@@ -30,6 +30,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
         public string AffiliateCode = "";
 
+        public string WindowTitleExtra = "";
+
         public bool ShowShopButton = true;
         
         List<string> printerWhiteList = new List<string>();
