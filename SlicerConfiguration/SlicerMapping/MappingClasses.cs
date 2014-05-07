@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             foreach (string name in replaceWithSettingsStrings)
             {
-                string thingToReplace = "{" + "{0}.FormatWith(name)" + "}";
+                string thingToReplace = "{" + "{0}".FormatWith(name) + "}";
                 gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
             }
 

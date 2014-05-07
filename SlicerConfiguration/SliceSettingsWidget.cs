@@ -643,7 +643,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     case OrganizerSettingsData.DataEditTypes.LIST:
                         {
-                            StyledDropDownList selectableOptions = new StyledDropDownList("None", Direction.Up);
+                            StyledDropDownList selectableOptions = new StyledDropDownList("None", maxHeight: 200);
                             selectableOptions.Margin = new BorderDouble();
                             
                             string[] listItems = settingData.ExtraSettings.Split(',');

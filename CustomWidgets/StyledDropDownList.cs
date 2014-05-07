@@ -20,8 +20,8 @@ namespace MatterHackers.MatterControl
         static RGBA_Bytes whiteSemiTransparent = new RGBA_Bytes(255, 255, 255, 100);
         static RGBA_Bytes whiteTransparent = new RGBA_Bytes(255, 255, 255, 0);
         
-        public StyledDropDownList(string noSelectionString, Direction direction = Direction.Down)
-            : base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction)
+        public StyledDropDownList(string noSelectionString, Direction direction = Direction.Down, double maxHeight = 0)
+            : base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction, maxHeight)
         {   
             this.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             this.MenuItemsBorderWidth = 1;
