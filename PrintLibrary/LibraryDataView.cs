@@ -214,9 +214,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
 
             this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
+            LibraryData.Instance.DataReloaded.RegisterEvent(LibraryDataReloaded, ref unregisterEvents);
             LibraryData.Instance.ItemAdded.RegisterEvent(ItemAddedToLibrary, ref unregisterEvents);
             LibraryData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
             LibraryData.Instance.OrderChanged.RegisterEvent(LibraryOrderChanged, ref unregisterEvents);
+        }
+
+        void LibraryDataReloaded(object sender, EventArgs e)
+        {
+            this.RemoveAllChildren();
+            for (int i = 0; i < LibraryData.Instance.Count; i++)
+            {
+                PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(i);
+                LibraryRowItem queueItem = new LibraryRowItem(item, this);
+                AddChild(queueItem);
+            }
         }
 
         public override void OnClosed(EventArgs e)
