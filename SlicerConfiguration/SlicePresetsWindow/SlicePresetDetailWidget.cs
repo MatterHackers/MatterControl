@@ -294,6 +294,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingDropDownList.MinimumSize = new Vector2(settingDropDownList.LocalBounds.Width, settingDropDownList.LocalBounds.Height);
             settingDropDownList.VAnchor = Agg.UI.VAnchor.ParentCenter;
             settingDropDownList.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            settingDropDownList.AlignToRightEdge = true;
             settingDropDownList.Height = 24;
 
             string selectedCategoryValue = "{0}:-1:-1".FormatWith(categoryDefaultIndex);
@@ -337,7 +338,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 string itemName = setting.PresentationName.Replace("\\n","").Replace(":","");                                
                                 if (setting.ExtraSettings.Trim() != "" && setting.DataEditType != OrganizerSettingsData.DataEditTypes.LIST)
                                 {
-                                    itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\n",""));
+                                    itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\\n"," "));
                                 }
 
                                 MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
@@ -972,7 +973,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         static RGBA_Bytes whiteTransparent = new RGBA_Bytes(255, 255, 255, 0);
 
         public SettingsDropDownList(string noSelectionString, Direction direction = Direction.Down)
-            : base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction)
+            : base(noSelectionString, whiteTransparent, whiteSemiTransparent, direction, maxHeight: 300)
         {
             //this.HAnchor = HAnchor.ParentLeftRight;
             this.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -985,7 +986,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.BorderWidth = 1;
             this.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
             this.HoverColor = whiteSemiTransparent;
-            this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 0);
+            this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 0);           
 
             mainControlText.VAnchor = VAnchor.ParentCenter;
         }
