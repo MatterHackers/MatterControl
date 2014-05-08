@@ -268,12 +268,5 @@ namespace MatterHackers.MatterControl.PrintHistory
                 }
             }
         }
-
-        public override void RemoveAllChildren()
-        {
-            topToBottomItemList.RemoveAllChildren();
-        }
-
-
     }
 }
