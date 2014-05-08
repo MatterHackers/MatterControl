@@ -24,33 +24,13 @@ namespace MatterHackers.Agg.UI
             set { borderWidth = value; }
         }
 
-        RGBA_Bytes borderColor;
-        public RGBA_Bytes BorderColor
-        {
-            get { return borderColor; }
-            set { borderColor = value; }
-        }
+        public RGBA_Bytes BorderColor { get; set; }
 
-        RGBA_Bytes arrowColor;
-        public RGBA_Bytes ArrowColor
-        {
-            get { return arrowColor; }
-            set { arrowColor = value; }
-        }
+        public RGBA_Bytes NormalArrowColor { get; set; }
+        public RGBA_Bytes HoverArrowColor { get; set; }
 
-        RGBA_Bytes normalColor;
-        public RGBA_Bytes NormalColor
-        {
-            get { return normalColor; }
-            set { normalColor = value; }
-        }
-
-        RGBA_Bytes hoverColor;
-        public RGBA_Bytes HoverColor
-        {
-            get { return hoverColor; }
-            set { hoverColor = value; }
-        }
+        public RGBA_Bytes NormalColor { get; set; }
+        public RGBA_Bytes HoverColor { get; set; }
 
         RGBA_Bytes textColor = RGBA_Bytes.Black;
         public RGBA_Bytes TextColor
@@ -110,14 +90,9 @@ namespace MatterHackers.Agg.UI
             MouseEnter += new EventHandler(DropDownList_MouseEnter);
             MouseLeave += new EventHandler(DropDownList_MouseLeave);
 
-            NormalColor = normalColor;
-            HoverColor = hoverColor;
-            BackgroundColor = normalColor;
-            BorderColor = normalColor;
-
             //IE Don't show arrow unless color is set explicitly
-            ArrowColor = new RGBA_Bytes(255, 255, 255, 0);
-            
+            NormalArrowColor = new RGBA_Bytes(255, 255, 255, 0);
+            HoverArrowColor = TextColor;
         }
 
         void DropDownList_MouseLeave(object sender, EventArgs e)
@@ -125,14 +100,12 @@ namespace MatterHackers.Agg.UI
             if (!this.IsOpen)
             {
                 BackgroundColor = NormalColor;
-                ArrowColor = new RGBA_Bytes(255, 255, 255, 0);
             }
         }
 
         void DropDownList_MouseEnter(object sender, EventArgs e)
         {
             BackgroundColor = HoverColor;
-            ArrowColor = TextColor;
         }
 
         void OnSelectionChanged(EventArgs e)
@@ -146,6 +119,10 @@ namespace MatterHackers.Agg.UI
         void MenuItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             Vector2 minSize = new Vector2(LocalBounds.Width, LocalBounds.Height);
+            foreach (MenuItem item in MenuItems)
+            {
+                minSize.x = Math.Max(minSize.x, item.Width);
+            }
 
             string startText = mainControlText.Text;
             foreach (MenuItem item in MenuItems)
@@ -224,7 +201,14 @@ namespace MatterHackers.Agg.UI
             {
                 throw new NotImplementedException("Pulldown direction has not been implemented");
             }
-            graphics2D.Render(littleArrow, LocalBounds.Right - 10, LocalBounds.Bottom + Height - 4, arrowColor);
+            if (UnderMouseState != UI.UnderMouseState.NotUnderMouse)
+            {
+                graphics2D.Render(littleArrow, LocalBounds.Right - 10, LocalBounds.Bottom + Height - 4, NormalArrowColor);
+            }
+            else
+            {
+                graphics2D.Render(littleArrow, LocalBounds.Right - 10, LocalBounds.Bottom + Height - 4, HoverArrowColor);
+            }
         }
 
         private void DrawBorder(Graphics2D graphics2D)
@@ -232,7 +216,7 @@ namespace MatterHackers.Agg.UI
             RectangleDouble Bounds = LocalBounds;
             RoundedRect borderRect = new RoundedRect(this.LocalBounds, 0);
             Stroke strokeRect = new Stroke(borderRect, borderWidth);
-            graphics2D.Render(strokeRect, borderColor);
+            graphics2D.Render(strokeRect, BorderColor);
         }
 
         public void AddItem(string name, string value = null, double pointSize = 12)
@@ -245,23 +229,21 @@ namespace MatterHackers.Agg.UI
             mainControlText.Margin = MenuItemsPadding;
 
             GuiWidget normalTextWithMargin = new GuiWidget();
-            normalTextWithMargin.HAnchor = UI.HAnchor.ParentLeft;
+            normalTextWithMargin.HAnchor = HAnchor.FitToChildren;
             normalTextWithMargin.BackgroundColor = MenuItemsBackgroundColor;
             TextWidget normal = new TextWidget(name, pointSize: pointSize);
             normal.Margin = MenuItemsPadding;
             normal.TextColor = MenuItemsTextColor;
             normalTextWithMargin.AddChild(normal);
-            normalTextWithMargin.HAnchor = HAnchor.FitToChildren;
             normalTextWithMargin.VAnchor = VAnchor.FitToChildren;
 
             GuiWidget hoverTextWithMargin = new GuiWidget();
-            hoverTextWithMargin.HAnchor = UI.HAnchor.ParentLeft;
+            hoverTextWithMargin.HAnchor = HAnchor.FitToChildren;
             hoverTextWithMargin.BackgroundColor = MenuItemsBackgroundHoverColor;
             TextWidget hover = new TextWidget(name, pointSize: pointSize);
             hover.Margin = MenuItemsPadding;
             hover.TextColor = mainControlText.TextColor;
             hoverTextWithMargin.AddChild(hover);
-            hoverTextWithMargin.HAnchor = HAnchor.FitToChildren;
             hoverTextWithMargin.VAnchor = VAnchor.FitToChildren;
 
             MenuItem menuItem = new MenuItem(new MenuItemStatesView(normalTextWithMargin, hoverTextWithMargin), value);
