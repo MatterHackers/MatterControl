@@ -189,8 +189,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return comPortOption;
         }
 
-
-
         void onPrinterStatusChanged(object sender, EventArgs e)
         {
             if (PrinterCommunication.Instance.PrinterIsConnected)
@@ -215,7 +213,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         void onConnectionSuccess()
         {
             printerComPortHelpLink.Visible = false;
-            printerComPortError.TextColor = RGBA_Bytes.White;
+            printerComPortError.TextColor = this.subContainerTextColor;
 			printerComPortError.Text = LocalizedString.Get("Connection succeeded!");
             nextButton.Visible = true;
             connectButton.Visible = false;
@@ -263,7 +261,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 this.ActivePrinter.ComPort = serialPort;
                 this.ActivePrinter.Commit();
                 printerComPortHelpLink.Visible = false;
-                printerComPortError.TextColor = RGBA_Bytes.White;
+                printerComPortError.TextColor = this.subContainerTextColor;
 				string printerComPortErrorLabel = LocalizedString.Get("Attempting to connect");
 				string printerComPortErrorLabelFull = string.Format("{0}...",printerComPortErrorLabel);
 				printerComPortError.Text = printerComPortErrorLabelFull;

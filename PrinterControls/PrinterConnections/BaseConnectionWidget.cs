@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         protected RGBA_Bytes defaultBackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
         protected RGBA_Bytes subContainerTextColor = ActiveTheme.Instance.PrimaryTextColor;
         protected RGBA_Bytes labelBackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-        protected RGBA_Bytes linkTextColor = ActiveTheme.Instance.PrimaryAccentColor;
+        protected RGBA_Bytes linkTextColor = ActiveTheme.Instance.SecondaryAccentColor;
         protected ConnectionWindow windowController;
         public ActionLinkFactory actionLinkFactory = new ActionLinkFactory();
 
