@@ -1152,7 +1152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Padding = new BorderDouble(5, 3);
 
-            TextWidget sizeDescription = new TextWidget(LocalizedString.Get("{0}:".FormatWith(axis)), textColor: ActiveTheme.Instance.PrimaryTextColor);
+            TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
             sizeDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
             leftToRight.AddChild(sizeDescription);
 
@@ -1194,7 +1194,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void UpdateSizeInfo()
         {
-            if (sizeDisplay[0] != null)
+            if (sizeDisplay[0] != null && SelectedMesh != null)
             {
                 AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
                 sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
