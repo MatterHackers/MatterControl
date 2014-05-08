@@ -133,8 +133,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onConnectButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            Button buttonClicked = ((Button)sender);            
-
+            Button buttonClicked = ((Button)sender);  
             if (buttonClicked.Enabled)
             {
                 if (ActivePrinterProfile.Instance.ActivePrinter == null)
@@ -203,6 +202,7 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             UiThread.RunOnIdle(OnIdleDisconnect);
         }
+
         void OnIdleDisconnect(object state)
         {
             bool doCancel = true;
@@ -220,37 +220,29 @@ namespace MatterHackers.MatterControl.ActionBar
 
             if (doCancel)
             {
-                PrinterCommunication.Instance.Disable();
+                PrinterCommunication.Instance.Disable();                
+                selectActivePrinterButton.Invalidate();
+            }
+        }
+
+        void SetConnectionButtonVisibleState(object state)
+        {            
+            
+            if (PrinterCommunication.Instance.PrinterIsConnected)
+            {
+                disconnectPrinterButton.Visible = true;
+                connectPrinterButton.Visible = false;
+            }
+            else
+            {
                 disconnectPrinterButton.Visible = false;
                 connectPrinterButton.Visible = true;
-                connectPrinterButton.Enabled = true;
-                selectActivePrinterButton.Invalidate();
             }
         }
 
         void onPrinterStatusChanged(object sender, EventArgs e)
         {
-            if (PrinterCommunication.Instance.PrinterIsConnected)
-            {
-                onConnectionSuccess();
-            }
-            else 
-            {
-                onConnectionFailed();
-            }        
-        }
-
-        void onConnectionFailed()
-        {
-            disconnectPrinterButton.Visible = false;
-            connectPrinterButton.Visible = true;
-            connectPrinterButton.Enabled = true;
-        }
-
-        void onConnectionSuccess()
-        {
-            disconnectPrinterButton.Visible = true;
-            connectPrinterButton.Visible = false;
+            UiThread.RunOnIdle(SetConnectionButtonVisibleState);      
         }
     }
 }
