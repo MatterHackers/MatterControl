@@ -26,7 +26,6 @@ namespace MatterHackers.Agg.UI
 
         public RGBA_Bytes BorderColor { get; set; }
 
-        RGBA_Bytes currentArrowColor;
         public RGBA_Bytes NormalArrowColor { get; set; }
         public RGBA_Bytes HoverArrowColor { get; set; }
 
@@ -101,14 +100,12 @@ namespace MatterHackers.Agg.UI
             if (!this.IsOpen)
             {
                 BackgroundColor = NormalColor;
-                currentArrowColor = NormalArrowColor;
             }
         }
 
         void DropDownList_MouseEnter(object sender, EventArgs e)
         {
             BackgroundColor = HoverColor;
-            currentArrowColor = HoverArrowColor;
         }
 
         void OnSelectionChanged(EventArgs e)
@@ -204,7 +201,14 @@ namespace MatterHackers.Agg.UI
             {
                 throw new NotImplementedException("Pulldown direction has not been implemented");
             }
-            graphics2D.Render(littleArrow, LocalBounds.Right - 10, LocalBounds.Bottom + Height - 4, currentArrowColor);
+            if (UnderMouseState != UI.UnderMouseState.NotUnderMouse)
+            {
+                graphics2D.Render(littleArrow, LocalBounds.Right - 10, LocalBounds.Bottom + Height - 4, NormalArrowColor);
+            }
+            else
+            {
+                graphics2D.Render(littleArrow, LocalBounds.Right - 10, LocalBounds.Bottom + Height - 4, HoverArrowColor);
+            }
         }
 
         private void DrawBorder(Graphics2D graphics2D)
