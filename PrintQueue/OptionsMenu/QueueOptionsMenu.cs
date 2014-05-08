@@ -96,7 +96,9 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {LocalizedString.Get(" Import from Zip"), importQueueFromZipMenu_Click},
                 {LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click},
                 {"GCode", null},
-                {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
+                    {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
+                {LocalizedString.Get("Other"), null},
+				    {LocalizedString.Get(" Remove All"), removeAllFromQueueButton_Click},
                 };
             }
             else
@@ -105,12 +107,12 @@ namespace MatterHackers.MatterControl.PrintQueue
                 menuItems = new TupleList<string, Func<bool>> 
                 {
                 {"STL", null},
-                {LocalizedString.Get(" Import from Zip"), importQueueFromZipMenu_Click},
-                {LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click},
+                    {LocalizedString.Get(" Import from Zip"), importQueueFromZipMenu_Click},
+                    {LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click},
                 {"GCode", null},
-                {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
+                    {LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click},
                 {LocalizedString.Get("Other"), null},
-                {LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click},
+                    {LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click},
 					{LocalizedString.Get(" Remove All"), removeAllFromQueueButton_Click},
                 };
             }
