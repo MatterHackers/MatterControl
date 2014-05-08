@@ -2181,3 +2181,6 @@ Translated:Make Settings Active\nAnd Save To Default
 English:Design Add-ons
 Translated:Design Add-ons
 
+English:Lock Ratio
+Translated:Lock Ratio
+

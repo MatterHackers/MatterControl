@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
     public class PlatingMeshData
     {
-        public double currentScale = 1;
+        public Vector3 currentScale = new Vector3(1,1,1);
         public double xSpacing;
         public IRayTraceable traceableData;
     }

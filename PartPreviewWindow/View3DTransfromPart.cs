@@ -1126,18 +1126,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(CreateScaleDropDownMenu());
 
-#if false
             // add in the dimensions
             {
                 buttonPanel.AddChild(createAxisScalingControl("x", 0));
                 buttonPanel.AddChild(createAxisScalingControl("y", 1));
                 buttonPanel.AddChild(createAxisScalingControl("z", 2));
 
-                uniformScale = new CheckBox(LocalizedString.Get("Uniform Scale"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                uniformScale = new CheckBox(LocalizedString.Get("Lock Ratio"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 uniformScale.Checked = true;
-                viewOptionContainer.AddChild(uniformScale);
+                
+                FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+                leftToRight.Padding = new BorderDouble(5, 3);
+
+                leftToRight.AddChild(uniformScale);
+                buttonPanel.AddChild(leftToRight);
             }
-#endif
 
             buttonPanel.AddChild(generateHorizontalRule());
         }
@@ -1149,7 +1152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Padding = new BorderDouble(5, 3);
 
-            TextWidget sizeDescription = new TextWidget(LocalizedString.Get("{0}:".FormatWith(axis)), textColor: ActiveTheme.Instance.PrimaryTextColor);
+            TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
             sizeDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
             leftToRight.AddChild(sizeDescription);
 
@@ -1169,11 +1172,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void SetNewModelSize(double sizeInMm, int axis)
         {
             AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
+
+            double currentSize = bounds.Size[axis];
+            double desiredSize = sizeDisplay[axis].GetValue();
+            double scaleFactor = 1;
+            if (currentSize != 0)
+            {
+                scaleFactor = desiredSize / currentSize;
+            }
+
+            if (uniformScale.Checked)
+            {
+                scaleRatioControl.ActuallNumberEdit.Value *= scaleFactor;
+                ApplyScaleFromEditField();
+            }
+            else
+            {
+                ScaleAxis(scaleFactor, axis);
+            }
         }
 
         void UpdateSizeInfo()
         {
-            if (sizeDisplay[0] != null)
+            if (sizeDisplay[0] != null && SelectedMesh != null)
             {
                 AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
                 sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
@@ -1185,7 +1206,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void SetApplyScaleVisability()
         {
             double scale = scaleRatioControl.ActuallNumberEdit.Value;
-            if (scale != MeshExtraData[SelectedMeshIndex].currentScale)
+            if (scale != MeshExtraData[SelectedMeshIndex].currentScale[0]
+                || scale != MeshExtraData[SelectedMeshIndex].currentScale[1]
+                || scale != MeshExtraData[SelectedMeshIndex].currentScale[2])
             {
                 applyScaleButton.Visible = true;
             }
@@ -1290,25 +1313,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             double scale = scaleRatioControl.ActuallNumberEdit.Value;
             if (scale > 0)
             {
-                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                Vector3 center = (bounds.maxXYZ - bounds.minXYZ) / 2 + bounds.minXYZ;
-                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-center);
-
-                // first we remove any scale we have applied and then scale to the value in the text edit field
-                Matrix4X4 newScale = Matrix4X4.CreateScale(1 / MeshExtraData[SelectedMeshIndex].currentScale);
-                newScale *= Matrix4X4.CreateScale(scale);
-                totalTransfrom *= newScale;
-
-                totalTransfrom *= Matrix4X4.CreateTranslation(center);
-                SelectedMeshTransform *= totalTransfrom;
-
-
-                PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
-                saveButtons.Visible = true;
-                Invalidate();
-                MeshExtraData[SelectedMeshIndex].currentScale = scale;
-                SetApplyScaleVisability();
+                ScaleAxis(scale, 0);
+                ScaleAxis(scale, 1);
+                ScaleAxis(scale, 2);
             }
+        }
+
+        private void ScaleAxis(double scaleIn, int axis)
+        {
+            AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
+            Vector3 center = (bounds.maxXYZ - bounds.minXYZ) / 2 + bounds.minXYZ;
+            Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-center);
+
+            // first we remove any scale we have applied and then scale to the new value
+            Matrix4X4 newScaleMatrix = Matrix4X4.CreateScale(1 / MeshExtraData[SelectedMeshIndex].currentScale);
+            Vector3 newScale = MeshExtraData[SelectedMeshIndex].currentScale;
+            newScale[axis] = scaleIn;
+            newScaleMatrix *= Matrix4X4.CreateScale(newScale);
+            totalTransfrom *= newScaleMatrix;
+
+            totalTransfrom *= Matrix4X4.CreateTranslation(center);
+            SelectedMeshTransform *= totalTransfrom;
+
+            PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
+            saveButtons.Visible = true;
+            Invalidate();
+            MeshExtraData[SelectedMeshIndex].currentScale[axis] = scaleIn;
+            SetApplyScaleVisability();
         }
 
         private void AddRotateControls(FlowLayoutWidget buttonPanel)
