@@ -176,8 +176,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onActivePrinterChanged(object sender, EventArgs e)
         {
-            SetButtonText();
+            UiThread.RunOnIdle((state) =>
+            {
+                SetButtonText();
+            });
         }
+
 
         int GetPrinterRecordCount()
         {
@@ -231,8 +235,6 @@ namespace MatterHackers.MatterControl.ActionBar
             RoundedRect rectInside = new RoundedRect(insideBounds, Math.Max(this.borderRadius - this.borderWidth, 0));
 
             graphics2D.Render(rectInside, this.fillColor);
-            SetButtonText();
-
             base.OnDraw(graphics2D);
         }
     }
