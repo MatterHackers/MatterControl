@@ -1084,6 +1084,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 string scaleRatioLabelText = LocalizedString.Get("Ratio");
                 string scaleRatioLabelTextFull = "{0}:".FormatWith(scaleRatioLabelText);
                 TextWidget scaleRatioLabel = new TextWidget(scaleRatioLabelTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                scaleRatioLabel.Margin = new BorderDouble(0, 0, 3, 0);
                 scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
                 scaleRatioContainer.AddChild(scaleRatioLabel);
 
@@ -1092,6 +1093,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 scaleRatioContainer.AddChild(horizontalSpacer);
 
                 scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50, allowDecimals: true, increment: .05);
+                scaleRatioControl.VAnchor = VAnchor.ParentCenter;
                 scaleRatioContainer.AddChild(scaleRatioControl);
                 scaleRatioControl.ActuallNumberEdit.KeyPressed += (sender, e) =>
                 {
@@ -1108,6 +1110,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     ApplyScaleFromEditField();
                 };
 
+                scaleRatioContainer.AddChild(CreateScaleDropDownMenu());
+
                 buttonPanel.AddChild(scaleRatioContainer);
 
                 scaleControls.Add(scaleRatioControl);
@@ -1123,8 +1127,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 ApplyScaleFromEditField();
             };
-
-            buttonPanel.AddChild(CreateScaleDropDownMenu());
 
             // add in the dimensions
             {
@@ -1222,14 +1224,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private DropDownMenu CreateScaleDropDownMenu()
         {
-            DropDownMenu presetScaleMenu = new DropDownMenu(LocalizedString.Get("Conversions"), Direction.Down);
-            RectangleDouble presetBounds = presetScaleMenu.LocalBounds;
-            presetBounds.Inflate(new BorderDouble(5, 10, 10, 10));
-            presetScaleMenu.LocalBounds = presetBounds;
+            DropDownMenu presetScaleMenu = new DropDownMenu("", Direction.Down);
+            presetScaleMenu.NormalArrowColor = ActiveTheme.Instance.PrimaryTextColor;
+            presetScaleMenu.HoverArrowColor = ActiveTheme.Instance.PrimaryTextColor;
             presetScaleMenu.MenuAsWideAsItems = false;
-            presetScaleMenu.HAnchor |= HAnchor.ParentLeftRight;
+            presetScaleMenu.AlignToRightEdge = true;
+            //presetScaleMenu.OpenOffset = new Vector2(-50, 0);
+            presetScaleMenu.HAnchor = HAnchor.None;
+            presetScaleMenu.VAnchor = VAnchor.None;
+            presetScaleMenu.Width = 25;
+            presetScaleMenu.Height = scaleRatioControl.Height + 2;
 
-            presetScaleMenu.AddItem("mm to in (.03937)");
+            presetScaleMenu.AddItem("mm to in (.0393)");
             presetScaleMenu.AddItem("in to mm (25.4)");
             presetScaleMenu.AddItem("mm to cm (.1)");
             presetScaleMenu.AddItem("cm to mm (10)");
