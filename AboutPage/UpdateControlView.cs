@@ -356,7 +356,6 @@ namespace MatterHackers.MatterControl
             System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
             request.Method = "HEAD";
 
-
             try
             {
                 WebResponse response = request.GetResponse();
