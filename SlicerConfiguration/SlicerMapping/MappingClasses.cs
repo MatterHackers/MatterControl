@@ -18,6 +18,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.originalKey = originalKey;
         }
 
+        protected static double ParesValueString(string valueString, double valueOnError = 0)
+        {
+            double value = valueOnError;
+
+            double.TryParse(valueString, out value);
+
+            return value;
+        }
+
+        public static double GetValueForKey(string originalKey, double valueOnError = 0)
+        {
+            return ParesValueString(ActiveSliceSettings.Instance.GetActiveValue(originalKey), valueOnError);
+        }
+
         public string MappedKey { get { return mappedKey; } }
         public string OriginalKey { get { return originalKey; } }
 
@@ -104,7 +118,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             preStartGCode.Add("; automatic settings before start_gcode");
             AddDefaultIfNotPresent(preStartGCode, "G21", preStartGCodeLines, "set units to millimeters");
             AddDefaultIfNotPresent(preStartGCode, "M107", preStartGCodeLines, "fan off");
-            double bed_temperature = double.Parse(ActiveSliceSettings.Instance.GetActiveValue("bed_temperature"));
+            double bed_temperature = MapItem.GetValueForKey("bed_temperature");
             if (bed_temperature > 0)
             {
                 string setBedTempString = string.Format("M190 S{0}", bed_temperature);
@@ -164,7 +178,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 if (scale != 1)
                 {
-                    return (double.Parse(base.MappedValue) * scale).ToString();
+                    return (MapItem.ParesValueString(base.MappedValue) * scale).ToString();
                 }
                 return base.MappedValue;
             }
@@ -231,9 +245,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 if (OriginalValue.Contains("%"))
                 {
                     string withoutPercent = OriginalValue.Replace("%", "");
-                    double ratio = double.Parse(withoutPercent) / 100.0;
+                    double ratio = MapItem.ParesValueString(withoutPercent) / 100.0;
                     string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
-                    double valueToModify = double.Parse(originalReferenceString);
+                    double valueToModify = MapItem.ParesValueString(originalReferenceString);
                     double finalValue = valueToModify * ratio * scale;
                     return finalValue.ToString();
                 }

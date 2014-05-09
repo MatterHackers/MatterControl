@@ -241,7 +241,7 @@ enableOozeShield = 0;
                         return "-1";
                     }
 
-                    return (90 - double.Parse(ActiveSliceSettings.Instance.GetActiveValue("support_material_threshold"))).ToString();
+                    return (90 - MapItem.GetValueForKey("support_material_threshold")).ToString();
                 }
             }
 
@@ -257,9 +257,9 @@ enableOozeShield = 0;
             {
                 get
                 {
-                    double infillRatio0To1 = Double.Parse(base.MappedValue);
+                    double infillRatio0To1 = MapItem.ParesValueString(base.MappedValue);
                     // 400 = solid (extruder width)
-                    double nozzle_diameter = double.Parse(ActiveSliceSettings.Instance.GetActiveValue("nozzle_diameter"));
+                    double nozzle_diameter = MapItem.GetValueForKey("nozzle_diameter");
                     double linespacing = 1000;
                     if (infillRatio0To1 > .01)
                     {
@@ -343,7 +343,7 @@ enableOozeShield = 0;
             {
                 get
                 {
-                    double lengthToExtrudeMm = double.Parse(base.MappedValue);
+                    double lengthToExtrudeMm = MapItem.ParesValueString(base.MappedValue);
                     // we need to convert mm of filament to mm of extrusion path
                     double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
                     double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
