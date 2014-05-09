@@ -276,9 +276,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     if (OriginalValue.Contains("%"))
                     {
                         string withoutPercent = OriginalValue.Replace("%", "");
-                        double ratio = double.Parse(withoutPercent) / 100.0;
-                        string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
-                        double valueToModify = double.Parse(originalReferenceString);
+                        double ratio = MapItem.ParseValueString(withoutPercent, 100) / 100.0;
+                        double valueToModify = MapItem.GetValueForKey(originalReference);
                         double finalValue = valueToModify * ratio * scale;
                         finalValueString = finalValue.ToString();
                     }
@@ -333,7 +332,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         return "-1";
                     }
 
-                    return (double.Parse(ActiveSliceSettings.Instance.GetActiveValue("support_material_threshold"))).ToString();
+                    return (MapItem.GetValueForKey("support_material_threshold")).ToString();
                 }
             }
         }
@@ -352,7 +351,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 get
                 {
-                    return (90 - double.Parse(OriginalValue)).ToString();
+                    return (90 - MapItem.ParseValueString(OriginalValue)).ToString();
                 }
             }
         }
@@ -371,7 +370,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 get
                 {
-                    return (double.Parse(OriginalValue) + constant).ToString();
+                    return (MapItem.ParseValueString(OriginalValue) + constant).ToString();
                 }
             }
         }
@@ -382,9 +381,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 get
                 {
-                    double infillRatio0To1 = Double.Parse(base.MappedValue);
+                    double infillRatio0To1 = MapItem.ParseValueString(base.MappedValue);
                     // 400 = solid (extruder width)
-                    double nozzle_diameter = double.Parse(ActiveSliceSettings.Instance.GetActiveValue("nozzle_diameter"));
+                    double nozzle_diameter = MapItem.GetValueForKey("nozzle_diameter");
                     double linespacing = 1000;
                     if (infillRatio0To1 > .01)
                     {
@@ -452,7 +451,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 get
                 {
-                    double lengthToExtrudeMm = double.Parse(base.MappedValue);
+                    double lengthToExtrudeMm = MapItem.ParseValueString(base.MappedValue);
                     // we need to convert mm of filament to mm of extrusion path
                     double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
                     double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;

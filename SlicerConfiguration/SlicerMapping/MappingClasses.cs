@@ -18,18 +18,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.originalKey = originalKey;
         }
 
-        protected static double ParesValueString(string valueString, double valueOnError = 0)
+        protected static double ParseValueString(string valueString, double valueOnError = 0)
         {
             double value = valueOnError;
 
-            double.TryParse(valueString, out value);
+            if (!double.TryParse(valueString, out value))
+            {
+#if DEBUG
+                throw new Exception("Slicing value is not a double.");
+#endif
+            }
 
             return value;
         }
 
         public static double GetValueForKey(string originalKey, double valueOnError = 0)
         {
-            return ParesValueString(ActiveSliceSettings.Instance.GetActiveValue(originalKey), valueOnError);
+            return ParseValueString(ActiveSliceSettings.Instance.GetActiveValue(originalKey), valueOnError);
         }
 
         public string MappedKey { get { return mappedKey; } }
@@ -178,7 +183,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 if (scale != 1)
                 {
-                    return (MapItem.ParesValueString(base.MappedValue) * scale).ToString();
+                    return (MapItem.ParseValueString(base.MappedValue) * scale).ToString();
                 }
                 return base.MappedValue;
             }
@@ -245,9 +250,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 if (OriginalValue.Contains("%"))
                 {
                     string withoutPercent = OriginalValue.Replace("%", "");
-                    double ratio = MapItem.ParesValueString(withoutPercent) / 100.0;
+                    double ratio = MapItem.ParseValueString(withoutPercent) / 100.0;
                     string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
-                    double valueToModify = MapItem.ParesValueString(originalReferenceString);
+                    double valueToModify = MapItem.ParseValueString(originalReferenceString);
                     double finalValue = valueToModify * ratio * scale;
                     return finalValue.ToString();
                 }
