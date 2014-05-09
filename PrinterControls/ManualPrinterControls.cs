@@ -134,6 +134,8 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
+
         EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
         public ManualPrinterControls()
         {
@@ -158,8 +160,6 @@ namespace MatterHackers.MatterControl
 
             // put in the terminal communications
             {
-                
-
                 FlowLayoutWidget rightColumnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 AddFanControls(rightColumnContainer);
                 rightColumnContainer.Width = 200;
@@ -185,6 +185,13 @@ namespace MatterHackers.MatterControl
             this.AddChild(controlsTopToBottomLayout);
             AddHandlers();
             SetVisibleControls();
+
+            UiThread.RunOnIdle(AddPlugins);
+        }
+
+        public void AddPlugins(object state)
+        {
+            AddPluginControls.CallEvents(this, null);
         }
 
         private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
