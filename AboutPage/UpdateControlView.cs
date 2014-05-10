@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl
                 SystemWindow topSystemWindow = parent as SystemWindow;
                 if (topSystemWindow != null)
                 {
-                    topSystemWindow.Close();
+                    topSystemWindow.CloseOnIdle();
                 }
             }
             catch

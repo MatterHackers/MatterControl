@@ -493,8 +493,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             SetProcessingMessage("");
             if (gcodeViewWidget != null
                 && gcodeViewWidget.LoadedGCode != null
-                && gcodeViewWidget.LoadedGCode.GCodeCommandQueue.Count > 0
-                && gcodeViewWidget.LoadedGCode.GCodeCommandQueue[0].secondsToEndFromHere > 0)
+                && gcodeViewWidget.LoadedGCode.GCodeCommandQueue.Count > 0)
             {
                 CreateOptionsContent();
 

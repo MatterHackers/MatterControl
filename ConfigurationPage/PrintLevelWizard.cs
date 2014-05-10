@@ -211,11 +211,12 @@ namespace MatterHackers.MatterControl
         {
             if (PrinterCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
             {
-                if (!StyledMessageBox.ShowMessageBox(zIsTooLowMessage, zTooLowTitle, StyledMessageBox.MessageType.OK))
+                UiThread.RunOnIdle( (state) => 
                 {
-                    // don't move the bed lower it will not work when we print.
-                    return;
-                }
+                    StyledMessageBox.ShowMessageBox(zIsTooLowMessage, zTooLowTitle, StyledMessageBox.MessageType.OK);
+                });
+                // don't move the bed lower it will not work when we print.
+                return;
             }
             PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, -moveAmount, ZMovementSpeed());
             PrinterCommunication.Instance.ReadPosition();
