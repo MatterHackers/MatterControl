@@ -45,6 +45,9 @@ using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using MatterHackers.Agg.Image;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -247,6 +250,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             viewArea.AnchorAll();
             {
                 meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "Press 'Add' to select an item.".Localize());
+                string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "watermark.png");
+                if (File.Exists(imagePathAndFile))
+                {
+                    ImageBuffer wattermarkImage = new ImageBuffer();
+                    ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);
+
+                    ImageBuffer bedImage = meshViewerWidget.BedImage;
+                    InvertLightness.DoInvertLightness(wattermarkImage);
+                    Graphics2D bedGraphics = bedImage.NewGraphics2D();
+                    bedGraphics.Render(wattermarkImage, 
+                        new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height)/2));
+                }
+
                 meshViewerWidget.AnchorAll();
             }
             viewArea.AddChild(meshViewerWidget);
