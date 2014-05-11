@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             new InfillTranslator("sparseInfillLineDistance", "fill_density"),
 
-            new MapStartGCode("startCode", "start_gcode"),
+            new MapStartGCode("startCode", "start_gcode", false),
             new MapEndGCode("endCode", "end_gcode"),
             
             new NotPassedItem("", "pause_gcode"),

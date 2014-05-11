@@ -63,6 +63,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
     public class MapStartGCode : InjectGCodeCommands
     {
+        bool replaceCRs;
+
         public override string MappedValue
         {
             get
@@ -84,6 +86,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     }
                     newStartGCode.Append(line);
                     first = false;
+                }
+
+                if (replaceCRs)
+                {
+                    return newStartGCode.ToString().Replace("\n", "\\n");
                 }
 
                 return newStartGCode.ToString();
@@ -109,9 +116,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return gcodeWithMacros;
         }
 
-        public MapStartGCode(string mappedKey, string originalKey)
+        public MapStartGCode(string mappedKey, string originalKey, bool replaceCRs)
             : base(mappedKey, originalKey)
         {
+            this.replaceCRs = replaceCRs;
         }
 
         public List<string> PreStartGCode()

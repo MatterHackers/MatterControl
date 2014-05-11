@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -204,7 +205,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
 
             //startCode=M109 S210
-            new MapStartGCode("startCode", "start_gcode"),
+            new MapStartGCode("startCode", "start_gcode", true),
 
             //supportExtruder=1
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
@@ -249,19 +250,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new NotPassedItem("", "bed_shape"),
         };
 
-        public static string GetMatterSliceCommandLineSettings()
+        public static void WriteMatterSliceSettingsFile(string outputFilename)
         {
-            StringBuilder settings = new StringBuilder();
-            for (int i = 0; i < matterSliceToDefaultMapping.Length; i++)
+            using (StreamWriter sliceSettingsFile = new StreamWriter(outputFilename))
             {
-                string matterSliceValue = matterSliceToDefaultMapping[i].MappedValue;
-                if (matterSliceValue != null && matterSliceValue != "")
+                for (int i = 0; i < matterSliceToDefaultMapping.Length; i++)
                 {
-                    settings.Append(string.Format("-s {0}=\"{1}\" ", matterSliceToDefaultMapping[i].MappedKey, matterSliceValue));
+                    string matterSliceValue = matterSliceToDefaultMapping[i].MappedValue;
+                    if (matterSliceValue != null && matterSliceValue != "")
+                    {
+                        sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(matterSliceToDefaultMapping[i].MappedKey, matterSliceValue));
+                    }
                 }
             }
-
-            return settings.ToString();
         }
 
         public class FirstLayerHeight : ScaledSingleNumber
@@ -406,13 +407,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 get
                 {
-                    StringBuilder endGCode = new StringBuilder();
-
-                    endGCode.Append(base.MappedValue);
-
-                    endGCode.Append("\n; filament used = filament_used_replace_mm (filament_used_replace_cm3)");
-
-                    return endGCode.ToString();
+                    return base.MappedValue.Replace("\n", "\\n");
                 }
             }
 

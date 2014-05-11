@@ -26,7 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
-//#define RUN_MATTER_SLICE_IN_PROCESS
+#define RUN_MATTER_SLICE_IN_PROCESS
 
 using System;
 using System.IO;
@@ -199,11 +199,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                                 case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
                                     commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
-                                    //Debug.Write(slicerProcess.StartInfo.Arguments);
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-                                    commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingsMatterSlice.GetMatterSliceCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    {
+                                        EngineMappingsMatterSlice.WriteMatterSliceSettingsFile(currentConfigurationFileAndPath);
+                                        commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    }
                                     break;
                             }
 
