@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl
         int downloadPercent = 0;
         int downloadSize = 0;
         TextWidget updateStatusText;
+        event EventHandler unregisterEvents;
         RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -126,133 +127,49 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        string InstallerExtension
-        {
-            get
-            {
-                if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Mac)
-                {
-                    return "pkg";
-                }
-                else
-                {
-                    return "exe";
-                }
-            }
-        }
+        
 
         static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
         static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
 
         public void InstallUpdate(object sender, MouseEventArgs e)
         {
-            string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-
-            string updateFileName = Path.Combine(updateFileLocation, "{0}.{1}".FormatWith(downloadToken, InstallerExtension));
-            string releaseVersion = ApplicationSettings.Instance.get("CurrentReleaseVersion");
-            string friendlyFileName = Path.Combine(updateFileLocation, "MatterControlSetup-{0}.{1}".FormatWith(releaseVersion, InstallerExtension));
-
-            if (System.IO.File.Exists(friendlyFileName))
-            {
-                System.IO.File.Delete(friendlyFileName);
-            }
-
             try
             {
-                //Change download file to friendly file name
-                System.IO.File.Move(updateFileName, friendlyFileName);
-
-                int tries = 0;
-                do
-                {
-                    Thread.Sleep(10);
-                } while (tries++ < 100 && !File.Exists(friendlyFileName));
-
-                //Run installer file
-                Process installUpdate = new Process();
-                installUpdate.StartInfo.FileName = friendlyFileName;
-                installUpdate.Start();
-
-                GuiWidget parent = Parent;
-                while (parent != null && parent as SystemWindow == null)
-                {
-                    parent = parent.Parent;
-                }
-
-                //Attempt to close current application
-                SystemWindow topSystemWindow = parent as SystemWindow;
-                if (topSystemWindow != null)
-                {
-                    topSystemWindow.CloseOnIdle();
-                }
+                UpdateControlData.Instance.InstallUpdate(this.Parent);
             }
             catch
             {
                 installUpdateLink.Visible = false;
                 updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
-                if (System.IO.File.Exists(friendlyFileName))
-                {
-                    System.IO.File.Delete(friendlyFileName);
-                }
             }
         }
 
+        
         public void DownloadUpdate(object sender, MouseEventArgs e)
         {
             if (!updateInitiated)
             {
                 downloadUpdateLink.Visible = false;
-                updateStatusText.Text = string.Format("Downloading updates...".Localize());
-                updateInitiated = true;
+                updateStatusText.Text = string.Format("Retrieving download info...".Localize());
 
-                string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
-                string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-
-                //Make HEAD request to determine the size of the download (required by GAE)
-                System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
-                request.Method = "HEAD";
-
-
-                try
-                {
-                    WebResponse response = request.GetResponse();
-                    downloadSize = (int)response.ContentLength;
-
-                }
-                catch
-                {
-                    //Unknown download size
-                    downloadSize = 0;
-                }
-
-                if (!System.IO.Directory.Exists(updateFileLocation))
-                {
-                    System.IO.Directory.CreateDirectory(updateFileLocation);
-                }
-
-                string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
-
-                WebClient webClient = new WebClient();
-                webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
-                webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-                webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
+                UpdateControlData.Instance.OnDownloadComplete.RegisterEvent(DownloadCompleted, ref unregisterEvents);
+                UpdateControlData.Instance.OnDownloadProgressChanged.RegisterEvent(DownloadProgressChanged, ref unregisterEvents);
+                UpdateControlData.Instance.InitiateUpdateDownload();
+                
             }
         }
 
-        void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
+        void DownloadProgressChanged(object sender, EventArgs e)
+        {            
             string newText = "Downloading updates...".Localize();
-            if (downloadSize > 0)
-            {
-                this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
-                newText = "{0} {1}%".FormatWith(newText, downloadPercent);
-            }
-
+            newText = "{0} {1}%".FormatWith(newText, UpdateControlData.Instance.DownloadPercent);
             updateStatusText.Text = newText;
         }
 
         void DownloadCompleted(object sender, EventArgs e)
         {
+            
             this.updateInitiated = false;
             updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
             downloadUpdateLink.Visible = false;
@@ -263,7 +180,7 @@ namespace MatterHackers.MatterControl
         void CheckVersionStatus()
         {
             string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
+            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, UpdateControlData.Instance.InstallerExtension));
 
             string applicationBuildToken = VersionInfo.Instance.BuildToken;
 
@@ -291,7 +208,7 @@ namespace MatterHackers.MatterControl
         {
             this.updateInitiated = false;
             string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
+            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, UpdateControlData.Instance.InstallerExtension));
 
             string applicationBuildToken = VersionInfo.Instance.BuildToken;
 

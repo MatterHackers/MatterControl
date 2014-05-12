@@ -44,6 +44,11 @@ namespace MatterHackers.MatterControl
     {
         public enum UpdateStatusStates { Unknown, UpdateAvailable, UpdateDownloading, UpdateDownloaded, UpToDate }; 
         public RootedObjectEventHandler UpdateStatusChanged = new RootedObjectEventHandler();
+        public RootedObjectEventHandler OnDownloadComplete = new RootedObjectEventHandler();
+        public RootedObjectEventHandler OnDownloadProgressChanged = new RootedObjectEventHandler();
+
+        static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
+        static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
 
         UpdateStatusStates updateStatus;
         public UpdateStatusStates UpdateStatus
@@ -55,6 +60,21 @@ namespace MatterHackers.MatterControl
                 {
                     updateStatus = value;
                     OnUpdateStatusChanged(null);
+                }
+            }
+        }
+
+        public string InstallerExtension
+        {
+            get
+            {
+                if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Mac)
+                {
+                    return "pkg";
+                }
+                else
+                {
+                    return "exe";
                 }
             }
         }
@@ -73,6 +93,70 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        WebClient webClient;
+        public void InitiateUpdateDownload()
+        {
+            if (!updateInitiated)
+            {
+                updateInitiated = true;
+
+                string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
+                string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+
+                //Make HEAD request to determine the size of the download (required by GAE)
+                System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
+                request.Method = "HEAD";
+
+                try
+                {
+                    WebResponse response = request.GetResponse();
+                    downloadSize = (int)response.ContentLength;
+                }
+                catch
+                {
+                    //Unknown download size
+                    downloadSize = 0;
+                }
+
+                if (!System.IO.Directory.Exists(updateFileLocation))
+                {
+                    System.IO.Directory.CreateDirectory(updateFileLocation);
+                }
+
+                string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
+
+                webClient = new WebClient();
+                webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
+                webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
+                webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
+            }
+        }
+
+
+        int downloadPercent;
+        int downloadSize;
+        bool updateInitiated;
+
+        public int DownloadPercent { get { return downloadPercent; }}
+        
+        void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {            
+            if (downloadSize > 0)
+            {
+                this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
+            }
+            OnDownloadProgressChanged.CallEvents(this, e);            
+        }
+
+        void DownloadCompleted(object sender, EventArgs e)
+        {
+            OnDownloadComplete.CallEvents(this, e);
+            OnDownloadComplete = new RootedObjectEventHandler();
+            OnDownloadProgressChanged = new RootedObjectEventHandler();
+            webClient.Dispose();
+            updateInitiated = false;
+        }
+
         private UpdateControlData()
         {
         }
@@ -80,6 +164,56 @@ namespace MatterHackers.MatterControl
         public void OnUpdateStatusChanged(EventArgs e)
         {
             UpdateStatusChanged.CallEvents(this, e);
+        }
+
+        public void InstallUpdate(GuiWidget parent)
+        {
+            string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+
+            string updateFileName = Path.Combine(updateFileLocation, "{0}.{1}".FormatWith(downloadToken, InstallerExtension));
+            string releaseVersion = ApplicationSettings.Instance.get("CurrentReleaseVersion");
+            string friendlyFileName = Path.Combine(updateFileLocation, "MatterControlSetup-{0}.{1}".FormatWith(releaseVersion, InstallerExtension));
+
+            if (System.IO.File.Exists(friendlyFileName))
+            {
+                System.IO.File.Delete(friendlyFileName);
+            }
+
+            try
+            {
+                //Change download file to friendly file name
+                System.IO.File.Move(updateFileName, friendlyFileName);
+
+                int tries = 0;
+                do
+                {
+                    Thread.Sleep(10);
+                } while (tries++ < 100 && !File.Exists(friendlyFileName));
+
+                //Run installer file
+                Process installUpdate = new Process();
+                installUpdate.StartInfo.FileName = friendlyFileName;
+                installUpdate.Start();
+
+                while (parent != null && parent as SystemWindow == null)
+                {
+                    parent = parent.Parent;
+                }
+
+                //Attempt to close current application
+                SystemWindow topSystemWindow = parent as SystemWindow;
+                if (topSystemWindow != null)
+                {
+                    topSystemWindow.CloseOnIdle();
+                }
+            }
+            catch
+            {                
+                if (System.IO.File.Exists(friendlyFileName))
+                {
+                    System.IO.File.Delete(friendlyFileName);
+                }
+            }
         }
     }
 }
