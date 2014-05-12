@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl
             ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);
 
-            MinimumSize = new Vector2(590, 540);
+            MinimumSize = new Vector2(590, 630);
 
             string desktopPosition = ApplicationSettings.Instance.get("DesktopPosition");
             if (desktopPosition != null && desktopPosition != "")
@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl
             // try and open our window matching the last size that we had for it.
             string windowSize = ApplicationSettings.Instance.get("WindowSize");
             int width = 600;
-            int height = 640;
+            int height = 660;
             if (windowSize != null && windowSize != "")
             {
                 string[] sizes = windowSize.Split(',');
