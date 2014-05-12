@@ -122,9 +122,9 @@ namespace MatterHackers.MatterControl
         {
             switch (UpdateControlData.Instance.UpdateStatus)
             {
-                case UpdateControlData.UpdateStatusStates.Unknown:
+                case UpdateControlData.UpdateStatusStates.MayBeAvailable:
+                case UpdateControlData.UpdateStatusStates.ReadyToInstall:
                 case UpdateControlData.UpdateStatusStates.UpdateAvailable:
-                case UpdateControlData.UpdateStatusStates.UpdateDownloaded:
                 case UpdateControlData.UpdateStatusStates.UpdateDownloading:
                     if (addedUpdateMark == null)
                     {
@@ -136,7 +136,11 @@ namespace MatterHackers.MatterControl
                     break;
 
                 case UpdateControlData.UpdateStatusStates.UpToDate:
-                    addedUpdateMark.Visible = false;
+                case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
+                    if (addedUpdateMark != null)
+                    {
+                        addedUpdateMark.Visible = false;
+                    }
                     break;
 
                 default:

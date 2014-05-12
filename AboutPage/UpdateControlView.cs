@@ -42,21 +42,17 @@ namespace MatterHackers.MatterControl
 {
     public class UpdateControlView : FlowLayoutWidget
     {
-        bool updateInitiated = false;
         Button downloadUpdateLink;
         Button checkUpdateLink;
         Button installUpdateLink;
-        int downloadPercent = 0;
-        int downloadSize = 0;
         TextWidget updateStatusText;
+
         event EventHandler unregisterEvents;
         RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
         public UpdateControlView()
         {
-            UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.Unknown;
-
             textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
             textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
@@ -81,7 +77,6 @@ namespace MatterHackers.MatterControl
                 downloadUpdateLink.Click += DownloadUpdate;
                 downloadUpdateLink.Visible = false;
 
-
                 installUpdateLink = textImageButtonFactory.Generate("Install Update".Localize());
                 installUpdateLink.VAnchor = VAnchor.ParentCenter;
                 installUpdateLink.Click += InstallUpdate;
@@ -94,49 +89,23 @@ namespace MatterHackers.MatterControl
                 AddChild(installUpdateLink);
             }
 
-            CheckVersionStatus();
-            if (ApplicationSettings.Instance.get("ClientToken") != null)
-            {
-                //If we have already requested an update once, check on load
-                CheckForUpdate(this, null);
-            }
-            else
-            {
-                DataStorage.ApplicationSession firstSession;
-                firstSession = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.ApplicationSession>().OrderBy(v => v.SessionStart).Take(1).FirstOrDefault();
-                if (firstSession != null
-                    && DateTime.Compare(firstSession.SessionStart.AddDays(7), DateTime.Now) < 0)
-                {
-                    UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpdateAvailable;
-                }
-            }
+            UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(UpdateStatusChanged, ref unregisterEvents);
+
+            MinimumSize = new VectorMath.Vector2(0, 50);
+
+            UpdateStatusChanged(null, null);
         }
 
         public void CheckForUpdate(object sender, MouseEventArgs e)
         {
-            if (!updateInitiated)
-            {
-                updateStatusText.Text = "Checking for updates...".Localize();
-                checkUpdateLink.Visible = false;
-
-                updateInitiated = true;
-                RequestLatestVersion request = new RequestLatestVersion();
-                request.RequestSucceeded += new EventHandler(onVersionRequestSucceeded);
-                request.RequestFailed += new EventHandler(onVersionRequestFailed);
-                request.Request();
-            }
+            UpdateControlData.Instance.CheckForUpdate();
         }
-
-        
-
-        static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
-        static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
 
         public void InstallUpdate(object sender, MouseEventArgs e)
         {
             try
             {
-                UpdateControlData.Instance.InstallUpdate(this.Parent);
+                UpdateControlData.Instance.InstallUpdate(this);
             }
             catch
             {
@@ -145,150 +114,59 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        
+
         public void DownloadUpdate(object sender, MouseEventArgs e)
         {
-            if (!updateInitiated)
-            {
-                downloadUpdateLink.Visible = false;
-                updateStatusText.Text = string.Format("Retrieving download info...".Localize());
-
-                UpdateControlData.Instance.OnDownloadComplete.RegisterEvent(DownloadCompleted, ref unregisterEvents);
-                UpdateControlData.Instance.OnDownloadProgressChanged.RegisterEvent(DownloadProgressChanged, ref unregisterEvents);
-                UpdateControlData.Instance.InitiateUpdateDownload();
-                
-            }
-        }
-
-        void DownloadProgressChanged(object sender, EventArgs e)
-        {            
-            string newText = "Downloading updates...".Localize();
-            newText = "{0} {1}%".FormatWith(newText, UpdateControlData.Instance.DownloadPercent);
-            updateStatusText.Text = newText;
-        }
-
-        void DownloadCompleted(object sender, EventArgs e)
-        {
-            
-            this.updateInitiated = false;
-            updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
             downloadUpdateLink.Visible = false;
-            installUpdateLink.Visible = true;
-            checkUpdateLink.Visible = false;
+            updateStatusText.Text = string.Format("Retrieving download info...".Localize());
+
+            UpdateControlData.Instance.InitiateUpdateDownload();
         }
 
-        void CheckVersionStatus()
+        void UpdateStatusChanged(object sender, EventArgs e)
         {
-            string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, UpdateControlData.Instance.InstallerExtension));
-
-            string applicationBuildToken = VersionInfo.Instance.BuildToken;
-
-            if (applicationBuildToken == currentBuildToken || currentBuildToken == null)
+            switch (UpdateControlData.Instance.UpdateStatus)
             {
-                updateStatusText.Text = string.Format("New updates may be available.".Localize());
-                checkUpdateLink.Visible = true;
-            }
-            else if (System.IO.File.Exists(updateFileName))
-            {
-                updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
-                installUpdateLink.Visible = true;
-                checkUpdateLink.Visible = false;
-            }
-            else
-            {
-                //updateStatusText.Text = string.Format("New version available: {0}", ApplicationSettings.Instance.get("CurrentReleaseVersion"));
-                updateStatusText.Text = string.Format("There are updates available.".Localize());
-                downloadUpdateLink.Visible = true;
-                checkUpdateLink.Visible = false;
-            }
-        }
-
-        void onVersionRequestSucceeded(object sender, EventArgs e)
-        {
-            this.updateInitiated = false;
-            string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, UpdateControlData.Instance.InstallerExtension));
-
-            string applicationBuildToken = VersionInfo.Instance.BuildToken;
-
-            if (applicationBuildToken == currentBuildToken)
-            {
-                updateStatusText.Text = string.Format("Your application is up-to-date.".Localize());
-                downloadUpdateLink.Visible = false;
-                installUpdateLink.Visible = false;
-                checkUpdateLink.Visible = true;
-                UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpToDate;
-            }
-            else if (System.IO.File.Exists(updateFileName))
-            {
-                updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
-                downloadUpdateLink.Visible = false;
-                installUpdateLink.Visible = true;
-                checkUpdateLink.Visible = false;
-                UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpdateDownloaded;
-            }
-            else
-            {
-                if (downloadHasZeroSize())
-                {
-                    this.updateInitiated = false;
-                    updateStatusText.Text = string.Format("No updates are currently available.".Localize());
-                    UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpToDate;
+                case UpdateControlData.UpdateStatusStates.MayBeAvailable:
+                    updateStatusText.Text = string.Format("New updates may be available.".Localize());
                     checkUpdateLink.Visible = true;
-                    downloadUpdateLink.Visible = false;
-                    installUpdateLink.Visible = false;                    
-                }
-                else
-                {
+                    break;
+
+                case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
+                    updateStatusText.Text = "Checking for updates...".Localize();
+                    checkUpdateLink.Visible = false;
+                    break;
+
+                case UpdateControlData.UpdateStatusStates.UpdateAvailable:
                     updateStatusText.Text = string.Format("There is a recommended update available.".Localize());
-                    //updateStatusText.Text = string.Format("New version available: {0}", ApplicationSettings.Instance.get("CurrentReleaseVersion"));
                     downloadUpdateLink.Visible = true;
                     installUpdateLink.Visible = false;
                     checkUpdateLink.Visible = false;
-                    UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpdateAvailable;
-                }
+                    break;
+
+                case UpdateControlData.UpdateStatusStates.UpdateDownloading:
+                    string newText = "Downloading updates...".Localize();
+                    newText = "{0} {1}%".FormatWith(newText, UpdateControlData.Instance.DownloadPercent);
+                    updateStatusText.Text = newText;
+                    break;
+
+                case UpdateControlData.UpdateStatusStates.ReadyToInstall:
+                    updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
+                    downloadUpdateLink.Visible = false;
+                    installUpdateLink.Visible = true;
+                    checkUpdateLink.Visible = false;
+                    break;
+
+                case UpdateControlData.UpdateStatusStates.UpToDate:
+                    updateStatusText.Text = string.Format("Your application is up-to-date.".Localize());
+                    downloadUpdateLink.Visible = false;
+                    installUpdateLink.Visible = false;
+                    checkUpdateLink.Visible = true;
+                    break;
+
+                default:
+                    throw new NotImplementedException();
             }
-
-            //MainSlidePanel.Instance.SetUpdateNotification(this, null);
-        }
-
-        void onVersionRequestFailed(object sender, EventArgs e)
-        {
-            this.updateInitiated = false;
-            updateStatusText.Text = string.Format("No updates are currently available.".Localize());
-            UpdateControlData.Instance.UpdateStatus = UpdateControlData.UpdateStatusStates.UpToDate;
-            checkUpdateLink.Visible = true;
-            downloadUpdateLink.Visible = false;
-            installUpdateLink.Visible = false;
-        }
-
-        bool downloadHasZeroSize()
-        {
-            bool zeroSizeDownload = false;
-            string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
-            string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-
-            //Make HEAD request to determine the size of the download (required by GAE)
-            System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
-            request.Method = "HEAD";
-
-            try
-            {
-                WebResponse response = request.GetResponse();
-                downloadSize = (int)response.ContentLength;
-                if (downloadSize == 0)
-                {
-                    zeroSizeDownload = true;
-                }
-
-            }
-            catch
-            {
-                //Unknown download size
-                downloadSize = 0;
-            }
-            return zeroSizeDownload;
         }
     }
 }

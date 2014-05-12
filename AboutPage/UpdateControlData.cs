@@ -42,10 +42,17 @@ namespace MatterHackers.MatterControl
 {
     public class UpdateControlData
     {
-        public enum UpdateStatusStates { Unknown, UpdateAvailable, UpdateDownloading, UpdateDownloaded, UpToDate }; 
+        WebClient webClient;
+
+        int downloadPercent;
+        int downloadSize;
+        bool updateInitiated;
+
+        public int DownloadPercent { get { return downloadPercent; } }
+
+        public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate }; 
+        
         public RootedObjectEventHandler UpdateStatusChanged = new RootedObjectEventHandler();
-        public RootedObjectEventHandler OnDownloadComplete = new RootedObjectEventHandler();
-        public RootedObjectEventHandler OnDownloadProgressChanged = new RootedObjectEventHandler();
 
         static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
         static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
@@ -53,18 +60,43 @@ namespace MatterHackers.MatterControl
         UpdateStatusStates updateStatus;
         public UpdateStatusStates UpdateStatus
         {
-            get { return updateStatus; }
-            set 
+            get 
             {
-                if (updateStatus != value)
-                {
-                    updateStatus = value;
-                    OnUpdateStatusChanged(null);
-                }
+                return updateStatus;
             }
         }
 
-        public string InstallerExtension
+        void CheckVersionStatus()
+        {
+            string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
+
+            string applicationBuildToken = VersionInfo.Instance.BuildToken;
+
+            if (applicationBuildToken == currentBuildToken || currentBuildToken == null)
+            {
+                SetUpdateStatus(UpdateStatusStates.MayBeAvailable);
+            }
+            else if (System.IO.File.Exists(updateFileName))
+            {
+                SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
+            }
+            else
+            {
+                SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
+            }
+        }
+
+        void SetUpdateStatus(UpdateStatusStates updateStatus)
+        {
+            if (this.updateStatus != updateStatus)
+            {
+                this.updateStatus = updateStatus;
+                OnUpdateStatusChanged(null);
+            }
+        }
+
+        string InstallerExtension
         {
             get
             {
@@ -93,12 +125,62 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        WebClient webClient;
+        public void CheckForUpdate()
+        {
+            if (!updateInitiated)
+            {
+                SetUpdateStatus(UpdateStatusStates.CheckingForUpdate);
+                updateInitiated = true;
+                RequestLatestVersion request = new RequestLatestVersion();
+                request.RequestSucceeded += new EventHandler(onVersionRequestSucceeded);
+                request.RequestFailed += new EventHandler(onVersionRequestFailed);
+                request.Request();
+            }
+        }
+
+        void onVersionRequestSucceeded(object sender, EventArgs e)
+        {
+            this.updateInitiated = false;
+            string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
+            string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
+
+            string applicationBuildToken = VersionInfo.Instance.BuildToken;
+
+            if (applicationBuildToken == currentBuildToken)
+            {
+                SetUpdateStatus(UpdateStatusStates.UpToDate);
+            }
+            else if (System.IO.File.Exists(updateFileName))
+            {
+                SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
+            }
+            else
+            {
+                if (DownloadHasZeroSize())
+                {
+                    SetUpdateStatus(UpdateStatusStates.UpToDate);
+                    this.updateInitiated = false;
+                }
+                else
+                {
+                    SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
+                }
+            }
+        }
+
+        void onVersionRequestFailed(object sender, EventArgs e)
+        {
+            SetUpdateStatus(UpdateStatusStates.UpToDate);
+            this.updateInitiated = false;
+        }
+
         public void InitiateUpdateDownload()
         {
             if (!updateInitiated)
             {
                 updateInitiated = true;
+
+                SetUpdateStatus(UpdateStatusStates.UpdateDownloading);
 
                 string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
                 string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
@@ -132,33 +214,68 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public bool DownloadHasZeroSize()
+        {
+            bool zeroSizeDownload = false;
+            string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
+            string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 
-        int downloadPercent;
-        int downloadSize;
-        bool updateInitiated;
+            //Make HEAD request to determine the size of the download (required by GAE)
+            System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
+            request.Method = "HEAD";
 
-        public int DownloadPercent { get { return downloadPercent; }}
-        
+            try
+            {
+                WebResponse response = request.GetResponse();
+                downloadSize = (int)response.ContentLength;
+                if (downloadSize == 0)
+                {
+                    zeroSizeDownload = true;
+                }
+
+            }
+            catch
+            {
+                //Unknown download size
+                downloadSize = 0;
+            }
+            return zeroSizeDownload;
+        }
+
         void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {            
             if (downloadSize > 0)
             {
                 this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
             }
-            OnDownloadProgressChanged.CallEvents(this, e);            
+            UpdateStatusChanged.CallEvents(this, e);            
         }
 
         void DownloadCompleted(object sender, EventArgs e)
         {
-            OnDownloadComplete.CallEvents(this, e);
-            OnDownloadComplete = new RootedObjectEventHandler();
-            OnDownloadProgressChanged = new RootedObjectEventHandler();
+            SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
             webClient.Dispose();
             updateInitiated = false;
         }
 
         private UpdateControlData()
         {
+            CheckVersionStatus();
+            if (ApplicationSettings.Instance.get("ClientToken") != null)
+            {
+                //If we have already requested an update once, check on load
+                CheckForUpdate();
+            }
+            else
+            {
+                DataStorage.ApplicationSession firstSession;
+                firstSession = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.ApplicationSession>().OrderBy(v => v.SessionStart).Take(1).FirstOrDefault();
+                if (firstSession != null
+                    && DateTime.Compare(firstSession.SessionStart.AddDays(7), DateTime.Now) < 0)
+                {
+                    SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
+                }
+            }
         }
 
         public void OnUpdateStatusChanged(EventArgs e)
@@ -166,7 +283,7 @@ namespace MatterHackers.MatterControl
             UpdateStatusChanged.CallEvents(this, e);
         }
 
-        public void InstallUpdate(GuiWidget parent)
+        public void InstallUpdate(GuiWidget windowToClose)
         {
             string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 
@@ -195,13 +312,13 @@ namespace MatterHackers.MatterControl
                 installUpdate.StartInfo.FileName = friendlyFileName;
                 installUpdate.Start();
 
-                while (parent != null && parent as SystemWindow == null)
+                while (windowToClose != null && windowToClose as SystemWindow == null)
                 {
-                    parent = parent.Parent;
+                    windowToClose = windowToClose.Parent;
                 }
 
                 //Attempt to close current application
-                SystemWindow topSystemWindow = parent as SystemWindow;
+                SystemWindow topSystemWindow = windowToClose as SystemWindow;
                 if (topSystemWindow != null)
                 {
                     topSystemWindow.CloseOnIdle();

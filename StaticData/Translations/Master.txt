@@ -2184,3 +2184,6 @@ Translated:Design Add-ons
 English:Lock Ratio
 Translated:Lock Ratio
 
+English:Retrieving download info...
+Translated:Retrieving download info...
+
