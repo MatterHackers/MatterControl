@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                 NumItemsToLoad = RecordLimit;
             }
             
-            RemoveAllChildren();
+            RemoveListItems();
             IEnumerable<DataStorage.PrintTask> partFiles = GetHistoryItems(NumItemsToLoad);
             if (partFiles != null)
             {
@@ -267,6 +267,11 @@ namespace MatterHackers.MatterControl.PrintHistory
                     topToBottomItemList.RemoveChild(itemHolder);
                 }
             }
+        }
+
+        public void RemoveListItems()
+        {
+            topToBottomItemList.RemoveAllChildren();
         }
     }
 }

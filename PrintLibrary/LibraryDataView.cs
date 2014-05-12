@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void LibraryDataReloaded(object sender, EventArgs e)
         {
-            this.RemoveAllChildren();
+            this.RemoveListItems();
             for (int i = 0; i < LibraryData.Instance.Count; i++)
             {
                 PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(i);
@@ -338,6 +338,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     topToBottomItemList.RemoveChild(itemHolder);
                 }
             }
+        }
+
+        public void RemoveListItems()
+        {
+            topToBottomItemList.RemoveAllChildren();
         }
 
         void itemHolder_ParentChanged(object sender, EventArgs e)
