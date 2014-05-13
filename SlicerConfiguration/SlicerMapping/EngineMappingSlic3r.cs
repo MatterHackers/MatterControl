@@ -66,6 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("create_raft");
                     hideItems.Add("z_gap");
                     hideItems.Add("bottom_clip_amount");
+                    hideItems.Add("gcode_output_type");
                 }
                 return instance;
             }

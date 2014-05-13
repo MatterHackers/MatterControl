@@ -2187,3 +2187,6 @@ Translated:Lock Ratio
 English:Retrieving download info...
 Translated:Retrieving download info...
 
+English:G-Code Output
+Translated:G-Code Output
+

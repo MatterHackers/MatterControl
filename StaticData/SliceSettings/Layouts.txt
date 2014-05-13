@@ -202,6 +202,7 @@ Advanced
         bed_shape
       Firmware
         gcode_flavor
+        gcode_output_type
         use_relative_e_distances
         gcode_arcs
         g0
