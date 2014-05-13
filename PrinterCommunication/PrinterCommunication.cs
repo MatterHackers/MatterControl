@@ -408,8 +408,8 @@ namespace MatterHackers.MatterControl
             ReadLineStartCallBacks.AddCallBackToKey("ok T:", ReadTemperatures); // marlin
             ReadLineStartCallBacks.AddCallBackToKey("T:", ReadTemperatures); // repatier
 
-            ReadLineStartCallBacks.AddCallBackToKey("C:", ReadPositions);
-            ReadLineStartCallBacks.AddCallBackToKey("X:", ReadPositions);
+            ReadLineStartCallBacks.AddCallBackToKey("C:", ReadTargetPositions);
+            ReadLineStartCallBacks.AddCallBackToKey("X:", ReadTargetPositions);
 
             ReadLineContainsCallBacks.AddCallBackToKey("RS:", PrinterRequestsResend);
             ReadLineContainsCallBacks.AddCallBackToKey("Resend:", PrinterRequestsResend);
@@ -855,7 +855,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public void ReadPositions(object sender, EventArgs e)
+        public void ReadTargetPositions(object sender, EventArgs e)
         {
             FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 
@@ -865,6 +865,11 @@ namespace MatterHackers.MatterControl
             GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref positionRead.y);
             GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref positionRead.z);
 
+            // The first position read is the target position.
+            lastReportedPosition = positionRead;
+
+#if false
+            // The second position (if available) is the actual current position of the extruder.
             int xPosition = lineToParse.IndexOf('X');
             int secondXPosition = lineToParse.IndexOf("Count", xPosition);
             if (secondXPosition != -1)
@@ -876,12 +881,7 @@ namespace MatterHackers.MatterControl
 
                 lastReportedPosition = currentPositionRead;
             }
-            else
-            {
-                // The firmware is only returning one x y z position so we need to use this as the position rather than 
-                // assume the printer will hand us incremental positions
-                lastReportedPosition = positionRead;
-            }
+#endif
 
             if (currentDestination != positionRead)
             {
