@@ -40,6 +40,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -155,37 +156,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        public List<string> GetLibraryParts()
-        {
-            List<string> libraryFilesToPreload = new List<string>();
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "PreloadedLibraryFiles.txt");
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
-            {
-                try
-                {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
-                    {
-                        //Ignore commented lines
-                        if (!line.StartsWith("#"))
-                        {
-                            string settingLine = line.Trim();
-                            libraryFilesToPreload.Add(settingLine);
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            return libraryFilesToPreload;
-        }
-
         void PreloadLibrary()
         {
-            List<string> calibrationPrints = GetLibraryParts();
-            foreach (string partFile in calibrationPrints)
+            foreach (string partFile in OemSettings.Instance.PreloadedLibraryFiles)
             {
                 string partFullPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "SampleParts", partFile);
                 if (System.IO.File.Exists(partFullPath))
