@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl
 
         void FixTabDot(object sender, EventArgs e)
         {
-            ApplicationWidget.Instance.ReloadAll(this, null);
+            UpdateControlData.Instance.CheckForUpdate();
         }
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
