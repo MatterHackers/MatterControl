@@ -105,7 +105,11 @@ namespace MatterHackers.MatterControl
         {
             try
             {
-                UpdateControlData.Instance.InstallUpdate(this);
+                if (!UpdateControlData.Instance.InstallUpdate(this))
+                {
+                    installUpdateLink.Visible = false;
+                    updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+                }
             }
             catch
             {

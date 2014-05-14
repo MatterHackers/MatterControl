@@ -1558,11 +1558,7 @@ namespace MatterHackers.MatterControl
         {
             if (serialPort == null && this.ActivePrinter != null)
             {   
-				#if USE_FROSTED_SERIAL_PORT
-                serialPort = new FrostedSerialPort(this.ActivePrinter.ComPort);
-				#else
-				serialPort = new SerialPort(this.ActivePrinter.ComPort);
-				#endif
+                serialPort = FrostedSerialPort.Create(this.ActivePrinter.ComPort);
                 serialPort.BaudRate = this.BaudRate;
                 if (PrinterCommunication.Instance.DtrEnableOnConnect)
                 {

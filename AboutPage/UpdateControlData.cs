@@ -159,7 +159,6 @@ namespace MatterHackers.MatterControl
                 if (DownloadHasZeroSize())
                 {
                     SetUpdateStatus(UpdateStatusStates.UpToDate);
-                    this.updateInitiated = false;
                 }
                 else
                 {
@@ -170,8 +169,8 @@ namespace MatterHackers.MatterControl
 
         void onVersionRequestFailed(object sender, EventArgs e)
         {
-            SetUpdateStatus(UpdateStatusStates.UpToDate);
             this.updateInitiated = false;
+            SetUpdateStatus(UpdateStatusStates.UpToDate);
         }
 
         public void InitiateUpdateDownload()
@@ -253,9 +252,9 @@ namespace MatterHackers.MatterControl
 
         void DownloadCompleted(object sender, EventArgs e)
         {
+            updateInitiated = false;
             SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
             webClient.Dispose();
-            updateInitiated = false;
         }
 
         private UpdateControlData()
@@ -283,7 +282,7 @@ namespace MatterHackers.MatterControl
             UpdateStatusChanged.CallEvents(this, e);
         }
 
-        public void InstallUpdate(GuiWidget windowToClose)
+        public bool InstallUpdate(GuiWidget windowToClose)
         {
             string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 
@@ -322,6 +321,7 @@ namespace MatterHackers.MatterControl
                 if (topSystemWindow != null)
                 {
                     topSystemWindow.CloseOnIdle();
+                    return true;
                 }
             }
             catch
@@ -331,6 +331,8 @@ namespace MatterHackers.MatterControl
                     System.IO.File.Delete(friendlyFileName);
                 }
             }
+
+            return false;
         }
     }
 }

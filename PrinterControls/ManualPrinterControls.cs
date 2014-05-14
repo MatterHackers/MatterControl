@@ -186,12 +186,18 @@ namespace MatterHackers.MatterControl
             AddHandlers();
             SetVisibleControls();
 
-            UiThread.RunOnIdle(AddPlugins);
+            if (!pluginsQueuedToAdd)
+            {
+                UiThread.RunOnIdle(AddPlugins);
+                pluginsQueuedToAdd = true;
+            }
         }
 
+        static bool pluginsQueuedToAdd = false;
         public void AddPlugins(object state)
         {
             AddPluginControls.CallEvents(this, null);
+            pluginsQueuedToAdd = false;
         }
 
         private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
