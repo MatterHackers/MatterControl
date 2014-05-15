@@ -599,8 +599,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 for (int i = 0; i < asynchMeshesList.Count; i++)
                 {
                     Mesh mesh = asynchMeshesList[i];
-                    Vector3 center = mesh.GetAxisAlignedBoundingBox(asynchMeshTransforms[i]).Center;
-                    asynchMeshTransforms[i] *= Matrix4X4.CreateTranslation(-center);
+                    Vector3 meshCenter = mesh.GetAxisAlignedBoundingBox(asynchMeshTransforms[i]).Center;
+                    asynchMeshTransforms[i] *= Matrix4X4.CreateTranslation(-meshCenter);
                     PlatingHelper.MoveMeshToOpenPosition(i, asynchPlatingDataList, asynchMeshesList, asynchMeshTransforms);
 
                     // and create the trace info so we can select it
@@ -750,9 +750,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         for (int subMeshIndex = 0; subMeshIndex < subMeshes.Length; subMeshIndex++)
                         {
                             Mesh subMesh = subMeshes[subMeshIndex];
-                            Vector3 center = subMesh.GetAxisAlignedBoundingBox().Center;
-                            center.z = 0;
-                            subMesh.Translate(-center);
+                            Vector3 soubMeshBoundsCenter = subMesh.GetAxisAlignedBoundingBox().Center;
+                            soubMeshBoundsCenter.z = 0;
+                            subMesh.Translate(-soubMeshBoundsCenter);
                             PlatingHelper.FindPositionForPartAndAddToPlate(subMesh, Matrix4X4.Identity, asynchPlatingDataList, asynchMeshesList, asynchMeshTransforms);
                             PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshesList, asynchMeshesList.Count - 1);
 
