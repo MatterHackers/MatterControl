@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //layerThickness=0.1
             new MapItem("layerThickness", "layer_height"),
 
-            //minimumExtrusionBeforeRetraction=0.1 # mm.
+            //minimumExtrusionBeforeRetraction=0 # mm.
             new MapItem("minimumExtrusionBeforeRetraction", "min_extrusion_before_retract"),
 
             //minimumPrintingSpeed=10 # The minimum speed that the extruder is allowed to move while printing. mm/s.
