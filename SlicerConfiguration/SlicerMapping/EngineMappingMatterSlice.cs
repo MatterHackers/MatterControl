@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //layerThickness=0.1
             new MapItem("layerThickness", "layer_height"),
 
-            //minimumExtrusionBeforeRetraction=0.1 # mm.
+            //minimumExtrusionBeforeRetraction=0 # mm.
             new MapItem("minimumExtrusionBeforeRetraction", "min_extrusion_before_retract"),
 
             //minimumPrintingSpeed=10 # The minimum speed that the extruder is allowed to move while printing. mm/s.
@@ -180,7 +180,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", "print_center"),
 
             // TODO: The raft currently does not handle brim correctly. So it needs to be fixed before it is enabled.
-            //new MapItemToBool("enableRaft", "create_raft"),
+            new MapItemToBool("enableRaft", "create_raft"),
+            new MapItem("raftExtraDistanceAroundPart", "raft_extra_distance_around_part"),
+            new MapItem("raftAirGapAsPercentOfExtrusionWidth", "raft_air_gap_as_percent_of_extrusion_width"),
 
             //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_NON_CLOSED # You can or them together using '|'.
             //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.

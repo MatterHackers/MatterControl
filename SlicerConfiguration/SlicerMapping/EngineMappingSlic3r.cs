@@ -67,6 +67,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("z_gap");
                     hideItems.Add("bottom_clip_amount");
                     hideItems.Add("gcode_output_type");
+                    hideItems.Add("raft_extra_distance_around_part");
+                    hideItems.Add("raft_air_gap_as_percent_of_extrusion_width");
                 }
                 return instance;
             }
