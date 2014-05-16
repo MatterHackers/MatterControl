@@ -2190,3 +2190,15 @@ Translated:Retrieving download info...
 English:G-Code Output
 Translated:G-Code Output
 
+English:The extra distance the raft will extend around the part.
+Translated:The extra distance the raft will extend around the part.
+
+English:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
+Translated:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
+
+English:Distance
+Translated:Distance
+
+English:Gap Percent
+Translated:Gap Percent
+
