@@ -46,12 +46,17 @@ namespace MatterHackers.MatterControl
 {
 	public class ThemeColorSelectorWidget : FlowLayoutWidget
 	{
-		public ThemeColorSelectorWidget ()
+		GuiWidget colorToChangeTo;
+
+		public ThemeColorSelectorWidget (GuiWidget colorToChangeTo)
 		{	
+
+			this.colorToChangeTo = colorToChangeTo;
 			//TextWidget colorText = new TextWidget("Accent Color", color: RGBA_Bytes.White);
 			//colorText.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			//this.AddChild(colorText);
 			//Temporary theme changer button
+
 			GuiWidget themeButtons = new GuiWidget(186, 42);
 
             int themeCount = ActiveTheme.Instance.AvailableThemes.Count;
@@ -65,12 +70,11 @@ namespace MatterHackers.MatterControl
 
                 themeButtons.AddChild(buttonOne);
                 themeButtons.AddChild(buttonTwo);
-
                 index++;
-			}            
-			themeButtons.Margin = new BorderDouble(2);
-			this.AddChild(themeButtons);
-            this.VAnchor = VAnchor.ParentCenter;
+			}
+
+			this.AddChild (themeButtons);
+			this.VAnchor = VAnchor.ParentCenter;
 		}
 
         public Button getThemeButton(int index, int x, int y)
@@ -91,6 +95,19 @@ namespace MatterHackers.MatterControl
 				UserSettings.Instance.set("ActiveThemeIndex",((GuiWidget)sender).Name);
 				ActiveTheme.Instance.LoadThemeSettings(int.Parse(((GuiWidget)sender).Name));
 			};
+
+			colorButton.MouseEnterBounds += (sender, mouseEvent) =>
+			{
+
+				colorToChangeTo.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].primaryAccentColor;
+
+			};
+
+			colorButton.MouseLeaveBounds += (sender, mouseEvent) => 
+			{
+				colorToChangeTo.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+			};
+
             return colorButton;
         }
 
