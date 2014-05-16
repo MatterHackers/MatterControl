@@ -125,10 +125,6 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
 
-
-			ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget();
-			themeSelector.Margin = new BorderDouble(right: 5);
-
 			GuiWidget currentColorThemeBorder = new GuiWidget();
 			currentColorThemeBorder.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			currentColorThemeBorder.VAnchor = VAnchor.ParentBottomTop;
@@ -141,6 +137,8 @@ namespace MatterHackers.MatterControl
 			currentColorTheme.VAnchor = VAnchor.ParentBottomTop;
 			currentColorTheme.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
+			ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget(colorToChangeTo: currentColorTheme);
+			themeSelector.Margin = new BorderDouble(right: 5);
 
 			themeControlsGroupBox.AddChild(colorSelectorContainer);
 			colorSelectorContainer.AddChild(themeSelector);
