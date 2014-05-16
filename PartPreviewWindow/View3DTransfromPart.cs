@@ -1191,9 +1191,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void SetNewModelSize(double sizeInMm, int axis)
         {
-            AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
+            // because we remove any current scale before we change to a new one we only get the size of the base mesh data
+            AxisAlignedBoundingBox originalMeshBounds = SelectedMesh.GetAxisAlignedBoundingBox();
 
-            double currentSize = bounds.Size[axis];
+            double currentSize = originalMeshBounds.Size[axis];
             double desiredSize = sizeDisplay[axis].GetValue();
             double scaleFactor = 1;
             if (currentSize != 0)
@@ -1203,7 +1204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (uniformScale.Checked)
             {
-                scaleRatioControl.ActuallNumberEdit.Value *= scaleFactor;
+                scaleRatioControl.ActuallNumberEdit.Value = scaleFactor;
                 ApplyScaleFromEditField();
             }
             else
@@ -1345,16 +1346,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void ScaleAxis(double scaleIn, int axis)
         {
-            AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-            Vector3 center = (bounds.maxXYZ - bounds.minXYZ) / 2 + bounds.minXYZ;
+            AxisAlignedBoundingBox originalMeshBounds = SelectedMesh.GetAxisAlignedBoundingBox();
+            AxisAlignedBoundingBox scaledBounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
+
+            Vector3 center = (scaledBounds.maxXYZ - scaledBounds.minXYZ) / 2 + scaledBounds.minXYZ;
             Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-center);
 
             // first we remove any scale we have applied and then scale to the new value
-            Matrix4X4 newScaleMatrix = Matrix4X4.CreateScale(1 / MeshExtraData[SelectedMeshIndex].currentScale);
+            Vector3 axisRemoveScalings = new Vector3();
+            axisRemoveScalings.x = scaledBounds.Size.x / originalMeshBounds.Size.x;
+            axisRemoveScalings.y = scaledBounds.Size.y / originalMeshBounds.Size.y;
+            axisRemoveScalings.z = scaledBounds.Size.z / originalMeshBounds.Size.z;
+
+            Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(1 / axisRemoveScalings);
+            
             Vector3 newScale = MeshExtraData[SelectedMeshIndex].currentScale;
             newScale[axis] = scaleIn;
-            newScaleMatrix *= Matrix4X4.CreateScale(newScale);
-            totalTransfrom *= newScaleMatrix;
+            removeScaleMatrix *= Matrix4X4.CreateScale(newScale);
+            totalTransfrom *= removeScaleMatrix;
 
             totalTransfrom *= Matrix4X4.CreateTranslation(center);
             SelectedMeshTransform *= totalTransfrom;
