@@ -1443,21 +1443,10 @@ namespace MatterHackers.MatterControl
                 if (lineToWrite.Contains("\n"))
                 {
                     string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-                    if (ForceImmediateWrites && !PrinterIsPrinting)
+                    for (int i = 0; i < lines.Length; i++)
                     {
-                        for (int i = 0; i < lines.Length; i++)
-                        {
-                            string line = lines[i];
-                            SendLineToPrinterNow(line);
-                        }
-                    }
-                    else
-                    {
-                        for (int i = lines.Length - 1; i >= 0; i--)
-                        {
-                            string line = lines[i];
-                            SendLineToPrinterNow(line);
-                        }
+                        string line = lines[i];
+                        SendLineToPrinterNow(line);
                     }
                     return;
                 }
