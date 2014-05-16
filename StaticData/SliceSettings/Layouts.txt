@@ -115,6 +115,8 @@ Advanced
         support_material_enforce_layers
       Raft
         create_raft
+        raft_extra_distance_around_part
+        raft_air_gap_as_percent_of_extrusion_width
         raft_layers
       Options
         support_material_pattern
