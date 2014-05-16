@@ -1,0 +1,15 @@
+bed_temperature = 0
+bridge_fan_speed = 100
+cooling = 1
+disable_fan_first_layers = 1
+extrusion_multiplier = 1.0
+fan_always_on = 1
+fan_below_layer_time = 60
+filament_diameter = 2.92
+first_layer_bed_temperature = 0
+first_layer_temperature = 195
+max_fan_speed = 100
+min_fan_speed = 35
+min_print_speed = 10
+slowdown_below_layer_time = 30
+temperature = 190
