@@ -1445,8 +1445,11 @@ namespace MatterHackers.MatterControl
                     string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
                     for (int i = 0; i < lines.Length; i++)
                     {
-                        string line = lines[i];
-                        SendLineToPrinterNow(line);
+                        string line = lines[i].Trim();
+                        if (line.Length > 0)
+                        {
+                            SendLineToPrinterNow(line);
+                        }
                     }
                     return;
                 }
