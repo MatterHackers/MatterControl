@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" || extension == ".GCODE" || extension == ".ZIP")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" || extension == ".GCODE" || extension == ".ZIP")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -245,6 +245,18 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
                 }
+                else if (extension == ".ZIP")
+                {
+                    ProjectFileHandler project = new ProjectFileHandler(null);
+                    List<PrintItem> partFiles = project.ImportFromProjectArchive(droppedFileName);
+                    if (partFiles != null)
+                    {
+                        foreach (PrintItem part in partFiles)
+                        {
+                            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+                        }
+                    }
+                }
             }
 
             base.OnDragDrop(fileDropEventArgs);
@@ -257,16 +269,31 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void AddItemsToQueue(object state)
         {
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode", multiSelect: true);
+            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode;*.zip", multiSelect: true);
 			openParams.ActionButtonLabel = "Add to Queue";
 			openParams.Title = "MatterControl: Select A File";
 
             FileDialog.OpenFileDialog(ref openParams);
             if (openParams.FileNames != null)
             {
-                foreach (string loadedFileName in openParams.FileNames)
+                foreach (string fileNameToLoad in openParams.FileNames)
                 {
-                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
+                    if (Path.GetExtension(fileNameToLoad).ToUpper() == ".ZIP")
+                    {
+                        ProjectFileHandler project = new ProjectFileHandler(null);
+                        List<PrintItem> partFiles = project.ImportFromProjectArchive(fileNameToLoad);
+                        if (partFiles != null)
+                        {
+                            foreach (PrintItem part in partFiles)
+                            {
+                                QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileNameToLoad), Path.GetFullPath(fileNameToLoad))));
+                    }
                 }
             }
         }
