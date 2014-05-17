@@ -16,8 +16,8 @@ complete_objects|Complete Individual Objects|CHECK_BOX||Each individual part is 
 cool_extruder_lift|Enable Extruder Lift|CHECK_BOX||Moves the extruder up off the part to allow cooling.
 cooling|Enable Auto Cooling|CHECK_BOX||Turns on and off all cooling settings (all settings below this one).
 create_raft|Create Raft|CHECK_BOX||Turns on and off the creation of a raft which can help parts adhear to the bed.
-raft_extra_distance_around_part|Distance|POSITIVE_DOUBLE|mm|The extra distance the raft will extend around the part.
-raft_air_gap_as_percent_of_extrusion_width|Gap Percent|POSITIVE_DOUBLE|%|The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
+raft_extra_distance_around_part|Distance Around Object|POSITIVE_DOUBLE|mm|The extra distance the raft will extend around the part.
+raft_air_gap|Air Gap|POSITIVE_DOUBLE|mm|The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
 default_acceleration|Default|POSITIVE_DOUBLE|mm/s²|Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
 disable_fan_first_layers|Disable Fan For The First|INT|Layers|The number of layers for which the fan will be forced to remain off.
 end_gcode|End G-Code|MULTI_LINE_TEXT|| This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
@@ -90,6 +90,10 @@ retract_restart_extra_toolchange|Length|POSITIVE_DOUBLE|mm\nzero to disable|The 
 retract_restart_extra|Extra Length On Restart|POSITIVE_DOUBLE|mm|Additional amount of filament that will be extruded after a retraction.
 retract_restart_extra|Extra Length On Restart|POSITIVE_DOUBLE|mm|The amount of extra extrusion that will occur when an extruder is selected.
 retract_speed|Speed|POSITIVE_DOUBLE|mm/s|The speed that the filament will be retracted (and re-extruded).
+repair_outlines_extensive_stitching|Connect Bad Edges|CHECK_BOX||Try to connect mesh edges when the actual mesh data is not all the way connected.
+repair_outlines_keep_open|Close Polygons|CHECK_BOX||Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
+repair_overlaps_reverse_orientation|Reverse Orientation|CHECK_BOX||Reverse the orientation of overlaps. This can make some unintended holes go away.
+repair_overlaps_union_all_together|Merge All|CHECK_BOX||Make all overlap areas into one big area. This can make some unintended holes go away..
 resolution|Resolution|POSITIVE_DOUBLE|mm|The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
 skirt_distance|Distance from Object|POSITIVE_DOUBLE|mm|The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
 skirt_height|Skirt Height|INT|layers|The number of layers to draw the skirt.

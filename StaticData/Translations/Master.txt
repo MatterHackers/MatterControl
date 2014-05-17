@@ -2202,3 +2202,45 @@ Translated:Distance
 English:Gap Percent
 Translated:Gap Percent
 
+English:Try to connect mesh edges when the actual mesh data is not all the way connected.
+Translated:Try to connect mesh edges when the actual mesh data is not all the way connected.
+
+English:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
+Translated:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
+
+English:Reverse the orientation of overlaps. This can make some unintended holes go away.
+Translated:Reverse the orientation of overlaps. This can make some unintended holes go away.
+
+English:Make all overlap areas into one big area. This can make some unintended holes go away..
+Translated:Make all overlap areas into one big area. This can make some unintended holes go away..
+
+English:Repair
+Translated:Repair
+
+English:Connect Bad Edges
+Translated:Connect Bad Edges
+
+English:Close Polygons
+Translated:Close Polygons
+
+English:Reverse Orientation
+Translated:Reverse Orientation
+
+English:Merge All
+Translated:Merge All
+
+English:Overlaps
+Translated:Overlaps
+
+English:The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+
+English:Air Gap
+Translated:Air Gap
+
+English:Outline Distance
+Translated:Outline Distance
+
+English:Distance Around Object
+Translated:Distance Around Object
+

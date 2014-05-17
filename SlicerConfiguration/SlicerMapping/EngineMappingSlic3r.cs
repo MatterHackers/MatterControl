@@ -69,6 +69,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("gcode_output_type");
                     hideItems.Add("raft_extra_distance_around_part");
                     hideItems.Add("raft_air_gap_as_percent_of_extrusion_width");
+                    hideItems.Add("repair_outlines_extensive_stitching");
+                    hideItems.Add("repair_outlines_keep_open");
+                    hideItems.Add("repair_overlaps_reverse_orientation");
+                    hideItems.Add("repair_overlaps_union_all_together");
                 }
                 return instance;
             }

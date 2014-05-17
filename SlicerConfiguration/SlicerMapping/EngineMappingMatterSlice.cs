@@ -182,11 +182,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             // TODO: The raft currently does not handle brim correctly. So it needs to be fixed before it is enabled.
             new MapItemToBool("enableRaft", "create_raft"),
             new MapItem("raftExtraDistanceAroundPart", "raft_extra_distance_around_part"),
-            new MapItem("raftAirGapAsPercentOfExtrusionWidth", "raft_air_gap_as_percent_of_extrusion_width"),
+            new MapItem("raftAirGap", "raft_air_gap"),
 
-            //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_NON_CLOSED # You can or them together using '|'.
+            //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
+            new MapRepairOutlines("repairOutlines", "repair_outlines_extensive_stitching"),
+            new NotPassedItem("", "repair_outlines_keep_open"),
+
             //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
-            
+            new MapRepairOverlaps("repairOverlaps", "repair_overlaps_reverse_orientation"),
+            new NotPassedItem("", "repair_overlaps_union_all_together"),
+
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
             
@@ -300,6 +305,72 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
+        public class MapRepairOutlines : MapItem
+        {
+            public override string MappedValue
+            {
+                get
+                {
+                    if(ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_extensive_stitching") == "1")
+                    {
+                        if (ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_keep_open") == "1")
+                        {
+                            return "EXTENSIVE_STITCHING|KEEP_OPEN";
+                        }
+                        else
+                        {
+                            return "EXTENSIVE_STITCHING";
+                        }
+                    }
+                    else if(ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_keep_open") == "1")
+                    {
+                        return "KEEP_OPEN";
+                    }
+
+                    return "NONE";
+                }
+            }
+
+            public MapRepairOutlines(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
+            {
+            }
+        }
+
+        //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
+        public class MapRepairOverlaps : MapItem
+        {
+            public override string MappedValue
+            {
+                get
+                {
+                    if(ActiveSliceSettings.Instance.GetActiveValue("repair_overlaps_reverse_orientation") == "1")
+                    {
+                        if (ActiveSliceSettings.Instance.GetActiveValue("repair_overlaps_union_all_together") == "1")
+                        {
+                            return "REVERSE_ORIENTATION|UNION_ALL_TOGETHER";
+                        }
+                        else
+                        {
+                            return "REVERSE_ORIENTATION";
+                        }
+                    }
+                    else if(ActiveSliceSettings.Instance.GetActiveValue("repair_overlaps_union_all_together") == "1")
+                    {
+                        return "UNION_ALL_TOGETHER";
+                    }
+
+                    return "NONE";
+                }
+            }
+
+            public MapRepairOverlaps(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
+            {
+            }
+        }
+
         public class FanTranslator : MapItem
         {
             public override string MappedValue
@@ -312,8 +383,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
             }
 
-            public FanTranslator(string mappedKey, string slicer)
-                : base(mappedKey, slicer)
+            public FanTranslator(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
             {
             }
         }
@@ -397,8 +468,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
             }
 
-            public InfillTranslator(string mappedKey, string slicer)
-                : base(mappedKey, slicer)
+            public InfillTranslator(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
             {
             }
         }
@@ -413,8 +484,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
             }
 
-            public MapEndGCode(string mappedKey, string slicer)
-                : base(mappedKey, slicer)
+            public MapEndGCode(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
             {
             }
         }

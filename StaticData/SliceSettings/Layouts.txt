@@ -116,7 +116,7 @@ Advanced
       Raft
         create_raft
         raft_extra_distance_around_part
-        raft_air_gap_as_percent_of_extrusion_width
+        raft_air_gap
         raft_layers
       Options
         support_material_pattern
@@ -128,6 +128,13 @@ Advanced
         support_material_z_distance
         support_material_z_gap_layers
         support_material_create_internal_support
+    Repair
+      Outlines
+        repair_outlines_extensive_stitching
+        repair_outlines_keep_open
+      Overlaps
+        repair_overlaps_reverse_orientation
+        repair_overlaps_union_all_together
     Notes
       Notes
         notes

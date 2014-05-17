@@ -202,8 +202,8 @@ enableOozeShield = 0;
                 }
             }
 
-            public FanTranslator(string cura, string slicer)
-                : base(cura, slicer)
+            public FanTranslator(string cura, string originalKey)
+                : base(cura, originalKey)
             {
             }
         }
@@ -225,8 +225,8 @@ enableOozeShield = 0;
                 }
             }
 
-            public SupportTypeMapping(string cura, string slicer)
-                : base(cura, slicer)
+            public SupportTypeMapping(string cura, string originalKey)
+                : base(cura, originalKey)
             {
             }
         }
@@ -247,8 +247,8 @@ enableOozeShield = 0;
                 }
             }
 
-            public SupportMatterial(string cura, string slicer)
-                : base(cura, slicer)
+            public SupportMatterial(string cura, string originalKey)
+                : base(cura, originalKey)
             {
             }
         }
@@ -272,8 +272,8 @@ enableOozeShield = 0;
                 }
             }
 
-            public InfillTranslator(string cura, string slicer)
-                : base(cura, slicer)
+            public InfillTranslator(string cura, string originalKey)
+                : base(cura, originalKey)
             {
             }
         }
@@ -289,8 +289,8 @@ enableOozeShield = 0;
                 }
             }
 
-            public PrintCenterX(string cura, string slicer)
-                : base(cura, slicer)
+            public PrintCenterX(string cura, string originalKey)
+                : base(cura, originalKey)
             {
             }
         }
@@ -306,8 +306,8 @@ enableOozeShield = 0;
                 }
             }
 
-            public PrintCenterY(string cura, string slicer)
-                : base(cura, slicer)
+            public PrintCenterY(string cura, string originalKey)
+                : base(cura, originalKey)
             {
             }
         }
@@ -328,8 +328,8 @@ enableOozeShield = 0;
                 }
             }
 
-            public MapEndGCode(string cura, string slicer)
-                : base(cura, slicer)
+            public MapEndGCode(string cura, string originalKey)
+                : base(cura, originalKey)
             {
             }
         }
