@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
             menuItems = new TupleList<string, Func<bool>> 
             {                
                 {LocalizedString.Get("Add File"), importFile_Click},
-                {LocalizedString.Get("Exit"), exit_Click},
+				{LocalizedString.Get("Exit"), exit_Click},
             };
 
             BorderDouble padding = MenuDropList.MenuItemsPadding;
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
             }            
             MenuDropList.Padding = padding;
         }
-
+			
         bool importFile_Click()
         {
             UiThread.RunOnIdle((state) =>
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl
             return true;
         }
 
-        bool exit_Click()
+		bool exit_Click()
         {
             UiThread.RunOnIdle((state) =>
             {                
@@ -169,11 +169,22 @@ namespace MatterHackers.MatterControl
                 {
                     parent = parent.Parent;
                 }
-                MatterControlApplication app = parent as MatterControlApplication;
-                app.RestartOnClose = false;
-                app.Close();
+
+				if(PrinterCommunication.Instance.PrinterIsPrinting)
+				{
+						StyledMessageBox.ShowMessageBox("Oops! You cannot exit while a print is active.", "Unable to Exit");
+				}
+				else
+				{
+
+                	MatterControlApplication app = parent as MatterControlApplication;
+               	 	app.RestartOnClose = false;
+                	app.Close();
+
+				}
+
             });
-            return true;
+			return true;
         }    
     }
 

@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl
 
             if (PrinterCommunication.Instance.PrinterIsPrinting)
             {
-                StyledMessageBox.ShowMessageBox("Oop! You cannot exit while a print is active.", "Unable to Exit");
+				StyledMessageBox.ShowMessageBox("Oops! You cannot exit while a print is active.", "Unable to Exit");
                 CancelClose = true;
             }
             else if (PartsSheet.IsSaving())
