@@ -65,6 +65,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget rotateOptionContainer;
         FlowLayoutWidget scaleOptionContainer;
 
+        List<string> pendingPartsToLoad = new List<string>();
+
         ProgressControl processingProgressControl;
         FlowLayoutWidget enterEditButtonsContainer;
         FlowLayoutWidget doEdittingButtonsContainer;
@@ -304,7 +306,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         UiThread.RunOnIdle((state) =>
                         {
-                            enterEditButtonsContainer.Visible = false;
                             EnterEditAndSplitIntoMeshes();
                             OpenAddDialogWhenDone = true;
                         });
@@ -313,8 +314,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     Button enterEdittingButton = textImageButtonFactory.Generate(LocalizedString.Get("Edit"));
                     enterEdittingButton.Click += (sender, e) =>
                     {
-                        enterEditButtonsContainer.Visible = false;
-
                         EnterEditAndSplitIntoMeshes();
                     };
 
@@ -636,7 +635,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void LoadAndAddPartsToPlate(string[] filesToLoad)
         {
-            if (Meshes.Count > 0)
+            if (Meshes.Count > 0 && filesToLoad.Length > 0)
             {
 				string loadingPartLabel = LocalizedString.Get("Loading Parts");
 				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
@@ -817,20 +816,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void EnterEditAndSplitIntoMeshes()
         {
-            if (Meshes.Count > 0)
+            if (enterEditButtonsContainer.Visible == true)
             {
-                processingProgressControl.Visible = true;
-                LockEditControls();
+                enterEditButtonsContainer.Visible = false;
 
-                BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
-                createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
-                createDiscreteMeshesBackgroundWorker.WorkerReportsProgress = true;
+                if (Meshes.Count > 0)
+                {
+                    processingProgressControl.Visible = true;
+                    LockEditControls();
 
-                createDiscreteMeshesBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
-                createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createDiscreteMeshesBackgroundWorker_RunWorkerCompleted);
-                createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(createDiscreteMeshesBackgroundWorker_DoWork);
+                    BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
+                    createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
+                    createDiscreteMeshesBackgroundWorker.WorkerReportsProgress = true;
 
-                createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
+                    createDiscreteMeshesBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
+                    createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createDiscreteMeshesBackgroundWorker_RunWorkerCompleted);
+                    createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(createDiscreteMeshesBackgroundWorker_DoWork);
+
+                    createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
+                }
             }
         }
 
@@ -885,6 +889,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 FileDialog.OpenFileDialog(ref openParams);
                 LoadAndAddPartsToPlate(openParams.FileNames);
+            }
+
+            if (pendingPartsToLoad.Count > 0)
+            {
+                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
             }
         }
 
@@ -1342,6 +1351,57 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 ScaleAxis(scale, 1);
                 ScaleAxis(scale, 2);
             }
+        }
+
+        public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+        {
+            foreach (string file in fileDropEventArgs.DroppedFiles)
+            {
+                string extension = Path.GetExtension(file).ToUpper();
+                if (extension == ".STL")
+                {
+                    fileDropEventArgs.AcceptDrop = true;
+                }
+            }
+            base.OnDragEnter(fileDropEventArgs);
+        }
+
+        public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
+        {
+            foreach (string file in fileDropEventArgs.DroppedFiles)
+            {
+                string extension = Path.GetExtension(file).ToUpper();
+                if (extension == ".STL")
+                {
+                    fileDropEventArgs.AcceptDrop = true;
+                }
+            }
+            base.OnDragOver(fileDropEventArgs);
+        }
+
+        public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
+        {
+            List<string> stlFiles = new List<string>();
+            foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
+            {
+                string extension = Path.GetExtension(droppedFileName).ToUpper();
+                if (extension == ".STL")
+                {
+                    if (enterEditButtonsContainer.Visible == true)
+                    {
+                        EnterEditAndSplitIntoMeshes();
+                        pendingPartsToLoad.Add(droppedFileName);
+                    }
+                    else
+                    {
+                        stlFiles.Add(droppedFileName);
+                    }
+                }
+            }
+
+            LoadAndAddPartsToPlate(stlFiles.ToArray());
+
+            base.OnDragDrop(fileDropEventArgs);
         }
 
         private void ScaleAxis(double scaleIn, int axis)
