@@ -297,6 +297,5 @@ namespace MatterHackers.MatterControl
                 perMeshInfo[i].traceableData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys);
             }
         }
-
     }
 }
