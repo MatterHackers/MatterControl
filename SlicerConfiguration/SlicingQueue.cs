@@ -36,6 +36,7 @@ using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Globalization;
 
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
@@ -171,6 +172,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         static Process slicerProcess = null;
         static void CreateSlicedPartsThread()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
             while (!haltSlicingThread)
             {
                 if (PrinterCommunication.Instance.ActivePrintItem != null && listOfSlicingItems.Count > 0)
