@@ -130,6 +130,32 @@ namespace MatterHackers.MatterControl
                 }
             };
 
+			textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs e) =>
+			{
+				string newName = textToAddWidget.ActualTextEditWidget.Text;
+				if (newName != "")
+				{
+					string fileName = "{0}.stl".FormatWith (Path.GetRandomFileName ());
+					string fileNameAndPath = Path.Combine (ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+					PrintItem printItem = new PrintItem ();
+					printItem.Name = newName;
+					printItem.FileLocation = Path.GetFullPath (fileNameAndPath);
+					printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+					printItem.Commit ();
+
+					PrintItemWrapper printItemWrapper = new PrintItemWrapper (printItem);
+					QueueData.Instance.AddItem (printItemWrapper);
+
+					if (addToLibraryOption.Checked) {
+						LibraryData.Instance.AddItem (printItemWrapper);
+					}
+
+					functionToCallOnSaveAs (printItemWrapper);
+					CloseOnIdle ();
+				}
+			};
+
 			//Adds SaveAs and Close Button to button container
 			GuiWidget hButtonSpacer = new GuiWidget();
 			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
