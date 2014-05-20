@@ -13,18 +13,25 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl 
 {
 	public class SaveAsWindow : SystemWindow
 	{
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory ();
+		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory ();
+        MHTextEditWidget textToAddWidget;
+        CheckBox addToLibraryOption;        
 
         public delegate void SetPrintItemWrapperAndSave(PrintItemWrapper printItemWrapper);
+        SetPrintItemWrapperAndSave functionToCallOnSaveAs;
+
         public SaveAsWindow(SetPrintItemWrapperAndSave functionToCallOnSaveAs)
 			: base (480, 250)
 		{
 			Title = "MatterControl - Save As";
+
+            this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
@@ -71,23 +78,19 @@ namespace MatterHackers.MatterControl
 			textBoxHeaderFull.Margin = new BorderDouble (5);
 			textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
 
-
 			//Adds text box and check box to the above container
-			MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here");
+			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here");
 			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
 			textToAddWidget.Margin = new BorderDouble(5);
 
-			GuiWidget cTSpacer = new GuiWidget();
-			cTSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-            CheckBox addToLibraryOption = new CheckBox("Also save to Library", ActiveTheme.Instance.PrimaryTextColor);
+            addToLibraryOption = new CheckBox("Also save to Library", ActiveTheme.Instance.PrimaryTextColor);
 			addToLibraryOption.Margin = new BorderDouble (5);
 			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
 
 			presetsFormContainer.AddChild(textBoxHeader);
 			presetsFormContainer.AddChild (textBoxHeaderFull);
 			presetsFormContainer.AddChild(textToAddWidget);
-			presetsFormContainer.AddChild(cTSpacer);
+			presetsFormContainer.AddChild(new HorizontalSpacer());
 			presetsFormContainer.AddChild(addToLibraryOption);
 			topToBottom.AddChild(presetsFormContainer);
 
@@ -103,63 +106,12 @@ namespace MatterHackers.MatterControl
 			saveAsButton.Visible = true;
 			saveAsButton.Cursor = Cursors.Hand;
             buttonRow.AddChild(saveAsButton);
-            saveAsButton.Click += (sender, e) =>
-            {
-                string newName = textToAddWidget.ActualTextEditWidget.Text;
-                if (newName != "")
-                {
-                    string fileName = "{0}.stl".FormatWith(Path.GetRandomFileName());
-                    string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-                    PrintItem printItem = new PrintItem();
-                    printItem.Name = newName;
-                    printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
-                    printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-                    printItem.Commit();
-
-                    PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-                    QueueData.Instance.AddItem(printItemWrapper);
-
-                    if (addToLibraryOption.Checked)
-                    {
-                        LibraryData.Instance.AddItem(printItemWrapper);
-                    }
-
-                    functionToCallOnSaveAs(printItemWrapper);
-                    CloseOnIdle();
-                }
-            };
-
-			textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs e) =>
-			{
-				string newName = textToAddWidget.ActualTextEditWidget.Text;
-				if (newName != "")
-				{
-					string fileName = "{0}.stl".FormatWith (Path.GetRandomFileName ());
-					string fileNameAndPath = Path.Combine (ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
-
-					PrintItem printItem = new PrintItem ();
-					printItem.Name = newName;
-					printItem.FileLocation = Path.GetFullPath (fileNameAndPath);
-					printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-					printItem.Commit ();
-
-					PrintItemWrapper printItemWrapper = new PrintItemWrapper (printItem);
-					QueueData.Instance.AddItem (printItemWrapper);
-
-					if (addToLibraryOption.Checked) {
-						LibraryData.Instance.AddItem (printItemWrapper);
-					}
-
-					functionToCallOnSaveAs (printItemWrapper);
-					CloseOnIdle ();
-				}
-			};
+            saveAsButton.Click += new ButtonBase.ButtonEventHandler(saveAsButton_Click);
+            textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 			//Adds SaveAs and Close Button to button container
-			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
-            buttonRow.AddChild(hButtonSpacer);
+            buttonRow.AddChild(new HorizontalSpacer());
 
 			Button cancelButton = textImageButtonFactory.Generate ("Cancel", centerText: true);
 			cancelButton.Visible = true;
@@ -174,6 +126,43 @@ namespace MatterHackers.MatterControl
 
 			ShowAsSystemWindow ();
 		}
+
+        void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)
+        {
+            SubmitForm();
+        }
+
+        void saveAsButton_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            SubmitForm();
+        }
+
+        private void SubmitForm()
+        {
+            string newName = textToAddWidget.ActualTextEditWidget.Text;
+            if (newName != "")
+            {
+                string fileName = "{0}.stl".FormatWith(Path.GetRandomFileName());
+                string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+                PrintItem printItem = new PrintItem();
+                printItem.Name = newName;
+                printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
+                printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+                printItem.Commit();
+
+                PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+                QueueData.Instance.AddItem(printItemWrapper);
+
+                if (addToLibraryOption.Checked)
+                {
+                    LibraryData.Instance.AddItem(printItemWrapper);
+                }
+
+                functionToCallOnSaveAs(printItemWrapper);
+                CloseOnIdle();
+            }
+        }
 	}
 }
 
