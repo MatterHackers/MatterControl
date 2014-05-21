@@ -81,7 +81,7 @@ print_center|Print Center|VECTOR2|mm|The position (coordinates) of the center of
 raft_layers|Raft Layers|INT|layers|Number of layers to print before printing any parts.
 randomize_start|Randomize Starting Points|CHECK_BOX||Start each new layer from a different vertex to reduce seams.
 resume_gcode|Resume G-Code|MULTI_LINE_TEXT||This gcode will be inserted when the printer is resumed.
-retract_before_travel|Minimum Travel After\n Retraction|POSITIVE_DOUBLE|mm|The minimum distance of a non-printing move that will result in a retraction.
+retract_before_travel|Minimum Travel\nRequiring Retraction|POSITIVE_DOUBLE|mm|The minimum distance of a non-printing move that will result in a retraction.
 retract_layer_change|Retract on Layer Change|CHECK_BOX||If set, a retraction will occur prior to changing the layer height.
 retract_length|Length|POSITIVE_DOUBLE|mm|The amount that the filament will be reversed after each qualifying non-printing move.
 retract_length_tool_change|Change Tool|POSITIVE_DOUBLE|mm|The amount that the filament will be reversed before changing to a new tool.
