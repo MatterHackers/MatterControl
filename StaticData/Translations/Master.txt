@@ -2244,3 +2244,6 @@ Translated:Outline Distance
 English:Distance Around Object
 Translated:Distance Around Object
 
+English:Minimum Travel\nRequiring Retraction
+Translated:Minimum Travel\nRequiring Retraction
+
