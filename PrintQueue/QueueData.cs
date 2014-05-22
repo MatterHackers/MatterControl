@@ -138,11 +138,16 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             if (index >= 0 && index < Count)
             {
-                PrintItems.RemoveAt(index);
+                bool ActiveItemMustStayInQueue = PrinterCommunication.Instance.PrinterIsPrinting || PrinterCommunication.Instance.PrinterIsPaused;
+                bool PartMustStayInQueue = ActiveItemMustStayInQueue && PrintItems[index] == PrinterCommunication.Instance.ActivePrintItem;
+                if (!PartMustStayInQueue)
+                {
+                    PrintItems.RemoveAt(index);
 
-                OnItemRemoved(new IndexArgs(index));
+                    OnItemRemoved(new IndexArgs(index));
 
-                SaveDefaultQueue();
+                    SaveDefaultQueue();
+                }
             }
         }
 
