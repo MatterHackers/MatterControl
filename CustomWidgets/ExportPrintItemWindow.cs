@@ -75,10 +75,7 @@ namespace MatterHackers.MatterControl
 			cancelButton.Click += ( sender, e) => {
 				CloseOnIdle ();
 			};
-
-			GuiWidget gDSpacer = new GuiWidget ();
-			gDSpacer.HAnchor = HAnchor.ParentLeftRight;
-
+				
             if (!partIsGCode)
             {
 				string exportStlText = LocalizedString.Get("Export as");
@@ -120,16 +117,17 @@ namespace MatterHackers.MatterControl
 			buttonRow.Padding = new BorderDouble (0);
 
             // TODO: make this work on the mac and then delete this if
-           	if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Windows)
-            {
-				showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), ActiveTheme.Instance.PrimaryTextColor, 10);
-				showInFolderAfterSave.Margin = new BorderDouble(top: 10);
-				exportSTLGCodeButtonsContainer.AddChild(showInFolderAfterSave);
-				buttonRow.AddChild (gDSpacer);
-				buttonRow.AddChild(cancelButton);
-				topToBottom.AddChild(exportSTLGCodeButtonsContainer);
-				topToBottom.AddChild (buttonRow);
-            }
+			if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType () == WindowsFormsAbstract.OSType.Windows) 
+			{
+				showInFolderAfterSave = new CheckBox (LocalizedString.Get ("Show file in folder after save"), ActiveTheme.Instance.PrimaryTextColor, 10);
+				showInFolderAfterSave.Margin = new BorderDouble (top: 10);
+				exportSTLGCodeButtonsContainer.AddChild (showInFolderAfterSave);
+			}
+
+			buttonRow.AddChild (new HorizontalSpacer());
+			buttonRow.AddChild(cancelButton);
+			topToBottom.AddChild(exportSTLGCodeButtonsContainer);
+			topToBottom.AddChild (buttonRow);            
 
             this.AddChild(topToBottom);
         }
