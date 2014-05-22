@@ -135,7 +135,12 @@ namespace MatterHackers.MatterControl
 
             UseOpenGL = true;
             string version = "1.1";
-            Title = "MatterControl{0} {1}".FormatWith(OemSettings.Instance.WindowTitleExtra, version);
+
+            Title = "MatterControl {0}".FormatWith(version);
+            if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
+            {
+                Title = Title + " - {1}".FormatWith(version, OemSettings.Instance.WindowTitleExtra);
+            }
 
             ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);
