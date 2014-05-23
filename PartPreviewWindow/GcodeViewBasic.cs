@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         CheckBox expandModelOptions;
         CheckBox expandDisplayOptions;
-        CheckBox animatePrint;
+        CheckBox syncToPrint;
 
         GuiWidget gcodeDispalyWidget;
 
@@ -117,28 +117,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     CloseOnIdle();
                 };
-            }
-            else
-            {
-                animatePrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                animatePrint.Checked = false;
-                animatePrint.VAnchor = VAnchor.ParentCenter;
-                animatePrint.CheckedStateChanged += (sender, e) =>
-                {
-                    if (animatePrint.Checked)
-                    {
-                        SetAnimationPosition();
-                    }
-                    else
-                    {
-                        if (layerEndRenderRatioSlider != null)
-                        {
-                            layerEndRenderRatioSlider.Value = 1;
-                            layerStartRenderRatioSlider.Value = 0;
-                        }
-                    }
-                };
-                layerSelectionButtonsPanel.AddChild(animatePrint);
             }
 
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
@@ -400,31 +378,60 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layerInfoContainer.Padding = new BorderDouble(5);
 
             // put in a show grid check box
-            CheckBox showGrid = new CheckBox(LocalizedString.Get("Show Grid"), textColor: ActiveTheme.Instance.PrimaryTextColor);
-            showGrid.Checked = gcodeViewWidget.RenderGrid;
-            showGrid.CheckedStateChanged += (sender, e) =>
             {
-                gcodeViewWidget.RenderGrid = showGrid.Checked;
-            };
-            layerInfoContainer.AddChild(showGrid);
+                CheckBox showGrid = new CheckBox(LocalizedString.Get("Show Grid"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                showGrid.Checked = gcodeViewWidget.RenderGrid;
+                showGrid.CheckedStateChanged += (sender, e) =>
+                {
+                    gcodeViewWidget.RenderGrid = showGrid.Checked;
+                };
+                layerInfoContainer.AddChild(showGrid);
+            }
 
             // put in a show moves checkbox
-            CheckBox showMoves = new CheckBox(LocalizedString.Get("Show Moves"), textColor: ActiveTheme.Instance.PrimaryTextColor);
-            showMoves.Checked = gcodeViewWidget.RenderMoves;
-            showMoves.CheckedStateChanged += (sender, e) =>
             {
-                gcodeViewWidget.RenderMoves = showMoves.Checked;
-            };
-            layerInfoContainer.AddChild(showMoves);
+                CheckBox showMoves = new CheckBox(LocalizedString.Get("Show Moves"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                showMoves.Checked = gcodeViewWidget.RenderMoves;
+                showMoves.CheckedStateChanged += (sender, e) =>
+                {
+                    gcodeViewWidget.RenderMoves = showMoves.Checked;
+                };
+                layerInfoContainer.AddChild(showMoves);
+            }
 
             // put in a show Retractions checkbox
-            CheckBox showRetractions = new CheckBox(LocalizedString.Get("Show Retractions"), textColor: ActiveTheme.Instance.PrimaryTextColor);
-            showRetractions.Checked = gcodeViewWidget.RenderRetractions;
-            showRetractions.CheckedStateChanged += (sender, e) =>
             {
-                gcodeViewWidget.RenderRetractions = showRetractions.Checked;
-            };
-            layerInfoContainer.AddChild(showRetractions);
+                CheckBox showRetractions = new CheckBox(LocalizedString.Get("Show Retractions"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                showRetractions.Checked = gcodeViewWidget.RenderRetractions;
+                showRetractions.CheckedStateChanged += (sender, e) =>
+                {
+                    gcodeViewWidget.RenderRetractions = showRetractions.Checked;
+                };
+                layerInfoContainer.AddChild(showRetractions);
+            }
+
+            // Put in the sync to print checkbox
+            if (!widgetHasCloseButton)
+            {
+                syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                syncToPrint.Checked = false;
+                syncToPrint.CheckedStateChanged += (sender, e) =>
+                {
+                    if (syncToPrint.Checked)
+                    {
+                        SetAnimationPosition();
+                    }
+                    else
+                    {
+                        if (layerEndRenderRatioSlider != null)
+                        {
+                            layerEndRenderRatioSlider.Value = 1;
+                            layerStartRenderRatioSlider.Value = 0;
+                        }
+                    }
+                };
+                layerInfoContainer.AddChild(syncToPrint);
+            }
 
             //layerInfoContainer.AddChild(new CheckBox("Show Retractions", textColor: ActiveTheme.Instance.PrimaryTextColor));
 
@@ -452,7 +459,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         bool hookedParentKeyDown = false;
         public override void OnDraw(Graphics2D graphics2D)
         {
-            if (animatePrint != null && animatePrint.Checked)
+            if (syncToPrint != null && syncToPrint.Checked)
             {
                 SetAnimationPosition();
             }

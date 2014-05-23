@@ -2256,3 +2256,6 @@ Translated:Show Current
 English:Printer Sync
 Translated:Printer Sync
 
+English:Sync To Print
+Translated:Sync To Print
+
