@@ -252,20 +252,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             viewArea.AnchorAll();
             {
                 meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "Press 'Add' to select an item.".Localize());
-#if false // this is to add an image to the bed
-                string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "watermark.png");
+                
+                // this is to add an image to the bed
+                string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "bedimage.png");
                 if (File.Exists(imagePathAndFile))
                 {
                     ImageBuffer wattermarkImage = new ImageBuffer();
                     ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);
 
                     ImageBuffer bedImage = meshViewerWidget.BedImage;
-                    InvertLightness.DoInvertLightness(wattermarkImage);
                     Graphics2D bedGraphics = bedImage.NewGraphics2D();
                     bedGraphics.Render(wattermarkImage, 
                         new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height)/2));
                 }
-#endif
 
                 meshViewerWidget.AnchorAll();
             }

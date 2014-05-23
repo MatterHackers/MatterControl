@@ -2247,3 +2247,12 @@ Translated:Distance Around Object
 English:Minimum Travel\nRequiring Retraction
 Translated:Minimum Travel\nRequiring Retraction
 
+English:Show Printing
+Translated:Show Printing
+
+English:Show Current
+Translated:Show Current
+
+English:Printer Sync
+Translated:Printer Sync
+

@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         CheckBox expandModelOptions;
         CheckBox expandDisplayOptions;
+        CheckBox animatePrint;
 
         GuiWidget gcodeDispalyWidget;
 
@@ -116,6 +117,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     CloseOnIdle();
                 };
+            }
+            else
+            {
+                animatePrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                animatePrint.Checked = false;
+                animatePrint.VAnchor = VAnchor.ParentCenter;
+                animatePrint.CheckedStateChanged += (sender, e) =>
+                {
+                    if (animatePrint.Checked)
+                    {
+                        SetAnimationPosition();
+                    }
+                    else
+                    {
+                        if (layerEndRenderRatioSlider != null)
+                        {
+                            layerEndRenderRatioSlider.Value = 1;
+                            layerStartRenderRatioSlider.Value = 0;
+                        }
+                    }
+                };
+                layerSelectionButtonsPanel.AddChild(animatePrint);
             }
 
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
@@ -193,6 +216,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             AddHandlers();
         }
 
+        private void SetAnimationPosition()
+        {
+            int currentLayer = PrinterCommunication.Instance.CurrentlyPrintingLayer;
+            if (currentLayer >= 1)
+            {
+                selectLayerSlider.Value = currentLayer-1;
+                layerEndRenderRatioSlider.Value = PrinterCommunication.Instance.RatioIntoCurrentLayer;
+                layerStartRenderRatioSlider.Value = 0;
+            }
+        }
+
         private FlowLayoutWidget CreateRightButtonPanel()
         {
             FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -257,7 +291,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 if (gcodeViewWidget != null && gcodeViewWidget.LoadedGCode != null)
                 {
-                    int secondsRemaining = (int)gcodeViewWidget.LoadedGCode.GCodeCommandQueue[0].secondsToEndFromHere;
+                    int secondsRemaining = (int)gcodeViewWidget.LoadedGCode.Instruction(0).secondsToEndFromHere;
                     int hoursRemaining = (int)(secondsRemaining / (60 * 60));
                     int minutesRemaining = (int)((secondsRemaining + 30) / 60 - hoursRemaining * 60); // +30 for rounding
                     secondsRemaining = secondsRemaining % 60;
@@ -418,6 +452,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         bool hookedParentKeyDown = false;
         public override void OnDraw(Graphics2D graphics2D)
         {
+            if (animatePrint != null && animatePrint.Checked)
+            {
+                SetAnimationPosition();
+            }
+
             if (!hookedParentKeyDown)
             {
                 GuiWidget parent = Parent;
@@ -493,7 +532,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             SetProcessingMessage("");
             if (gcodeViewWidget != null
                 && gcodeViewWidget.LoadedGCode != null
-                && gcodeViewWidget.LoadedGCode.GCodeCommandQueue.Count > 0)
+                && gcodeViewWidget.LoadedGCode.Count > 0)
             {
                 CreateOptionsContent();
 
