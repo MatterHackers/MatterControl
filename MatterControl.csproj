@@ -101,6 +101,8 @@
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
+    <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
+    <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
     <Compile Include="PrinterCommunication\ActivePrinterProfile.cs" />
     <Compile Include="ConfigurationPage\ConfigurationPage.cs" />
@@ -170,7 +172,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ControlElements\MHTextEditWidget.cs" />
-    <Compile Include="PartPreviewWindow\GcodeViewBasic.cs" />
+    <Compile Include="PartPreviewWindow\ViewGcodeBasic.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
     <Compile Include="PrintQueue\OptionsMenu\PartsSheetCreator.cs" />
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />

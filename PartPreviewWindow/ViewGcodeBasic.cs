@@ -33,6 +33,7 @@ using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -40,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class GcodeViewBasic : PartPreviewWidget
+    public class ViewGcodeBasic : PartPreview3DWidget
     {
         public Slider selectLayerSlider;
         public Slider layerStartRenderRatioSlider;
@@ -62,29 +63,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         GuiWidget gcodeDispalyWidget;
 
-        GetSizeFunction bedSizeFunction;
-        GetSizeFunction bedCenterFunction;
         EventHandler unregisterEvents;
         bool widgetHasCloseButton;
 
         public delegate Vector2 GetSizeFunction();
 
-        public GcodeViewBasic(PrintItemWrapper printItem, GetSizeFunction bedSizeFunction, GetSizeFunction bedCenterFunction, bool addCloseButton)
+        static string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
+        static string pressGenerateMessage = "Press 'generate' to view layers".Localize();
+        static string fileNotFoundMessage = "File not found on disk.".Localize();
+
+        Vector2 bedCenter;
+        Vector3 viewerVolume;
+        MeshViewerWidget.BedShape bedShape;
+
+        public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, Vector2 bedCenter, bool addCloseButton)
         {
+            this.viewerVolume = viewerVolume;
+            this.bedShape = bedShape;
+            this.bedCenter = bedCenter;
             widgetHasCloseButton = addCloseButton;
             this.printItem = printItem;
-
-            this.bedSizeFunction = bedSizeFunction;
-            this.bedCenterFunction = bedCenterFunction;
 
             CreateAndAddChildren(null);
         }
 
-        static string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
-        static string pressGenerateMessage = "Press 'generate' to view layers".Localize();
-        static string fileNotFoundMessage = "File not found on disk.".Localize();
         void CreateAndAddChildren(object state)
         {
+            TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
             RemoveAllChildren();
             gcodeViewWidget = null;
             gcodeProcessingStateInfoText = null;
@@ -181,12 +191,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mainContainerTopToBottom.AddChild(buttonBottomPanel);
             this.AddChild(mainContainerTopToBottom);
 
-            Add2DViewControls();
-            translateButton.Click += (sender, e) =>
+            meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "Press 'Add' to select an item.".Localize());
+
+            viewControls2D = new ViewControls2D();
+            AddChild(viewControls2D);
+            viewControls3D = new ViewControls3D(meshViewerWidget);
+            AddChild(viewControls3D);
+            viewControls3D.Visible = false;
+            viewControls3D.translateButton.ClickButton(null);
+
+            viewControls2D.translateButton.Click += (sender, e) =>
             {
                 gcodeViewWidget.TransformState = GCodeViewWidget.ETransformState.Move;
             };
-            scaleButton.Click += (sender, e) =>
+            viewControls2D.scaleButton.Click += (sender, e) =>
             {
                 gcodeViewWidget.TransformState = GCodeViewWidget.ETransformState.Scale;
             };
@@ -254,6 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddModelInfo(FlowLayoutWidget buttonPanel)
         {
+            int oldWidth = textImageButtonFactory.FixedWidth;
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -343,11 +362,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(modelInfoContainer);
 
-            textImageButtonFactory.FixedWidth = 0;
+            textImageButtonFactory.FixedWidth = oldWidth;
         }
 
         private void AddLayerInfo(FlowLayoutWidget buttonPanel)
         {
+            int oldWidth = textImageButtonFactory.FixedWidth;
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -366,11 +386,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(layerInfoContainer);
 
-            textImageButtonFactory.FixedWidth = 0;
+            textImageButtonFactory.FixedWidth = oldWidth;
         }
 
         private void AddDisplayControls(FlowLayoutWidget buttonPanel)
         {
+            int oldWidth = textImageButtonFactory.FixedWidth; 
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -410,6 +431,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 layerInfoContainer.AddChild(showRetractions);
             }
 
+            // put in a show 3D view checkbox
+            {
+                CheckBox show3D = new CheckBox(LocalizedString.Get("Show 3D"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                show3D.CheckedStateChanged += (sender, e) =>
+                {
+                    // show the tumbel widget and not the line widget
+                    if (show3D.Checked)
+                    {
+                        viewControls2D.Visible = false;
+                        viewControls3D.Visible = true;
+                    }
+                    else
+                    {
+                        viewControls2D.Visible = true;
+                        viewControls3D.Visible = false;
+                    }
+                };
+                layerInfoContainer.AddChild(show3D);
+            }
+
             // Put in the sync to print checkbox
             if (!widgetHasCloseButton)
             {
@@ -437,7 +478,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(layerInfoContainer);
 
-            textImageButtonFactory.FixedWidth = 0;
+            textImageButtonFactory.FixedWidth = oldWidth;
         }
 
         public override void OnParentChanged(EventArgs e)
@@ -448,7 +489,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         string partToStartLoadingOnFirstDraw = null;
         private GuiWidget CreateGCodeViewWidget(string pathAndFileName)
         {
-            gcodeViewWidget = new GCodeViewWidget(bedSizeFunction(), bedCenterFunction());
+            gcodeViewWidget = new GCodeViewWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter);
             gcodeViewWidget.DoneLoading += DoneLoadingGCode;
             gcodeViewWidget.LoadingProgressChanged += LoadingProgressChanged;
             partToStartLoadingOnFirstDraw = pathAndFileName;

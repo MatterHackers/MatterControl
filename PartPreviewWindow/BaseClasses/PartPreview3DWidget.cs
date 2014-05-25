@@ -51,68 +51,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         protected MeshViewerWidget meshViewerWidget;
         event EventHandler unregisterEvents;
 
+        protected ViewControls3D viewControls3D;
+
         public PartPreview3DWidget()
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
-        }
-
-        protected void Add3DViewControls()
-        {
-            FlowLayoutWidget transformTypeSelector = new FlowLayoutWidget();
-            transformTypeSelector.BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-            textImageButtonFactory.FixedHeight = 20;
-            textImageButtonFactory.FixedWidth = 20;
-            textImageButtonFactory.AllowThemeToAdjustImage = false;
-
-            string rotateIconPath = Path.Combine("Icons", "ViewTransformControls", "rotate.png");
-            rotateViewButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
-            rotateViewButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(rotateViewButton);
-            rotateViewButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-            };
-
-            string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
-            translateButton = textImageButtonFactory.GenerateRadioButton("", translateIconPath);
-            translateButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(translateButton);
-            translateButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
-            };
-
-            string scaleIconPath = Path.Combine("Icons", "ViewTransformControls", "scale.png");
-            RadioButton scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
-            scaleButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(scaleButton);
-            scaleButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
-            };
-
-            viewControlsSeparator = new GuiWidget(2, 32);
-            viewControlsSeparator.BackgroundColor = RGBA_Bytes.White;
-            viewControlsSeparator.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(viewControlsSeparator);
-
-            string partSelectIconPath = Path.Combine("Icons", "ViewTransformControls", "partSelect.png");
-            partSelectButton = textImageButtonFactory.GenerateRadioButton("", partSelectIconPath);
-            partSelectButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(partSelectButton);
-            partSelectButton.Click += (sender, e) =>
-            {
-                meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
-            };
-
-            transformTypeSelector.Margin = new BorderDouble(5);
-            transformTypeSelector.HAnchor |= Agg.UI.HAnchor.ParentLeft;
-            transformTypeSelector.VAnchor = Agg.UI.VAnchor.ParentTop;
-            AddChild(transformTypeSelector);
-            rotateViewButton.Checked = true;
-
-            SetMeshViewerDisplayTheme();
-            partSelectButton.CheckedStateChanged += SetMeshViewerDisplayTheme;
         }
 
         public override void OnClosed(EventArgs e)
@@ -122,12 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 unregisterEvents(this, null);
             }
             base.OnClosed(e);
-        }
-
-        void Instance_ThemeChanged(object sender, EventArgs e)
-        {
-            SetMeshViewerDisplayTheme();
-            Invalidate();
         }
 
         protected static Slider InseretUiForSlider(FlowLayoutWidget wordOptionContainer, string header, double min = 0, double max = .5)
@@ -146,25 +82,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             wordOptionContainer.AddChild(namedSlider);
 
             return namedSlider;
-        }
-
-        protected void SetMeshViewerDisplayTheme(object sender = null, EventArgs e = null)
-        {
-            meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            //if (partSelectButton.Checked)
-            {
-                meshViewerWidget.PartColor = RGBA_Bytes.White;
-                meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
-            }
-#if false
-            else
-            {
-                meshViewerWidget.PartColor = ActiveTheme.Instance.PrimaryAccentColor;
-                meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
-            }
-#endif
-            meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
-            meshViewerWidget.BuildVolumeColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor.Red0To255, ActiveTheme.Instance.PrimaryAccentColor.Green0To255, ActiveTheme.Instance.PrimaryAccentColor.Blue0To255, 50);
         }
     }
 }

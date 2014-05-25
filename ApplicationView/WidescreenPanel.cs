@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
         int Max2ColumnWidth = 1590;
 
         View3DTransformPart part3DView;
-        GcodeViewBasic partGcodeView;
+        ViewGcodeBasic partGcodeView;
 
         PanelSeparator RightBorderLine;
         PanelSeparator LeftBorderLine;
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
             part3DView.Margin = new BorderDouble(bottom: 4);
             part3DView.AnchorAll();
 
-            partGcodeView = new GcodeViewBasic(PrinterCommunication.Instance.ActivePrintItem, ActiveSliceSettings.Instance.GetBedSize, ActiveSliceSettings.Instance.GetBedCenter, false);
+            partGcodeView = new ViewGcodeBasic(PrinterCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, ActiveSliceSettings.Instance.BedCenter, false);
             partGcodeView.AnchorAll();
 
             ColumnTwo.AddChild(part3DView);
