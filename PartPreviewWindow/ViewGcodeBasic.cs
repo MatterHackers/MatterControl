@@ -191,7 +191,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mainContainerTopToBottom.AddChild(buttonBottomPanel);
             this.AddChild(mainContainerTopToBottom);
 
-            meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "Press 'Add' to select an item.".Localize());
+            meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "".Localize());
+            meshViewerWidget.AnchorAll();
+            meshViewerWidget.AlwaysRenderBed = true;
+            gcodeDispalyWidget.AddChild(meshViewerWidget);
+            meshViewerWidget.Visible = false;
+            meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
 
             viewControls2D = new ViewControls2D();
             AddChild(viewControls2D);
@@ -210,6 +215,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
 
             AddHandlers();
+        }
+
+        void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+        {
+            gcodeViewWidget.gCodeRenderer.Render3D(gcodeViewWidget.ActiveLayerIndex, gcodeViewWidget.TotalTransform, 1, RenderType.All, 
+                gcodeViewWidget.FeatureToStartOnRatio0To1, gcodeViewWidget.FeatureToEndOnRatio0To1);
         }
 
         private void SetAnimationPosition()
@@ -440,12 +451,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     if (show3D.Checked)
                     {
                         viewControls2D.Visible = false;
+                        gcodeViewWidget.Visible = false;
+
                         viewControls3D.Visible = true;
+                        meshViewerWidget.Visible = true;
                     }
                     else
                     {
                         viewControls2D.Visible = true;
+                        gcodeViewWidget.Visible = true;
+
                         viewControls3D.Visible = false;
+                        meshViewerWidget.Visible = false;
                     }
                 };
                 layerInfoContainer.AddChild(show3D);
