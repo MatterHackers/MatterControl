@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
         {
-            gcodeViewWidget.gCodeRenderer.Render3D(gcodeViewWidget.ActiveLayerIndex, gcodeViewWidget.TotalTransform, 1, RenderType.All, 
+            gcodeViewWidget.gCodeRenderer.Render3D(0, Math.Min(gcodeViewWidget.ActiveLayerIndex+1, gcodeViewWidget.LoadedGCode.NumChangesInZ), gcodeViewWidget.TotalTransform, 1, RenderType.All, 
                 gcodeViewWidget.FeatureToStartOnRatio0To1, gcodeViewWidget.FeatureToEndOnRatio0To1);
         }
 
