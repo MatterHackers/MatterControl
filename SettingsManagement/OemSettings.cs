@@ -28,6 +28,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
             }
         }
 
+        public string ThemeColor = "";
+
         public string AffiliateCode = "";
 
         public string WindowTitleExtra = "";

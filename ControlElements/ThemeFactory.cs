@@ -42,10 +42,10 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl
 {
-
     public class ActiveTheme
     {
         static ActiveTheme globalInstance;
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
             {
                 if (this.availableThemes == null)
                 {
-                    this.availableThemes = getAvailableThemes();
+                    this.availableThemes = GetAvailableThemes();
                 }
                 return availableThemes;
             }
@@ -168,7 +168,22 @@ namespace MatterHackers.MatterControl
             //Load the default theme by index
             if (UserSettings.Instance.get("ActiveThemeIndex") == null)
             {
-                UserSettings.Instance.set("ActiveThemeIndex", defaultThemeIndex.ToString());
+                bool foundOemColor = false;
+                for (int i = 0; i < AvailableThemes.Count; i++)
+                {
+                    Theme current = AvailableThemes[i];
+                    if (current.Name == OemSettings.Instance.ThemeColor)
+                    {
+                        UserSettings.Instance.set("ActiveThemeIndex", i.ToString());
+                        foundOemColor = true;
+                        break;
+                    }
+                }
+
+                if (!foundOemColor)
+                {
+                    UserSettings.Instance.set("ActiveThemeIndex", defaultThemeIndex.ToString());
+                }
             }
 
             int themeIndex;
@@ -215,34 +230,34 @@ namespace MatterHackers.MatterControl
         }
 
 
-        private List<Theme> getAvailableThemes()
+        private List<Theme> GetAvailableThemes()
         {
             //Generate a list of available theme definitions
             List<Theme> themeList = new List<Theme>();
 
             //Dark themes
-            themeList.Add(new Theme("Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190)));                        
-            themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204)));
-            themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32)));
-            themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255)));
-            themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76)));           
-            themeList.Add(new Theme("Purple", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229)));
-            themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77)));
-            themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203)));
-            themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114)));
-            themeList.Add(new Theme("Pink", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188,0,200)));
+            themeList.Add(new Theme("Blue - Dark", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190)));
+            themeList.Add(new Theme("Teal - Dark", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204)));
+            themeList.Add(new Theme("Green - Dark", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32)));
+            themeList.Add(new Theme("Light Blue - Dark", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255)));
+            themeList.Add(new Theme("Orange - Dark", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76)));
+            themeList.Add(new Theme("Purple - Dark", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229)));
+            themeList.Add(new Theme("Red - Dark", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77)));
+            themeList.Add(new Theme("Pink - Dark", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203)));
+            themeList.Add(new Theme("Grey - Dark", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114)));
+            themeList.Add(new Theme("Pink - Dark", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188, 0, 200)));
 
             //Light themes
-            themeList.Add(new Theme("Blue", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190),false));
-            themeList.Add(new Theme("Teal", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204), false));
-            themeList.Add(new Theme("Green", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32), false));
-            themeList.Add(new Theme("Light Blue", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255), false));
-            themeList.Add(new Theme("Orange", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76), false));
-            themeList.Add(new Theme("Purple", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229), false));
-            themeList.Add(new Theme("Red", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77), false));
-            themeList.Add(new Theme("Pink", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203), false));
-            themeList.Add(new Theme("Grey", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114), false));
-            themeList.Add(new Theme("Pink", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188, 0, 200), false));
+            themeList.Add(new Theme("Blue - Light", new RGBA_Bytes(0, 75, 139), new RGBA_Bytes(0, 103, 190), false));
+            themeList.Add(new Theme("Teal - Light", new RGBA_Bytes(0, 130, 153), new RGBA_Bytes(0, 173, 204), false));
+            themeList.Add(new Theme("Green - Light", new RGBA_Bytes(0, 138, 23), new RGBA_Bytes(0, 189, 32), false));
+            themeList.Add(new Theme("Light Blue - Light", new RGBA_Bytes(93, 178, 255), new RGBA_Bytes(144, 202, 255), false));
+            themeList.Add(new Theme("Orange - Light", new RGBA_Bytes(255, 129, 25), new RGBA_Bytes(255, 157, 76), false));
+            themeList.Add(new Theme("Purple - Light", new RGBA_Bytes(70, 23, 180), new RGBA_Bytes(104, 51, 229), false));
+            themeList.Add(new Theme("Red - Light", new RGBA_Bytes(172, 25, 61), new RGBA_Bytes(217, 31, 77), false));
+            themeList.Add(new Theme("Pink - Light", new RGBA_Bytes(220, 79, 173), new RGBA_Bytes(233, 143, 203), false));
+            themeList.Add(new Theme("Grey - Light", new RGBA_Bytes(88, 88, 88), new RGBA_Bytes(114, 114, 114), false));
+            themeList.Add(new Theme("Pink - Light", new RGBA_Bytes(140, 0, 149), new RGBA_Bytes(188, 0, 200), false));
 
 			return themeList;
         }
@@ -258,7 +273,8 @@ namespace MatterHackers.MatterControl
         public RGBA_Bytes secondaryBackgroundColor;
         public RGBA_Bytes tabLabelSelectedColor;
         public RGBA_Bytes tabLabelUnselectedColor;
-        public string name;
+        string name;
+        public string Name { get { return name; } }
         bool darkTheme;
 
         public bool DarkTheme { get { return darkTheme; } }
