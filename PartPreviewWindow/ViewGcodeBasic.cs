@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         meshViewerWidget.Visible = false;
                     }
                 };
-                layerInfoContainer.AddChild(show3D);
+                //layerInfoContainer.AddChild(show3D);
             }
 
             // Put in the sync to print checkbox
