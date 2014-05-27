@@ -43,8 +43,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class GcodeViewBasic : PartPreviewWidget
     {
         public Slider selectLayerSlider;
+
+        SetLayerWidget setLayerWidget;
+        LayerNavigationWidget navigationWidget;
+        TextWidget layerStartRenderRationTitle;
         public Slider layerStartRenderRatioSlider;
+        TextWidget layerEndRenderRationTitle;
         public Slider layerEndRenderRatioSlider;
+        
         TextWidget gcodeProcessingStateInfoText;
         GCodeViewWidget gcodeViewWidget;
         PrintItemWrapper printItem;
@@ -420,6 +426,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     if (syncToPrint.Checked)
                     {
                         SetAnimationPosition();
+                        navigationWidget.Visible = false;
+                        setLayerWidget.Visible = false;
+                        layerStartRenderRationTitle.Visible = false;
+                        layerStartRenderRatioSlider.Visible = false;
+                        layerEndRenderRationTitle.Visible = false;
+                        layerEndRenderRatioSlider.Visible = false;
+                        selectLayerSlider.Visible = false;
                     }
                     else
                     {
@@ -428,9 +441,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             layerEndRenderRatioSlider.Value = 1;
                             layerStartRenderRatioSlider.Value = 0;
                         }
+                        navigationWidget.Visible = true;
+                        setLayerWidget.Visible = true;
+                        layerStartRenderRationTitle.Visible = true;
+                        layerStartRenderRatioSlider.Visible = true;
+                        layerEndRenderRationTitle.Visible = true;
+                        layerEndRenderRatioSlider.Visible = true;
+                        selectLayerSlider.Visible = true;
                     }
                 };
                 layerInfoContainer.AddChild(syncToPrint);
+
+                if (PrinterCommunication.Instance.PrinterIsPrinting
+                    && PrinterCommunication.Instance.ActivePrintItem == printItem)
+                {
+                    printItem.SlicingOutputMessage.UnregisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
+                    printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
+
+                    generateGCodeButton.Visible = false;
+                }
             }
 
             //layerInfoContainer.AddChild(new CheckBox("Show Retractions", textColor: ActiveTheme.Instance.PrimaryTextColor));
@@ -543,11 +572,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 CreateOptionsContent();
 
-                SetLayerWidget setLayerWidget = new SetLayerWidget(gcodeViewWidget);
+                setLayerWidget = new SetLayerWidget(gcodeViewWidget);
                 setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
                 layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
-                LayerNavigationWidget navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
+                navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
                 navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
                 layerSelectionButtonsPanel.AddChild(navigationWidget);
 
@@ -556,12 +585,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
-                AddChild(new TextWidget(LocalizedString.Get("start:"), 50, 77, 10, Agg.Font.Justification.Right));
+                layerStartRenderRationTitle = new TextWidget(LocalizedString.Get("start:"), 50, 77, 10, Agg.Font.Justification.Right);
+                AddChild(layerStartRenderRationTitle);
                 layerStartRenderRatioSlider = new Slider(new Vector2(), 10);
                 layerStartRenderRatioSlider.ValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
                 AddChild(layerStartRenderRatioSlider);
 
-                AddChild(new TextWidget(LocalizedString.Get("end:"), 50, 57, 10, Agg.Font.Justification.Right));
+                layerEndRenderRationTitle = new TextWidget(LocalizedString.Get("end:"), 50, 57, 10, Agg.Font.Justification.Right);
+                AddChild(layerEndRenderRationTitle);
                 layerEndRenderRatioSlider = new Slider(new Vector2(), 10);
                 layerEndRenderRatioSlider.Value = 1;
                 layerEndRenderRatioSlider.ValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);

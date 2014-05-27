@@ -234,6 +234,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnMouseUp(mouseEvent);
         }
 
+        EventHandler unregisterEvents;
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+
+            base.OnClosed(e);
+        }
+
         public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, bool standAloneWindow)
         {
             MeshExtraData = new List<PlatingMeshData>();
@@ -247,6 +259,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
             centerPartPreviewAndControls.AnchorAll();
+
+            if (!standAloneWindow)
+            {
+                PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
+            }
 
             GuiWidget viewArea = new GuiWidget();
             viewArea.AnchorAll();
@@ -433,6 +450,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (printItemWrapper == null && !standAloneWindow)
             {
                 enterEditButtonsContainer.Visible = false;
+            }
+
+            SetEditControlsBasedOnPrinterState(this, null);
+        }
+
+        void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
+        {
+            switch (PrinterCommunication.Instance.CommunicationState)
+            {
+                case PrinterCommunication.CommunicationStates.Printing:
+                case PrinterCommunication.CommunicationStates.Paused:
+                    LockEditControls();
+                    break;
+
+                default:
+                    UnlockEditControls();
+                    break;
             }
         }
 
@@ -766,11 +800,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void meshViewerWidget_LoadDone(object sender, EventArgs e)
         {
-            UnlockEditControls();
+            switch (PrinterCommunication.Instance.CommunicationState)
+            {
+                case PrinterCommunication.CommunicationStates.Printing:
+                case PrinterCommunication.CommunicationStates.Paused:
+                    break;
+
+                default:
+                    UnlockEditControls();
+                    break;
+            }
         }
 
+        bool wasInEditMode = false;
         void LockEditControls()
         {
+            wasInEditMode = doEdittingButtonsContainer.Visible;
+            enterEditButtonsContainer.Visible = false;
             doEdittingButtonsContainer.Visible = false;
             buttonRightPanelDisabledCover.Visible = true;
             if (viewControlsSeparator != null)
@@ -789,11 +835,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonRightPanelDisabledCover.Visible = false;
             processingProgressControl.Visible = false;
 
-            if (!enterEditButtonsContainer.Visible)
+            if (wasInEditMode)
             {
-                viewControlsSeparator.Visible = true;
-                partSelectButton.Visible = true;
-                doEdittingButtonsContainer.Visible = true;
+                if (!enterEditButtonsContainer.Visible)
+                {
+                    viewControlsSeparator.Visible = true;
+                    partSelectButton.Visible = true;
+                    doEdittingButtonsContainer.Visible = true;
+                }
+            }
+            else
+            {
+                enterEditButtonsContainer.Visible = true;
             }
 
             UpdateSizeInfo();
