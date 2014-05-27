@@ -872,6 +872,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     processingProgressControl.Visible = true;
                     LockEditControls();
+                    wasInEditMode = true;
 
                     BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
                     createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
