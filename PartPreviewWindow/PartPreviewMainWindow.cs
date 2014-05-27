@@ -43,15 +43,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class PartPreviewMainWindow : SystemWindow
     {
-        View3DTransformPart part3DView;
-        GcodeViewBasic partGcodeView;
-        //PartPreview3DGcode part3DGcodeView;
+        View3DTransformPart view3DTransformPart;
+        ViewGcodeBasic viewGcodeBasic;
 
         public PartPreviewMainWindow(PrintItemWrapper printItem)
             : base(690, 340)
         {
-			string partPreviewTitle = LocalizedString.Get ("MatterControl");
-			Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
+            string partPreviewTitle = LocalizedString.Get("MatterControl");
+            Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -61,22 +60,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
-			string part3DViewLabelBegining = ("3D");
-			string part3DViewLabelEnd = LocalizedString.Get ("View");
-			string part3DViewLabelFull = string.Format("{0} {1} ", part3DViewLabelBegining, part3DViewLabelEnd);
-            part3DView = new View3DTransformPart(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, true);
-			TabPage partPreview3DView = new TabPage(part3DView, part3DViewLabelFull);
+            // put in the 3D view
+            {
+                string part3DViewLabelFull = string.Format("{0} {1} ", "3D", "View".Localize());
 
-            partGcodeView = new GcodeViewBasic(printItem, ActiveSliceSettings.Instance.GetBedSize, ActiveSliceSettings.Instance.GetBedCenter, true);
-			TabPage layerView = new TabPage(partGcodeView, LocalizedString.Get("Layer View"));
+                view3DTransformPart = new View3DTransformPart(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, true);
+                TabPage partPreview3DView = new TabPage(view3DTransformPart, part3DViewLabelFull);
+                tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView, 16,
+                            ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
+            }
 
-            //part3DGcodeView = new PartPreview3DGcode(printItem.FileLocation, bedXSize, bedYSize);
-
-            tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView , 16,
-                        ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
-
-            tabControl.AddTab(new SimpleTextTabWidget(layerView, 16,
-                        ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));       
+            // put in the 2d gcode view
+            TabPage layerView;
+            {
+                viewGcodeBasic = new ViewGcodeBasic(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, ActiveSliceSettings.Instance.BedCenter, true);
+                layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View"));
+                tabControl.AddTab(new SimpleTextTabWidget(layerView, 16,
+                            ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
+            }
 
             this.AddChild(tabControl);
             this.AnchorAll();
@@ -89,12 +90,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             MinimumSize = new Vector2(400, 300);
             ShowAsSystemWindow();
 
-            // We do this after showing the system window so that when we try and take fucus the parent window (the system window)
-            // exists and can give the fucus to its child the gecode window.
+            // We do this after showing the system window so that when we try and take focus of the parent window (the system window)
+            // it exists and can give the focus to its child the gcode window.
             if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
             {
                 tabControl.TabBar.SwitchToPage(layerView);
-                partGcodeView.Focus();
+                viewGcodeBasic.Focus();
             }
         }
 
@@ -102,8 +103,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void AddHandlers()
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
-            part3DView.Closed += (sender, e) => { Close(); };
-            partGcodeView.Closed += (sender, e) => { Close(); };
+            view3DTransformPart.Closed += (sender, e) => { Close(); };
+            viewGcodeBasic.Closed += (sender, e) => { Close(); };
         }
 
         public override void OnClosed(EventArgs e)

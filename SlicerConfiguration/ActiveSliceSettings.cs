@@ -337,10 +337,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public Vector2 GetBedCenter()
-        {
-            return BedCenter;
-        }
         public Vector2 BedCenter
         {
             get

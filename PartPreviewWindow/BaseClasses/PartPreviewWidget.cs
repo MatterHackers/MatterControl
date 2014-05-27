@@ -55,11 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         protected TextImageButtonFactory expandMenuOptionFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
 
-        protected RadioButton partSelectButton;
-        protected RadioButton translateButton;
-        protected RadioButton rotateViewButton;
-        protected RadioButton scaleButton;
-        protected GuiWidget viewControlsSeparator;
+        protected ViewControls2D viewControls2D;
 
         protected Cover buttonRightPanelDisabledCover;
         protected FlowLayoutWidget buttonRightPanel;
@@ -105,33 +101,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             checkboxButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             BackgroundColor = RGBA_Bytes.White;
-        }
-
-        protected void Add2DViewControls()
-        {
-            TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
-            iconTextImageButtonFactory.AllowThemeToAdjustImage = false;
-
-            FlowLayoutWidget transformTypeSelector = new FlowLayoutWidget();
-            transformTypeSelector.BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-            iconTextImageButtonFactory.FixedHeight = 20;
-            iconTextImageButtonFactory.FixedWidth = 20;
-
-            string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
-            translateButton = iconTextImageButtonFactory.GenerateRadioButton("", translateIconPath);
-            translateButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(translateButton);
-
-            string scaleIconPath = Path.Combine("Icons", "ViewTransformControls", "scale.png");
-            scaleButton = iconTextImageButtonFactory.GenerateRadioButton("", scaleIconPath);
-            scaleButton.Margin = new BorderDouble(3);
-            transformTypeSelector.AddChild(scaleButton);
-
-            transformTypeSelector.Margin = new BorderDouble(5);
-            transformTypeSelector.HAnchor |= Agg.UI.HAnchor.ParentLeft;
-            transformTypeSelector.VAnchor = Agg.UI.VAnchor.ParentTop;
-            AddChild(transformTypeSelector);
-            translateButton.Checked = true;
         }
     }
 }
