@@ -668,7 +668,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void LoadAndAddPartsToPlate(string[] filesToLoad)
         {
-            if (Meshes.Count > 0 && filesToLoad.Length > 0)
+            if (Meshes.Count > 0 && filesToLoad != null && filesToLoad.Length > 0)
             {
 				string loadingPartLabel = LocalizedString.Get("Loading Parts");
 				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
