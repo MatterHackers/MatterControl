@@ -428,8 +428,9 @@ namespace MatterHackers.MatterControl
                 {
                     FlowLayoutWidget feedRateLeftToRight;
                     {
-                        feedRateValue = new NumberEdit(1, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40);
-
+						feedRateValue = new NumberEdit(0, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40);
+						feedRateValue.Value = ((int)(PrinterCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
+					
                         feedRateLeftToRight = new FlowLayoutWidget();
 
 						feedRateDescription = new TextWidget(LocalizedString.Get("Speed Multiplier"));
@@ -438,16 +439,16 @@ namespace MatterHackers.MatterControl
                         feedRateLeftToRight.AddChild(feedRateDescription);
                         feedRateRatioSlider = new Slider(new Vector2(), 300, minFeedRateRatio, maxFeedRateRatio);
                         feedRateRatioSlider.Margin = new BorderDouble(5, 0);
-                        feedRateRatioSlider.Value = PrinterCommunication.Instance.FeedRateRatio;
+						feedRateRatioSlider.Value = PrinterCommunication.Instance.FeedRateRatio;
                         feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         feedRateRatioSlider.ValueChanged += (sender, e) =>
                         {
-                            PrinterCommunication.Instance.FeedRateRatio = feedRateRatioSlider.Value;
+							PrinterCommunication.Instance.FeedRateRatio = feedRateRatioSlider.Value;
                         };
                         PrinterCommunication.Instance.FeedRateRatioChanged.RegisterEvent(FeedRateRatioChanged_Event, ref unregisterEvents);
                         feedRateValue.EditComplete += (sender, e) =>
                         {
-                            feedRateRatioSlider.Value = feedRateValue.Value;
+							feedRateRatioSlider.Value = feedRateValue.Value;
                         };
                         feedRateLeftToRight.AddChild(feedRateRatioSlider);
                         tuningRatiosLayout.AddChild(feedRateLeftToRight);
@@ -465,7 +466,8 @@ namespace MatterHackers.MatterControl
 
                     TextWidget extrusionDescription;
                     {
-                        extrusionValue = new NumberEdit(1, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40);
+						extrusionValue = new NumberEdit(0, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40);
+						extrusionValue.Value = ((int)(PrinterCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
 
                         FlowLayoutWidget leftToRight = new FlowLayoutWidget();
                         leftToRight.Margin = new BorderDouble(top: 10);
@@ -480,7 +482,7 @@ namespace MatterHackers.MatterControl
                         extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         extrusionRatioSlider.ValueChanged += (sender, e) =>
                         {
-                            PrinterCommunication.Instance.ExtrusionRatio = extrusionRatioSlider.Value;
+							PrinterCommunication.Instance.ExtrusionRatio = extrusionRatioSlider.Value;
                         };
                         PrinterCommunication.Instance.ExtrusionRatioChanged.RegisterEvent(ExtrusionRatioChanged_Event, ref unregisterEvents);
                         extrusionValue.EditComplete += (sender, e) =>
@@ -531,7 +533,7 @@ namespace MatterHackers.MatterControl
         void FeedRateRatioChanged_Event(object sender, EventArgs e)
         {
             feedRateRatioSlider.Value = PrinterCommunication.Instance.FeedRateRatio;
-            feedRateValue.Value = ((int)(PrinterCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
+			feedRateValue.Value = ((int)(PrinterCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
         }       
 
         private GuiWidget CreateSdCardManagerContainer()
