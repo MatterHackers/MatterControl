@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl.ActionBar
         TooltipButton doneWithCurrentPartButton;
 
         QueueDataView queueDataView;
+		bool cancelButtonWasClicked = false;
 
         public PrintActionRow(QueueDataView queueDataView)
         {
@@ -76,7 +77,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			string pauseButtonMessage = LocalizedString.Get("Pause the current print");
 			pauseButton = makeButton(pauseButtonText, pauseButtonMessage);
 
-            string cancelCancelButtonText = LocalizedString.Get("Cancel Connect");
+			string cancelCancelButtonText = LocalizedString.Get("Cancel Connect");
             string cancelConnectButtonMessage = LocalizedString.Get("Stop trying to connect to the printer.");
             cancelConnectButton = makeButton(cancelCancelButtonText, cancelConnectButtonMessage);
 
@@ -141,7 +142,16 @@ namespace MatterHackers.MatterControl.ActionBar
             resumeButton.Click += new ButtonBase.ButtonEventHandler(onResumeButton_Click);
 
             pauseButton.Click += new ButtonBase.ButtonEventHandler(onPauseButton_Click);
-            cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
+            cancelButton.Click += (sender, e) => 
+			{ 	
+				cancelButtonWasClicked = true;
+				if (PrinterCommunication.CommunicationStates.Printing != null && cancelButtonWasClicked == true) 
+				{
+					DisableActiveButtons();
+				}
+
+				UiThread.RunOnIdle(CancelButton_Click); 
+			};
             cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
             reprintButton.Click += new ButtonBase.ButtonEventHandler(onReprintButton_Click);
             doneWithCurrentPartButton.Click += new ButtonBase.ButtonEventHandler(onDoneWithCurrentPartButton_Click);
@@ -299,13 +309,13 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             PrinterCommunication.Instance.RequestPause();
         }
-
+			
         void CancelButton_Click(object state)
         {
             if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
             {
                 if (StyledMessageBox.ShowMessageBox("Cancel the current print?", "Cancel Print?", StyledMessageBox.MessageType.YES_NO))
-                {
+				{	
                     CancelPrinting();
                 }
             }
@@ -362,6 +372,7 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 button.Enabled = true;
             }
+				
         }
 
         protected void ShowActiveButtons()
@@ -424,11 +435,11 @@ namespace MatterHackers.MatterControl.ActionBar
                         EnableActiveButtons();
                         break;
 
-                    case PrinterCommunication.CommunicationStates.Printing:
-                        this.activePrintButtons.Add(pauseButton);
-                        this.activePrintButtons.Add(cancelButton);
-                        EnableActiveButtons();
-                        break;
+				case PrinterCommunication.CommunicationStates.Printing:
+					 this.activePrintButtons.Add (pauseButton);
+					 this.activePrintButtons.Add (cancelButton);
+					 EnableActiveButtons ();
+                     break;
 
                     case PrinterCommunication.CommunicationStates.Paused:
                         this.activePrintButtons.Add(resumeButton);
