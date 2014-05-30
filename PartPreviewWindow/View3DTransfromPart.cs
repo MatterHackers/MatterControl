@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (!standAloneWindow)
             {
-                PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
+                PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
             }
 
             GuiWidget viewArea = new GuiWidget();

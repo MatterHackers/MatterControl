@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton = textImageButtonFactory.Generate(LocalizedString.Get("Connect"));
                 connectButton.Click += new ButtonBase.ButtonEventHandler(ConnectButton_Click);
 
-                PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+                PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;

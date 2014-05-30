@@ -5,6 +5,7 @@ using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -133,7 +134,7 @@ namespace MatterHackers.MatterControl.ActionBar
         protected override void AddHandlers()
         {
             PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
+            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
             addButton.Click += new ButtonBase.ButtonEventHandler(onAddButton_Click);
             startButton.Click += new ButtonBase.ButtonEventHandler(onStartButton_Click);
             skipButton.Click += new ButtonBase.ButtonEventHandler(onSkipButton_Click);
@@ -222,6 +223,18 @@ namespace MatterHackers.MatterControl.ActionBar
         string itemNotFoundMessage = "Item not found".Localize();
         void PrintActivePart()
         {
+            if (ActivePrinterProfile.Instance.ActivePrinter.NeedsPrintLeveling
+                && ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0).z == 0
+                && ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1).z == 0
+                && ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2).z == 0)
+            {
+                PrintLevelWizardWindow printLevelWizardWindow = new PrintLevelWizardWindow(true);
+                printLevelWizardWindow.ShowAsSystemWindow();
+                
+                return;
+            }
+
+            // else print as normal
             if (ActiveSliceSettings.Instance.IsValid())
             {
                 string pathAndFile = PrinterCommunication.Instance.ActivePrintItem.FileLocation;
@@ -229,7 +242,7 @@ namespace MatterHackers.MatterControl.ActionBar
                 {
                     string hideGCodeWarning = ApplicationSettings.Instance.get("HideGCodeWarning");
 
-                    if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null )
+                    if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
                     {
                         CheckBox hideGCodeWaringCheckBox = new CheckBox(doNotShowAgainMessage);
                         hideGCodeWaringCheckBox.HAnchor = Agg.UI.HAnchor.ParentCenter;

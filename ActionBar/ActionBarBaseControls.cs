@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.ActionBar
             this.AddChild(textContainer);
 
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
+            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
         }
 
         public override void OnClosed(EventArgs e)

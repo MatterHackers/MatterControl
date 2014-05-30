@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         void AddHandlers()
         {
-            PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(ReloadData, ref unregisterEvents);
+            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(ReloadData, ref unregisterEvents);
         }
 
         void ReloadData(object sender, EventArgs e)

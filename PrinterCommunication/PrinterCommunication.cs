@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl
         public RootedObjectEventHandler CommunicationUnconditionalFromPrinter = new RootedObjectEventHandler();
         public RootedObjectEventHandler CommunicationUnconditionalToPrinter = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionFailed = new RootedObjectEventHandler();
-        public RootedObjectEventHandler ConnectionStateChanged = new RootedObjectEventHandler();
+        public RootedObjectEventHandler CommunicationStateChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler ConnectionSucceeded = new RootedObjectEventHandler();
         public RootedObjectEventHandler DestinationChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler EnableChanged = new RootedObjectEventHandler();
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl
                     }
 
                     communicationState = value;
-                    OnConnectionStateChanged(null);
+                    OnCommunicationStateChanged(null);
                 }
             }
         }
@@ -1224,9 +1224,9 @@ namespace MatterHackers.MatterControl
             OnEnabledChanged(e);
         }
 
-        public void OnConnectionStateChanged(EventArgs e)
+        public void OnCommunicationStateChanged(EventArgs e)
         {
-            ConnectionStateChanged.CallEvents(this, e);
+            CommunicationStateChanged.CallEvents(this, e);
         }
 
         public void OnConnectionFailed(EventArgs e)

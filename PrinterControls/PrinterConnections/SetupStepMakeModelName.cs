@@ -202,6 +202,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 ActivePrinter.BaudRate = baudRate;
             }
 
+            // Check if we need to run the print level wizard before printing
+            string needsPrintLeveling;
+            if (settingsDict.TryGetValue("needs_print_leveling", out needsPrintLeveling))
+            {
+                ActivePrinter.NeedsPrintLeveling = true;
+            }
+
             string defaultSliceEngine;
             if (settingsDict.TryGetValue("default_slice_engine", out defaultSliceEngine))
             {
@@ -253,8 +260,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 }
             }
         }
-
-
 
         private Dictionary<string, string> LoadPrinterSetupFromFile(string make, string model)
         {

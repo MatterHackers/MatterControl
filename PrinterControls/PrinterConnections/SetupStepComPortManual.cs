@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton = textImageButtonFactory.Generate(LocalizedString.Get("Connect"));
                 connectButton.Click += new ButtonBase.ButtonEventHandler(ConnectButton_Click);
 
-                PrinterCommunication.Instance.ConnectionStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+                PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 				refreshButton = textImageButtonFactory.Generate(LocalizedString.Get("Refresh"));
                 refreshButton.Click += new ButtonBase.ButtonEventHandler(RefreshButton_Click);

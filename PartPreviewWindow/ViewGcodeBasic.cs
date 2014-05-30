@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     if (File.Exists(printItem.FileLocation))
                     {
-                        string gcodePathAndFileName = printItem.GCodePathAndFileName;
+                        string gcodePathAndFileName = printItem.GetGCodePathAndFileName();
                         bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
 
                         if (printItem.SlicingHadError)
@@ -521,6 +521,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 };
                 layerInfoContainer.AddChild(syncToPrint);
 
+                // The idea here is we just got asked to rebuild the window (and it is being created now)
+                // because the gcode finished creating for the print that is printing.
+                // We don't want to be notified if any other updates happen to this gcode while it is printing.
                 if (PrinterCommunication.Instance.PrinterIsPrinting
                     && PrinterCommunication.Instance.ActivePrintItem == printItem)
                 {
@@ -528,6 +531,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
 
                     generateGCodeButton.Visible = false;
+                    
+                    // However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
+                    PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
                 }
             }
 
@@ -538,9 +544,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.FixedWidth = oldWidth;
         }
 
-        public override void OnParentChanged(EventArgs e)
+        void HookUpGCodeMessagesWhenDonePrinting(object sender, EventArgs e)
         {
-            base.OnParentChanged(e);
+            if(!PrinterCommunication.Instance.PrinterIsPaused && !PrinterCommunication.Instance.PrinterIsPrinting)
+            {
+                // unregister first to make sure we don't double up in error (should not be needed but no harm)
+                printItem.SlicingOutputMessage.UnregisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
+                printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
+
+                // register for done slicing and slicing messages
+                printItem.SlicingOutputMessage.RegisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
+                printItem.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+            }
         }
 
         string partToStartLoadingOnFirstDraw = null;

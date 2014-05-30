@@ -323,32 +323,29 @@ namespace MatterHackers.MatterControl
 
     public class PrintLevelWizardWindow : SystemWindow
     {
-		string pageOneInstructionsTextOne = LocalizedString.Get("Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.");
+        string requiredPageInstructions1 = "Congratulations on setting up your new printer. Before starting your first print we need to run a simple calibration procedure.";
+        string requiredPageInstructions2 = "The next few screens will walk your through the print leveling wizard.";
+
+        string pageOneInstructionsTextOne = LocalizedString.Get("Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.");
 		string pageOneInstructionsTextTwo = LocalizedString.Get("'Home' the printer");
 		string pageOneInstructionsTextThree = LocalizedString.Get("Sample the bed at three points");
 		string pageOneInstructionsTextFour = LocalizedString.Get("Turn auto leveling on");
-		string pageOneInstructionsTextFive = LocalizedString.Get("You should be done in about 3 minutes.");
-		string pageOneInstructionsTextSix = LocalizedString.Get("Click 'Next' to continue.");
-		string pageOneInstructions;
+        string pageOneInstructionsText5 = LocalizedString.Get("You should be done in about 3 minutes.");
+        string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extrude is clean.");
+		string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
 
 		string homingPageInstructionsTextOne = LocalizedString.Get("The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need");
 		string homingPageInstructionsTextTwo = LocalizedString.Get("A standard sheet of paper");
 		string homingPageInstructionsTextThree = LocalizedString.Get("We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.");
-		string homingPageInstructions;
 		 
 		string doneInstructionsText = LocalizedString.Get("Congratulations!\n\nAuto Print Leveling is now configured and enabled.");
 		string doneInstructionsTextTwo = LocalizedString.Get("Remove the paper");
 		string doneInstructionsTextThree = LocalizedString.Get("If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.");
-		string doneInstructions;
 
         WizardControl printLevelWizard;
-        public PrintLevelWizardWindow()
+        public PrintLevelWizardWindow(bool requiredForPrinter)
             : base(500, 370)
-		{	
-			pageOneInstructions = string.Format("{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}",pageOneInstructionsTextOne, pageOneInstructionsTextTwo, pageOneInstructionsTextThree, pageOneInstructionsTextFour, pageOneInstructionsTextFive, pageOneInstructionsTextSix);
-			homingPageInstructions = string.Format("{0}:\n\n\t• {1}\n\n{2}", homingPageInstructionsTextOne, homingPageInstructionsTextTwo, homingPageInstructionsTextThree);
-			doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}",doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
-
+		{
 			string printLevelWizardTitle = LocalizedString.Get("MatterControl");
 			string printLevelWizardTitleFull = LocalizedString.Get ("Print Leveling Wizard");
 			Title = string.Format("{0} - {1}",printLevelWizardTitle, printLevelWizardTitleFull);
@@ -361,7 +358,16 @@ namespace MatterHackers.MatterControl
             printLevelWizard.DoneButton.Click += new ButtonBase.ButtonEventHandler(DoneButton_Click);
             AddChild(printLevelWizard);
 
+            if(requiredForPrinter)
+            {
+                string requiredPageInstructions = "{0}\n\n{1}".FormatWith(requiredPageInstructions1, requiredPageInstructions2);
+                printLevelWizard.AddPage(new FirstPageInstructions(requiredPageInstructions));
+            }
+
+            string pageOneInstructions = string.Format("{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}\n\n{6}", pageOneInstructionsTextOne, pageOneInstructionsTextTwo, pageOneInstructionsTextThree, pageOneInstructionsTextFour, pageOneInstructionsText5, pageOneInstructionsText6, pageOneInstructionsText7);
             printLevelWizard.AddPage(new FirstPageInstructions(pageOneInstructions));
+
+			string homingPageInstructions = string.Format("{0}:\n\n\t• {1}\n\n{2}", homingPageInstructionsTextOne, homingPageInstructionsTextTwo, homingPageInstructionsTextThree);
             printLevelWizard.AddPage(new HomePrinterPage(homingPageInstructions));
 
             Vector2 probeBackCenter = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(0);
@@ -398,6 +404,7 @@ namespace MatterHackers.MatterControl
 			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", Step(),positionLabelThree, medPrecisionLabelThree ), probePositions[2]));
 			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", Step(), positionLabelThree, highPrecisionLabelThree ), probePositions[2]));
 
+			string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}",doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
             printLevelWizard.AddPage(new LastPageInstructions(doneInstructions, probePositions));
         }
 

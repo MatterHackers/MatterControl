@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl
             PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
             printItemWrapper.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
-            SaveGCodeToNewLocation(sliceItem.GCodePathAndFileName, pathAndFilenameToSave);
+            SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), pathAndFilenameToSave);
         }
     }
 }

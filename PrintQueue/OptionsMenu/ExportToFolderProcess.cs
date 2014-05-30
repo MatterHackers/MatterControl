@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             sliceItem.SlicingOutputMessage.UnregisterEvent(printItemWrapper_SlicingOutputMessage, ref unregisterEvents);
             if (File.Exists(sliceItem.FileLocation))
             {
-                savedGCodeFileNames.Add(sliceItem.GCodePathAndFileName);
+                savedGCodeFileNames.Add(sliceItem.GetGCodePathAndFileName());
             }
 
             itemCountBeingWorkedOn++;
