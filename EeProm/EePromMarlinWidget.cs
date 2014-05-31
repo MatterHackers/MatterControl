@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.EeProm
 
                 CreateSpacer(bottomButtonBar);
 
-                CreateMainButton(ref buttonAbort, bottomButtonBar, "Cancel");
+                CreateMainButton(ref buttonAbort, bottomButtonBar, "Close");
                 buttonAbort.Click += buttonAbort_Click;
 
 				mainContainer.AddChild(bottomButtonBar);

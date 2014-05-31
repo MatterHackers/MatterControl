@@ -51,10 +51,12 @@ namespace MatterHackers.MatterControl
     {
         protected FlowLayoutWidget topToBottomControls;
 
-        public InstructionsPage(string instructionsText)
+        public InstructionsPage(string pageDescription, string instructionsText)
+            : base(pageDescription)
         {
             topToBottomControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            topToBottomControls.HAnchor |= Agg.UI.HAnchor.ParentCenter;
+            topToBottomControls.Padding = new BorderDouble(3);
+            topToBottomControls.HAnchor |= Agg.UI.HAnchor.ParentLeft;
             topToBottomControls.VAnchor |= Agg.UI.VAnchor.ParentTop;
 
 			AddTextField(instructionsText, 10);
@@ -73,15 +75,15 @@ namespace MatterHackers.MatterControl
             string wrappedInstructions = wrapper.InsertCRs(instructionsText, 400);
             string wrappedInstructionsTabsToSpaces = wrappedInstructions.Replace("\t", "    ");
 			TextWidget instructionsWidget = new TextWidget(wrappedInstructionsTabsToSpaces, textColor: ActiveTheme.Instance.PrimaryTextColor);
-            instructionsWidget.HAnchor = Agg.UI.HAnchor.ParentCenter;
+            instructionsWidget.HAnchor = Agg.UI.HAnchor.ParentLeft;
             topToBottomControls.AddChild(instructionsWidget);
         }
     }
 
     public class FirstPageInstructions : InstructionsPage
     {
-        public FirstPageInstructions(string instructionsText)
-            : base(instructionsText)
+        public FirstPageInstructions(string pageDescription, string instructionsText)
+            : base(pageDescription, instructionsText)
         {
         }
 
@@ -96,8 +98,8 @@ namespace MatterHackers.MatterControl
     {
         ProbePosition[] probePositions = new ProbePosition[3];
 
-        public LastPageInstructions(string instructionsText, ProbePosition[] probePositions)
-            : base(instructionsText)
+        public LastPageInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
+            : base(pageDescription, instructionsText)
         {
             this.probePositions = probePositions;
         }
@@ -119,8 +121,8 @@ namespace MatterHackers.MatterControl
 
     public class HomePrinterPage : InstructionsPage
     {
-        public HomePrinterPage(string instructionsText)
-            : base(instructionsText)
+        public HomePrinterPage(string pageDescription, string instructionsText)
+            : base(pageDescription, instructionsText)
         {
         }
 
@@ -140,8 +142,8 @@ namespace MatterHackers.MatterControl
         protected JogControls.MoveButton zPlusControl;
         protected JogControls.MoveButton zMinusControl;
 
-        public FindBedHeight(string instructionsText, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, ProbePosition whereToWriteProbePosition)
-            : base(instructionsText + "\n\n" + setZHeightCoarseInstruction1)
+        public FindBedHeight(string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, ProbePosition whereToWriteProbePosition)
+            : base(pageDescription, setZHeightCoarseInstruction1)
         {
             this.moveAmount = moveDistance;
             this.lastReportedPosition = PrinterCommunication.Instance.LastReportedPosition;
@@ -243,8 +245,8 @@ namespace MatterHackers.MatterControl
         Vector3 probeStartPosition;
         WizardControl container;
 
-        public GetCoarseBedHeight(WizardControl container, Vector3 probeStartPosition, string instructionsText, ProbePosition whereToWriteProbePosition)
-            : base(instructionsText, setZHeightCoarseInstruction1, setZHeightCoarseInstruction2, 1, whereToWriteProbePosition)
+        public GetCoarseBedHeight(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition)
+            : base(pageDescription, setZHeightCoarseInstruction1, setZHeightCoarseInstruction2, 1, whereToWriteProbePosition)
         {
             this.container = container;
             this.probeStartPosition = probeStartPosition;
@@ -283,8 +285,8 @@ namespace MatterHackers.MatterControl
 		static string setZHeightFineInstructionTextThree = LocalizedString.Get("Finally click 'Next' to continue.");
 		static string setZHeightFineInstruction2 = string.Format("\t• {0}\n\t• {1}\n\n{2}",setZHeightFineInstructionTextOne, setZHeightFineInstructionTextTwo, setZHeightFineInstructionTextThree);
 
-        public GetFineBedHeight(string instructionsText, ProbePosition whereToWriteProbePosition)
-            : base(instructionsText, setZHeightFineInstruction1, setZHeightFineInstruction2, .1, whereToWriteProbePosition)
+        public GetFineBedHeight(string pageDescription, ProbePosition whereToWriteProbePosition)
+            : base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .1, whereToWriteProbePosition)
         {
         }
     }
@@ -296,8 +298,8 @@ namespace MatterHackers.MatterControl
 		static string setHeightFineInstructionTextTwo = LocalizedString.Get("Finally click 'Next' to continue.");
 		static string setZHeightFineInstruction2 = string.Format("\t• {0}\n\n\n{1}", setHeightFineInstructionTextOne, setHeightFineInstructionTextTwo);
 
-        public GetUltraFineBedHeight(string instructionsText, ProbePosition whereToWriteProbePosition)
-            : base(instructionsText, setZHeightFineInstruction1, setZHeightFineInstruction2, .02, whereToWriteProbePosition)
+        public GetUltraFineBedHeight(string pageDescription, ProbePosition whereToWriteProbePosition)
+            : base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .02, whereToWriteProbePosition)
         {
         }
 
@@ -323,9 +325,11 @@ namespace MatterHackers.MatterControl
 
     public class PrintLevelWizardWindow : SystemWindow
     {
+        string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
         string requiredPageInstructions1 = "Congratulations on setting up your new printer. Before starting your first print we need to run a simple calibration procedure.";
         string requiredPageInstructions2 = "The next few screens will walk your through the print leveling wizard.";
 
+        string pageOneStepText = "Print Leveling Overview".Localize();
         string pageOneInstructionsTextOne = LocalizedString.Get("Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.");
 		string pageOneInstructionsTextTwo = LocalizedString.Get("'Home' the printer");
 		string pageOneInstructionsTextThree = LocalizedString.Get("Sample the bed at three points");
@@ -334,15 +338,26 @@ namespace MatterHackers.MatterControl
         string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extrude is clean.");
 		string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
 
-		string homingPageInstructionsTextOne = LocalizedString.Get("The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need");
+        string homingPageStepText = "Homing The Printer".Localize();
+        string homingPageInstructionsTextOne = LocalizedString.Get("The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need");
 		string homingPageInstructionsTextTwo = LocalizedString.Get("A standard sheet of paper");
 		string homingPageInstructionsTextThree = LocalizedString.Get("We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.");
 		 
 		string doneInstructionsText = LocalizedString.Get("Congratulations!\n\nAuto Print Leveling is now configured and enabled.");
 		string doneInstructionsTextTwo = LocalizedString.Get("Remove the paper");
-		string doneInstructionsTextThree = LocalizedString.Get("If in the future you wish to turn Auto Print Leveling off, you can uncheck the 'Enabled' button found in 'Advanced Settings'->'Printer Controls'.\n\nClick 'Done' to close this window.");
+		string doneInstructionsTextThree = LocalizedString.Get("If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.");
+        string stepTextBeg = LocalizedString.Get("Step");
+        string stepTextEnd = LocalizedString.Get("of");
 
         WizardControl printLevelWizard;
+
+        int stepNumber = 1;
+        
+        string GetStepString()
+        {
+            return string.Format("{0} {1} {2} 9:", stepTextBeg, stepNumber++, stepTextEnd);
+        }
+
         public PrintLevelWizardWindow(bool requiredForPrinter)
             : base(500, 370)
 		{
@@ -355,20 +370,19 @@ namespace MatterHackers.MatterControl
             probePositions[2] = new ProbePosition();
 
             printLevelWizard = new WizardControl();
-            printLevelWizard.DoneButton.Click += new ButtonBase.ButtonEventHandler(DoneButton_Click);
             AddChild(printLevelWizard);
 
             if(requiredForPrinter)
             {
                 string requiredPageInstructions = "{0}\n\n{1}".FormatWith(requiredPageInstructions1, requiredPageInstructions2);
-                printLevelWizard.AddPage(new FirstPageInstructions(requiredPageInstructions));
+                printLevelWizard.AddPage(new FirstPageInstructions(initialPrinterSetupStepText, requiredPageInstructions));
             }
 
             string pageOneInstructions = string.Format("{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}\n\n{6}", pageOneInstructionsTextOne, pageOneInstructionsTextTwo, pageOneInstructionsTextThree, pageOneInstructionsTextFour, pageOneInstructionsText5, pageOneInstructionsText6, pageOneInstructionsText7);
-            printLevelWizard.AddPage(new FirstPageInstructions(pageOneInstructions));
+            printLevelWizard.AddPage(new FirstPageInstructions(pageOneStepText, pageOneInstructions));
 
 			string homingPageInstructions = string.Format("{0}:\n\n\t• {1}\n\n{2}", homingPageInstructionsTextOne, homingPageInstructionsTextTwo, homingPageInstructionsTextThree);
-            printLevelWizard.AddPage(new HomePrinterPage(homingPageInstructions));
+            printLevelWizard.AddPage(new HomePrinterPage(homingPageStepText, homingPageInstructions));
 
             Vector2 probeBackCenter = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(0);
 
@@ -376,54 +390,36 @@ namespace MatterHackers.MatterControl
 			string lowPrecisionLabel = LocalizedString.Get ("Low Precision");
 			GetCoarseBedHeight getCourseBedHeight = new GetCoarseBedHeight (printLevelWizard, 
 				new Vector3 (probeBackCenter, 10), 
-				string.Format ("{0} {1} 1 - {2}", Step (),lowPrecisionPositionLabel, lowPrecisionLabel),
+				string.Format ("{0} {1} 1 - {2}", GetStepString(), lowPrecisionPositionLabel, lowPrecisionLabel),
 				probePositions [0]);
 
 			printLevelWizard.AddPage(getCourseBedHeight);
 			string precisionPositionLabel = LocalizedString.Get("Position");
 			string medPrecisionLabel = LocalizedString.Get("Medium Precision");
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 1 - {2}", Step(), precisionPositionLabel, medPrecisionLabel), probePositions[0]));
+			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 1 - {2}", GetStepString(), precisionPositionLabel, medPrecisionLabel), probePositions[0]));
 			string highPrecisionLabel = LocalizedString.Get("High Precision");
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 1 - {2}", Step(), precisionPositionLabel, highPrecisionLabel), probePositions[0]));
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 1 - {2}", GetStepString(), precisionPositionLabel, highPrecisionLabel), probePositions[0]));
 
             Vector2 probeFrontLeft = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(1);
 			string positionLabelTwo = LocalizedString.Get("Position");
 			string lowPrecisionTwoLabel = LocalizedString.Get("Low Precision");
 			string medPrecisionTwoLabel = LocalizedString.Get("Medium Precision");
 			string highPrecisionTwoLabel = LocalizedString.Get("High Precision");
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontLeft, 10), string.Format("{0} {1} 2 - {2}", Step(), positionLabelTwo, lowPrecisionTwoLabel  ), probePositions[1]));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", Step(), positionLabelTwo,medPrecisionTwoLabel), probePositions[1]));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", Step(), positionLabelTwo,highPrecisionTwoLabel), probePositions[1]));
+			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontLeft, 10), string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, lowPrecisionTwoLabel  ), probePositions[1]));
+			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo,medPrecisionTwoLabel), probePositions[1]));
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo,highPrecisionTwoLabel), probePositions[1]));
 
             Vector2 probeFrontRight = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(2);
 			string positionLabelThree = LocalizedString.Get("Position");
 			string lowPrecisionLabelThree = LocalizedString.Get("Low Precision");
 			string medPrecisionLabelThree = LocalizedString.Get("Medium Precision");
 			string highPrecisionLabelThree = LocalizedString.Get("High Precision");
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontRight, 10), string.Format("{0} {1} 3 - {2}", Step(), positionLabelThree, lowPrecisionLabelThree), probePositions[2]));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", Step(),positionLabelThree, medPrecisionLabelThree ), probePositions[2]));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", Step(), positionLabelThree, highPrecisionLabelThree ), probePositions[2]));
+			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontRight, 10), string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, lowPrecisionLabelThree), probePositions[2]));
+			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(),positionLabelThree, medPrecisionLabelThree ), probePositions[2]));
+			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, highPrecisionLabelThree ), probePositions[2]));
 
 			string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}",doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
-            printLevelWizard.AddPage(new LastPageInstructions(doneInstructions, probePositions));
-        }
-
-        int step = 1;
-		string stepTextBeg = LocalizedString.Get("Step");
-		string stepTextEnd = LocalizedString.Get("of");
-        string Step()
-        {
-			return string.Format("{0} {1} {2} 9:",stepTextBeg, step++, stepTextEnd);
-        }
-
-        void DoneButton_Click(object sender, MouseEventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle (DoDoneButton_Click);
-		}
-
-        void DoDoneButton_Click(object state)
-        {
-            Close();
+            printLevelWizard.AddPage(new LastPageInstructions("Done", doneInstructions, probePositions));
         }
     }
 }

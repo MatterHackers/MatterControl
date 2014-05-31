@@ -6,13 +6,17 @@ using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
     public class WizardPage : GuiWidget
     {
-        public WizardPage()
+        string stepDescription = "";
+        public string StepDescription { get { return stepDescription; } set { stepDescription = value; } }
+        public WizardPage(string stepDescription)
         {
+            StepDescription = stepDescription;
         }
 
         public virtual void PageIsBecomingActive()
@@ -34,57 +38,99 @@ namespace MatterHackers.MatterControl
         Button backButton;
         public Button nextButton;
         Button doneButton;
+        Button cancelButton;
 
-        public Button DoneButton
+        TextWidget stepDescriptionWidget;
+
+        public string StepDescription
         {
-            get { return doneButton; }
+            get { return stepDescriptionWidget.Text; }
+            set { stepDescriptionWidget.Text = value; }
         }
 
         public WizardControl()
         {
-            Padding = new BorderDouble(10);
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            topToBottom.AnchorAll();
+            topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+
+            FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+            headerRow.HAnchor = HAnchor.ParentLeftRight;
+            headerRow.Margin = new BorderDouble(0, 3, 0, 0);
+            headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+
+            {
+                string titleString = LocalizedString.Get("Title Stuff".Localize());
+                stepDescriptionWidget = new TextWidget(titleString, pointSize: 14);
+                stepDescriptionWidget.AutoExpandBoundsToText = true;
+                stepDescriptionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                stepDescriptionWidget.HAnchor = HAnchor.ParentLeftRight;
+                stepDescriptionWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+
+                headerRow.AddChild(stepDescriptionWidget);
+            }
+
+            topToBottom.AddChild(headerRow);
+
+            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.disabledTextColor = new RGBA_Bytes(200, 200, 200);
             textImageButtonFactory.disabledFillColor = new RGBA_Bytes(0, 0, 0, 0);
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             AnchorAll();
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             bottomToTopLayout = new FlowLayoutWidget(FlowDirection.BottomToTop);
-            FlowLayoutWidget buttonBar = new FlowLayoutWidget();
+            bottomToTopLayout.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 
-            textImageButtonFactory.FixedWidth = 60;
-			backButton = textImageButtonFactory.Generate(LocalizedString.Get("Back"), centerText: true);
-            backButton.Click += new ButtonBase.ButtonEventHandler(back_Click);
+            topToBottom.AddChild(bottomToTopLayout);
 
-			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Next"), centerText: true);
-            nextButton.Click += new ButtonBase.ButtonEventHandler(next_Click);
+            {
+                FlowLayoutWidget buttonBar = new FlowLayoutWidget();
+                buttonBar.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                buttonBar.Padding = new BorderDouble(0, 3);
 
-			doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"), centerText: true);
-            doneButton.Click += new ButtonBase.ButtonEventHandler(done_Click);
+                textImageButtonFactory.FixedWidth = 60;
+                backButton = textImageButtonFactory.Generate(LocalizedString.Get("Back"), centerText: true);
+                backButton.Click += new ButtonBase.ButtonEventHandler(back_Click);
 
-            textImageButtonFactory.FixedWidth = 0;
+                nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Next"), centerText: true);
+                nextButton.Click += new ButtonBase.ButtonEventHandler(next_Click);
 
-            buttonBar.AddChild(backButton);
-            buttonBar.AddChild(nextButton);
-            buttonBar.AddChild(doneButton);
+                doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"), centerText: true);
+                doneButton.Click += done_Click;
 
-            bottomToTopLayout.AddChild(buttonBar);
+                cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+                cancelButton.Click += done_Click;
+
+                buttonBar.AddChild(backButton);
+                buttonBar.AddChild(nextButton);
+                buttonBar.AddChild(new HorizontalSpacer());
+                buttonBar.AddChild(doneButton);
+                buttonBar.AddChild(cancelButton);
+
+                topToBottom.AddChild(buttonBar);
+            }
+
             bottomToTopLayout.AnchorAll();
 
-            AddChild(bottomToTopLayout);
+            AddChild(topToBottom);
         }
 
         void done_Click(object sender, MouseEventArgs mouseEvent)
         {
-            UiThread.RunOnIdle(CloseOnIdle);
-        }
+            GuiWidget windowToClose = this;
+            while (windowToClose != null && windowToClose as SystemWindow == null)
+            {
+                windowToClose = windowToClose.Parent;
+            }
 
-		void CloseOnIdle(object state)
-        {
-            Close();
+            SystemWindow topSystemWindow = windowToClose as SystemWindow;
+            if (topSystemWindow != null)
+            {
+                topSystemWindow.CloseOnIdle();
+            }
         }
 
         void next_Click(object sender, MouseEventArgs mouseEvent)
@@ -102,8 +148,6 @@ namespace MatterHackers.MatterControl
         void SetPageVisibility()
         {
             backButton.Enabled = true;
-            nextButton.Visible = true;
-            doneButton.Visible = false;
 
             for (int i = 0; i < pages.Count; i++)
             {
@@ -111,6 +155,7 @@ namespace MatterHackers.MatterControl
                 {
                     pages[i].Visible = true;
                     pages[i].PageIsBecomingActive();
+                    StepDescription = pages[i].StepDescription;
                 }
                 else
                 {
@@ -125,11 +170,18 @@ namespace MatterHackers.MatterControl
             if (pageIndex == 0)
             {
                 backButton.Enabled = false;
+                nextButton.Visible = true;
             }
-            if (pageIndex >= pages.Count -1)
+            if (pageIndex >= pages.Count - 1)
             {
                 nextButton.Visible = false;
                 doneButton.Visible = true;
+                cancelButton.Visible = false;
+            }
+            else
+            {
+                cancelButton.Visible = true;
+                doneButton.Visible = false;
             }
         }
 

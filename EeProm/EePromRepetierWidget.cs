@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.EeProm
         public void translate()
         {
             Title = LocalizedString.Get("Firmware EEPROM Settings");
-            buttonCancel.Text = LocalizedString.Get("Cancel");
+            buttonCancel.Text = LocalizedString.Get("Close");
             buttonCancel.Click += buttonAbort_Click;
 
             buttonSave.Text = LocalizedString.Get("Save to EEPROM");
