@@ -2268,3 +2268,18 @@ Translated:Show 3D
 English:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
 Translated:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
 
+English:Initial Printer Setup
+Translated:Initial Printer Setup
+
+English:Print Leveling Overview
+Translated:Print Leveling Overview
+
+English:Note: Be sure the tip of the extrude is clean.
+Translated:Note: Be sure the tip of the extrude is clean.
+
+English:Homing The Printer
+Translated:Homing The Printer
+
+English:Title Stuff
+Translated:Title Stuff
+

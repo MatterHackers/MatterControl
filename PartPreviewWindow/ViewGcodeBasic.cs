@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonBottomPanel.Padding = new BorderDouble(3, 3);
             buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			generateGCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Generate"));
+            generateGCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Generate"));
             generateGCodeButton.Click += new ButtonBase.ButtonEventHandler(generateButton_Click);
             buttonBottomPanel.AddChild(generateGCodeButton);
 
@@ -209,7 +209,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             viewControls3D = new ViewControls3D(meshViewerWidget);
             AddChild(viewControls3D);
             viewControls3D.Visible = false;
-            viewControls3D.translateButton.ClickButton(null);
+            //viewControls3D.translateButton.ClickButton(null);
+            viewControls3D.rotateButton.ClickButton(null);
+            // move things into the right place and scale
+            {
+                Vector3 bedCenter3D = new Vector3(bedCenter, 0);
+                meshViewerWidget.PrinterBed.Translate(bedCenter3D);
+                meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .05;
+                meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-bedCenter3D);
+            }
 
             viewControls2D.translateButton.Click += (sender, e) =>
             {
