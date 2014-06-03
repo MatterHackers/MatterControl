@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.ActionBar
         protected override void Initialize()
         {
             textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-            textImageButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
+			textImageButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
             textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
             textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
             textImageButtonFactory.AllowThemeToAdjustImage = false;
@@ -140,24 +140,29 @@ namespace MatterHackers.MatterControl.ActionBar
             skipButton.Click += new ButtonBase.ButtonEventHandler(onSkipButton_Click);
             removeButton.Click += new ButtonBase.ButtonEventHandler(onRemoveButton_Click);
             resumeButton.Click += new ButtonBase.ButtonEventHandler(onResumeButton_Click);
-
             pauseButton.Click += new ButtonBase.ButtonEventHandler(onPauseButton_Click);
-            cancelButton.Click += (sender, e) => 
+	        cancelButton.Click += (sender, e) => 
 			{ 	
-				cancelButtonWasClicked = true;
-				if (PrinterCommunication.CommunicationStates.Printing != null && cancelButtonWasClicked == true) 
-				{
-					DisableActiveButtons();
-				}
-
-				UiThread.RunOnIdle(CancelButton_Click); 
+				CancelButtonClickedPrintActive();
+				UiThread.RunOnIdle(CancelButton_Click);
 			};
             cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
             reprintButton.Click += new ButtonBase.ButtonEventHandler(onReprintButton_Click);
             doneWithCurrentPartButton.Click += new ButtonBase.ButtonEventHandler(onDoneWithCurrentPartButton_Click);
-
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
         }
+
+		public void CancelButtonClickedPrintActive()
+		{
+			cancelButtonWasClicked = true;
+			if (PrinterCommunication.CommunicationStates.Printing != null && cancelButtonWasClicked == true)
+				UiThread.RunOnIdle ((state) => 
+				{
+					StyledMessageBox.ShowMessageBox("Active print will now cancel automatically once the extruder has reached it's target temperature.", "Active print cancelling...", StyledMessageBox.MessageType.OK);
+					DisableActiveButtons();
+				}
+				);
+		}
 
         public override void OnClosed(EventArgs e)
         {
