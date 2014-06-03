@@ -164,6 +164,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             throw new NotImplementedException();
                     }
 
+			   case Agg.UI.WindowsFormsAbstract.OSType.X11:
+					switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
+					{
+						case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
+							{
+								//string parentLocation = Directory.GetParent (ApplicationDataStorage.Instance.ApplicationPath).ToString ();
+								string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "Slic3r.app", "Contents", "MacOS", "slic3r");
+								return applicationPath;
+							}
+						case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
+							{
+								string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
+								return applicationPath;
+							}
+						case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
+							{
+								string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "MatterSlice");
+								return applicationPath;
+							}
+
+					default:
+						throw new NotImplementedException();
+					}
+					
                 default:
                     throw new NotImplementedException();
             }
