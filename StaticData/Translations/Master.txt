@@ -2283,3 +2283,9 @@ Translated:Homing The Printer
 English:Title Stuff
 Translated:Title Stuff
 
+English:Select the baud rate.
+Translated:Select the baud rate.
+
+English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+
