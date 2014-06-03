@@ -154,6 +154,44 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
                 case Agg.UI.WindowsFormsAbstract.OSType.Mac:
                     break;
+
+				case Agg.UI.WindowsFormsAbstract.OSType.X11:
+				if (File.Exists(fileName))
+				{
+					if (Path.GetExtension(fileName).ToUpper() == ".INF")
+					{
+						var driverInstallerProcess = new Process();
+						// Prepare the process to run
+						// Enter in the command line arguments, everything you would enter after the executable name itself
+						driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
+						// Enter the executable to run, including the complete path
+						string printerDriverInstallerExePathAndFileName = Path.Combine(".", "InfInstaller.exe");
+
+						driverInstallerProcess.StartInfo.CreateNoWindow = true;
+						driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+						driverInstallerProcess.StartInfo.FileName = Path.GetFullPath(printerDriverInstallerExePathAndFileName);
+						driverInstallerProcess.StartInfo.Verb = "runas";
+						driverInstallerProcess.StartInfo.UseShellExecute = true;
+
+						driverInstallerProcess.Start();
+
+						driverInstallerProcess.WaitForExit();
+
+						// Retrieve the app's exit code
+						var exitCode = driverInstallerProcess.ExitCode;
+					}
+					else
+					{
+						Process.Start(fileName);
+					}
+				}
+				else
+				{
+					throw new Exception(string.Format("Can't find dirver {0}.", fileName));
+				}
+				break;
+
             }
         }
 

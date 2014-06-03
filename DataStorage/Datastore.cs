@@ -118,7 +118,16 @@ namespace MatterHackers.MatterControl.DataStorage
 						{
 							return Path.Combine("..", "..", "StaticData");
 						}
-
+					case Agg.UI.WindowsFormsAbstract.OSType.X11:
+						if (Directory.Exists("StaticData"))
+						{
+							return "StaticData";
+						}
+						else
+						{
+							return Path.Combine("..", "..", "StaticData");
+						}
+						
                     default:
                         throw new NotImplementedException();
 				}
@@ -197,7 +206,8 @@ namespace MatterHackers.MatterControl.DataStorage
                 }
             }
             
-            switch (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType())
+			Agg.UI.WindowsFormsAbstract.OSType osType = MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType ();
+			switch (osType)
             {
                 case Agg.UI.WindowsFormsAbstract.OSType.Windows:
                     dbSQLite = new SQLiteWin32.SQLiteConnection(datastoreLocation);
@@ -206,6 +216,9 @@ namespace MatterHackers.MatterControl.DataStorage
                 case Agg.UI.WindowsFormsAbstract.OSType.Mac:
                     dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
                     break;
+				case Agg.UI.WindowsFormsAbstract.OSType.X11:
+					dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
+					break;
 
                 default:
                     throw new NotImplementedException();

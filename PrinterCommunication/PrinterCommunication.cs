@@ -1240,10 +1240,14 @@ namespace MatterHackers.MatterControl
         //Function is not mac-friendly
         bool SerialPortAlreadyOpen(string portName)
         {
-            if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Mac)
-            {
-                return false;
-            }
+			if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType () == WindowsFormsAbstract.OSType.Mac)
+			{
+				return false;
+			}
+			else if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType () == WindowsFormsAbstract.OSType.X11) 
+			{
+				return false;
+			}
             else
             {
                 int dwFlagsAndAttributes = 0x40000000;

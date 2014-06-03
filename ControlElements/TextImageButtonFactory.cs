@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
         {
             FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 
-            editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_Black.png")));
+			editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
             editButton.Margin = new BorderDouble(2, -2, 2, 0);
             editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
             TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
