@@ -73,6 +73,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("repair_outlines_keep_open");
                     hideItems.Add("repair_overlaps_reverse_orientation");
                     hideItems.Add("repair_overlaps_union_all_together");
+                    hideItems.Add("complete_objects");
+                    hideItems.Add("output_filename_format");
+                    hideItems.Add("post_process");
+                    hideItems.Add("extruder_clearance_height");
+                    hideItems.Add("extruder_clearance_radius");
+                    hideItems.Add("wipe_shield_distance");
                 }
                 return instance;
             }
