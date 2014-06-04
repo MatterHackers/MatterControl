@@ -62,7 +62,6 @@ namespace MatterHackers.MatterControl
 
             public PartImage(ImageBuffer imageOfPart)
             {
-                // TODO: Complete member initialization
                 this.image = imageOfPart;
             }
         }
