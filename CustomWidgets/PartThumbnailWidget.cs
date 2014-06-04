@@ -55,6 +55,9 @@ namespace MatterHackers.MatterControl
         static BackgroundWorker createThumbnailWorker = null;
 
         PrintItemWrapper printItem;
+		PartPreviewMainWindow partPreviewWindow;
+		bool partPreviewWindowIsOpen = false;
+
         public PrintItemWrapper PrintItem
         {
             get { return printItem; }
@@ -315,9 +318,10 @@ namespace MatterHackers.MatterControl
             if (printItem != null)
             {
                 string pathAndFile = printItem.FileLocation;
-                if (File.Exists(pathAndFile))
+				if (File.Exists(pathAndFile))
                 {
-                    new PartPreviewMainWindow(printItem);
+					OpenPartPreviewWindow ();
+					// new PartPreviewMainWindow(printItem);
                 }
                 else
                 {
@@ -325,6 +329,29 @@ namespace MatterHackers.MatterControl
                 }
             }
         }
+
+		void PartPreviewWindow_Closed(object sender, EventArgs e)
+		{
+			this.partPreviewWindowIsOpen = false;
+		}
+
+		private void OpenPartPreviewWindow()
+		{
+			if (partPreviewWindowIsOpen == false)
+			{
+				partPreviewWindow = new PartPreviewMainWindow (this.PrintItem);
+				this.partPreviewWindowIsOpen = true;
+				partPreviewWindow.Closed += new EventHandler (PartPreviewWindow_Closed);
+			}
+			else
+			{
+				if (partPreviewWindow != null)
+				{
+					partPreviewWindow.BringToFront ();
+				}
+			}
+
+		}
 
         private void onEnter(object sender, EventArgs e)
         {
