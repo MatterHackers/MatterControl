@@ -58,12 +58,12 @@ namespace MatterHackers.MatterControl
 			}
 
 			//Creates container in the middle of window
-			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			FlowLayoutWidget middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
-				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
-				presetsFormContainer.Padding = new BorderDouble(5);
-				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+				middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
+				middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
+				middleRowContainer.Padding = new BorderDouble(5);
+				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
 			string fileNameLabel = "Design Name";
@@ -87,12 +87,12 @@ namespace MatterHackers.MatterControl
 			addToLibraryOption.Margin = new BorderDouble (5);
 			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
 
-			presetsFormContainer.AddChild(textBoxHeader);
-			presetsFormContainer.AddChild (textBoxHeaderFull);
-			presetsFormContainer.AddChild(textToAddWidget);
-			presetsFormContainer.AddChild(new HorizontalSpacer());
-			presetsFormContainer.AddChild(addToLibraryOption);
-			topToBottom.AddChild(presetsFormContainer);
+			middleRowContainer.AddChild(textBoxHeader);
+			middleRowContainer.AddChild (textBoxHeaderFull);
+			middleRowContainer.AddChild(textToAddWidget);
+			middleRowContainer.AddChild(new HorizontalSpacer());
+			middleRowContainer.AddChild(addToLibraryOption);
+			topToBottom.AddChild(middleRowContainer);
 
 			//Creates button container on the bottom of window 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
