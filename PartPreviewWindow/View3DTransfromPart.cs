@@ -264,11 +264,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
             centerPartPreviewAndControls.AnchorAll();
 
-            if (windowType == WindowType.Embeded)
-            {
-                PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
-            }
-
             GuiWidget viewArea = new GuiWidget();
             viewArea.AnchorAll();
             {
@@ -456,6 +451,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 enterEditButtonsContainer.Visible = false;
             }
 
+            if (windowType == WindowType.Embeded)
+            {
+                PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
+            }
             SetEditControlsBasedOnPrinterState(this, null);
         }
 

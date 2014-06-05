@@ -142,7 +142,6 @@ namespace MatterHackers.MatterControl
                 Title = Title + " - {1}".FormatWith(version, OemSettings.Instance.WindowTitleExtra);
             }
 
-            ActivePrinterProfile.CheckForAndDoAutoConnect();
             UiThread.RunOnIdle(CheckOnPrinter);
 
             MinimumSize = new Vector2(590, 630);
@@ -276,6 +275,8 @@ namespace MatterHackers.MatterControl
 
             if (firstDraw)
             {
+                UiThread.RunOnIdle(DoAutoConnectIfRequired);
+
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
@@ -285,6 +286,11 @@ namespace MatterHackers.MatterControl
                     }
                 }
             }
+        }
+
+        public void DoAutoConnectIfRequired(object state)
+        {
+            ActivePrinterProfile.CheckForAndDoAutoConnect();
         }
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)
