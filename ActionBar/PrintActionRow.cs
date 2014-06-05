@@ -36,7 +36,6 @@ namespace MatterHackers.MatterControl.ActionBar
         TooltipButton doneWithCurrentPartButton;
 
         QueueDataView queueDataView;
-		bool cancelButtonWasClicked = false;
 
         public PrintActionRow(QueueDataView queueDataView)
         {
@@ -141,29 +140,14 @@ namespace MatterHackers.MatterControl.ActionBar
             removeButton.Click += new ButtonBase.ButtonEventHandler(onRemoveButton_Click);
             resumeButton.Click += new ButtonBase.ButtonEventHandler(onResumeButton_Click);
             pauseButton.Click += new ButtonBase.ButtonEventHandler(onPauseButton_Click);
-	        cancelButton.Click += (sender, e) => 
-			{ 	
-				CancelButtonClickedPrintActive();
-				UiThread.RunOnIdle(CancelButton_Click);
-			};
+
+			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
             cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
             reprintButton.Click += new ButtonBase.ButtonEventHandler(onReprintButton_Click);
             doneWithCurrentPartButton.Click += new ButtonBase.ButtonEventHandler(onDoneWithCurrentPartButton_Click);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
         }
-
-		public void CancelButtonClickedPrintActive()
-		{
-			cancelButtonWasClicked = true;
-			if (PrinterCommunication.CommunicationStates.Printing != null && cancelButtonWasClicked == true)
-				UiThread.RunOnIdle ((state) => 
-				{
-					StyledMessageBox.ShowMessageBox("Cancel confirmed. Please wait for active printer communication to be completed, then continue printing.", "Print Cancelling", StyledMessageBox.MessageType.OK);
-					DisableActiveButtons();
-				}
-				);
-		}
-
+			
         public override void OnClosed(EventArgs e)
         {
             if (unregisterEvents != null)
