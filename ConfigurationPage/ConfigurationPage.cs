@@ -517,13 +517,11 @@ namespace MatterHackers.MatterControl
         {
             if (printLevelWizardWindow == null)
             {
-                LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.UserRequestedCalibration);
+                printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.UserRequestedCalibration);
                 printLevelWizardWindow.Closed += (sender, e) =>
                 {
                     printLevelWizardWindow = null;
                 };
-
-                printLevelWizardWindow.ShowAsSystemWindow();
             }
             else 
             {

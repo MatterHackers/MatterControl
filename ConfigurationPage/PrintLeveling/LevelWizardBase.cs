@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
         }
 
         public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
-        public static void CreateAndShowWizard(RuningState runningState)
+        public static LevelWizardBase CreateAndShowWizard(RuningState runningState)
         {
             LevelWizardBase printLevelWizardWindow;
             if (ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingType != null
@@ -96,6 +96,7 @@ namespace MatterHackers.MatterControl
                 printLevelWizardWindow = new LevelWizard3Point(runningState);
             }
             printLevelWizardWindow.ShowAsSystemWindow();
+            return printLevelWizardWindow;
         }
     }
 }
