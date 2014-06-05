@@ -55,6 +55,9 @@ namespace MatterHackers.MatterControl
         static BackgroundWorker createThumbnailWorker = null;
 
         PrintItemWrapper printItem;
+		PartPreviewMainWindow partPreviewWindow;
+		bool partPreviewWindowIsOpen = false;
+
         public PrintItemWrapper PrintItem
         {
             get { return printItem; }
@@ -315,16 +318,16 @@ namespace MatterHackers.MatterControl
             if (printItem != null)
             {
                 string pathAndFile = printItem.FileLocation;
-                if (File.Exists(pathAndFile))
+				if (File.Exists(pathAndFile))
                 {
                     bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
                     if (shiftKeyDown)
                     {
-                        new PartPreviewMainWindow(printItem, View3DTransformPart.AutoRotate.Disabled);
+                        OpenPartPreviewWindow (View3DTransformPart.AutoRotate.Disabled);
                     }
                     else
                     {
-                        new PartPreviewMainWindow(printItem, View3DTransformPart.AutoRotate.Enabled);
+                        OpenPartPreviewWindow (View3DTransformPart.AutoRotate.Enabled);
                     }
                 }
                 else
@@ -333,6 +336,29 @@ namespace MatterHackers.MatterControl
                 }
             }
         }
+
+		void PartPreviewWindow_Closed(object sender, EventArgs e)
+		{
+			this.partPreviewWindowIsOpen = false;
+		}
+
+		private void OpenPartPreviewWindow(View3DTransformPart.AutoRotate autoRotate)
+		{
+			if (partPreviewWindowIsOpen == false)
+			{
+                partPreviewWindow = new PartPreviewMainWindow(this.PrintItem, autoRotate);
+				this.partPreviewWindowIsOpen = true;
+				partPreviewWindow.Closed += new EventHandler (PartPreviewWindow_Closed);
+			}
+			else
+			{
+				if (partPreviewWindow != null)
+				{
+					partPreviewWindow.BringToFront ();
+				}
+			}
+
+		}
 
         private void onEnter(object sender, EventArgs e)
         {

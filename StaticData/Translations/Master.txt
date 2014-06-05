@@ -2265,27 +2265,9 @@ Translated:Layers
 English:Show 3D
 Translated:Show 3D
 
-English:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
-Translated:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
+English:Uh-oh! Could not connect to printer.
+Translated:Uh-oh! Could not connect to printer.
 
-English:Initial Printer Setup
-Translated:Initial Printer Setup
-
-English:Print Leveling Overview
-Translated:Print Leveling Overview
-
-English:Note: Be sure the tip of the extrude is clean.
-Translated:Note: Be sure the tip of the extrude is clean.
-
-English:Homing The Printer
-Translated:Homing The Printer
-
-English:Title Stuff
-Translated:Title Stuff
-
-English:Select the baud rate.
-Translated:Select the baud rate.
-
-English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+English:Installing
+Translated:Installing
 
