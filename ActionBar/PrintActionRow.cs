@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (PrinterCommunication.CommunicationStates.Printing != null && cancelButtonWasClicked == true)
 				UiThread.RunOnIdle ((state) => 
 				{
-					StyledMessageBox.ShowMessageBox("Active print will now cancel automatically once the extruder has reached it's target temperature.", "Active print cancelling...", StyledMessageBox.MessageType.OK);
+					StyledMessageBox.ShowMessageBox("Cancel confirmed. Please wait for active printer communication to be completed, then continue printing.", "Print Cancelling", StyledMessageBox.MessageType.OK);
 					DisableActiveButtons();
 				}
 				);
