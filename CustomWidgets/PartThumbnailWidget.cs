@@ -317,7 +317,15 @@ namespace MatterHackers.MatterControl
                 string pathAndFile = printItem.FileLocation;
                 if (File.Exists(pathAndFile))
                 {
-                    new PartPreviewMainWindow(printItem);
+                    bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
+                    if (shiftKeyDown)
+                    {
+                        new PartPreviewMainWindow(printItem, View3DTransformPart.AutoRotate.Disabled);
+                    }
+                    else
+                    {
+                        new PartPreviewMainWindow(printItem, View3DTransformPart.AutoRotate.Enabled);
+                    }
                 }
                 else
                 {

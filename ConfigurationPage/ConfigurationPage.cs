@@ -395,7 +395,7 @@ namespace MatterHackers.MatterControl
             return topLine;
         }
 
-        PrintLevelWizardWindow printLevelWizardWindow;        
+        SystemWindow printLevelWizardWindow;        
 
         public override void OnClosed(EventArgs e)
         {
@@ -451,7 +451,10 @@ namespace MatterHackers.MatterControl
                 Button runPrintLevelingButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
                 runPrintLevelingButton.Margin = new BorderDouble(left:6);
                 runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-                runPrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(runPrintLeveling_Click);
+                runPrintLevelingButton.Click += (sender, e) =>
+                {
+                    OpenPrintLevelWizard();
+                };
 
                 Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
 				ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
@@ -514,11 +517,12 @@ namespace MatterHackers.MatterControl
         {
             if (printLevelWizardWindow == null)
             {
-                printLevelWizardWindow = new PrintLevelWizardWindow(false);
+                LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.UserRequestedCalibration);
                 printLevelWizardWindow.Closed += (sender, e) =>
                 {
                     printLevelWizardWindow = null;
                 };
+
                 printLevelWizardWindow.ShowAsSystemWindow();
             }
             else 
@@ -652,11 +656,6 @@ namespace MatterHackers.MatterControl
         public override void OnClosing(out bool CancelClose)
         {
             base.OnClosing(out CancelClose);
-        }
-
-        void runPrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
-        {
-            OpenPrintLevelWizard();
         }
     }
 }

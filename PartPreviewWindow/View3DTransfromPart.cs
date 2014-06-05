@@ -246,8 +246,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnClosed(e);
         }
 
-        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, bool standAloneWindow)
+        public enum WindowType { Embeded, StandAlone };
+        public enum AutoRotate { Enabled, Disabled };
+
+        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate)
         {
+            autoRotateEnabled = (autoRotate == AutoRotate.Enabled);
             MeshExtraData = new List<PlatingMeshData>();
             MeshExtraData.Add(new PlatingMeshData());
 
@@ -260,7 +264,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
             centerPartPreviewAndControls.AnchorAll();
 
-            if (!standAloneWindow)
+            if (windowType == WindowType.Embeded)
             {
                 PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
             }
@@ -417,7 +421,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             leftRightSpacer.HAnchor = HAnchor.ParentLeftRight;
             buttonBottomPanel.AddChild(leftRightSpacer);
 
-            if (standAloneWindow)
+            if (windowType == WindowType.StandAlone)
             {
                 Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
                 buttonBottomPanel.AddChild(closeButton);
@@ -447,7 +451,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             UiThread.RunOnIdle(AutoSpin);
 
-            if (printItemWrapper == null && !standAloneWindow)
+            if (printItemWrapper == null && windowType == WindowType.Embeded)
             {
                 enterEditButtonsContainer.Visible = false;
             }

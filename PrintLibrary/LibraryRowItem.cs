@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (viewWindowIsOpen == false)
 			{
-				viewingWindow =  new PartPreviewMainWindow(this.printItemWrapper);
+				viewingWindow =  new PartPreviewMainWindow(this.printItemWrapper, View3DTransformPart.AutoRotate.Enabled);
 				this.viewWindowIsOpen = true;
 				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed); 
 			}

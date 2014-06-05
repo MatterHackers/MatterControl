@@ -376,6 +376,7 @@ namespace MatterHackers.MatterControl.DataStorage
         public bool AutoConnectFlag { get; set; } //Auto connect to printer (if available)
         public bool DoPrintLeveling { get; set; }
         public bool NeedsPrintLeveling { get; set; }
+        public string PrintLevelingType { get; set; }
 
         // features
         public string _features { get; set; }

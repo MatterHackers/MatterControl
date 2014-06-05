@@ -97,6 +97,10 @@
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="ApplicationView\MainScreenTabView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard2Point.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3Point.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardBase.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
     <Compile Include="DataStorage\Models.cs" />
@@ -145,7 +149,7 @@
     <Compile Include="Testing\ReleaseTests.cs" />
     <Compile Include="Testing\TestingDispatch.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
-    <Compile Include="ConfigurationPage\PrintLevelWizard.cs" />
+    <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelPages.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />
     <Compile Include="CustomWidgets\ClickWidget.cs">
       <DependentUpon>ExportPrintItemWindow.cs</DependentUpon>

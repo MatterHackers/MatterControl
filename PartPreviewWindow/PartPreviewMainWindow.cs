@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         View3DTransformPart view3DTransformPart;
         ViewGcodeBasic viewGcodeBasic;
 
-        public PartPreviewMainWindow(PrintItemWrapper printItem)
+        public PartPreviewMainWindow(PrintItemWrapper printItem, View3DTransformPart.AutoRotate autoRotate3DView)
             : base(690, 340)
         {
             string partPreviewTitle = LocalizedString.Get("MatterControl");
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 string part3DViewLabelFull = string.Format("{0} {1} ", "3D", "View".Localize());
 
-                view3DTransformPart = new View3DTransformPart(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, true);
+                view3DTransformPart = new View3DTransformPart(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, View3DTransformPart.WindowType.StandAlone, autoRotate3DView);
                 TabPage partPreview3DView = new TabPage(view3DTransformPart, part3DViewLabelFull);
                 tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView, 16,
                             ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));

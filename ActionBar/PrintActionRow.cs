@@ -238,9 +238,7 @@ namespace MatterHackers.MatterControl.ActionBar
                 && ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1).z == 0
                 && ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2).z == 0)
             {
-                PrintLevelWizardWindow printLevelWizardWindow = new PrintLevelWizardWindow(true);
-                printLevelWizardWindow.ShowAsSystemWindow();
-                
+                LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
                 return;
             }
 

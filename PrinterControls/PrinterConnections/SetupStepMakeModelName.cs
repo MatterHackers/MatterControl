@@ -209,6 +209,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 ActivePrinter.NeedsPrintLeveling = true;
             }
 
+            string printLevelingType;
+            if (settingsDict.TryGetValue("print_leveling_type", out printLevelingType))
+            {
+                ActivePrinter.PrintLevelingType = printLevelingType;
+            }
+
             string defaultSliceEngine;
             if (settingsDict.TryGetValue("default_slice_engine", out defaultSliceEngine))
             {

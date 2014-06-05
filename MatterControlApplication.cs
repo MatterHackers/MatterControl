@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl
                 {
                     if (Path.GetExtension(arg).ToUpper() == ".STL")
                     {
-                        new PartPreviewMainWindow(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
+                        new PartPreviewMainWindow(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))), View3DTransformPart.AutoRotate.Enabled);
                     }
                 }
             }
