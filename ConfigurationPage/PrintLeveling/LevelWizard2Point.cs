@@ -40,7 +40,7 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
     public class LevelWizard2Point : LevelWizardBase
     {
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
         string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extrude is clean.");
         string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
 
-        public LevelWizard2Point(RuningState runningState)
+        public LevelWizard2Point(LevelWizardBase.RuningState runningState)
             : base(500, 370, 6)
         {
             string printLevelWizardTitle = LocalizedString.Get("MatterControl");
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
             printLevelWizard = new WizardControl();
             AddChild(printLevelWizard);
 
-            if (runningState == RuningState.InitialStartupCalibration)
+            if (runningState == LevelWizardBase.RuningState.InitialStartupCalibration)
             {
                 string requiredPageInstructions = "{0}\n\n{1}".FormatWith(requiredPageInstructions1, requiredPageInstructions2);
                 printLevelWizard.AddPage(new FirstPageInstructions(initialPrinterSetupStepText, requiredPageInstructions));

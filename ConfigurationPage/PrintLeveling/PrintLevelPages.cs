@@ -40,7 +40,7 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
     public class FirstPageInstructions : InstructionsPage
     {
@@ -68,13 +68,10 @@ namespace MatterHackers.MatterControl
 
         public override void PageIsBecomingActive()
         {
-            double[] printLevelPositions3x3 =  
-            {
-                probePositions[0].position.x, probePositions[0].position.y, probePositions[0].position.z, 
-                probePositions[1].position.x, probePositions[1].position.y, probePositions[1].position.z, 
-                probePositions[2].position.x, probePositions[2].position.y, probePositions[2].position.z, 
-            };
-            ActivePrinterProfile.Instance.SetPrintLevelingMeasuredPositions(printLevelPositions3x3);
+            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+            levelingData.position0 = probePositions[0].position;
+            levelingData.position1 = probePositions[1].position;
+            levelingData.position2 = probePositions[2].position;
 
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();

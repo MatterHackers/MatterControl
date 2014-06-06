@@ -374,9 +374,11 @@ namespace MatterHackers.MatterControl.DataStorage
         public string ComPort { get; set; }
         public string BaudRate { get; set; }
         public bool AutoConnectFlag { get; set; } //Auto connect to printer (if available)
+        
+        // all the data about print leveling
         public bool DoPrintLeveling { get; set; }
-        public bool NeedsPrintLeveling { get; set; }
-        public string PrintLevelingType { get; set; }
+        public string PrintLevelingJsonData { get; set; }
+        public string PrintLevelingProbePositions { get; set; } // this is depricated go through PrintLevelingData
 
         // features
         public string _features { get; set; }
@@ -387,11 +389,6 @@ namespace MatterHackers.MatterControl.DataStorage
 
         public string MaterialCollectionIds { get; set; } // store id1,id2... (for N extruders)
         public int QualityCollectionId { get; set; }
-
-        /// <summary>
-        /// This stores the 3 bed probed positions as a string. 3 * (x, y, z) = 9 values.
-        /// </summary>
-        public string PrintLevelingProbePositions { get; set; }
 
         protected PrinterFeatures printerFeatures;
         public PrinterFeatures GetFeatures()
@@ -412,46 +409,6 @@ namespace MatterHackers.MatterControl.DataStorage
             }
 
             base.Commit();
-        }
-
-        /// <summary>
-        /// Gets the 9 {3 * (x, y, z)} positions that were probed during the print leveling setup.
-        /// </summary>
-        /// <returns></returns>
-        public double[] GetPrintLevelingMeasuredPositions()
-        {
-            double[] positions = new double[9];
-
-            if (PrintLevelingProbePositions != null)
-            {
-                string[] lines = PrintLevelingProbePositions.Split(',');
-                if (lines.Length == 9)
-                {
-                    for (int i = 0; i < 9; i++)
-                    {
-                        positions[i] = double.Parse(lines[i]);
-                    }
-                }
-            }
-
-            return positions;
-        }
-
-        public void SetPrintLevelingMeasuredPositions(double[] printLevelingPositions3_xyz)
-        {
-            StringBuilder allValues = new StringBuilder();
-            bool first = true;
-            foreach (double position in printLevelingPositions3_xyz)
-            {
-                if (!first)
-                {
-                    allValues.Append(",");
-                }
-                allValues.Append(position);
-                first = false;
-            }
-
-            PrintLevelingProbePositions = allValues.ToString();
         }
 
         public Printer()

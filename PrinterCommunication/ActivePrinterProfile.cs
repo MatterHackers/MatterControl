@@ -46,10 +46,11 @@ using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl
 {
-    public class TepmRootedObjectEventHandler
+    public class TempRootedObjectEventHandler
     {
 #if DEBUG
         private event EventHandler InternalEventForDebug;
@@ -114,7 +115,7 @@ namespace MatterHackers.MatterControl
         static ActivePrinterProfile globalInstance = null;
 
         public RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
-        public TepmRootedObjectEventHandler DoPrintLevelingChanged = new TepmRootedObjectEventHandler();
+        public TempRootedObjectEventHandler DoPrintLevelingChanged = new TempRootedObjectEventHandler();
 
         // private so that it can only be gotten through the Instance
         ActivePrinterProfile()
@@ -314,9 +315,21 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        PrintLevelingData activePrinterPrintLevelingData = null;
         public void OnActivePrinterChanged(EventArgs e)
         {
+            activePrinterPrintLevelingData = null;
             ActivePrinterChanged.CallEvents(this, e);
+        }
+
+        public PrintLevelingData GetPrintLevelingData()
+        {
+            if (activePrinterPrintLevelingData == null)
+            {
+                activePrinterPrintLevelingData = PrintLevelingData.CreateFromJsonOrLegacy(ActivePrinter.PrintLevelingJsonData, ActivePrinter.PrintLevelingProbePositions);
+            }
+
+            return activePrinterPrintLevelingData;
         }
 
         public bool DoPrintLeveling
@@ -340,48 +353,14 @@ namespace MatterHackers.MatterControl
 
                     if (DoPrintLeveling)
                     {
+                        PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
                         PrintLeveling.Instance.SetPrintLevelingEquation(
-                            GetPrintLevelingMeasuredPosition(0),
-                            GetPrintLevelingMeasuredPosition(1),
-                            GetPrintLevelingMeasuredPosition(2),
+                            levelingData.position0,
+                            levelingData.position1,
+                            levelingData.position2,
                             ActiveSliceSettings.Instance.PrintCenter);
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// This function returns one of the three positions as it was actually measured
-        /// </summary>
-        /// <param name="position0To2"></param>
-        /// <returns></returns>
-        public Vector3 GetPrintLevelingMeasuredPosition(int position0To2)
-        {
-            if (ActivePrinter != null)
-            {
-                double[] positions = ActivePrinter.GetPrintLevelingMeasuredPositions();
-                switch (position0To2)
-                {
-                    case 0:
-                        return new Vector3(positions[0], positions[1], positions[2]);
-                    case 1:
-                        return new Vector3(positions[3], positions[4], positions[5]);
-                    case 2:
-                        return new Vector3(positions[6], positions[7], positions[8]);
-                    default:
-                        throw new Exception("there are only 3 probe positions.");
-                }
-            }
-
-            return Vector3.Zero;
-        }
-
-        public void SetPrintLevelingMeasuredPositions(double[] printLevelingPositions3_xyz)
-        {
-            if (ActivePrinter != null)
-            {
-                ActivePrinter.SetPrintLevelingMeasuredPositions(printLevelingPositions3_xyz);
-                ActivePrinter.Commit();
             }
         }
 

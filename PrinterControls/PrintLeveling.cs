@@ -7,6 +7,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.RayTracer;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl
 {
@@ -58,9 +59,9 @@ namespace MatterHackers.MatterControl
                 Vector3 outPosition1 = Vector3.TransformPosition(position1, makePointsFlatMatrix);
                 Vector3 outPosition2 = Vector3.TransformPosition(position2, makePointsFlatMatrix);
 
-                Vector3 printPosition0 = new Vector3(ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(0), 0);
-                Vector3 printPosition1 = new Vector3(ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(1), 0);
-                Vector3 printPosition2 = new Vector3(ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(2), 0);
+                Vector3 printPosition0 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(0), 0);
+                Vector3 printPosition1 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(1), 0);
+                Vector3 printPosition2 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(2), 0);
 
                 Vector3 leveledPositon0 = Vector3.TransformPosition(printPosition0, bedLevelMatrix);
                 Vector3 leveledPositon1 = Vector3.TransformPosition(printPosition1, bedLevelMatrix);

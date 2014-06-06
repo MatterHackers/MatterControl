@@ -40,7 +40,7 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
     public class LevelWizard3Point : LevelWizardBase
     {
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
         string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extrude is clean.");
         string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
 
-        public LevelWizard3Point(RuningState runningState)
+        public LevelWizard3Point(LevelWizardBase.RuningState runningState)
             : base(500, 370, 9)
         {
             string printLevelWizardTitle = LocalizedString.Get("MatterControl");
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
             printLevelWizard = new WizardControl();
             AddChild(printLevelWizard);
 
-            if (runningState == RuningState.InitialStartupCalibration)
+            if (runningState == LevelWizardBase.RuningState.InitialStartupCalibration)
             {
                 string requiredPageInstructions = "{0}\n\n{1}".FormatWith(requiredPageInstructions1, requiredPageInstructions2);
                 printLevelWizard.AddPage(new FirstPageInstructions(initialPrinterSetupStepText, requiredPageInstructions));
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl
             string homingPageInstructions = string.Format("{0}:\n\n\t• {1}\n\n{2}", homingPageInstructionsTextOne, homingPageInstructionsTextTwo, homingPageInstructionsTextThree);
             printLevelWizard.AddPage(new HomePrinterPage(homingPageStepText, homingPageInstructions));
 
-            Vector2 probeBackCenter = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(0);
+            Vector2 probeBackCenter = LevelWizardBase.GetPrintLevelPositionToSample(0);
 
             string lowPrecisionPositionLabel = LocalizedString.Get("Position");
             string lowPrecisionLabel = LocalizedString.Get("Low Precision");
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
             string highPrecisionLabel = LocalizedString.Get("High Precision");
             printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 1 - {2}", GetStepString(), precisionPositionLabel, highPrecisionLabel), probePositions[0]));
 
-            Vector2 probeFrontLeft = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(1);
+            Vector2 probeFrontLeft = LevelWizardBase.GetPrintLevelPositionToSample(1);
             string positionLabelTwo = LocalizedString.Get("Position");
             string lowPrecisionTwoLabel = LocalizedString.Get("Low Precision");
             string medPrecisionTwoLabel = LocalizedString.Get("Medium Precision");
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl
             printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, medPrecisionTwoLabel), probePositions[1]));
             printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, highPrecisionTwoLabel), probePositions[1]));
 
-            Vector2 probeFrontRight = ActiveSliceSettings.Instance.GetPrintLevelPositionToSample(2);
+            Vector2 probeFrontRight = LevelWizardBase.GetPrintLevelPositionToSample(2);
             string positionLabelThree = LocalizedString.Get("Position");
             string lowPrecisionLabelThree = LocalizedString.Get("Low Precision");
             string medPrecisionLabelThree = LocalizedString.Get("Medium Precision");

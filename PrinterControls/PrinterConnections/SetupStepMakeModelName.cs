@@ -15,6 +15,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {   
@@ -203,16 +204,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
 
             // Check if we need to run the print level wizard before printing
+            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
             string needsPrintLeveling;
             if (settingsDict.TryGetValue("needs_print_leveling", out needsPrintLeveling))
             {
-                ActivePrinter.NeedsPrintLeveling = true;
+                levelingData.needsPrintLeveling = true;
             }
 
             string printLevelingType;
             if (settingsDict.TryGetValue("print_leveling_type", out printLevelingType))
             {
-                ActivePrinter.PrintLevelingType = printLevelingType;
+                levelingData.levelingSystem = PrintLevelingData.LevelingSystem.Probe2Points;
             }
 
             string defaultSliceEngine;

@@ -40,6 +40,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -115,50 +116,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-
-
-        /// <summary>
-        /// This returns one of the three positions that should be probed when leveling
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public Vector2 GetPrintLevelPositionToSample(int index)
-        {
-            Vector2 bedSize = ActiveSliceSettings.Instance.BedSize;
-            Vector2 printCenter = ActiveSliceSettings.Instance.PrintCenter;
-
-            switch (BedShape)
-            {
-                case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
-                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
-                    switch (index)
-                    {
-                        case 0:
-                            return firstPosition;
-                        case 1:
-                            return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
-                        case 2:
-                            return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
-                        default:
-                            throw new IndexOutOfRangeException();
-                    }
-
-                case MeshVisualizer.MeshViewerWidget.BedShape.Rectangular:
-                default:
-                    switch (index)
-                    {
-                        case 0:
-                            return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
-                        case 1:
-                            return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
-                        case 2:
-                            return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
-                        default:
-                            throw new IndexOutOfRangeException();
-                    }
-            }
-        }
-
         public void LoadAllSettings()
         {
             this.activeSettingsLayers = new List<SettingsLayer>();
@@ -170,10 +127,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
+                PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+
                 PrintLeveling.Instance.SetPrintLevelingEquation(
-                    ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0),
-                    ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1),
-                    ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2),
+                    levelingData.position0,
+                    levelingData.position1,
+                    levelingData.position2,
                     ActiveSliceSettings.Instance.PrintCenter);
             }
             OnSettingsChanged();

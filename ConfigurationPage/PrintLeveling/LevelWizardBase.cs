@@ -40,7 +40,7 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
     // this class is so that it is not passed by value
     public class ProbePosition
@@ -50,6 +50,8 @@ namespace MatterHackers.MatterControl
 
     public class LevelWizardBase : SystemWindow
     {
+        public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
+
         protected static readonly string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
         protected static readonly string requiredPageInstructions1 = "Congratulations on setting up your new printer. Before starting your first print we need to run a simple calibration procedure.";
         protected static readonly string requiredPageInstructions2 = "The next few screens will walk your through the print leveling wizard.";
@@ -81,22 +83,68 @@ namespace MatterHackers.MatterControl
             this.totalSteps = totalSteps;
         }
 
-        public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
-        public static LevelWizardBase CreateAndShowWizard(RuningState runningState)
+        public static Vector2 GetPrintLevelPositionToSample(int index)
         {
+            Vector2 bedSize = ActiveSliceSettings.Instance.BedSize;
+            Vector2 printCenter = ActiveSliceSettings.Instance.PrintCenter;
+
+            switch (ActiveSliceSettings.Instance.BedShape)
+            {
+                case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
+                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
+                    switch (index)
+                    {
+                        case 0:
+                            return firstPosition;
+                        case 1:
+                            return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
+                        case 2:
+                            return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
+                        default:
+                            throw new IndexOutOfRangeException();
+                    }
+
+                case MeshVisualizer.MeshViewerWidget.BedShape.Rectangular:
+                default:
+                    switch (index)
+                    {
+                        case 0:
+                            return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+                        case 1:
+                            return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+                        case 2:
+                            return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+                        default:
+                            throw new IndexOutOfRangeException();
+                    }
+            }
+        }
+
+        public static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
+        {
+            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+
             LevelWizardBase printLevelWizardWindow;
-            if (ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingType != null
-                && ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingType != ""
-                && ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingType == "2Point")
+            switch(levelingData.levelingSystem)
             {
-                printLevelWizardWindow = new LevelWizard2Point(runningState);
+                case PrintLevelingData.LevelingSystem.Probe2Points:
+                    printLevelWizardWindow = new LevelWizard2Point(runningState);
+                    break;
+
+                case PrintLevelingData.LevelingSystem.Probe3Points:
+                    printLevelWizardWindow = new LevelWizard3Point(runningState);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
             }
-            else
-            {
-                printLevelWizardWindow = new LevelWizard3Point(runningState);
-            }
+
             printLevelWizardWindow.ShowAsSystemWindow();
             return printLevelWizardWindow;
         }
+    }
+
+    public class PrintLevelingInfo
+    {
     }
 }

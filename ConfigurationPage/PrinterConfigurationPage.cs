@@ -42,21 +42,22 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl
 {
-    public class ConfigurationPage : ScrollableWidget
+    public class PrinterConfigurationPage : ScrollableWidget
     {
-        public ConfigurationPage()
+        public PrinterConfigurationPage()
             : base(true)
         {
             ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             AnchorAll();
-            AddChild(new ConfigurationWidget());
+            AddChild(new PrinterConfigurationWidget());
         }
     }
     
-    public class ConfigurationWidget : GuiWidget
+    public class PrinterConfigurationWidget : GuiWidget
     {
         readonly int TallButtonHeight = 25;
 
@@ -69,7 +70,7 @@ namespace MatterHackers.MatterControl
 
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-        public ConfigurationWidget()
+        public PrinterConfigurationWidget()
         {
             SetDisplayAttributes();
 

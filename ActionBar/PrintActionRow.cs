@@ -9,6 +9,7 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -222,10 +223,11 @@ namespace MatterHackers.MatterControl.ActionBar
         string itemNotFoundMessage = "Item not found".Localize();
         void PrintActivePart()
         {
-            if (ActivePrinterProfile.Instance.ActivePrinter.NeedsPrintLeveling
-                && ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(0).z == 0
-                && ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(1).z == 0
-                && ActivePrinterProfile.Instance.GetPrintLevelingMeasuredPosition(2).z == 0)
+            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+            if (levelingData.needsPrintLeveling
+                && levelingData.position0.z == 0
+                && levelingData.position1.z == 0
+                && levelingData.position2.z == 0)
             {
                 LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
                 return;
