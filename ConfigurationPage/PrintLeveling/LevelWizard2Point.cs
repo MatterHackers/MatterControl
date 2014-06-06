@@ -62,10 +62,9 @@ namespace MatterHackers.MatterControl
             string printLevelWizardTitle = LocalizedString.Get("MatterControl");
             string printLevelWizardTitleFull = LocalizedString.Get("Print Leveling Wizard");
             Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
-            ProbePosition[] probePositions = new ProbePosition[3];
+            ProbePosition[] probePositions = new ProbePosition[2];
             probePositions[0] = new ProbePosition();
             probePositions[1] = new ProbePosition();
-            probePositions[2] = new ProbePosition();
 
             printLevelWizard = new WizardControl();
             AddChild(printLevelWizard);
@@ -87,21 +86,21 @@ namespace MatterHackers.MatterControl
             string lowPrecisionTwoLabel = LocalizedString.Get("Low Precision");
             string medPrecisionTwoLabel = LocalizedString.Get("Medium Precision");
             string highPrecisionTwoLabel = LocalizedString.Get("High Precision");
-            printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontLeft, 10), string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, lowPrecisionTwoLabel), probePositions[1]));
-            printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, medPrecisionTwoLabel), probePositions[1]));
-            printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, highPrecisionTwoLabel), probePositions[1]));
+            printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontLeft, 10), string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, lowPrecisionTwoLabel), probePositions[0]));
+            printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, medPrecisionTwoLabel), probePositions[0]));
+            printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, highPrecisionTwoLabel), probePositions[0]));
 
             Vector2 probeFrontRight = position1;
             string positionLabelThree = LocalizedString.Get("Position");
             string lowPrecisionLabelThree = LocalizedString.Get("Low Precision");
             string medPrecisionLabelThree = LocalizedString.Get("Medium Precision");
             string highPrecisionLabelThree = LocalizedString.Get("High Precision");
-            printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontRight, 10), string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, lowPrecisionLabelThree), probePositions[2]));
-            printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, medPrecisionLabelThree), probePositions[2]));
-            printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, highPrecisionLabelThree), probePositions[2]));
+            printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontRight, 10), string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, lowPrecisionLabelThree), probePositions[1]));
+            printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, medPrecisionLabelThree), probePositions[1]));
+            printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, highPrecisionLabelThree), probePositions[1]));
 
             string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}", doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
-            printLevelWizard.AddPage(new LastPageInstructions("Done", doneInstructions, probePositions));
+            printLevelWizard.AddPage(new LastPage2PointInstructions("Done", doneInstructions, probePositions));
         }
     }
 }

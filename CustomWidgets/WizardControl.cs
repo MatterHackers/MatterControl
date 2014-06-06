@@ -147,7 +147,35 @@ namespace MatterHackers.MatterControl
 
         void SetPageVisibility()
         {
-            backButton.Enabled = true;
+            // we set these before we call becoming active or inactive so that they can override these if needed.
+            {
+                // if the first page
+                if (pageIndex == 0)
+                {
+                    backButton.Enabled = false;
+                    nextButton.Enabled = true;
+
+                    doneButton.Visible = false;
+                    cancelButton.Visible = true;
+                }
+                // if the last page
+                else if (pageIndex >= pages.Count - 1)
+                {
+                    backButton.Enabled = true;
+                    nextButton.Enabled = false;
+
+                    doneButton.Visible = true;
+                    cancelButton.Visible = false;
+                }
+                else // in the middle
+                {
+                    backButton.Enabled = true;
+                    nextButton.Enabled = true;
+
+                    doneButton.Visible = false;
+                    cancelButton.Visible = true;
+                }
+            }
 
             for (int i = 0; i < pages.Count; i++)
             {
@@ -165,23 +193,6 @@ namespace MatterHackers.MatterControl
                         pages[i].PageIsBecomingInactive();
                     }
                 }
-            }
-
-            if (pageIndex == 0)
-            {
-                backButton.Enabled = false;
-                nextButton.Visible = true;
-            }
-            if (pageIndex >= pages.Count - 1)
-            {
-                nextButton.Visible = false;
-                doneButton.Visible = true;
-                cancelButton.Visible = false;
-            }
-            else
-            {
-                cancelButton.Visible = true;
-                doneButton.Visible = false;
             }
         }
 

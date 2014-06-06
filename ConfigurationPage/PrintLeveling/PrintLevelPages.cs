@@ -56,11 +56,11 @@ namespace MatterHackers.MatterControl
         }
     }
 
-    public class LastPageInstructions : InstructionsPage
+    public class LastPage3PointInstructions : InstructionsPage
     {
         ProbePosition[] probePositions = new ProbePosition[3];
 
-        public LastPageInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
+        public LastPage3PointInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
             : base(pageDescription, instructionsText)
         {
             this.probePositions = probePositions;
@@ -75,6 +75,33 @@ namespace MatterHackers.MatterControl
                 probePositions[2].position.x, probePositions[2].position.y, probePositions[2].position.z, 
             };
             ActivePrinterProfile.Instance.SetPrintLevelingMeasuredPositions(printLevelPositions3x3);
+
+            ActivePrinterProfile.Instance.DoPrintLeveling = true;
+            base.PageIsBecomingActive();
+        }
+    }
+
+    public class LastPage2PointInstructions : InstructionsPage
+    {
+        ProbePosition[] probePositions = new ProbePosition[2];
+
+        public LastPage2PointInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
+            : base(pageDescription, instructionsText)
+        {
+            this.probePositions = probePositions;
+        }
+
+        public override void PageIsBecomingActive()
+        {
+#if false
+            double[] printLevelPositions3x3 =  
+            {
+                probePositions[0].position.x, probePositions[0].position.y, probePositions[0].position.z, 
+                probePositions[1].position.x, probePositions[1].position.y, probePositions[1].position.z, 
+                probePositions[2].position.x, probePositions[2].position.y, probePositions[2].position.z, 
+            };
+            ActivePrinterProfile.Instance.SetPrintLevelingMeasuredPositions(printLevelPositions3x3);
+#endif
 
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
@@ -138,6 +165,14 @@ namespace MatterHackers.MatterControl
                 unregisterEvents(this, null);
             }
             base.OnClosed(e);
+        }
+
+        public override void PageIsBecomingActive()
+        {
+            // always make sure we don't have print leveling turned on
+            ActivePrinterProfile.Instance.DoPrintLeveling = false;
+
+            base.PageIsBecomingActive();
         }
 
         public override void PageIsBecomingInactive()
@@ -204,10 +239,11 @@ namespace MatterHackers.MatterControl
 
         public override void PageIsBecomingActive()
         {
+            base.PageIsBecomingActive();
+
             double feedRate = 4000;
             PrinterCommunication.Instance.MoveAbsolute(PrinterCommunication.Axis.Z, probeStartPosition.z, feedRate);
             PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, feedRate);
-            base.PageIsBecomingActive();
             PrinterCommunication.Instance.ReadPosition();
 
             container.nextButton.Enabled = false;

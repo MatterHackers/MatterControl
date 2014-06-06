@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
             LevelWizardBase printLevelWizardWindow;
             if (ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingType != null
                 && ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingType != ""
-                && ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingType != "2Point")
+                && ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingType == "2Point")
             {
                 printLevelWizardWindow = new LevelWizard2Point(runningState);
             }
