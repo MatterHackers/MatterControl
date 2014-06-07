@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, highPrecisionLabelThree), probePositions[2]));
 
             string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}", doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
-            printLevelWizard.AddPage(new LastPage3PointInstructions("Done", doneInstructions, probePositions));
+            printLevelWizard.AddPage(new LastPage3PointInstructions("Done".Localize(), doneInstructions, probePositions));
         }
     }
 }

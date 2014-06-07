@@ -61,16 +61,18 @@ namespace MatterHackers.MatterControl
             AnchorAll();
         }
 
-        protected double ZMovementSpeed()
+        public static Vector3 ManualControlsFeedRate()
         {
-            double zSpeed = 315;
+            Vector3 feedRate = new Vector3(3000, 3000, 315);
             string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;
             if (savedSettings != null && savedSettings != "")
             {
-                zSpeed = double.Parse(savedSettings.Split(',')[5]);
+                feedRate.x = double.Parse(savedSettings.Split(',')[1]);
+                feedRate.y = double.Parse(savedSettings.Split(',')[3]);
+                feedRate.z = double.Parse(savedSettings.Split(',')[5]);
             }
 
-            return zSpeed;
+            return feedRate;
         }
 
         public void AddTextField(string instructionsText, int pixelsFromLast)
