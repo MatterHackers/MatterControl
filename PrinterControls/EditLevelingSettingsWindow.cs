@@ -94,9 +94,9 @@ namespace MatterHackers.MatterControl
 
             // put in the movement edit controls
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            positions[0] = levelingData.position0;
-            positions[1] = levelingData.position1;
-            positions[2] = levelingData.position2;
+            positions[0] = levelingData.sampledPosition0;
+            positions[1] = levelingData.sampledPosition1;
+            positions[2] = levelingData.sampledPosition2;
             
             int tab_index = 0;
             for (int row = 0; row < 3; row++ )
@@ -192,14 +192,14 @@ namespace MatterHackers.MatterControl
         {
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
-            levelingData.position0 = positions[0];
-            levelingData.position1 = positions[1];
-            levelingData.position2 = positions[2];
+            levelingData.sampledPosition0 = positions[0];
+            levelingData.sampledPosition1 = positions[1];
+            levelingData.sampledPosition2 = positions[2];
 
             PrintLeveling.Instance.SetPrintLevelingEquation(
-                levelingData.position0,
-                levelingData.position1,
-                levelingData.position2,
+                levelingData.sampledPosition0,
+                levelingData.sampledPosition1,
+                levelingData.sampledPosition2,
                 ActiveSliceSettings.Instance.PrintCenter);
 
             Close();

@@ -225,9 +225,9 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
             if (levelingData.needsPrintLeveling
-                && levelingData.position0.z == 0
-                && levelingData.position1.z == 0
-                && levelingData.position2.z == 0)
+                && levelingData.sampledPosition0.z == 0
+                && levelingData.sampledPosition1.z == 0
+                && levelingData.sampledPosition2.z == 0)
             {
                 LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
                 return;

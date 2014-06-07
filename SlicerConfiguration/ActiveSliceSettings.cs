@@ -130,9 +130,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
                 PrintLeveling.Instance.SetPrintLevelingEquation(
-                    levelingData.position0,
-                    levelingData.position1,
-                    levelingData.position2,
+                    levelingData.sampledPosition0,
+                    levelingData.sampledPosition1,
+                    levelingData.sampledPosition2,
                     ActiveSliceSettings.Instance.PrintCenter);
             }
             OnSettingsChanged();

@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl
         FlowLayoutWidget bottomToTopLayout;
         List<WizardPage> pages = new List<WizardPage>();
         int pageIndex = 0;
-        Button backButton;
+        public Button backButton;
         public Button nextButton;
         Button doneButton;
         Button cancelButton;

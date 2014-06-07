@@ -18,43 +18,43 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         public enum LevelingSystem { Probe3Points, Probe2Points }
 
         [JsonIgnoreAttribute ]
-        Vector3 position0Private;
-        public Vector3 position0
+        Vector3 sampledPosition0Private;
+        public Vector3 sampledPosition0
         {
-            get { return position0Private; }
+            get { return sampledPosition0Private; }
             set
             {
-                if (position0Private != value)
+                if (sampledPosition0Private != value)
                 {
-                    position0Private = value;
+                    sampledPosition0Private = value;
                     Commit();
                 }
             }
         }
 
-        Vector3 position1Private;
-        public Vector3 position1
+        Vector3 sampledPosition1Private;
+        public Vector3 sampledPosition1
         {
-            get { return position1Private; }
+            get { return sampledPosition1Private; }
             set
             {
-                if (position1Private != value)
+                if (sampledPosition1Private != value)
                 {
-                    position1Private = value;
+                    sampledPosition1Private = value;
                     Commit();
                 }
             }
         }
 
-        Vector3 position2Private;
-        public Vector3 position2
+        Vector3 sampledPosition2Private;
+        public Vector3 sampledPosition2
         {
-            get { return position2Private; }
+            get { return sampledPosition2Private; }
             set
             {
-                if (position2Private != value)
+                if (sampledPosition2Private != value)
                 {
-                    position2Private = value;
+                    sampledPosition2Private = value;
                     Commit();
                 }
             }
@@ -148,9 +148,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        position0Private[i % 3] = double.Parse(lines[0 * 3 + i]);
-                        position1Private[i % 3] = double.Parse(lines[1 * 3 + i]);
-                        position2Private[i % 3] = double.Parse(lines[2 * 3 + i]);
+                        sampledPosition0Private[i % 3] = double.Parse(lines[0 * 3 + i]);
+                        sampledPosition1Private[i % 3] = double.Parse(lines[1 * 3 + i]);
+                        sampledPosition2Private[i % 3] = double.Parse(lines[2 * 3 + i]);
                     }
                 }
             }

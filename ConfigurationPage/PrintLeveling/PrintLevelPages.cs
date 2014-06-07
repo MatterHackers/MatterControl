@@ -69,9 +69,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         public override void PageIsBecomingActive()
         {
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            levelingData.position0 = probePositions[0].position;
-            levelingData.position1 = probePositions[1].position;
-            levelingData.position2 = probePositions[2].position;
+            levelingData.sampledPosition0 = probePositions[0].position;
+            levelingData.sampledPosition1 = probePositions[1].position;
+            levelingData.sampledPosition2 = probePositions[2].position;
 
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
@@ -82,12 +82,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
     {
         protected Vector3 probeStartPosition;
         ProbePosition[] probePositions = new ProbePosition[3];
+        protected WizardControl container;
 
-        public GettingThirdPointFor2PointCalibration(string pageDescription, Vector3 probeStartPosition, string instructionsText, ProbePosition[] probePositions)
+        public GettingThirdPointFor2PointCalibration(WizardControl container, string pageDescription, Vector3 probeStartPosition, string instructionsText, ProbePosition[] probePositions)
             : base(pageDescription, instructionsText)
         {
             this.probeStartPosition = probeStartPosition;
             this.probePositions = probePositions;
+            this.container = container;
         }
 
         event EventHandler unregisterEvents;
@@ -113,8 +115,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             levelingData.position2 = probePositions[2].position;
 #endif
 
-            ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
+
+            container.nextButton.Enabled = false;
+            container.backButton.Enabled = false;
         }
 
         void FinishedProbe(object sender, EventArgs e)
@@ -129,6 +133,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                     string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
                     PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
                     PrinterCommunication.Instance.ReadPosition();
+
+                    container.nextButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
                 }
             }
         }
