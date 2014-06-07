@@ -315,21 +315,9 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        PrintLevelingData activePrinterPrintLevelingData = null;
         public void OnActivePrinterChanged(EventArgs e)
         {
-            activePrinterPrintLevelingData = null;
             ActivePrinterChanged.CallEvents(this, e);
-        }
-
-        public PrintLevelingData GetPrintLevelingData()
-        {
-            if (activePrinterPrintLevelingData == null)
-            {
-                activePrinterPrintLevelingData = PrintLevelingData.CreateFromJsonOrLegacy(ActivePrinter.PrintLevelingJsonData, ActivePrinter.PrintLevelingProbePositions);
-            }
-
-            return activePrinterPrintLevelingData;
         }
 
         public bool DoPrintLeveling
@@ -353,7 +341,7 @@ namespace MatterHackers.MatterControl
 
                     if (DoPrintLeveling)
                     {
-                        PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+                        PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
                         PrintLeveling.Instance.SetPrintLevelingEquation(
                             levelingData.position0,
                             levelingData.position1,

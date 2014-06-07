@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
             textImageButtonFactory.FixedHeight = 30;
 
             // put in the movement edit controls
-            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
             positions[0] = levelingData.position0;
             positions[1] = levelingData.position1;
             positions[2] = levelingData.position2;
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl
 
         void DoSave_Click(object state)
         {
-            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
             levelingData.position0 = positions[0];
             levelingData.position1 = positions[1];

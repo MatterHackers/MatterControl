@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
 
             // Check if we need to run the print level wizard before printing
-            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinter);
             string needsPrintLeveling;
             if (settingsDict.TryGetValue("needs_print_leveling", out needsPrintLeveling))
             {

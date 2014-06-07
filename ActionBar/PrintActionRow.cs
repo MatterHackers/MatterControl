@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.ActionBar
         string itemNotFoundMessage = "Item not found".Localize();
         void PrintActivePart()
         {
-            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
             if (levelingData.needsPrintLeveling
                 && levelingData.position0.z == 0
                 && levelingData.position1.z == 0

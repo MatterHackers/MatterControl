@@ -95,16 +95,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 string newLevelingInfo = Newtonsoft.Json.JsonConvert.SerializeObject(this);
 
                 // clear the legacy value
-                ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingProbePositions = "";
+                activePrinter.PrintLevelingProbePositions = "";
                 // set the new value
-                ActivePrinterProfile.Instance.ActivePrinter.PrintLevelingJsonData = newLevelingInfo;
-                ActivePrinterProfile.Instance.ActivePrinter.Commit();
+                activePrinter.PrintLevelingJsonData = newLevelingInfo;
+                activePrinter.Commit();
             }
         }
 
-        public static PrintLevelingData CreateFromJsonOrLegacy(string jsonData, string depricatedPositionsCsv3ByXYZ)
+        static Printer activePrinter = null;
+        static PrintLevelingData instance = null;
+        public static PrintLevelingData GetForPrinter(Printer printer)
         {
-            PrintLevelingData instance;
+            if (printer != activePrinter)
+            {
+                CreateFromJsonOrLegacy(printer.PrintLevelingJsonData, printer.PrintLevelingProbePositions);
+            }
+
+            activePrinter = printer;
+
+            return instance;
+        }
+
+        static void CreateFromJsonOrLegacy(string jsonData, string depricatedPositionsCsv3ByXYZ)
+        {
             if (jsonData != null)
             {
                 activelyLoading = true;
@@ -120,8 +133,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             {
                 instance = new PrintLevelingData();
             }
-
-            return instance;
         }
         
         /// <summary>

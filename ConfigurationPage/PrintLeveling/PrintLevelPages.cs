@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override void PageIsBecomingActive()
         {
-            PrintLevelingData levelingData = ActivePrinterProfile.Instance.GetPrintLevelingData();
+            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
             levelingData.position0 = probePositions[0].position;
             levelingData.position1 = probePositions[1].position;
             levelingData.position2 = probePositions[2].position;
