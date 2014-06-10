@@ -8,6 +8,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -20,19 +21,13 @@ namespace MatterHackers.MatterControl
 
         public static bool ShowMessageBox(String message, string caption, MessageType messageType = MessageType.OK)
         {
-            EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
-            string wrappedMessage = wrapper.InsertCRs(message, 350);
-            StyledMessageBox messageBox = new StyledMessageBox(wrappedMessage, caption, messageType, null, 400, 300);
-            bool okClicked = false;
-            messageBox.ClickedOk += (sender, e) => { okClicked = true; };
-            messageBox.ShowAsSystemWindow();
-            return okClicked;
+            return ShowMessageBox(message, caption, null, messageType);
         }
 
         public static bool ShowMessageBox(string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType)
         {
             EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
-            string wrappedMessage = wrapper.InsertCRs(message, 300);
+            string wrappedMessage = wrapper.InsertCRs(message, 300 - 6);
             StyledMessageBox messageBox = new StyledMessageBox(wrappedMessage, caption, messageType, extraWidgetsToAdd, 400, 300);
             bool okClicked = false;
             messageBox.ClickedOk += (sender, e) => { okClicked = true; };
@@ -43,63 +38,88 @@ namespace MatterHackers.MatterControl
         public StyledMessageBox(String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height)
             : base(width, height)
         {
+            FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            topToBottom.AnchorAll();
+            topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+
+            // Creates Header
+            FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+            headerRow.HAnchor = HAnchor.ParentLeftRight;
+            headerRow.Margin = new BorderDouble(0, 3, 0, 0);
+            headerRow.Padding = new BorderDouble(0, 3, 0, 3);
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            textImageButtonFactory.FixedWidth = 50;            
+            //Creates Text and adds into header 
+            {
+                TextWidget elementHeader = new TextWidget(windowTitle, pointSize: 14);
+                elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                elementHeader.HAnchor = HAnchor.ParentLeftRight;
+                elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
 
-            FlowLayoutWidget topToBottomFlow = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            //topToBottomFlow.DebugShowBounds = true;
+                headerRow.AddChild(elementHeader);
+                topToBottom.AddChild(headerRow);
+                this.AddChild(topToBottom);
+            }
+
+            //Creates container in the middle of window
+            FlowLayoutWidget middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            {
+                middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
+                middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
+                middleRowContainer.Padding = new BorderDouble(5, 5, 5, 15);
+                middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+            }
+
             TextWidget messageContainer = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
-            messageContainer.HAnchor = Agg.UI.HAnchor.ParentCenter;
-            topToBottomFlow.AddChild(messageContainer);
+            messageContainer.HAnchor = Agg.UI.HAnchor.ParentLeft;
+            middleRowContainer.AddChild(messageContainer);
 
             if (extraWidgetsToAdd != null)
             {
                 foreach (GuiWidget widget in extraWidgetsToAdd)
                 {
-                    topToBottomFlow.AddChild(widget);
+                    middleRowContainer.AddChild(widget);
                 }
             }
 
-            Title = windowTitle;
+            topToBottom.AddChild(middleRowContainer);
 
-            // add a spacer
-            GuiWidget spacer = new GuiWidget(10, 10);
-            spacer.HAnchor |= Agg.UI.HAnchor.ParentCenter;
-            //spacer.DebugShowBounds = true;
-            topToBottomFlow.AddChild(spacer);
-            topToBottomFlow.HAnchor = Agg.UI.HAnchor.ParentCenter | Agg.UI.HAnchor.FitToChildren;
-            topToBottomFlow.VAnchor = Agg.UI.VAnchor.ParentCenter | Agg.UI.VAnchor.FitToChildren;
+            //Creates button container on the bottom of window 
+            FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+            {
+                BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+                buttonRow.HAnchor = HAnchor.ParentLeftRight;
+                buttonRow.Padding = new BorderDouble(0, 3);
+            }
 
+            textImageButtonFactory.FixedWidth = 50;
+            
             switch (messageType)
             {
                 case MessageType.YES_NO:
                     {
-                        FlowLayoutWidget yesNoButtonsFlow = new FlowLayoutWidget();
-                        yesNoButtonsFlow.HAnchor |= HAnchor.ParentCenter;
-
-					Button yesButton = textImageButtonFactory.Generate(LocalizedString.Get("Yes"), centerText:true);
+                        Title = "MatterControl - " + "Input Required".Localize();
+                        Button yesButton = textImageButtonFactory.Generate(LocalizedString.Get("Yes"), centerText: true);
                         yesButton.Click += new ButtonBase.ButtonEventHandler(okButton_Click);
-                        yesNoButtonsFlow.AddChild(yesButton);
+                        yesButton.Cursor = Cursors.Hand;
+                        buttonRow.AddChild(yesButton);
 
-                        GuiWidget buttonSpacer = new GuiWidget(10, 10);
-                        yesNoButtonsFlow.AddChild(buttonSpacer);
+                        buttonRow.AddChild(new HorizontalSpacer());
 
-					Button noButton = textImageButtonFactory.Generate(LocalizedString.Get("No"), centerText: true);
+                        Button noButton = textImageButtonFactory.Generate(LocalizedString.Get("No"), centerText: true);
                         noButton.Click += new ButtonBase.ButtonEventHandler(noButton_Click);
-                        yesNoButtonsFlow.AddChild(noButton);
-
-                        topToBottomFlow.AddChild(yesNoButtonsFlow);
+                        noButton.Cursor = Cursors.Hand;
+                        buttonRow.AddChild(noButton);
                     }
                     break;
 
                 case MessageType.OK:
                     {
-					Button okButton = textImageButtonFactory.Generate(LocalizedString.Get("Ok"), centerText: true);
-                        //okButton.DebugShowBounds = true;
+                        Title = "MatterControl - " + "Alert".Localize();
+                        Button okButton = textImageButtonFactory.Generate(LocalizedString.Get("Ok"), centerText: true);
+                        okButton.Cursor = Cursors.Hand;
                         okButton.Click += new ButtonBase.ButtonEventHandler(okButton_Click);
-                        okButton.HAnchor = HAnchor.ParentCenter;
-                        topToBottomFlow.AddChild(okButton);
+                        buttonRow.AddChild(okButton);
                     }
                     break;
 
@@ -107,7 +127,7 @@ namespace MatterHackers.MatterControl
                     throw new NotImplementedException();
             }
 
-            AddChild(topToBottomFlow);
+            topToBottom.AddChild(buttonRow);
 
             IsModal = true;
         }
