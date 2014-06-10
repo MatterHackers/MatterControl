@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
                 string categoryPageLabel = LocalizedString.Get(category.Name);
                 TabPage categoryPage = new TabPage(categoryPageLabel);
-                SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, 16,
+                SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, category.Name + " Tab", 16,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
                 categoryPage.AnchorAll();
                 categoryTabs.AddTab(textTabWidget);
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             if (showAllDetails.Checked && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.Slic3r)
             {
                 TabPage extraSettingsPage = new TabPage("Other");
-                SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, 16,
+                SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, "Other Tab", 16,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
                 extraSettingsPage.AnchorAll();
                 int count;
@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				TabPage groupTabPage = new TabPage(groupTabLabel);
                 groupTabPage.HAnchor = HAnchor.ParentLeftRight;
 
-                SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, 14,
+                SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, group.Name + " Tab", 14,
                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
                 groupTabWidget.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
@@ -432,7 +432,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             sideTabs.TabBar.BorderColor = RGBA_Bytes.White;
             {
                 TabPage groupTabPage = new TabPage("Extra Settings");
-                SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, 14,
+                SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, "Extra Settings Tab", 14,
                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
                 sideTabs.AddTab(groupTabWidget);
 

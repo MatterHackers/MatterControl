@@ -76,19 +76,19 @@ namespace MatterHackers.MatterControl
             this.Margin = new BorderDouble(top: 4);
 
             QueueTabPage = new TabPage(new QueueBottomToolbar(queueDataView), LocalizedString.Get("Queue").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(QueueTabPage, 15,
+            this.AddTab(new SimpleTextTabWidget(QueueTabPage, "Queue Tab", 15,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             LibraryTabPage = new TabPage(new PrintLibraryWidget(), LocalizedString.Get("Library").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, 15,
+            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, "Library Tab", 15,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             HistoryTabPage = new TabPage(new PrintHistoryWidget(), LocalizedString.Get("History").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(HistoryTabPage, 15,
+            this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", 15,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
-            AboutTabView = new SimpleTextTabWidget(AboutTabPage, 15,
+            AboutTabView = new SimpleTextTabWidget(AboutTabPage, "About Tab", 15,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
             this.AddTab(AboutTabView);
 

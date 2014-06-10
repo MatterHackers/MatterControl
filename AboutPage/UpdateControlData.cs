@@ -158,8 +158,10 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        string updateAvailableMessage = "There is an update avalible for MatterControl. Would you like to download it now?";
-        string updateAvailableTitle = "Update available";
+        string updateAvailableMessage = "There is a recommended update avalible for MatterControl. Would you like to download it now?".Localize();
+        string updateAvailableTitle = "Recommended Update Available".Localize();
+        string downloadNow = "Download Now".Localize();
+        string remindMeLater = "Remind Me Later".Localize();
         void onVersionRequestSucceeded(object sender, EventArgs e)
         {
             string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
@@ -177,26 +179,45 @@ namespace MatterHackers.MatterControl
             }
             else
             {
-                if (DownloadHasZeroSize())
+                SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
+                if (updateRequestType == UpdateRequestType.FirstTimeEver)
                 {
-                    SetUpdateStatus(UpdateStatusStates.UpToDate);
-                }
-                else
-                {
-                    SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
-                    if (updateRequestType == UpdateRequestType.FirstTimeEver)
+                    UiThread.RunOnIdle((state) =>
                     {
-                        UiThread.RunOnIdle((state) =>
+                        // show a dialog to tell the user there is an update
+                        if (StyledMessageBox.ShowMessageBox(updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater))
                         {
-                            // show a dialog to tell the user there is an update
-                            if (StyledMessageBox.ShowMessageBox(updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO))
+                            InitiateUpdateDownload();
+                            // Switch to the about page so we can see the download progress.
+                            GuiWidget aboutTabWidget = FindNamedWidgetRecursive(ApplicationWidget.Instance, "About Tab");
+                            Tab aboutTab = aboutTabWidget as Tab;
+                            if (aboutTab != null)
                             {
-                                InitiateUpdateDownload();
+                                aboutTab.TabBarContaningTab.SelectTab(aboutTab);
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             }
+        }
+
+        static GuiWidget FindNamedWidgetRecursive(GuiWidget root, string name)
+        {
+            foreach (GuiWidget child in root.Children)
+            {
+                if (child.Name == name)
+                {
+                    return child;
+                }
+
+                GuiWidget foundWidget = FindNamedWidgetRecursive(child, name);
+                if (foundWidget != null)
+                {
+                    return foundWidget;
+                }
+            }
+
+            return null;
         }
 
         void onVersionRequestFailed(object sender, EventArgs e)
@@ -242,60 +263,26 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public bool DownloadHasZeroSize()
-        {
-            bool zeroSizeDownload = false;
-            string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
-            string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-
-            //Make HEAD request to determine the size of the download (required by GAE)
-            System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
-            request.Method = "HEAD";
-
-            try
-            {
-                WebResponse response = request.GetResponse();
-                downloadSize = (int)response.ContentLength;
-                if (downloadSize == 0)
-                {
-                    zeroSizeDownload = true;
-                }
-
-            }
-            catch
-            {
-                //Unknown download size
-                downloadSize = 0;
-            }
-            return zeroSizeDownload;
-        }
-
         void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {            
             if (downloadSize > 0)
             {
                 this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
             }
-            UpdateStatusChanged.CallEvents(this, e);            
+            UiThread.RunOnIdle((state) =>
+            {
+                UpdateStatusChanged.CallEvents(this, e);
+            });
         }
 
-        string downloadCompleteMessage = "MatterControl update is downloaded. Would you like to install it now?";
-        string downloadCompleteTitle = "Download Complete";
         void DownloadCompleted(object sender, EventArgs e)
         {
-            SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
-            webClient.Dispose();
-            if (updateRequestType == UpdateRequestType.FirstTimeEver)
+            UiThread.RunOnIdle((state) =>
             {
-                UiThread.RunOnIdle((state) =>
-                {
-                    // show a dialog to tell the user there is an update
-                    if (StyledMessageBox.ShowMessageBox(downloadCompleteMessage, downloadCompleteTitle, StyledMessageBox.MessageType.YES_NO))
-                    {
-                        //InstallUpdate();
-                    }
-                });
-            }
+                SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
+            });
+
+            webClient.Dispose();
         }
 
         private UpdateControlData()

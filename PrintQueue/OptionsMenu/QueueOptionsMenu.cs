@@ -175,9 +175,11 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
+        string pleaseSelectPrinterMessage = "Before you can export printable files, you must select a printer.";
+        string pleaseSelectPrinterTitle = "Please select a printer";
         void MustSelectPrinterMessage(object state)
         {
-            StyledMessageBox.ShowMessageBox("You must select a printer before you can export printable files.", "You must select a printer");
+            StyledMessageBox.ShowMessageBox(pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
         }
 
         bool exportGCodeToFolderButton_Click()
