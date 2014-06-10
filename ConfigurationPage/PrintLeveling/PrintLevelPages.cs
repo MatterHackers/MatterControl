@@ -81,14 +81,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
     public class GettingThirdPointFor2PointCalibration : InstructionsPage
     {
         protected Vector3 probeStartPosition;
-        ProbePosition[] probePositions = new ProbePosition[3];
+        ProbePosition probePosition;
         protected WizardControl container;
 
-        public GettingThirdPointFor2PointCalibration(WizardControl container, string pageDescription, Vector3 probeStartPosition, string instructionsText, ProbePosition[] probePositions)
+        public GettingThirdPointFor2PointCalibration(WizardControl container, string pageDescription, Vector3 probeStartPosition, string instructionsText, ProbePosition probePosition)
             : base(pageDescription, instructionsText)
         {
             this.probeStartPosition = probeStartPosition;
-            this.probePositions = probePositions;
+            this.probePosition = probePosition;
             this.container = container;
         }
 
@@ -108,12 +108,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
             PrinterCommunication.Instance.SendLineToPrinterNow("G30");
             PrinterCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
-#if false
-            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            levelingData.position0 = probePositions[0].position;
-            levelingData.position1 = probePositions[1].position;
-            levelingData.position2 = probePositions[2].position;
-#endif
 
             base.PageIsBecomingActive();
 
@@ -131,6 +125,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                     PrinterCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
                     int zStringPos = currentEvent.Data.LastIndexOf("Z:");
                     string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
+                    probePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
                     PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
                     PrinterCommunication.Instance.ReadPosition();
 
@@ -142,7 +137,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
     public class LastPage2PointInstructions : InstructionsPage
     {
-        ProbePosition[] probePositions = new ProbePosition[3];
+        ProbePosition[] probePositions = new ProbePosition[5];
 
         public LastPage2PointInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
             : base(pageDescription, instructionsText)
@@ -152,14 +147,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override void PageIsBecomingActive()
         {
-#if false
             // This data is currently the offset from the probe to the extruder tip. We need to translate them
             // into bed offsets and store them.
+
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            levelingData.position0 = probePositions[0].position;
-            levelingData.position1 = probePositions[1].position;
-            levelingData.position2 = probePositions[2].position;
-#endif
+            // The first point is the user assisted offset to the bed
+            Vector3 userBedSample0 = probePositions[0].position;
+            // The second ponit sample offset at the limit switch
+            Vector3 probeOffset0 = probePositions[1].position; // this z should be 0
+
+            // right side of printer
+            Vector3 userBedSample1 = probePositions[2].position;
+            Vector3 probeOffset1 = probePositions[3].position;
+
+            // auto back probe
+            Vector3 probeOffset2 = probePositions[4].position;
+
+            levelingData.sampledPosition0 = userBedSample0;
+            levelingData.sampledPosition1 = userBedSample1;
+            levelingData.sampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0;
 
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
@@ -323,10 +329,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
     public class GetCoarseBedHeightProbeFirst : GetCoarseBedHeight
     {
         event EventHandler unregisterEvents;
+        ProbePosition whereToWriteSamplePosition;
 
-        public GetCoarseBedHeightProbeFirst(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition)
+        public GetCoarseBedHeightProbeFirst(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition, ProbePosition whereToWriteSamplePosition)
             : base(container, probeStartPosition, pageDescription, whereToWriteProbePosition)
         {
+            this.whereToWriteSamplePosition = whereToWriteSamplePosition;
         }
 
         public override void PageIsBecomingActive()
@@ -354,6 +362,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                     PrinterCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
                     int zStringPos = currentEvent.Data.LastIndexOf("Z:");
                     string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
+                    // store the position that the limit swich fires
+                    whereToWriteSamplePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
+
+                    // now move to the probe start position
                     PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
                     PrinterCommunication.Instance.ReadPosition();
                 }

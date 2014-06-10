@@ -17,7 +17,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         [JsonConverter(typeof(StringEnumConverter))]
         public enum LevelingSystem { Probe3Points, Probe2Points }
 
-        [JsonIgnoreAttribute ]
         Vector3 sampledPosition0Private;
         public Vector3 sampledPosition0
         {
