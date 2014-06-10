@@ -1,1 +1,9 @@
-{"AffiliateCode":"5NEP8W","ShowShopButton":true,"PrinterWhiteList":["Airwolf 3D","Type A Machines","Other","SeeMeCNC","Printrbot","Deezmaker","Blue Eagle Labs","RoBo 3D","Solidoodle","Portabee","Lulzbot","3D Stuffmaker","Vellerman"],"PreloadedLibraryFiles":["Calibration - Box.stl"]}
+{
+	"ThemeColor":"Blue - Light",
+	"CheckForUpdatesOnFirstRun":true,
+	"WindowTitleExtra":"RoBo 3D",
+	"AffiliateCode":"QN3RO8",
+	"ShowShopButton":false,
+	"PrinterWhiteList":["RoBo 3D"],
+	"PreloadedLibraryFiles":["Calibration - Box.stl","Calibration - Bridge.stl","Money Clip.STL","Picture frame 4x6.STL","Calibration - Circle.stl","Whistle.STL","Wrench.STL","Wine Bottle Holder.STL","Business Card Holder1.STL","Picture frame 6x4.STL","Universal Car Phone Mount.STL","Glasses Temples.STL","Cup Lid.STL","Glasses Frame.STL","Cup.STL","DogTag.STL","Business Card Holder2.STL","Bracelet.STL","Wall Hook.STL","Shower Head.STL","Vase.STL","Message in a Bottle.STL","Hair Comb.STL","Bow Tie.STL","RoBo The Robot.STL","Keychains.STL"]
+}
