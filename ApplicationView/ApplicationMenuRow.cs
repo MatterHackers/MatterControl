@@ -160,6 +160,8 @@ namespace MatterHackers.MatterControl
             return true;
         }
 
+        string cannotExitWhileActiveMessage = "Oops! You cannot exit while a print is active.".Localize();
+        string cannotExitWhileActiveTitle = "Unable to Exit";
 		bool exit_Click()
         {
             UiThread.RunOnIdle((state) =>
@@ -172,7 +174,7 @@ namespace MatterHackers.MatterControl
 
 				if(PrinterCommunication.Instance.PrinterIsPrinting)
 				{
-						StyledMessageBox.ShowMessageBox("Oops! You cannot exit while a print is active.", "Unable to Exit");
+						StyledMessageBox.ShowMessageBox(cannotExitWhileActiveMessage, cannotExitWhileActiveTitle);
 				}
 				else
 				{

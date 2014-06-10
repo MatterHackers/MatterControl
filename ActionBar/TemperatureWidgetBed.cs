@@ -102,6 +102,9 @@ namespace MatterHackers.MatterControl.ActionBar
             setToCurrentTemperature();
         }
 
+        string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
+        string waitingForBedToHeatMessage = "The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
+        string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
         protected override void SetTargetTemperature()
         {
             double targetTemp;
@@ -112,9 +115,8 @@ namespace MatterHackers.MatterControl.ActionBar
                     && PrinterCommunication.Instance.PrintingState == PrinterCommunication.DetailedPrintingState.HeatingBed
                     && goalTemp != PrinterCommunication.Instance.TargetBedTemperature)
                 {
-                    string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
-                    string message = string.Format("The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterCommunication.Instance.TargetBedTemperature, sliceSettingsNote);
-                    StyledMessageBox.ShowMessageBox(message, "Waiting For Bed To Heat");
+                    string message = string.Format(waitingForBedToHeatMessage, PrinterCommunication.Instance.TargetBedTemperature, sliceSettingsNote);
+                    StyledMessageBox.ShowMessageBox(message, waitingForBedToHeatTitle);
                 }
                 else
                 {

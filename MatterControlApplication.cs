@@ -43,6 +43,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -347,6 +348,10 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
+        string unableToExitMessage = "Oops! You cannot exit while a print is active.".Localize();
+        string unableToExitTitle = "Unable to Exit".Localize();
+        string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
+        string confirmExit = "Confirm Exit".Localize();
         public override void OnClosing(out bool CancelClose)
         {
             //Save a snapshot of the prints in queue
@@ -354,12 +359,12 @@ namespace MatterHackers.MatterControl
 
             if (PrinterCommunication.Instance.PrinterIsPrinting)
             {
-				StyledMessageBox.ShowMessageBox("Oops! You cannot exit while a print is active.", "Unable to Exit");
+                StyledMessageBox.ShowMessageBox(unableToExitMessage, unableToExitTitle);
                 CancelClose = true;
             }
             else if (PartsSheet.IsSaving())
             {
-                if (!StyledMessageBox.ShowMessageBox("You are currently saving a parts sheet, are you sure you want to exit?", "Confirm Exit", StyledMessageBox.MessageType.YES_NO))
+                if (!StyledMessageBox.ShowMessageBox(savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO))
                 {
                     CancelClose = true;
                 }

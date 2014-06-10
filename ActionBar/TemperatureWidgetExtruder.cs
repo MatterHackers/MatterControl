@@ -98,8 +98,11 @@ namespace MatterHackers.MatterControl.ActionBar
         void onTemperatureRead(Object sender, EventArgs e)
         {
             setToCurrentTemperature();
-        }        
+        }
 
+        string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
+        string waitingForeExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
+        string waitingForeExtruderToHeatTitle = "Waiting For Extruder To Heat".Localize();
         protected override void SetTargetTemperature()
         {
             double targetTemp;
@@ -110,9 +113,8 @@ namespace MatterHackers.MatterControl.ActionBar
                     && PrinterCommunication.Instance.PrintingState == PrinterCommunication.DetailedPrintingState.HeatingExtruder
                     && goalTemp != PrinterCommunication.Instance.TargetExtruderTemperature)
                 {
-                    string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
-                    string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterCommunication.Instance.TargetExtruderTemperature, sliceSettingsNote);
-                    StyledMessageBox.ShowMessageBox(message, "Waiting For Extruder To Heat");
+                    string message = string.Format(waitingForeExtruderToHeatMessage, PrinterCommunication.Instance.TargetExtruderTemperature, sliceSettingsNote);
+                    StyledMessageBox.ShowMessageBox(message, waitingForeExtruderToHeatTitle);
                 }
                 else
                 {

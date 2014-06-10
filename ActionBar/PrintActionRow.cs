@@ -311,12 +311,14 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             PrinterCommunication.Instance.RequestPause();
         }
-			
+
+        string cancelCurrentPrintMessage = "Cancel the current print?".Localize();
+        string cancelCurrentPrintTitle = "Cancel Print?".Localize();
         void CancelButton_Click(object state)
         {
             if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
             {
-                if (StyledMessageBox.ShowMessageBox("Cancel the current print?", "Cancel Print?", StyledMessageBox.MessageType.YES_NO))
+                if (StyledMessageBox.ShowMessageBox(cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO))
 				{	
                     CancelPrinting();
                 }

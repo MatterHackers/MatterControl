@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl
 
         void FixTabDot(object sender, EventArgs e)
         {
-            UpdateControlData.Instance.CheckForUpdate();
+            UpdateControlData.Instance.CheckForUpdateUserRequested();
         }
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
@@ -325,9 +325,12 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(terminalCommunicationsContainer);
         }
 
+        string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
+        string noEepromMappingTitle = "Warning no eeprom mapping".Localize();
+        string groupBoxTitle = "EEProm Settings".Localize();
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            GroupBox eePromControlsGroupBox = new GroupBox(LocalizedString.Get("EEProm Settings"));
+            GroupBox eePromControlsGroupBox = new GroupBox(groupBoxTitle);
             
 			eePromControlsGroupBox.Margin = new BorderDouble(0);
             eePromControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -366,8 +369,7 @@ namespace MatterHackers.MatterControl
                             default:
                                 UiThread.RunOnIdle((state) => 
                                 {
-                                    string message = LocalizedString.Get("Oops! There is no eeprom mapping for your printer's firmware.");
-                                    StyledMessageBox.ShowMessageBox(message, "Warning no eeprom mapping", StyledMessageBox.MessageType.OK);
+                                    StyledMessageBox.ShowMessageBox(noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
                                 }
                                 );
                             break;

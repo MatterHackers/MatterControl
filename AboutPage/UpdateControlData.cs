@@ -36,6 +36,7 @@ using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.VersionManagement;
 
 namespace MatterHackers.MatterControl
@@ -46,11 +47,26 @@ namespace MatterHackers.MatterControl
 
         int downloadPercent;
         int downloadSize;
-        bool updateInitiated;
 
         public int DownloadPercent { get { return downloadPercent; } }
 
-        public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate }; 
+        public enum UpdateRequestType { UserRequested, Automatic, FirstTimeEver };
+        UpdateRequestType updateRequestType;
+
+        public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate };
+
+        bool WaitingToCompleteTransaction()
+        {
+            switch(UpdateStatus)
+            {
+                case UpdateStatusStates.CheckingForUpdate:
+                case UpdateStatusStates.UpdateDownloading:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
         
         public RootedObjectEventHandler UpdateStatusChanged = new RootedObjectEventHandler();
 
@@ -125,12 +141,16 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public void CheckForUpdate()
+        public void CheckForUpdateUserRequested()
         {
-            if (!updateInitiated)
+            updateRequestType = UpdateRequestType.UserRequested;
+        }
+
+        void CheckForUpdate()
+        {
+            if (!WaitingToCompleteTransaction())
             {
                 SetUpdateStatus(UpdateStatusStates.CheckingForUpdate);
-                updateInitiated = true;
                 RequestLatestVersion request = new RequestLatestVersion();
                 request.RequestSucceeded += new EventHandler(onVersionRequestSucceeded);
                 request.RequestFailed += new EventHandler(onVersionRequestFailed);
@@ -138,9 +158,10 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        string updateAvailableMessage = "There is an update avalible for MatterControl. Would you like to download it now?";
+        string updateAvailableTitle = "Update available";
         void onVersionRequestSucceeded(object sender, EventArgs e)
         {
-            this.updateInitiated = false;
             string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
             string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
 
@@ -163,22 +184,30 @@ namespace MatterHackers.MatterControl
                 else
                 {
                     SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
+                    if (updateRequestType == UpdateRequestType.FirstTimeEver)
+                    {
+                        UiThread.RunOnIdle((state) =>
+                        {
+                            // show a dialog to tell the user there is an update
+                            if (StyledMessageBox.ShowMessageBox(updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO))
+                            {
+                                InitiateUpdateDownload();
+                            }
+                        });
+                    }
                 }
             }
         }
 
         void onVersionRequestFailed(object sender, EventArgs e)
         {
-            this.updateInitiated = false;
             SetUpdateStatus(UpdateStatusStates.UpToDate);
         }
 
         public void InitiateUpdateDownload()
         {
-            if (!updateInitiated)
+            if (!WaitingToCompleteTransaction())
             {
-                updateInitiated = true;
-
                 SetUpdateStatus(UpdateStatusStates.UpdateDownloading);
 
                 string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
@@ -250,18 +279,39 @@ namespace MatterHackers.MatterControl
             UpdateStatusChanged.CallEvents(this, e);            
         }
 
+        string downloadCompleteMessage = "MatterControl update is downloaded. Would you like to install it now?";
+        string downloadCompleteTitle = "Download Complete";
         void DownloadCompleted(object sender, EventArgs e)
         {
-            updateInitiated = false;
             SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
             webClient.Dispose();
+            if (updateRequestType == UpdateRequestType.FirstTimeEver)
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    // show a dialog to tell the user there is an update
+                    if (StyledMessageBox.ShowMessageBox(downloadCompleteMessage, downloadCompleteTitle, StyledMessageBox.MessageType.YES_NO))
+                    {
+                        //InstallUpdate();
+                    }
+                });
+            }
         }
 
         private UpdateControlData()
         {
             CheckVersionStatus();
-            if (ApplicationSettings.Instance.get("ClientToken") != null)
+            if (ApplicationSettings.Instance.get("ClientToken") != null 
+                || OemSettings.Instance.CheckForUpdatesOnFirstRun)
             {
+                if (ApplicationSettings.Instance.get("ClientToken") == null)
+                {
+                    updateRequestType = UpdateRequestType.FirstTimeEver;
+                }
+                else
+                {
+                    updateRequestType = UpdateRequestType.Automatic;
+                }
                 //If we have already requested an update once, check on load
                 CheckForUpdate();
             }

@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 
         public void CheckForUpdate(object sender, MouseEventArgs e)
         {
-            UpdateControlData.Instance.CheckForUpdate();
+            UpdateControlData.Instance.CheckForUpdateUserRequested();
         }
 
         public void InstallUpdate(object sender, MouseEventArgs e)

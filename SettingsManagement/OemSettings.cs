@@ -35,6 +35,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
         public string WindowTitleExtra = "";
 
         public bool ShowShopButton = true;
+
+        public bool CheckForUpdatesOnFirstRun = false;
         
         List<string> printerWhiteList = new List<string>();
         public List<string> PrinterWhiteList { get { return printerWhiteList; } }
