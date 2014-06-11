@@ -30,19 +30,16 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.IO.Ports;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -356,13 +353,13 @@ namespace MatterHackers.MatterControl
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
                         new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
 #else
-						switch(PrinterCommunication.Instance.FirmwareType)
+						switch(PrinterConnectionAndCommunication.Instance.FirmwareType)
                         {
-                            case PrinterCommunication.FirmwareTypes.Repetier:
+                            case PrinterConnectionAndCommunication.FirmwareTypes.Repetier:
                                 new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
                             break;
 
-                            case PrinterCommunication.FirmwareTypes.Marlin:
+                            case PrinterConnectionAndCommunication.FirmwareTypes.Marlin:
                                 new MatterHackers.MatterControl.EeProm.EePromMarlinWidget();
                             break;
 
@@ -559,33 +556,33 @@ namespace MatterHackers.MatterControl
             }
             else // we at least have a printer selected
             {
-                switch (PrinterCommunication.Instance.CommunicationState)
+                switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
                 {
-                    case PrinterCommunication.CommunicationStates.Disconnecting:
-                    case PrinterCommunication.CommunicationStates.ConnectionLost:
-                    case PrinterCommunication.CommunicationStates.Disconnected:
-                    case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-                    case PrinterCommunication.CommunicationStates.FailedToConnect:                        
+                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
+                    case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
+                    case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
+                    case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:                        
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
-                    case PrinterCommunication.CommunicationStates.FinishedPrint:
-                    case PrinterCommunication.CommunicationStates.Connected:
+                    case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Connected:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
-                    case PrinterCommunication.CommunicationStates.PreparingToPrint:
-                    case PrinterCommunication.CommunicationStates.Printing:
-                        switch (PrinterCommunication.Instance.PrintingState)
+                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                        switch (PrinterConnectionAndCommunication.Instance.PrintingState)
                         {
-                            case PrinterCommunication.DetailedPrintingState.HomingAxis:
-                            case PrinterCommunication.DetailedPrintingState.HeatingBed:
-                            case PrinterCommunication.DetailedPrintingState.HeatingExtruder:
-                            case PrinterCommunication.DetailedPrintingState.Printing:
+                            case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:
+                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
+                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
+                            case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
 
                                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
@@ -597,7 +594,7 @@ namespace MatterHackers.MatterControl
                         }
                         break;
 
-                    case PrinterCommunication.CommunicationStates.Paused:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Paused:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -613,8 +610,8 @@ namespace MatterHackers.MatterControl
         private void AddHandlers()
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
 
         private void onPrinterStatusChanged(object sender, EventArgs e)

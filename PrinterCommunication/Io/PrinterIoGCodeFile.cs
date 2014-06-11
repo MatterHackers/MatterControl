@@ -31,63 +31,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.GCodeVisualizer;
 
-namespace MatterHackers.MatterControl.EeProm
+namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class EePromRepetierParameter : EventArgs
+    public class PrinterIoGCodeFile : PrinterIoBase
     {
-        public string description;
-        public int type;
-        public int position;
-        string val = "";
-        bool changed = false;
-
-        public EePromRepetierParameter(string line)
+        GCodeFile loadedGCode = new GCodeFile();
+        public PrinterIoGCodeFile(GCodeFile loadedGCode)
+            : base(null)
         {
-            update(line);
-        }
-
-        public void update(string line)
-        {
-            string[] lines = line.Substring(4).Split(' ');
-            int.TryParse(lines[0], out type);
-            int.TryParse(lines[1], out position);
-            val = lines[2];
-            description = line.Substring(7 + lines[0].Length + lines[1].Length + lines[2].Length);
-            changed = false;
-        }
-        
-        public void save()
-        {
-            if (!changed)
-            {
-                return;
-            }
-
-            string cmd = "M206 T" + type + " P" + position + " ";
-            if (type == 3) cmd += "X" + val;
-            else cmd += "S" + val;
-            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmd);
-            changed = false;
-        }
-
-        public string Description
-        {
-            get { return description; }
-            set { description = value; }
-        }
-
-        public string Value
-        {
-            get { return val; }
-            set
-            {
-                value = value.Replace(',', '.').Trim();
-                if (val.Equals(value)) return;
-                val = value;
-                changed = true;
-            }
+            this.loadedGCode = loadedGCode;
         }
     }
 }

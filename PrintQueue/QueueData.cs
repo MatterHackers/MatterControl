@@ -40,6 +40,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -138,8 +139,8 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             if (index >= 0 && index < Count)
             {
-                bool ActiveItemMustStayInQueue = PrinterCommunication.Instance.PrinterIsPrinting || PrinterCommunication.Instance.PrinterIsPaused;
-                bool PartMustStayInQueue = ActiveItemMustStayInQueue && PrintItems[index] == PrinterCommunication.Instance.ActivePrintItem;
+                bool ActiveItemMustStayInQueue = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+                bool PartMustStayInQueue = ActiveItemMustStayInQueue && PrintItems[index] == PrinterConnectionAndCommunication.Instance.ActivePrintItem;
                 if (!PartMustStayInQueue)
                 {
                     PrintItems.RemoveAt(index);

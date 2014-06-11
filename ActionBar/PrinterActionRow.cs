@@ -13,6 +13,7 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 using MatterHackers.Localizations;
 
@@ -112,8 +113,8 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(ReloadPrinterSelectionWidget, ref unregisterEvents);
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
             selectActivePrinterButton.Click += new ButtonBase.ButtonEventHandler(onSelectActivePrinterButton_Click);
             connectPrinterButton.Click += new ButtonBase.ButtonEventHandler(onConnectButton_Click);
@@ -149,8 +150,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void ConnectToActivePrinter()
         {            
-            PrinterCommunication.Instance.HaltConnectionThread();
-            PrinterCommunication.Instance.ConnectToActivePrinter();
+            PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+            PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
         }
 
         void onSelectActivePrinterButton_Click(object sender, MouseEventArgs mouseEvent)
@@ -208,11 +209,11 @@ namespace MatterHackers.MatterControl.ActionBar
         void OnIdleDisconnect(object state)
         {
             bool doCancel = true;
-            if (PrinterCommunication.Instance.PrinterIsPrinting)
+            if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
                 if (StyledMessageBox.ShowMessageBox(disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO))
                 {
-                    PrinterCommunication.Instance.Stop();
+                    PrinterConnectionAndCommunication.Instance.Stop();
                 }
                 else
                 {
@@ -222,7 +223,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
             if (doCancel)
             {
-                PrinterCommunication.Instance.Disable();                
+                PrinterConnectionAndCommunication.Instance.Disable();                
                 selectActivePrinterButton.Invalidate();
             }
         }
@@ -230,7 +231,7 @@ namespace MatterHackers.MatterControl.ActionBar
         void SetConnectionButtonVisibleState(object state)
         {            
             
-            if (PrinterCommunication.Instance.PrinterIsConnected)
+            if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
             {
                 disconnectPrinterButton.Visible = true;
                 connectPrinterButton.Visible = false;

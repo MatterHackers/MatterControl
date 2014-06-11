@@ -14,6 +14,7 @@ using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -135,7 +136,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		void SkipConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
 		{
-			PrinterCommunication.Instance.HaltConnectionThread();
+			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 			if (GetPrinterRecordCount () > 0)
 			{
 				this.windowController.ChangeToChoosePrinter ();

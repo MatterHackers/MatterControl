@@ -29,20 +29,17 @@ either expressed or implied, of the FreeBSD Project.
 //#define RUN_MATTER_SLICE_IN_PROCESS
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Globalization;
-
+using System.IO;
+using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -200,7 +197,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             while (!haltSlicingThread)
             {
-                if (PrinterCommunication.Instance.ActivePrintItem != null && listOfSlicingItems.Count > 0)
+                if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null && listOfSlicingItems.Count > 0)
                 {
                     PrintItemWrapper itemToSlice = listOfSlicingItems[0];
                     // check that the STL file is currently on disk

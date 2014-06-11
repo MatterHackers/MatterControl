@@ -105,12 +105,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         static PrintLevelingData instance = null;
         public static PrintLevelingData GetForPrinter(Printer printer)
         {
-            if (printer != activePrinter)
+            if (activePrinter != printer)
             {
                 CreateFromJsonOrLegacy(printer.PrintLevelingJsonData, printer.PrintLevelingProbePositions);
+                activePrinter = printer;
             }
-
-            activePrinter = printer;
 
             return instance;
         }

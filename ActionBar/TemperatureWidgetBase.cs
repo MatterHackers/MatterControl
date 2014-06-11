@@ -28,15 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -147,7 +142,7 @@ namespace MatterHackers.MatterControl.ActionBar
         void onEnterBounds(Object sender, EventArgs e)
         {
             labelTextWidget.Visible = true;
-            if (PrinterCommunication.Instance.PrinterIsConnected && !PrinterCommunication.Instance.PrinterIsPrinting)
+            if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
                 preheatButton.Visible = true;
             }

@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl
                 GCodeFile unleveledGCode = new GCodeFile(source);
                 if (applyLeveling.Checked)
                 {
-                    PrintLeveling.Instance.ApplyLeveling(unleveledGCode);
+                    PrintLevelingPlane.Instance.ApplyLeveling(unleveledGCode);
                 }
                 unleveledGCode.Save(dest);
             }

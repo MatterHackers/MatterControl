@@ -1,23 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-
-
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.Font;
-using MatterHackers.VectorMath;
-
-using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -172,7 +162,7 @@ namespace MatterHackers.MatterControl
                     parent = parent.Parent;
                 }
 
-				if(PrinterCommunication.Instance.PrinterIsPrinting)
+				if(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 				{
 						StyledMessageBox.ShowMessageBox(cannotExitWhileActiveMessage, cannotExitWhileActiveTitle);
 				}

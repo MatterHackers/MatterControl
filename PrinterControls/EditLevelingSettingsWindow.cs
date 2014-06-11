@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl
             levelingData.sampledPosition1 = positions[1];
             levelingData.sampledPosition2 = positions[2];
 
-            PrintLeveling.Instance.SetPrintLevelingEquation(
+            PrintLevelingPlane.Instance.SetPrintLevelingEquation(
                 levelingData.sampledPosition0,
                 levelingData.sampledPosition1,
                 levelingData.sampledPosition2,

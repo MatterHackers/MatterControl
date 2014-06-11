@@ -39,6 +39,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -106,6 +107,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
             string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}", doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
             printLevelWizard.AddPage(new LastPage2PointInstructions("Done".Localize(), doneInstructions, probePositions));
+        }
+
+        public static string ProcesssCommand(string lineBeingSent)
+        {
+            if (lineBeingSent == "G28")
+            {
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G28 Y0");
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G28 Z0");
+                return "G28 X0";
+            }
+
+            return lineBeingSent;
         }
     }
 }

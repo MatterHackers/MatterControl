@@ -39,6 +39,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -104,10 +105,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override void PageIsBecomingActive()
         {
-            PrinterCommunication.Instance.MoveAbsolute(PrinterCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
-            PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
-            PrinterCommunication.Instance.SendLineToPrinterNow("G30");
-            PrinterCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
+            PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30");
+            PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
 
             base.PageIsBecomingActive();
 
@@ -122,12 +123,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             {
                 if (currentEvent.Data.Contains("endstops hit"))
                 {
-                    PrinterCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
+                    PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
                     int zStringPos = currentEvent.Data.LastIndexOf("Z:");
                     string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
                     probePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
-                    PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
-                    PrinterCommunication.Instance.ReadPosition();
+                    PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
+                    PrinterConnectionAndCommunication.Instance.ReadPosition();
 
                     container.nextButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
                 }
@@ -181,7 +182,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override void PageIsBecomingActive()
         {
-            PrinterCommunication.Instance.HomeAxis(PrinterCommunication.Axis.XYZ);
+            PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
             base.PageIsBecomingActive();
         }
     }
@@ -201,7 +202,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         {
             this.allowLessThan0 = allowLessThan0;
             this.moveAmount = moveDistance;
-            this.lastReportedPosition = PrinterCommunication.Instance.LastReportedPosition;
+            this.lastReportedPosition = PrinterConnectionAndCommunication.Instance.LastReportedPosition;
             this.probePosition = whereToWriteProbePosition;
 
             GuiWidget spacer = new GuiWidget(15, 15);
@@ -243,7 +244,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override void PageIsBecomingInactive()
         {
-            probePosition.position = PrinterCommunication.Instance.LastReportedPosition;
+            probePosition.position = PrinterConnectionAndCommunication.Instance.LastReportedPosition;
             base.PageIsBecomingInactive();
         }
 
@@ -263,7 +264,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         void zMinusControl_Click(object sender, MouseEventArgs mouseEvent)
         {
             if (!allowLessThan0
-                && PrinterCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
+                && PrinterConnectionAndCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
             {
                 UiThread.RunOnIdle( (state) => 
                 {
@@ -272,14 +273,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 // don't move the bed lower it will not work when we print.
                 return;
             }
-            PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, -moveAmount, InstructionsPage.ManualControlsFeedRate().z);
-            PrinterCommunication.Instance.ReadPosition();
+            PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, -moveAmount, InstructionsPage.ManualControlsFeedRate().z);
+            PrinterConnectionAndCommunication.Instance.ReadPosition();
         }
 
         void zPlusControl_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, moveAmount, InstructionsPage.ManualControlsFeedRate().z);
-            PrinterCommunication.Instance.ReadPosition();
+            PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmount, InstructionsPage.ManualControlsFeedRate().z);
+            PrinterConnectionAndCommunication.Instance.ReadPosition();
         }
     }
 
@@ -308,9 +309,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         {
             base.PageIsBecomingActive();
 
-            PrinterCommunication.Instance.MoveAbsolute(PrinterCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
-            PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
-            PrinterCommunication.Instance.ReadPosition();
+            PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
+            PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
+            PrinterConnectionAndCommunication.Instance.ReadPosition();
 
             container.nextButton.Enabled = false;
 
@@ -342,10 +343,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override void PageIsBecomingActive()
         {
-            PrinterCommunication.Instance.MoveAbsolute(PrinterCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
-            PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
-            PrinterCommunication.Instance.SendLineToPrinterNow("G30");
-            PrinterCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
+            PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30");
+            PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
 
             base.PageIsBecomingActive();
 
@@ -362,15 +363,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             {
                 if (currentEvent.Data.Contains("endstops hit"))
                 {
-                    PrinterCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
+                    PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
                     int zStringPos = currentEvent.Data.LastIndexOf("Z:");
                     string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
                     // store the position that the limit swich fires
                     whereToWriteSamplePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
 
                     // now move to the probe start position
-                    PrinterCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
-                    PrinterCommunication.Instance.ReadPosition();
+                    PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().z);
+                    PrinterConnectionAndCommunication.Instance.ReadPosition();
                 }
             }
         }
@@ -422,7 +423,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         {
             if (haveDrawn)
             {
-                PrinterCommunication.Instance.MoveRelative(PrinterCommunication.Axis.Z, 2, InstructionsPage.ManualControlsFeedRate().z);
+                PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, 2, InstructionsPage.ManualControlsFeedRate().z);
             }
             base.PageIsBecomingInactive();
         }

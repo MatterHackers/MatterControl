@@ -29,17 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
@@ -188,12 +183,15 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         void AddHandlers()
         {
-            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(ReloadData, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(ReloadData, ref unregisterEvents);
         }
 
         void ReloadData(object sender, EventArgs e)
-        {            
-            LoadHistoryItems(Count);
+        {
+            using (TimedLock.Lock(this, "ReloadData PrintHistory"))
+            {
+                LoadHistoryItems(Count);
+            }
         }
 
         event EventHandler unregisterEvents;

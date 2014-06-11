@@ -8,6 +8,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 int printerOptionHash = printerRecord.GetHashCode();
                 if (connectedPrinterHash == printerOptionHash)
                 {
-                    availableText = PrinterCommunication.Instance.PrinterConnectionStatusVerbose;                    
+                    availableText = PrinterConnectionAndCommunication.Instance.PrinterConnectionStatusVerbose;                    
                     availableColor = new RGBA_Bytes(0,95,107);
                 }
             }        
@@ -181,7 +182,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 //Disconnect printer if the printer being removed is currently connected
                 if (connectedPrinterHash == printerOptionHash)
                 {
-                    PrinterCommunication.Instance.Disable();
+                    PrinterConnectionAndCommunication.Instance.Disable();
                     ActivePrinterProfile.Instance.ActivePrinter = null;
                 }
             }

@@ -30,16 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-using System.Text;
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.Agg.Image;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
@@ -173,7 +167,7 @@ namespace MatterHackers.MatterControl
 
         protected void SentCommandToPrinter(string command)
         {
-            PrinterCommunication.Instance.SendLineToPrinterNow(command);
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(command);
         }
     }
 }

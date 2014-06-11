@@ -37,6 +37,7 @@ using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -117,7 +118,7 @@ namespace MatterHackers.MatterControl.EeProm
             ShowAsSystemWindow();
 
             currentEePromSettings.Clear();
-            PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents); 
+            PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents); 
             currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
             currentEePromSettings.AskPrinterForSettings();
 

@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using System.IO.Ports;
-using System.Diagnostics;
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -435,7 +427,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void CloseWindow(object o, MouseEventArgs e)
         {
-            PrinterCommunication.Instance.HaltConnectionThread();
+            PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
             this.containerWindowToClose.Close();
         }
 

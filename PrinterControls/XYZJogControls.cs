@@ -38,6 +38,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
@@ -184,7 +185,7 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget eButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
                 FlowLayoutWidget eMinusButtonAndText = new FlowLayoutWidget();
-                eMinusControl = moveButtonFactory.Generate("E-", PrinterCommunication.Axis.E, ManualPrinterControls.EFeedRate(0));
+                eMinusControl = moveButtonFactory.Generate("E-", PrinterConnectionAndCommunication.Axis.E, ManualPrinterControls.EFeedRate(0));
                 eMinusControl.Margin = new BorderDouble(0, 0, 5, 0);
                 eMinusButtonAndText.AddChild(eMinusControl);
 				TextWidget eMinusControlLabel = new TextWidget(LocalizedString.Get("Retract"), pointSize: 11);
@@ -204,7 +205,7 @@ namespace MatterHackers.MatterControl
                 eButtons.AddChild(eSpacer);
 
                 FlowLayoutWidget ePlusButtonAndText = new FlowLayoutWidget();
-                ePlusControl = moveButtonFactory.Generate("E+", PrinterCommunication.Axis.E, ManualPrinterControls.EFeedRate(0));
+                ePlusControl = moveButtonFactory.Generate("E+", PrinterConnectionAndCommunication.Axis.E, ManualPrinterControls.EFeedRate(0));
                 ePlusControl.Margin = new BorderDouble(0, 0, 5, 0);
                 ePlusButtonAndText.AddChild(ePlusControl);
 				TextWidget ePlusControlLabel = new TextWidget(LocalizedString.Get("Extrude"), pointSize: 11);
@@ -269,7 +270,7 @@ namespace MatterHackers.MatterControl
             {
                 MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
                 moveButtonFactory.normalFillColor = color;
-                zPlusControl = moveButtonFactory.Generate("Z+", PrinterCommunication.Axis.Z, ManualPrinterControls.ZSpeed);
+                zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, ManualPrinterControls.ZSpeed);
                 zButtons.AddChild(zPlusControl);
 
                 GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
@@ -277,7 +278,7 @@ namespace MatterHackers.MatterControl
                 spacer.BackgroundColor = XYZColors.zColor;
                 zButtons.AddChild(spacer);
 
-                zMinusControl = moveButtonFactory.Generate("Z-", PrinterCommunication.Axis.Z, ManualPrinterControls.ZSpeed);
+                zMinusControl = moveButtonFactory.Generate("Z-", PrinterConnectionAndCommunication.Axis.Z, ManualPrinterControls.ZSpeed);
                 zButtons.AddChild(zMinusControl);
             }
             zButtons.Margin = new BorderDouble(0, 5);
@@ -293,7 +294,7 @@ namespace MatterHackers.MatterControl
                     moveButtonFactory.normalFillColor = XYZColors.xColor;
                     xButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
                     xButtons.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                    xMinusControl = moveButtonFactory.Generate("X-", PrinterCommunication.Axis.X, ManualPrinterControls.XSpeed);
+                    xMinusControl = moveButtonFactory.Generate("X-", PrinterConnectionAndCommunication.Axis.X, ManualPrinterControls.XSpeed);
                     xButtons.AddChild(xMinusControl);
 
                     GuiWidget spacer = new GuiWidget(xMinusControl.Width + buttonSeparationDistance * 2, 2);
@@ -301,7 +302,7 @@ namespace MatterHackers.MatterControl
                     spacer.BackgroundColor = XYZColors.xColor;
                     xButtons.AddChild(spacer);
 
-                    xPlusControl = moveButtonFactory.Generate("X+", PrinterCommunication.Axis.X, ManualPrinterControls.XSpeed);
+                    xPlusControl = moveButtonFactory.Generate("X+", PrinterConnectionAndCommunication.Axis.X, ManualPrinterControls.XSpeed);
                     xButtons.AddChild(xPlusControl);
                 }
                 xyGrid.AddChild(xButtons);
@@ -311,7 +312,7 @@ namespace MatterHackers.MatterControl
                     moveButtonFactory.normalFillColor = XYZColors.yColor;
                     yButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
                     yButtons.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                    yPlusControl = moveButtonFactory.Generate("Y+", PrinterCommunication.Axis.Y, ManualPrinterControls.YSpeed);
+                    yPlusControl = moveButtonFactory.Generate("Y+", PrinterConnectionAndCommunication.Axis.Y, ManualPrinterControls.YSpeed);
                     yButtons.AddChild(yPlusControl);
 
                     GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
@@ -319,7 +320,7 @@ namespace MatterHackers.MatterControl
                     spacer.BackgroundColor = XYZColors.yColor;
                     yButtons.AddChild(spacer);
 
-                    yMinusControl = moveButtonFactory.Generate("Y-", PrinterCommunication.Axis.Y, ManualPrinterControls.YSpeed);
+                    yMinusControl = moveButtonFactory.Generate("Y-", PrinterConnectionAndCommunication.Axis.Y, ManualPrinterControls.YSpeed);
                     yButtons.AddChild(yMinusControl);
                 }
                 xyGrid.AddChild(yButtons);
@@ -333,13 +334,13 @@ namespace MatterHackers.MatterControl
 
         public class MoveButton : Button
         {
-            PrinterCommunication.Axis moveAxis;
+            PrinterConnectionAndCommunication.Axis moveAxis;
 
             //Amounts in millimeters
             public double MoveAmount = 10;
             private double movementFeedRate;
 
-            public MoveButton(double x, double y, GuiWidget buttonView, PrinterCommunication.Axis axis, double movementFeedRate)
+            public MoveButton(double x, double y, GuiWidget buttonView, PrinterConnectionAndCommunication.Axis axis, double movementFeedRate)
                 : base(x, y, buttonView)
             {
                 this.moveAxis = axis;
@@ -353,7 +354,7 @@ namespace MatterHackers.MatterControl
                 MoveButton moveButton = (MoveButton)sender;
 
                 //Add more fancy movement here
-                PrinterCommunication.Instance.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
+                PrinterConnectionAndCommunication.Instance.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
             }
         }
 
@@ -402,7 +403,7 @@ namespace MatterHackers.MatterControl
             public RGBA_Bytes pressedTextColor = RGBA_Bytes.White;
             public RGBA_Bytes disabledTextColor = RGBA_Bytes.White;
 
-            public MoveButton Generate(string label, PrinterCommunication.Axis axis, double movementFeedRate)
+            public MoveButton Generate(string label, PrinterConnectionAndCommunication.Axis axis, double movementFeedRate)
             {
                 //Create button based on view container widget
                 ButtonViewStates buttonViewWidget = getButtonView(label);

@@ -34,9 +34,8 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -276,9 +275,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
-            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(APP_onPrinterStatusChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
 
         public override void OnClosed(EventArgs e)

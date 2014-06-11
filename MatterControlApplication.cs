@@ -36,14 +36,15 @@ using System.Text;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PluginSystem;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -199,7 +200,7 @@ namespace MatterHackers.MatterControl
 
         void CheckOnPrinter(object state)
         {
-            PrinterCommunication.Instance.OnIdle();
+            PrinterConnectionAndCommunication.Instance.OnIdle();
             UiThread.RunOnIdle(CheckOnPrinter);
         }
 
@@ -327,10 +328,10 @@ namespace MatterHackers.MatterControl
             // save the last size of the window so we can restore it next time.
             ApplicationSettings.Instance.set("WindowSize", string.Format("{0},{1}", Width, Height));
             ApplicationSettings.Instance.set("DesktopPosition", string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
-            PrinterCommunication.Instance.Disable();
+            PrinterConnectionAndCommunication.Instance.Disable();
             //Close connection to the local datastore
             Datastore.Instance.Exit();
-            PrinterCommunication.Instance.HaltConnectionThread();
+            PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
             SlicingQueue.Instance.ShutDownSlicingThread();
             if (RestartOnClose)
             {
@@ -357,7 +358,7 @@ namespace MatterHackers.MatterControl
             //Save a snapshot of the prints in queue
             QueueData.Instance.SaveDefaultQueue();
 
-            if (PrinterCommunication.Instance.PrinterIsPrinting)
+            if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
                 StyledMessageBox.ShowMessageBox(unableToExitMessage, unableToExitTitle);
                 CancelClose = true;

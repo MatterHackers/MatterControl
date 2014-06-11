@@ -7,6 +7,7 @@ using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {    
@@ -57,9 +58,9 @@ namespace MatterHackers.MatterControl
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            PrinterCommunication.Instance.WroteLine.RegisterEvent(Instance_WroteLine, ref unregisterEvents);
-            PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(Instance_WroteLine, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
         }
 
@@ -102,7 +103,7 @@ namespace MatterHackers.MatterControl
             if (timeSinceLastUpdate.ElapsedMilliseconds > 999)
             {
                 timeSinceLastUpdate.Restart();
-                currentPercent = PrinterCommunication.Instance.PercentComplete;
+                currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
                 UpdatePrintStatus();
                 this.Invalidate();                
             }
@@ -118,7 +119,7 @@ namespace MatterHackers.MatterControl
             if (timeSinceLastUpdate.ElapsedMilliseconds > 999)
             {
                 timeSinceLastUpdate.Restart();
-                currentPercent = PrinterCommunication.Instance.PercentComplete;
+                currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
                 UpdatePrintStatus();
                 
             }
@@ -131,7 +132,7 @@ namespace MatterHackers.MatterControl
 
         private void UpdatePrintStatus()
         {
-            if (PrinterCommunication.Instance.ActivePrintItem == null)
+            if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
             {
                 printTimeElapsed.Text = string.Format("");
                 printTimeRemaining.Text = string.Format("");
@@ -139,7 +140,7 @@ namespace MatterHackers.MatterControl
 
             else
             {
-                int secondsPrinted = PrinterCommunication.Instance.SecondsPrinted;
+                int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
                 int hoursPrinted = (int)(secondsPrinted / (60 * 60));
                 int minutesPrinted = (int)(secondsPrinted / 60 - hoursPrinted * 60);
                 secondsPrinted = secondsPrinted % 60;
@@ -167,11 +168,11 @@ namespace MatterHackers.MatterControl
 
                 string printPercentRemainingText = string.Format("{0:0.0}%", currentPercent);
 
-                if (PrinterCommunication.Instance.PrinterIsPrinting || PrinterCommunication.Instance.PrinterIsPaused)
+                if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
                 {
                     printTimeRemaining.Text = printPercentRemainingText;
                 }
-                else if (PrinterCommunication.Instance.PrintIsFinished)
+                else if (PrinterConnectionAndCommunication.Instance.PrintIsFinished)
                 {
                     printTimeRemaining.Text = "Done!";
                 }

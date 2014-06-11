@@ -40,6 +40,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
@@ -111,7 +112,7 @@ namespace MatterHackers.MatterControl
         static string GetMovementSpeedsString()
         {
             string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
-            if (PrinterCommunication.Instance != null && ActivePrinterProfile.Instance.ActivePrinter != null)
+            if (PrinterConnectionAndCommunication.Instance != null && ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 string savedSettings = ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds;
                 if (savedSettings != null && savedSettings != "")
@@ -262,13 +263,13 @@ namespace MatterHackers.MatterControl
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
                         new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
 #else
-						switch(PrinterCommunication.Instance.FirmwareType)
+						switch(PrinterConnectionAndCommunication.Instance.FirmwareType)
                         {
-                            case PrinterCommunication.FirmwareTypes.Repetier:
+                            case PrinterConnectionAndCommunication.FirmwareTypes.Repetier:
                                 new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
                             break;
 
-                            case PrinterCommunication.FirmwareTypes.Marlin:
+                            case PrinterConnectionAndCommunication.FirmwareTypes.Marlin:
                                 new MatterHackers.MatterControl.EeProm.EePromMarlinWidget();
                             break;
 
@@ -365,7 +366,7 @@ namespace MatterHackers.MatterControl
         EditableNumberDisplay fanSpeedDisplay;
         private GuiWidget CreateFanControls()
         {
-            PrinterCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
 
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Padding = new BorderDouble(3, 0, 0, 5);
@@ -374,10 +375,10 @@ namespace MatterHackers.MatterControl
             fanSpeedDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
             leftToRight.AddChild(fanSpeedDescription);
 
-            fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, PrinterCommunication.Instance.FanSpeed0To255.ToString(), "100");
+            fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, PrinterConnectionAndCommunication.Instance.FanSpeed0To255.ToString(), "100");
             fanSpeedDisplay.EditComplete += (sender, e) =>
             {
-                PrinterCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
+                PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
             };
 
             leftToRight.AddChild(fanSpeedDisplay);
@@ -391,7 +392,7 @@ namespace MatterHackers.MatterControl
 
         void FanSpeedChanged_Event(object sender, EventArgs e)
         {
-            int printerFanSpeed = PrinterCommunication.Instance.FanSpeed0To255;
+            int printerFanSpeed = PrinterConnectionAndCommunication.Instance.FanSpeed0To255;
 
             fanSpeedDisplay.SetDisplayString(((int)(printerFanSpeed * 100.5 / 255)).ToString());
         }
@@ -429,7 +430,7 @@ namespace MatterHackers.MatterControl
                     FlowLayoutWidget feedRateLeftToRight;
                     {
 						feedRateValue = new NumberEdit(0, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40);
-						feedRateValue.Value = ((int)(PrinterCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
+						feedRateValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
 					
                         feedRateLeftToRight = new FlowLayoutWidget();
 
@@ -439,13 +440,13 @@ namespace MatterHackers.MatterControl
                         feedRateLeftToRight.AddChild(feedRateDescription);
                         feedRateRatioSlider = new Slider(new Vector2(), 300, minFeedRateRatio, maxFeedRateRatio);
                         feedRateRatioSlider.Margin = new BorderDouble(5, 0);
-						feedRateRatioSlider.Value = PrinterCommunication.Instance.FeedRateRatio;
+						feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
                         feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         feedRateRatioSlider.ValueChanged += (sender, e) =>
                         {
-							PrinterCommunication.Instance.FeedRateRatio = feedRateRatioSlider.Value;
+							PrinterConnectionAndCommunication.Instance.FeedRateRatio = feedRateRatioSlider.Value;
                         };
-                        PrinterCommunication.Instance.FeedRateRatioChanged.RegisterEvent(FeedRateRatioChanged_Event, ref unregisterEvents);
+                        PrinterConnectionAndCommunication.Instance.FeedRateRatioChanged.RegisterEvent(FeedRateRatioChanged_Event, ref unregisterEvents);
                         feedRateValue.EditComplete += (sender, e) =>
                         {
 							feedRateRatioSlider.Value = feedRateValue.Value;
@@ -467,7 +468,7 @@ namespace MatterHackers.MatterControl
                     TextWidget extrusionDescription;
                     {
 						extrusionValue = new NumberEdit(0, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40);
-						extrusionValue.Value = ((int)(PrinterCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
+						extrusionValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
 
                         FlowLayoutWidget leftToRight = new FlowLayoutWidget();
                         leftToRight.Margin = new BorderDouble(top: 10);
@@ -478,13 +479,13 @@ namespace MatterHackers.MatterControl
                         leftToRight.AddChild(extrusionDescription);
                         extrusionRatioSlider = new Slider(new Vector2(), 300, minExtrutionRatio, maxExtrusionRatio);
                         extrusionRatioSlider.Margin = new BorderDouble(5, 0);
-                        extrusionRatioSlider.Value = PrinterCommunication.Instance.ExtrusionRatio;
+                        extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
                         extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         extrusionRatioSlider.ValueChanged += (sender, e) =>
                         {
-							PrinterCommunication.Instance.ExtrusionRatio = extrusionRatioSlider.Value;
+							PrinterConnectionAndCommunication.Instance.ExtrusionRatio = extrusionRatioSlider.Value;
                         };
-                        PrinterCommunication.Instance.ExtrusionRatioChanged.RegisterEvent(ExtrusionRatioChanged_Event, ref unregisterEvents);
+                        PrinterConnectionAndCommunication.Instance.ExtrusionRatioChanged.RegisterEvent(ExtrusionRatioChanged_Event, ref unregisterEvents);
                         extrusionValue.EditComplete += (sender, e) =>
                         {
                             extrusionRatioSlider.Value = extrusionValue.Value;
@@ -516,8 +517,8 @@ namespace MatterHackers.MatterControl
 
         void ExtrusionRatioChanged_Event(object sender, EventArgs e)
         {
-            extrusionRatioSlider.Value = PrinterCommunication.Instance.ExtrusionRatio;
-            extrusionValue.Value = ((int)(PrinterCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
+            extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
+            extrusionValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
         }
 
         public override void OnClosed(EventArgs e)
@@ -532,8 +533,8 @@ namespace MatterHackers.MatterControl
 
         void FeedRateRatioChanged_Event(object sender, EventArgs e)
         {
-            feedRateRatioSlider.Value = PrinterCommunication.Instance.FeedRateRatio;
-			feedRateValue.Value = ((int)(PrinterCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
+            feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
+			feedRateValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
         }       
 
         private GuiWidget CreateSdCardManagerContainer()
@@ -602,13 +603,13 @@ namespace MatterHackers.MatterControl
             }
             else // we at least have a printer selected
             {
-                switch (PrinterCommunication.Instance.CommunicationState)
+                switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
                 {
-                    case PrinterCommunication.CommunicationStates.Disconnecting:
-                    case PrinterCommunication.CommunicationStates.ConnectionLost:
-                    case PrinterCommunication.CommunicationStates.Disconnected:
-                    case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-                    case PrinterCommunication.CommunicationStates.FailedToConnect:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
+                    case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
+                    case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
+                    case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
                         extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
@@ -618,8 +619,8 @@ namespace MatterHackers.MatterControl
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         break;
 
-                    case PrinterCommunication.CommunicationStates.FinishedPrint:
-                    case PrinterCommunication.CommunicationStates.Connected:
+                    case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Connected:
                         extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -629,14 +630,14 @@ namespace MatterHackers.MatterControl
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         break;
 
-                    case PrinterCommunication.CommunicationStates.PreparingToPrint:
-                    case PrinterCommunication.CommunicationStates.Printing:
-                        switch (PrinterCommunication.Instance.PrintingState)
+                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                        switch (PrinterConnectionAndCommunication.Instance.PrintingState)
                         {
-                            case PrinterCommunication.DetailedPrintingState.HomingAxis:
-                            case PrinterCommunication.DetailedPrintingState.HeatingBed:
-                            case PrinterCommunication.DetailedPrintingState.HeatingExtruder:
-                            case PrinterCommunication.DetailedPrintingState.Printing:
+                            case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:
+                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
+                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
+                            case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
                                 extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
@@ -651,7 +652,7 @@ namespace MatterHackers.MatterControl
                         }
                         break;
 
-                    case PrinterCommunication.CommunicationStates.Paused:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Paused:
                         extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -783,8 +784,8 @@ namespace MatterHackers.MatterControl
         private void AddHandlers()
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
 
         private void onPrinterStatusChanged(object sender, EventArgs e)
@@ -802,27 +803,27 @@ namespace MatterHackers.MatterControl
 
         void disableMotors_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrinterCommunication.Instance.ReleaseMotors();
+            PrinterConnectionAndCommunication.Instance.ReleaseMotors();
         }
 
         void homeXButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrinterCommunication.Instance.HomeAxis(PrinterCommunication.Axis.X);
+            PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
         }
 
         void homeYButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrinterCommunication.Instance.HomeAxis(PrinterCommunication.Axis.Y);
+            PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
         }
 
         void homeZButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrinterCommunication.Instance.HomeAxis(PrinterCommunication.Axis.Z);
+            PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
         }
 
         void homeAll_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrinterCommunication.Instance.HomeAxis(PrinterCommunication.Axis.XYZ);
+            PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
         }
 
         public override void OnClosing(out bool CancelClose)

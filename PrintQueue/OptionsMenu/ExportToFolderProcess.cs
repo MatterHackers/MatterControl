@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         if (ActivePrinterProfile.Instance.DoPrintLeveling)
                         {
                             GCodeFile unleveledGCode = new GCodeFile(savedGcodeFileName);
-                            PrintLeveling.Instance.ApplyLeveling(unleveledGCode);
+                            PrintLevelingPlane.Instance.ApplyLeveling(unleveledGCode);
                             unleveledGCode.Save(outputPathAndName);
                         }
                         else

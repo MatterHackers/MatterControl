@@ -113,6 +113,9 @@
     <Compile Include="ConfigurationPage\PrinterConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
+    <Compile Include="PrinterCommunication\Io\PrinterIoBase.cs" />
+    <Compile Include="PrinterCommunication\Io\PrinterIoGCodeFile.cs" />
+    <Compile Include="PrinterCommunication\Io\PrinterIoInjectionFifo.cs" />
     <Compile Include="PrintLibrary\LibraryData.cs" />
     <Compile Include="PrintQueue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
@@ -181,8 +184,8 @@
     <Compile Include="PartPreviewWindow\PartPreviewMainWindow.cs" />
     <Compile Include="PrintQueue\OptionsMenu\PartsSheetCreator.cs" />
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
-    <Compile Include="PrinterCommunication\PrinterCommunication.cs" />
-    <Compile Include="PrinterControls\PrintLeveling.cs" />
+    <Compile Include="PrinterCommunication\PrinterConnectionAndCommunication.cs" />
+    <Compile Include="PrinterControls\PrintLevelingPlane.cs" />
     <Compile Include="PrinterControls\OutputScrollWindow.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ChooseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />

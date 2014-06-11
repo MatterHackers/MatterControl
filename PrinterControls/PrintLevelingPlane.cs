@@ -11,23 +11,23 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl
 {
-    public class PrintLeveling
+    public class PrintLevelingPlane
     {
         Matrix4X4 bedLevelMatrix = Matrix4X4.Identity;
 
         // private constructor
-        private PrintLeveling()
+        private PrintLevelingPlane()
         {
         }
 
-        static private PrintLeveling instance;
-        static public PrintLeveling Instance
+        static private PrintLevelingPlane instance;
+        static public PrintLevelingPlane Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new PrintLeveling();
+                    instance = new PrintLevelingPlane();
                 }
 
                 return instance;
@@ -94,14 +94,14 @@ namespace MatterHackers.MatterControl
 
                 if (lineBeingSent.Contains('X') || lineBeingSent.Contains('Y') || lineBeingSent.Contains('Z'))
                 {
-                    Vector3 outPosition = PrintLeveling.Instance.ApplyLeveling(currentDestination);
+                    Vector3 outPosition = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination);
                     if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
                     {
                         Vector3 relativeMove = Vector3.Zero;
                         GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
                         GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
                         GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref relativeMove.z);
-                        outPosition = PrintLeveling.Instance.ApplyLevelingRotation(relativeMove);
+                        outPosition = PrintLevelingPlane.Instance.ApplyLevelingRotation(relativeMove);
                     }
 
                     newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.##}", outPosition.x, outPosition.y, outPosition.z);

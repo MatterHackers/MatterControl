@@ -35,8 +35,11 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations; //Added Namespace
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -45,9 +48,6 @@ using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
-using MatterHackers.Agg.Image;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Agg.ImageProcessing;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -453,17 +453,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (windowType == WindowType.Embeded)
             {
-                PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
+                PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
             }
             SetEditControlsBasedOnPrinterState(this, null);
         }
 
         void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
         {
-            switch (PrinterCommunication.Instance.CommunicationState)
+            switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
             {
-                case PrinterCommunication.CommunicationStates.Printing:
-                case PrinterCommunication.CommunicationStates.Paused:
+                case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                case PrinterConnectionAndCommunication.CommunicationStates.Paused:
                     LockEditControls();
                     break;
 
@@ -803,10 +803,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void meshViewerWidget_LoadDone(object sender, EventArgs e)
         {
-            switch (PrinterCommunication.Instance.CommunicationState)
+            switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
             {
-                case PrinterCommunication.CommunicationStates.Printing:
-                case PrinterCommunication.CommunicationStates.Paused:
+                case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                case PrinterConnectionAndCommunication.CommunicationStates.Paused:
                     break;
 
                 default:

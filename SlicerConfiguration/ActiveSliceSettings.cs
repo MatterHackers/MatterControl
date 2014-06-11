@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
-                PrintLeveling.Instance.SetPrintLevelingEquation(
+                PrintLevelingPlane.Instance.SetPrintLevelingEquation(
                     levelingData.sampledPosition0,
                     levelingData.sampledPosition1,
                     levelingData.sampledPosition2,

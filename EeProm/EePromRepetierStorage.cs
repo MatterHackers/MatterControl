@@ -33,6 +33,7 @@ using System.Linq;
 using System.Text;
 
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.EeProm
 {
@@ -92,7 +93,7 @@ namespace MatterHackers.MatterControl.EeProm
 
         public void AskPrinterForSettings()
         {
-            PrinterCommunication.Instance.SendLineToPrinterNow("M205");
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M205");
         }
     }
 }

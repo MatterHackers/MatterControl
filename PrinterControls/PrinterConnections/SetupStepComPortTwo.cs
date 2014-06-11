@@ -14,6 +14,7 @@ using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -41,7 +42,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton = textImageButtonFactory.Generate(LocalizedString.Get("Connect"));
                 connectButton.Click += new ButtonBase.ButtonEventHandler(ConnectButton_Click);
 
-                PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+                PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -173,7 +174,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerErrorMessage.Text = printerErrorMessageLabelTwoFull;
                 this.ActivePrinter.Commit();
                 ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
-                PrinterCommunication.Instance.ConnectToActivePrinter();
+                PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
                 connectButton.Visible = false;                
             }     
         }
@@ -181,11 +182,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void onPrinterStatusChanged(object sender, EventArgs e)
         {
-            if (PrinterCommunication.Instance.PrinterIsConnected)
+            if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
             {
                 onConnectionSuccess();
             }
-            else if (PrinterCommunication.Instance.CommunicationState != PrinterCommunication.CommunicationStates.AttemptingToConnect)
+            else if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
             {
                 onConnectionFailed();
             }

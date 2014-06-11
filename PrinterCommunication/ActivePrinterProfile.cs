@@ -47,6 +47,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
@@ -130,7 +131,7 @@ namespace MatterHackers.MatterControl
             {
                 if (activePrinter != value)
                 {
-                    PrinterCommunication.Instance.Disable();
+                    PrinterConnectionAndCommunication.Instance.Disable();
 
                     activePrinter = value;
                     ValidateMaterialSettings();
@@ -342,7 +343,7 @@ namespace MatterHackers.MatterControl
                     if (DoPrintLeveling)
                     {
                         PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-                        PrintLeveling.Instance.SetPrintLevelingEquation(
+                        PrintLevelingPlane.Instance.SetPrintLevelingEquation(
                             levelingData.sampledPosition0,
                             levelingData.sampledPosition1,
                             levelingData.sampledPosition2,
@@ -358,8 +359,8 @@ namespace MatterHackers.MatterControl
             if (autoConnectProfile != null)
             {
                 ActivePrinterProfile.Instance.ActivePrinter = autoConnectProfile;
-                PrinterCommunication.Instance.HaltConnectionThread();
-                PrinterCommunication.Instance.ConnectToActivePrinter();
+                PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+                PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
             }
         }
 

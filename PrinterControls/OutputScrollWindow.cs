@@ -28,13 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 using System;
 using System.Collections.Generic;
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.SerialPortCommunication;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {    
@@ -116,7 +114,7 @@ namespace MatterHackers.MatterControl
 
                     monitorPrinterTemperature = new CheckBox("Monitor Temperature");
                     monitorPrinterTemperature.Margin = new BorderDouble(5, 5, 5, 2);
-                    monitorPrinterTemperature.Checked = PrinterCommunication.Instance.MonitorPrinterTemperature;
+                    monitorPrinterTemperature.Checked = PrinterConnectionAndCommunication.Instance.MonitorPrinterTemperature;
                     monitorPrinterTemperature.TextColor = this.textColor;
                     monitorPrinterTemperature.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(monitorPrinterTemperature_CheckedStateChanged);
 
@@ -177,7 +175,7 @@ namespace MatterHackers.MatterControl
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            PrinterCommunication.Instance.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
         }
 
         public override void OnClosed(EventArgs e)
@@ -192,7 +190,7 @@ namespace MatterHackers.MatterControl
 
         void monitorPrinterTemperature_CheckedStateChanged(object sender, EventArgs e)
         {
-            PrinterCommunication.Instance.MonitorPrinterTemperature = ((CheckBox)sender).Checked;
+            PrinterConnectionAndCommunication.Instance.MonitorPrinterTemperature = ((CheckBox)sender).Checked;
         }
 
         List<string> commandHistory = new List<string>();
@@ -246,7 +244,7 @@ namespace MatterHackers.MatterControl
             }
             commandHistory.Add(textToSend);
             commandHistoryIndex = commandHistory.Count;
-            PrinterCommunication.Instance.SendLineToPrinterNow(textToSend);
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(textToSend);
             if (!filterOutput.Checked)
             {
                 outputScrollWidget.WriteLine(this, new StringEventArgs(textToSend));
@@ -258,15 +256,15 @@ namespace MatterHackers.MatterControl
         {
             if (filterOutput.Checked)
             {
-                PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.UnregisterEvent(FromPrinter, ref unregisterEvents);
-                PrinterCommunication.Instance.CommunicationUnconditionalToPrinter.UnregisterEvent(ToPrinter, ref unregisterEvents);
-                PrinterCommunication.Instance.ReadLine.RegisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
+                PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.UnregisterEvent(FromPrinter, ref unregisterEvents);
+                PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.UnregisterEvent(ToPrinter, ref unregisterEvents);
+                PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
             }
             else
             {
-                PrinterCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
-                PrinterCommunication.Instance.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
-                PrinterCommunication.Instance.ReadLine.UnregisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
+                PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
+                PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
+                PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
             }
         }
 

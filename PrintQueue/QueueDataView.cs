@@ -28,18 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -200,12 +195,12 @@ namespace MatterHackers.MatterControl.PrintQueue
                     if (index == selectedIndex)
                     {
                         ((QueueRowItem)child.Children[0]).isSelectedItem = true;
-                        if (!PrinterCommunication.Instance.PrinterIsPrinting && !PrinterCommunication.Instance.PrinterIsPaused)
+                        if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
                         {
                             ((QueueRowItem)child.Children[0]).isActivePrint = true;
-                            PrinterCommunication.Instance.ActivePrintItem = ((QueueRowItem)child.Children[0]).PrintItemWrapper;
+                            PrinterConnectionAndCommunication.Instance.ActivePrintItem = ((QueueRowItem)child.Children[0]).PrintItemWrapper;
                         }
-                        else if (((QueueRowItem)child.Children[0]).PrintItemWrapper == PrinterCommunication.Instance.ActivePrintItem)
+                        else if (((QueueRowItem)child.Children[0]).PrintItemWrapper == PrinterConnectionAndCommunication.Instance.ActivePrintItem)
                         {
                             // the selection must be the active print item
                             ((QueueRowItem)child.Children[0]).isActivePrint = true;
@@ -217,7 +212,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         {
                             ((QueueRowItem)child.Children[0]).isSelectedItem = false;
                         }
-                        if (!PrinterCommunication.Instance.PrinterIsPrinting && !PrinterCommunication.Instance.PrinterIsPaused)
+                        if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
                         {
                             if (((QueueRowItem)child.Children[0]).isActivePrint)
                             {
@@ -232,7 +227,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 if (QueueData.Instance.Count == 0)
                 {
-                    PrinterCommunication.Instance.ActivePrintItem = null;
+                    PrinterConnectionAndCommunication.Instance.ActivePrintItem = null;
                 }
             }
         }

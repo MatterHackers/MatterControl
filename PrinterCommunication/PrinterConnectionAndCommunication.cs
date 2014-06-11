@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+// This should split into Connection and Communication eventually and use PrinterIo for the sourc of data.
+
 #define USE_FROSTED_SERIAL_PORT
 
 using System;
@@ -38,21 +40,21 @@ using System.IO.Ports;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-
 using Microsoft.Win32.SafeHandles;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.PrinterCommunication
 {
     /// <summary>
     /// This is a class to pass temperatures to callbacks that expect them.
@@ -94,7 +96,7 @@ namespace MatterHackers.MatterControl
     /// It handles opening and closing the serial port and does quite a bit of gcode parsing.
     /// It should be refactoried into better moduals at some point.
     /// </summary>
-    public class PrinterCommunication
+    public class PrinterConnectionAndCommunication
     {
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
@@ -113,7 +115,7 @@ namespace MatterHackers.MatterControl
             get { return firmwareVersion; }
         }
 
-        static PrinterCommunication globalInstance;
+        static PrinterConnectionAndCommunication globalInstance;
         string connectionFailureMessage = "Unknown Reason";
 
         public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
@@ -325,7 +327,7 @@ namespace MatterHackers.MatterControl
             }
             set
             {
-                if (!PrinterCommunication.Instance.PrinterIsPrinting)
+                if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
                 {
                     if (this.activePrintItem != value)
                     {
@@ -378,20 +380,20 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public static PrinterCommunication Instance
+        public static PrinterConnectionAndCommunication Instance
         {
             get
             {
                 if (globalInstance == null)
                 {
-                    globalInstance = new PrinterCommunication();
+                    globalInstance = new PrinterConnectionAndCommunication();
                 }
                 return globalInstance;
             }
 
         }
 
-        PrinterCommunication()
+        PrinterConnectionAndCommunication()
         {
             MonitorPrinterTemperature = true;
 
@@ -1125,9 +1127,9 @@ namespace MatterHackers.MatterControl
 
         public void ConnectToActivePrinter()
         {
-            if (PrinterCommunication.Instance.ActivePrinter != null)
+            if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
             {
-                ConnectToPrinter(PrinterCommunication.Instance.ActivePrinter);
+                ConnectToPrinter(PrinterConnectionAndCommunication.Instance.ActivePrinter);
             }
         }
 
@@ -1413,8 +1415,14 @@ namespace MatterHackers.MatterControl
                 if (ActivePrinter.DoPrintLeveling)
                 {
                     string inputLine = lineBeingSent;
-                    lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, inputLine);
+                    lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, inputLine);
                 }
+            }
+
+            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+            if(levelingData != null && levelingData.levelingSystem == PrintLevelingData.LevelingSystem.Probe2Points)
+            {
+                lineBeingSent = LevelWizard2Point.ProcesssCommand(lineBeingSent);
             }
 
             return lineBeingSent;
@@ -1604,7 +1612,7 @@ namespace MatterHackers.MatterControl
             {   
                 serialPort = FrostedSerialPort.Create(this.ActivePrinter.ComPort);
                 serialPort.BaudRate = this.BaudRate;
-                if (PrinterCommunication.Instance.DtrEnableOnConnect)
+                if (PrinterConnectionAndCommunication.Instance.DtrEnableOnConnect)
                 {
                     serialPort.DtrEnable = true;
                 }
@@ -2112,12 +2120,12 @@ namespace MatterHackers.MatterControl
 
         public void SetMovementToAbsolute()
         {
-            PrinterCommunication.Instance.SendLineToPrinterNow("G90");
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G90");
         }
 
         public void SetMovementToRelative()
         {
-            PrinterCommunication.Instance.SendLineToPrinterNow("G91");
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G91");
         }
 
         public void MoveRelative(Axis axis, double moveAmountMm, double feedRateMmPerMinute)
@@ -2125,8 +2133,8 @@ namespace MatterHackers.MatterControl
             if (moveAmountMm != 0)
             {
                 SetMovementToRelative();
-                PrinterCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
-                PrinterCommunication.Instance.SendLineToPrinterNow("G1 {0}{1}".FormatWith(axis, moveAmountMm));
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1}".FormatWith(axis, moveAmountMm));
                 SetMovementToAbsolute();
             }
         }
@@ -2134,15 +2142,15 @@ namespace MatterHackers.MatterControl
         public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
         {
             SetMovementToAbsolute();
-            PrinterCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
-            PrinterCommunication.Instance.SendLineToPrinterNow("G1 {0}{1}".FormatWith(axis, axisPositionMm));
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 {0}{1}".FormatWith(axis, axisPositionMm));
         }
 
         public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
         {
             SetMovementToAbsolute();
-            PrinterCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
-            PrinterCommunication.Instance.SendLineToPrinterNow("G1 X{0}Y{1}Z{2}".FormatWith(position.x, position.y, position.z));
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 X{0}Y{1}Z{2}".FormatWith(position.x, position.y, position.z));
         }
 
         public void ReadPosition()

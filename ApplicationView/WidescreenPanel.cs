@@ -48,6 +48,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
@@ -85,7 +86,7 @@ namespace MatterHackers.MatterControl
             Padding = new BorderDouble(4);
 
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
             ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanel, ref unregisterEvents);
             this.BoundsChanged += new EventHandler(onBoundsChanges);
         }
@@ -243,11 +244,11 @@ namespace MatterHackers.MatterControl
             ColumnTwo.RemoveAllChildren();
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-            part3DView = new View3DTransformPart(PrinterCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, View3DTransformPart.WindowType.Embeded, View3DTransformPart.AutoRotate.Enabled);
+            part3DView = new View3DTransformPart(PrinterConnectionAndCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, View3DTransformPart.WindowType.Embeded, View3DTransformPart.AutoRotate.Enabled);
             part3DView.Margin = new BorderDouble(bottom: 4);
             part3DView.AnchorAll();
 
-            partGcodeView = new ViewGcodeBasic(PrinterCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, ActiveSliceSettings.Instance.BedCenter, false);
+            partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, ActiveSliceSettings.Instance.BedCenter, false);
             partGcodeView.AnchorAll();
 
             ColumnTwo.AddChild(part3DView);

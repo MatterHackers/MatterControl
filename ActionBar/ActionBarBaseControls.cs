@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO.Ports;
-using System.Diagnostics;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
 using MatterHackers.Agg.VertexSource;
-
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ActionBar
 {    
@@ -162,7 +152,7 @@ namespace MatterHackers.MatterControl.ActionBar
             this.AddChild(textContainer);
 
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
-            PrinterCommunication.Instance.CommunicationStateChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
         }
 
         public override void OnClosed(EventArgs e)
@@ -190,16 +180,16 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void SetButtonText()
         {
-            if (PrinterCommunication.Instance.CommunicationState == PrinterCommunication.CommunicationStates.FailedToConnect && PrinterCommunication.Instance.ConnectionFailureMessage != "")
+            if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect && PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage != "")
 			{
                 string statusString = LocalizedString.Get("Status: {0} - {1}");
-                printerStatusText.Text = string.Format(statusString, PrinterCommunication.Instance.PrinterConnectionStatusVerbose, PrinterCommunication.Instance.ConnectionFailureMessage);
+                printerStatusText.Text = string.Format(statusString, PrinterConnectionAndCommunication.Instance.PrinterConnectionStatusVerbose, PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage);
 			}
 			else
 			{
                 string statusStringBeg = LocalizedString.Get("Status").ToUpper();
-				string statusString = string.Format("{1}: {0}",  PrinterCommunication.Instance.PrinterConnectionStatusVerbose, statusStringBeg);
-				printerStatusText.Text = string.Format(statusString,PrinterCommunication.Instance.PrinterConnectionStatusVerbose);           
+				string statusString = string.Format("{1}: {0}",  PrinterConnectionAndCommunication.Instance.PrinterConnectionStatusVerbose, statusStringBeg);
+				printerStatusText.Text = string.Format(statusString,PrinterConnectionAndCommunication.Instance.PrinterConnectionStatusVerbose);           
 			}
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {

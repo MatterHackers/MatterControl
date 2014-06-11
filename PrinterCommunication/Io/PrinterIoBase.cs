@@ -27,66 +27,40 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+// This is the base class for translators and sources to the printer communication. Things like bed leveling,
+// temperature injection, etc.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MatterHackers.MatterControl.PrinterCommunication;
 
-namespace MatterHackers.MatterControl.EeProm
+namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class EePromRepetierParameter : EventArgs
+    public abstract class PrinterIoBase
     {
-        public string description;
-        public int type;
-        public int position;
-        string val = "";
-        bool changed = false;
+        PrinterIoBase source;
 
-        public EePromRepetierParameter(string line)
+        public PrinterIoBase(PrinterIoBase source)
         {
-            update(line);
+            this.source = source;
         }
 
-        public void update(string line)
+        public string PeekNextLine()
         {
-            string[] lines = line.Substring(4).Split(' ');
-            int.TryParse(lines[0], out type);
-            int.TryParse(lines[1], out position);
-            val = lines[2];
-            description = line.Substring(7 + lines[0].Length + lines[1].Length + lines[2].Length);
-            changed = false;
+            throw new NotImplementedException();
         }
-        
-        public void save()
+
+        public string PopNextLine()
         {
-            if (!changed)
+            throw new NotImplementedException();
+        }
+
+        public int NumberOfLines
+        {
+            get
             {
-                return;
-            }
-
-            string cmd = "M206 T" + type + " P" + position + " ";
-            if (type == 3) cmd += "X" + val;
-            else cmd += "S" + val;
-            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmd);
-            changed = false;
-        }
-
-        public string Description
-        {
-            get { return description; }
-            set { description = value; }
-        }
-
-        public string Value
-        {
-            get { return val; }
-            set
-            {
-                value = value.Replace(',', '.').Trim();
-                if (val.Equals(value)) return;
-                val = value;
-                changed = true;
+                throw new NotImplementedException();
             }
         }
     }
