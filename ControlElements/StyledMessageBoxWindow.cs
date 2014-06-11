@@ -60,14 +60,14 @@ namespace MatterHackers.MatterControl
 
                 headerRow.AddChild(elementHeader);
                 topToBottom.AddChild(headerRow);
-                this.AddChild(topToBottom);
             }
 
-            //Creates container in the middle of window
+            // Creates container in the middle of window
             middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
                 middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
                 middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
+                // normally the padding for the middle container should be just (5) all around. The has extra top space
                 middleRowContainer.Padding = new BorderDouble(5, 5, 5, 15);
                 middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
             }
@@ -155,6 +155,7 @@ namespace MatterHackers.MatterControl
             }
 
             topToBottom.AddChild(buttonRow);
+            this.AddChild(topToBottom);
 
             IsModal = true;
             AdjustTextWrap();

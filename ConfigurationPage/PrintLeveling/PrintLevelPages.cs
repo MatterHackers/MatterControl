@@ -191,13 +191,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         Vector3 lastReportedPosition;
         ProbePosition probePosition;
         double moveAmount;
+        bool allowLessThan0;
 
         protected JogControls.MoveButton zPlusControl;
         protected JogControls.MoveButton zMinusControl;
 
-        public FindBedHeight(string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, ProbePosition whereToWriteProbePosition)
+        public FindBedHeight(string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance, ProbePosition whereToWriteProbePosition, bool allowLessThan0)
             : base(pageDescription, setZHeightCoarseInstruction1)
         {
+            this.allowLessThan0 = allowLessThan0;
             this.moveAmount = moveDistance;
             this.lastReportedPosition = PrinterCommunication.Instance.LastReportedPosition;
             this.probePosition = whereToWriteProbePosition;
@@ -260,7 +262,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         static string zTooLowTitle = "Waring Moving Too Low".Localize();
         void zMinusControl_Click(object sender, MouseEventArgs mouseEvent)
         {
-            if (PrinterCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
+            if (!allowLessThan0
+                && PrinterCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
             {
                 UiThread.RunOnIdle( (state) => 
                 {
@@ -294,8 +297,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         protected Vector3 probeStartPosition;
         protected WizardControl container;
 
-        public GetCoarseBedHeight(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition)
-            : base(pageDescription, setZHeightCoarseInstruction1, setZHeightCoarseInstruction2, 1, whereToWriteProbePosition)
+        public GetCoarseBedHeight(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition, bool allowLessThan0)
+            : base(pageDescription, setZHeightCoarseInstruction1, setZHeightCoarseInstruction2, 1, whereToWriteProbePosition, allowLessThan0)
         {
             this.container = container;
             this.probeStartPosition = probeStartPosition;
@@ -331,8 +334,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         event EventHandler unregisterEvents;
         ProbePosition whereToWriteSamplePosition;
 
-        public GetCoarseBedHeightProbeFirst(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition, ProbePosition whereToWriteSamplePosition)
-            : base(container, probeStartPosition, pageDescription, whereToWriteProbePosition)
+        public GetCoarseBedHeightProbeFirst(WizardControl container, Vector3 probeStartPosition, string pageDescription, ProbePosition whereToWriteProbePosition, ProbePosition whereToWriteSamplePosition, bool allowLessThan0)
+            : base(container, probeStartPosition, pageDescription, whereToWriteProbePosition, allowLessThan0)
         {
             this.whereToWriteSamplePosition = whereToWriteSamplePosition;
         }
@@ -390,8 +393,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		static string setZHeightFineInstructionTextThree = LocalizedString.Get("Finally click 'Next' to continue.");
 		static string setZHeightFineInstruction2 = string.Format("\t• {0}\n\t• {1}\n\n{2}",setZHeightFineInstructionTextOne, setZHeightFineInstructionTextTwo, setZHeightFineInstructionTextThree);
 
-        public GetFineBedHeight(string pageDescription, ProbePosition whereToWriteProbePosition)
-            : base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .1, whereToWriteProbePosition)
+        public GetFineBedHeight(string pageDescription, ProbePosition whereToWriteProbePosition, bool allowLessThan0)
+            : base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .1, whereToWriteProbePosition, allowLessThan0)
         {
         }
     }
@@ -403,8 +406,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		static string setHeightFineInstructionTextTwo = LocalizedString.Get("Finally click 'Next' to continue.");
 		static string setZHeightFineInstruction2 = string.Format("\t• {0}\n\n\n{1}", setHeightFineInstructionTextOne, setHeightFineInstructionTextTwo);
 
-        public GetUltraFineBedHeight(string pageDescription, ProbePosition whereToWriteProbePosition)
-            : base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .02, whereToWriteProbePosition)
+        public GetUltraFineBedHeight(string pageDescription, ProbePosition whereToWriteProbePosition, bool allowLessThan0)
+            : base(pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .02, whereToWriteProbePosition, allowLessThan0)
         {
         }
 

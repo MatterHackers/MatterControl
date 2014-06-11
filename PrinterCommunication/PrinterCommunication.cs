@@ -729,7 +729,7 @@ namespace MatterHackers.MatterControl
             {
                 string lineToWrite = LinesToWriteQueue[0];
 
-                lineToWrite = ApplyPrintLeveling(lineToWrite, false, false);
+                lineToWrite = ApplyPrintLeveling(lineToWrite);
 
                 LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
                 WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
@@ -1385,7 +1385,7 @@ namespace MatterHackers.MatterControl
             EnableChanged.CallEvents(this, e);
         }
 
-        string ApplyPrintLeveling(string lineBeingSent, bool addLFCR, bool includeSpaces)
+        string ApplyPrintLeveling(string lineBeingSent)
         {
             if (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
             {
@@ -1413,7 +1413,7 @@ namespace MatterHackers.MatterControl
                 if (ActivePrinter.DoPrintLeveling)
                 {
                     string inputLine = lineBeingSent;
-                    lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, inputLine, addLFCR, includeSpaces);
+                    lineBeingSent = PrintLeveling.Instance.ApplyLeveling(currentDestination, movementMode, inputLine);
                 }
             }
 
@@ -1544,7 +1544,7 @@ namespace MatterHackers.MatterControl
 
             lineToWrite = ApplyExtrusionMultiplier(lineToWrite);
             lineToWrite = ApplyFeedRateMultiplier(lineToWrite);
-            lineToWrite = ApplyPrintLeveling(lineToWrite, false, false);
+            lineToWrite = ApplyPrintLeveling(lineToWrite);
 
             string lineWithCount = "N" + (allCheckSumLinesSent.Count + 1).ToString() + " " + lineToWrite;
             string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount);

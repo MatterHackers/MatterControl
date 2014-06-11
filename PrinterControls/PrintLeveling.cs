@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl
             return Vector3.TransformVector(inPosition, bedLevelMatrix);
         }
 
-        public string ApplyLeveling(Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode, string lineBeingSent, bool addLFCR, bool includeSpaces)
+        public string ApplyLeveling(Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode, string lineBeingSent)
         {
             if ((lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
                 && lineBeingSent.Length > 2 
@@ -104,14 +104,7 @@ namespace MatterHackers.MatterControl
                         outPosition = PrintLeveling.Instance.ApplyLevelingRotation(relativeMove);
                     }
 
-                    if (includeSpaces)
-                    {
-                        newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.##}", outPosition.x, outPosition.y, outPosition.z);
-                    }
-                    else
-                    {
-                        newLine = newLine + String.Format("X{0:0.##}Y{1:0.##}Z{2:0.##}", outPosition.x, outPosition.y, outPosition.z);
-                    }
+                    newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.##}", outPosition.x, outPosition.y, outPosition.z);
                 }
 
                 if (extruderDelta != 0)
@@ -124,11 +117,6 @@ namespace MatterHackers.MatterControl
                 }
 
                 lineBeingSent = newLine;
-
-                if (addLFCR)
-                {
-                    lineBeingSent += "\r\n";
-                }
             }
 
             return lineBeingSent;
@@ -140,7 +128,7 @@ namespace MatterHackers.MatterControl
             {
                 PrinterMachineInstruction instruction = unleveledGCode.Instruction(i);
                 Vector3 currentDestination = instruction.Position;
-                instruction.Line = ApplyLeveling(currentDestination, instruction.movementType, instruction.Line, false, true);
+                instruction.Line = ApplyLeveling(currentDestination, instruction.movementType, instruction.Line);
             }
         }
     }

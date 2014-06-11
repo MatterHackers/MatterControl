@@ -2355,3 +2355,6 @@ Translated:You should be done in about 2 minutes.
 English:Alert
 Translated:Alert
 
+English:Input Required
+Translated:Input Required
+
