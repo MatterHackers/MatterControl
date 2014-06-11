@@ -2289,3 +2289,69 @@ Translated:Note: Be sure the tip of the extrude is clean.
 English:Title Stuff
 Translated:Title Stuff
 
+English:Oops! You cannot exit while a print is active.
+Translated:Oops! You cannot exit while a print is active.
+
+English:Unable to Exit
+Translated:Unable to Exit
+
+English:You are currently saving a parts sheet, are you sure you want to exit?
+Translated:You are currently saving a parts sheet, are you sure you want to exit?
+
+English:Confirm Exit
+Translated:Confirm Exit
+
+English:Disconnect and cancel the current print?
+Translated:Disconnect and cancel the current print?
+
+English:WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?
+Translated:WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?
+
+English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+Translated:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+
+English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+
+English:Waiting For Extruder To Heat
+Translated:Waiting For Extruder To Heat
+
+English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+
+English:Waiting For Bed To Heat
+Translated:Waiting For Bed To Heat
+
+English:Cancel the current print?
+Translated:Cancel the current print?
+
+English:Cancel Print?
+Translated:Cancel Print?
+
+English:There is a recommended update avalible for MatterControl. Would you like to download it now?
+Translated:There is a recommended update avalible for MatterControl. Would you like to download it now?
+
+English:Recommended Update Available
+Translated:Recommended Update Available
+
+English:Download Now
+Translated:Download Now
+
+English:Remind Me Later
+Translated:Remind Me Later
+
+English:Oops! There is no eeprom mapping for your printer's firmware.
+Translated:Oops! There is no eeprom mapping for your printer's firmware.
+
+English:Warning no eeprom mapping
+Translated:Warning no eeprom mapping
+
+English:Sample the bed at two points
+Translated:Sample the bed at two points
+
+English:You should be done in about 2 minutes.
+Translated:You should be done in about 2 minutes.
+
+English:Alert
+Translated:Alert
+

@@ -1433,25 +1433,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
         {
-            List<string> stlFiles = new List<string>();
+            pendingPartsToLoad.Clear();
             foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
                 if (extension == ".STL")
                 {
-                    if (enterEditButtonsContainer.Visible == true)
-                    {
-                        EnterEditAndSplitIntoMeshes();
-                        pendingPartsToLoad.Add(droppedFileName);
-                    }
-                    else
-                    {
-                        stlFiles.Add(droppedFileName);
-                    }
+                    pendingPartsToLoad.Add(droppedFileName);
                 }
             }
 
-            LoadAndAddPartsToPlate(stlFiles.ToArray());
+            bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
+            if (enterEditModeBeforeAddingParts)
+            {
+                EnterEditAndSplitIntoMeshes();
+            }
+            else
+            {
+                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+            }
 
             base.OnDragDrop(fileDropEventArgs);
         }
