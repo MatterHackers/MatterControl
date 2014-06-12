@@ -45,9 +45,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
     public class LevelWizard2Point : LevelWizardBase
     {
-        Vector2 probeFrontLeft = new Vector2(0, 0);
-        Vector2 probeFrontRight = new Vector2(220, 0);
-        Vector2 probeBackLeft = new Vector2(0, 210);
+        static Vector2 probeFrontLeft = new Vector2(0, 0);
+        static Vector2 probeFrontRight = new Vector2(220, 0);
+        static Vector2 probeBackLeft = new Vector2(0, 210);
 
         string pageOneStepText = "Print Leveling Overview".Localize();
         string pageOneInstructionsTextOne = LocalizedString.Get("Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.");
@@ -116,6 +116,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G28 Y0");
                 PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G28 Z0");
                 return "G28 X0";
+            }
+            else if (lineBeingSent == "G29")
+            {
             }
 
             return lineBeingSent;

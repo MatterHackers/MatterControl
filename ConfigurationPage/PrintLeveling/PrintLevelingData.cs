@@ -31,6 +31,34 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             }
         }
 
+        Vector3 probeOffset0Private;
+        public Vector3 probeOffset0
+        {
+            get { return probeOffset0Private; }
+            set
+            {
+                if (probeOffset0Private != value)
+                {
+                    probeOffset0Private = value;
+                    Commit();
+                }
+            }
+        }
+
+        Vector3 probeOffset1Private;
+        public Vector3 probeOffset1
+        {
+            get { return probeOffset1Private; }
+            set
+            {
+                if (probeOffset1Private != value)
+                {
+                    probeOffset1Private = value;
+                    Commit();
+                }
+            }
+        }
+
         Vector3 sampledPosition1Private;
         public Vector3 sampledPosition1
         {

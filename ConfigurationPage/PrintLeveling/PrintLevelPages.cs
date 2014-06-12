@@ -168,6 +168,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             levelingData.sampledPosition1 = userBedSample1;
             levelingData.sampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0;
 
+            levelingData.probeOffset0 = probeOffset0;
+            levelingData.probeOffset1 = probeOffset1;
+
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
         }
