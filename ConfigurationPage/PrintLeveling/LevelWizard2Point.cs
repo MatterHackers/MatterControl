@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         static Vector2 probeFrontLeft = new Vector2(0, 0);
         static Vector2 probeFrontRight = new Vector2(220, 0);
         static Vector2 probeBackLeft = new Vector2(0, 210);
+        static double probeStartZHeight = 10;
 
         string pageOneStepText = "Print Leveling Overview".Localize();
         string pageOneInstructionsTextOne = LocalizedString.Get("Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.");
@@ -90,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             string lowPrecisionTwoLabel = LocalizedString.Get("Low Precision");
             string medPrecisionTwoLabel = LocalizedString.Get("Medium Precision");
             string highPrecisionTwoLabel = LocalizedString.Get("High Precision");
-            printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontLeft, 10), string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, lowPrecisionTwoLabel), probePositions[0], probePositions[1], true));
+            printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontLeft, probeStartZHeight), string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, lowPrecisionTwoLabel), probePositions[0], probePositions[1], true));
             printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, medPrecisionTwoLabel), probePositions[0], true));
             printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabelTwo, highPrecisionTwoLabel), probePositions[0], true));
 
@@ -98,30 +99,136 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             string lowPrecisionLabelThree = LocalizedString.Get("Low Precision");
             string medPrecisionLabelThree = LocalizedString.Get("Medium Precision");
             string highPrecisionLabelThree = LocalizedString.Get("High Precision");
-            printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontRight, 10), string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, lowPrecisionLabelThree), probePositions[2], probePositions[3], true));
+            printLevelWizard.AddPage(new GetCoarseBedHeightProbeFirst(printLevelWizard, new Vector3(probeFrontRight, probeStartZHeight), string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, lowPrecisionLabelThree), probePositions[2], probePositions[3], true));
             printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, medPrecisionLabelThree), probePositions[2], true));
             printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabelThree, highPrecisionLabelThree), probePositions[2], true));
 
             string retrievingFinalPosition = "Getting the third point.";
-            printLevelWizard.AddPage(new GettingThirdPointFor2PointCalibration(printLevelWizard, "Collecting Data", new Vector3(probeBackLeft, 10), retrievingFinalPosition, probePositions[4]));
+            printLevelWizard.AddPage(new GettingThirdPointFor2PointCalibration(printLevelWizard, "Collecting Data", new Vector3(probeBackLeft, probeStartZHeight), retrievingFinalPosition, probePositions[4]));
 
             string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}", doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
             printLevelWizard.AddPage(new LastPage2PointInstructions("Done".Localize(), doneInstructions, probePositions));
         }
 
+        static event EventHandler unregisterEvents;
+        static int probeIndex = 0;
+        static Vector3 probeRead0;
+        static Vector3 probeRead1;
+        static Vector3 probeRead2;
         public static string ProcesssCommand(string lineBeingSent)
         {
             if (lineBeingSent == "G28")
             {
-                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G28 Y0");
-                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G28 Z0");
-                return "G28 X0";
+                StringBuilder commands = new StringBuilder();
+                commands.AppendLine("G28 X0");
+                commands.AppendLine("G28 Y0");
+                commands.AppendLine("G28 Z0");
+                commands.AppendLine("M114");
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
+
+                return "G4 P100"; // send a command that will do nothing for this line (G4 Dwell 100 ms)
             }
             else if (lineBeingSent == "G29")
             {
+                if (unregisterEvents != null)
+                {
+                    unregisterEvents(null, null);
+                }
+                ActivePrinterProfile.Instance.DoPrintLeveling = false;
+
+                probeIndex = 0;
+                PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
+
+                StringBuilder commands = new StringBuilder();
+
+                double zFeedRate = InstructionsPage.ManualControlsFeedRate().z;
+                double xyFeedRate = InstructionsPage.ManualControlsFeedRate().x;
+
+                // probe position 0
+                probeRead0 = new Vector3(probeFrontLeft, probeStartZHeight);
+                // up in z
+                commands.AppendLine("G1 F{0}".FormatWith(zFeedRate));
+                commands.AppendLine("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
+                // move to xy
+                commands.AppendLine("G1 F{0}".FormatWith(xyFeedRate));
+                commands.AppendLine("G1 X{0}Y{1}Z{2}".FormatWith(probeFrontLeft.x, probeFrontLeft.y, probeStartZHeight));
+                // probe
+                commands.AppendLine("G30");
+
+                // probe position 1
+                probeRead1 = new Vector3(probeFrontRight, probeStartZHeight);
+                // up in z
+                commands.AppendLine("G1 F{0}".FormatWith(zFeedRate));
+                commands.AppendLine("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
+                // move to xy
+                commands.AppendLine("G1 F{0}".FormatWith(xyFeedRate));
+                commands.AppendLine("G1 X{0}Y{1}Z{2}".FormatWith(probeFrontRight.x, probeFrontRight.y, probeStartZHeight));
+                // probe
+                commands.AppendLine("G30");
+
+                // probe position 2
+                probeRead2 = new Vector3(probeBackLeft, probeStartZHeight);
+                // up in z
+                commands.AppendLine("G1 F{0}".FormatWith(zFeedRate));
+                commands.AppendLine("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
+                // move to xy
+                commands.AppendLine("G1 F{0}".FormatWith(xyFeedRate));
+                commands.AppendLine("G1 X{0}Y{1}Z{2}".FormatWith(probeBackLeft.x, probeBackLeft.y, probeStartZHeight));
+                // probe
+                commands.AppendLine("G30");
+                commands.AppendLine("M114");
+
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
+
+                return "G4 P100"; // send a command that will do nothing for this line (G4 Dwell 100 ms)
             }
 
             return lineBeingSent;
+        }
+
+        static void FinishedProbe(object sender, EventArgs e)
+        {
+            StringEventArgs currentEvent = e as StringEventArgs;
+            if (currentEvent != null)
+            {
+                if (currentEvent.Data.Contains("endstops hit"))
+                {
+                    int zStringPos = currentEvent.Data.LastIndexOf("Z:");
+                    string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
+                    // store the position that the limit swich fires
+                    switch (probeIndex++)
+                    {
+                        case 0:
+                            probeRead0.z = double.Parse(zProbeHeight);
+                            break;
+
+                        case 1:
+                            probeRead1.z = double.Parse(zProbeHeight);
+                            break;
+
+                        case 2:
+                            probeRead2.z = double.Parse(zProbeHeight);
+                            if (unregisterEvents != null)
+                            {
+                                unregisterEvents(null, null);
+                            }
+                            SetEquations();
+                            break;
+                    }
+                }
+            }
+        }
+
+        static void SetEquations()
+        {
+            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+
+            // position 0 does not change as it is the distance from the switch trigger to the extruder tip.
+            //levelingData.sampledPosition0 = levelingData.sampledPosition0;
+            levelingData.sampledPosition1 = levelingData.sampledPosition0 + probeRead1;
+            levelingData.sampledPosition2 = levelingData.sampledPosition0 + probeRead2;
+
+            ActivePrinterProfile.Instance.DoPrintLeveling = true;
         }
     }
 }

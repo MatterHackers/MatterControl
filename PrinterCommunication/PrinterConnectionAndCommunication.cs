@@ -417,8 +417,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReadLineContainsCallBacks.AddCallBackToKey("Resend:", PrinterRequestsResend);
             ReadLineContainsCallBacks.AddCallBackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
 
-            WriteLineStartCallBacks.AddCallBackToKey("G28", HomeWasWritenToPrinter);
-
             WriteLineStartCallBacks.AddCallBackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
             WriteLineStartCallBacks.AddCallBackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
             WriteLineStartCallBacks.AddCallBackToKey("M140", BedTemperatureWasWritenToPrinter);
@@ -765,16 +763,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             get
             {
                 return actualExtruderTemperature;
-            }
-        }
-
-        public void HomeWasWritenToPrinter(object sender, EventArgs e)
-        {
-            if (ActivePrinter.DoPrintLeveling)
-            {
-                ForceImmediateWrites = true;
-                ReadPosition();
-                ForceImmediateWrites = false;
             }
         }
 
@@ -1420,9 +1408,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
 
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            if(levelingData != null && levelingData.levelingSystem == PrintLevelingData.LevelingSystem.Probe2Points)
+            if(levelingData != null)
             {
-                lineBeingSent = LevelWizard2Point.ProcesssCommand(lineBeingSent);
+                switch (levelingData.levelingSystem)
+                {
+                    case PrintLevelingData.LevelingSystem.Probe2Points:
+                        lineBeingSent = LevelWizard2Point.ProcesssCommand(lineBeingSent);
+                        break;
+
+                    case PrintLevelingData.LevelingSystem.Probe3Points:
+                        lineBeingSent = LevelWizard3Point.ProcesssCommand(lineBeingSent);
+                        break;
+                }
             }
 
             return lineBeingSent;
@@ -1503,12 +1500,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 if (lineToWrite.Contains("\n"))
                 {
                     string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-                    for (int i = 0; i < lines.Length; i++)
+                    if (PrinterIsPrinting)
                     {
-                        string line = lines[i].Trim();
-                        if (line.Length > 0)
+                        for (int i = lines.Length - 1; i >= 0; i--)
                         {
-                            SendLineToPrinterNow(line);
+                            string line = lines[i].Trim();
+                            if (line.Length > 0)
+                            {
+                                SendLineToPrinterNow(line);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < lines.Length; i++)
+                        {
+                            string line = lines[i].Trim();
+                            if (line.Length > 0)
+                            {
+                                SendLineToPrinterNow(line);
+                            }
                         }
                     }
                     return;

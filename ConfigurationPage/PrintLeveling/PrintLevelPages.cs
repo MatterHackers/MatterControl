@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
             // The first point is the user assisted offset to the bed
             Vector3 userBedSample0 = probePositions[0].position;
-            // The second ponit sample offset at the limit switch
+            // The second point sample offset at the limit switch
             Vector3 probeOffset0 = probePositions[1].position; // this z should be 0
 
             // right side of printer

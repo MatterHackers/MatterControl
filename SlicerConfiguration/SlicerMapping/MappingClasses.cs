@@ -77,15 +77,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                 newStartGCode.Append(ReplaceMacroValues(base.MappedValue));
 
-                bool first = true;
                 foreach (string line in PostStartGCode())
                 {
-                    if (!first)
-                    {
-                        newStartGCode.Append("\n");
-                    }
+                    newStartGCode.Append("\n");
                     newStartGCode.Append(line);
-                    first = false;
                 }
 
                 if (replaceCRs)

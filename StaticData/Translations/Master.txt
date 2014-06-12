@@ -2358,3 +2358,9 @@ Translated:Alert
 English:Input Required
 Translated:Input Required
 
+English:Apply leveling to gcode during export
+Translated:Apply leveling to gcode during export
+
+English:File export options:
+Translated:File export options:
+
