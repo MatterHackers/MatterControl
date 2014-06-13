@@ -1410,16 +1410,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
             if(levelingData != null)
             {
+                List<string> linesToWrite = null;
                 switch (levelingData.levelingSystem)
                 {
                     case PrintLevelingData.LevelingSystem.Probe2Points:
-                        lineBeingSent = LevelWizard2Point.ProcesssCommand(lineBeingSent);
+                        linesToWrite = LevelWizard2Point.ProcesssCommand(lineBeingSent);
                         break;
 
                     case PrintLevelingData.LevelingSystem.Probe3Points:
-                        lineBeingSent = LevelWizard3Point.ProcesssCommand(lineBeingSent);
+                        linesToWrite = LevelWizard3Point.ProcesssCommand(lineBeingSent);
                         break;
                 }
+
+                lineBeingSent = linesToWrite[linesToWrite.Count - 1];
+                linesToWrite.RemoveAt(linesToWrite.Count - 1);
+                SendLinesToPrinterNow(linesToWrite.ToArray());
             }
 
             return lineBeingSent;
@@ -1492,6 +1497,32 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
+        public void SendLinesToPrinterNow(string[] linesToWrite)
+        {
+            if (PrinterIsPrinting)
+            {
+                for (int i = linesToWrite.Length - 1; i >= 0; i--)
+                {
+                    string line = linesToWrite[i].Trim();
+                    if (line.Length > 0)
+                    {
+                        SendLineToPrinterNow(line);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < linesToWrite.Length; i++)
+                {
+                    string line = linesToWrite[i].Trim();
+                    if (line.Length > 0)
+                    {
+                        SendLineToPrinterNow(line);
+                    }
+                }
+            }
+        }
+
         public void SendLineToPrinterNow(string lineToWrite)
         {
             using (TimedLock.Lock(this, "QueueLineToPrinter"))
@@ -1499,29 +1530,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 //Check line for linebreaks, split and process separate if necessary
                 if (lineToWrite.Contains("\n"))
                 {
-                    string[] lines = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-                    if (PrinterIsPrinting)
-                    {
-                        for (int i = lines.Length - 1; i >= 0; i--)
-                        {
-                            string line = lines[i].Trim();
-                            if (line.Length > 0)
-                            {
-                                SendLineToPrinterNow(line);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < lines.Length; i++)
-                        {
-                            string line = lines[i].Trim();
-                            if (line.Length > 0)
-                            {
-                                SendLineToPrinterNow(line);
-                            }
-                        }
-                    }
+                    string[] linesToWrite = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
+                    SendLinesToPrinterNow(linesToWrite);
                     return;
                 }
 

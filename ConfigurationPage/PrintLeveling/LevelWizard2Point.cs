@@ -115,18 +115,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         static Vector3 probeRead0;
         static Vector3 probeRead1;
         static Vector3 probeRead2;
-        public static string ProcesssCommand(string lineBeingSent)
+        public static List<string> ProcesssCommand(string lineBeingSent)
         {
+            List<string> lines = new List<string>();
             if (lineBeingSent == "G28")
             {
-                StringBuilder commands = new StringBuilder();
-                commands.AppendLine("G28 X0");
-                commands.AppendLine("G28 Y0");
-                commands.AppendLine("G28 Z0");
-                commands.AppendLine("M114");
-                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
-
-                return "G4 P100"; // send a command that will do nothing for this line (G4 Dwell 100 ms)
+                lines.Add("G28 X0");
+                lines.Add("G28 Y0");
+                lines.Add("G28 Z0");
+                lines.Add("M114");
             }
             else if (lineBeingSent == "G29")
             {
@@ -147,43 +144,43 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 // probe position 0
                 probeRead0 = new Vector3(probeFrontLeft, probeStartZHeight);
                 // up in z
-                commands.AppendLine("G1 F{0}".FormatWith(zFeedRate));
-                commands.AppendLine("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
+                lines.Add("G1 F{0}".FormatWith(zFeedRate));
+                lines.Add("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
                 // move to xy
-                commands.AppendLine("G1 F{0}".FormatWith(xyFeedRate));
-                commands.AppendLine("G1 X{0}Y{1}Z{2}".FormatWith(probeFrontLeft.x, probeFrontLeft.y, probeStartZHeight));
+                lines.Add("G1 F{0}".FormatWith(xyFeedRate));
+                lines.Add("G1 X{0}Y{1}Z{2}".FormatWith(probeFrontLeft.x, probeFrontLeft.y, probeStartZHeight));
                 // probe
-                commands.AppendLine("G30");
+                lines.Add("G30");
 
                 // probe position 1
                 probeRead1 = new Vector3(probeFrontRight, probeStartZHeight);
                 // up in z
-                commands.AppendLine("G1 F{0}".FormatWith(zFeedRate));
-                commands.AppendLine("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
+                lines.Add("G1 F{0}".FormatWith(zFeedRate));
+                lines.Add("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
                 // move to xy
-                commands.AppendLine("G1 F{0}".FormatWith(xyFeedRate));
-                commands.AppendLine("G1 X{0}Y{1}Z{2}".FormatWith(probeFrontRight.x, probeFrontRight.y, probeStartZHeight));
+                lines.Add("G1 F{0}".FormatWith(xyFeedRate));
+                lines.Add("G1 X{0}Y{1}Z{2}".FormatWith(probeFrontRight.x, probeFrontRight.y, probeStartZHeight));
                 // probe
-                commands.AppendLine("G30");
+                lines.Add("G30");
 
                 // probe position 2
                 probeRead2 = new Vector3(probeBackLeft, probeStartZHeight);
                 // up in z
-                commands.AppendLine("G1 F{0}".FormatWith(zFeedRate));
-                commands.AppendLine("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
+                lines.Add("G1 F{0}".FormatWith(zFeedRate));
+                lines.Add("G1 {0}{1}".FormatWith("Z", probeStartZHeight));
                 // move to xy
-                commands.AppendLine("G1 F{0}".FormatWith(xyFeedRate));
-                commands.AppendLine("G1 X{0}Y{1}Z{2}".FormatWith(probeBackLeft.x, probeBackLeft.y, probeStartZHeight));
+                lines.Add("G1 F{0}".FormatWith(xyFeedRate));
+                lines.Add("G1 X{0}Y{1}Z{2}".FormatWith(probeBackLeft.x, probeBackLeft.y, probeStartZHeight));
                 // probe
-                commands.AppendLine("G30");
-                commands.AppendLine("M114");
-
-                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
-
-                return "G4 P100"; // send a command that will do nothing for this line (G4 Dwell 100 ms)
+                lines.Add("G30");
+                lines.Add("M114");
+            }
+            else
+            {
+                lines.Add(lineBeingSent);
             }
 
-            return lineBeingSent;
+            return lines;
         }
 
         static void FinishedProbe(object sender, EventArgs e)
@@ -194,26 +191,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 if (currentEvent.Data.Contains("endstops hit"))
                 {
                     int zStringPos = currentEvent.Data.LastIndexOf("Z:");
-                    string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
-                    // store the position that the limit swich fires
-                    switch (probeIndex++)
+                    if (zStringPos != -1)
                     {
-                        case 0:
-                            probeRead0.z = double.Parse(zProbeHeight);
-                            break;
+                        string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
+                        // store the position that the limit swich fires
+                        switch (probeIndex++)
+                        {
+                            case 0:
+                                probeRead0.z = double.Parse(zProbeHeight);
+                                break;
 
-                        case 1:
-                            probeRead1.z = double.Parse(zProbeHeight);
-                            break;
+                            case 1:
+                                probeRead1.z = double.Parse(zProbeHeight);
+                                break;
 
-                        case 2:
-                            probeRead2.z = double.Parse(zProbeHeight);
-                            if (unregisterEvents != null)
-                            {
-                                unregisterEvents(null, null);
-                            }
-                            SetEquations();
-                            break;
+                            case 2:
+                                probeRead2.z = double.Parse(zProbeHeight);
+                                if (unregisterEvents != null)
+                                {
+                                    unregisterEvents(null, null);
+                                }
+                                SetEquations();
+                                break;
+                        }
                     }
                 }
             }

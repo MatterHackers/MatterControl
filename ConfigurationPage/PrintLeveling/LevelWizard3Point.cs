@@ -118,15 +118,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             printLevelWizard.AddPage(new LastPage3PointInstructions("Done".Localize(), doneInstructions, probePositions));
         }
 
-        public static string ProcesssCommand(string lineBeingSent)
+        public static List<string> ProcesssCommand(string lineBeingSent)
         {
+            List<string> lines = new List<string>();
             if (lineBeingSent.StartsWith("G28"))
             {
-                PrinterConnectionAndCommunication.Instance.ReadPosition();
-                return lineBeingSent;
+                lines.Add("M114");
+            }
+            else
+            {
+                lines.Add(lineBeingSent);
             }
 
-            return lineBeingSent;
+            return lines;
         }
     }
 }
