@@ -141,6 +141,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 double zFeedRate = InstructionsPage.ManualControlsFeedRate().z;
                 double xyFeedRate = InstructionsPage.ManualControlsFeedRate().x;
 
+                // make sure the probe offset is set to 0
+                lines.Add("M565 Z0");
+
                 // probe position 0
                 probeRead0 = new Vector3(probeFrontLeft, probeStartZHeight);
                 // up in z

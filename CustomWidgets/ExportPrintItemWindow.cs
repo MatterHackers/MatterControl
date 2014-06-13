@@ -12,6 +12,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl
 {
@@ -209,6 +210,37 @@ namespace MatterHackers.MatterControl
                 if (applyLeveling.Checked)
                 {
                     PrintLevelingPlane.Instance.ApplyLeveling(unleveledGCode);
+
+                    PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+                    if (levelingData != null)
+                    {
+                        for (int i = 0; i < unleveledGCode.Count; i++)
+                        {
+                            PrinterMachineInstruction instruction = unleveledGCode.Instruction(i);
+
+                            List<string> linesToWrite = null;
+                            switch (levelingData.levelingSystem)
+                            {
+                                case PrintLevelingData.LevelingSystem.Probe2Points:
+                                    linesToWrite = LevelWizard2Point.ProcesssCommand(instruction.Line);
+                                    break;
+
+                                case PrintLevelingData.LevelingSystem.Probe3Points:
+                                    linesToWrite = LevelWizard3Point.ProcesssCommand(instruction.Line);
+                                    break;
+                            }
+
+                            instruction.Line = linesToWrite[linesToWrite.Count - 1];
+                            linesToWrite.RemoveAt(linesToWrite.Count - 1);
+
+                            // now insert any new lines
+                            foreach(string line in linesToWrite)
+                            {
+                                PrinterMachineInstruction newInstruction = new PrinterMachineInstruction(line);
+                                unleveledGCode.Insert(++i, newInstruction); 
+                            }
+                        }
+                    }
                 }
                 unleveledGCode.Save(dest);
             }
