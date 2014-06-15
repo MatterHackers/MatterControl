@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         TextImageButtonFactory buttonFactory;
         LinkButtonFactory linkButtonFactory;
         PresetListControl presetListControl;
+        Button importPresetButton;
 
         public SlicePresetListWidget(SlicePresetsWindow windowController)
         {
@@ -67,6 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             buttonFactory.borderWidth = 0;
 
             AddElements();
+            AddHandlers();
         }
 
         void AddElements()
@@ -80,6 +82,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             mainContainer.AddChild(GetBottomRow());
 
             this.AddChild(mainContainer);
+        }
+
+        void AddHandlers()
+        {
+            importPresetButton.Click += new ButtonBase.ButtonEventHandler(importPreset_Click);
         }
 
         FlowLayoutWidget GetTopRow()
@@ -129,6 +136,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 });
             };
 
+            importPresetButton = buttonFactory.Generate(LocalizedString.Get("Import"));
+
             Button closeButton = buttonFactory.Generate(LocalizedString.Get("Close"));
             closeButton.Click += (sender, e) =>
             {
@@ -139,10 +148,60 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             };
 
             container.AddChild(addPresetButton);
+            container.AddChild(importPresetButton);
             container.AddChild(new HorizontalSpacer());
             container.AddChild(closeButton);
 
             return container;
+        }
+
+
+        void importPreset_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
+            openParams.ActionButtonLabel = "Load Slice Preset";
+            openParams.Title = "MatterControl: Select A File";
+
+            FileDialog.OpenFileDialog(ref openParams);
+            if (openParams.FileNames != null)
+            {                
+                DataStorage.SliceSettingsCollection settingsCollection;
+                try
+                {
+                    if (File.Exists(openParams.FileName))
+                    {
+
+                        settingsCollection = new SliceSettingsCollection();
+                        settingsCollection.Tag = windowController.filterTag;
+                        settingsCollection.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+                        settingsCollection.Name = System.IO.Path.GetFileNameWithoutExtension(openParams.FileName);
+                        settingsCollection.Commit();
+                        
+                        string[] lines = System.IO.File.ReadAllLines(openParams.FileName);
+                        foreach (string line in lines)
+                        {
+                            //Ignore commented lines
+                            if (!line.StartsWith("#"))
+                            {
+                                string[] settingLine = line.Split('=');
+                                string keyName = settingLine[0].Trim();
+                                string settingDefaultValue = settingLine[1].Trim();
+
+                                DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+                                sliceSetting.Name = keyName;
+                                sliceSetting.Value = settingDefaultValue;                                
+                                sliceSetting.SettingsCollectionId = settingsCollection.Id;
+                                sliceSetting.Commit();
+                            }
+                        }
+                        windowController.ChangeToSlicePresetList();
+                    }
+                }
+                catch (Exception e)
+                {                    
+                    // Error loading configuration
+                }
+            }
         }
 
         IEnumerable<DataStorage.SliceSettingsCollection> GetCollections()
