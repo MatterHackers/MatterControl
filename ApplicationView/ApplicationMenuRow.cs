@@ -5,7 +5,9 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 
@@ -116,6 +118,7 @@ namespace MatterHackers.MatterControl
         {
             menuItems = new TupleList<string, Func<bool>> 
             {                
+                {LocalizedString.Get("Add Printer"), addPrinter_Click},
                 {LocalizedString.Get("Add File"), importFile_Click},
 				{LocalizedString.Get("Exit"), exit_Click},
             };
@@ -128,6 +131,16 @@ namespace MatterHackers.MatterControl
                 MenuDropList.AddItem(item.Item1,pointSize:10);
             }            
             MenuDropList.Padding = padding;
+        }
+
+
+        bool addPrinter_Click()
+        {
+            UiThread.RunOnIdle((state) =>
+            { 
+                ConnectionWindow.Show();
+            });
+            return true;
         }
 			
         bool importFile_Click()
@@ -225,7 +238,8 @@ namespace MatterHackers.MatterControl
             {                
                 {LocalizedString.Get("Getting Started"), gettingStarted_Click},
                 {LocalizedString.Get("View Help"), help_Click},
-                {LocalizedString.Get("About"), about_Click},
+                {LocalizedString.Get("Report a Bug"), bug_Click},
+                {LocalizedString.Get("About MatterControl"), about_Click},
             };
 
             BorderDouble padding = MenuDropList.MenuItemsPadding;
@@ -236,6 +250,17 @@ namespace MatterHackers.MatterControl
                 MenuDropList.AddItem(item.Item1, pointSize: 10);
             }
             MenuDropList.Padding = padding;
+        }
+
+
+        bool bug_Click()
+        {
+            
+            UiThread.RunOnIdle((state) =>
+            {
+                ContactFormWindow.Open();
+            });
+            return true;
         }
 
         bool help_Click()
@@ -251,8 +276,8 @@ namespace MatterHackers.MatterControl
         {
             UiThread.RunOnIdle((state) =>
             {
-                System.Diagnostics.Process.Start("http://www.mattercontrol.com/");
-            });
+                AboutWindow.Show();
+            });            
             return true;
         }
 

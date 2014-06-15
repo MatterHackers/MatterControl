@@ -131,13 +131,13 @@ namespace MatterHackers.MatterControl.ContactForm
             formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             formLabel.VAnchor = VAnchor.ParentTop;
             formLabel.HAnchor = HAnchor.ParentLeft;
-            formLabel.Margin = new BorderDouble(10, 10);
+            formLabel.Margin = new BorderDouble(6, 3,6,6);
             labelContainer.AddChild(formLabel);
             mainContainer.AddChild(labelContainer);
 
             centerContainer = new GuiWidget();
             centerContainer.AnchorAll();
-            centerContainer.Padding = new BorderDouble(10);
+            centerContainer.Padding = new BorderDouble(3,0,3,3);
 
             messageContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             messageContainer.AnchorAll();
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.ContactForm
         {
             FlowLayoutWidget buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight);
             buttonBottomPanel.HAnchor = HAnchor.ParentLeftRight;
-            buttonBottomPanel.Padding = new BorderDouble(10, 3);
+            buttonBottomPanel.Padding = new BorderDouble(3, 3);
             buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             return buttonBottomPanel;
         }

@@ -43,6 +43,29 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             MinimumSize = new Vector2(350, 400);
         }
 
+        static ConnectionWindow connectionWindow = null;
+        static bool connectionWindowIsOpen = false;
+        public static void Show()
+        {
+            if (connectionWindowIsOpen == false)
+            {
+                connectionWindow = new ConnectionWindow();
+                connectionWindowIsOpen = true;
+                connectionWindow.Closed += (parentSender, e) =>
+                {
+                    connectionWindowIsOpen = false;
+                    connectionWindow = null;
+                };
+            }
+            else
+            {
+                if (connectionWindow != null)
+                {
+                    connectionWindow.BringToFront();
+                }
+            }
+        }
+
         public override void OnMouseUp(MouseEventArgs mouseEvent)
         {
             base.OnMouseUp(mouseEvent);
