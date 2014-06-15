@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -64,6 +65,7 @@ namespace MatterHackers.MatterControl
         protected abstract double GetTargetTemperature();
         protected abstract void SetTargetTemperature(double targetTemp);
         protected abstract string GetTemperaturePresets();
+        protected abstract double GetPreheatTemperature();
         protected abstract void SetTemperaturePresets(object sender, EventArgs stringEvent);
 
         protected abstract string HelpText { get; }
@@ -219,20 +221,20 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget presetsContainer = new FlowLayoutWidget();
             presetsContainer.Margin = new BorderDouble(3, 0);
 
-			string presetsLabelTxt = LocalizedString.Get ("Presets");
-			string presetsLabelTxtFull = string.Format ("{0}: ", presetsLabelTxt);
+            string presetsLabelTxt = LocalizedString.Get("Presets");
+            string presetsLabelTxtFull = string.Format("{0}: ", presetsLabelTxt);
 
-		    TextWidget presetsLabel = new TextWidget(presetsLabelTxtFull, pointSize: 10);
+            TextWidget presetsLabel = new TextWidget(presetsLabelTxtFull, pointSize: 10);
             presetsLabel.Margin = new BorderDouble(right: 5);
             presetsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             presetsLabel.VAnchor = VAnchor.ParentCenter;
-            presetsContainer.AddChild(presetsLabel);
+            //presetsContainer.AddChild(presetsLabel);
 
             SortedDictionary<double, string> labels = GetTemperaturePresetLabels();
 
             foreach (KeyValuePair<double, string> keyValue in labels)
             {
-                
+
                 Button tempButton = textImageButtonFactory.Generate(keyValue.Value);
                 tempButton.Margin = new BorderDouble(right: 5);
                 presetsContainer.AddChild(tempButton);
@@ -245,8 +247,27 @@ namespace MatterHackers.MatterControl
                     tempSliderContainer.Visible = false;
                 };
             }
+
+            this.textImageButtonFactory.FixedWidth = 76;
+            {
+                Button tempButton = textImageButtonFactory.Generate("PREHEAT");
+                tempButton.Margin = new BorderDouble(right: 5);
+                presetsContainer.AddChild(tempButton);
+
+                // We push the value into a temp double so that the function will not point to a shared keyValue instance.
+                double temp = GetPreheatTemperature();
+                tempButton.Click += (sender, e) =>
+                {
+                    SetTargetTemperature(temp);
+                    tempSliderContainer.Visible = false;
+                };
+            }
+            this.textImageButtonFactory.FixedWidth = 38;
+
             return presetsContainer;
         }
+
+
 
         private EditableNumberDisplay GetTargetTemperatureDisplay()
         {
@@ -435,7 +456,7 @@ namespace MatterHackers.MatterControl
 
         protected override string GetTemperaturePresets()
         {
-            string default_presets = "PLA,190,ABS,220,,0,250";
+            string default_presets = ",0,,0,,0,250";
             string presets;
 
             if (UserSettings.Instance.get("Extruder1PresetTemps") == null)
@@ -456,6 +477,11 @@ namespace MatterHackers.MatterControl
                 ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
             }
         }
+
+        protected override double GetPreheatTemperature()
+        {
+            return Convert.ToDouble(ActiveSliceSettings.Instance.GetActiveValue("first_layer_temperature"));
+        } 
 
         protected override double GetTargetTemperature()
         {
@@ -524,7 +550,7 @@ namespace MatterHackers.MatterControl
 
         protected override string GetTemperaturePresets()
         {
-            string default_presets = "PLA,70,ABS,120,,0,150";
+            string default_presets = ",0,,0,,0,150";
             string presets;
 
             if (UserSettings.Instance.get("BedPresetTemps") == null)
@@ -545,6 +571,11 @@ namespace MatterHackers.MatterControl
                 ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
             }
         }
+
+        protected override double GetPreheatTemperature()
+        {
+            return Convert.ToDouble(ActiveSliceSettings.Instance.GetActiveValue("first_layer_bed_temperature"));
+        } 
 
         protected override double GetActualTemperature()
         {
