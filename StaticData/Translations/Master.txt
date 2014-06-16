@@ -2364,3 +2364,9 @@ Translated:Apply leveling to gcode during export
 English:File export options:
 Translated:File export options:
 
+English:Report a Bug
+Translated:Report a Bug
+
+English:About MatterControl
+Translated:About MatterControl
+
