@@ -126,13 +126,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 lineBeingSent = lineBeingSent.Substring(0, commentIndex).Trim();
             }
             List<string> lines = new List<string>();
+            lines.Add(lineBeingSent);
             if (lineBeingSent.StartsWith("G28"))
             {
                 lines.Add("M114");
-            }
-            else
-            {
-                lines.Add(lineBeingSent);
             }
 
             return lines;
