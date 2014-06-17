@@ -2370,3 +2370,6 @@ Translated:Report a Bug
 English:About MatterControl
 Translated:About MatterControl
 
+English:Oops! Printer could not be detected 
+Translated:Oops! Printer could not be detected 
+

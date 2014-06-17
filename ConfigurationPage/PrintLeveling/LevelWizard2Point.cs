@@ -126,12 +126,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             if (lineBeingSent == "G28")
             {
                 lines.Add("G28 X0");
+                lines.Add("G1 X1");
                 lines.Add("G28 Y0");
+                lines.Add("G1 Y1");
                 lines.Add("G28 Z0");
                 lines.Add("M114");
             }
             else if (lineBeingSent == "G29")
             {
+                // first make sure we don't have any leftover reading.
+                PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
+
                 if (unregisterEvents != null)
                 {
                     unregisterEvents(null, null);

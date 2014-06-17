@@ -105,6 +105,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override void PageIsBecomingActive()
         {
+            // first make sure there is no leftover FinishedProbe event
+            PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
+
             PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
             PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
             PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30");
@@ -346,6 +349,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
         public override void PageIsBecomingActive()
         {
+            // first make sure there is no leftover FinishedProbe event
+            PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
+
             PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, InstructionsPage.ManualControlsFeedRate().z);
             PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
             PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30");
