@@ -115,8 +115,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         static Vector3 probeRead0;
         static Vector3 probeRead1;
         static Vector3 probeRead2;
-        public static List<string> ProcesssCommand(string lineBeingSent)
+        public static List<string> ProcessCommand(string lineBeingSent)
         {
+            int commentIndex = lineBeingSent.IndexOf(';');
+            if (commentIndex > 0) // there is content in front of the ;
+            {
+                lineBeingSent = lineBeingSent.Substring(0, commentIndex).Trim();
+            }
             List<string> lines = new List<string>();
             if (lineBeingSent == "G28")
             {

@@ -118,8 +118,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             printLevelWizard.AddPage(new LastPage3PointInstructions("Done".Localize(), doneInstructions, probePositions));
         }
 
-        public static List<string> ProcesssCommand(string lineBeingSent)
+        public static List<string> ProcessCommand(string lineBeingSent)
         {
+            int commentIndex = lineBeingSent.IndexOf(';');
+            if (commentIndex > 0) // there is content in front of the ;
+            {
+                lineBeingSent = lineBeingSent.Substring(0, commentIndex).Trim();
+            }
             List<string> lines = new List<string>();
             if (lineBeingSent.StartsWith("G28"))
             {

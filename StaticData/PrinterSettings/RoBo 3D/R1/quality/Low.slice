@@ -1,5 +1,5 @@
 layer_height = 0.3
-first_layer_height = 0.3
+first_layer_height = 0.4
 bottom_clip_amount = 0
 perimeters = 2
 top_solid_layers = 3

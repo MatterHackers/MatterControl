@@ -222,16 +222,16 @@ namespace MatterHackers.MatterControl
                             switch (levelingData.levelingSystem)
                             {
                                 case PrintLevelingData.LevelingSystem.Probe2Points:
-                                    linesToWrite = LevelWizard2Point.ProcesssCommand(instruction.Line);
+                                    linesToWrite = LevelWizard2Point.ProcessCommand(instruction.Line);
                                     break;
 
                                 case PrintLevelingData.LevelingSystem.Probe3Points:
-                                    linesToWrite = LevelWizard3Point.ProcesssCommand(instruction.Line);
+                                    linesToWrite = LevelWizard3Point.ProcessCommand(instruction.Line);
                                     break;
                             }
 
-                            instruction.Line = linesToWrite[linesToWrite.Count - 1];
-                            linesToWrite.RemoveAt(linesToWrite.Count - 1);
+                            instruction.Line = linesToWrite[0];
+                            linesToWrite.RemoveAt(0);
 
                             // now insert any new lines
                             foreach(string line in linesToWrite)

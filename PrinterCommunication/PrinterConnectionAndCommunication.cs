@@ -1414,16 +1414,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 switch (levelingData.levelingSystem)
                 {
                     case PrintLevelingData.LevelingSystem.Probe2Points:
-                        linesToWrite = LevelWizard2Point.ProcesssCommand(lineBeingSent);
+                        linesToWrite = LevelWizard2Point.ProcessCommand(lineBeingSent);
                         break;
 
                     case PrintLevelingData.LevelingSystem.Probe3Points:
-                        linesToWrite = LevelWizard3Point.ProcesssCommand(lineBeingSent);
+                        linesToWrite = LevelWizard3Point.ProcessCommand(lineBeingSent);
                         break;
                 }
 
-                lineBeingSent = linesToWrite[linesToWrite.Count - 1];
-                linesToWrite.RemoveAt(linesToWrite.Count - 1);
+                if (PrinterIsPrinting)
+                {
+                    lineBeingSent = linesToWrite[0];
+                    linesToWrite.RemoveAt(0);
+                }
+                else
+                {
+                    lineBeingSent = linesToWrite[linesToWrite.Count - 1];
+                    linesToWrite.RemoveAt(linesToWrite.Count - 1);
+                }
+
                 SendLinesToPrinterNow(linesToWrite.ToArray());
             }
 
