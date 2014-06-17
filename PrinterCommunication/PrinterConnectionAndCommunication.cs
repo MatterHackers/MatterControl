@@ -1422,16 +1422,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         break;
                 }
 
-                if (PrinterIsPrinting)
-                {
-                    lineBeingSent = linesToWrite[0];
-                    linesToWrite.RemoveAt(0);
-                }
-                else
-                {
-                    lineBeingSent = linesToWrite[linesToWrite.Count - 1];
-                    linesToWrite.RemoveAt(linesToWrite.Count - 1);
-                }
+                lineBeingSent = linesToWrite[0];
+                linesToWrite.RemoveAt(0);
 
                 SendLinesToPrinterNow(linesToWrite.ToArray());
             }
