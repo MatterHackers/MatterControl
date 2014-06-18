@@ -243,6 +243,9 @@ namespace MatterHackers.MatterControl
                     }
                 }
                 unleveledGCode.Save(dest);
+
+                // Make sure we turn this back on as it can get turned off by the LevelWizard2Point.ProcessCommand and it was on.
+                ActivePrinterProfile.Instance.DoPrintLeveling = true;
             }
             else
             {

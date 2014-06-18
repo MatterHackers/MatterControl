@@ -136,6 +136,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //infillSpeed=50 # mm/s.
             new MapItem("infillSpeed", "infill_speed"),
+
+            new MapItem("bridgeSpeed", "bridge_speed"),
             
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),

@@ -476,12 +476,6 @@ namespace MatterHackers.MatterControl
 				disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 				disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);
 
-                CheckBox doLevelingCheckBox = new CheckBox(LocalizedString.Get("Enable Automatic Print Leveling"));
-                doLevelingCheckBox.Margin = new BorderDouble(left: 3);
-                doLevelingCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                doLevelingCheckBox.VAnchor = VAnchor.ParentCenter;
-                doLevelingCheckBox.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
-
 				printLevelingStatusLabel = new TextWidget ("");
 				printLevelingStatusLabel.AutoExpandBoundsToText = true;
 				printLevelingStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -491,16 +485,11 @@ namespace MatterHackers.MatterControl
 				hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
                 buttonBar.AddChild(levelingIcon);
-				//buttonBar.AddChild(doLevelingCheckBox);
 				buttonBar.AddChild (printLevelingStatusLabel);
 				buttonBar.AddChild (hSpacer);
 				buttonBar.AddChild(enablePrintLevelingButton);
 				buttonBar.AddChild(disablePrintLevelingButton);
                 buttonBar.AddChild(runPrintLevelingButton);
-                doLevelingCheckBox.CheckedStateChanged += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.DoPrintLeveling = doLevelingCheckBox.Checked;
-                };
                 ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
                 {
 					SetPrintLevelButtonVisiblity();
@@ -564,7 +553,7 @@ namespace MatterHackers.MatterControl
                     case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
                     case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:                        
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
