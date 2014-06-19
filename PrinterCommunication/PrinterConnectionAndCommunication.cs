@@ -41,7 +41,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatfromAbstract;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
