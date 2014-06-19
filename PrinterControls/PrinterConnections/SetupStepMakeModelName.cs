@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.IO.Ports;
-using System.Diagnostics;
-
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatfromAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {   
@@ -253,9 +244,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             if (settingsDict.TryGetValue("windows_driver", out driverFile))
             {
                 string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", driverFile);
-                switch (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType())
+                switch (OsInformation.GetOSType())
                 {
-                    case Agg.UI.WindowsFormsAbstract.OSType.Windows:
+                    case OsInformation.OSType.Windows:
                         if (File.Exists(infPathAndFileToInstall))
                         {
                             PrinterSetupStatus.DriverNeedsToBeInstalled = true;

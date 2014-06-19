@@ -314,6 +314,10 @@
       <Project>{DF6845CD-64C6-4263-8357-DA8066855739}</Project>
       <Name>MarchingSquares</Name>
     </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
+      <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
+      <Name>PlatformAbstract</Name>
+    </ProjectReference>
     <ProjectReference Include="..\agg-sharp\RayTracer\RayTracer.csproj">
       <Project>{1E01ABE0-B494-4FE4-B0D6-540133286887}</Project>
       <Name>RayTracer</Name>

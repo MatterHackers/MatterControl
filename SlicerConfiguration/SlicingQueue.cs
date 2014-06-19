@@ -40,6 +40,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Agg.PlatfromAbstract;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -102,9 +103,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         static string getSlicerFullPath()
         {
-            switch (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType())
+            switch (OsInformation.GetOSType())
             {
-                case Agg.UI.WindowsFormsAbstract.OSType.Windows:
+                case OsInformation.OSType.Windows:
                     switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                     {
                         case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
@@ -137,7 +138,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             throw new NotImplementedException();
                     }
 
-                case Agg.UI.WindowsFormsAbstract.OSType.Mac:
+                case OsInformation.OSType.Mac:
                     switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                     {
                         case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
@@ -161,7 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             throw new NotImplementedException();
                     }
 
-			   case Agg.UI.WindowsFormsAbstract.OSType.X11:
+                case OsInformation.OSType.X11:
 					switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
 					{
 						case ActivePrinterProfile.SlicingEngineTypes.Slic3r:

@@ -36,6 +36,7 @@ using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatfromAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations; //Added Namespace
 using MatterHackers.MatterControl.DataStorage;

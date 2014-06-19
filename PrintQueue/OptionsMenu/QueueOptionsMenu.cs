@@ -45,6 +45,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.Agg.PlatfromAbstract;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -103,7 +104,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             
             // The pdf export library is not working on the mac at the moment so we don't include the 
             // part sheet export option on mac.
-            if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Mac)
+            if (OsInformation.GetOSType() == OsInformation.OSType.Mac)
             {
                 // mac cannot export to pdf
                 menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Other"), null));

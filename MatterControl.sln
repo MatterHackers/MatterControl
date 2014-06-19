@@ -66,6 +66,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X3GCommunication", "..\Matt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterRepair", "..\MatterRepair\MatterRepair\MatterRepair.csproj", "{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformAbstract", "..\agg-sharp\PlatformAbstract\PlatformAbstract.csproj", "{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -466,6 +468,18 @@ Global
 		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release64|Any CPU.Build.0 = Release64|Any CPU
 		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release64|x64.ActiveCfg = Release64|Any CPU
 		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release64|x86.ActiveCfg = Release64|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release|x64.ActiveCfg = Release|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release|x86.ActiveCfg = Release|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release64|Any CPU.ActiveCfg = Release64|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release64|Any CPU.Build.0 = Release64|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release64|x64.ActiveCfg = Release64|Any CPU
+		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release64|x86.ActiveCfg = Release64|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

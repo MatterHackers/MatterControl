@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
+using MatterHackers.Agg.PlatfromAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.Font;
-using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.CustomWidgets

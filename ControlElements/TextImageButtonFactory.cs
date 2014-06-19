@@ -32,6 +32,7 @@ using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatfromAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.DataStorage;

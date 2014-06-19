@@ -30,18 +30,16 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.IO.Ports;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.Agg.PlatfromAbstract;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {

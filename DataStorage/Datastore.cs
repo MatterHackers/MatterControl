@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Data.Common;
 using System.Diagnostics;
-using System.ComponentModel;
-using System.Reflection;
+using System.IO;
 using System.Threading;
-
-using MatterHackers.VectorMath;
+using MatterHackers.Agg.PlatfromAbstract;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
@@ -93,9 +87,9 @@ namespace MatterHackers.MatterControl.DataStorage
         {
             get
             {
-                switch (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType())
+                switch (OsInformation.GetOSType())
                 {
-                    case Agg.UI.WindowsFormsAbstract.OSType.Windows:
+                    case OsInformation.OSType.Windows:
                         if (Directory.Exists("StaticData"))
                         {
                             return "StaticData";
@@ -105,7 +99,7 @@ namespace MatterHackers.MatterControl.DataStorage
                             return Path.Combine("..", "..", "StaticData");
                         }
 
-                    case Agg.UI.WindowsFormsAbstract.OSType.Mac:
+                    case OsInformation.OSType.Mac:
                         if (Directory.Exists("StaticData"))
                         {
                             return "StaticData";
@@ -118,7 +112,7 @@ namespace MatterHackers.MatterControl.DataStorage
 						{
 							return Path.Combine("..", "..", "StaticData");
 						}
-					case Agg.UI.WindowsFormsAbstract.OSType.X11:
+                    case OsInformation.OSType.X11:
 						if (Directory.Exists("StaticData"))
 						{
 							return "StaticData";
@@ -205,18 +199,18 @@ namespace MatterHackers.MatterControl.DataStorage
                     }
                 }
             }
-            
-			Agg.UI.WindowsFormsAbstract.OSType osType = MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType ();
+
+            OsInformation.OSType osType = OsInformation.GetOSType();
 			switch (osType)
             {
-                case Agg.UI.WindowsFormsAbstract.OSType.Windows:
+                case OsInformation.OSType.Windows:
                     dbSQLite = new SQLiteWin32.SQLiteConnection(datastoreLocation);
                     break;
 
-                case Agg.UI.WindowsFormsAbstract.OSType.Mac:
+                case OsInformation.OSType.Mac:
                     dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
                     break;
-				case Agg.UI.WindowsFormsAbstract.OSType.X11:
+                case OsInformation.OSType.X11:
 					dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
 					break;
 

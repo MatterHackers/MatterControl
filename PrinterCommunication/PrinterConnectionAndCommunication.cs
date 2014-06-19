@@ -41,12 +41,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatfromAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
@@ -1230,11 +1230,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         //Function is not mac-friendly
         bool SerialPortAlreadyOpen(string portName)
         {
-			if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType () == WindowsFormsAbstract.OSType.Mac)
+            if (OsInformation.GetOSType() == OsInformation.OSType.Mac)
 			{
 				return false;
 			}
-			else if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType () == WindowsFormsAbstract.OSType.X11) 
+            else if (OsInformation.GetOSType() == OsInformation.OSType.X11) 
 			{
 				return false;
 			}

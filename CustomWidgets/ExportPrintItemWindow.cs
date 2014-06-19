@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatfromAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -121,8 +118,8 @@ namespace MatterHackers.MatterControl
             }
 
             // TODO: make this work on the mac and then delete this if
-            if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Windows
-                || MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.X11)
+            if (OsInformation.GetOSType() == OsInformation.OSType.Windows
+                || OsInformation.GetOSType() == OsInformation.OSType.X11)
             {
                 showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), ActiveTheme.Instance.PrimaryTextColor, 10);
                 showInFolderAfterSave.HAnchor = HAnchor.ParentLeft;
@@ -256,7 +253,7 @@ namespace MatterHackers.MatterControl
 
         void ShowFileIfRequested(string filename)
         {
-			if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType () == WindowsFormsAbstract.OSType.Windows) 
+            if (OsInformation.GetOSType() == OsInformation.OSType.Windows) 
 			{
 				if (showInFolderAfterSave.Checked) 
 				{

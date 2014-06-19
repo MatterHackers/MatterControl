@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
+﻿using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatfromAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {

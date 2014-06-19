@@ -29,25 +29,19 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Globalization;
-using System.Threading;
-using System.IO;
 using System.ComponentModel;
-
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
+using System.IO;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatfromAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Agg.VertexSource;
-
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {

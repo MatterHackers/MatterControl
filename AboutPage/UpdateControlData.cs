@@ -34,6 +34,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatfromAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -116,7 +117,7 @@ namespace MatterHackers.MatterControl
         {
             get
             {
-                if (MatterHackers.Agg.UI.WindowsFormsAbstract.GetOSType() == WindowsFormsAbstract.OSType.Mac)
+                if (OsInformation.GetOSType() == OsInformation.OSType.Mac)
                 {
                     return "pkg";
                 }
