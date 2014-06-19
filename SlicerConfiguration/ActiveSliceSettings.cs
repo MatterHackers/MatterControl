@@ -190,6 +190,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         }
 
+        public bool HasFan()
+        {
+            return GetActiveValue("has_fan") == "1";
+        }
+
+        public bool HasSdCardReader()
+        {
+            return GetActiveValue("has_sd_card_reader") == "1";
+        }
+
+        public bool HasHeatedBed()
+        {
+            return GetActiveValue("has_heated_bed") == "1";
+        }
+
         public Dictionary<string, DataStorage.SliceSetting> DefaultSettings
         {
             get

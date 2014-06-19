@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.FixedWidth = 20;
             textImageButtonFactory.AllowThemeToAdjustImage = false;
 
-            string rotateIconPath = Path.Combine("Icons", "ViewTransformControls", "rotate.png");
+            string rotateIconPath = Path.Combine("ViewTransformControls", "rotate.png");
             rotateButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
             rotateButton.Margin = new BorderDouble(3);
             AddChild(rotateButton);
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
             };
 
-            string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
+            string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
             translateButton = textImageButtonFactory.GenerateRadioButton("", translateIconPath);
             translateButton.Margin = new BorderDouble(3);
             AddChild(translateButton);
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
             };
 
-            string scaleIconPath = Path.Combine("Icons", "ViewTransformControls", "scale.png");
+            string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
             RadioButton scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
             scaleButton.Margin = new BorderDouble(3);
             AddChild(scaleButton);
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             partSelectSeparator.Margin = new BorderDouble(3);
             AddChild(partSelectSeparator);
 
-            string partSelectIconPath = Path.Combine("Icons", "ViewTransformControls", "partSelect.png");
+            string partSelectIconPath = Path.Combine("ViewTransformControls", "partSelect.png");
             partSelectButton = textImageButtonFactory.GenerateRadioButton("", partSelectIconPath);
             partSelectButton.Margin = new BorderDouble(3);
             AddChild(partSelectButton);

@@ -96,6 +96,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new NotPassedItem("", "bed_temperature"),
             new NotPassedItem("", "bed_shape"),
 
+            new NotPassedItem("", "has_fan"),
+            new NotPassedItem("", "has_heated_bed"),
+            new NotPassedItem("", "has_sd_card_reader"),
 
             new ScaledSingleNumber("objectSink", "bottom_clip_amount", 1000),
 

@@ -687,6 +687,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         }
                         break;
 
+                    case OrganizerSettingsData.DataEditTypes.HARDWARE_PRESENT:
+                        // this is not editable for a detail setting (quality or material)
+                        break;
+
                     case OrganizerSettingsData.DataEditTypes.VECTOR2:
                         {
                             string[] xyValueStrings = sliceSettingValue.Split(',');

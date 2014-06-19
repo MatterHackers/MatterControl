@@ -68,6 +68,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
     public class QueueData
     {
+        public static readonly string SdCardFileName = "SD_CARD";
+
         private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
         private List<PrintItemWrapper> PrintItems
         {
@@ -214,6 +216,19 @@ namespace MatterHackers.MatterControl.PrintQueue
                 foreach (PrintItem item in partFiles)
                 {
                     AddItem(new PrintItemWrapper(item));
+                }
+            }
+            RemoveAllSdCardFiles();
+        }
+
+        public void RemoveAllSdCardFiles()
+        {
+            for (int i = Count - 1; i >= 0; i--)
+            {
+                PrintItem printItem = PrintItems[i].PrintItem;
+                if (printItem.FileLocation == QueueData.SdCardFileName)
+                {
+                    RemoveAt(i);
                 }
             }
         }

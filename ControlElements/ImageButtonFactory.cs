@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 
         private string GetImageLocation(string imageName)
         {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, imageName);
+            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
         }
     }
 

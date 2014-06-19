@@ -209,6 +209,9 @@ Advanced
         build_height
         z_offset
         bed_shape
+        has_fan
+        has_heated_bed
+        has_sd_card_reader
       Firmware
         gcode_flavor
         gcode_output_type

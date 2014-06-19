@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl
 
         ImageBuffer LoadUpButtonImage(string imageName)
         {
-            string path = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, imageName);
+            string path = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
             ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
             ImageIO.LoadImageData(path, buffer);
 
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl
 
         private string GetImageLocation(string imageName)
         {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, imageName);
+            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
         }
 
         private ButtonViewStates getButtonView(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)

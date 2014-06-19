@@ -24,12 +24,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             iconTextImageButtonFactory.FixedHeight = 20;
             iconTextImageButtonFactory.FixedWidth = 20;
 
-            string translateIconPath = Path.Combine("Icons", "ViewTransformControls", "translate.png");
+            string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
             translateButton = iconTextImageButtonFactory.GenerateRadioButton("", translateIconPath);
             translateButton.Margin = new BorderDouble(3);
             AddChild(translateButton);
 
-            string scaleIconPath = Path.Combine("Icons", "ViewTransformControls", "scale.png");
+            string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
             scaleButton = iconTextImageButtonFactory.GenerateRadioButton("", scaleIconPath);
             scaleButton.Margin = new BorderDouble(3);
             AddChild(scaleButton);

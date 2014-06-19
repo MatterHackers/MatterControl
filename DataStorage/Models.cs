@@ -291,80 +291,6 @@ namespace MatterHackers.MatterControl.DataStorage
         }
     }
 
-    public class PrinterFeatures
-    {
-        Dictionary<string, string> features = new Dictionary<string, string>();
-        public PrinterFeatures(string features)
-        {
-            if (features != null)
-            {
-                string[] featuresArray = features.Split(',');
-                for (int i = 0; i < features.Length / 2; i++)
-                {
-                    this.features.Add(featuresArray[i * 2], featuresArray[i * 2 + 1]);
-                }
-            }
-        }
-
-        public string GetFeatuersString()
-        {
-            StringBuilder output = new StringBuilder();
-
-            bool first = true;
-            foreach (KeyValuePair<string, string> feature in features)
-            {
-                if (!first)
-                {
-                    output.Append(",");
-                }
-                output.Append(feature.Key + "," + feature.Value);
-                first = false;
-            }
-
-            return output.ToString();
-        }
-
-        public bool HasFan()
-        {
-            if (features.ContainsKey("HasFan"))
-            {
-                return features["HasFan"] == "true";
-            }
-
-            return true;
-        }
-
-        public bool HasSdCard()
-        {
-            if (features.ContainsKey("HasSdCard"))
-            {
-                return features["HasSdCard"] == "true";
-            }
-
-            return true;
-        }
-
-        public bool HasHeatedBed()
-        {
-            if (features.ContainsKey("HasHeatedBed"))
-            {
-                return features["HasHeatedBed"] == "true";
-            }
-
-            return true;
-        }
-
-        public int ExtruderCount()
-        {
-            if (features.ContainsKey("ExtruderCount"))
-            {
-                return int.Parse(features["ExtruderCount"]);
-            }
-
-            return 1;
-        }
-    }
-
     public class Printer : Entity
     {
         public int DefaultSettingsCollectionId { get; set; }
@@ -389,27 +315,6 @@ namespace MatterHackers.MatterControl.DataStorage
 
         public string MaterialCollectionIds { get; set; } // store id1,id2... (for N extruders)
         public int QualityCollectionId { get; set; }
-
-        protected PrinterFeatures printerFeatures;
-        public PrinterFeatures GetFeatures()
-        {
-            if (printerFeatures == null)
-            {
-                printerFeatures = new PrinterFeatures(_features);
-            }
-
-            return printerFeatures;
-        }
-
-        public override void Commit()
-        {
-            if (printerFeatures != null)
-            {
-                _features = printerFeatures.GetFeatuersString();
-            }
-
-            base.Commit();
-        }
 
         public Printer()
             : base()

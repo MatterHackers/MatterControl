@@ -41,7 +41,6 @@ using MatterHackers.MatterControl.HtmlParsing;
 
 namespace MatterHackers.MatterControl
 {
-
     public class AboutWindow : SystemWindow
     {
         public AboutWindow()

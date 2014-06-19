@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl
             FormField.ValidationHandler[] stringValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty };
             FormField.ValidationHandler[] nameValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty, validationMethods.StringHasNoSpecialChars };
 
-            formFields.Add(new FormField(macroNameInput, macroNameError, nameValidationHandlers));
+            formFields.Add(new FormField(macroNameInput, macroNameError, stringValidationHandlers));
             formFields.Add(new FormField(macroCommandInput, macroCommandError, stringValidationHandlers));
 
             bool formIsValid = true;

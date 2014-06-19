@@ -37,6 +37,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.PrinterCommunication;
 
@@ -181,7 +182,7 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
-                if (ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasHeatedBed())
+                if (ActiveSliceSettings.Instance.HasHeatedBed())
                 {
                     bedTemperatureWidget.Visible = true;
                 }
@@ -196,8 +197,8 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
             imageButtonFactory.invertImageColor = false;
-            string notifyIconPath = Path.Combine("Icons", "PrintStatusControls", "leveling-16x16.png");
-			string notifyHoverIconPath = Path.Combine("Icons", "PrintStatusControls", "leveling-16x16.png");
+            string notifyIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
+			string notifyHoverIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
             Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
             autoLevelButton.Cursor = Cursors.Hand;
             autoLevelButton.Margin = new Agg.BorderDouble(top: 3);

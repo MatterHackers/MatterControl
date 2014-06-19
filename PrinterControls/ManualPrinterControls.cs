@@ -37,6 +37,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
@@ -227,8 +228,7 @@ namespace MatterHackers.MatterControl
             fanControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             fanControlsContainer.AddChild(fanControlsGroupBox);
 
-            if (ActivePrinterProfile.Instance.ActivePrinter == null
-                || ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasFan())
+            if (ActiveSliceSettings.Instance.HasFan())
             {
                 controlsTopToBottomLayout.AddChild(fanControlsContainer);
             }
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl
 				eePromControlsLayout.Padding = new BorderDouble(0);
                 {
 					Agg.Image.ImageBuffer eePromImage = new Agg.Image.ImageBuffer();
-					ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
+					ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
@@ -354,8 +354,7 @@ namespace MatterHackers.MatterControl
             bedTemperatureControlWidget = new DisableableWidget();
             bedTemperatureControlWidget.AddChild(new BedTemperatureControlWidget());
 
-            if (ActivePrinterProfile.Instance.ActivePrinter == null
-                || ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasHeatedBed())
+            if (ActiveSliceSettings.Instance.HasHeatedBed())
             {
                 temperatureControlContainer.AddChild(bedTemperatureControlWidget);
             }
@@ -676,7 +675,7 @@ namespace MatterHackers.MatterControl
             homeButtonBar.Padding = new BorderDouble(0);
 
             string homeIconFile = "icon_home_white_24x24.png";
-            string fileAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, homeIconFile);
+            string fileAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", homeIconFile);
             ImageBuffer helpIconImage = new ImageBuffer();
             ImageIO.LoadImageData(fileAndPath, helpIconImage);
             ImageWidget homeIconImageWidget = new ImageWidget(helpIconImage);

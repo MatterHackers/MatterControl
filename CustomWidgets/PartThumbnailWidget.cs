@@ -43,6 +43,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Agg.VertexSource;
 
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -168,6 +169,38 @@ namespace MatterHackers.MatterControl
                 {
                     thumbnailWidget.tumbnailImage = new ImageBuffer(thumbnailWidget.noThumbnailImage);
                     thumbnailWidget.Invalidate();
+                    return;
+                }
+
+                if (thumbnailWidget.PrintItem.FileLocation == QueueData.SdCardFileName)
+                {
+                    switch (thumbnailWidget.Size)
+                    {
+                        case ImageSizes.Size115x115:
+                            {
+                                ImageIO.LoadImageData(this.GetImageLocation("icon_sd_card_115x115.png"), thumbnailWidget.tumbnailImage);
+                                thumbnailWidget.tumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+                                Graphics2D graphics = thumbnailWidget.tumbnailImage.NewGraphics2D();
+                                Ellipse outline = new Ellipse(new Vector2(115 / 2.0, 115 / 2.0), 50);
+                                graphics.Render(new Stroke(outline, 4), RGBA_Bytes.White);
+                            }
+                            break;
+
+                        case ImageSizes.Size50x50:
+                            {
+                                ImageIO.LoadImageData(this.GetImageLocation("icon_sd_card_50x50.png"), thumbnailWidget.tumbnailImage);
+                                thumbnailWidget.tumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+                                Graphics2D graphics = thumbnailWidget.tumbnailImage.NewGraphics2D();
+                                Ellipse outline = new Ellipse(new Vector2(50 / 2.0, 50 / 2.0), 22);
+                                graphics.Render(new Stroke(outline, 1.5), RGBA_Bytes.White);
+                            }
+                            break;
+
+                        default:
+                            throw new NotImplementedException();
+                    }
+
+                    UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
                     return;
                 }
                 
@@ -403,7 +436,7 @@ namespace MatterHackers.MatterControl
 
         string GetImageLocation(string imageName)
         {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, imageName);
+            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
         }
     }
 }

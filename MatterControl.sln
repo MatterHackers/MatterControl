@@ -64,6 +64,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PictureCreator", "..\Matter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X3GCommunication", "..\MatterControlX3GCommunication\X3GCommunication.csproj", "{A3680C51-A549-4D1F-AEA5-3931EA755E9A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterRepair", "..\MatterRepair\MatterRepair\MatterRepair.csproj", "{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -452,6 +454,18 @@ Global
 		{A3680C51-A549-4D1F-AEA5-3931EA755E9A}.Release64|Any CPU.Build.0 = Release64|Any CPU
 		{A3680C51-A549-4D1F-AEA5-3931EA755E9A}.Release64|x64.ActiveCfg = Release64|Any CPU
 		{A3680C51-A549-4D1F-AEA5-3931EA755E9A}.Release64|x86.ActiveCfg = Release64|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release|x64.ActiveCfg = Release|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release|x86.ActiveCfg = Release|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release64|Any CPU.ActiveCfg = Release64|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release64|Any CPU.Build.0 = Release64|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release64|x64.ActiveCfg = Release64|Any CPU
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}.Release64|x86.ActiveCfg = Release64|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -462,6 +476,7 @@ Global
 		{239CC6B1-537C-4998-9AA9-3372A3464498} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 		{BEC6FD13-C765-4B90-836B-53823AC12E20} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 		{A3680C51-A549-4D1F-AEA5-3931EA755E9A} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
+		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MatterControl.csproj

@@ -284,7 +284,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onStartButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrintActivePart();
+            UiThread.RunOnIdle((state) =>
+            {
+                PrintActivePart();
+            });
         }
 
         void onSkipButton_Click(object sender, MouseEventArgs mouseEvent)

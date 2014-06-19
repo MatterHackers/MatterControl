@@ -48,6 +48,9 @@ gcode_arcs|Use Arcs|CHECK_BOX||Use firmware arcs rather than multiple segments f
 gcode_comments|Verbose G-Code|CHECK_BOX||Include detailed comments in the gcode.
 gcode_flavor|G-Code Flavor|LIST|reprap,teacup,makerbot,sailfish,mach3_ecm,no_extrusion|Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.
 gcode_output_type|G-Code Output|LIST|REPRAP,ULTIGCODE,MAKERBOT,BFB,MACH3|Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.
+has_fan|Has Fan|HARDWARE_PRESENT|bridge_fan_speed,disable_fan_first_layers,fan_always_on,fan_below_layer_time,max_fan_speed,min_fan_speed|Specify if your printer has a fan.
+has_heated_bed|Has Heated Bed|HARDWARE_PRESENT||Specify if your printer has a heated bed.
+has_sd_card_reader|Has SD Card Reader|HARDWARE_PRESENT|bed_temperature,first_layer_bed_temperature|Specify if your printer has the ability to plug in an SD card.
 infill_acceleration|Infill|POSITIVE_DOUBLE|mm/s²|Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.
 infill_every_layers|Infill Every|INT|layers|Sets which layers will receive infill. This should normally stay set to 1 to make strong parts.
 infill_extruder|Infill Extruder|INT||The index of the extruder to use for infill.

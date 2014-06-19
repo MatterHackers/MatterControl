@@ -664,6 +664,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         }
                         break;
 
+                    case OrganizerSettingsData.DataEditTypes.HARDWARE_PRESENT:
+                        {
+                            CheckBox checkBoxWidget = new CheckBox("");
+                            checkBoxWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                            checkBoxWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                            checkBoxWidget.Checked = (sliceSettingValue == "1");
+                            checkBoxWidget.CheckedStateChanged += (sender, e) =>
+                            {
+                                if (((CheckBox)sender).Checked)
+                                {
+                                    SaveSetting(settingData.SlicerConfigName, "1");
+                                    // Now show all of the settings that this control is associated with.
+                                }
+                                else
+                                {
+                                    SaveSetting(settingData.SlicerConfigName, "0");
+                                    // Now hide all of the settings that this control is associated with.
+                                }
+                            };
+                            leftToRightLayout.AddChild(checkBoxWidget);
+                        }
+                        break;
+
                     case OrganizerSettingsData.DataEditTypes.VECTOR2:
                         {
                             string[] xyValueStrings = sliceSettingValue.Split(',');

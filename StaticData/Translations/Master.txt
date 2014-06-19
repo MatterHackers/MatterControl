@@ -2373,3 +2373,36 @@ Translated:About MatterControl
 English:Oops! Printer could not be detected 
 Translated:Oops! Printer could not be detected 
 
+English: Load Files
+Translated: Load Files
+
+English: Eject SD Card
+Translated: Eject SD Card
+
+English:Show Voxels
+Translated:Show Voxels
+
+English:Show Mesh
+Translated:Show Mesh
+
+English:Do Subtract
+Translated:Do Subtract
+
+English:Specify if your printer has a fan.
+Translated:Specify if your printer has a fan.
+
+English:Specify if your printer has a heated bed.
+Translated:Specify if your printer has a heated bed.
+
+English:Specify if your printer has the ability to plug in an SD card.
+Translated:Specify if your printer has the ability to plug in an SD card.
+
+English:Has Fan
+Translated:Has Fan
+
+English:Has Heated Bed
+Translated:Has Heated Bed
+
+English:Has SD Card Reader
+Translated:Has SD Card Reader
+
