@@ -291,6 +291,7 @@ namespace MatterHackers.MatterControl
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");  
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
+            saveParams.FileName = printItemWrapper.Name;
 
             System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
 
