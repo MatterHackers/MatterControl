@@ -87,9 +87,9 @@ namespace MatterHackers.MatterControl.DataStorage
         {
             get
             {
-                switch (OsInformation.GetOSType())
+                switch (OsInformation.OperatingSystem)
                 {
-                    case OsInformation.OSType.Windows:
+                    case OSType.Windows:
                         if (Directory.Exists("StaticData"))
                         {
                             return "StaticData";
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.DataStorage
                             return Path.Combine("..", "..", "StaticData");
                         }
 
-                    case OsInformation.OSType.Mac:
+                    case OSType.Mac:
                         if (Directory.Exists("StaticData"))
                         {
                             return "StaticData";
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.DataStorage
 						{
 							return Path.Combine("..", "..", "StaticData");
 						}
-                    case OsInformation.OSType.X11:
+                    case OSType.X11:
 						if (Directory.Exists("StaticData"))
 						{
 							return "StaticData";
@@ -200,17 +200,17 @@ namespace MatterHackers.MatterControl.DataStorage
                 }
             }
 
-            OsInformation.OSType osType = OsInformation.GetOSType();
+            OSType osType = OsInformation.OperatingSystem;
 			switch (osType)
             {
-                case OsInformation.OSType.Windows:
+                case OSType.Windows:
                     dbSQLite = new SQLiteWin32.SQLiteConnection(datastoreLocation);
                     break;
 
-                case OsInformation.OSType.Mac:
+                case OSType.Mac:
                     dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
                     break;
-                case OsInformation.OSType.X11:
+                case OSType.X11:
 					dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
 					break;
 

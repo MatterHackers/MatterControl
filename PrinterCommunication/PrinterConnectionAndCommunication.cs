@@ -1230,11 +1230,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         //Function is not mac-friendly
         bool SerialPortAlreadyOpen(string portName)
         {
-            if (OsInformation.GetOSType() == OsInformation.OSType.Mac)
+            if (OsInformation.OperatingSystem == OSType.Mac)
 			{
 				return false;
 			}
-            else if (OsInformation.GetOSType() == OsInformation.OSType.X11) 
+            else if (OsInformation.OperatingSystem == OSType.X11) 
 			{
 				return false;
 			}

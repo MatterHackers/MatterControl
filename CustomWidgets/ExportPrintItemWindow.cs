@@ -118,8 +118,8 @@ namespace MatterHackers.MatterControl
             }
 
             // TODO: make this work on the mac and then delete this if
-            if (OsInformation.GetOSType() == OsInformation.OSType.Windows
-                || OsInformation.GetOSType() == OsInformation.OSType.X11)
+            if (OsInformation.OperatingSystem == OSType.Windows
+                || OsInformation.OperatingSystem == OSType.X11)
             {
                 showInFolderAfterSave = new CheckBox(LocalizedString.Get("Show file in folder after save"), ActiveTheme.Instance.PrimaryTextColor, 10);
                 showInFolderAfterSave.HAnchor = HAnchor.ParentLeft;
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl
 
         void ShowFileIfRequested(string filename)
         {
-            if (OsInformation.GetOSType() == OsInformation.OSType.Windows) 
+            if (OsInformation.OperatingSystem == OSType.Windows) 
 			{
 				if (showInFolderAfterSave.Checked) 
 				{

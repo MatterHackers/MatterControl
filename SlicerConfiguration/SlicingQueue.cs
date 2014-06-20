@@ -103,9 +103,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         static string getSlicerFullPath()
         {
-            switch (OsInformation.GetOSType())
+            switch (OsInformation.OperatingSystem)
             {
-                case OsInformation.OSType.Windows:
+                case OSType.Windows:
                     switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                     {
                         case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             throw new NotImplementedException();
                     }
 
-                case OsInformation.OSType.Mac:
+                case OSType.Mac:
                     switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                     {
                         case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             throw new NotImplementedException();
                     }
 
-                case OsInformation.OSType.X11:
+                case OSType.X11:
 					switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
 					{
 						case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     break;
                             }
 
-                            if (OsInformation.GetOSType() == OsInformation.OSType.Mac
+                            if (OsInformation.OperatingSystem == OSType.Mac
                                 && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {
                                 itemCurrentlySlicing = itemToSlice;

@@ -244,9 +244,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             if (settingsDict.TryGetValue("windows_driver", out driverFile))
             {
                 string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", driverFile);
-                switch (OsInformation.GetOSType())
+                switch (OsInformation.OperatingSystem)
                 {
-                    case OsInformation.OSType.Windows:
+                    case OSType.Windows:
                         if (File.Exists(infPathAndFileToInstall))
                         {
                             PrinterSetupStatus.DriverNeedsToBeInstalled = true;

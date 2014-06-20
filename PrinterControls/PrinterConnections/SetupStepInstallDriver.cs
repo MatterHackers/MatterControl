@@ -104,9 +104,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void InstallDriver(string fileName)
         {
-            switch (OsInformation.GetOSType())
+            switch (OsInformation.OperatingSystem)
             {
-                case OsInformation.OSType.Windows:
+                case OSType.Windows:
                     if (File.Exists(fileName))
                     {
                         if (Path.GetExtension(fileName).ToUpper() == ".INF")
@@ -143,10 +143,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     }
                     break;
 
-                case OsInformation.OSType.Mac:
+                case OSType.Mac:
                     break;
 
-                case OsInformation.OSType.X11:
+                case OSType.X11:
 				if (File.Exists(fileName))
 				{
 					if (Path.GetExtension(fileName).ToUpper() == ".INF")

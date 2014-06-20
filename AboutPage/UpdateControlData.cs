@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
         {
             get
             {
-                if (OsInformation.GetOSType() == OsInformation.OSType.Mac)
+                if (OsInformation.OperatingSystem == OSType.Mac)
                 {
                     return "pkg";
                 }

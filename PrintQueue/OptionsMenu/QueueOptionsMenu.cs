@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             
             // The pdf export library is not working on the mac at the moment so we don't include the 
             // part sheet export option on mac.
-            if (OsInformation.GetOSType() == OsInformation.OSType.Mac)
+            if (OsInformation.OperatingSystem == OSType.Mac)
             {
                 // mac cannot export to pdf
                 menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Other"), null));
