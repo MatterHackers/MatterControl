@@ -234,8 +234,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     break;
                             }
 
-#if RUN_MATTER_SLICE_IN_PROCESS
-                            if (ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
+                            if (OsInformation.GetOSType() == OsInformation.OSType.Mac
+                                && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {
                                 itemCurrentlySlicing = itemToSlice;
                                 MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;
@@ -244,7 +244,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 itemCurrentlySlicing = null;
                             }
                             else
-#endif
                             {
                                 slicerProcess = new Process();
                                 slicerProcess.StartInfo.Arguments = commandArgs;
