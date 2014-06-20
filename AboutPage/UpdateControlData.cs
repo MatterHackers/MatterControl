@@ -145,6 +145,7 @@ namespace MatterHackers.MatterControl
         public void CheckForUpdateUserRequested()
         {
             updateRequestType = UpdateRequestType.UserRequested;
+            CheckForUpdate();
         }
 
         void CheckForUpdate()
