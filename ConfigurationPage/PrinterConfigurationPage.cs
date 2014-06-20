@@ -272,7 +272,8 @@ namespace MatterHackers.MatterControl
             string releaseCode = ((AnchoredDropDownList)sender).SelectedValue;
 			if(releaseCode != UserSettings.Instance.get("UpdateFeedType"))
 			{
-				UserSettings.Instance.set("UpdateFeedType", releaseCode);
+                UpdateControlData.Instance.CheckForUpdateUserRequested();
+                UserSettings.Instance.set("UpdateFeedType", releaseCode);
 			}
 		}
 			
