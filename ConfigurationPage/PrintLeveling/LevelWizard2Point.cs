@@ -187,6 +187,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 // probe
                 lines.Add("G30");
                 lines.Add("M114");
+                lines.Add("G1 Z1 F300");
             }
             else
             {
