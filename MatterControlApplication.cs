@@ -307,6 +307,7 @@ namespace MatterHackers.MatterControl
         [STAThread]
         public static void Main()
         {
+            WindowsFormsAbstract.SetOSTypeEarlyNow();
             Datastore.Instance.Initialize();
 
             // try and open our window matching the last size that we had for it.
