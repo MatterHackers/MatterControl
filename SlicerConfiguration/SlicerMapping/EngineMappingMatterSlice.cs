@@ -192,9 +192,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapRepairOutlines("repairOutlines", "repair_outlines_extensive_stitching"),
             new NotPassedItem("", "repair_outlines_keep_open"),
 
+#if false
             new NotPassedItem("", "has_fan"),
             new NotPassedItem("", "has_heated_bed"),
             new NotPassedItem("", "has_sd_card_reader"),
+#endif
 
             //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
             new MapRepairOverlaps("repairOverlaps", "repair_overlaps_reverse_orientation"),
