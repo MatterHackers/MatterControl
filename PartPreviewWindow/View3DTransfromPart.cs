@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 
                 // this is to add an image to the bed
                 string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "bedimage.png");
-                if (File.Exists(imagePathAndFile))
+                if (autoRotateEnabled && File.Exists(imagePathAndFile))
                 {
                     ImageBuffer wattermarkImage = new ImageBuffer();
                     ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);

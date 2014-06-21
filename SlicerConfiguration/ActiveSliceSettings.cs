@@ -261,6 +261,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public double FirstLayerExtrusionWidth
+        {
+            get
+            {
+                string firstLayerValueString = GetActiveValue("first_layer_extrusion_width");
+                if (firstLayerValueString.Contains("%"))
+                {
+                    string onlyNumber = firstLayerValueString.Replace("%", "");
+                    double ratio = ParseDouble(onlyNumber) / 100;
+                    return NozzleDiameter * ratio;
+                }
+                double firstLayerValue;
+                firstLayerValue = ParseDouble(firstLayerValueString);
+
+                return firstLayerValue;
+            }
+        }
+
         private static double ParseDouble(string firstLayerValueString)
         {
             double firstLayerValue;
@@ -642,6 +660,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = LocalizedString.Get("First Layer Height' must be less than or equal to the 'Nozzle Diameter'.");
                     string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}", FirstLayerHeight, NozzleDiameter);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'";
+                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    return false;
+                }
+
+                if (FirstLayerExtrusionWidth > NozzleDiameter * 4)
+                {
+                    string error = LocalizedString.Get("First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.");
+                    string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}", GetActiveValue("first_layer_extrusion_width"), NozzleDiameter);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'";
                     StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }

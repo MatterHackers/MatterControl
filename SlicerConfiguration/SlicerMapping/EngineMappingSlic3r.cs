@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("extruder_clearance_height");
                     hideItems.Add("extruder_clearance_radius");
                     hideItems.Add("wipe_shield_distance");
-#if true
+#if false
                     hideItems.Add("has_fan");
                     hideItems.Add("has_heated_bed");
                     hideItems.Add("has_sd_card_reader");

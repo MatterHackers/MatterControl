@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapRepairOutlines("repairOutlines", "repair_outlines_extensive_stitching"),
             new NotPassedItem("", "repair_outlines_keep_open"),
 
-#if false
+#if true
             new NotPassedItem("", "has_fan"),
             new NotPassedItem("", "has_heated_bed"),
             new NotPassedItem("", "has_sd_card_reader"),

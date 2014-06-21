@@ -234,10 +234,14 @@ namespace MatterHackers.MatterControl.ActionBar
                 return;
             }
 
-            // else print as normal
-            if (ActiveSliceSettings.Instance.IsValid())
+            string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
+            if (ActiveSliceSettings.Instance.HasSdCardReader() 
+                && pathAndFile == QueueData.SdCardFileName)
             {
-                string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
+                PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
+            }
+            else if (ActiveSliceSettings.Instance.IsValid())
+            {
                 if (File.Exists(pathAndFile))
                 {
                     string hideGCodeWarning = ApplicationSettings.Instance.get("HideGCodeWarning");
@@ -269,7 +273,6 @@ namespace MatterHackers.MatterControl.ActionBar
                     PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
                     SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
                     partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
-
                 }
                 else
                 {

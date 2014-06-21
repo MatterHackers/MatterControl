@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         Stopwatch timeSinceLastReadAnything = new Stopwatch();
         Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
 
-        public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, Printing, Paused, FinishedPrint, Disconnecting, ConnectionLost };
+        public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, Printing, PrintingFromSd, Paused, FinishedPrint, Disconnecting, ConnectionLost };
         CommunicationStates communicationState = CommunicationStates.Disconnected;
 
         bool ForceImmediateWrites = false;
@@ -370,6 +370,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     case CommunicationStates.Connected:
                     case CommunicationStates.PreparingToPrint:
                     case CommunicationStates.Printing:
+                    case CommunicationStates.PrintingFromSd:
                     case CommunicationStates.Paused:
                     case CommunicationStates.FinishedPrint:
                         return true;
@@ -1984,10 +1985,32 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     CommunicationState = CommunicationStates.Connected;
                     break;
             }
-        }        
+        }
 
-        public bool StartPrint(string gcodeFileContents, int startIndex = 0)
-        {   
+        public bool StartSdCardPrint()
+        {
+            if (!PrinterIsConnected 
+                || PrinterIsPrinting
+                || ActivePrintItem.PrintItem.FileLocation != QueueData.SdCardFileName)
+            {
+                return false;
+            }
+
+            ClearQueuedGCode();
+            CommunicationState = CommunicationStates.PrintingFromSd;
+
+            SendLineToPrinterNow("M32 {0}".FormatWith(ActivePrintItem.PrintItem.Name));
+
+            return true;
+        }
+
+        public bool StartPrint(string gcodeFileContents)
+        {
+            if (!PrinterIsConnected || PrinterIsPrinting)
+            {
+                return false;
+            }
+
             gcodeFileContents = gcodeFileContents.Replace("\r\n", "\n");
             gcodeFileContents = gcodeFileContents.Replace('\r', '\n');
             string[] gcodeLines = gcodeFileContents.Split('\n');
@@ -2002,12 +2025,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
 
                 printableGCode.Add(trimedLine);
-            }
-
-            //Is there a reason this check doesn't happen earlier? (KP)
-            if (!PrinterIsConnected || PrinterIsPrinting)
-            {
-                return false;
             }
 
             if (ActivePrintItem.PrintItem.Id == 0)
