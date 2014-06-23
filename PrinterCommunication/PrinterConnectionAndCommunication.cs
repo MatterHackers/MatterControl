@@ -138,6 +138,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         public RootedObjectEventHandler PositionRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler ReadLine = new RootedObjectEventHandler();
         public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
+        public RootedObjectEventHandler UpdateEventHook = new RootedObjectEventHandler();
 
         FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
         FoundStringContainsCallbacks ReadLineContainsCallBacks = new FoundStringContainsCallbacks();
@@ -154,6 +155,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         Stopwatch timeSinceLastReadAnything = new Stopwatch();
         Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
+        Stopwatch timeSinceUpdateEvent = new Stopwatch();
+        int secondsBetweenUpdateEvent = 300;
 
         public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, Printing, PrintingFromSd, Paused, FinishedPrint, Disconnecting, ConnectionLost };
         CommunicationStates communicationState = CommunicationStates.Disconnected;
@@ -610,6 +613,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
+        public int TotalLayersInPrint
+        {
+            get
+            {
+                try
+                {
+                    int layerCount = loadedGCode.NumChangesInZ;
+                    return layerCount;
+                }
+                catch
+                {
+                    return -1;
+                }
+            }
+        }
+
         public double RatioIntoCurrentLayer
         {
             get
@@ -716,6 +735,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
                 temperatureRequestTimer.Restart();
             }
+
+            if (timeSinceUpdateEvent.Elapsed.Seconds > secondsBetweenUpdateEvent)
+            {
+                UpdateEventHook.CallEvents(null, null);
+                timeSinceUpdateEvent.Restart();
+            }
+
+            
 
             bool waited30SeconsdForOk = timeHaveBeenWaitingForOK.Elapsed.Seconds > 30; // waited for more than 30 seconds
             bool noResponseFor5Seconds = timeSinceLastReadAnything.Elapsed.Seconds > 5;

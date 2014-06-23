@@ -60,10 +60,13 @@ namespace MatterHackers.MatterControl
 
 		Button enablePrintLevelingButton;
 		Button disablePrintLevelingButton;
+        Button enableCloudMonitorButton;
+        Button disableCloudMonitorButton;
 
         DisableableWidget eePromControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
-        DisableableWidget printLevelContainer;
+        DisableableWidget cloudMonitorContainer;
+        DisableableWidget printLevelingContainer;
 
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -100,6 +103,7 @@ namespace MatterHackers.MatterControl
             
             mainLayoutContainer.AddChild(terminalControls);
             AddPrintLevelingControls(mainLayoutContainer);
+            AddCloudMonitorControls(mainLayoutContainer);
             mainLayoutContainer.AddChild(settingsControls);
 			//mainLayoutContainer.AddChild(releaseControls);
 
@@ -275,12 +279,12 @@ namespace MatterHackers.MatterControl
                 UserSettings.Instance.set("UpdateFeedType", releaseCode);
 			}
 		}
-			
+
         private void AddTerminalControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             GroupBox terminalControlsContainer;
             terminalControlsContainer = new GroupBox(LocalizedString.Get("Communications"));
-            
+
             terminalControlsContainer.Margin = new BorderDouble(0);
             terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             terminalControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -320,7 +324,99 @@ namespace MatterHackers.MatterControl
             terminalCommunicationsContainer.AddChild(terminalControlsContainer);
 
             controlsTopToBottomLayout.AddChild(terminalCommunicationsContainer);
+        }       
+
+        private static GuiWidget CreateSeparatorLine()
+        {
+            GuiWidget topLine = new GuiWidget(10, 1);
+            topLine.Margin = new BorderDouble(0, 5);
+            topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            topLine.BackgroundColor = RGBA_Bytes.White;
+            return topLine;
         }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+
+            base.OnClosed(e);
+        }
+
+        TextWidget cloudMonitorStatusLabel;
+        private void AddCloudMonitorControls(FlowLayoutWidget controlsTopToBottomLayout)
+        {
+            cloudMonitorContainer = new DisableableWidget();
+            cloudMonitorContainer.AddChild(CreateCloudMonitorControls());
+            controlsTopToBottomLayout.AddChild(cloudMonitorContainer);
+        }
+        
+        private GuiWidget CreateCloudMonitorControls()
+        {
+            
+            GroupBox cloudMonitorContainer = new GroupBox(LocalizedString.Get("Cloud Services"));
+            
+            cloudMonitorContainer.Margin = new BorderDouble(0);
+            cloudMonitorContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            cloudMonitorContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+            cloudMonitorContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            cloudMonitorContainer.Height = 68;
+
+            {
+                FlowLayoutWidget buttonBar = new FlowLayoutWidget();
+                buttonBar.HAnchor |= HAnchor.ParentLeftRight;
+                buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+                buttonBar.Margin = new BorderDouble(0, 0, 0, 0);
+                buttonBar.Padding = new BorderDouble(0);
+
+                this.textImageButtonFactory.FixedHeight = TallButtonHeight;               
+
+                Agg.Image.ImageBuffer cloudMonitorImage = new Agg.Image.ImageBuffer();
+                ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "cloud-24x24.png"), cloudMonitorImage);
+                if (!ActiveTheme.Instance.IsDarkTheme)
+                {
+                    InvertLightness.DoInvertLightness(cloudMonitorImage);
+                }
+
+                ImageWidget levelingIcon = new ImageWidget(cloudMonitorImage);
+                levelingIcon.Margin = new BorderDouble(right: 6);
+
+                enableCloudMonitorButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
+                enableCloudMonitorButton.Margin = new BorderDouble(left: 6);
+                enableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
+                enableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(enableCloudMonitor_Click);
+
+                disableCloudMonitorButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
+                disableCloudMonitorButton.Margin = new BorderDouble(left: 6);
+                disableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
+                disableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(disableCloudMonitor_Click);
+
+                cloudMonitorStatusLabel = new TextWidget("");
+                cloudMonitorStatusLabel.AutoExpandBoundsToText = true;
+                cloudMonitorStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                cloudMonitorStatusLabel.VAnchor = VAnchor.ParentCenter;
+
+                GuiWidget hSpacer = new GuiWidget();
+                hSpacer.HAnchor = HAnchor.ParentLeftRight;
+
+                buttonBar.AddChild(levelingIcon);
+                buttonBar.AddChild(cloudMonitorStatusLabel);
+                buttonBar.AddChild(hSpacer);
+                buttonBar.AddChild(enableCloudMonitorButton);
+                buttonBar.AddChild(disableCloudMonitorButton);
+                ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+                {
+                    SetCloudButtonVisiblity();
+
+                }, ref unregisterEvents);
+
+                cloudMonitorContainer.AddChild(buttonBar);
+            }
+            SetCloudButtonVisiblity();
+            return cloudMonitorContainer;
+        }			
 
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
         string noEepromMappingTitle = "Warning no eeprom mapping".Localize();
@@ -385,34 +481,16 @@ namespace MatterHackers.MatterControl
 
             controlsTopToBottomLayout.AddChild(eePromControlsContainer);
         }
-			
-        private static GuiWidget CreateSeparatorLine()
-        {
-            GuiWidget topLine = new GuiWidget(10, 1);
-            topLine.Margin = new BorderDouble(0, 5);
-            topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            topLine.BackgroundColor = RGBA_Bytes.White;
-            return topLine;
-        }
 
-        SystemWindow printLevelWizardWindow;        
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-
-            base.OnClosed(e);
-        }
+        SystemWindow printLevelWizardWindow;
 
 		TextWidget printLevelingStatusLabel;
+        
         private void AddPrintLevelingControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            printLevelContainer = new DisableableWidget();
-            printLevelContainer.AddChild(CreatePrintLevelingControlsContainer());
-            controlsTopToBottomLayout.AddChild(printLevelContainer);
+            printLevelingContainer = new DisableableWidget();
+            printLevelingContainer.AddChild(CreatePrintLevelingControlsContainer());
+            controlsTopToBottomLayout.AddChild(printLevelingContainer);
         }
 
         EditLevelingSettingsWindow editLevelingSettingsWindow;
@@ -536,12 +614,13 @@ namespace MatterHackers.MatterControl
 
         private void SetVisibleControls()
         {
+            cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
             if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
                 // no printer selected                         
                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
             else // we at least have a printer selected
             {
@@ -553,14 +632,14 @@ namespace MatterHackers.MatterControl
                     case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
                     case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:                        
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
                     case PrinterConnectionAndCommunication.CommunicationStates.Connected:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
@@ -579,7 +658,7 @@ namespace MatterHackers.MatterControl
                             case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
                             case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
                                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                                printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                                printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 break;
 
@@ -590,7 +669,7 @@ namespace MatterHackers.MatterControl
 
                     case PrinterConnectionAndCommunication.CommunicationStates.Paused:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
@@ -621,15 +700,45 @@ namespace MatterHackers.MatterControl
 			//this.Invalidate();
         }
 
-		void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+		void enableCloudMonitor_Click(object sender, MouseEventArgs mouseEvent)
 		{
-			ActivePrinterProfile.Instance.DoPrintLeveling = true;
+			UserSettings.Instance.set("CloudMonitorEnabled","true");
+            ApplicationWidget.Instance.ChangeCloudSyncStatus();
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
 		}
 
-		void disablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+        void disableCloudMonitor_Click(object sender, MouseEventArgs mouseEvent)
 		{
-			ActivePrinterProfile.Instance.DoPrintLeveling = false;
+            UserSettings.Instance.set("CloudMonitorEnabled", "false");
+            ApplicationWidget.Instance.ChangeCloudSyncStatus();
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
 		}
+
+        void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            ActivePrinterProfile.Instance.DoPrintLeveling = true;
+        }
+
+        void disablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            ActivePrinterProfile.Instance.DoPrintLeveling = false;
+        }
+
+        void SetCloudButtonVisiblity()
+        {
+            bool cloudMontitorEnabled = (UserSettings.Instance.get("CloudMonitorEnabled") == "true");
+            enableCloudMonitorButton.Visible = !cloudMontitorEnabled;
+            disableCloudMonitorButton.Visible = cloudMontitorEnabled;
+
+            if (cloudMontitorEnabled)
+            {
+                cloudMonitorStatusLabel.Text = LocalizedString.Get("Cloud Monitoring (enabled)");
+            }
+            else
+            {
+                cloudMonitorStatusLabel.Text = LocalizedString.Get("Cloud Monitoring (disabled)");
+            }
+        }
 
 		void SetPrintLevelButtonVisiblity()
 		{

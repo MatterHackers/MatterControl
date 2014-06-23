@@ -2406,9 +2406,12 @@ Translated:Has Heated Bed
 English:Has SD Card Reader
 Translated:Has SD Card Reader
 
-English:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
-Translated:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+English:Cloud Services
+Translated:Cloud Services
 
-English:Printing From SD Card
-Translated:Printing From SD Card
+English:Cloud Monitoring (disabled)
+Translated:Cloud Monitoring (disabled)
+
+English:Cloud Monitoring (enabled)
+Translated:Cloud Monitoring (enabled)
 
