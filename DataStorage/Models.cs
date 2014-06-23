@@ -300,6 +300,8 @@ namespace MatterHackers.MatterControl.DataStorage
         public string ComPort { get; set; }
         public string BaudRate { get; set; }
         public bool AutoConnectFlag { get; set; } //Auto connect to printer (if available)
+        public string DeviceToken { get; set; }
+        public string DeviceType { get; set; }
         
         // all the data about print leveling
         public bool DoPrintLeveling { get; set; }

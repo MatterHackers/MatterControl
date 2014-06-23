@@ -2406,3 +2406,12 @@ Translated:Has Heated Bed
 English:Has SD Card Reader
 Translated:Has SD Card Reader
 
+English:Cloud Services
+Translated:Cloud Services
+
+English:Cloud Monitoring (disabled)
+Translated:Cloud Monitoring (disabled)
+
+English:Cloud Monitoring (enabled)
+Translated:Cloud Monitoring (enabled)
+

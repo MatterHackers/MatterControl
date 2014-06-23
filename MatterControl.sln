@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterControl.csproj", "{0B8D6F56-BD7F-4426-B858-D9292B084656}"
 	ProjectSection(ProjectDependencies) = postProject
 		{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B} = {657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}
@@ -67,6 +67,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterRepair", "..\MatterRepair\MatterRepair\MatterRepair.csproj", "{DA4A9C04-C54A-4571-B6B0-957C7E6E868B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformAbstract", "..\agg-sharp\PlatformAbstract\PlatformAbstract.csproj", "{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudServices", "..\CloudServicesPlugin\CloudServices\CloudServices.csproj", "{6782BF37-8139-4DC6-885E-98D22D1FB258}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -480,6 +482,18 @@ Global
 		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release64|Any CPU.Build.0 = Release64|Any CPU
 		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release64|x64.ActiveCfg = Release64|Any CPU
 		{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}.Release64|x86.ActiveCfg = Release64|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release|x64.ActiveCfg = Release|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release|x86.ActiveCfg = Release|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release64|Any CPU.ActiveCfg = Release|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release64|Any CPU.Build.0 = Release|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release64|x64.ActiveCfg = Release|Any CPU
+		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release64|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -491,6 +505,7 @@ Global
 		{BEC6FD13-C765-4B90-836B-53823AC12E20} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 		{A3680C51-A549-4D1F-AEA5-3931EA755E9A} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 		{DA4A9C04-C54A-4571-B6B0-957C7E6E868B} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
+		{6782BF37-8139-4DC6-885E-98D22D1FB258} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MatterControl.csproj
