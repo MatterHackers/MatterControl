@@ -564,6 +564,12 @@ namespace MatterHackers.MatterControl
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
+                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
+                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        break;
+
                     case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
                     case PrinterConnectionAndCommunication.CommunicationStates.Printing:
                         switch (PrinterConnectionAndCommunication.Instance.PrintingState)
@@ -572,7 +578,6 @@ namespace MatterHackers.MatterControl
                             case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
                             case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
                             case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
-
                                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);

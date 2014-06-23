@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         QueueDataView queueDataView;
 
         static Button shopButton;
+        event EventHandler unregisterEvents;
 
         public QueueBottomToolbar(QueueDataView queueDataView)
         {
@@ -125,9 +126,20 @@ namespace MatterHackers.MatterControl.PrintQueue
                     spacer2.HAnchor = HAnchor.ParentLeftRight;
                     buttonPanel1.AddChild(spacer2);
 
+                    FlowLayoutWidget queueMenuSpace = new FlowLayoutWidget();
                     GuiWidget queueMenu = new QueueOptionsMenu();
                     queueMenu.VAnchor = VAnchor.ParentTop;
-                    buttonPanel1.AddChild(queueMenu);
+                    queueMenuSpace.AddChild(queueMenu);
+                    buttonPanel1.AddChild(queueMenuSpace);
+
+                    ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((object sender, EventArgs e) =>
+                    {
+                        queueMenuSpace.RemoveAllChildren();
+                        // the printer changed reload the queueMenue
+                        queueMenu = new QueueOptionsMenu();
+                        queueMenu.VAnchor = VAnchor.ParentTop;
+                        queueMenuSpace.AddChild(queueMenu);
+                    }, ref unregisterEvents);
                 }
                 allControls.AddChild(buttonPanel1);
             }

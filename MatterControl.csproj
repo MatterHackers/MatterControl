@@ -140,7 +140,6 @@
     <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PrinterControls\SDCardManager.cs" />
     <Compile Include="PrinterControls\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
     <Compile Include="PrinterControls\EditMacrosWindow.cs" />

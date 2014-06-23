@@ -2409,3 +2409,6 @@ Translated:Has SD Card Reader
 English:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
 Translated:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
 
+English:Printing From SD Card
+Translated:Printing From SD Card
+

@@ -76,7 +76,6 @@ namespace MatterHackers.MatterControl
         DisableableWidget eePromControlsContainer;
         DisableableWidget tuningAdjustmentControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
-        DisableableWidget sdCardManagerContainer;
         DisableableWidget macroControls;
 
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
@@ -168,13 +167,6 @@ namespace MatterHackers.MatterControl
             }
 
             controlsTopToBottomLayout.AddChild(centerControlsContainer);
-
-            sdCardManagerContainer = new DisableableWidget();
-            sdCardManagerContainer.AddChild(CreateSdCardManagerContainer());
-            if (false)// || ActivePrinterProfile.Instance.ActivePrinter == null || ActivePrinterProfile.Instance.ActivePrinter.GetFeatures().HasSdCard())
-            {
-                controlsTopToBottomLayout.AddChild(sdCardManagerContainer);
-            }
 
             macroControls = new DisableableWidget();
             macroControls.AddChild(new MacroControls());
@@ -534,40 +526,6 @@ namespace MatterHackers.MatterControl
 			feedRateValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
         }       
 
-        private GuiWidget CreateSdCardManagerContainer()
-        {
-            GroupBox sdCardControlsContainer;
-            sdCardControlsContainer = new GroupBox("SD Card Printing");
-
-            sdCardControlsContainer.Margin = new BorderDouble(top: 10);
-            sdCardControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            sdCardControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            sdCardControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            sdCardControlsContainer.Height = 68;
-
-            {
-                FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-                buttonBar.HAnchor |= HAnchor.ParentLeftRight;
-                buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                buttonBar.Margin = new BorderDouble(3, 0, 3, 6);
-                buttonBar.Padding = new BorderDouble(0);
-
-                this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-
-                Button showSDPrintingPanel = textImageButtonFactory.Generate("SD Card Manager".ToUpper());
-                showSDPrintingPanel.Margin = new BorderDouble(left: 10);
-                showSDPrintingPanel.Click += (sender, e) =>
-                {
-                    SDCardManager.Show();
-                };
-                buttonBar.AddChild(showSDPrintingPanel);
-
-                sdCardControlsContainer.AddChild(buttonBar);
-            }
-
-            return sdCardControlsContainer;
-        }
-
         private void SetDisplayAttributes()
         {
             //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -595,7 +553,6 @@ namespace MatterHackers.MatterControl
                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				
-                sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
             else // we at least have a printer selected
@@ -612,7 +569,6 @@ namespace MatterHackers.MatterControl
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);                        
-                        sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         break;
 
@@ -622,8 +578,16 @@ namespace MatterHackers.MatterControl
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                        
-                        sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        break;
+
+                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
+                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         break;
 
@@ -640,7 +604,6 @@ namespace MatterHackers.MatterControl
                                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                                
-                                sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 break;
 
@@ -655,7 +618,6 @@ namespace MatterHackers.MatterControl
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                        
-                        sdCardManagerContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 

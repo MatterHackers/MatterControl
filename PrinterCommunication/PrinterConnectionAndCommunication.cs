@@ -457,6 +457,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         return false;
 
                     case CommunicationStates.Printing:
+                    case CommunicationStates.PrintingFromSd:
                         return true;
 
                     default:
@@ -523,12 +524,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						return LocalizedString.Get("Preparing To Print");
                     case CommunicationStates.Printing:
 						return LocalizedString.Get("Printing");
+                    case CommunicationStates.PrintingFromSd:
+                        return "Printing From SD Card".Localize();
                     case CommunicationStates.Paused:
 						return LocalizedString.Get("Paused");
                     case CommunicationStates.FinishedPrint:
 						return LocalizedString.Get("Finished Print");
                     default:
-                        throw new NotImplementedException("Make sure very satus returns the correct connected state.");
+                        throw new NotImplementedException("Make sure every satus returns the correct connected state.");
                 }
             }
         }
@@ -1501,7 +1504,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public void SendLinesToPrinterNow(string[] linesToWrite)
         {
-            if (PrinterIsPrinting)
+            if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd)
             {
                 for (int i = linesToWrite.Length - 1; i >= 0; i--)
                 {
@@ -1538,7 +1541,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
 
                 lineToWrite = lineToWrite.Split(';')[0].Trim();
-                if (PrinterIsPrinting)
+                if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd)
                 {
                     // insert the command into the printing queue at the head
                     if (printerCommandQueueIndex >= 0
@@ -1999,7 +2002,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ClearQueuedGCode();
             CommunicationState = CommunicationStates.PrintingFromSd;
 
-            SendLineToPrinterNow("M32 {0}".FormatWith(ActivePrintItem.PrintItem.Name));
+            SendLineToPrinterNow("M23 {0}".FormatWith(ActivePrintItem.PrintItem.Name.ToLower())); // Select SD File
+            SendLineToPrinterNow("M24"); // Start/resume SD print
 
             return true;
         }
