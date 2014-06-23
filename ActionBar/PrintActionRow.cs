@@ -361,7 +361,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onReprintButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            PrintActivePart();
+            UiThread.RunOnIdle((state) =>
+            {
+                PrintActivePart();
+            });
         }
 
         private void onStateChanged(object sender, EventArgs e)

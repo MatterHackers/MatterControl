@@ -139,6 +139,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         public RootedObjectEventHandler ReadLine = new RootedObjectEventHandler();
         public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
         public RootedObjectEventHandler UpdateEventHook = new RootedObjectEventHandler();
+        public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
 
         FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
         FoundStringContainsCallbacks ReadLineContainsCallBacks = new FoundStringContainsCallbacks();
@@ -156,7 +157,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         Stopwatch timeSinceLastReadAnything = new Stopwatch();
         Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
         Stopwatch timeSinceUpdateEvent = new Stopwatch();
-        int secondsBetweenUpdateEvent = 300;
+        int secondsBetweenUpdateEvent = 120;
 
         public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, Printing, PrintingFromSd, Paused, FinishedPrint, Disconnecting, ConnectionLost };
         CommunicationStates communicationState = CommunicationStates.Disconnected;
@@ -470,13 +471,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         }
 
         public enum DetailedPrintingState { HomingAxis, HeatingBed, HeatingExtruder, Printing };
-        DetailedPrintingState detailedPrintingState;
+        DetailedPrintingState printingStatePrivate;
 
         public DetailedPrintingState PrintingState
         {
             get
             {
-                return detailedPrintingState;
+                return printingStatePrivate;
+            }
+
+            set
+            {
+                if (printingStatePrivate != value)
+                {
+                    printingStatePrivate = value;
+                    PrintingStateChanged.CallEvents(this, null);
+                }
             }
         }
 
@@ -484,7 +494,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                switch (detailedPrintingState)
+                switch (PrintingState)
                 {
                     case DetailedPrintingState.HomingAxis:
                         return "Homing Axis";
@@ -741,8 +751,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 UpdateEventHook.CallEvents(null, null);
                 timeSinceUpdateEvent.Restart();
             }
-
-            
 
             bool waited30SeconsdForOk = timeHaveBeenWaitingForOK.Elapsed.Seconds > 30; // waited for more than 30 seconds
             bool noResponseFor5Seconds = timeSinceLastReadAnything.Elapsed.Seconds > 5;
@@ -1513,19 +1521,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (lineBeingSetToPrinter.StartsWith("G28"))
             {
-                detailedPrintingState = DetailedPrintingState.HomingAxis;
+                PrintingState = DetailedPrintingState.HomingAxis;
             }
             else if (lineBeingSetToPrinter.StartsWith("M190"))
             {
-                detailedPrintingState = DetailedPrintingState.HeatingBed;
+                PrintingState = DetailedPrintingState.HeatingBed;
             }
             else if (lineBeingSetToPrinter.StartsWith("M109"))
             {
-                detailedPrintingState = DetailedPrintingState.HeatingExtruder;
+                PrintingState = DetailedPrintingState.HeatingExtruder;
             }
             else
             {
-                detailedPrintingState = DetailedPrintingState.Printing;
+                PrintingState = DetailedPrintingState.Printing;
             }
         }
 

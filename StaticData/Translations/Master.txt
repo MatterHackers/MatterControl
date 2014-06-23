@@ -2415,3 +2415,9 @@ Translated:Cloud Monitoring (disabled)
 English:Cloud Monitoring (enabled)
 Translated:Cloud Monitoring (enabled)
 
+English:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+
+English:Export to SD Card
+Translated:Export to SD Card
+

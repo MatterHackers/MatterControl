@@ -10,6 +10,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
@@ -100,8 +101,24 @@ namespace MatterHackers.MatterControl
                 Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
                 exportGCode.HAnchor = HAnchor.ParentLeft;
                 exportGCode.Cursor = Cursors.Hand;
-                exportGCode.Click += new ButtonBase.ButtonEventHandler(exportGCode_Click);
+                exportGCode.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
+                { 
+                    UiThread.RunOnIdle(ExportGCode_Click); 
+                } );
                 middleRowContainer.AddChild(exportGCode);
+
+                if (ActiveSliceSettings.Instance.HasSdCardReader() && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+                {
+                    string exportSdCardText = "Export to Printer SD Card".Localize();
+                    Button exportToSdCard = textImageButtonFactory.Generate(exportSdCardText);
+                    exportToSdCard.HAnchor = HAnchor.ParentLeft;
+                    exportToSdCard.Cursor = Cursors.Hand;
+                    exportToSdCard.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) =>
+                    {
+                        UiThread.RunOnIdle(ExportToSdCard_Click);
+                    });
+                    middleRowContainer.AddChild(exportToSdCard);
+                }
             }
 
             middleRowContainer.AddChild(new VerticalSpacer());
@@ -161,12 +178,12 @@ namespace MatterHackers.MatterControl
             this.AddChild(topToBottom);
         }
 
-        void exportGCode_Click(object sender, MouseEventArgs mouseEvent)
+        void ExportToSdCard_Click(object state)
         {
-            UiThread.RunOnIdle(DoExportGCode_Click);
+            // send the file to the printers sd card
         }
 
-        void DoExportGCode_Click(object state)
+        void ExportGCode_Click(object state)
         {
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
 			saveParams.Title = "MatterControl: Export File";

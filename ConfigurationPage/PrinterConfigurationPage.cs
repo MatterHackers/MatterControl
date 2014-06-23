@@ -645,7 +645,7 @@ namespace MatterHackers.MatterControl
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 

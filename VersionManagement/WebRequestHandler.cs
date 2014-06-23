@@ -119,19 +119,26 @@ namespace MatterHackers.MatterControl.VersionManagement
         {
             JsonResponseDictionary responseValues = e.Result as JsonResponseDictionary;
 
-            string requestSuccessStatus = responseValues.get("Status");
-            if (responseValues != null && requestSuccessStatus != null && requestSuccessStatus == "success")
+            if (responseValues != null)
             {
-                ProcessSuccessResponse(responseValues);
-                OnRequestSuceeded();
+                string requestSuccessStatus = responseValues.get("Status");
+                if (responseValues != null && requestSuccessStatus != null && requestSuccessStatus == "success")
+                {
+                    ProcessSuccessResponse(responseValues);
+                    OnRequestSuceeded();
+                }
+                else
+                {
+                    ProcessErrorResponse(responseValues);
+                    OnRequestFailed();
+                }
+
+                OnRequestComplete();
             }
             else
             {
-                ProcessErrorResponse(responseValues);
-                OnRequestFailed();
+                // Don't do anything, there was no respones.
             }
-
-            OnRequestComplete();
         }
 
         public virtual void ProcessSuccessResponse(JsonResponseDictionary responseValues)
