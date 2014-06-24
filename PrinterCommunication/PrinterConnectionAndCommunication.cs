@@ -98,6 +98,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
     /// </summary>
     public class PrinterConnectionAndCommunication
     {
+        readonly int JoinThreadTimeoutMs = 5000;
+
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
@@ -138,7 +140,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         public RootedObjectEventHandler PositionRead = new RootedObjectEventHandler();
         public RootedObjectEventHandler ReadLine = new RootedObjectEventHandler();
         public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
-        public RootedObjectEventHandler UpdateEventHook = new RootedObjectEventHandler();
         public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
 
         FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
@@ -156,8 +157,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         Stopwatch timeSinceLastReadAnything = new Stopwatch();
         Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
-        Stopwatch timeSinceUpdateEvent = new Stopwatch();
-        int secondsBetweenUpdateEvent = 120;
 
         public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, Printing, PrintingFromSd, Paused, FinishedPrint, Disconnecting, ConnectionLost };
         CommunicationStates communicationState = CommunicationStates.Disconnected;
@@ -746,12 +745,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 temperatureRequestTimer.Restart();
             }
 
-            if (timeSinceUpdateEvent.Elapsed.Seconds > secondsBetweenUpdateEvent)
-            {
-                UpdateEventHook.CallEvents(null, null);
-                timeSinceUpdateEvent.Restart();
-            }
-
             bool waited30SeconsdForOk = timeHaveBeenWaitingForOK.Elapsed.Seconds > 30; // waited for more than 30 seconds
             bool noResponseFor5Seconds = timeSinceLastReadAnything.Elapsed.Seconds > 5;
             bool waitedToLongForOK = waited30SeconsdForOk && noResponseFor5Seconds;
@@ -1123,7 +1116,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             {
                 if (this.stopTryingToConnect)
                 {
-                    connectThread.Join(); //Halt connection thread
+                    connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
                     Disable();
                     connectionFailureMessage = "Cancelled";
                     OnConnectionFailed(null);
@@ -1136,12 +1129,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
             else if (CommunicationState == CommunicationStates.FailedToConnect)
             {
-                connectThread.Join();
+                connectThread.Join(JoinThreadTimeoutMs);
                 return false;
             }
             else
             {
-                connectThread.Join(); //Halt connection thread
+                connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
                 OnConnectionSucceeded(null);
                 return false;
             }
@@ -1715,7 +1708,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 CommunicationState = CommunicationStates.Disconnecting;
                 if (readFromPrinterThread != null)
                 {
-                    readFromPrinterThread.Join();
+                    readFromPrinterThread.Join(JoinThreadTimeoutMs);
                 }
                 serialPort.Close();
                 serialPort.Dispose();
@@ -1884,7 +1877,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 CommunicationState = CommunicationStates.Paused;
                 if (sendGCodeToPrinterThread != null)
                 {
-                    sendGCodeToPrinterThread.Join();
+                    sendGCodeToPrinterThread.Join(JoinThreadTimeoutMs);
                 }
                 sendGCodeToPrinterThread = null;
             }
@@ -1988,7 +1981,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         CommunicationState = CommunicationStates.Connected;
                         if (sendGCodeToPrinterThread != null)
                         {
-                            sendGCodeToPrinterThread.Join();
+                            sendGCodeToPrinterThread.Join(JoinThreadTimeoutMs);
                             sendGCodeToPrinterThread = null;
                         }
                         if (activePrintTask != null)
@@ -2004,11 +1997,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                 case CommunicationStates.AttemptingToConnect:
                     CommunicationState = CommunicationStates.FailedToConnect;
-                    connectThread.Join();
+                    connectThread.Join(JoinThreadTimeoutMs);
                     CommunicationState = CommunicationStates.Disconnecting;
                     if (readFromPrinterThread != null)
                     {
-                        readFromPrinterThread.Join();
+                        readFromPrinterThread.Join(JoinThreadTimeoutMs);
                     }
                     if (serialPort != null)
                     {
@@ -2111,7 +2104,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             {
                 try
                 {
-                    while (serialPort.BytesToRead > 0)
+                    while (serialPort != null 
+                        && serialPort.BytesToRead > 0)
                     {
                         char nextChar = (char)serialPort.ReadChar();
                         using (TimedLock.Lock(this, "ReadFromPrinter"))
