@@ -102,6 +102,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3Point.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardBase.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingData.cs" />
+    <Compile Include="CrashTracker.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
     <Compile Include="DataStorage\Models.cs" />
