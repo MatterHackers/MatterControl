@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl
 		Button disablePrintLevelingButton;
         Button enableCloudMonitorButton;
         Button disableCloudMonitorButton;
+        Button goCloudMonitoringWebPageButton;
 
         DisableableWidget eePromControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
@@ -355,7 +356,6 @@ namespace MatterHackers.MatterControl
         
         private GuiWidget CreateCloudMonitorControls()
         {
-            
             GroupBox cloudMonitorContainer = new GroupBox(LocalizedString.Get("Cloud Services"));
             
             cloudMonitorContainer.Margin = new BorderDouble(0);
@@ -380,8 +380,8 @@ namespace MatterHackers.MatterControl
                     InvertLightness.DoInvertLightness(cloudMonitorImage);
                 }
 
-                ImageWidget levelingIcon = new ImageWidget(cloudMonitorImage);
-                levelingIcon.Margin = new BorderDouble(right: 6);
+                ImageWidget cloudMonitoringIcon = new ImageWidget(cloudMonitorImage);
+                cloudMonitoringIcon.Margin = new BorderDouble(right: 6);
 
                 enableCloudMonitorButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
                 enableCloudMonitorButton.Margin = new BorderDouble(left: 6);
@@ -393,6 +393,10 @@ namespace MatterHackers.MatterControl
                 disableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
                 disableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(disableCloudMonitor_Click);
 
+                goCloudMonitoringWebPageButton = textImageButtonFactory.Generate("Go".Localize().ToUpper());
+                goCloudMonitoringWebPageButton.VAnchor = VAnchor.ParentCenter;
+                goCloudMonitoringWebPageButton.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringWebPageButton_Click);
+
                 cloudMonitorStatusLabel = new TextWidget("");
                 cloudMonitorStatusLabel.AutoExpandBoundsToText = true;
                 cloudMonitorStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -401,22 +405,18 @@ namespace MatterHackers.MatterControl
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-                buttonBar.AddChild(levelingIcon);
+                buttonBar.AddChild(cloudMonitoringIcon);
                 buttonBar.AddChild(cloudMonitorStatusLabel);
                 buttonBar.AddChild(hSpacer);
+                buttonBar.AddChild(goCloudMonitoringWebPageButton);
                 buttonBar.AddChild(enableCloudMonitorButton);
                 buttonBar.AddChild(disableCloudMonitorButton);
-                ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
-                {
-                    SetCloudButtonVisiblity();
-
-                }, ref unregisterEvents);
 
                 cloudMonitorContainer.AddChild(buttonBar);
             }
             SetCloudButtonVisiblity();
             return cloudMonitorContainer;
-        }			
+        }
 
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
         string noEepromMappingTitle = "Warning no eeprom mapping".Localize();
@@ -713,6 +713,19 @@ namespace MatterHackers.MatterControl
             ApplicationWidget.Instance.ChangeCloudSyncStatus();
             ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
 		}
+
+        public delegate void OpenDashboardPage(object state);
+        public static OpenDashboardPage openDashboardPageFunction = null;
+        void goCloudMonitoringWebPageButton_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            if (openDashboardPageFunction != null)
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    openDashboardPageFunction(null);
+                });
+            }
+        }
 
         void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
         {
