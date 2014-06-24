@@ -30,14 +30,17 @@ either expressed or implied, of the FreeBSD Project.
 #define USE_CRASH_TRACKER
 
 using System.IO;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
     public static class CrashTracker
     {
-        static readonly string outputFilename = "CrashTracker.txt";
+        static string outputFilename;
         public static void Reset()
         {
+            outputFilename = Path.Combine(DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath, "CrashTracker.txt");
+
 #if USE_CRASH_TRACKER
             // Create the file to clear its contents
             using (StreamWriter sw = File.CreateText(outputFilename))
