@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl
         Button enableCloudMonitorButton;
         Button disableCloudMonitorButton;
         Button goCloudMonitoringWebPageButton;
+		Button configureNotificationSettingsButton;
 
         DisableableWidget eePromControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
