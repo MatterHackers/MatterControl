@@ -67,6 +67,8 @@ namespace MatterHackers.MatterControl
         public MatterControlApplication(double width, double height)
             : base(width, height)
         {
+            CrashTracker.Reset();
+
             this.commandLineArgs = Environment.GetCommandLineArgs();
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 

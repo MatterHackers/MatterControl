@@ -1,4 +1,4 @@
-English:Connect
+﻿English:Connect
 Translated:Connect
 
 English:Disconnect
@@ -2423,4 +2423,40 @@ Translated:Export to SD Card
 
 English:Notification Settings
 Translated:Notification Settings
+
+English:After a Print is Finished:
+Translated:After a Print is Finished:
+
+English:Saving your settings...
+Translated:Saving your settings...
+
+English:Send an SMS notification
+Translated:Send an SMS notification
+
+English:Experimental
+Translated:Experimental
+
+English:Have MatterControl send you a text message after your print is finished
+Translated:Have MatterControl send you a text message after your print is finished
+
+English:Your Phone Number*
+Translated:Your Phone Number*
+
+English:A U.S. or Canadian mobile phone number
+Translated:A U.S. or Canadian mobile phone number
+
+English:Send an email notification
+Translated:Send an email notification
+
+English:Have MatterControl send you an email message after your print is finished
+Translated:Have MatterControl send you an email message after your print is finished
+
+English:A valid email address
+Translated:A valid email address
+
+English:Play a Sound
+Translated:Play a Sound
+
+English:Play a sound after your print is finished
+Translated:Play a sound after your print is finished
 
