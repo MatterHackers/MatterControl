@@ -2421,3 +2421,6 @@ Translated:First Layer Extrusion Width' must be less than or equal to the 'Nozzl
 English:Export to SD Card
 Translated:Export to SD Card
 
+English:Notification Settings
+Translated:Notification Settings
+
