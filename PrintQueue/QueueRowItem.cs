@@ -40,6 +40,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -252,7 +253,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					Button deleteLink = linkButtonFactory.Generate(LocalizedString.Get("Remove"));
                     deleteLink.Click += (sender, e) =>
                     {
-                        DeletePartFromQueue();
+                        UiThread.RunOnIdle(DeletePartFromQueue);
                     };
                     layoutLeftToRight.AddChild(deleteLink);
                 }
@@ -422,8 +423,19 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public void DeletePartFromQueue()
+        string alsoRemoveFromSdCardMessage = "Would you also like to remove this file from the Printer's SD Card?".Localize();
+        string alsoRemoveFromSdCardTitle = "Remove From Printer's SD Card?";
+        void DeletePartFromQueue(object state)
         {
+            if (PrintItemWrapper.PrintItem.FileLocation == QueueData.SdCardFileName)
+            {
+                if (StyledMessageBox.ShowMessageBox(alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO))
+                {
+                    // The firmware only understands the names when lowercase.
+                    PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M30 {0}".FormatWith(PrintItemWrapper.PrintItem.Name.ToLower()));
+                }
+            }
+
             int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
             QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);
         }

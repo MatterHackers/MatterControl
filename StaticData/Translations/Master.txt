@@ -2457,3 +2457,9 @@ Translated:Play a Sound
 English:Play a sound after your print is finished
 Translated:Play a sound after your print is finished
 
+English:Printing From SD Card
+Translated:Printing From SD Card
+
+English:Would you also like to remove this file from the Printer's SD Card?
+Translated:Would you also like to remove this file from the Printer's SD Card?
+
