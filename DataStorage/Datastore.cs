@@ -210,8 +210,13 @@ namespace MatterHackers.MatterControl.DataStorage
                 case OSType.Mac:
                     dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
                     break;
+
                 case OSType.X11:
 					dbSQLite = new SQLiteUnix.SQLiteConnection(datastoreLocation);
+					break;
+
+				case OSType.Android:
+					dbSQLite = new SQLiteAndroid.SQLiteConnection(datastoreLocation);
 					break;
 
                 default:

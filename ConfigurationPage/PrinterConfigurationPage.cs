@@ -63,11 +63,13 @@ namespace MatterHackers.MatterControl
         Button enableCloudMonitorButton;
         Button disableCloudMonitorButton;
         Button goCloudMonitoringWebPageButton;
+		Button configureNotificationSettingsButton;
 
         DisableableWidget eePromControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
         DisableableWidget cloudMonitorContainer;
         DisableableWidget printLevelingContainer;
+		DisableableWidget editNotificationSettingsContainer;
 
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -105,6 +107,7 @@ namespace MatterHackers.MatterControl
             mainLayoutContainer.AddChild(terminalControls);
             AddPrintLevelingControls(mainLayoutContainer);
             AddCloudMonitorControls(mainLayoutContainer);
+			CreateEditNotificationConfiguration (mainLayoutContainer);
             mainLayoutContainer.AddChild(settingsControls);
 			//mainLayoutContainer.AddChild(releaseControls);
 
@@ -417,6 +420,58 @@ namespace MatterHackers.MatterControl
             SetCloudButtonVisiblity();
             return cloudMonitorContainer;
         }
+			
+		TextWidget notificationSettingsLabel;
+		private void CreateEditNotificationConfiguration(FlowLayoutWidget controlsTopToBottom)
+		{
+			DisableableWidget container = new DisableableWidget ();
+
+			GroupBox notificationSettingsContainer = new GroupBox (LocalizedString.Get("Notification Settings"));
+
+			notificationSettingsContainer.Margin = new BorderDouble (0);
+			notificationSettingsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			notificationSettingsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			notificationSettingsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			notificationSettingsContainer.Height = 68;
+
+			{
+				FlowLayoutWidget buttonRow = new FlowLayoutWidget ();
+				buttonRow.HAnchor |= HAnchor.ParentLeftRight;
+				buttonRow.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+				buttonRow.Margin = new BorderDouble (0, 0, 0, 0);
+				buttonRow.Padding = new BorderDouble (0);
+
+				this.textImageButtonFactory.FixedHeight = TallButtonHeight;
+
+				Agg.Image.ImageBuffer notificationSettingsImage = new Agg.Image.ImageBuffer ();
+				ImageIO.LoadImageData (Path.Combine (ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "notify.png"), notificationSettingsImage);
+				if (!ActiveTheme.Instance.IsDarkTheme) {
+					InvertLightness.DoInvertLightness (notificationSettingsImage);
+				}
+
+				ImageWidget levelingIcon = new ImageWidget (notificationSettingsImage);
+				levelingIcon.Margin = new BorderDouble (right: 6);
+
+				configureNotificationSettingsButton = textImageButtonFactory.Generate ("Configure".Localize ().ToUpper ());
+				configureNotificationSettingsButton.Margin = new BorderDouble (left: 6);
+				configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
+				//configureNotificationSettingsButton.Click += new ButtonBase.ButtonEventHandler ();
+
+				notificationSettingsLabel = new TextWidget ("Edit Notification Settings");
+				notificationSettingsLabel.AutoExpandBoundsToText = true;
+				notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
+
+				buttonRow.AddChild (levelingIcon);
+				buttonRow.AddChild (notificationSettingsLabel);
+				buttonRow.AddChild (new HorizontalSpacer ());
+				buttonRow.AddChild (configureNotificationSettingsButton);
+				notificationSettingsContainer.AddChild (buttonRow);
+				controlsTopToBottom.AddChild (notificationSettingsContainer);
+				AddChild(controlsTopToBottom);
+			}
+
+		}
 
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
         string noEepromMappingTitle = "Warning no eeprom mapping".Localize();

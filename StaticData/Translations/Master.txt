@@ -1,4 +1,4 @@
-English:Connect
+﻿English:Connect
 Translated:Connect
 
 English:Disconnect
@@ -2420,6 +2420,9 @@ Translated:First Layer Extrusion Width' must be less than or equal to the 'Nozzl
 
 English:Export to SD Card
 Translated:Export to SD Card
+
+English:Notification Settings
+Translated:Notification Settings
 
 English:After a Print is Finished:
 Translated:After a Print is Finished:
