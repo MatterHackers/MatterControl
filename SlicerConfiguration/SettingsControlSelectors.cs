@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         AnchoredDropDownList CreateDropdown()
         {
-            AnchoredDropDownList dropDownList = new AnchoredDropDownList("- default -");
+            AnchoredDropDownList dropDownList = new AnchoredDropDownList("- default -", maxHeight: 300);
             dropDownList.Margin = new BorderDouble(0, 3);
             dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
             MenuItem defaultMenuItem = dropDownList.AddItem("- default -", "0");
