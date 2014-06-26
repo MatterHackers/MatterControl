@@ -424,18 +424,18 @@ namespace MatterHackers.MatterControl
 		TextWidget notificationSettingsLabel;
 		private void CreateEditNotificationConfiguration(FlowLayoutWidget controlsTopToBottom)
 		{
-			DisableableWidget container = new DisableableWidget ();
+			DisableableWidget container = new DisableableWidget();
 
-			GroupBox notificationSettingsContainer = new GroupBox (LocalizedString.Get("Notification Settings"));
+			GroupBox notificationSettingsContainer = new GroupBox(LocalizedString.Get("Notification Settings"));
 
-			notificationSettingsContainer.Margin = new BorderDouble (0);
+			notificationSettingsContainer.Margin = new BorderDouble(0);
 			notificationSettingsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			notificationSettingsContainer.Height = 68;
 
 			{
-				FlowLayoutWidget buttonRow = new FlowLayoutWidget ();
+				FlowLayoutWidget buttonRow = new FlowLayoutWidget();
 				buttonRow.HAnchor |= HAnchor.ParentLeftRight;
 				buttonRow.VAnchor |= Agg.UI.VAnchor.ParentCenter;
 				buttonRow.Margin = new BorderDouble (0, 0, 0, 0);
@@ -443,9 +443,10 @@ namespace MatterHackers.MatterControl
 
 				this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
-				Agg.Image.ImageBuffer notificationSettingsImage = new Agg.Image.ImageBuffer ();
+				Agg.Image.ImageBuffer notificationSettingsImage = new Agg.Image.ImageBuffer();
 				ImageIO.LoadImageData (Path.Combine (ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "notify.png"), notificationSettingsImage);
-				if (!ActiveTheme.Instance.IsDarkTheme) {
+				if (!ActiveTheme.Instance.IsDarkTheme)
+				{
 					InvertLightness.DoInvertLightness (notificationSettingsImage);
 				}
 
@@ -455,7 +456,7 @@ namespace MatterHackers.MatterControl
 				configureNotificationSettingsButton = textImageButtonFactory.Generate ("Configure".Localize ().ToUpper ());
 				configureNotificationSettingsButton.Margin = new BorderDouble (left: 6);
 				configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
-				//configureNotificationSettingsButton.Click += new ButtonBase.ButtonEventHandler ();
+				configureNotificationSettingsButton.Click += new ButtonBase.ButtonEventHandler(configureNotificationSettingsButton_Click);
 
 				notificationSettingsLabel = new TextWidget ("Edit Notification Settings");
 				notificationSettingsLabel.AutoExpandBoundsToText = true;
@@ -783,6 +784,19 @@ namespace MatterHackers.MatterControl
                 });
             }
         }
+
+		public delegate void OpenNotificationFormWindow(object state);
+		public static OpenNotificationFormWindow openPrintNotificationFunction = null;
+		void configureNotificationSettingsButton_Click(object sender, MouseEventArgs mouseEvent)
+		{
+			if(openPrintNotificationFunction != null)
+			{
+				UiThread.RunOnIdle ((state) => 
+				{
+					openPrintNotificationFunction(null);
+				});
+			}
+		}
 
         void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
         {
