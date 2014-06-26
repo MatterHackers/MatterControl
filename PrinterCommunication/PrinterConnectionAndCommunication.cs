@@ -2059,7 +2059,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         void DonePrintingSdFile(object sender, EventArgs e)
         {
-            ReadLineStartCallBacks.RemoveCallBackFromKey("Done printing file", DonePrintingSdFile);
+            UiThread.RunOnIdle((state) =>
+            {
+                ReadLineStartCallBacks.RemoveCallBackFromKey("Done printing file", DonePrintingSdFile);
+            });
             CommunicationState = CommunicationStates.FinishedPrint;
 
             printJobDisplayName = null;

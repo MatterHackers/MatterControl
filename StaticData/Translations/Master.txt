@@ -2475,3 +2475,6 @@ Translated:Preparing To Send To SD Card
 English:Sending To SD Card
 Translated:Sending To SD Card
 
+English:Exporting to Folder
+Translated:Exporting to Folder
+
