@@ -1968,6 +1968,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             switch (CommunicationState)
             {
+                case CommunicationStates.PrintingToSd:
+                    using (TimedLock.Lock(this, "CancelingPrint"))
+                    {
+                        // get rid of all the gcode we have left to print
+                        ClearQueuedGCode();
+                        // let the process know we canceled not ended normaly.
+                        printWasCanceled = true;
+                        // close the file
+                        //M29: // Stop writing to SD card
+                        // and delete it from the sd card
+                        //30: // Delete a file on the SD card
+                    }
+                    break;
+
+                case CommunicationStates.PrintingFromSd:
+                    break;
+
                 case CommunicationStates.Printing:
                     {
                         using (TimedLock.Lock(this, "CancelingPrint"))
@@ -2279,6 +2296,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         public void ReadPosition()
         {
             SendLineToPrinterNow("M114");
+        }
+
+        public void DeleteFileFromSdCard(string fileName)
+        {
+            // Register to detect the file deleted confirmation.
+            // This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
+            ReadLineStartCallBacks.AddCallBackToKey("File deleted:", FileDelteConfirmed);
+            // and send the line to delete the file
+            SendLineToPrinterNow("M30 {0}".FormatWith(fileName.ToLower()));
+        }
+
+        void FileDelteConfirmed(object sender, EventArgs e)
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                ReadLineStartCallBacks.RemoveCallBackFromKey("File deleted:", FileDelteConfirmed);
+            });
+            PrintingCanContinue(this, null);
         }
     }
 }

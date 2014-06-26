@@ -191,7 +191,10 @@ namespace MatterHackers.MatterControl
 
         void onActivePrintItemChanged(object sender, EventArgs e)
         {
-            UiThread.RunOnIdle(LoadColumnTwo);
+            if (NumberOfVisiblePanels() > 1)
+            {
+                UiThread.RunOnIdle(LoadColumnTwo);
+            }
         }
 
         public void StoreUiState()

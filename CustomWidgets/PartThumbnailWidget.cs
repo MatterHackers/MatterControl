@@ -51,7 +51,6 @@ namespace MatterHackers.MatterControl
 
         PrintItemWrapper printItem;
 		PartPreviewMainWindow partPreviewWindow;
-		bool partPreviewWindowIsOpen = false;
 
         public PrintItemWrapper PrintItem
         {
@@ -366,23 +365,19 @@ namespace MatterHackers.MatterControl
 
 		void PartPreviewWindow_Closed(object sender, EventArgs e)
 		{
-			this.partPreviewWindowIsOpen = false;
+            this.partPreviewWindow = null;
 		}
 
 		private void OpenPartPreviewWindow(View3DTransformPart.AutoRotate autoRotate)
 		{
-			if (partPreviewWindowIsOpen == false)
+            if (partPreviewWindow == null)
 			{
                 partPreviewWindow = new PartPreviewMainWindow(this.PrintItem, autoRotate);
-				this.partPreviewWindowIsOpen = true;
 				partPreviewWindow.Closed += new EventHandler (PartPreviewWindow_Closed);
 			}
 			else
 			{
-				if (partPreviewWindow != null)
-				{
-					partPreviewWindow.BringToFront ();
-				}
+                partPreviewWindow.BringToFront ();
 			}
 
 		}

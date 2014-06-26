@@ -438,7 +438,7 @@ namespace MatterHackers.MatterControl.ActionBar
                         if (QueueData.Instance.Count > 1)
                         {
                             this.activePrintButtons.Add(skipButton);
-                        }                        
+                        }
 
                         this.activePrintButtons.Add(removeButton);
                         EnableActiveButtons();
@@ -449,11 +449,13 @@ namespace MatterHackers.MatterControl.ActionBar
                         EnableActiveButtons();
                         break;
 
-				case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-					 this.activePrintButtons.Add (pauseButton);
-					 this.activePrintButtons.Add (cancelButton);
-					 EnableActiveButtons ();
-                     break;
+                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
+                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                        this.activePrintButtons.Add(pauseButton);
+                        this.activePrintButtons.Add(cancelButton);
+                        EnableActiveButtons();
+                        break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.Paused:
                         this.activePrintButtons.Add(resumeButton);
@@ -467,13 +469,12 @@ namespace MatterHackers.MatterControl.ActionBar
                         EnableActiveButtons();
                         break;
 
-                    default:                        
+                    default:
                         DisableActiveButtons();
                         break;
                 }
             }
             ShowActiveButtons();
-            
         }
     }
 }

@@ -582,6 +582,15 @@ namespace MatterHackers.MatterControl
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         break;
 
+                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
+                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        break;
+
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
                         extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -594,7 +603,6 @@ namespace MatterHackers.MatterControl
                     case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
                     case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrintToSd:
                     case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
                         switch (PrinterConnectionAndCommunication.Instance.PrintingState)
                         {
                             case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:

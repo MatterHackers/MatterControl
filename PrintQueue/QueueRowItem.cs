@@ -436,7 +436,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 if (StyledMessageBox.ShowMessageBox(alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO))
                 {
                     // The firmware only understands the names when lowercase.
-                    PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M30 {0}".FormatWith(PrintItemWrapper.PrintItem.Name.ToLower()));
+                    PrinterConnectionAndCommunication.Instance.DeleteFileFromSdCard(PrintItemWrapper.PrintItem.Name);
                 }
             }
 
