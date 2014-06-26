@@ -252,53 +252,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             return true;
         }
 
-        event EventHandler unregisterEvents;
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-
         bool loadFilesFromSDButton_Click()
         {
-            if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
-                && !(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-                || PrinterConnectionAndCommunication.Instance.PrinterIsPaused))
-            {
-                PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(GetSdCardList, ref unregisterEvents);
-                StringBuilder commands = new StringBuilder();
-                commands.AppendLine("M21"); // Init SD card
-                commands.AppendLine("M20"); // List SD card
-                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
-            }
+            QueueData.Instance.LoadFilesFromSD();
             return true;
-        }
-
-        void GetSdCardList(object sender, EventArgs e)
-        {
-            StringEventArgs currentEvent = e as StringEventArgs;
-            if (currentEvent != null)
-            {
-                if (!currentEvent.Data.StartsWith("echo:"))
-                {
-                    switch (currentEvent.Data)
-                    {
-                        case "Begin file list":
-                            break;
-
-                        default:
-                            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(currentEvent.Data, QueueData.SdCardFileName)));
-                            break;
-
-                        case "End file list":
-                            PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(GetSdCardList, ref unregisterEvents);
-                            break;
-                    }
-                }
-            }
         }
 
         bool ejectSDCardButton_Click()

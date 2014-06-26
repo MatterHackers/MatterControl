@@ -592,7 +592,9 @@ namespace MatterHackers.MatterControl
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrintToSd:
                     case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
                         switch (PrinterConnectionAndCommunication.Instance.PrintingState)
                         {
                             case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:

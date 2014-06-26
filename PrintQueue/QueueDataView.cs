@@ -115,13 +115,13 @@ namespace MatterHackers.MatterControl.PrintQueue
             if (SelectedIndex >= 0 && SelectedIndex < Count)
             {
                 int currentIndex = SelectedIndex;
-                PrintItem replacementItem = new PrintItem(SelectedPart.Name, SelectedPart.FileLocation);
+                PrintItem replacementItem = new PrintItem(SelectedPrintItem.Name, SelectedPrintItem.FileLocation);
                 QueueData.Instance.RemoveAt(SelectedIndex);
                 this.SelectedIndex = currentIndex;
             }
         }
 
-        public PrintItemWrapper SelectedPart
+        public PrintItemWrapper SelectedPrintItem
         {
             get
             {
@@ -132,6 +132,14 @@ namespace MatterHackers.MatterControl.PrintQueue
                 else
                 {
                     return null;
+                }
+            }
+
+            set
+            {
+                if (SelectedPrintItem != value)
+                {
+                    throw new NotImplementedException();
                 }
             }
         }
@@ -233,6 +241,11 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
+        public override void SendToChildren(object objectToRout)
+        {
+            base.SendToChildren(objectToRout);
+        }
+
         public int DragIndex
         {
             get
@@ -314,6 +327,13 @@ namespace MatterHackers.MatterControl.PrintQueue
             QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
             QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToQueue, ref unregisterEvents);
             QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
+
+            PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
+        }
+
+        void PrintItemChange(object sender, EventArgs e)
+        {
+            SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
         }
 
         void ItemAddedToQueue(object sender, EventArgs e)

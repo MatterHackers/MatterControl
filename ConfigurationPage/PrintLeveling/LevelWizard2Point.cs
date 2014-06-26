@@ -141,7 +141,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 {
                     unregisterEvents(null, null);
                 }
-                ActivePrinterProfile.Instance.DoPrintLeveling = false;
+                if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
+                {
+                    ActivePrinterProfile.Instance.DoPrintLeveling = false;
+                }
 
                 probeIndex = 0;
                 PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);

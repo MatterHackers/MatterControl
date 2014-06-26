@@ -650,6 +650,8 @@ namespace MatterHackers.MatterControl
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrintToSd:
+                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
                     case PrinterConnectionAndCommunication.CommunicationStates.Printing:
                         switch (PrinterConnectionAndCommunication.Instance.PrintingState)
                         {

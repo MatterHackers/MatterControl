@@ -195,52 +195,56 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 linkButtonFactory.margin = new BorderDouble(3);
 
-                // view button
+                bool fileIsOnPrinterSdCard = PrintItemWrapper.PrintItem.FileLocation == QueueData.SdCardFileName;
+                if (!fileIsOnPrinterSdCard)
                 {
-					Button viewLink = linkButtonFactory.Generate(LocalizedString.Get("View"));
-                    viewLink.Click += (sender, e) =>
+                    // view button
                     {
-
-                        string pathAndFile = PrintItemWrapper.FileLocation;
-                        if (File.Exists(pathAndFile))
+                        Button viewLink = linkButtonFactory.Generate(LocalizedString.Get("View"));
+                        viewLink.Click += (sender, e) =>
                         {
-							OpenViewWindow();
-                        }
-                        else
-                        {
-                            ShowCantFindFileMessage(PrintItemWrapper);
-                        }
-                    };
-                    layoutLeftToRight.AddChild(viewLink);
-                }
 
-                // copy button
-                {
-					Button copyLink = linkButtonFactory.Generate(LocalizedString.Get("Copy"));
-                    copyLink.Click += (sender, e) =>
-                    {
-                        CreateCopyInQueue();
-                    };
-                    layoutLeftToRight.AddChild(copyLink);
-                }
-
-                // add to library button
-                {
-                    if (this.PrintItemWrapper.PrintItem.PrintItemCollectionID == LibraryData.Instance.LibraryCollection.Id)
-                    {
-                        //rightColumnOptions.AddChild(new TextWidget("Libary Item"));
+                            string pathAndFile = PrintItemWrapper.FileLocation;
+                            if (File.Exists(pathAndFile))
+                            {
+                                OpenViewWindow();
+                            }
+                            else
+                            {
+                                ShowCantFindFileMessage(PrintItemWrapper);
+                            }
+                        };
+                        layoutLeftToRight.AddChild(viewLink);
                     }
-                }
 
-                // the export menu
-                {
-					Button exportLink = linkButtonFactory.Generate(LocalizedString.Get("Export"));
-                    exportLink.Click += (sender, e) =>
+                    // copy button
                     {
-						OpenExportWindow();
-                        
-                    };
-                    layoutLeftToRight.AddChild(exportLink);
+                        Button copyLink = linkButtonFactory.Generate(LocalizedString.Get("Copy"));
+                        copyLink.Click += (sender, e) =>
+                        {
+                            CreateCopyInQueue();
+                        };
+                        layoutLeftToRight.AddChild(copyLink);
+                    }
+
+                    // add to library button
+                    {
+                        if (this.PrintItemWrapper.PrintItem.PrintItemCollectionID == LibraryData.Instance.LibraryCollection.Id)
+                        {
+                            //rightColumnOptions.AddChild(new TextWidget("Libary Item"));
+                        }
+                    }
+
+                    // the export menu
+                    {
+                        Button exportLink = linkButtonFactory.Generate(LocalizedString.Get("Export"));
+                        exportLink.Click += (sender, e) =>
+                        {
+                            OpenExportWindow();
+
+                        };
+                        layoutLeftToRight.AddChild(exportLink);
+                    }
                 }
 
                 // spacer
@@ -369,7 +373,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         public void CreateCopyInQueue()
         {
             int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
-            if (thisIndexInQueue != -1)
+            if (thisIndexInQueue != -1 && File.Exists(PrintItemWrapper.FileLocation))
             {
                 string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
                 string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "stl");

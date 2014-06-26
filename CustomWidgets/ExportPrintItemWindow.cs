@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
@@ -178,9 +180,103 @@ namespace MatterHackers.MatterControl
             this.AddChild(topToBottom);
         }
 
+        string Get8Name(string longName)
+        {
+            longName.Replace(' ', '_');
+            return longName.Substring(0, 8);
+        }
+
+        bool levelingEnabledStateBeforeSdOutput;
         void ExportToSdCard_Click(object state)
         {
-            // send the file to the printers sd card
+            if (applyLeveling.Checked) // check if the user wants that output leveled
+            {
+                // Check if the printer needs to run calibration to print
+                PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+                if (levelingData.needsPrintLeveling
+                    && levelingData.sampledPosition0.z == 0
+                    && levelingData.sampledPosition1.z == 0
+                    && levelingData.sampledPosition2.z == 0)
+                {
+                    LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+                    // we will exit and not export until the printe has been leveled
+                    Close();
+                    return;
+                }
+            }
+
+            // set the printer to this item
+            PrinterConnectionAndCommunication.Instance.ActivePrintItem = printItemWrapper;
+            // tell the printer to save to sd.
+            StringBuilder commands = new StringBuilder();
+            string sdUsableName = Get8Name(printItemWrapper.Name);
+            commands.AppendLine("M28 {0}.gco".FormatWith(sdUsableName)); // Begin write to SD card
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
+
+            // check if we need to turn off the print leveling
+            levelingEnabledStateBeforeSdOutput = ActivePrinterProfile.Instance.DoPrintLeveling;
+            if (!applyLeveling.Checked)
+            {
+                ActivePrinterProfile.Instance.DoPrintLeveling = false;
+            }
+
+            // Tell the printer we are getting ready to print
+            PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrintToSd;
+
+            // slice the part or start the gcode printing
+            Close();
+            PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+            SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
+            partToPrint.SlicingDone.RegisterEvent(PartSlicedStartPrintingToSd, ref unregisterEvents);
+            // register to know when the print finishes so we can close the sd save
+            PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent(DoneWritingToSdCard, ref unregisterEvents);
+        }
+
+        void PartSlicedStartPrintingToSd(object sender, EventArgs e)
+        {
+            // tell the printer to start the print
+            PrintItemWrapper partToPrint = sender as PrintItemWrapper;
+            if (partToPrint != null)
+            {
+                partToPrint.SlicingDone.UnregisterEvent(PartSlicedStartPrintingToSd, ref unregisterEvents);
+                string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
+                if (gcodePathAndFileName != "")
+                {
+                    bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
+                    if (File.Exists(gcodePathAndFileName)
+                        && (originalIsGCode || File.ReadAllText(gcodePathAndFileName).Contains("filament used")))
+                    {
+                        string gcodeFileContents = "";
+                        using (FileStream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
+                            using (StreamReader gcodeStreamReader = new StreamReader(fileStream))
+                            {
+                                gcodeFileContents = gcodeStreamReader.ReadToEnd();
+                            }
+                        }
+
+                        PrinterConnectionAndCommunication.Instance.StartPrint(gcodeFileContents);
+                    }
+                    else
+                    {
+                        PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
+                    }
+                }
+            }
+        }
+
+        void DoneWritingToSdCard(object sender, EventArgs e)
+        {
+            // get rid of the hook to print finished
+            PrinterConnectionAndCommunication.Instance.PrintFinished.UnregisterEvent(DoneWritingToSdCard, ref unregisterEvents);
+            // send the command to stop writing to sd
+            StringBuilder commands = new StringBuilder();
+            commands.AppendLine("M29"); // Stop writing to SD card            
+            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
+            // load the new sd card info to the queue
+            QueueData.Instance.LoadFilesFromSD();
+
+            ActivePrinterProfile.Instance.DoPrintLeveling = levelingEnabledStateBeforeSdOutput;
         }
 
         void ExportGCode_Click(object state)
@@ -257,9 +353,6 @@ namespace MatterHackers.MatterControl
                     }
                 }
                 unleveledGCode.Save(dest);
-
-                // Make sure we turn this back on as it can get turned off by the LevelWizard2Point.ProcessCommand and it was on.
-                ActivePrinterProfile.Instance.DoPrintLeveling = true;
             }
             else
             {

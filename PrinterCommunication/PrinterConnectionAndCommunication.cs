@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         Stopwatch timeSinceLastReadAnything = new Stopwatch();
         Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
 
-        public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, Printing, PrintingFromSd, Paused, FinishedPrint, Disconnecting, ConnectionLost };
+        public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, PreparingToPrintToSd, Printing, PrintingToSd, PrintingFromSd, Paused, FinishedPrint, Disconnecting, ConnectionLost };
         CommunicationStates communicationState = CommunicationStates.Disconnected;
 
         bool ForceImmediateWrites = false;
@@ -174,41 +174,51 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             {
                 if (communicationState != value)
                 {
-                    // if it was printing
-                    if (communicationState == CommunicationStates.Printing)
+                    switch (communicationState)
                     {
-                        // and is changing to paused
-                        if (value == CommunicationStates.Paused)
-                        {
-                            timeSinceStartedPrint.Stop();
-                        }
-                        else if (value == CommunicationStates.FinishedPrint)
-                        {
-                            if (activePrintTask != null)
+                        // if it was printing
+                        case CommunicationStates.PrintingToSd:
+                        case CommunicationStates.Printing:
                             {
-                                TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+                                // and is changing to paused
+                                if (value == CommunicationStates.Paused)
+                                {
+                                    timeSinceStartedPrint.Stop();
+                                }
+                                else if (value == CommunicationStates.FinishedPrint)
+                                {
+                                    if (activePrintTask != null)
+                                    {
+                                        TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
 
-                                activePrintTask.PrintEnd = DateTime.Now;
-                                activePrintTask.PrintComplete = true;
-                                activePrintTask.Commit();
+                                        activePrintTask.PrintEnd = DateTime.Now;
+                                        activePrintTask.PrintComplete = true;
+                                        activePrintTask.Commit();
+                                    }
+
+                                    // Set this early as we always want our functions to know the state we are in.
+                                    communicationState = value;
+                                    timeSinceStartedPrint.Stop();
+                                    OnPrintFinished(null);
+                                }
+                                else
+                                {
+                                    timeSinceStartedPrint.Stop();
+                                    timeSinceStartedPrint.Reset();
+                                }
                             }
-                            
-                            OnPrintFinished(null);
-                            timeSinceStartedPrint.Stop();
-                        }
-                        else
-                        {
-                            timeSinceStartedPrint.Stop();
-                            timeSinceStartedPrint.Reset();
-                        }
-                    }
-                    else if (communicationState == CommunicationStates.Paused) // was paused
-                    {
-                        // changing to printing
-                        if (value == CommunicationStates.Printing)
-                        {
-                            timeSinceStartedPrint.Start();
-                        }
+                            break;
+
+                        // was paused
+                        case CommunicationStates.Paused:
+                            {
+                                // changing to printing
+                                if (value == CommunicationStates.Printing)
+                                {
+                                    timeSinceStartedPrint.Start();
+                                }
+                            }
+                            break;
                     }
 
                     communicationState = value;
@@ -372,7 +382,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     case CommunicationStates.Disconnecting:
                     case CommunicationStates.Connected:
                     case CommunicationStates.PreparingToPrint:
+                    case CommunicationStates.PreparingToPrintToSd:
                     case CommunicationStates.Printing:
+                    case CommunicationStates.PrintingToSd:
                     case CommunicationStates.PrintingFromSd:
                     case CommunicationStates.Paused:
                     case CommunicationStates.FinishedPrint:
@@ -410,6 +422,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReadLineStartCallBacks.AddCallBackToKey("T:", SuppressEcho); // repatier
 
             ReadLineStartCallBacks.AddCallBackToKey("ok", PrintingCanContinue);
+            ReadLineStartCallBacks.AddCallBackToKey("Done saving file", PrintingCanContinue);
 
             ReadLineStartCallBacks.AddCallBackToKey("ok T:", ReadTemperatures); // marlin
             ReadLineStartCallBacks.AddCallBackToKey("T:", ReadTemperatures); // repatier
@@ -455,11 +468,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     case CommunicationStates.FailedToConnect:
                     case CommunicationStates.Connected:
                     case CommunicationStates.PreparingToPrint:
+                    case CommunicationStates.PreparingToPrintToSd:
                     case CommunicationStates.Paused:
                     case CommunicationStates.FinishedPrint:
                         return false;
 
                     case CommunicationStates.Printing:
+                    case CommunicationStates.PrintingToSd:
                     case CommunicationStates.PrintingFromSd:
                         return true;
 
@@ -520,28 +535,32 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 switch (CommunicationState)
                 {
                     case CommunicationStates.Disconnected:
-						return LocalizedString.Get("Not Connected");
+                        return "Not Connected".Localize();
                     case CommunicationStates.Disconnecting:
-						return LocalizedString.Get("Disconnecting");
+                        return "Disconnecting".Localize();
 					case CommunicationStates.AttemptingToConnect:
-						string connectingMessageTxt = LocalizedString.Get ("Connecting");
+                        string connectingMessageTxt = "Connecting".Localize();
 						return "{0}...".FormatWith(connectingMessageTxt);
                     case CommunicationStates.ConnectionLost:
-						return LocalizedString.Get("Connection Lost");
+                        return "Connection Lost".Localize();
                     case CommunicationStates.FailedToConnect:
                         return "Unable to Connect";
                     case CommunicationStates.Connected:
-						return LocalizedString.Get("Connected");
+                        return "Connected".Localize();
                     case CommunicationStates.PreparingToPrint:
-						return LocalizedString.Get("Preparing To Print");
+                        return "Preparing To Print".Localize();
+                    case CommunicationStates.PreparingToPrintToSd:
+                        return "Preparing To Send To SD Card".Localize();
                     case CommunicationStates.Printing:
-						return LocalizedString.Get("Printing");
+                        return "Printing".Localize();
+                    case CommunicationStates.PrintingToSd:
+                        return "Sending To SD Card".Localize();
                     case CommunicationStates.PrintingFromSd:
                         return "Printing From SD Card".Localize();
                     case CommunicationStates.Paused:
-						return LocalizedString.Get("Paused");
+                        return "Paused".Localize();
                     case CommunicationStates.FinishedPrint:
-						return LocalizedString.Get("Finished Print");
+                        return "Finished Print".Localize();
                     default:
                         throw new NotImplementedException("Make sure every satus returns the correct connected state.");
                 }
@@ -2033,7 +2052,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             SendLineToPrinterNow("M23 {0}".FormatWith(ActivePrintItem.PrintItem.Name.ToLower())); // Select SD File
             SendLineToPrinterNow("M24"); // Start/resume SD print
 
+            ReadLineStartCallBacks.AddCallBackToKey("Done printing file", DonePrintingSdFile);
+
             return true;
+        }
+
+        void DonePrintingSdFile(object sender, EventArgs e)
+        {
+            ReadLineStartCallBacks.RemoveCallBackFromKey("Done printing file", DonePrintingSdFile);
+            CommunicationState = CommunicationStates.FinishedPrint;
+
+            printJobDisplayName = null;
+
+            // never leave the extruder and the bed hot
+            ReleaseMotors();
+            TargetExtruderTemperature = 0;
+            TargetBedTemperature = 0;
         }
 
         public bool StartPrint(string gcodeFileContents)
@@ -2059,23 +2093,37 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 printableGCode.Add(trimedLine);
             }
 
-            if (ActivePrintItem.PrintItem.Id == 0)
-            {
-                ActivePrintItem.PrintItem.Commit();
-            }
-
-            activePrintTask = new PrintTask();
-            activePrintTask.PrintStart = DateTime.Now;
-            activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
-            activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
-            activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
-            activePrintTask.PrintComplete = false;
-            activePrintTask.Commit();
-
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
 
-            CommunicationState = CommunicationStates.Printing;
+            switch(communicationState)
+            {
+                case CommunicationStates.PreparingToPrintToSd:
+                    activePrintTask = null;
+                    CommunicationState = CommunicationStates.PrintingToSd;
+                    break;
+
+                case CommunicationStates.PreparingToPrint:
+                    if (ActivePrintItem.PrintItem.Id == 0)
+                    {
+                        ActivePrintItem.PrintItem.Commit();
+                    }
+
+                    activePrintTask = new PrintTask();
+                    activePrintTask.PrintStart = DateTime.Now;
+                    activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+                    activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
+                    activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
+                    activePrintTask.PrintComplete = false;
+                    activePrintTask.Commit();
+
+                    CommunicationState = CommunicationStates.Printing;
+                    break;
+
+                default:
+                    throw new NotFiniteNumberException();
+            }
+
             ClearQueuedGCode();
             loadedGCode = GCodeFile.ParseGCodeString(string.Join("\n", printableGCode.ToArray()));
 
