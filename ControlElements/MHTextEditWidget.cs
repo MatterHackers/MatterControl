@@ -3,9 +3,7 @@ using System.Diagnostics;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 
