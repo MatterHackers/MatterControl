@@ -85,31 +85,34 @@ namespace MatterHackers.MatterControl
             mainLayoutContainer.VAnchor = Agg.UI.VAnchor.FitToChildren;
             mainLayoutContainer.Padding = new BorderDouble(3, 0, 3, 10);
 
+            // setup the terminal controls
             FlowLayoutWidget terminalControls = new FlowLayoutWidget();
             terminalControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             terminalControls.Padding = new BorderDouble(right: 15);
-
-            FlowLayoutWidget settingsControls = new FlowLayoutWidget();
-            settingsControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-
-            AddThemeControls(settingsControls);
-            AddLanguageControls(settingsControls);            
-
-			//FlowLayoutWidget releaseControls = new FlowLayoutWidget();
-			//releaseControls.Margin = new BorderDouble (right: 10);
-			//releaseControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-
-            
             AddTerminalControls(terminalControls);
+            mainLayoutContainer.AddChild(terminalControls);
+
+            // add other elements on the same line as terminal controls
             AddEePromControls(terminalControls);
             AddReleaseOptions(terminalControls);
-            
-            mainLayoutContainer.AddChild(terminalControls);
+
+            // put in print leveling controls
             AddPrintLevelingControls(mainLayoutContainer);
+
+            // put in cloud monitor control
             AddCloudMonitorControls(mainLayoutContainer);
-			CreateEditNotificationConfiguration (mainLayoutContainer);
-            mainLayoutContainer.AddChild(settingsControls);
-			//mainLayoutContainer.AddChild(releaseControls);
+
+            // put in the notification control (SMS, email)
+            CreateEditNotificationControls(mainLayoutContainer);
+
+            // put in the theme and language controls
+            FlowLayoutWidget uiSettingsControls = new FlowLayoutWidget();
+            uiSettingsControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            AddThemeControls(uiSettingsControls);
+            AddLanguageControls(uiSettingsControls);
+            mainLayoutContainer.AddChild(uiSettingsControls);
+
+            //mainLayoutContainer.AddChild(releaseControls);
 
             AddChild(mainLayoutContainer);
 
@@ -422,7 +425,7 @@ namespace MatterHackers.MatterControl
         }
 			
 		TextWidget notificationSettingsLabel;
-		private void CreateEditNotificationConfiguration(FlowLayoutWidget controlsTopToBottom)
+		private void CreateEditNotificationControls(FlowLayoutWidget controlsTopToBottom)
 		{
 			DisableableWidget container = new DisableableWidget();
 
@@ -469,9 +472,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.AddChild (configureNotificationSettingsButton);
 				notificationSettingsContainer.AddChild (buttonRow);
 				controlsTopToBottom.AddChild (notificationSettingsContainer);
-				AddChild(controlsTopToBottom);
 			}
-
 		}
 
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
@@ -587,7 +588,9 @@ namespace MatterHackers.MatterControl
                 runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
                 runPrintLevelingButton.Click += (sender, e) =>
                 {
+					UiThread.RunOnIdle( (state) => {
                     OpenPrintLevelWizard();
+					});
                 };
 
                 Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
