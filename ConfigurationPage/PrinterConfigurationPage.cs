@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				ImageWidget levelingIcon = new ImageWidget (notificationSettingsImage);
-				levelingIcon.Margin = new BorderDouble (right: 6);
+				levelingIcon.Margin = new BorderDouble (right: 6, bottom: 6);
 
 				configureNotificationSettingsButton = textImageButtonFactory.Generate ("Configure".Localize ().ToUpper ());
 				configureNotificationSettingsButton.Margin = new BorderDouble (left: 6);
@@ -791,7 +791,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle ((state) => 
 				{
-					openPrintNotificationFunction(null);
+						openPrintNotificationFunction(null);
 				});
 			}
 		}
