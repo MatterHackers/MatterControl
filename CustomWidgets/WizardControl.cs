@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl
 
             bottomToTopLayout = new FlowLayoutWidget(FlowDirection.BottomToTop);
             bottomToTopLayout.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+            bottomToTopLayout.Padding = new BorderDouble(3);
 
             topToBottom.AddChild(bottomToTopLayout);
 
