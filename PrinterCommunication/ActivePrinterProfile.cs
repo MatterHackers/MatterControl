@@ -28,26 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.IO.Ports;
-using System.Threading;
-using System.Diagnostics;
-using System.Collections;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Globalization;
-
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.ContactForm;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl
 {
@@ -368,7 +357,7 @@ namespace MatterHackers.MatterControl
         {
             string query = string.Format("SELECT * FROM Printer;");
             IEnumerable<Printer> printer_profiles = (IEnumerable<Printer>)Datastore.Instance.dbSQLite.Query<Printer>(query);
-            string[] comportNames = SerialPort.GetPortNames();
+            string[] comportNames = FrostedSerialPort.GetPortNames();
 
             foreach (DataStorage.Printer printer in printer_profiles)
             {

@@ -36,7 +36,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.Ports;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -1300,7 +1299,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             // Allow the user to set the appropriate properties.
-            var portNames = SerialPort.GetPortNames();
+            var portNames = FrostedSerialPort.GetPortNames();
             //Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
             if (portNames.Length > 0)
             {
