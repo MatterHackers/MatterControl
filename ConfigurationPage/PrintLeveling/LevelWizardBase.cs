@@ -120,7 +120,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             }
         }
 
-        public static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
+        static SystemWindow printLevelWizardWindow;
+        public static void ShowPrintLevelWizard(LevelWizardBase.RuningState runningState)
+        {
+            if (printLevelWizardWindow == null)
+            {
+                printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(runningState);
+                printLevelWizardWindow.Closed += (sender, e) =>
+                {
+                    printLevelWizardWindow = null;
+                };
+            }
+            else
+            {
+                printLevelWizardWindow.BringToFront();
+            }
+        }
+
+        static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
         {
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
