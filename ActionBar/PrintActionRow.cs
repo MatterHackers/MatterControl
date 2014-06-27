@@ -249,8 +249,9 @@ namespace MatterHackers.MatterControl.ActionBar
                     if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
                     {
                         CheckBox hideGCodeWaringCheckBox = new CheckBox(doNotShowAgainMessage);
+                        hideGCodeWaringCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                        hideGCodeWaringCheckBox.Margin = new BorderDouble(top: 6);
                         hideGCodeWaringCheckBox.HAnchor = Agg.UI.HAnchor.ParentCenter;
-                        hideGCodeWaringCheckBox.TextColor = RGBA_Bytes.White;
                         hideGCodeWaringCheckBox.Click += (sender, e) =>
                         {
                             if (hideGCodeWaringCheckBox.Checked)

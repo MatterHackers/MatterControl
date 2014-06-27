@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
     public class ManualPrinterControls : GuiWidget
     {
         readonly double minExtrutionRatio = .5;
-        readonly double maxExtrusionRatio = 2;
+        readonly double maxExtrusionRatio = 3;
         readonly double minFeedRateRatio = .5;
         readonly double maxFeedRateRatio = 2;
         readonly int TallButtonHeight = 25;
