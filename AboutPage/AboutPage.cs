@@ -53,29 +53,22 @@ namespace MatterHackers.MatterControl
 
             this.Title = LocalizedString.Get("About MatterControl");
             this.ShowAsSystemWindow();
-            
         }
 
         static AboutWindow aboutWindow = null;
-        static bool aboutWindowIsOpen = false;
         public static void Show()
         {
-            if (aboutWindowIsOpen == false)
+            if (aboutWindow == null)
             {
                 aboutWindow = new AboutWindow();
-                aboutWindowIsOpen = true;
                 aboutWindow.Closed += (parentSender, e) =>
                 {
-                    aboutWindowIsOpen = false;
                     aboutWindow = null;
                 };
             }
             else
             {
-                if (aboutWindow != null)
-                {
-                    aboutWindow.BringToFront();
-                }
+                aboutWindow.BringToFront();
             }
         }
     }

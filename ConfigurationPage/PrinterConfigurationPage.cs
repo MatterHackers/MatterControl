@@ -548,8 +548,6 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(eePromControlsContainer);
         }
 
-        SystemWindow printLevelWizardWindow;
-
 		TextWidget printLevelingStatusLabel;
         
         private void AddPrintLevelingControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -605,7 +603,7 @@ namespace MatterHackers.MatterControl
                 {
                     UiThread.RunOnIdle((state) =>
                     {
-                        OpenPrintLevelWizard();
+                        LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.UserRequestedCalibration);
                     });
                 };
 
@@ -655,22 +653,6 @@ namespace MatterHackers.MatterControl
             return printLevelingControlsContainer;
         }
 
-        public void OpenPrintLevelWizard()
-        {
-            if (printLevelWizardWindow == null)
-            {
-                printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.UserRequestedCalibration);
-                printLevelWizardWindow.Closed += (sender, e) =>
-                {
-                    printLevelWizardWindow = null;
-                };
-            }
-            else 
-            {
-                printLevelWizardWindow.BringToFront();
-            }
-        }
-			
         private void SetDisplayAttributes()
         {
             //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;

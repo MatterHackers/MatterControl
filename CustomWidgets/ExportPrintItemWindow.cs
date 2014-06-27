@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl
                     && levelingData.sampledPosition1.z == 0
                     && levelingData.sampledPosition2.z == 0)
                 {
-                    LevelWizardBase.CreateAndShowWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+                    LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
                     // we will exit and not export until the printe has been leveled
                     Close();
                     return;
