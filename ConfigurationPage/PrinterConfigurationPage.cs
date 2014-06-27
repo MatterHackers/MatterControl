@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl
         Button disableCloudMonitorButton;
         Button goCloudMonitoringWebPageButton;
 		Button configureNotificationSettingsButton;
+		Button cloudMonitorInstructionsLink;
 
         DisableableWidget eePromControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
@@ -72,6 +73,7 @@ namespace MatterHackers.MatterControl
 		DisableableWidget editNotificationSettingsContainer;
 
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
         public PrinterConfigurationWidget()
         {
@@ -399,6 +401,12 @@ namespace MatterHackers.MatterControl
                 disableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
                 disableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(disableCloudMonitor_Click);
 
+
+				cloudMonitorInstructionsLink = linkButtonFactory.Generate("More Info".Localize().ToUpper());
+				cloudMonitorInstructionsLink.VAnchor = VAnchor.ParentCenter;
+				cloudMonitorInstructionsLink.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringInstructionsButton_Click);
+				cloudMonitorInstructionsLink.Margin = new BorderDouble (left: 6);
+
                 goCloudMonitoringWebPageButton = textImageButtonFactory.Generate("Go".Localize().ToUpper());
                 goCloudMonitoringWebPageButton.VAnchor = VAnchor.ParentCenter;
                 goCloudMonitoringWebPageButton.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringWebPageButton_Click);
@@ -413,6 +421,7 @@ namespace MatterHackers.MatterControl
 
                 buttonBar.AddChild(cloudMonitoringIcon);
                 buttonBar.AddChild(cloudMonitorStatusLabel);
+				buttonBar.AddChild (cloudMonitorInstructionsLink);
                 buttonBar.AddChild(hSpacer);
                 buttonBar.AddChild(goCloudMonitoringWebPageButton);
                 buttonBar.AddChild(enableCloudMonitorButton);
@@ -447,7 +456,7 @@ namespace MatterHackers.MatterControl
 				this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
 				Agg.Image.ImageBuffer notificationSettingsImage = new Agg.Image.ImageBuffer();
-				ImageIO.LoadImageData (Path.Combine (ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "notify.png"), notificationSettingsImage);
+				ImageIO.LoadImageData (Path.Combine (ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "notify-24x24.png"), notificationSettingsImage);
 				if (!ActiveTheme.Instance.IsDarkTheme)
 				{
 					InvertLightness.DoInvertLightness (notificationSettingsImage);
@@ -461,7 +470,7 @@ namespace MatterHackers.MatterControl
 				configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
 				configureNotificationSettingsButton.Click += new ButtonBase.ButtonEventHandler(configureNotificationSettingsButton_Click);
 
-				notificationSettingsLabel = new TextWidget ("Edit Notification Settings");
+				notificationSettingsLabel = new TextWidget ("Notification Settings");
 				notificationSettingsLabel.AutoExpandBoundsToText = true;
 				notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
@@ -676,6 +685,8 @@ namespace MatterHackers.MatterControl
             this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
             this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+			this.linkButtonFactory.fontSize = 11;
         }
 
         private void SetVisibleControls()
@@ -794,6 +805,19 @@ namespace MatterHackers.MatterControl
                 });
             }
         }
+
+		public delegate void OpenInstructionsPage(object state);
+		public static OpenInstructionsPage openInstructionsPageFunction = null;
+		void goCloudMonitoringInstructionsButton_Click(object sender, MouseEventArgs mouseEvent)
+		{
+			if (openDashboardPageFunction != null)
+			{
+				UiThread.RunOnIdle((state) =>
+					{
+						openInstructionsPageFunction(null);
+					});
+			}
+		}
 
 		public delegate void OpenNotificationFormWindow(object state);
 		public static OpenNotificationFormWindow openPrintNotificationFunction = null;

@@ -239,6 +239,7 @@ namespace MatterHackers.MatterControl
                 {LocalizedString.Get("Getting Started"), gettingStarted_Click},
                 {LocalizedString.Get("View Help"), help_Click},
                 {LocalizedString.Get("Report a Bug"), bug_Click},
+				{LocalizedString.Get("Release Notes"), notes_Click},
                 {LocalizedString.Get("About MatterControl"), about_Click},
             };
 
@@ -280,6 +281,15 @@ namespace MatterHackers.MatterControl
             });            
             return true;
         }
+
+		bool notes_Click()
+		{
+			UiThread.RunOnIdle((state) =>
+				{
+					System.Diagnostics.Process.Start("http://wiki.mattercontrol.com/Release_Notes");
+				});            
+			return true;
+		}
 
         bool gettingStarted_Click()
         {

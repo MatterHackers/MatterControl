@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
     public class AboutWindow : SystemWindow
     {
         public AboutWindow()
-            : base(690, 340)
+			: base(500, 640)
         {
             
             GuiWidget aboutPage = new AboutPage();
