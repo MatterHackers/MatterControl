@@ -557,15 +557,21 @@ namespace MatterHackers.MatterControl
             GroupBox printLevelingControlsContainer = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(LocalizedString.Get("Automatic Calibration"), out editButton));
             editButton.Click += (sender, e) =>
             {
-                if (editLevelingSettingsWindow == null)
+                UiThread.RunOnIdle((state) =>
                 {
-                    editLevelingSettingsWindow = new EditLevelingSettingsWindow();
-                    editLevelingSettingsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editLevelingSettingsWindow = null; };
-                }
-                else
-                {
-                    editLevelingSettingsWindow.BringToFront();
-                }
+                    if (editLevelingSettingsWindow == null)
+                    {
+                        editLevelingSettingsWindow = new EditLevelingSettingsWindow();
+                        editLevelingSettingsWindow.Closed += (sender2, e2) =>
+                        {
+                            editLevelingSettingsWindow = null;
+                        };
+                    }
+                    else
+                    {
+                        editLevelingSettingsWindow.BringToFront();
+                    }
+                });
             };
 
             printLevelingControlsContainer.Margin = new BorderDouble(0);
@@ -588,9 +594,10 @@ namespace MatterHackers.MatterControl
                 runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
                 runPrintLevelingButton.Click += (sender, e) =>
                 {
-					UiThread.RunOnIdle( (state) => {
-                    OpenPrintLevelWizard();
-					});
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        OpenPrintLevelWizard();
+                    });
                 };
 
                 Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
