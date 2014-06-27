@@ -2478,3 +2478,6 @@ Translated:Sending To SD Card
 English:Exporting to Folder
 Translated:Exporting to Folder
 
+English:Warning GCode file
+Translated:Warning GCode file
+

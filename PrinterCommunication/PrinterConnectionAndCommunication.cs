@@ -158,7 +158,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         Stopwatch timeSinceLastReadAnything = new Stopwatch();
         Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
 
-        public enum CommunicationStates { Disconnected, AttemptingToConnect, FailedToConnect, Connected, PreparingToPrint, PreparingToPrintToSd, Printing, PrintingToSd, PrintingFromSd, Paused, FinishedPrint, Disconnecting, ConnectionLost };
+        public enum CommunicationStates 
+        { 
+            Disconnected, 
+            AttemptingToConnect, 
+            FailedToConnect, 
+            Connected, 
+            PreparingToPrint,
+            Printing,
+            PreparingToPrintToSd,
+            PrintingToSd,
+            PrintingFromSd, 
+            Paused,
+            FinishedPrint,
+            Disconnecting,
+            ConnectionLost
+        };
+
         CommunicationStates communicationState = CommunicationStates.Disconnected;
 
         bool ForceImmediateWrites = false;
@@ -426,6 +442,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             ReadLineStartCallBacks.AddCallBackToKey("ok T:", ReadTemperatures); // marlin
             ReadLineStartCallBacks.AddCallBackToKey("T:", ReadTemperatures); // repatier
+
+            ReadLineStartCallBacks.AddCallBackToKey("SD printing byte", ReadSdProgress); // repatier
 
             ReadLineStartCallBacks.AddCallBackToKey("C:", ReadTargetPositions);
             ReadLineStartCallBacks.AddCallBackToKey("X:", ReadTargetPositions);
@@ -728,6 +746,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
+                if (CommunicationState == CommunicationStates.PrintingFromSd)
+                {
+                    if (totalSdBytes > 0)
+                    {
+                        return currentSdBytes / totalSdBytes * 100;
+                    }
+
+                    return 0;
+                }
+
                 if (PrintIsFinished && !PrinterIsPaused)
                 {
                     return 100.0;
@@ -748,6 +776,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             timeHaveBeenWaitingForOK.Stop();
         }
 
+        Stopwatch timeWaitingForTemperature = new Stopwatch();
+        Stopwatch timeWaitingForSdProgress = new Stopwatch();
         System.Diagnostics.Stopwatch temperatureRequestTimer = new System.Diagnostics.Stopwatch();
         public void OnIdle()
         {
@@ -757,10 +787,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
             if (temperatureRequestTimer.ElapsedMilliseconds > 2000)
             {
-                if (MonitorPrinterTemperature)
+                if (MonitorPrinterTemperature
+                    && (!timeWaitingForTemperature.IsRunning || timeWaitingForTemperature.Elapsed.TotalSeconds > 60))
                 {
+                    timeWaitingForTemperature.Restart();
                     SendLineToPrinterNow("M105");
                 }
+                
+                if (CommunicationState == CommunicationStates.PrintingFromSd
+                    && (!timeWaitingForSdProgress.IsRunning || timeWaitingForSdProgress.Elapsed.TotalSeconds > 60))
+                {
+                    timeWaitingForSdProgress.Restart();
+                    SendLineToPrinterNow("M27"); // : Report SD print status
+                }
+
                 temperatureRequestTimer.Restart();
             }
 
@@ -981,6 +1021,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             PositionRead.CallEvents(this, null);
         }
 
+        double currentSdBytes = 0;
+        double totalSdBytes = 0;
+        public void ReadSdProgress(object sender, EventArgs e)
+        {
+            FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
+            if (foundStringEventArgs != null)
+            {
+                string sdProgressString = foundStringEventArgs.LineToCheck.Substring("Sd printing byte ".Length);
+
+                string[] values = sdProgressString.Split('/');
+                currentSdBytes = long.Parse(values[0]);
+                totalSdBytes = long.Parse(values[1]);
+            }
+
+            // We read it so we are no longer waiting
+            timeWaitingForSdProgress.Stop();
+        }
+
         public void ReadTemperatures(object sender, EventArgs e)
         {
             FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
@@ -1040,6 +1098,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     }
                 }
             }
+
+            // We read them so we are no longer waiting
+            timeWaitingForTemperature.Stop();
         }
 
         void MovementWasSetToAbsoluteMode(object sender, EventArgs e)
@@ -1863,6 +1924,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (PrinterIsPrinting)
             {
+                if (CommunicationState == CommunicationStates.PrintingFromSd)
+                {
+                    CommunicationState = CommunicationStates.Paused;
+                    SendLineToPrinterNow("M25"); // : Pause SD print
+                    return;
+                }
+
                 // Add the pause_gcode to the loadedGCode.GCodeCommandQueue
                 string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
                 if (pauseGCode.Trim() == "")
@@ -1933,11 +2001,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (PrinterIsPaused)
             {
-                CommunicationState = CommunicationStates.Printing;
-                sendGCodeToPrinterThread = new Thread(SendCurrentGCodeFileToPrinter);
-                sendGCodeToPrinterThread.Name = "sendGCodeToPrinterThread - Resume";
-                sendGCodeToPrinterThread.IsBackground = true;
-                sendGCodeToPrinterThread.Start();
+                if (ActivePrintItem.PrintItem.FileLocation == QueueData.SdCardFileName)
+                {
+                    CommunicationState = CommunicationStates.PrintingFromSd;
+
+                    SendLineToPrinterNow("M24"); // Start/resume SD print
+                }
+                else
+                {
+                    CommunicationState = CommunicationStates.Printing;
+
+                    sendGCodeToPrinterThread = new Thread(SendCurrentGCodeFileToPrinter);
+                    sendGCodeToPrinterThread.Name = "sendGCodeToPrinterThread - Resume";
+                    sendGCodeToPrinterThread.IsBackground = true;
+                    sendGCodeToPrinterThread.Start();
+                }
             }
         }
 
@@ -1979,10 +2057,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         //M29: // Stop writing to SD card
                         // and delete it from the sd card
                         //30: // Delete a file on the SD card
+                        SendLineToPrinterNow("M25"); // : Pause SD print
                     }
                     break;
 
                 case CommunicationStates.PrintingFromSd:
+                    CommunicationState = CommunicationStates.Connected;
+                    printWasCanceled = true;
                     break;
 
                 case CommunicationStates.Printing:
