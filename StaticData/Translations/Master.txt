@@ -2481,3 +2481,9 @@ Translated:Exporting to Folder
 English:Warning GCode file
 Translated:Warning GCode file
 
+English:Release Notes
+Translated:Release Notes
+
+English:More Info
+Translated:More Info
+
