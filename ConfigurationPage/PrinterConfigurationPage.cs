@@ -401,15 +401,15 @@ namespace MatterHackers.MatterControl
                 disableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
                 disableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(disableCloudMonitor_Click);
 
-
 				cloudMonitorInstructionsLink = linkButtonFactory.Generate("More Info".Localize().ToUpper());
 				cloudMonitorInstructionsLink.VAnchor = VAnchor.ParentCenter;
 				cloudMonitorInstructionsLink.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringInstructionsButton_Click);
 				cloudMonitorInstructionsLink.Margin = new BorderDouble (left: 6);
 
-                goCloudMonitoringWebPageButton = textImageButtonFactory.Generate("Go".Localize().ToUpper());
+                goCloudMonitoringWebPageButton = linkButtonFactory.Generate("View Status".Localize().ToUpper());
                 goCloudMonitoringWebPageButton.VAnchor = VAnchor.ParentCenter;
                 goCloudMonitoringWebPageButton.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringWebPageButton_Click);
+                goCloudMonitoringWebPageButton.Margin = new BorderDouble(left: 6);
 
                 cloudMonitorStatusLabel = new TextWidget("");
                 cloudMonitorStatusLabel.AutoExpandBoundsToText = true;
@@ -422,8 +422,8 @@ namespace MatterHackers.MatterControl
                 buttonBar.AddChild(cloudMonitoringIcon);
                 buttonBar.AddChild(cloudMonitorStatusLabel);
 				buttonBar.AddChild (cloudMonitorInstructionsLink);
-                buttonBar.AddChild(hSpacer);
                 buttonBar.AddChild(goCloudMonitoringWebPageButton);
+                buttonBar.AddChild(hSpacer);                
                 buttonBar.AddChild(enableCloudMonitorButton);
                 buttonBar.AddChild(disableCloudMonitorButton);
 
@@ -761,19 +761,35 @@ namespace MatterHackers.MatterControl
 			//this.Invalidate();
         }
 
+        public delegate void EnableCloudMonitor(object state);
+        public static EnableCloudMonitor enableCloudMonitorFunction = null;
 		void enableCloudMonitor_Click(object sender, MouseEventArgs mouseEvent)
 		{
-			UserSettings.Instance.set("CloudMonitorEnabled","true");
-            ApplicationWidget.Instance.ChangeCloudSyncStatus();
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+            if (enableCloudMonitorFunction != null)
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    enableCloudMonitorFunction(null);
+                });
+            }            
 		}
 
+        public delegate void DisableCloudMonitor(object state);
+        public static DisableCloudMonitor disableCloudMonitorFunction = null;
         void disableCloudMonitor_Click(object sender, MouseEventArgs mouseEvent)
-		{
+        {
             UserSettings.Instance.set("CloudMonitorEnabled", "false");
             ApplicationWidget.Instance.ChangeCloudSyncStatus();
             ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-		}
+            if (disableCloudMonitorFunction != null)
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    disableCloudMonitorFunction(null);
+                });
+            }
+        }
+
 
         public delegate void OpenDashboardPage(object state);
         public static OpenDashboardPage openDashboardPageFunction = null;
@@ -829,6 +845,8 @@ namespace MatterHackers.MatterControl
             bool cloudMontitorEnabled = (UserSettings.Instance.get("CloudMonitorEnabled") == "true");
             enableCloudMonitorButton.Visible = !cloudMontitorEnabled;
             disableCloudMonitorButton.Visible = cloudMontitorEnabled;
+            goCloudMonitoringWebPageButton.Visible = cloudMontitorEnabled;
+
 
             if (cloudMontitorEnabled)
             {

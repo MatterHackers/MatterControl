@@ -2487,3 +2487,9 @@ Translated:Release Notes
 English:More Info
 Translated:More Info
 
+English:Go To Status
+Translated:Go To Status
+
+English:View Status
+Translated:View Status
+
