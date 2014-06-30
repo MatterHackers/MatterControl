@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.DataStorage
         static Datastore globalInstance;     
         static string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;        
         public bool ConnectionError = false;
-        List<Type> dataStoreTables = new List<Type> { typeof(PrintItemCollection), typeof(CustomCommands), typeof(SystemSetting), typeof(UserSetting), typeof(ApplicationSession), typeof(PrintItem), typeof(PrintTask), typeof(Printer), typeof(SliceSetting), typeof(SliceSettingsCollection) };
+		List<Type> dataStoreTables = new List<Type> { typeof(PrintItemCollection), typeof(PrinterSetting), typeof(CustomCommands), typeof(SystemSetting), typeof(UserSetting), typeof(ApplicationSession), typeof(PrintItem), typeof(PrintTask), typeof(Printer), typeof(SliceSetting), typeof(SliceSettingsCollection) };
         ApplicationSession activeSession;
         public ISQLite dbSQLite;
 
