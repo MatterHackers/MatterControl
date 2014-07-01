@@ -2045,19 +2045,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             switch (CommunicationState)
             {
-                case CommunicationStates.PrintingToSd:
+                case CommunicationStates.PrintingFromSd:
                     using (TimedLock.Lock(this, "CancelingPrint"))
                     {
                         // get rid of all the gcode we have left to print
                         ClearQueuedGCode();
                         // let the process know we canceled not ended normaly.
-                        printWasCanceled = true;
+                        CommunicationState = CommunicationStates.Connected;
                         SendLineToPrinterNow("M25"); // : Pause SD print
                         SendLineToPrinterNow("M26"); // : Set SD position
+                        // never leave the extruder and the bed hot
+                        ReleaseMotors();
+                        TargetExtruderTemperature = 0;
+                        TargetBedTemperature = 0;
                     }
                     break;
 
-                case CommunicationStates.PrintingFromSd:
+                case CommunicationStates.PrintingToSd:
                     CommunicationState = CommunicationStates.Connected;
                     printWasCanceled = true;
                     break;
