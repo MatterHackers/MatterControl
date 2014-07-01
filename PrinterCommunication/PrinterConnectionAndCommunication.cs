@@ -2052,11 +2052,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         ClearQueuedGCode();
                         // let the process know we canceled not ended normaly.
                         printWasCanceled = true;
-                        // close the file
-                        //M29: // Stop writing to SD card
-                        // and delete it from the sd card
-                        //30: // Delete a file on the SD card
                         SendLineToPrinterNow("M25"); // : Pause SD print
+                        SendLineToPrinterNow("M26"); // : Set SD position
                     }
                     break;
 

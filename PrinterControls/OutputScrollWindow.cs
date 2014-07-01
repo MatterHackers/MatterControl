@@ -122,17 +122,12 @@ namespace MatterHackers.MatterControl
                 }
 
                 {
-                    FlowLayoutWidget OutputWindowsLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
-                    OutputWindowsLayout.VAnchor = VAnchor.ParentBottomTop;
-
                     outputScrollWidget = new OutputScroll();
                     outputScrollWidget.Height = 100;
                     outputScrollWidget.BackgroundColor = RGBA_Bytes.White;
                     outputScrollWidget.HAnchor = HAnchor.ParentLeftRight;
                     outputScrollWidget.VAnchor = VAnchor.ParentBottomTop;
                     outputScrollWidget.Margin = new BorderDouble(0, 5);
-
-                    OutputWindowsLayout.AddChild(outputScrollWidget);
 
                     manualEntryTopToBottomLayout.AddChild(outputScrollWidget);
                 }
