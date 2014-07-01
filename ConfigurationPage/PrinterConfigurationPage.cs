@@ -672,18 +672,19 @@ namespace MatterHackers.MatterControl
         }
 
         private void SetVisibleControls()
-        {
-            cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+        {            
             if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
                 // no printer selected                         
                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                 printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
             else // we at least have a printer selected
             {
-                switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
                 {
                     case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
                     case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
@@ -778,7 +779,7 @@ namespace MatterHackers.MatterControl
         public static DisableCloudMonitor disableCloudMonitorFunction = null;
         void disableCloudMonitor_Click(object sender, MouseEventArgs mouseEvent)
         {
-            UserSettings.Instance.set("CloudMonitorEnabled", "false");
+			PrinterSettings.Instance.set("CloudMonitorEnabled", "false");
             ApplicationWidget.Instance.ChangeCloudSyncStatus();
             ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
             if (disableCloudMonitorFunction != null)
@@ -842,7 +843,7 @@ namespace MatterHackers.MatterControl
 
         void SetCloudButtonVisiblity()
         {
-            bool cloudMontitorEnabled = (UserSettings.Instance.get("CloudMonitorEnabled") == "true");
+			bool cloudMontitorEnabled = (PrinterSettings.Instance.get("CloudMonitorEnabled") == "true");
             enableCloudMonitorButton.Visible = !cloudMontitorEnabled;
             disableCloudMonitorButton.Visible = cloudMontitorEnabled;
             goCloudMonitoringWebPageButton.Visible = cloudMontitorEnabled;

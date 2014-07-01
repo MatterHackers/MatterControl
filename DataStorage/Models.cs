@@ -324,4 +324,19 @@ namespace MatterHackers.MatterControl.DataStorage
             this.Model = "Unknown";
         }
     }
+
+	public class PrinterSetting : Entity
+	{
+		[Indexed]
+		public int PrinterId { get; set; }
+		public string Name { get; set; }
+		public string Value { get; set; }
+		public DateTime DateLastModified { get; set; }
+
+		public override void Commit()
+		{
+			DateLastModified = DateTime.Now;
+			base.Commit();
+		}
+	}
 }
