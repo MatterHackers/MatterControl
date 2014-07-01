@@ -139,7 +139,18 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 if (SelectedPrintItem != value)
                 {
-                    throw new NotImplementedException();
+                    for (int index = 0; index < topToBottomItemList.Children.Count; index++)
+                    {
+                        GuiWidget child = topToBottomItemList.Children[index];
+                        QueueRowItem rowItem = child.Children[0] as QueueRowItem;
+                        if (rowItem.PrintItemWrapper == value)
+                        {
+                            SelectedIndex = index;
+                            return;
+                        }
+                    }
+
+                    throw new Exception("Item not in queue.");
                 }
             }
         }

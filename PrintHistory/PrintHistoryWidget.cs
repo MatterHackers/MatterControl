@@ -115,6 +115,10 @@ namespace MatterHackers.MatterControl.PrintHistory
                 }
 
                 allControls.AddChild(searchPanel);
+                if (PrintHistoryListControl.Instance.Parent != null)
+                {
+                    PrintHistoryListControl.Instance.Parent.RemoveChild(PrintHistoryListControl.Instance);
+                }
                 allControls.AddChild(PrintHistoryListControl.Instance);
                 allControls.AddChild(buttonPanel);
             }

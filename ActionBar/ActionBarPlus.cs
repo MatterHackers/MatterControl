@@ -64,6 +64,11 @@ namespace MatterHackers.MatterControl
     {
         protected override void AddChildElements()
         {
+            if (HelpTextWidget.Instance.Parent != null)
+            {
+                HelpTextWidget.Instance.Parent.RemoveChild(HelpTextWidget.Instance);
+            }
+
             this.AddChild(HelpTextWidget.Instance);
         }
 
