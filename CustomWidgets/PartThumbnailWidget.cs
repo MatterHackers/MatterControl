@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
             this.tumbnailImage = new ImageBuffer(buildingThumbnailImage);
 
             // Add Handlers
-            this.Click += new ButtonEventHandler(onMouseClick);
+            this.Click += new ButtonEventHandler(OnMouseClick);
             this.MouseEnterBounds += new EventHandler(onEnter);
             this.MouseLeaveBounds += new EventHandler(onExit);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
@@ -339,7 +339,12 @@ namespace MatterHackers.MatterControl
             this.Invalidate();
         }
 
-        private void onMouseClick(object sender, MouseEventArgs e)
+        private void OnMouseClick(object sender, MouseEventArgs e)
+        {
+            UiThread.RunOnIdle(DoOnMouseClick);
+        }
+
+        private void DoOnMouseClick(object state)
         {
             if (printItem != null)
             {
