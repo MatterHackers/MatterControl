@@ -178,6 +178,7 @@ namespace MatterHackers.MatterControl.EeProm
             }
         }
 
+        int currentTabIndex = 0;
         void AddItemToUi(object state)
         {
             EePromRepetierParameter newSetting = state as EePromRepetierParameter;
@@ -197,6 +198,7 @@ namespace MatterHackers.MatterControl.EeProm
                 double currentValue;
                 double.TryParse(newSetting.Value, out currentValue);
                 MHNumberEdit valueEdit = new MHNumberEdit(currentValue, pixelWidth: 80, allowNegatives: true, allowDecimals: true);
+                valueEdit.TabIndex = currentTabIndex++;
                 valueEdit.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 valueEdit.ActuallNumberEdit.EditComplete += (sender, e) =>
                 {

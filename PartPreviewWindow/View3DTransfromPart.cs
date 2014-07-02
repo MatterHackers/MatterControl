@@ -62,6 +62,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
     public class View3DTransformPart : PartPreview3DWidget
     {
+        public WindowType windowType { get; set; }
+
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
         FlowLayoutWidget scaleOptionContainer;
@@ -252,6 +254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate)
         {
+            this.windowType = windowType;
             autoRotateEnabled = (autoRotate == AutoRotate.Enabled);
             MeshExtraData = new List<PlatingMeshData>();
             MeshExtraData.Add(new PlatingMeshData());
@@ -461,16 +464,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
         {
-            switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+            if (windowType == WindowType.Embeded)
             {
-                case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-                case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-                    LockEditControls();
-                    break;
+                switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+                {
+                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+                        LockEditControls();
+                        break;
 
-                default:
-                    UnlockEditControls();
-                    break;
+                    default:
+                        UnlockEditControls();
+                        break;
+                }
+            }
+            else
+            {
+                UnlockEditControls();
             }
         }
 

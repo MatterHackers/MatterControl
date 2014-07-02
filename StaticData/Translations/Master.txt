@@ -2493,3 +2493,18 @@ Translated:Go To Status
 English:View Status
 Translated:View Status
 
+English:Description
+Translated:Description
+
+English:Value
+Translated:Value
+
+English:Save To EEPROM
+Translated:Save To EEPROM
+
+English:Firmware EEPROM Settings
+Translated:Firmware EEPROM Settings
+
+English:Save to EEPROM
+Translated:Save to EEPROM
+
