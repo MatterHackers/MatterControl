@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl
 
         void LoadColumnTwo(object state = null)
         {
-            ColumnTwo.CloseAllChildren();
+            ColumnTwo.CloseAndRemoveAllChildren();
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
             part3DView = new View3DTransformPart(PrinterConnectionAndCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, View3DTransformPart.WindowType.Embeded, View3DTransformPart.AutoRotate.Enabled);
@@ -402,7 +402,7 @@ namespace MatterHackers.MatterControl
 
         private void RemovePanelsAndCreateEmpties()
         {
-            RemoveAllChildren();
+            CloseAndRemoveAllChildren();
 
             ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
             ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
