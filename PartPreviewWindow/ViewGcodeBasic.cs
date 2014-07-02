@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         FlowLayoutWidget modelOptionsContainer;
         FlowLayoutWidget displayOptionsContainer;
+		ViewControlsToggle viewControlsToggle;
 
         CheckBox expandModelOptions;
         CheckBox expandDisplayOptions;
@@ -209,9 +210,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             AddChild(viewControls2D);
             viewControls3D = new ViewControls3D(meshViewerWidget);
             AddChild(viewControls3D);
-            viewControls3D.Visible = false;
+			viewControls3D.rotateButton.ClickButton(null);
+			viewControls3D.Visible = false;
+
+			viewControlsToggle = new ViewControlsToggle ();
+			AddChild (viewControlsToggle);
+
+            
             //viewControls3D.translateButton.ClickButton(null);
-            viewControls3D.rotateButton.ClickButton(null);
+            
             // move things into the right place and scale
             {
                 Vector3 bedCenter3D = new Vector3(bedCenter, 0);
@@ -470,28 +477,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // put in a show 3D view checkbox
             {
-                CheckBox show3D = new CheckBox(LocalizedString.Get("Show 3D"), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                show3D.CheckedStateChanged += (sender, e) =>
+                //CheckBox show3D = new CheckBox(LocalizedString.Get("Show 3D"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				viewControlsToggle.twoDimensionButton.CheckedStateChanged += (sender, e) =>
                 {
-                    // show the tumbel widget and not the line widget
-                    if (show3D.Checked)
-                    {
-                        viewControls2D.Visible = false;
-                        gcodeViewWidget.Visible = false;
-
-                        viewControls3D.Visible = true;
-                        meshViewerWidget.Visible = true;
-                    }
-                    else
-                    {
-                        viewControls2D.Visible = true;
-                        gcodeViewWidget.Visible = true;
-
-                        viewControls3D.Visible = false;
-                        meshViewerWidget.Visible = false;
-                    }
+					SetLayerViewType();
                 };
-                layerInfoContainer.AddChild(show3D);
+				viewControlsToggle.threeDimensionButton.CheckedStateChanged += (sender, e) =>
+				{
+					SetLayerViewType();
+				};
+				SetLayerViewType ();
+                //layerInfoContainer.AddChild(show3D);
             }
 
             // Put in the sync to print checkbox
@@ -552,6 +548,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             textImageButtonFactory.FixedWidth = oldWidth;
         }
+
+		void SetLayerViewType()
+		{
+			if (viewControlsToggle.threeDimensionButton.Checked)
+			{
+				UserSettings.Instance.set ("LayerViewDefault", "3D Layer");
+				viewControls2D.Visible = false;
+				gcodeViewWidget.Visible = false;
+
+				viewControls3D.Visible = true;
+				meshViewerWidget.Visible = true;
+			}
+			else
+			{
+				UserSettings.Instance.set ("LayerViewDefault", "2D Layer");
+				viewControls2D.Visible = true;
+				gcodeViewWidget.Visible = true;
+
+				viewControls3D.Visible = false;
+				meshViewerWidget.Visible = false;
+			}
+		}
 
         void HookUpGCodeMessagesWhenDonePrinting(object sender, EventArgs e)
         {
