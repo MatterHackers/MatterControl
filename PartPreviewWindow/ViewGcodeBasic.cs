@@ -477,7 +477,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // put in a show 3D view checkbox
             {
-                //CheckBox show3D = new CheckBox(LocalizedString.Get("Show 3D"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				viewControlsToggle.twoDimensionButton.CheckedStateChanged += (sender, e) =>
                 {
 					SetLayerViewType();
@@ -487,17 +486,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					SetLayerViewType();
 				};
 				SetLayerViewType ();
-                //layerInfoContainer.AddChild(show3D);
             }
 
             // Put in the sync to print checkbox
             if (!widgetHasCloseButton)
             {
                 syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                syncToPrint.Checked = false;
+				syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
                 syncToPrint.CheckedStateChanged += (sender, e) =>
                 {
-                    if (syncToPrint.Checked)
+					UserSettings.Instance.set("LayerViewSyncToPrint", syncToPrint.Checked.ToString());
+
+					if (syncToPrint.Checked)
                     {
                         SetAnimationPosition();
                         navigationWidget.Visible = false;
