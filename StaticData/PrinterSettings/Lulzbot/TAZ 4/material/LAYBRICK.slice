@@ -1,4 +1,4 @@
-bed_size = 300300
+bed_size = 300,300
 bridge_acceleration = 1000
 bridge_flow_ratio = 1.15
 bridge_speed = 25
@@ -22,7 +22,7 @@ only_retract_when_crossing_perimeters = 0
 perimeter_acceleration = 800
 perimeter_extrusion_width = 0.38
 perimeter_speed = 36
-print_center = 140140
+print_center = 140,140
 resolution = 0
 retract_length = 1.9
 retract_length_toolchange = 3

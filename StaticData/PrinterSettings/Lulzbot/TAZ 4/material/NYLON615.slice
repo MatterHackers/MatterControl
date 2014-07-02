@@ -1,4 +1,4 @@
-bed_size = 300300
+bed_size = 300,300
 bottom_solid_layers = 4
 bridge_acceleration = 800
 bridge_flow_ratio = 1.12
@@ -26,7 +26,7 @@ perimeter_acceleration = 800
 perimeter_extrusion_width = 0.325
 perimeter_speed = 35
 perimeters = 5
-print_center = 140140
+print_center = 140,140
 retract_length = 4.5
 retract_length_toolchange = 3
 skirts = 3
