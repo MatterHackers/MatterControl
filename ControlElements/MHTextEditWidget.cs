@@ -166,6 +166,18 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(OnIdle);
         }
 
+        public override int TabIndex
+        {
+            get
+            {
+                return base.TabIndex;
+            }
+            set
+            {
+                actuallNumberEdit.TabIndex = value;
+            }
+        }
+
         void InternalTextEditWidget_EditComplete(object sender, EventArgs e)
         {
             timeSinceLastTextChanged.Stop();
