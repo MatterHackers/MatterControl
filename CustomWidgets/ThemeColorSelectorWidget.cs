@@ -98,9 +98,7 @@ namespace MatterHackers.MatterControl
 
 			colorButton.MouseEnterBounds += (sender, mouseEvent) =>
 			{
-
 				colorToChangeTo.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].primaryAccentColor;
-
 			};
 
 			colorButton.MouseLeaveBounds += (sender, mouseEvent) => 

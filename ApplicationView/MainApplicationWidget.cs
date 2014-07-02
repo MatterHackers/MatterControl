@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle((state) =>
             {
                 widescreenPanel.StoreUiState();
-                this.RemoveAllChildren();
+                this.CloseAndRemoveAllChildren();
                 AddElements();
             });
         }

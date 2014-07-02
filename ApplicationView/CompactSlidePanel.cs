@@ -51,6 +51,8 @@ namespace MatterHackers.MatterControl
 {
     public class CompactSlidePanel : SlidePanel
     {
+        event EventHandler unregisterEvents;
+
         TabControl advancedControlsTabControl;
         TabControl mainControlsTabControl;
         SliceSettingsWidget sliceSettingsWidget;
@@ -124,7 +126,9 @@ namespace MatterHackers.MatterControl
                 this.RightPanel.AddChild(advancedControlsTabControl);
                 
             }
-            AddHandlers();
+
+            // make sure we relead when we need to
+            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
 
             SetPanelIndexImediate(lastPanelIndexOnClose);
             advancedControlsTabControl.SelectedTabIndex = lastAdvanceControlsIndex;
@@ -256,27 +260,6 @@ namespace MatterHackers.MatterControl
             ScrollableWidget configurationControls = new PrinterConfigurationPage();
             advancedControlsTabControl.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", 14,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-        }
-
-        bool UpdateIsAvailable()
-        {
-            string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
-            string applicationBuildToken = VersionInfo.Instance.BuildToken;
-
-            if (applicationBuildToken == currentBuildToken || currentBuildToken == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        event EventHandler unregisterEvents;
-        void AddHandlers()
-        {            
-            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
         }
 
         public void ReloadBackPanel(object sender, EventArgs widgetEvent)
