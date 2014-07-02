@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.EeProm;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -484,6 +485,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+        static EePromMarlinWidget openEePromMarlinWidget = null;
+        static EePromRepetierWidget openEePromRepetierWidget = null;
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
         string noEepromMappingTitle = "Warning no eeprom mapping".Localize();
         string groupBoxTitle = "EEProm Settings".Localize();
@@ -515,23 +518,46 @@ namespace MatterHackers.MatterControl
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
                         new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
 #else
-						switch(PrinterConnectionAndCommunication.Instance.FirmwareType)
+                        switch (PrinterConnectionAndCommunication.Instance.FirmwareType)
                         {
                             case PrinterConnectionAndCommunication.FirmwareTypes.Repetier:
-                                new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
-                            break;
+                                new EePromRepetierWidget();
+                                if (openEePromRepetierWidget != null)
+                                {
+                                    openEePromRepetierWidget.BringToFront();
+                                }
+                                else
+                                {
+                                    openEePromRepetierWidget = new EePromRepetierWidget();
+                                    openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) => 
+                                    {
+                                        openEePromRepetierWidget = null;
+                                    };
+                                }
+                                break;
 
                             case PrinterConnectionAndCommunication.FirmwareTypes.Marlin:
-                                new MatterHackers.MatterControl.EeProm.EePromMarlinWidget();
-                            break;
+                                if (openEePromMarlinWidget != null)
+                                {
+                                    openEePromMarlinWidget.BringToFront();
+                                }
+                                else
+                                {
+                                    openEePromMarlinWidget = new EePromMarlinWidget();
+                                    openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) => 
+                                    {
+                                        openEePromMarlinWidget = null;
+                                    };
+                                }
+                                break;
 
                             default:
-                                UiThread.RunOnIdle((state) => 
+                                UiThread.RunOnIdle((state) =>
                                 {
                                     StyledMessageBox.ShowMessageBox(noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
                                 }
                                 );
-                            break;
+                                break;
                         }
 #endif
                     };
