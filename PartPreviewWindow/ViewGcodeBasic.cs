@@ -31,8 +31,8 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public Slider layerEndRenderRatioSlider;
         
         TextWidget gcodeProcessingStateInfoText;
-        GCodeViewWidget gcodeViewWidget;
+        ViewGcodeWidget gcodeViewWidget;
         PrintItemWrapper printItem;
         bool startedSliceFromGenerateButton = false;
         Button generateGCodeButton;
@@ -222,11 +222,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             viewControls2D.translateButton.Click += (sender, e) =>
             {
-                gcodeViewWidget.TransformState = GCodeViewWidget.ETransformState.Move;
+                gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Move;
             };
             viewControls2D.scaleButton.Click += (sender, e) =>
             {
-                gcodeViewWidget.TransformState = GCodeViewWidget.ETransformState.Scale;
+                gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Scale;
             };
 
             AddHandlers();
@@ -570,7 +570,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         string partToStartLoadingOnFirstDraw = null;
         private GuiWidget CreateGCodeViewWidget(string pathAndFileName)
         {
-            gcodeViewWidget = new GCodeViewWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter);
+            gcodeViewWidget = new ViewGcodeWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter);
             gcodeViewWidget.DoneLoading += DoneLoadingGCode;
             gcodeViewWidget.LoadingProgressChanged += LoadingProgressChanged;
             partToStartLoadingOnFirstDraw = pathAndFileName;
@@ -842,10 +842,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     {
         NumberEdit editCurrentLayerIndex;
         Button setLayerButton;
-        GCodeViewWidget gcodeViewWidget;
+        ViewGcodeWidget gcodeViewWidget;
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();        
 
-        public SetLayerWidget(GCodeViewWidget gcodeViewWidget)
+        public SetLayerWidget(ViewGcodeWidget gcodeViewWidget)
             :base(FlowDirection.LeftToRight)
         {
             this.gcodeViewWidget = gcodeViewWidget;
@@ -890,10 +890,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Button prevLayerButton;
         Button nextLayerButton;        
         TextWidget layerCountTextWidget;        
-        GCodeViewWidget gcodeViewWidget;
+        ViewGcodeWidget gcodeViewWidget;
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-        public LayerNavigationWidget(GCodeViewWidget gcodeViewWidget)
+        public LayerNavigationWidget(ViewGcodeWidget gcodeViewWidget)
             :base(FlowDirection.LeftToRight)
         {
             this.gcodeViewWidget = gcodeViewWidget;
