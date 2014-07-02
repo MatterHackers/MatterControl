@@ -431,8 +431,12 @@ namespace MatterHackers.MatterControl
 
         public void ReloadAdvancedControlsPanel(object sender, EventArgs widgetEvent)
         {
-            sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
-            UiThread.RunOnIdle(LoadColumnThree);
+            if (NumberOfVisiblePanels() > 1)
+            {
+                sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
+
+                UiThread.RunOnIdle(LoadColumnThree);
+            }
         }
 
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
