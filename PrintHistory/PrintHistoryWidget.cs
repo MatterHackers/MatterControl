@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.PrintHistory
         Button deleteFromLibraryButton;
         CheckBox showOnlyCompletedCheckbox;
         CheckBox showTimestampCheckbox;
+        PrintHistoryDataView historyView;
 
         public PrintHistoryWidget()
         {
@@ -64,9 +65,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
-
-                
-
                 FlowLayoutWidget completedStatsContainer = new FlowLayoutWidget();
                 completedStatsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 completedStatsContainer.Padding = new BorderDouble(6, 2);
@@ -115,11 +113,8 @@ namespace MatterHackers.MatterControl.PrintHistory
                 }
 
                 allControls.AddChild(searchPanel);
-                if (PrintHistoryListControl.Instance.Parent != null)
-                {
-                    PrintHistoryListControl.Instance.Parent.RemoveChild(PrintHistoryListControl.Instance);
-                }
-                allControls.AddChild(PrintHistoryListControl.Instance);
+                historyView = new PrintHistoryDataView();
+                allControls.AddChild(historyView);
                 allControls.AddChild(buttonPanel);
             }
             allControls.AnchorAll();
@@ -145,7 +140,8 @@ namespace MatterHackers.MatterControl.PrintHistory
             {
                 UserSettings.Instance.set("PrintHistoryFilterShowCompleted", "false");
             }
-            PrintHistoryListControl.Instance.LoadHistoryItems();
+
+            historyView.LoadHistoryItems();
         }
 
         private void UpdateHistoryFilterShowTimestamp(object sender, EventArgs e)
@@ -158,8 +154,8 @@ namespace MatterHackers.MatterControl.PrintHistory
             {
                 UserSettings.Instance.set("PrintHistoryFilterShowTimestamp", "false");
             }
-            PrintHistoryListControl.Instance.ShowTimestamp = showTimestampCheckbox.Checked;
-            PrintHistoryListControl.Instance.LoadHistoryItems();
+            historyView.ShowTimestamp = showTimestampCheckbox.Checked;
+            historyView.LoadHistoryItems();
         }
 
         private int GetCompletedPrints()

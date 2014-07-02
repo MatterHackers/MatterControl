@@ -119,11 +119,12 @@
     <Compile Include="PrinterCommunication\Io\PrinterIoBase.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterIoGCodeFile.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterIoInjectionFifo.cs" />
+    <Compile Include="PrintHistory\PrintHistoryData.cs" />
     <Compile Include="PrintLibrary\LibraryData.cs" />
     <Compile Include="PrintQueue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
-    <Compile Include="PrintHistory\PrintHistoryListControl.cs" />
+    <Compile Include="PrintHistory\PrintHistoryDataView.cs" />
     <Compile Include="PrintHistory\PrintHistoryListItem.cs" />
     <Compile Include="PrintHistory\PrintHistoryWidget.cs" />
     <Compile Include="PrintQueue\QueueData.cs" />

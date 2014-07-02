@@ -136,11 +136,18 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
+        void AdvancedControlsClosed(object sender, EventArgs e)
+        {
+            advancedControls.Closed -= AdvancedControlsClosed;
+            advancedControls = null;
+        }
+
         TabControl CreateNewAdvancedControlsTab(SliceSettingsWidget.UiState sliceSettingsUiState)
         {
             StoreUiState();
 
             advancedControls = new TabControl();
+            advancedControls.Closed += AdvancedControlsClosed;
             advancedControls.AnchorAll();
             advancedControls.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             advancedControls.TabBar.BorderColor = ActiveTheme.Instance.SecondaryTextColor;

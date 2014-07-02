@@ -166,10 +166,15 @@ namespace MatterHackers.MatterControl
             HelpTextWidget.Instance.HideHoverText();
         }
 
-        public override void OnClosed(EventArgs e)
+        public override void OnClosing(out bool cancelClose)
         {
             lastPanelIndexOnClose = PanelIndex;
             lastAdvanceControlsIndex = advancedControlsTabControl.SelectedTabIndex;
+            base.OnClosing(out cancelClose);
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
             if (unregisterEvents != null)
             {
                 unregisterEvents(this, null);

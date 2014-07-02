@@ -109,9 +109,14 @@ namespace MatterHackers.MatterControl
             QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
         }
 
-        public override void OnClosed(EventArgs e)
+        public override void OnClosing(out bool cancelClose)
         {
             tabStateBeforeClose = SelectedTabIndex;
+            base.OnClosing(out cancelClose);
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
             if (unregisterEvents != null)
             {
                 unregisterEvents(this, null);

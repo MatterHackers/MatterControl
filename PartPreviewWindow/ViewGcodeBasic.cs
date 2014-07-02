@@ -771,7 +771,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             displayOptionsContainer.Visible = expandDisplayOptions.Checked;
         }
 
-        public override void OnClosed(EventArgs e)
+        public override void OnClosing(out bool cancelClose)
         {
             GuiWidget parent = Parent;
             while (parent as SystemWindow == null)
@@ -794,7 +794,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     SlicingQueue.Instance.CancelCurrentSlicing();
                 }
             }
-            base.OnClosed(e);
+
+            base.OnClosing(out cancelClose);
         }
 
         void generateButton_Click(object sender, MouseEventArgs mouseEvent)

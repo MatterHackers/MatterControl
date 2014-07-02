@@ -62,23 +62,9 @@ namespace MatterHackers.MatterControl.PrintHistory
         }
     }
 
-    public class PrintHistoryListControl : ScrollableWidget
+    public class PrintHistoryDataView : ScrollableWidget
     {
-        static PrintHistoryListControl instance;
         public bool ShowTimestamp;
-
-        public static PrintHistoryListControl Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new PrintHistoryListControl();
-                    instance.LoadHistoryItems();
-                }
-                return instance;
-            }
-        }
 
         private void SetDisplayAttributes()
         {
@@ -89,65 +75,20 @@ namespace MatterHackers.MatterControl.PrintHistory
             this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
         }
 
-
-
-        private List<string> GetLibraryParts()
-        {
-            List<string> libraryFilesToPreload = new List<string>();
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "PreloadedLibraryFiles.txt");
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
-            {
-                try
-                {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
-                    {
-                        //Ignore commented lines
-                        if (!line.StartsWith("#"))
-                        {
-                            string settingLine = line.Trim();
-                            libraryFilesToPreload.Add(settingLine);
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            return libraryFilesToPreload;
-        }
-
-        int RecordLimit = 20;
-        IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)
-        {
-            string query;
-            if (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true")
-            {                
-                query = string.Format("SELECT * FROM PrintTask WHERE PrintComplete = 1 ORDER BY PrintStart DESC LIMIT {0};", recordCount);
-            }
-            else
-            {
-                query = string.Format("SELECT * FROM PrintTask ORDER BY PrintStart DESC LIMIT {0};", recordCount);
-            }
-            IEnumerable<DataStorage.PrintTask> result = (IEnumerable<DataStorage.PrintTask>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintTask>(query);
-            return result;
-        }
-
         public void LoadHistoryItems(int NumItemsToLoad = 0)
         {
-            if (NumItemsToLoad == 0 || NumItemsToLoad < RecordLimit)
+            if (NumItemsToLoad == 0 || NumItemsToLoad < PrintHistoryData.RecordLimit)
             {
-                NumItemsToLoad = RecordLimit;
+                NumItemsToLoad = PrintHistoryData.RecordLimit;
             }
             
             RemoveListItems();
-            IEnumerable<DataStorage.PrintTask> partFiles = GetHistoryItems(NumItemsToLoad);
+            IEnumerable<DataStorage.PrintTask> partFiles = PrintHistoryData.Instance.GetHistoryItems(NumItemsToLoad);
             if (partFiles != null)
             {
                 foreach (PrintTask part in partFiles)
                 {
-                    PrintHistoryListControl.Instance.AddChild(new PrintHistoryListItem(part, ShowTimestamp));
+                    AddChild(new PrintHistoryListItem(part, ShowTimestamp));
                 }
             }
         }
@@ -155,7 +96,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         protected FlowLayoutWidget topToBottomItemList;
        
-
         public int Count
         {
             get
@@ -164,9 +104,7 @@ namespace MatterHackers.MatterControl.PrintHistory
             }
         }
 
-       
-
-        public PrintHistoryListControl()
+        public PrintHistoryDataView()
         {
             ShowTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
             
@@ -177,8 +115,9 @@ namespace MatterHackers.MatterControl.PrintHistory
             topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             base.AddChild(topToBottomItemList);
-            AddHandlers(); 
-            
+            AddHandlers();
+
+            LoadHistoryItems();
         }
 
         void AddHandlers()
