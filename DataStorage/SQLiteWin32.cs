@@ -19,6 +19,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+//#define USE_CSHARP_SQLITE
+
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;

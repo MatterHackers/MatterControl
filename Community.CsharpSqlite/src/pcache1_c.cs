@@ -740,7 +740,7 @@ static int pcache1MemSize(object p){
           ////pGroup = new PGroup();//(PGroup)pCache[1];
           ////pGroup.mxPinned = 10;
         ////}
-
+		pGroup = pcache1.grp;
         pCache.pGroup = pGroup;
         pCache.szPage = szPage;
         pCache.bPurgeable = bPurgeable;//( bPurgeable ? 1 : 0 );
