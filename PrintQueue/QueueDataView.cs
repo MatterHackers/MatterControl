@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public static int lastSelectedTabOnAnyView = 0;
+        static int lastSelectedTabOnAnyView = -1;
 
         public int SelectedIndex
         {
@@ -208,7 +208,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                     throw new ArgumentOutOfRangeException();
                 }
                 
-                lastSelectedTabOnAnyView = value;
                 selectedIndex = value;
                 OnSelectedIndexChanged();
 
@@ -343,7 +342,17 @@ namespace MatterHackers.MatterControl.PrintQueue
             QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
 
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
+
+            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
+
+            SelectedIndex = lastSelectedTabOnAnyView;
         }
+
+        void SaveCurrentTab(object sender, EventArgs e)
+        {
+            lastSelectedTabOnAnyView = SelectedIndex;
+        }
+
 
         void PrintItemChange(object sender, EventArgs e)
         {

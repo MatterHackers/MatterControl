@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl
 {
     public class WidescreenPanel : FlowLayoutWidget
     {
+        static int lastNumberOfVisiblePanels;
+
         SliceSettingsWidget sliceSettingsWidget;
         TabControl advancedControls;
         public TabPage AboutTabPage;
@@ -96,15 +98,14 @@ namespace MatterHackers.MatterControl
 
         public override void OnParentChanged(EventArgs e)
         {
-            lastNumberVisible = 0;
+            lastNumberOfVisiblePanels = 0;
             RecreateAllPanels();
             base.OnParentChanged(e);
         }
 
-        static int lastNumberVisible;
         void onBoundsChanges(Object sender, EventArgs e)
         {
-            if (NumberOfVisiblePanels() != lastNumberVisible)
+            if (NumberOfVisiblePanels() != lastNumberOfVisiblePanels)
             {
                 RecreateAllPanels();
             }
@@ -217,8 +218,6 @@ namespace MatterHackers.MatterControl
 
         void RestoreUiState()
         {
-            queueDataView.SelectedIndex = QueueDataView.lastSelectedTabOnAnyView;
-
             if (MainScreenUiState.lastAdvancedControlsTab != MainScreenUiState.EmpytValue && advancedControls != null)
             {
                 advancedControls.SelectedTabIndex = MainScreenUiState.lastAdvancedControlsTab;
@@ -323,7 +322,7 @@ namespace MatterHackers.MatterControl
             SetColumnVisibility(state);
 
             RestoreUiState();
-            lastNumberVisible = numberOfPanels;
+            lastNumberOfVisiblePanels = numberOfPanels;
             PostChangePannels.CallEvents(this, null);
         }
 
