@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        void RecreateAllPanels(object state = null)
+        public void RecreateAllPanels(object state = null)
         {
             if (Width == 0)
             {
