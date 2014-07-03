@@ -113,8 +113,12 @@ namespace MatterHackers.MatterControl
             advancedControls.TabBar.Margin = new BorderDouble(0, 0);
             advancedControls.TabBar.Padding = new BorderDouble(0, 2);
 
+            int textSize = 16;
+
             if (AdvancedControlsButton_Click != null)
             {
+                // this means we are in compact view and so we will make the tabs text a bit smaller
+                textSize = 14;
                 TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
                 advancedControlsButtonFactory.invertImageLocation = false;
                 advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Print\nQueue"), "icon_arrow_left_32x32.png");
@@ -143,17 +147,17 @@ namespace MatterHackers.MatterControl
 
             //Add the tab contents for 'Advanced Controls'
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", 16,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", textSize,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", 16,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", textSize,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new PrinterConfigurationPage();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", 16,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", textSize,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             advancedControls.SelectedTabIndex = lastAdvanceControlsIndex;
