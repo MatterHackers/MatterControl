@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
         }
 
         static int lastPanelIndexBeforeReload = 0;
-        public CompactSlidePanel(QueueDataView queueDataView, SliceSettingsWidget.UiState sliceSettingsUiState)
+        public CompactSlidePanel(QueueDataView queueDataView)
             : base(2)
         {
             this.queueDataView = queueDataView;

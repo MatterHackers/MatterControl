@@ -54,13 +54,13 @@ namespace MatterHackers.MatterControl
 {
     public class WidescreenPanel : FlowLayoutWidget
     {
+        static bool leftBorderLineHiden;
+        static bool rightBorderLineHiden;
         static int lastNumberOfVisiblePanels;
 
-        SliceSettingsWidget sliceSettingsWidget;
         public TabPage AboutTabPage;
         TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-        SliceSettingsWidget.UiState sliceSettingsUiState = new SliceSettingsWidget.UiState();
 
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl
             
             ColumnOne.RemoveAllChildren();
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-            ColumnOne.AddChild(new CompactSlidePanel(queueDataView, sliceSettingsUiState));
+            ColumnOne.AddChild(new CompactSlidePanel(queueDataView));
             ColumnOne.AnchorAll();
         }
 
@@ -217,6 +217,14 @@ namespace MatterHackers.MatterControl
             }
             else
             {
+                if(LeftBorderLine != null
+                    && (LeftBorderLine.Hidden || RightBorderLine.Hidden))
+                {
+                    // If we are only showing 1 or 2 pannels (but are in wide mode),
+                    // return 2 so we don't resize as often.
+                    return 2;
+                }
+
                 return 3;
             }
         }
@@ -227,10 +235,16 @@ namespace MatterHackers.MatterControl
             {
                 return;
             }
-            PreChangePannels.CallEvents(this, null);
-            RemovePanelsAndCreateEmpties();
 
             int numberOfPanels = NumberOfVisiblePanels();
+
+            if (LeftBorderLine != null)
+            {
+                leftBorderLineHiden = LeftBorderLine.Hidden;
+                rightBorderLineHiden = RightBorderLine.Hidden;
+            }
+            PreChangePannels.CallEvents(this, null);
+            RemovePanelsAndCreateEmpties();
 
             switch (numberOfPanels)
             {
@@ -253,7 +267,11 @@ namespace MatterHackers.MatterControl
                     break;
             }
 
+            LeftBorderLine.Hidden = leftBorderLineHiden;
+            RightBorderLine.Hidden = rightBorderLineHiden;
             SetColumnVisibility(state);
+            RightBorderLine.SetDisplayState();
+            LeftBorderLine.SetDisplayState();
 
             lastNumberOfVisiblePanels = numberOfPanels;
         }
@@ -363,8 +381,6 @@ namespace MatterHackers.MatterControl
         {
             if (NumberOfVisiblePanels() > 1)
             {
-                sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
-
                 UiThread.RunOnIdle(LoadColumnThree);
             }
         }
