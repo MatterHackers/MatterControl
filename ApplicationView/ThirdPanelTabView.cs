@@ -64,8 +64,7 @@ namespace MatterHackers.MatterControl
 
         TabControl advancedControls2;
 
-        public ThirdPanelTabView(SliceSettingsWidget.UiState sliceSettingsUiState,
-            ButtonBase.ButtonEventHandler AdvancedControlsButton_Click = null,
+        public ThirdPanelTabView(ButtonBase.ButtonEventHandler AdvancedControlsButton_Click = null,
             EventHandler onMouseEnterBoundsPrintQueueLink = null,
             EventHandler onMouseLeaveBoundsPrintQueueLink = null)
         {
@@ -73,13 +72,28 @@ namespace MatterHackers.MatterControl
             this.onMouseEnterBoundsPrintQueueLink = onMouseEnterBoundsPrintQueueLink;
             this.onMouseLeaveBoundsPrintQueueLink = onMouseLeaveBoundsPrintQueueLink;
 
-            advancedControls2 = CreateNewAdvancedControls(sliceSettingsUiState, AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
+            advancedControls2 = CreateNewAdvancedControls(new SliceSettingsWidget.UiState(), AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
 
             AddChild(advancedControls2);
 
             WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
 
             AnchorAll();
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+
+        public void ReloadBackPanel(object sender, EventArgs widgetEvent)
+        {
+            UiThread.RunOnIdle(ReloadSliceSettings);
         }
 
         void SaveCurrentPanelIndex(object sender, EventArgs e)
@@ -129,17 +143,17 @@ namespace MatterHackers.MatterControl
 
             //Add the tab contents for 'Advanced Controls'
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", 14,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", 16,
             ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", 14,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new PrinterConfigurationPage();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", 14,
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", 16,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             advancedControls.SelectedTabIndex = lastAdvanceControlsIndex;

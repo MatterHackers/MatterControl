@@ -53,9 +53,7 @@ namespace MatterHackers.MatterControl
     {
         event EventHandler unregisterEvents;
 
-        ThirdPanelTabView thirdPanelTabView;
         TabControl mainControlsTabControl;
-        private delegate void ReloadPanel();
         public TabPage QueueTabPage;
         public TabPage AboutTabPage;
 
@@ -117,12 +115,9 @@ namespace MatterHackers.MatterControl
             // do the right panel
             {
                 this.RightPanel.AddChild(new PrintProgressBar());
-                thirdPanelTabView = new ThirdPanelTabView(sliceSettingsUiState, AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
+                ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView(AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
                 this.RightPanel.AddChild(thirdPanelTabView);
             }
-
-            // make sure we reload when we need to
-            ApplicationWidget.Instance.ReloadPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
 
             WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
 
@@ -178,11 +173,6 @@ namespace MatterHackers.MatterControl
         void DoNotChangePanel()
         {
             //Empty function used as placeholder
-        }
-
-        public void ReloadBackPanel(object sender, EventArgs widgetEvent)
-        {
-            UiThread.RunOnIdle(thirdPanelTabView.ReloadSliceSettings);
         }
     }
 }

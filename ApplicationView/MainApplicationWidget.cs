@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
     public class ApplicationWidget : GuiWidget
     {
         static ApplicationWidget globalInstance;
-        public RootedObjectEventHandler ReloadPanelTrigger = new RootedObjectEventHandler();
+        public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
         public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 
         public SlicePresetsWindow EditSlicePresetsWindow { get; set;} 
@@ -97,8 +97,6 @@ namespace MatterHackers.MatterControl
         {
             UiThread.RunOnIdle((state) =>
             {
-                widescreenPanel.StoreUiState();
-
                 // give the widget a chance to hear about the close before they are actually colsed. 
                 bool cancelClose;
                 this.OnClosing(out cancelClose);
@@ -129,7 +127,7 @@ namespace MatterHackers.MatterControl
 
         public void ReloadAdvancedControlsPanel()
         {
-            ReloadPanelTrigger.CallEvents(this, null);
+            ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
         }
 
         public void ChangeCloudSyncStatus()
