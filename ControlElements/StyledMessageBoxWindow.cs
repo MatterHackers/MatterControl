@@ -171,9 +171,13 @@ namespace MatterHackers.MatterControl
         {
             if (messageContainer != null)
             {
-                EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
-                string wrappedMessage = wrapper.InsertCRs(unwrappedMessage, middleRowContainer.Width - (middleRowContainer.Padding.Width + messageContainer.Margin.Width));
-                messageContainer.Text = wrappedMessage;
+                double wrappingSize = middleRowContainer.Width - (middleRowContainer.Padding.Width + messageContainer.Margin.Width);
+                if (wrappingSize > 0)
+                {
+                    EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
+                    string wrappedMessage = wrapper.InsertCRs(unwrappedMessage, wrappingSize);
+                    messageContainer.Text = wrappedMessage;
+                }
             }
         }
 
