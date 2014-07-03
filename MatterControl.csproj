@@ -96,6 +96,7 @@
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
+    <Compile Include="ApplicationView\ThirdPanelTabView.cs" />
     <Compile Include="ApplicationView\FirstPanelTabView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard2Point.cs" />

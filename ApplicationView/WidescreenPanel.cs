@@ -78,7 +78,6 @@ namespace MatterHackers.MatterControl
         event EventHandler unregisterEvents;
 
         public static RootedObjectEventHandler PreChangePannels = new RootedObjectEventHandler();
-        public static RootedObjectEventHandler PostChangePannels = new RootedObjectEventHandler();
 
         QueueDataView queueDataView = null;
         
@@ -323,7 +322,6 @@ namespace MatterHackers.MatterControl
 
             RestoreUiState();
             lastNumberOfVisiblePanels = numberOfPanels;
-            PostChangePannels.CallEvents(this, null);
         }
 
         void SetColumnVisibility(object state = null)
