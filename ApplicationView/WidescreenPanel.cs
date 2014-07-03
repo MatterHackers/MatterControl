@@ -75,6 +75,9 @@ namespace MatterHackers.MatterControl
 
         event EventHandler unregisterEvents;
 
+        public static RootedObjectEventHandler PreChangePannels = new RootedObjectEventHandler();
+        public static RootedObjectEventHandler PostChangePannels = new RootedObjectEventHandler();
+
         QueueDataView queueDataView = null;
         
         public WidescreenPanel()
@@ -206,10 +209,6 @@ namespace MatterHackers.MatterControl
 
         public void StoreUiState()
         {
-            if (queueDataView != null)
-            {
-                MainScreenUiState.lastSelectedIndex = queueDataView.SelectedIndex;
-            }
             if (advancedControls != null)
             {
                 MainScreenUiState.lastAdvancedControlsTab = advancedControls.SelectedTabIndex;
@@ -218,10 +217,8 @@ namespace MatterHackers.MatterControl
 
         void RestoreUiState()
         {
-            if (MainScreenUiState.lastSelectedIndex != MainScreenUiState.EmpytValue && queueDataView != null)
-            {
-                queueDataView.SelectedIndex = MainScreenUiState.lastSelectedIndex;
-            }
+            queueDataView.SelectedIndex = QueueDataView.lastSelectedTabOnAnyView;
+
             if (MainScreenUiState.lastAdvancedControlsTab != MainScreenUiState.EmpytValue && advancedControls != null)
             {
                 advancedControls.SelectedTabIndex = MainScreenUiState.lastAdvancedControlsTab;
@@ -295,6 +292,7 @@ namespace MatterHackers.MatterControl
             {
                 return;
             }
+            PreChangePannels.CallEvents(this, null);
             StoreUiState();
             RemovePanelsAndCreateEmpties();
 
@@ -326,6 +324,7 @@ namespace MatterHackers.MatterControl
 
             RestoreUiState();
             lastNumberVisible = numberOfPanels;
+            PostChangePannels.CallEvents(this, null);
         }
 
         void SetColumnVisibility(object state = null)

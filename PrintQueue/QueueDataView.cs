@@ -193,6 +193,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
+        public static int lastSelectedTabOnAnyView = 0;
+
         public int SelectedIndex
         {
             get
@@ -206,6 +208,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     throw new ArgumentOutOfRangeException();
                 }
                 
+                lastSelectedTabOnAnyView = value;
                 selectedIndex = value;
                 OnSelectedIndexChanged();
 

@@ -99,6 +99,8 @@ namespace MatterHackers.MatterControl
             QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
+            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
+
             SelectedTabIndex = tabStateBeforeClose;
         }
 
@@ -109,10 +111,9 @@ namespace MatterHackers.MatterControl
             QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
         }
 
-        public override void OnClosing(out bool cancelClose)
+        void SaveCurrentTab(object sender, EventArgs e)
         {
             tabStateBeforeClose = SelectedTabIndex;
-            base.OnClosing(out cancelClose);
         }
 
         public override void OnClosed(EventArgs e)
