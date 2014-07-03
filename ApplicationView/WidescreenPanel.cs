@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
             ColumnOne.VAnchor = VAnchor.ParentBottomTop;
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
             ColumnOne.AddChild(new PrintProgressBar());
-            ColumnOne.AddChild(new MainScreenTabView(queueDataView));
+            ColumnOne.AddChild(new FirstPanelTabView(queueDataView));
             ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
         }
 

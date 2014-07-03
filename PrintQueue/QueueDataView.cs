@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
@@ -41,6 +42,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
     public class QueueDataView : ScrollableWidget
     {
+        public static int selectedQueueItemIndex = -1;
+
         event EventHandler unregisterEvents;
 
         // make this private so it can only be built from the Instance
@@ -193,8 +196,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        static int lastSelectedTabOnAnyView = -1;
-
         public int SelectedIndex
         {
             get
@@ -343,14 +344,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
 
-            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
+            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentlySelctedItemIndex, ref unregisterEvents);
 
-            SelectedIndex = lastSelectedTabOnAnyView;
+            SelectedIndex = selectedQueueItemIndex;
         }
 
-        void SaveCurrentTab(object sender, EventArgs e)
+        void SaveCurrentlySelctedItemIndex(object sender, EventArgs e)
         {
-            lastSelectedTabOnAnyView = SelectedIndex;
+            selectedQueueItemIndex = SelectedIndex;
         }
 
 
