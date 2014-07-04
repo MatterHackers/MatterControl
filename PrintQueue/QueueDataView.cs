@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
@@ -41,6 +42,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
     public class QueueDataView : ScrollableWidget
     {
+        public static int selectedQueueItemIndex = -1;
+
         event EventHandler unregisterEvents;
 
         // make this private so it can only be built from the Instance
@@ -193,8 +196,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public static int lastSelectedTabOnAnyView = 0;
-
         public int SelectedIndex
         {
             get
@@ -208,7 +209,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                     throw new ArgumentOutOfRangeException();
                 }
                 
-                lastSelectedTabOnAnyView = value;
                 selectedIndex = value;
                 OnSelectedIndexChanged();
 
@@ -343,7 +343,18 @@ namespace MatterHackers.MatterControl.PrintQueue
             QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
 
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
+
+            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentlySelctedItemIndex, ref unregisterEvents);
+
+            selectedQueueItemIndex = Math.Min(selectedQueueItemIndex, QueueData.Instance.Count-1);
+            SelectedIndex = selectedQueueItemIndex;
         }
+
+        void SaveCurrentlySelctedItemIndex(object sender, EventArgs e)
+        {
+            selectedQueueItemIndex = SelectedIndex;
+        }
+
 
         void PrintItemChange(object sender, EventArgs e)
         {

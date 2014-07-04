@@ -48,12 +48,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-    public static class MainScreenUiState
-    {
-        public static readonly int EmpytValue = -2;
-        public static int lastAdvancedControlsTab = EmpytValue;
-    }
-
     public class MatterControlApplication : SystemWindow
     {
         string[] commandLineArgs = null;

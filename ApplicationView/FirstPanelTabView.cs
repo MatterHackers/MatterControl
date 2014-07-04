@@ -51,9 +51,9 @@ using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl
 {
-    class MainScreenTabView : TabControl
+    class FirstPanelTabView : TabControl
     {
-        static int tabStateBeforeClose = 0;
+        public static int firstPanelCurrentTab = 0;
 
         TabPage QueueTabPage;
         TabPage LibraryTabPage;
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
         QueueDataView queueDataView;
         event EventHandler unregisterEvents;
 
-        public MainScreenTabView(QueueDataView queueDataView)
+        public FirstPanelTabView(QueueDataView queueDataView)
         {
             this.queueDataView = queueDataView;
             this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 
             WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
 
-            SelectedTabIndex = tabStateBeforeClose;
+            SelectedTabIndex = firstPanelCurrentTab;
         }
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl
 
         void SaveCurrentTab(object sender, EventArgs e)
         {
-            tabStateBeforeClose = SelectedTabIndex;
+            firstPanelCurrentTab = SelectedTabIndex;
         }
 
         public override void OnClosed(EventArgs e)
