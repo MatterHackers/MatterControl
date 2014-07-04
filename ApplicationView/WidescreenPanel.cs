@@ -379,6 +379,7 @@ namespace MatterHackers.MatterControl
 
         public void ReloadAdvancedControlsPanel(object sender, EventArgs widgetEvent)
         {
+            PreChangePannels.CallEvents(this, null);
             if (NumberOfVisiblePanels() > 1)
             {
                 UiThread.RunOnIdle(LoadColumnThree);
