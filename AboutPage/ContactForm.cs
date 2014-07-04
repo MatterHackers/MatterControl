@@ -37,7 +37,6 @@ using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
