@@ -303,6 +303,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             string UserLevel = "Advanced"; //Show all settings
             for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
             {      
+                
                 OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[categoryIndex];
                 
                 //Always add all categories
@@ -330,19 +331,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             //Add settings if within selected category and group or no category selected
                             if (selectedGroupValue == groupValue || (groupDefaultIndex == -1 && categoryIndex == categoryDefaultIndex) || categoryDefaultIndex == -1)
                             {
-                                
-
                                 OrganizerSettingsData setting = subgroup.SettingDataList[settingIndex];
-                                string itemValue = "{0}:{1}:{2}".FormatWith(categoryIndex, groupIndex, setting.SlicerConfigName);
-                                string itemName = setting.PresentationName.Replace("\\n","").Replace(":","");                                
-                                if (setting.ExtraSettings.Trim() != "" && setting.DataEditType != OrganizerSettingsData.DataEditTypes.LIST)
-                                {
-                                    itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\\n"," "));
-                                }
 
-                                MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
-                                settingMenuItem.Selected += new EventHandler(OnItemSelected);
-                                settingMenuItem.Selected += new EventHandler(OnSettingSelected);
+                                if (setting.DataEditType != OrganizerSettingsData.DataEditTypes.HARDWARE_PRESENT)
+                                {
+                                    string itemValue = "{0}:{1}:{2}".FormatWith(categoryIndex, groupIndex, setting.SlicerConfigName);
+                                    string itemName = setting.PresentationName.Replace("\\n", "").Replace(":", "");
+                                    if (setting.ExtraSettings.Trim() != "" && setting.DataEditType != OrganizerSettingsData.DataEditTypes.LIST)
+                                    {
+                                        itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\\n", " "));
+                                    }
+
+                                    MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
+                                    settingMenuItem.Selected += new EventHandler(OnItemSelected);
+                                    settingMenuItem.Selected += new EventHandler(OnSettingSelected);
+                                }
                             }
                         }
                     }
@@ -551,7 +554,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 
 
                 switch (settingData.DataEditType)
-                {
+                {                    
                     case OrganizerSettingsData.DataEditTypes.INT:
                         {
                             int currentValue = 0;
