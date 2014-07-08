@@ -98,7 +98,11 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle((state) =>
             {
                 // give the widget a chance to hear about the close before they are actually colsed. 
-                widescreenPanel.RecreateAllPanels();
+                bool cancelClose;
+                this.OnClosing(out cancelClose);
+
+                this.CloseAndRemoveAllChildren();
+                AddElements();
             });
         }
 
