@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl
             this.onMouseEnterBoundsPrintQueueLink = onMouseEnterBoundsPrintQueueLink;
             this.onMouseLeaveBoundsPrintQueueLink = onMouseLeaveBoundsPrintQueueLink;
 
-            advancedControls2 = CreateNewAdvancedControls(new SliceSettingsWidget.UiState(), AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
+            advancedControls2 = CreateNewAdvancedControls(AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
 
             AddChild(advancedControls2);
 
@@ -96,8 +96,11 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(ReloadSliceSettings);
         }
 
+        static SliceSettingsWidget.UiState sliceSettingsUiState = new SliceSettingsWidget.UiState();
         void SaveCurrentPanelIndex(object sender, EventArgs e)
         {
+            sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
+
             if (advancedControls2.Children.Count > 0)
             {
                 lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
@@ -110,7 +113,7 @@ namespace MatterHackers.MatterControl
             base.OnClosing(out cancelClose);
         }
 
-        private TabControl CreateNewAdvancedControls(SliceSettingsWidget.UiState sliceSettingsUiState, ButtonBase.ButtonEventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
+        private TabControl CreateNewAdvancedControls(ButtonBase.ButtonEventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
         {
             TabControl advancedControls = new TabControl();
 
@@ -173,7 +176,6 @@ namespace MatterHackers.MatterControl
 
         public void ReloadSliceSettings(object state)
         {
-            SliceSettingsWidget.UiState sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
             lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
 
             // remove the advance control and replace it with new ones built for the selected printer
@@ -188,8 +190,7 @@ namespace MatterHackers.MatterControl
                 advancedControlsLinkButton.MouseLeaveBounds -= new EventHandler(onMouseLeaveBoundsPrintQueueLink);
             }
 
-            advancedControls2 = CreateNewAdvancedControls(sliceSettingsUiState,
-                AdvancedControlsButton_Click,
+            advancedControls2 = CreateNewAdvancedControls(AdvancedControlsButton_Click,
                 onMouseEnterBoundsPrintQueueLink,
                 onMouseLeaveBoundsPrintQueueLink);
             AddChild(advancedControls2, advancedControlsIndex);

@@ -2095,3 +2095,423 @@ Translated:Oops! Unable to install update.
 English:Motor de Capas
 Translated:Motor de Capas
 
+English:Your application is up-to-date.
+Translated:Your application is up-to-date.
+
+English:Install Communication Driver
+Translated:Install Communication Driver
+
+English:This printer requires a driver for communication.
+Translated:This printer requires a driver for communication.
+
+English:Driver located. Would you like to install?
+Translated:Driver located. Would you like to install?
+
+English:Install Driver
+Translated:Install Driver
+
+English:Apply
+Translated:Apply
+
+English:Buy Materials
+Translated:Buy Materials
+
+English:Select an STL file
+Translated:Select an STL file
+
+English:Add File
+Translated:Add File
+
+English:Time
+Translated:Time
+
+English:Press 'Connect' to select a printer.
+Translated:Press 'Connect' to select a printer.
+
+English:Marlin Firmware EEPROM Settings
+Translated:Marlin Firmware EEPROM Settings
+
+English:Re-Load Default Settings
+Translated:Re-Load Default Settings
+
+English:Set Default To Factory Settings
+Translated:Set Default To Factory Settings
+
+English:Steps per mm:
+Translated:Steps per mm:
+
+English:Maximum feedrates [mm/s]:
+Translated:Maximum feedrates [mm/s]:
+
+English:Maximum Acceleration [mm/s²]:
+Translated:Maximum Acceleration [mm/s²]:
+
+English:Acceleration:
+Translated:Acceleration:
+
+English:Retract Acceleration:
+Translated:Retract Acceleration:
+
+English:PID settings:
+Translated:PID settings:
+
+English:Homing Offset:
+Translated:Homing Offset:
+
+English:Min feedrate [mm/s]:
+Translated:Min feedrate [mm/s]:
+
+English:Min travel feedrate [mm/s]:
+Translated:Min travel feedrate [mm/s]:
+
+English:Minimum segment time [ms]:
+Translated:Minimum segment time [ms]:
+
+English:Maximum X-Y jerk [mm/s]:
+Translated:Maximum X-Y jerk [mm/s]:
+
+English:Maximum Z jerk [mm/s]:
+Translated:Maximum Z jerk [mm/s]:
+
+English:Make Settings Active
+Translated:Make Settings Active
+
+English:Make Settings Active\nAnd Save To Default
+Translated:Make Settings Active\nAnd Save To Default
+
+English:Design Add-ons
+Translated:Design Add-ons
+
+English:Lock Ratio
+Translated:Lock Ratio
+
+English:Retrieving download info...
+Translated:Retrieving download info...
+
+English:G-Code Output
+Translated:G-Code Output
+
+English:The extra distance the raft will extend around the part.
+Translated:The extra distance the raft will extend around the part.
+
+English:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
+Translated:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
+
+English:Distance
+Translated:Distance
+
+English:Gap Percent
+Translated:Gap Percent
+
+English:Try to connect mesh edges when the actual mesh data is not all the way connected.
+Translated:Try to connect mesh edges when the actual mesh data is not all the way connected.
+
+English:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
+Translated:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
+
+English:Reverse the orientation of overlaps. This can make some unintended holes go away.
+Translated:Reverse the orientation of overlaps. This can make some unintended holes go away.
+
+English:Make all overlap areas into one big area. This can make some unintended holes go away..
+Translated:Make all overlap areas into one big area. This can make some unintended holes go away..
+
+English:Repair
+Translated:Repair
+
+English:Connect Bad Edges
+Translated:Connect Bad Edges
+
+English:Close Polygons
+Translated:Close Polygons
+
+English:Reverse Orientation
+Translated:Reverse Orientation
+
+English:Merge All
+Translated:Merge All
+
+English:Overlaps
+Translated:Overlaps
+
+English:The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+Translated:The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+
+English:Air Gap
+Translated:Air Gap
+
+English:Outline Distance
+Translated:Outline Distance
+
+English:Distance Around Object
+Translated:Distance Around Object
+
+English:Minimum Travel\nRequiring Retraction
+Translated:Minimum Travel\nRequiring Retraction
+
+English:Show Printing
+Translated:Show Printing
+
+English:Show Current
+Translated:Show Current
+
+English:Printer Sync
+Translated:Printer Sync
+
+English:Sync To Print
+Translated:Sync To Print
+
+English:Layers
+Translated:Layers
+
+English:Show 3D
+Translated:Show 3D
+
+English:Uh-oh! Could not connect to printer.
+Translated:Uh-oh! Could not connect to printer.
+
+English:Installing
+Translated:Installing
+
+English:Initial Printer Setup
+Translated:Initial Printer Setup
+
+English:Homing The Printer
+Translated:Homing The Printer
+
+English:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
+Translated:If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.
+
+English:Print Leveling Overview
+Translated:Print Leveling Overview
+
+English:Note: Be sure the tip of the extrude is clean.
+Translated:Note: Be sure the tip of the extrude is clean.
+
+English:Title Stuff
+Translated:Title Stuff
+
+English:Oops! You cannot exit while a print is active.
+Translated:Oops! You cannot exit while a print is active.
+
+English:Unable to Exit
+Translated:Unable to Exit
+
+English:You are currently saving a parts sheet, are you sure you want to exit?
+Translated:You are currently saving a parts sheet, are you sure you want to exit?
+
+English:Confirm Exit
+Translated:Confirm Exit
+
+English:Disconnect and cancel the current print?
+Translated:Disconnect and cancel the current print?
+
+English:WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?
+Translated:WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?
+
+English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+Translated:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+
+English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+
+English:Waiting For Extruder To Heat
+Translated:Waiting For Extruder To Heat
+
+English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
+
+English:Waiting For Bed To Heat
+Translated:Waiting For Bed To Heat
+
+English:Cancel the current print?
+Translated:Cancel the current print?
+
+English:Cancel Print?
+Translated:Cancel Print?
+
+English:There is a recommended update avalible for MatterControl. Would you like to download it now?
+Translated:There is a recommended update avalible for MatterControl. Would you like to download it now?
+
+English:Recommended Update Available
+Translated:Recommended Update Available
+
+English:Download Now
+Translated:Download Now
+
+English:Remind Me Later
+Translated:Remind Me Later
+
+English:Oops! There is no eeprom mapping for your printer's firmware.
+Translated:Oops! There is no eeprom mapping for your printer's firmware.
+
+English:Warning no eeprom mapping
+Translated:Warning no eeprom mapping
+
+English:Sample the bed at two points
+Translated:Sample the bed at two points
+
+English:You should be done in about 2 minutes.
+Translated:You should be done in about 2 minutes.
+
+English:Alert
+Translated:Alert
+
+English:Input Required
+Translated:Input Required
+
+English:Apply leveling to gcode during export
+Translated:Apply leveling to gcode during export
+
+English:File export options:
+Translated:File export options:
+
+English:Report a Bug
+Translated:Report a Bug
+
+English:About MatterControl
+Translated:About MatterControl
+
+English:Oops! Printer could not be detected 
+Translated:Oops! Printer could not be detected 
+
+English: Load Files
+Translated: Load Files
+
+English: Eject SD Card
+Translated: Eject SD Card
+
+English:Show Voxels
+Translated:Show Voxels
+
+English:Show Mesh
+Translated:Show Mesh
+
+English:Do Subtract
+Translated:Do Subtract
+
+English:Specify if your printer has a fan.
+Translated:Specify if your printer has a fan.
+
+English:Specify if your printer has a heated bed.
+Translated:Specify if your printer has a heated bed.
+
+English:Specify if your printer has the ability to plug in an SD card.
+Translated:Specify if your printer has the ability to plug in an SD card.
+
+English:Has Fan
+Translated:Has Fan
+
+English:Has Heated Bed
+Translated:Has Heated Bed
+
+English:Has SD Card Reader
+Translated:Has SD Card Reader
+
+English:Cloud Services
+Translated:Cloud Services
+
+English:Cloud Monitoring (disabled)
+Translated:Cloud Monitoring (disabled)
+
+English:Cloud Monitoring (enabled)
+Translated:Cloud Monitoring (enabled)
+
+English:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+Translated:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
+
+English:Export to SD Card
+Translated:Export to SD Card
+
+English:Notification Settings
+Translated:Notification Settings
+
+English:After a Print is Finished:
+Translated:After a Print is Finished:
+
+English:Saving your settings...
+Translated:Saving your settings...
+
+English:Send an SMS notification
+Translated:Send an SMS notification
+
+English:Experimental
+Translated:Experimental
+
+English:Have MatterControl send you a text message after your print is finished
+Translated:Have MatterControl send you a text message after your print is finished
+
+English:Your Phone Number*
+Translated:Your Phone Number*
+
+English:A U.S. or Canadian mobile phone number
+Translated:A U.S. or Canadian mobile phone number
+
+English:Send an email notification
+Translated:Send an email notification
+
+English:Have MatterControl send you an email message after your print is finished
+Translated:Have MatterControl send you an email message after your print is finished
+
+English:A valid email address
+Translated:A valid email address
+
+English:Play a Sound
+Translated:Play a Sound
+
+English:Play a sound after your print is finished
+Translated:Play a sound after your print is finished
+
+English:Printing From SD Card
+Translated:Printing From SD Card
+
+English:Would you also like to remove this file from the Printer's SD Card?
+Translated:Would you also like to remove this file from the Printer's SD Card?
+
+English:Export to Printer SD Card
+Translated:Export to Printer SD Card
+
+English:Preparing To Send To SD Card
+Translated:Preparing To Send To SD Card
+
+English:Sending To SD Card
+Translated:Sending To SD Card
+
+English:Exporting to Folder
+Translated:Exporting to Folder
+
+English:Warning GCode file
+Translated:Warning GCode file
+
+English:Release Notes
+Translated:Release Notes
+
+English:More Info
+Translated:More Info
+
+English:Go To Status
+Translated:Go To Status
+
+English:View Status
+Translated:View Status
+
+English:Description
+Translated:Description
+
+English:Value
+Translated:Value
+
+English:Save To EEPROM
+Translated:Save To EEPROM
+
+English:Firmware EEPROM Settings
+Translated:Firmware EEPROM Settings
+
+English:Save to EEPROM
+Translated:Save to EEPROM
+
+English:Select the baud rate.
+Translated:Select the baud rate.
+
+English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
+
