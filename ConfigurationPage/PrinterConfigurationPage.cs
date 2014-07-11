@@ -521,7 +521,6 @@ namespace MatterHackers.MatterControl
                         switch (PrinterConnectionAndCommunication.Instance.FirmwareType)
                         {
                             case PrinterConnectionAndCommunication.FirmwareTypes.Repetier:
-                                new EePromRepetierWidget();
                                 if (openEePromRepetierWidget != null)
                                 {
                                     openEePromRepetierWidget.BringToFront();
