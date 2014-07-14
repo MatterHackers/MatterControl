@@ -319,9 +319,6 @@ namespace MatterHackers.MatterControl
 
         public override void OnClosed(EventArgs e)
         {
-            // save the last size of the window so we can restore it next time.
-            ApplicationSettings.Instance.set("WindowSize", string.Format("{0},{1}", Width, Height));
-            ApplicationSettings.Instance.set("DesktopPosition", string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
             PrinterConnectionAndCommunication.Instance.Disable();
             //Close connection to the local datastore
             Datastore.Instance.Exit();
@@ -349,6 +346,10 @@ namespace MatterHackers.MatterControl
         string confirmExit = "Confirm Exit".Localize();
         public override void OnClosing(out bool CancelClose)
         {
+            // save the last size of the window so we can restore it next time.
+            ApplicationSettings.Instance.set("WindowSize", string.Format("{0},{1}", Width, Height));
+            ApplicationSettings.Instance.set("DesktopPosition", string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
+
             //Save a snapshot of the prints in queue
             QueueData.Instance.SaveDefaultQueue();
 
