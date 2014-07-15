@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl
                 {
                     if (Path.GetExtension(arg).ToUpper() == ".STL")
                     {
-                        new PartPreviewMainWindow(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))), View3DTransformPart.AutoRotate.Enabled);
+                        QueueData.Instance.AddItem(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
                     }
                 }
             }
@@ -301,6 +301,9 @@ namespace MatterHackers.MatterControl
         [STAThread]
         public static void Main()
         {
+            // Make sure we have the right woring directory as we assume everything relative to the executable.
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
+
             Datastore.Instance.Initialize();
 
             // try and open our window matching the last size that we had for it.
