@@ -94,12 +94,21 @@ namespace MatterHackers.MatterControl
                     ModelDropList.AddItem(model);
                 }
             }
-			ModelDropList.AddItem(LocalizedString.Get("Other"));
 
+
+			ModelDropList.AddItem(LocalizedString.Get("Other"));
             AddChild(ModelDropList);
 
             HAnchor = HAnchor.FitToChildren;
             VAnchor = VAnchor.FitToChildren;
         }
+
+		public void SelectIfOnlyOneModel()
+		{
+			if (ModelDropList.MenuItems.Count == 2)
+			{
+				ModelDropList.SelectedIndex = 0;
+			}
+		}
     }
 }
