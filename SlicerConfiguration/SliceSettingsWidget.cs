@@ -798,15 +798,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     clickToEdit.OverlayColor = qualityOverlayColor;
                     editButton.Click += (sender, e) =>
                     {
-                        if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
+						if (ApplicationWidget.Instance.EditQualityPresetsWindow == null)
                         {
-                            ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-                            ApplicationWidget.Instance.EditSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditSlicePresetsWindow = null; };
+							ApplicationWidget.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
+							ApplicationWidget.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditQualityPresetsWindow = null; };
                         }
                         else
                         {
-                            ApplicationWidget.Instance.EditSlicePresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-                            ApplicationWidget.Instance.EditSlicePresetsWindow.BringToFront();
+							ApplicationWidget.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
+							ApplicationWidget.Instance.EditQualityPresetsWindow.BringToFront();
                         }
                     };
                 }
@@ -816,15 +816,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     clickToEdit.OverlayColor = materialOverlayColor;
                     editButton.Click += (sender, e) =>
                     {                        
-                        if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
+						if (ApplicationWidget.Instance.EditMaterialPresetsWindow == null)
                         {
-                            ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
-                            ApplicationWidget.Instance.EditSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditSlicePresetsWindow = null; };
+							ApplicationWidget.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
+							ApplicationWidget.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditMaterialPresetsWindow = null; };
                         }
                         else
                         {
-                            ApplicationWidget.Instance.EditSlicePresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
-                            ApplicationWidget.Instance.EditSlicePresetsWindow.BringToFront();
+							ApplicationWidget.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
+							ApplicationWidget.Instance.EditMaterialPresetsWindow.BringToFront();
                         }                        
                     };
                 }                

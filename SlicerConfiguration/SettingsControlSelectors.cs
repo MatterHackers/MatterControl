@@ -102,21 +102,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             editButton.Margin = new BorderDouble(right:6);
             editButton.Click += (sender, e) =>
             {
-                if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
-                {
-                    ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
-                    ApplicationWidget.Instance.EditSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditSlicePresetsWindow = null; };
-                }
-                else
-                {
-                    ApplicationWidget.Instance.EditSlicePresetsWindow.BringToFront();
-                }
+				if (filterTag == "material")
+				{
+					if (ApplicationWidget.Instance.EditMaterialPresetsWindow == null)
+                	{
+						ApplicationWidget.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
+						ApplicationWidget.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditMaterialPresetsWindow = null; };
+					}
+                	else
+                	{
+							ApplicationWidget.Instance.EditMaterialPresetsWindow.BringToFront();
+                	}
+				}
+
+				if (filterTag == "quality")
+				{
+					if(ApplicationWidget.Instance.EditQualityPresetsWindow == null)
+					{
+						ApplicationWidget.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
+						ApplicationWidget.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => {ApplicationWidget.Instance.EditQualityPresetsWindow = null; };
+					}
+					else
+					{
+						ApplicationWidget.Instance.EditQualityPresetsWindow.BringToFront();
+					}
+				}
             };
 
             container.AddChild(editButton);
             container.AddChild(DropDownList);
             return container;
-        }
+		}
+		
 
         protected void ReloadOptions(object sender, EventArgs e)
         {
@@ -167,16 +184,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 ActiveSliceSettings.Instance.LoadAllSettings();
                 ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-                if (ApplicationWidget.Instance.EditSlicePresetsWindow == null)
-                {
-                    ApplicationWidget.Instance.EditSlicePresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
-                    ApplicationWidget.Instance.EditSlicePresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditSlicePresetsWindow = null; };
-                }
-                else
-                {
-                    ApplicationWidget.Instance.EditSlicePresetsWindow.ChangeToSlicePresetFromID(0);
-                    ApplicationWidget.Instance.EditSlicePresetsWindow.BringToFront();
-                }                
+				if (filterTag == "material") 
+				{
+					if(ApplicationWidget.Instance.EditMaterialPresetsWindow == null)
+                	{
+						ApplicationWidget.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
+						ApplicationWidget.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditMaterialPresetsWindow = null; };
+                	}
+               		 else
+                	{
+						ApplicationWidget.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(0);
+						ApplicationWidget.Instance.EditMaterialPresetsWindow.BringToFront();
+                	}       
+				}
+				if(filterTag == "quality")
+				{
+					if(ApplicationWidget.Instance.EditQualityPresetsWindow == null)
+					{
+						ApplicationWidget.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
+						ApplicationWidget.Instance.EditQualityPresetsWindow.Closed +=(popupWindowSender, popupWindowSenderE) => {ApplicationWidget.Instance.EditQualityPresetsWindow = null; };
+					}
+					else
+					{
+						ApplicationWidget.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(0);
+						ApplicationWidget.Instance.EditQualityPresetsWindow.BringToFront();
+					}
+				}
             });
         }
 

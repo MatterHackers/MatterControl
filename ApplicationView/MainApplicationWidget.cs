@@ -56,7 +56,8 @@ namespace MatterHackers.MatterControl
         public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
         public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 
-        public SlicePresetsWindow EditSlicePresetsWindow { get; set;} 
+		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
+		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
 
         event EventHandler unregisterEvents;
 
