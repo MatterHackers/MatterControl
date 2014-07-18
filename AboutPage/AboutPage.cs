@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 			buttonRowContainer.Padding = new BorderDouble(0, 3);
 			AddChild(buttonRowContainer);
 
-			Button cancelButton = textImageButtonFactory.Generate("Cancel");
+			Button cancelButton = textImageButtonFactory.Generate("Close");
 			cancelButton.Click += (sender , e) => {CancelButton_Click();};
 			buttonRowContainer.AddChild(new HorizontalSpacer());
 			buttonRowContainer.AddChild(cancelButton);
