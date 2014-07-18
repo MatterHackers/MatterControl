@@ -447,9 +447,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 CheckBox showGrid = new CheckBox(LocalizedString.Get("Show Grid"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 showGrid.Checked = gcodeViewWidget.RenderGrid;
+                meshViewerWidget.RenderBed = showGrid.Checked;
                 showGrid.CheckedStateChanged += (sender, e) =>
                 {
                     gcodeViewWidget.RenderGrid = showGrid.Checked;
+                    meshViewerWidget.RenderBed = showGrid.Checked;
                 };
                 layerInfoContainer.AddChild(showGrid);
             }
@@ -957,6 +959,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             base.OnDraw(graphics2D);
         }
-
     }
 }

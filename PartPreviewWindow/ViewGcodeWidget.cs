@@ -52,7 +52,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ProgressChangedEventHandler LoadingProgressChanged;
 
-
 		public bool RenderGrid 
 		{
 			get { return (UserSettings.Instance.get("GcodeViewerRenderGrid") == "True"); }
@@ -69,7 +68,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ETransformState TransformState { get; set; }
 
-
 		public bool RenderMoves
 		{
 			get { return (UserSettings.Instance.get("GcodeViewerRenderMoves") == "True"); }
@@ -79,7 +77,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Invalidate();
 			}
 		}
-
 
 		public bool RenderRetractions
 		{
@@ -231,17 +228,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			SetGCodeAfterLoad((GCodeFile)e.Result);
-
-			if(DoneLoading != null)
-			{
-				DoneLoading(this, null);
-			}
-		}
-
-		void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		void initialLoading_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			if (LoadingProgressChanged != null)
 			{
@@ -249,7 +236,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		PathStorage grid = new PathStorage();
+        void initialLoading_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            SetGCodeAfterLoad((GCodeFile)e.Result);
+
+            backgroundWorker = new BackgroundWorker();
+            backgroundWorker.WorkerReportsProgress = true;
+            backgroundWorker.WorkerSupportsCancellation = true;
+
+            backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(postLoadInitialization_ProgressChanged);
+            backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(postLoadInitialization_RunWorkerCompleted);
+
+            backgroundWorker.DoWork += new DoWorkEventHandler(DoPostLoadInitialization);
+
+            gCodeRenderer = new GCodeRenderer(loadedGCode);
+            backgroundWorker.RunWorkerAsync(gCodeRenderer);
+        }
+
+        public static void DoPostLoadInitialization(object sender, DoWorkEventArgs doWorkEventArgs)
+        {
+            GCodeRenderer gCodeRenderer = (GCodeRenderer)doWorkEventArgs.Argument;
+            gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
+        }
+
+        void postLoadInitialization_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (LoadingProgressChanged != null)
+            {
+                LoadingProgressChanged(this, e);
+            }
+        }
+
+        void postLoadInitialization_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (DoneLoading != null)
+            {
+                DoneLoading(this, null);
+            }
+        }
+
+       
+        PathStorage grid = new PathStorage();
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (loadedGCode != null)
@@ -404,8 +431,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			backgroundWorker.WorkerReportsProgress = true;
 			backgroundWorker.WorkerSupportsCancellation = true;
 
-			backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker_ProgressChanged);
-			backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
+			backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(initialLoading_ProgressChanged);
+			backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(initialLoading_RunWorkerCompleted);
 
 			loadedGCode = null;
 			GCodeFile.LoadInBackground(backgroundWorker, gcodePathAndFileName);
@@ -444,7 +471,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void CenterPartInView()
 		{
-			gCodeRenderer = new GCodeRenderer(loadedGCode);
 			RectangleDouble partBounds = loadedGCode.GetBounds();
 			Vector2 weightedCenter = loadedGCode.GetWeightedCenter();
 
