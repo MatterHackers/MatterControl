@@ -139,6 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerModelSelector.HAnchor = HAnchor.ParentLeftRight;
             printerModelSelector.Margin = elementMargin;
             printerModelSelector.ModelDropList.SelectionChanged += new EventHandler(ModelDropList_SelectionChanged);
+			printerModelSelector.SelectIfOnlyOneModel();
 
 			printerModelError = new TextWidget(LocalizedString.Get("Select the printer model"), 0, 0, 10);
 			printerModelError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -429,7 +430,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 UiThread.RunOnIdle(MoveToNextWidget);
             }
         }
-
+			
         void LoadSlicePresets()
         {
 
