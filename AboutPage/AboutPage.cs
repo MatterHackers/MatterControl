@@ -43,6 +43,8 @@ namespace MatterHackers.MatterControl
 {
     public class AboutWindow : SystemWindow
     {
+		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+
         public AboutWindow()
 			: base(500, 640)
         {
@@ -51,9 +53,30 @@ namespace MatterHackers.MatterControl
             aboutPage.AnchorAll();
             this.AddChild(aboutPage);
 
+			FlowLayoutWidget buttonRowContainer = new FlowLayoutWidget();
+			buttonRowContainer.HAnchor = HAnchor.ParentLeftRight;
+			buttonRowContainer.Padding = new BorderDouble(0, 3);
+			AddChild(buttonRowContainer);
+
+			Button cancelButton = textImageButtonFactory.Generate("Cancel");
+			cancelButton.Click += (sender , e) => {CancelButton_Click();};
+			buttonRowContainer.AddChild(new HorizontalSpacer());
+			buttonRowContainer.AddChild(cancelButton);
+
+
             this.Title = LocalizedString.Get("About MatterControl");
             this.ShowAsSystemWindow();
+
+
         }
+
+		private void CancelButton_Click()
+		{
+			UiThread.RunOnIdle((state) =>
+				{
+					aboutWindow.Close();
+				});
+		}
 
         static AboutWindow aboutWindow = null;
         public static void Show()
