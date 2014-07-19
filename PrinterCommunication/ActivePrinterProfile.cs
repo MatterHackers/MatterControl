@@ -31,7 +31,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.Agg.UI;
+using MatterHackers.Agg;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
