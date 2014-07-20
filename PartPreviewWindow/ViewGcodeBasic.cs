@@ -599,7 +599,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             return gcodeViewWidget;
         }
 
-        bool hookedParentKeyDown = false;
+        GuiWidget widgetThatHasKeyDownHooked = null;
         public override void OnDraw(Graphics2D graphics2D)
         {
             if (syncToPrint != null && syncToPrint.Checked)
@@ -607,7 +607,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 SetAnimationPosition();
             }
 
-            if (!hookedParentKeyDown)
+            if (widgetThatHasKeyDownHooked == null)
             {
                 GuiWidget parent = Parent;
                 while (parent as SystemWindow == null)
@@ -615,7 +615,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     parent = parent.Parent;
                 }
                 parent.KeyDown += Parent_KeyDown;
-                hookedParentKeyDown = true;
+                widgetThatHasKeyDownHooked = parent;
             }
             if (partToStartLoadingOnFirstDraw != null)
             {
@@ -792,14 +792,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             displayOptionsContainer.Visible = expandDisplayOptions.Checked;
         }
 
-        public override void OnClosing(out bool cancelClose)
+        public override void OnClosed(EventArgs e)
         {
-            GuiWidget parent = Parent;
-            while (parent as SystemWindow == null)
+            if (widgetThatHasKeyDownHooked != null)
             {
-                parent = parent.Parent;
+                widgetThatHasKeyDownHooked.KeyDown -= Parent_KeyDown;
             }
-            parent.KeyDown -= Parent_KeyDown;
 
             if (unregisterEvents != null)
             {
@@ -816,7 +814,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
             }
 
-            base.OnClosing(out cancelClose);
+            base.OnClosed(e);
         }
 
         void generateButton_Click(object sender, MouseEventArgs mouseEvent)

@@ -794,10 +794,5 @@ namespace MatterHackers.MatterControl
         {
             PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
         }
-
-        public override void OnClosing(out bool CancelClose)
-        {
-            base.OnClosing(out CancelClose);
-        }
     }
 }

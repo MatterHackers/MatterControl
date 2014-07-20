@@ -897,10 +897,5 @@ namespace MatterHackers.MatterControl
                 printLevelingStatusLabel.Text = LocalizedString.Get("Automatic Print Leveling (disabled)");
 			}
 		}
-
-        public override void OnClosing(out bool CancelClose)
-        {
-            base.OnClosing(out CancelClose);
-        }
     }
 }
