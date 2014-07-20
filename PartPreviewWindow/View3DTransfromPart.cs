@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 string progressFindPartsLabel = LocalizedString.Get("Finding Parts");
                 string progressFindPartsLabelFull = "{0}:".FormatWith(progressFindPartsLabel);
 
-                processingProgressControl = new ProgressControl(progressFindPartsLabelFull);
+                processingProgressControl = new ProgressControl(progressFindPartsLabelFull, ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor);
                 processingProgressControl.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 editToolBar.AddChild(processingProgressControl);
                 editToolBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;

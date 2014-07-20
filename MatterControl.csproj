@@ -141,7 +141,6 @@
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreviewWidget.cs" />
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
-    <Compile Include="PartPreviewWindow\ProgressControl.cs" />
     <Compile Include="PartPreviewWindow\View3DTransfromPart.cs" />
     <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
       <SubType>Code</SubType>
