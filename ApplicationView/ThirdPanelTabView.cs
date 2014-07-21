@@ -107,12 +107,6 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public override void OnClosing(out bool cancelClose)
-        {
-            lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
-            base.OnClosing(out cancelClose);
-        }
-
         private TabControl CreateNewAdvancedControls(ButtonBase.ButtonEventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
         {
             TabControl advancedControls = new TabControl();

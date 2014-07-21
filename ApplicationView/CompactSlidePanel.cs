@@ -124,13 +124,6 @@ namespace MatterHackers.MatterControl
             SetPanelIndexImediate(lastPanelIndexBeforeReload);
         }
 
-        public override void OnClosing(out bool cancelClose)
-        {
-            lastPanelIndexBeforeReload = PanelIndex;
-            base.OnClosing(out cancelClose);
-        }
-
-
         void SaveCurrentPanelIndex(object sender, EventArgs e)
         {
             lastPanelIndexBeforeReload = PanelIndex;
