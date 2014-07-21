@@ -256,13 +256,14 @@ namespace MatterHackers.MatterControl
         public override void OnDraw(Graphics2D graphics2D)
         {
             totalDrawTime.Restart();
+            GuiWidget.DrawCount = 0;
             base.OnDraw(graphics2D);
             totalDrawTime.Stop();
 
             if (ShowMemoryUsed)
             {
                 long memory = GC.GetTotalMemory(false);
-                this.Title = string.Format("Allocated = {0:n0} : {1}ms, d{2} Size = {3}x{4}", memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height);
+                this.Title = "Allocated = {0:n0} : {1}ms, d{2} Size = {3}x{4}, onIdle = {5}, drawCount = {6}".FormatWith(memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height, UiThread.Count, GuiWidget.DrawCount);
                 if (DoCGCollectEveryDraw)
                 {
                     GC.Collect();
