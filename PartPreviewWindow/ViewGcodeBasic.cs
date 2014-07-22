@@ -719,6 +719,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 gcodeViewWidget.ActiveLayerIndex = gcodeViewWidget.ActiveLayerIndex - 1;
 
                 BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
+
+                meshViewerWidget.partProcessingInfo.Visible = false;
             }
         }
 
