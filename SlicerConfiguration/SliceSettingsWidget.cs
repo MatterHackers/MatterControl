@@ -682,6 +682,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     SaveSetting(settingData.SlicerConfigName, "0");
                                     // Now hide all of the settings that this control is associated with.
                                 }
+									ApplicationWidget.Instance.ReloadAll(this, null); 
                             };
                             leftToRightLayout.AddChild(checkBoxWidget);
                         }
