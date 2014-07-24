@@ -109,6 +109,7 @@
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
+    <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
     <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
