@@ -479,8 +479,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             dataTypeInfo.Margin = new BorderDouble(5, 0);
             return dataTypeInfo;
         }
+			
 
-        private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth)
+		List<string> settingToReload = new List<string>() {"bed_size", "print_center", "build_height", "bed_shape"};
+
+		private void ResetIfNeeded(OrganizerSettingsData settingData)
+		{
+			if (settingToReload.Contains(settingData.SlicerConfigName))
+			{
+				ApplicationWidget.Instance.ReloadAll(null, null);
+			}
+		}
+
+		private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth)
         {
             GuiWidget container = new GuiWidget();            
             FlowLayoutWidget leftToRightLayout = new FlowLayoutWidget();
@@ -491,14 +502,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             RGBA_Bytes qualityOverlayColor = new RGBA_Bytes(255, 255, 0, 40);
             RGBA_Bytes materialOverlayColor = new RGBA_Bytes(255, 127, 0, 40);
 
+
             if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
             {
                 int intEditWidth = 60;
                 int doubleEditWidth = 60;
                 int vectorXYEditWidth = 60;
                 int multiLineEditHeight = 60;
-
-                              
 
                 string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
                 leftToRightLayout.Margin = new BorderDouble(0, 2);
@@ -559,10 +569,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
 								{
 									SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
-									if(settingData.PresentationName == "Build Height")
-									{
-										ApplicationWidget.Instance.ReloadAll(null, null);
-									}
+									ResetIfNeeded(settingData);
 								};
                             leftToRightLayout.AddChild(doubleEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
@@ -666,10 +673,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 {
                                     MenuItem menuItem = ((MenuItem)sender);
                                     SaveSetting(settingData.SlicerConfigName, menuItem.Text);
-										if(settingData.PresentationName == "Bed Shape")//menuItem.Text == "circular" || menuItem.Text == "rectangular"
-										{
-											ApplicationWidget.Instance.ReloadAll(null, null);
-										}
+									ResetIfNeeded(settingData);
 											
                                 };
                             }
@@ -715,14 +719,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 double currentYValue = 0;
                                 double.TryParse(xyValueStrings[1], out currentYValue);
                                 MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
-                           
+   								
 								xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
 								{
 									SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-									if(settingData.PresentationName == "Bed Size" || settingData.PresentationName == "Print Center")
-									{
-											ApplicationWidget.Instance.ReloadAll(null, null); 
-									}	
+									ResetIfNeeded(settingData);
 								};
 
                                 leftToRightLayout.AddChild(xEditWidget);
@@ -730,15 +731,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 xText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                                 xText.Margin = new BorderDouble(5, 0);
                                 leftToRightLayout.AddChild(xText);
-                         
 
                                 yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
 									{
 										SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-										if(settingData.PresentationName == "Bed Size" || settingData.PresentationName == "Print Center")
-										{
-											ApplicationWidget.Instance.ReloadAll(null, null); 
-										}
+										ResetIfNeeded(settingData);
 									};
                                 leftToRightLayout.AddChild(yEditWidget);
                                 TextWidget yText = new TextWidget("y");
