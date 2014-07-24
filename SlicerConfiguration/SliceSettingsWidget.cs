@@ -561,7 +561,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
 									if(settingData.PresentationName == "Build Height")
 									{
-										ApplicationWidget.Instance.ReloadAll(this, null);
+										ApplicationWidget.Instance.ReloadAll(null, null);
 									}
 								};
                             leftToRightLayout.AddChild(doubleEditWidget);
@@ -668,7 +668,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     SaveSetting(settingData.SlicerConfigName, menuItem.Text);
 										if(settingData.PresentationName == "Bed Shape")//menuItem.Text == "circular" || menuItem.Text == "rectangular"
 										{
-											ApplicationWidget.Instance.ReloadAll(this, null);
+											ApplicationWidget.Instance.ReloadAll(null, null);
 										}
 											
                                 };
