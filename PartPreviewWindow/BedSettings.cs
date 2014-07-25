@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
         BedSettings()
         {
+            //File.WriteAllText("test.json", Newtonsoft.Json.JsonConvert.SerializeObject(this));
         }
     }
 }
