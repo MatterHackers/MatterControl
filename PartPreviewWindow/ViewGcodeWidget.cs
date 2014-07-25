@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (RenderGrid)
 				{
-					graphics2D.Render(stroke, RGBA_Bytes.LightGray);
+                    graphics2D.Render(stroke, new RGBA_Bytes(190, 190, 190, 255));
 				}
 
 				RenderType renderType = RenderType.Extrusions;
