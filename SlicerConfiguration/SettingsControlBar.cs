@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             saveButton.VAnchor = VAnchor.ParentTop;
             saveButton.Visible = false;
             saveButton.Margin = new BorderDouble(0, 0, 0, 10);
-            saveButton.Click += new ButtonBase.ButtonEventHandler(saveButton_Click);
+			saveButton.Click += new ButtonBase.ButtonEventHandler(saveButton_Click);
 
 			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert"));
             revertbutton.VAnchor = VAnchor.ParentTop;
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsStatusDescription.Text = string.Format("{0}", settingsLayerDescription);
             
             if (ActiveSliceSettings.Instance.HasUncommittedChanges)
-            {                
+            {   
                 this.saveButton.Visible = true;
                 this.revertbutton.Visible = true;                
                 unsavedChangesIndicator.Visible = true;
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 unsavedChangesIndicator.Visible = false;
             }         
         }
-
+			
         void saveButton_Click(object sender, MouseEventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.CommitChanges();

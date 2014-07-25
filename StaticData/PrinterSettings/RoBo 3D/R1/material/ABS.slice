@@ -1,8 +1,8 @@
-bed_temperature = 90
+bed_temperature = 75
 disable_fan_first_layers = 0
 fan_always_on = 0
-first_layer_bed_temperature = 90
+first_layer_bed_temperature = 75
 first_layer_temperature = 225
 retract_length = 1
-temperature = 215
+temperature = 225
 retract_speed = 30

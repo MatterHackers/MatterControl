@@ -93,10 +93,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             //Set hash code back to 0
             this.settingsHashCode = 0;
-
             SettingsChanged.CallEvents(this, null);
-        }
 
+        }
+			
         // private so that it can only be gotten through the Instance
         ActiveSliceSettings()
         {
