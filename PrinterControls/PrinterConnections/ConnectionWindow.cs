@@ -107,7 +107,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             GuiWidget chooseConnectionWidget = new ChooseConnectionWidget(this, this, this.editMode);
             this.RemoveAllChildren();
             this.AddChild(chooseConnectionWidget);
+
             this.Invalidate();
+
         }
 
 		private void DoChangeToEditPrinter(object state)
