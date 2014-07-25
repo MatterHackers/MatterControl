@@ -37,6 +37,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
+using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl
 {
@@ -126,6 +127,7 @@ namespace MatterHackers.MatterControl
                     ValidateMaterialSettings();
                     ValidateQualitySettings();
 
+					BedSettings.SetMakeAndModel(ActivePrinter.Make, ActivePrinter.Model);
                     globalInstance.OnActivePrinterChanged(null);
                 }
             }

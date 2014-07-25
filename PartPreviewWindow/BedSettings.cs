@@ -52,9 +52,16 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
         public static void SetMakeAndModel(string make, string model)
         {
-            string pathToBedSettings = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "BedSettings", "Settings.json");
-            string BedSettings = File.ReadAllText(pathToBedSettings);
-            instance = (BedSettings)Newtonsoft.Json.JsonConvert.DeserializeObject<BedSettings>(BedSettings);
+			string pathToBedSettings = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "BedSettings.json");
+			if (File.Exists(pathToBedSettings))
+			{
+				string content = File.ReadAllText(pathToBedSettings);
+				instance = (BedSettings)Newtonsoft.Json.JsonConvert.DeserializeObject<BedSettings>(content);
+			}
+			else
+			{
+				instance = new BedSettings();
+			}
         }
 
         public RectangleInt ActualBedInImage;
