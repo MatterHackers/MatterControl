@@ -96,10 +96,10 @@ namespace MatterHackers.MatterControl
             UiThread.RunOnIdle(ReloadSliceSettings);
         }
 
-        static SliceSettingsWidget.UiState sliceSettingsUiState = new SliceSettingsWidget.UiState();
+        static SliceSettingsWidgetUiState sliceSettingsUiState = new SliceSettingsWidgetUiState();
         void SaveCurrentPanelIndex(object sender, EventArgs e)
         {
-            sliceSettingsUiState = new SliceSettingsWidget.UiState(sliceSettingsWidget);
+            sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
 
             if (advancedControls2.Children.Count > 0)
             {

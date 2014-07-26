@@ -56,33 +56,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public PartPreview3DWidget()
         {
+            SliceSettingsWidget.PartPreviewSettingsChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
         }
 
-        public override void OnParentChanged(EventArgs e)
+        void RecreateBedAndPartPosition(object sender, EventArgs e)
         {
-            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, changeEventArgs) =>
+            double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+
+            UiThread.RunOnIdle((state) =>
             {
-                double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-
-                UiThread.RunOnIdle((state) =>
-                {
-#if false
-            "bed_size", 
-            "print_center", 
-            "build_height", 
-            "bed_shape", 
-            "center_part_on_bed",
-#endif
-                    meshViewerWidget.CreatePrintBed(
-                        new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                        ActiveSliceSettings.Instance.BedCenter,
-                        ActiveSliceSettings.Instance.BedShape);
-                });
-            }, ref unregisterEvents);
-
-            base.OnParentChanged(e);
+                meshViewerWidget.CreatePrintBed(
+                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                    ActiveSliceSettings.Instance.BedCenter,
+                    ActiveSliceSettings.Instance.BedShape);
+            });
         }
-
+        
         public override void OnClosed(EventArgs e)
         {
             if (unregisterEvents != null)

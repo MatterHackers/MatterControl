@@ -132,6 +132,7 @@
     <Compile Include="PrintQueue\QueueData.cs" />
     <Compile Include="SettingsManagement\OemSettings.cs" />
     <Compile Include="SettingsManagement\PrinterSettings.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingsWidgetUiState.cs" />
     <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetDetailWidget.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetListWidget.cs" />

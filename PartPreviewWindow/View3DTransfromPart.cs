@@ -458,8 +458,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (windowType == WindowType.Embeded)
             {
                 PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
+                if (windowType == WindowType.Embeded)
+                {
+                    // make sure we lock the controls if we are printing or paused
+                    switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+                    {
+                        case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                        case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+                            LockEditControls();
+                            break;
+                    }
+                }
             }
-            SetEditControlsBasedOnPrinterState(this, null);
         }
 
         void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
@@ -477,10 +487,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         UnlockEditControls();
                         break;
                 }
-            }
-            else
-            {
-                UnlockEditControls();
             }
         }
 
@@ -826,10 +832,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        bool wasInEditMode = false;
+        bool viewIsInEditModePreLock = false;
         void LockEditControls()
         {
-            wasInEditMode = doEdittingButtonsContainer.Visible;
+            viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
             enterEditButtonsContainer.Visible = false;
             doEdittingButtonsContainer.Visible = false;
             buttonRightPanelDisabledCover.Visible = true;
@@ -845,7 +851,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonRightPanelDisabledCover.Visible = false;
             processingProgressControl.Visible = false;
 
-            if (wasInEditMode)
+            if (viewIsInEditModePreLock)
             {
                 if (!enterEditButtonsContainer.Visible)
                 {
@@ -886,7 +892,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     processingProgressControl.Visible = true;
                     LockEditControls();
-                    wasInEditMode = true;
+                    viewIsInEditModePreLock = true;
 
                     BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
                     createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
@@ -1690,7 +1696,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
             expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
         }
-
 
         bool partSelectButtonWasClicked = false;
         private void MergeAndSavePartsToStl(PrintItemWrapper printItemWarpperToSwitchTo = null)

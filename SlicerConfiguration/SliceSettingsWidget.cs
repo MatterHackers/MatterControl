@@ -41,34 +41,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
     public class SliceSettingsWidget : GuiWidget
     {
+        static List<string> settingToReloadUiWhenChanged = new List<string>() 
+        {
+            "has_fan", 
+            "has_heated_bed", 
+            "has_sd_card_reader", 
+        };
+
+        static List<string> settingsRequiringPreviewUpdate = new List<string>() 
+        {
+            "bed_size", 
+            "print_center", 
+            "build_height", 
+            "bed_shape", 
+            "center_part_on_bed",
+        };
+
+        public static RootedObjectEventHandler PartPreviewSettingsChanged = new RootedObjectEventHandler();
+
         const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
         const string SliceSettingsLevelEntry = "SliceSettingsLevel";
         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-
-        public class UiState
-        {
-            public class WhichItem
-            {
-                public int index = 0;
-                public string name = "";
-            }
-
-            public WhichItem selectedCategory = new WhichItem();
-            public WhichItem selectedGroup = new WhichItem();
-
-            public UiState()
-            {
-            }
-
-            public UiState(SliceSettingsWidget settingsWidgetToCopyFrom)
-            {
-                if (settingsWidgetToCopyFrom != null)
-                {
-                    settingsWidgetToCopyFrom.CurrentlyActiveCategory(out selectedCategory.index, out selectedCategory.name);
-                    settingsWidgetToCopyFrom.CurrentlyActiveGroup(out selectedGroup.index, out selectedGroup.name);
-                }
-            }
-        }
 
         TabControl categoryTabs;
         GroupBox noConnectionMessageContainer;
@@ -76,7 +69,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         CheckBox showHelpBox;
         CheckBox showAllDetails;
 
-        public SliceSettingsWidget(UiState uiState)
+        public SliceSettingsWidget(SliceSettingsWidgetUiState uiState)
         {
             int minSettingNameWidth = 220;
             buttonFactory.FixedHeight = 20;
@@ -207,14 +200,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public string UserLevel
         {
-            get 
+            get
             {
                 if (showAllDetails.Checked)
                 {
                     return "Advanced";
                 }
 
-                return "Beginner"; 
+                return "Beginner";
             }
         }
 
@@ -246,7 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         void RebuildSlicerSettings(object sender, EventArgs e)
         {
             UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
-            if(showAllDetails.Checked)
+            if (showAllDetails.Checked)
             {
                 UserSettings.Instance.set(SliceSettingsLevelEntry, "Advanced");
             }
@@ -254,7 +247,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 UserSettings.Instance.set(SliceSettingsLevelEntry, "Beginner");
             }
-            
+
             CheckBox checkBox = sender as CheckBox;
             if (checkBox != null)
             {
@@ -319,7 +312,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         }
 
         int tabIndexForItem = 0;
-        private TabControl CreateSideTabsAndPages(int minSettingNameWidth, OrganizerCategory category, UiState uiState)
+        private TabControl CreateSideTabsAndPages(int minSettingNameWidth, OrganizerCategory category, SliceSettingsWidgetUiState uiState)
         {
             TabControl groupTabs = new TabControl(Orientation.Vertical);
             groupTabs.Margin = new BorderDouble(0, 0, 0, 5);
@@ -327,8 +320,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             foreach (OrganizerGroup group in category.GroupsList)
             {
                 tabIndexForItem = 0;
-				string groupTabLabel = LocalizedString.Get (group.Name);
-				TabPage groupTabPage = new TabPage(groupTabLabel);
+                string groupTabLabel = LocalizedString.Get(group.Name);
+                TabPage groupTabPage = new TabPage(groupTabLabel);
                 groupTabPage.HAnchor = HAnchor.ParentLeftRight;
 
                 SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, group.Name + " Tab", 14,
@@ -363,8 +356,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     if (addedSettingToSubGroup)
                     {
                         needToAddSubGroup = true;
-						string groupBoxLabel = LocalizedString.Get (subGroup.Name);
-						GroupBox groupBox = new GroupBox (groupBoxLabel);
+                        string groupBoxLabel = LocalizedString.Get(subGroup.Name);
+                        GroupBox groupBox = new GroupBox(groupBoxLabel);
                         groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.AddChild(topToBottomSettings);
@@ -380,7 +373,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     subGroupLayoutTopToBottom.VAnchor = VAnchor.FitToChildren;
                     subGroupLayoutTopToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                    
+
                     //subGroupLayoutTopToBottom.DebugShowBounds = true;
                     //scrollOnGroupTab.DebugShowBounds = true;
                     scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
@@ -408,7 +401,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             EnglishTextWrapping wrapper = new EnglishTextWrapping(helpPointSize);
             string[] wrappedText = wrapper.WrapText(settingInfo.HelpText, textRegionWidth - allText.Padding.Width);
-            foreach(string line in wrappedText)
+            foreach (string line in wrappedText)
             {
                 GuiWidget helpWidget = new TextWidget(line, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
                 helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
@@ -474,31 +467,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             string extraSettings = settingData.ExtraSettings;
             extraSettings = extraSettings.Replace("\\n", "\n");
-            TextWidget dataTypeInfo = new TextWidget(extraSettings, pointSize:10);
+            TextWidget dataTypeInfo = new TextWidget(extraSettings, pointSize: 10);
             dataTypeInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             dataTypeInfo.Margin = new BorderDouble(5, 0);
             return dataTypeInfo;
         }
 
-
-        List<string> settingToReloadUiWhenChanged = new List<string>() 
+        private void CallEventsOnSettingsChange(OrganizerSettingsData settingData)
         {
-            "has_fan", 
-            "has_heated_bed", 
-            "has_sd_card_reader", 
-        };
+            if (settingToReloadUiWhenChanged.Contains(settingData.SlicerConfigName))
+            {
+                ApplicationWidget.Instance.ReloadAll(null, null);
+            }
 
-        private void ReloadUiIfRequired(OrganizerSettingsData settingData)
-		{
-			if (settingToReloadUiWhenChanged.Contains(settingData.SlicerConfigName))
-			{
-				ApplicationWidget.Instance.ReloadAll(null, null);
-			}
-		}
+            if (settingsRequiringPreviewUpdate.Contains(settingData.SlicerConfigName))
+            {
+                PartPreviewSettingsChanged.CallEvents(this, null);
+            }
+        }
 
-		private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth)
+        private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth)
         {
-            GuiWidget container = new GuiWidget();            
+            GuiWidget container = new GuiWidget();
             FlowLayoutWidget leftToRightLayout = new FlowLayoutWidget();
 
             bool addQualityOverlay = false;
@@ -524,24 +514,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     string convertedNewLines = settingData.PresentationName.Replace("\\n ", "\n");
                     convertedNewLines = convertedNewLines.Replace("\\n", "\n");
-					convertedNewLines = LocalizedString.Get (convertedNewLines);
+                    convertedNewLines = LocalizedString.Get(convertedNewLines);
                     TextWidget settingName = new TextWidget(convertedNewLines);
                     settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
                     if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
                     {
-                        addMaterialOverlay = true; 
+                        addMaterialOverlay = true;
                     }
                     else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
                     {
                         addQualityOverlay = true;
                     }
-                    
+
                     settingName.Width = minSettingNameWidth;
                     //settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
                     leftToRightLayout.AddChild(settingName);
                 }
-                
+
                 switch (settingData.DataEditType)
                 {
                     case OrganizerSettingsData.DataEditTypes.INT:
@@ -549,7 +539,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             int currentValue = 0;
                             int.TryParse(sliceSettingValue, out currentValue);
                             MHNumberEdit intEditWidget = new MHNumberEdit(currentValue, pixelWidth: intEditWidth, tabIndex: tabIndexForItem++);
-                            intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString()); };
+                            intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+                            {
+                                SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+                                CallEventsOnSettingsChange(settingData);
+                            };
                             leftToRightLayout.AddChild(intEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
                         }
@@ -560,7 +554,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             double currentValue = 0;
                             double.TryParse(sliceSettingValue, out currentValue);
                             MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowNegatives: true, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
-                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString()); };
+                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+                            {
+                                SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+                                CallEventsOnSettingsChange(settingData);
+                            };
                             leftToRightLayout.AddChild(doubleEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
                         }
@@ -571,11 +569,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             double currentValue = 0;
                             double.TryParse(sliceSettingValue, out currentValue);
                             MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
-                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
-								{
-									SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
-									ReloadUiIfRequired(settingData);
-								};
+                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+                                {
+                                    SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+                                    CallEventsOnSettingsChange(settingData);
+                                };
                             leftToRightLayout.AddChild(doubleEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
                         }
@@ -586,7 +584,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             double currentValue = 0;
                             double.TryParse(sliceSettingValue, out currentValue);
                             MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, allowNegatives: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
-                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString()); };
+                            doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+                            {
+                                SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+                                CallEventsOnSettingsChange(settingData);
+                            };
                             leftToRightLayout.AddChild(doubleEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
                         }
@@ -601,7 +603,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 string text = textEditWidget.Text;
                                 text = text.Trim();
                                 bool isPercent = text.Contains("%");
-                                if(isPercent)
+                                if (isPercent)
                                 {
                                     text = text.Substring(0, text.IndexOf("%"));
                                 }
@@ -614,6 +616,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 }
                                 textEditWidget.Text = text;
                                 SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
+                                CallEventsOnSettingsChange(settingData);
                             };
 
                             leftToRightLayout.AddChild(stringEdit);
@@ -637,6 +640,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 {
                                     SaveSetting(settingData.SlicerConfigName, "0");
                                 }
+                                CallEventsOnSettingsChange(settingData);
                             };
                             leftToRightLayout.AddChild(checkBoxWidget);
                         }
@@ -645,7 +649,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     case OrganizerSettingsData.DataEditTypes.STRING:
                         {
                             MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++);
-                            stringEdit.ActualTextEditWidget.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text); };
+                            stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
+                            {
+                                SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text);
+                                CallEventsOnSettingsChange(settingData);
+                            };
                             leftToRightLayout.AddChild(stringEdit);
                         }
                         break;
@@ -654,7 +662,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         {
                             string convertedNewLines = sliceSettingValue.Replace("\\n", "\n");
                             MHTextEditWidget stringEdit = new MHTextEditWidget(convertedNewLines, pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndexForItem++);
-                            stringEdit.ActualTextEditWidget.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text.Replace("\n", "\\n")); };
+                            stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
+                            {
+                                SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text.Replace("\n", "\\n"));
+                                CallEventsOnSettingsChange(settingData);
+                            };
                             leftToRightLayout.AddChild(stringEdit);
                         }
                         break;
@@ -663,9 +675,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         {
                             StyledDropDownList selectableOptions = new StyledDropDownList("None", maxHeight: 200);
                             selectableOptions.Margin = new BorderDouble();
-                            
+
                             string[] listItems = settingData.ExtraSettings.Split(',');
-								
+
                             foreach (string listItem in listItems)
                             {
                                 MenuItem newItem = selectableOptions.AddItem(listItem);
@@ -678,7 +690,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 {
                                     MenuItem menuItem = ((MenuItem)sender);
                                     SaveSetting(settingData.SlicerConfigName, menuItem.Text);
-									ReloadUiIfRequired(settingData);
+                                    CallEventsOnSettingsChange(settingData);
                                 };
                             }
                             leftToRightLayout.AddChild(selectableOptions);
@@ -703,7 +715,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     SaveSetting(settingData.SlicerConfigName, "0");
                                     // Now hide all of the settings that this control is associated with.
                                 }
-                                ReloadUiIfRequired(settingData);
+                                CallEventsOnSettingsChange(settingData);
                             };
                             leftToRightLayout.AddChild(checkBoxWidget);
                         }
@@ -716,37 +728,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             {
                                 xyValueStrings = new string[] { "0", "0" };
                             }
-                                double currentXValue = 0;
-                                double.TryParse(xyValueStrings[0], out currentXValue);
-                                MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+                            double currentXValue = 0;
+                            double.TryParse(xyValueStrings[0], out currentXValue);
+                            MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
 
-                                double currentYValue = 0;
-                                double.TryParse(xyValueStrings[1], out currentYValue);
-                                MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
-   								
-								xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
-								{
-									SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-									ReloadUiIfRequired(settingData);
-								};
+                            double currentYValue = 0;
+                            double.TryParse(xyValueStrings[1], out currentYValue);
+                            MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
 
-                                leftToRightLayout.AddChild(xEditWidget);
-                                TextWidget xText = new TextWidget("x");
-                                xText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                                xText.Margin = new BorderDouble(5, 0);
-                                leftToRightLayout.AddChild(xText);
+                            xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+                            {
+                                SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
+                                CallEventsOnSettingsChange(settingData);
+                            };
 
-                                yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
-									{
-										SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-										ReloadUiIfRequired(settingData);
-									};
-                                leftToRightLayout.AddChild(yEditWidget);
-                                TextWidget yText = new TextWidget("y");
-                                yText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                                yText.Margin = new BorderDouble(5, 0);
-                                leftToRightLayout.AddChild(yText);
-                           
+                            leftToRightLayout.AddChild(xEditWidget);
+                            TextWidget xText = new TextWidget("x");
+                            xText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                            xText.Margin = new BorderDouble(5, 0);
+                            leftToRightLayout.AddChild(xText);
+
+                            yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+                                {
+                                    SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
+                                    CallEventsOnSettingsChange(settingData);
+                                };
+                            leftToRightLayout.AddChild(yEditWidget);
+                            TextWidget yText = new TextWidget("y");
+                            yText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                            yText.Margin = new BorderDouble(5, 0);
+                            leftToRightLayout.AddChild(yText);
+
                         }
                         break;
 
@@ -765,7 +777,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             double.TryParse(xyValueStrings[1], out currentYValue);
                             MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
                             {
-                                xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString()); };
+                                xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+                                {
+                                    SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
+                                    CallEventsOnSettingsChange(settingData);
+                                };
                                 leftToRightLayout.AddChild(xEditWidget);
                                 TextWidget xText = new TextWidget("x");
                                 xText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -773,7 +789,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 leftToRightLayout.AddChild(xText);
                             }
                             {
-                                yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => { SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString()); };
+                                yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+                                {
+                                    SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
+                                    CallEventsOnSettingsChange(settingData);
+                                };
                                 leftToRightLayout.AddChild(yEditWidget);
                                 TextWidget yText = new TextWidget("y");
                                 yText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -806,7 +826,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             container.AddChild(leftToRightLayout);
 
             if (addQualityOverlay || addMaterialOverlay)
-            {              
+            {
                 SettingPresetOverlay overlay = new SettingPresetOverlay();
                 overlay.HAnchor = HAnchor.ParentLeftRight;
                 overlay.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
@@ -828,15 +848,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     clickToEdit.OverlayColor = qualityOverlayColor;
                     editButton.Click += (sender, e) =>
                     {
-						if (ApplicationWidget.Instance.EditQualityPresetsWindow == null)
+                        if (ApplicationWidget.Instance.EditQualityPresetsWindow == null)
                         {
-							ApplicationWidget.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-							ApplicationWidget.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditQualityPresetsWindow = null; };
+                            ApplicationWidget.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
+                            ApplicationWidget.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditQualityPresetsWindow = null; };
                         }
                         else
                         {
-							ApplicationWidget.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-							ApplicationWidget.Instance.EditQualityPresetsWindow.BringToFront();
+                            ApplicationWidget.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
+                            ApplicationWidget.Instance.EditQualityPresetsWindow.BringToFront();
                         }
                     };
                 }
@@ -845,19 +865,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     overlay.OverlayColor = materialOverlayColor;
                     clickToEdit.OverlayColor = materialOverlayColor;
                     editButton.Click += (sender, e) =>
-                    {                        
-						if (ApplicationWidget.Instance.EditMaterialPresetsWindow == null)
+                    {
+                        if (ApplicationWidget.Instance.EditMaterialPresetsWindow == null)
                         {
-							ApplicationWidget.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
-							ApplicationWidget.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditMaterialPresetsWindow = null; };
+                            ApplicationWidget.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
+                            ApplicationWidget.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditMaterialPresetsWindow = null; };
                         }
                         else
                         {
-							ApplicationWidget.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
-							ApplicationWidget.Instance.EditMaterialPresetsWindow.BringToFront();
-                        }                        
+                            ApplicationWidget.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
+                            ApplicationWidget.Instance.EditMaterialPresetsWindow.BringToFront();
+                        }
                     };
-                }                
+                }
 
                 container.MouseEnterBounds += (sender, e) =>
                 {
@@ -878,7 +898,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 };
 
                 container.AddChild(overlay);
-                container.AddChild(clickToEdit);    
+                container.AddChild(clickToEdit);
             }
 
 
@@ -901,7 +921,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         }
 
         public override void OnDraw(Graphics2D graphics2D)
-        {            
+        {
             base.OnDraw(graphics2D);
         }
     }
@@ -912,7 +932,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public override void OnDraw(Graphics2D graphics2D)
         {
-            
+
             RoundedRect rect = new RoundedRect(LocalBounds, 0);
             graphics2D.Render(rect, new RGBA_Bytes(OverlayColor, 220));
             base.OnDraw(graphics2D);
@@ -923,13 +943,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     class SettingPresetOverlay : GuiWidget
     {
         public RGBA_Bytes OverlayColor;
-        
+
         public override void OnDraw(Graphics2D graphics2D)
         {
             base.OnDraw(graphics2D);
-            RoundedRect rect = new RoundedRect(LocalBounds,0);
-            graphics2D.Render(rect,new RGBA_Bytes(OverlayColor, 50));
-            graphics2D.Render(new Stroke(rect, 3),OverlayColor);
+            RoundedRect rect = new RoundedRect(LocalBounds, 0);
+            graphics2D.Render(rect, new RGBA_Bytes(OverlayColor, 50));
+            graphics2D.Render(new Stroke(rect, 3), OverlayColor);
         }
     }
 
