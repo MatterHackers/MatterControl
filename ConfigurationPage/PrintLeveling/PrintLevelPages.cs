@@ -70,9 +70,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         public override void PageIsBecomingActive()
         {
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            levelingData.sampledPosition0 = probePositions[0].position;
-            levelingData.sampledPosition1 = probePositions[1].position;
-            levelingData.sampledPosition2 = probePositions[2].position;
+            levelingData.sampledPosition0 = probePositions[0].position - paperWidth;
+            levelingData.sampledPosition1 = probePositions[1].position - paperWidth;
+            levelingData.sampledPosition2 = probePositions[2].position - paperWidth;
 
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
             // The first point is the user assisted offset to the bed
             Vector3 userBedSample0 = probePositions[0].position;
-            // The second point sample offset at the limit switch
+            // The first point sample offset at the limit switch
             Vector3 probeOffset0 = probePositions[1].position; // this z should be 0
 
             // right side of printer
@@ -167,12 +167,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             // auto back probe
             Vector3 probeOffset2 = probePositions[4].position;
 
-            levelingData.sampledPosition0 = userBedSample0;
-            levelingData.sampledPosition1 = userBedSample1;
-            levelingData.sampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0;
+            levelingData.sampledPosition0 = userBedSample0 - paperWidth;
+            levelingData.sampledPosition1 = userBedSample1 - paperWidth;
+            levelingData.sampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0 - paperWidth;
 
-            levelingData.probeOffset0 = probeOffset0;
-            levelingData.probeOffset1 = probeOffset1;
+            levelingData.probeOffset0 = probeOffset0 - paperWidth;
+            levelingData.probeOffset1 = probeOffset1 - paperWidth;
 
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
             base.PageIsBecomingActive();
