@@ -60,12 +60,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
             }
 
-            public UiState(SliceSettingsWidget settingsToCopy)
+            public UiState(SliceSettingsWidget settingsWidgetToCopyFrom)
             {
-                if (settingsToCopy != null)
+                if (settingsWidgetToCopyFrom != null)
                 {
-                    settingsToCopy.CurrentlyActiveCategory(out selectedCategory.index, out selectedCategory.name);
-                    settingsToCopy.CurrentlyActiveGroup(out selectedGroup.index, out selectedGroup.name);
+                    settingsWidgetToCopyFrom.CurrentlyActiveCategory(out selectedCategory.index, out selectedCategory.name);
+                    settingsWidgetToCopyFrom.CurrentlyActiveGroup(out selectedGroup.index, out selectedGroup.name);
                 }
             }
         }
@@ -479,13 +479,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             dataTypeInfo.Margin = new BorderDouble(5, 0);
             return dataTypeInfo;
         }
-			
 
-		List<string> settingToReload = new List<string>() {"bed_size", "print_center", "build_height", "bed_shape"};
 
-		private void ResetIfNeeded(OrganizerSettingsData settingData)
+        List<string> settingToReloadUiWhenChanged = new List<string>() 
+        {
+            "has_fan", 
+            "has_heated_bed", 
+            "has_sd_card_reader", 
+        };
+
+        private void ReloadUiIfRequired(OrganizerSettingsData settingData)
 		{
-			if (settingToReload.Contains(settingData.SlicerConfigName))
+			if (settingToReloadUiWhenChanged.Contains(settingData.SlicerConfigName))
 			{
 				ApplicationWidget.Instance.ReloadAll(null, null);
 			}
@@ -569,7 +574,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
 								{
 									SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
-									ResetIfNeeded(settingData);
+									ReloadUiIfRequired(settingData);
 								};
                             leftToRightLayout.AddChild(doubleEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
@@ -673,8 +678,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 {
                                     MenuItem menuItem = ((MenuItem)sender);
                                     SaveSetting(settingData.SlicerConfigName, menuItem.Text);
-									ResetIfNeeded(settingData);
-											
+									ReloadUiIfRequired(settingData);
                                 };
                             }
                             leftToRightLayout.AddChild(selectableOptions);
@@ -699,7 +703,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     SaveSetting(settingData.SlicerConfigName, "0");
                                     // Now hide all of the settings that this control is associated with.
                                 }
-									ApplicationWidget.Instance.ReloadAll(null, null); 
+                                ReloadUiIfRequired(settingData);
                             };
                             leftToRightLayout.AddChild(checkBoxWidget);
                         }
@@ -723,7 +727,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
 								{
 									SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-									ResetIfNeeded(settingData);
+									ReloadUiIfRequired(settingData);
 								};
 
                                 leftToRightLayout.AddChild(xEditWidget);
@@ -735,7 +739,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) => 
 									{
 										SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-										ResetIfNeeded(settingData);
+										ReloadUiIfRequired(settingData);
 									};
                                 leftToRightLayout.AddChild(yEditWidget);
                                 TextWidget yText = new TextWidget("y");

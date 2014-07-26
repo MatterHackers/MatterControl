@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Vector3 viewerVolume;
         MeshViewerWidget.BedShape bedShape;
 
-        public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, Vector2 bedCenter, bool addCloseButton)
+        public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, bool addCloseButton)
         {
             this.viewerVolume = viewerVolume;
             this.bedShape = bedShape;
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mainContainerTopToBottom.AddChild(buttonBottomPanel);
             this.AddChild(mainContainerTopToBottom);
 
-            meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "".Localize());
+            meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "".Localize());
             meshViewerWidget.AnchorAll();
             meshViewerWidget.AlwaysRenderBed = true;
             gcodeDispalyWidget.AddChild(meshViewerWidget);

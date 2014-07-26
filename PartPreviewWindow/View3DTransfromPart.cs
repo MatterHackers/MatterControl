@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public enum WindowType { Embeded, StandAlone };
         public enum AutoRotate { Enabled, Disabled };
 
-        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate)
+        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate)
         {
             this.windowType = windowType;
             autoRotateEnabled = (autoRotate == AutoRotate.Enabled);
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             GuiWidget viewArea = new GuiWidget();
             viewArea.AnchorAll();
             {
-                meshViewerWidget = new MeshViewerWidget(viewerVolume, 1, bedShape, "Press 'Add' to select an item.".Localize());
+                meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "Press 'Add' to select an item.".Localize());
                 
                 // this is to add an image to the bed
                 string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "bedimage.png");

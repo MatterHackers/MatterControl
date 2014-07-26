@@ -43,18 +43,44 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class PartPreview3DWidget : PartPreviewWidget
     {
-        protected MeshViewerWidget meshViewerWidget;
+        public MeshViewerWidget meshViewerWidget;
         event EventHandler unregisterEvents;
 
         protected ViewControls3D viewControls3D;
 
         public PartPreview3DWidget()
         {
+        }
+
+        public override void OnParentChanged(EventArgs e)
+        {
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, changeEventArgs) =>
+            {
+                double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+
+                UiThread.RunOnIdle((state) =>
+                {
+#if false
+            "bed_size", 
+            "print_center", 
+            "build_height", 
+            "bed_shape", 
+            "center_part_on_bed",
+#endif
+                    meshViewerWidget.CreatePrintBed(
+                        new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                        ActiveSliceSettings.Instance.BedCenter,
+                        ActiveSliceSettings.Instance.BedShape);
+                });
+            }, ref unregisterEvents);
+
+            base.OnParentChanged(e);
         }
 
         public override void OnClosed(EventArgs e)

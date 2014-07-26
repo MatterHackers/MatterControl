@@ -64,7 +64,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 string part3DViewLabelFull = string.Format("{0} {1} ", "3D", "View".Localize());
 
-                view3DTransformPart = new View3DTransformPart(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, View3DTransformPart.WindowType.StandAlone, autoRotate3DView);
+                view3DTransformPart = new View3DTransformPart(printItem,
+                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                    ActiveSliceSettings.Instance.BedCenter,
+                    ActiveSliceSettings.Instance.BedShape,
+                    View3DTransformPart.WindowType.StandAlone,
+                    autoRotate3DView);
+
                 TabPage partPreview3DView = new TabPage(view3DTransformPart, part3DViewLabelFull);
                 tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView, "3D View Tab", 16,
                             ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
@@ -73,7 +79,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // put in the 2d gcode view
             TabPage layerView;
             {
-                viewGcodeBasic = new ViewGcodeBasic(printItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, ActiveSliceSettings.Instance.BedCenter, true);
+                viewGcodeBasic = new ViewGcodeBasic(printItem,
+                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                    ActiveSliceSettings.Instance.BedCenter,
+                    ActiveSliceSettings.Instance.BedShape,
+                    true);
                 layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View"));
                 tabControl.AddTab(new SimpleTextTabWidget(layerView, "Layer View Tab", 16,
                             ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));

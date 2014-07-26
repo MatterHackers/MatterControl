@@ -186,11 +186,20 @@ namespace MatterHackers.MatterControl
             ColumnTwo.CloseAndRemoveAllChildren();
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-            part3DView = new View3DTransformPart(PrinterConnectionAndCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, View3DTransformPart.WindowType.Embeded, View3DTransformPart.AutoRotate.Enabled);
+            part3DView = new View3DTransformPart(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), 
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape, 
+                View3DTransformPart.WindowType.Embeded, 
+                View3DTransformPart.AutoRotate.Enabled);
             part3DView.Margin = new BorderDouble(bottom: 4);
             part3DView.AnchorAll();
 
-            partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem, new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), ActiveSliceSettings.Instance.BedShape, ActiveSliceSettings.Instance.BedCenter, false);
+            partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter, 
+                ActiveSliceSettings.Instance.BedShape, 
+                false);
             partGcodeView.AnchorAll();
 
             ColumnTwo.AddChild(part3DView);
