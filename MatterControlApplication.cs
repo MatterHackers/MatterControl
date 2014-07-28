@@ -99,7 +99,9 @@ namespace MatterHackers.MatterControl
             if (File.Exists("RunUnitTests.txt"))
 #endif
             {
+#if IS_WINDOWS_FORMS
                 Clipboard.SetSystemClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
+#endif
 
                 MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();
                 MatterHackers.RayTracer.UnitTests.Run();

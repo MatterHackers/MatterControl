@@ -35,9 +35,9 @@ using MatterHackers.Agg;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
-using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl
 {

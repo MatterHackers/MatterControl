@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.IO.Ports;
-using System.Diagnostics;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -126,7 +118,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
             
             int portIndex = 0;
-            foreach (string serialPort in SerialPort.GetPortNames())
+            foreach (string serialPort in FrostedSerialPort.GetPortNames())
             {
                 //Filter com port list based on usb type (applies to Mac mostly)
                 bool looks_like_mac = serialPort.StartsWith("/dev/tty.");
@@ -143,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             if (portIndex == 0)
             {
 
-                foreach (string serialPort in SerialPort.GetPortNames())
+                foreach (string serialPort in FrostedSerialPort.GetPortNames())
                 {
                     SerialPortIndexRadioButton comPortOption = createComPortOption(serialPort);
                     container.AddChild(comPortOption);

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO.Ports;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.BackgroundColor = this.defaultBackgroundColor;
             this.Padding = new BorderDouble(5);            
             
-            string[] comportNames = SerialPort.GetPortNames();
+            string[] comportNames = FrostedSerialPort.GetPortNames();
             bool portIsAvailable = comportNames.Contains(printerRecord.ComPort);
 
             printerName = new TextWidget(this.printerRecord.Name);

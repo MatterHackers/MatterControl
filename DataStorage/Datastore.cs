@@ -104,27 +104,41 @@ namespace MatterHackers.MatterControl.DataStorage
                         {
                             return "StaticData";
                         }
-						else if(Directory.Exists(Path.Combine(ApplicationPath, "StaticData")))
-						{
-							return Path.Combine(ApplicationPath, "StaticData");
-						}
-						else
-						{
-							return Path.Combine("..", "..", "StaticData");
-						}
+                        else if (Directory.Exists(Path.Combine(ApplicationPath, "StaticData")))
+                        {
+                            return Path.Combine(ApplicationPath, "StaticData");
+                        }
+                        else
+                        {
+                            return Path.Combine("..", "..", "StaticData");
+                        }
                     case OSType.X11:
-						if (Directory.Exists("StaticData"))
-						{
-							return "StaticData";
-						}
-						else
-						{
-							return Path.Combine("..", "..", "StaticData");
-						}
-						
+                        if (Directory.Exists("StaticData"))
+                        {
+                            return "StaticData";
+                        }
+                        else
+                        {
+                            return Path.Combine("..", "..", "StaticData");
+                        }
+
+                    case OSType.Android:
+                        if (Directory.Exists("StaticData"))
+                        {
+                            return "StaticData";
+                        }
+                        else if (Directory.Exists(Path.Combine(ApplicationPath, "StaticData")))
+                        {
+                            return Path.Combine(ApplicationPath, "StaticData");
+                        }
+                        else
+                        {
+                            return Path.Combine("");
+                        }
+                 
                     default:
                         throw new NotImplementedException();
-				}
+                }
             }
         }
 
@@ -276,20 +290,7 @@ namespace MatterHackers.MatterControl.DataStorage
         {
             foreach (Type table in dataStoreTables)
             {
-
                 dbSQLite.CreateTable(table);
-                
-                //string query = string.Format("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='{0}';", table.Name);
-                ////SQLiteCommand command = dbSQLite.CreateCommand(query);
-
-                //int RowCount = 0;
-                //string result = dbSQLite.ExecuteScalar<string>(query);
-                //RowCount = Convert.ToInt32(result);
-                //if (RowCount == 0)
-                //{
-                //    dbSQLite.CreateTable(table);
-                //}
-
             }
         }
 
