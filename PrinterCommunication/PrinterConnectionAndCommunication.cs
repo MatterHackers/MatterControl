@@ -445,6 +445,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReadLineStartCallBacks.AddCallBackToKey("SD printing byte", ReadSdProgress); // repatier
 
             ReadLineStartCallBacks.AddCallBackToKey("C:", ReadTargetPositions);
+            ReadLineStartCallBacks.AddCallBackToKey("ok C:", ReadTargetPositions);
             ReadLineStartCallBacks.AddCallBackToKey("X:", ReadTargetPositions);
 
             ReadLineContainsCallBacks.AddCallBackToKey("RS:", PrinterRequestsResend);
