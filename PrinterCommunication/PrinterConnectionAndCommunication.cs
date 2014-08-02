@@ -445,7 +445,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReadLineStartCallBacks.AddCallBackToKey("SD printing byte", ReadSdProgress); // repatier
 
             ReadLineStartCallBacks.AddCallBackToKey("C:", ReadTargetPositions);
-            ReadLineStartCallBacks.AddCallBackToKey("ok C:", ReadTargetPositions);
+            ReadLineStartCallBacks.AddCallBackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
             ReadLineStartCallBacks.AddCallBackToKey("X:", ReadTargetPositions);
 
             ReadLineContainsCallBacks.AddCallBackToKey("RS:", PrinterRequestsResend);
