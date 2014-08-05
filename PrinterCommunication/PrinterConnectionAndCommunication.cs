@@ -27,10 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-// This should split into Connection and Communication eventually and use PrinterIo for the sourc of data.
-
-#define USE_FROSTED_SERIAL_PORT
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -250,11 +246,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         double targetBedTemperature;
         string printJobDisplayName = null;
         GCodeFile loadedGCode = new GCodeFile();
-		#if USE_FROSTED_SERIAL_PORT
 		IFrostedSerialPort serialPort;
-		#else
-		SerialPort serialPort;
-		#endif
         Thread readFromPrinterThread;
         Thread connectThread;
 
@@ -1339,30 +1331,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             OnEnabledChanged(e);
         }
 
-        //Function is not mac-friendly
+        //Windows-only function
         bool SerialPortAlreadyOpen(string portName)
         {
-            if (OsInformation.OperatingSystem == OSType.Mac)
+			if (OsInformation.OperatingSystem == OSType.Windows)
 			{
-				return false;
-			}
-            else if (OsInformation.OperatingSystem == OSType.X11) 
-			{
+				int dwFlagsAndAttributes = 0x40000000;
+
+				//Borrowed from Microsoft's Serial Port Open Method :)
+				SafeFileHandle hFile = CreateFile(@"\\.\" + portName, -1073741824, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero);
+				if (hFile.IsInvalid)
+				{
+					return true;
+				}
+
+				hFile.Close();
+
 				return false;
 			}
             else
             {
-                int dwFlagsAndAttributes = 0x40000000;
-
-                //Borrowed from Microsoft's Serial Port Open Method :)
-                SafeFileHandle hFile = CreateFile(@"\\.\" + portName, -1073741824, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero);
-                if (hFile.IsInvalid)
-                {
-                    return true;
-                }
-
-                hFile.Close();
-
                 return false;
             }
         }
@@ -1401,22 +1389,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     try
                     {
-						#if USE_FROSTED_SERIAL_PORT
 						serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, DtrEnableOnConnect);
-						#else
-						serialPort = new SerialPort(serialPortName);
-						serialPort.BaudRate = baudRate;
-						if (DtrEnableOnConnect)
-						{
-						serialPort.DtrEnable = true;
-						}
-
-						// Set the read/write timeouts
-						serialPort.ReadTimeout = 500;
-						serialPort.WriteTimeout = 500;
-
-						serialPort.Open();
-						#endif
 
 						readFromPrinterThread = new Thread(ReadFromPrinter);
                         readFromPrinterThread.Name = "Read From Printer";
