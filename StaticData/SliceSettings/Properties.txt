@@ -63,7 +63,7 @@ infill_type|Infill Type|LIST|CONCENTRIC,GRID,LINES,TRIANGLES|The type of support
 layer_gcode|Layer Change G-Code|MULTI_LINE_TEXT||This gcode will be inserted right after the change in z height for the next layer.
 layer_height|Layer Height|POSITIVE_DOUBLE|mm|Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.
 max_fan_speed|Max Fan Speed|INT|%|This is the maximum speed that your fan can run at.
-min_extrusion_before_retract|Min Extrusion|POSITIVE_DOUBLE|mm|This is the minimum amount of filament that must be extruded before a rectarction can occure.
+min_extrusion_before_retract|Min Extrusion|POSITIVE_DOUBLE|mm|This is the minimum amount of filament that must be extruded before a retraction can occur.
 min_fan_speed|Min Fan Speed|INT|%|This is the minimum fan speed that your fan can run at.
 min_print_speed|Min Print Speed|POSITIVE_DOUBLE|mm/s|This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the min layer time.
 min_skirt_length|Minimum Extrusion Length|POSITIVE_DOUBLE|mm|Sets the minimum amount of filament to use drawing the skirt loops. This will cause at least enough skirt loops to be drawn to use this amount of filament.

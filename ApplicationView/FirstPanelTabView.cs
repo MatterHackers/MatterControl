@@ -51,7 +51,7 @@ using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl
 {
-    class FirstPanelTabView : TabControl
+    class FirstPanelTabView : TabControl, IReceiveRootedWeakEvent
     {
         public static int firstPanelCurrentTab = 0;
 
@@ -97,11 +97,24 @@ namespace MatterHackers.MatterControl
 
             QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
+            UpdateControlData.Instance.UpdateStatusChanged.Register(this, "UpdateStatusChanged");
 
             WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
 
             SelectedTabIndex = firstPanelCurrentTab;
+        }
+
+        public void RootedEvent(string eventType, EventArgs e)
+        {
+            switch (eventType)
+            {
+                case "UpdateStatusChanged":
+                    this.SetUpdateNotification(null, null);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
