@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public PartPreview3DWidget()
         {
             SliceSettingsWidget.PartPreviewSettingsChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
         }
 
         void RecreateBedAndPartPosition(object sender, EventArgs e)

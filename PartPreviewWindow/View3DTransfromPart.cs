@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
     }
 
-    public class View3DTransformPart : PartPreview3DWidget
+    public class View3DTransformPart : PartPreview3DWidget, IReceiveRootedWeakEvent
     {
         public WindowType windowType { get; set; }
 
@@ -470,7 +470,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                 }
             }
+
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
         }
+
+        public void RootedEvent(string eventType, EventArgs e)
+        {
+            switch (eventType)
+            {
+                case "ThemeChanged":
+                    processingProgressControl.fillColor = ActiveTheme.Instance.PrimaryAccentColor;
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
 
         void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
         {

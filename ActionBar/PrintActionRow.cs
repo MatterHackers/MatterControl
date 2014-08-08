@@ -14,7 +14,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-    class PrintActionRow : ActionRowBase
+    class PrintActionRow : ActionRowBase, IReceiveRootedWeakEvent
     {
         Stopwatch timeSincePrintStarted = new Stopwatch();
 
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.ActionBar
             cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
             reprintButton.Click += new ButtonBase.ButtonEventHandler(onReprintButton_Click);
             doneWithCurrentPartButton.Click += new ButtonBase.ButtonEventHandler(onDoneWithCurrentPartButton_Click);
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
         }
 			
         public override void OnClosed(EventArgs e)
@@ -160,9 +160,17 @@ namespace MatterHackers.MatterControl.ActionBar
             base.OnClosed(e);
         }
 
-        private void onThemeChanged(object sender, EventArgs e)
-        {            
-            this.Invalidate();
+        public void RootedEvent(string eventType, EventArgs e)
+        {
+            switch (eventType)
+            {
+                case "ThemeChanged":
+                    this.Invalidate();
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         void onAddButton_Click(object sender, MouseEventArgs mouseEvent)

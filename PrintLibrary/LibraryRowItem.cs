@@ -51,7 +51,7 @@ using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-    public class LibraryRowItem : ClickWidget
+    public class LibraryRowItem : ClickWidget, IReceiveRootedWeakEvent
     {
         public PrintItemWrapper printItemWrapper;
         public RGBA_Bytes WidgetTextColor;
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
             //this.Click += new ButtonEventHandler(PrintLibraryListItem_Click);
             viewLink.Click += new ButtonBase.ButtonEventHandler(onViewLinkClick);
             removeLink.Click += new ButtonBase.ButtonEventHandler(onRemoveLinkClick);
@@ -315,10 +315,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        private void onThemeChanged(object sender, EventArgs e)
+        public void RootedEvent(string eventType, EventArgs e)
         {
-            //Set background and text color to new theme
-            this.Invalidate();
+            switch (eventType)
+            {
+                case "ThemeChanged":
+                    this.Invalidate();
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override void OnDraw(Graphics2D graphics2D)
