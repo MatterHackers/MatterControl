@@ -144,6 +144,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),
 
+            new MapItem("supportInfillStartingAngle", "support_material_infill_angle"),            
+
             //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
             new MapItem("insidePerimetersSpeed", "perimeter_speed"),
 
