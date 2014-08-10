@@ -51,7 +51,7 @@ using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl
 {
-    public class ThirdPanelTabView : GuiWidget
+	public class ThirdPanelTabView : GuiWidget, IReceiveRootedWeakEvent
     {
         event EventHandler unregisterEvents;
         static int lastAdvanceControlsIndex = 0;
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
             AddChild(advancedControls2);
 
             WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadBackPanel, ref unregisterEvents);
+			ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.Register(this, "ReloadAdvancedControlsPanelTrigger");
 
             AnchorAll();
         }
@@ -91,10 +91,18 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        public void ReloadBackPanel(object sender, EventArgs widgetEvent)
-        {
-            UiThread.RunOnIdle(ReloadSliceSettings);
-        }
+		public void RootedEvent(string eventType, EventArgs e)
+		{
+			switch (eventType)
+			{
+			case "ReloadAdvancedControlsPanelTrigger":
+				UiThread.RunOnIdle(ReloadSliceSettings);
+				break;
+
+			default:
+				throw new NotImplementedException();
+			}
+		}
 
         static SliceSettingsWidgetUiState sliceSettingsUiState = new SliceSettingsWidgetUiState();
         void SaveCurrentPanelIndex(object sender, EventArgs e)

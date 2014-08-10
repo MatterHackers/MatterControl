@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl
     public class ApplicationWidget : GuiWidget, IReceiveRootedWeakEvent
     {
         static ApplicationWidget globalInstance;
-        public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
-        public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+        public RootedObjectWeakEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectWeakEventHandler();
+        public RootedObjectWeakEventHandler CloudSyncStatusChanged = new RootedObjectWeakEventHandler();
 
 		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
 		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
