@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Testing
             }
         }
 
-        public void RunTests(string[] testCommands)
+        public void RunTests()
         {
             try { ReleaseTests.AssertDebugNotDefined(); }
             catch (Exception e) { DumpException(e); }
