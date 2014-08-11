@@ -34,7 +34,7 @@ fan_always_on|Keep Fan Always On|CHECK_BOX||This will force the fan to remain on
 fan_below_layer_time|Enable Fan If Layer\nPrint Time Is Below|INT|Seconds|If a layer is estimated to take less than this to print, the fan will be turned on.
 filament_diameter|Diameter|POSITIVE_DOUBLE|mm|This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
 fill_angle|Starting Angle|POSITIVE_DOUBLE|degrees|Sets the starting angle of the infill. Not used when bridging.
-fill_density|Fill Density|POSITIVE_DOUBLE|Ratio (0 to 1)|The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
+fill_density|Fill Density|DOUBLE_OR_PERCENT|Ratio (0 to 1)|The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
 fill_pattern|Fill Pattern|LIST|rectilinear,line,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral|The pattern used on the inside portions of the print.
 first_layer_acceleration|First Layer|DOUBLE|mm/s|Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.
 first_layer_bed_temperature|Bed First Layer|DOUBLE|degrees|The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.

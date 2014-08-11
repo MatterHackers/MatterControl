@@ -261,13 +261,14 @@ enableOozeShield = 0;
             }
         }
 
-        public class InfillTranslator : MapItem
+        public class InfillTranslator : ScaledSingleNumber
         {
             public override string MappedValue
             {
                 get
                 {
-                    double infillRatio0To1 = MapItem.ParseValueString(base.MappedValue);
+                    double infillRatio0To1 = ScaledSingleNumber.ParseValueString(base.MappedValue);
+
                     // 400 = solid (extruder width)
                     double nozzle_diameter = MapItem.GetValueForKey("nozzle_diameter");
                     double linespacing = 1000;
