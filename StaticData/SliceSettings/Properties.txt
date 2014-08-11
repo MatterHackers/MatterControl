@@ -90,7 +90,7 @@ retract_length|Length|POSITIVE_DOUBLE|mm|The amount that the filament will be re
 retract_length_tool_change|Change Tool|POSITIVE_DOUBLE|mm|The amount that the filament will be reversed before changing to a new tool.
 retract_lift|Z Lift|POSITIVE_DOUBLE|mm|The amount the extruder head will be lifted after each retraction.
 retract_restart_extra_toolchange|Length|POSITIVE_DOUBLE|mm\nzero to disable|The amount the filament will be retracted when changing to a different extruder.
-retract_restart_extra|Extra Length On Restart|POSITIVE_DOUBLE|mm|Additional amount of filament that will be extruded after a retraction.
+retract_restart_extra|Extra Length On Restart|DOUBLE|mm|Additional amount of filament that will be extruded after a retraction.
 retract_restart_extra|Extra Length On Restart|POSITIVE_DOUBLE|mm|The amount of extra extrusion that will occur when an extruder is selected.
 retract_speed|Speed|POSITIVE_DOUBLE|mm/s|The speed that the filament will be retracted (and re-extruded).
 repair_outlines_extensive_stitching|Connect Bad Edges|CHECK_BOX||Try to connect mesh edges when the actual mesh data is not all the way connected.
