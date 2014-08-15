@@ -854,15 +854,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void meshViewerWidget_LoadDone(object sender, EventArgs e)
         {
-            switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+            if (windowType == WindowType.Embeded)
             {
-                case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-                case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-                    break;
+                switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+                {
+                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+                        break;
 
-                default:
-                    UnlockEditControls();
-                    break;
+                    default:
+                        UnlockEditControls();
+                        break;
+                }
+            }
+            else
+            {
+                UnlockEditControls();
             }
         }
 
