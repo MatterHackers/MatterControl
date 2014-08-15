@@ -248,6 +248,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //supportZDistanceFromObject=1 # The number of layers to skip in z. The gap between the support and the model.
             new MapItem("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers"),
 
+            new MapItem("supportInterfaceLayers", "support_material_interface_layers"),
+
             //travelSpeed=200 # The speed to move when not extruding material. mm/s.
             new MapItem("travelSpeed", "travel_speed"),
             
