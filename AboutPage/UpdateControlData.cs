@@ -231,37 +231,46 @@ namespace MatterHackers.MatterControl
         {
             if (!WaitingToCompleteTransaction())
             {
-                SetUpdateStatus(UpdateStatusStates.UpdateDownloading);
-
-                string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
+                
                 string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 
-                //Make HEAD request to determine the size of the download (required by GAE)
-                System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
-                request.Method = "HEAD";
-
-                try
+                if (downloadToken == null)
                 {
-                    WebResponse response = request.GetResponse();
-                    downloadSize = (int)response.ContentLength;
+                    //
                 }
-                catch
+                else
                 {
-                    //Unknown download size
-                    downloadSize = 0;
+                    SetUpdateStatus(UpdateStatusStates.UpdateDownloading);
+                    string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
+
+
+                    //Make HEAD request to determine the size of the download (required by GAE)
+                    System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
+                    request.Method = "HEAD";
+
+                    try
+                    {
+                        WebResponse response = request.GetResponse();
+                        downloadSize = (int)response.ContentLength;
+                    }
+                    catch
+                    {
+                        //Unknown download size
+                        downloadSize = 0;
+                    }
+
+                    if (!System.IO.Directory.Exists(updateFileLocation))
+                    {
+                        System.IO.Directory.CreateDirectory(updateFileLocation);
+                    }
+
+                    string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
+
+                    webClient = new WebClient();
+                    webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
+                    webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
+                    webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
                 }
-
-                if (!System.IO.Directory.Exists(updateFileLocation))
-                {
-                    System.IO.Directory.CreateDirectory(updateFileLocation);
-                }
-
-                string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
-
-                webClient = new WebClient();
-                webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
-                webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-                webClient.DownloadFileAsync(new Uri(downloadUri), updateFileName);
             }
         }
 
