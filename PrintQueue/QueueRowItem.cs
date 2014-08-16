@@ -50,7 +50,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-    public class QueueRowItem : GuiWidget
+    public class QueueRowItem : GuiWidget, IReceiveRootedWeakEvent
     {
         public PrintItemWrapper PrintItemWrapper { get; set; }
         public RGBA_Bytes WidgetTextColor;
@@ -316,7 +316,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
 
             PrintItemWrapper.SlicingOutputMessage.RegisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
 
@@ -468,16 +468,24 @@ namespace MatterHackers.MatterControl.PrintQueue
             });
         }
 
-        private void onThemeChanged(object sender, EventArgs e)
+        public void RootedEvent(string eventType, EventArgs e)
         {
-			if (this.isActivePrint)
-			{
-				//Set background and text color to new theme
-	            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-	            this.partLabel.TextColor = RGBA_Bytes.White;
-                this.partStatus.TextColor = RGBA_Bytes.White;
-	            this.Invalidate();
-			}
+            switch (eventType)
+            {
+                case "ThemeChanged":
+                    if (this.isActivePrint)
+                    {
+                        //Set background and text color to new theme
+                        this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+                        this.partLabel.TextColor = RGBA_Bytes.White;
+                        this.partStatus.TextColor = RGBA_Bytes.White;
+                        this.Invalidate();
+                    }
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public void SetTextColors(RGBA_Bytes color)

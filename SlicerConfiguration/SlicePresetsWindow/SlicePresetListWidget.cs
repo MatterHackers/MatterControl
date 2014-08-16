@@ -158,6 +158,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void importPreset_Click(object sender, MouseEventArgs mouseEvent)
         {
+            UiThread.RunOnIdle(importPresetDo);
+        }
+
+        void importPresetDo(object state)
+        {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
             openParams.ActionButtonLabel = "Load Slice Preset";
             openParams.Title = "MatterControl: Select A File";

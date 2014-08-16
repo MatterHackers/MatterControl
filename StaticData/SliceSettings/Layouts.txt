@@ -113,21 +113,22 @@ Advanced
         support_type
         support_material_threshold
         support_material_enforce_layers
-      Raft
-        create_raft
-        raft_extra_distance_around_part
-        raft_air_gap
-        raft_layers
-      Options
+      Support Options
         support_material_pattern
         support_material_spacing
         support_material_angle
+        support_material_infill_angle
         support_material_interface_layers
         support_material_interface_spacing
         support_material_xy_distance
         support_material_z_distance
         support_material_z_gap_layers
         support_material_create_internal_support
+      Raft
+        create_raft
+        raft_extra_distance_around_part
+        raft_air_gap
+        raft_layers
     Repair
       Outlines
         repair_outlines_extensive_stitching

@@ -231,7 +231,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             get
             {
-                return ParseDouble(GetActiveValue("fill_density"));
+                string fillDensityValueString = GetActiveValue("fill_density");
+                if (fillDensityValueString.Contains("%"))
+                {
+                    string onlyNumber = fillDensityValueString.Replace("%", "");
+                    double ratio = ParseDouble(onlyNumber) / 100;
+                    return ratio;
+                }
+                else
+                {
+                    return ParseDouble(GetActiveValue("fill_density"));
+                }
             }
         }
 

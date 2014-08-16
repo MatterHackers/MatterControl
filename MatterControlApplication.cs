@@ -71,12 +71,7 @@ namespace MatterHackers.MatterControl
                 {
                     case "TEST":
                         Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
-                        string[] testCommands = new string[commandLineArgs.Length - 2];
-                        if (commandLineArgs.Length > 2)
-                        {
-                            commandLineArgs.CopyTo(testCommands, 2);
-                        }
-                        testDispatch.RunTests(testCommands);
+                        testDispatch.RunTests();
                         return;
 
                     case "CLEAR_CACHE":

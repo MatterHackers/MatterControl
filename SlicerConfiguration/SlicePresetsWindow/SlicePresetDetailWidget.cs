@@ -934,13 +934,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void exportPresets_Click(object sender, MouseEventArgs mouseEvent)
         {
-            SaveAs();
+            UiThread.RunOnIdle(SaveAs);
         }
 
-        public void SaveAs()
+        void SaveAs(object state)
         {
             string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension, documentsPath);
+            saveParams.FileName = presetNameInput.Text;
 
             System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
             if (streamToSaveTo != null)

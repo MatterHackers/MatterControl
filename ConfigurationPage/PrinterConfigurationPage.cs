@@ -769,7 +769,6 @@ namespace MatterHackers.MatterControl
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
@@ -778,13 +777,6 @@ namespace MatterHackers.MatterControl
         {
             SetVisibleControls();
             this.Invalidate();
-        }
-
-        private void onThemeChanged(object sender, EventArgs e)
-		{	
-			//this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-			// SetVisibleControls();
-			//this.Invalidate();
         }
 
         public delegate void EnableCloudMonitor(object state);

@@ -190,11 +190,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             get
             {
-                if (scale != 1)
+                double ratio = 0;
+                if (OriginalValue.Contains("%"))
                 {
-                    return (MapItem.ParseValueString(base.MappedValue) * scale).ToString();
+                    string withoutPercent = OriginalValue.Replace("%", "");
+                    ratio = MapItem.ParseValueString(withoutPercent) / 100.0;
                 }
-                return base.MappedValue;
+                else
+                {
+                     ratio = MapItem.ParseValueString(base.MappedValue);
+                }
+
+                return (ratio * scale).ToString();
             }
         }
 

@@ -41,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class PartPreviewMainWindow : SystemWindow
+    public class PartPreviewMainWindow : SystemWindow, IReceiveRootedWeakEvent
     {
         View3DTransformPart view3DTransformPart;
         ViewGcodeBasic viewGcodeBasic;
@@ -112,9 +112,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(Instance_ThemeChanged, ref unregisterEvents);
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
             view3DTransformPart.Closed += (sender, e) => { Close(); };
             viewGcodeBasic.Closed += (sender, e) => { Close(); };
+        }
+
+        public void RootedEvent(string eventType, EventArgs e)
+        {
+            switch (eventType)
+            {
+                case "ThemeChanged":
+                    this.Invalidate();
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override void OnClosed(EventArgs e)
@@ -124,11 +137,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 unregisterEvents(this, null);
             }
             base.OnClosed(e);
-        }
-
-        void Instance_ThemeChanged(object sender, EventArgs e)
-        {
-            Invalidate();
         }
     }
 }

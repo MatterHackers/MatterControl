@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
    
 
-    public class PrintHistoryListItem : FlowLayoutWidget
+    public class PrintHistoryListItem : FlowLayoutWidget, IReceiveRootedWeakEvent
     {        
         public PrintTask printTask;
         public RGBA_Bytes WidgetTextColor;
@@ -240,26 +240,22 @@ namespace MatterHackers.MatterControl.PrintHistory
             this.Margin = new BorderDouble(6, 0, 6, 6);
         }
 
-        event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
         }
 
-        private void onThemeChanged(object sender, EventArgs e)
+        public void RootedEvent(string eventType, EventArgs e)
         {
-            //Set background and text color to new theme
-            this.Invalidate();
-        }
-
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
+            switch (eventType)
             {
-                unregisterEvents(this, null);
+                case "ThemeChanged":
+                    this.Invalidate();
+                    break;
+
+                default:
+                    throw new NotImplementedException();
             }
-            base.OnClosed(e);
         }
 
         public override void OnDraw(Graphics2D graphics2D)

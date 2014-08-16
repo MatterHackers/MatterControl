@@ -2514,3 +2514,21 @@ Translated:Select the baud rate.
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 
+English:This is the minimum amount of filament that must be extruded before a retraction can occur.
+Translated:This is the minimum amount of filament that must be extruded before a retraction can occur.
+
+English:Support Options
+Translated:Support Options
+
+English:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
+Translated:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
+
+English:Support Everywhere
+Translated:Support Everywhere
+
+English:The angle the support infill will be drawn.
+Translated:The angle the support infill will be drawn.
+
+English:Infill Angle
+Translated:Infill Angle
+

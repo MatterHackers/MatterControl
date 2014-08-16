@@ -11,7 +11,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {    
-    public class PrintProgressBar : GuiWidget
+    public class PrintProgressBar : GuiWidget, IReceiveRootedWeakEvent
     {
         double currentPercent = 0;
         Stopwatch timeSinceLastUpdate = new Stopwatch();
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
             PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(Instance_WroteLine, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
         }
 
         public override void OnClosed(EventArgs e)
@@ -80,13 +80,20 @@ namespace MatterHackers.MatterControl
             this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
         }
 
-        private void onThemeChanged(object sender, EventArgs e)
+        public void RootedEvent(string eventType, EventArgs e)
         {
-            //Set background color to new theme
-            SetThemedColors();
-            this.Invalidate();
-        }
+            switch (eventType)
+            {
+                case "ThemeChanged":
+                    //Set background color to new theme
+                    SetThemedColors();
+                    this.Invalidate();
+                    break;
 
+                default:
+                    throw new NotImplementedException();
+            }
+        }
 
         void Instance_PrintItemChanged(object sender, EventArgs e)
         {

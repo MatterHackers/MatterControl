@@ -34,7 +34,7 @@ fan_always_on|Keep Fan Always On|CHECK_BOX||This will force the fan to remain on
 fan_below_layer_time|Enable Fan If Layer\nPrint Time Is Below|INT|Seconds|If a layer is estimated to take less than this to print, the fan will be turned on.
 filament_diameter|Diameter|POSITIVE_DOUBLE|mm|This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
 fill_angle|Starting Angle|POSITIVE_DOUBLE|degrees|Sets the starting angle of the infill. Not used when bridging.
-fill_density|Fill Density|POSITIVE_DOUBLE|Ratio (0 to 1)|The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
+fill_density|Fill Density|DOUBLE_OR_PERCENT|Ratio (0 to 1)|The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
 fill_pattern|Fill Pattern|LIST|rectilinear,line,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral|The pattern used on the inside portions of the print.
 first_layer_acceleration|First Layer|DOUBLE|mm/s|Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.
 first_layer_bed_temperature|Bed First Layer|DOUBLE|degrees|The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
@@ -63,7 +63,7 @@ infill_type|Infill Type|LIST|CONCENTRIC,GRID,LINES,TRIANGLES|The type of support
 layer_gcode|Layer Change G-Code|MULTI_LINE_TEXT||This gcode will be inserted right after the change in z height for the next layer.
 layer_height|Layer Height|POSITIVE_DOUBLE|mm|Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.
 max_fan_speed|Max Fan Speed|INT|%|This is the maximum speed that your fan can run at.
-min_extrusion_before_retract|Min Extrusion|POSITIVE_DOUBLE|mm|This is the minimum amount of filament that must be extruded before a rectarction can occure.
+min_extrusion_before_retract|Min Extrusion|POSITIVE_DOUBLE|mm|This is the minimum amount of filament that must be extruded before a retraction can occur.
 min_fan_speed|Min Fan Speed|INT|%|This is the minimum fan speed that your fan can run at.
 min_print_speed|Min Print Speed|POSITIVE_DOUBLE|mm/s|This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the min layer time.
 min_skirt_length|Minimum Extrusion Length|POSITIVE_DOUBLE|mm|Sets the minimum amount of filament to use drawing the skirt loops. This will cause at least enough skirt loops to be drawn to use this amount of filament.
@@ -90,7 +90,7 @@ retract_length|Length|POSITIVE_DOUBLE|mm|The amount that the filament will be re
 retract_length_tool_change|Change Tool|POSITIVE_DOUBLE|mm|The amount that the filament will be reversed before changing to a new tool.
 retract_lift|Z Lift|POSITIVE_DOUBLE|mm|The amount the extruder head will be lifted after each retraction.
 retract_restart_extra_toolchange|Length|POSITIVE_DOUBLE|mm\nzero to disable|The amount the filament will be retracted when changing to a different extruder.
-retract_restart_extra|Extra Length On Restart|POSITIVE_DOUBLE|mm|Additional amount of filament that will be extruded after a retraction.
+retract_restart_extra|Extra Length On Restart|DOUBLE|mm|Additional amount of filament that will be extruded after a retraction.
 retract_restart_extra|Extra Length On Restart|POSITIVE_DOUBLE|mm|The amount of extra extrusion that will occur when an extruder is selected.
 retract_speed|Speed|POSITIVE_DOUBLE|mm/s|The speed that the filament will be retracted (and re-extruded).
 repair_outlines_extensive_stitching|Connect Bad Edges|CHECK_BOX||Try to connect mesh edges when the actual mesh data is not all the way connected.
@@ -114,7 +114,8 @@ start_gcode|Start G-Code|MULTI_LINE_TEXT||This gcode will be inserted into the o
 start_perimeters_at_concave_points|Start At Concave Points|CHECK_BOX||Make sure the first point on a perimeter is a concave point.
 start_perimeters_at_non_overhang|Start At Non Overhang|CHECK_BOX||Make sure the first point on a perimeter is not an overhang.
 support_material_angle|Starting Angle|POSITIVE_DOUBLE|degrees|The starting angle of the supports.
-support_material_create_internal_support|Internal Support|CHECK_BOX||Create support where needed on internal features.
+support_material_infill_angle|Infill Angle|POSITIVE_DOUBLE|degrees|The angle the support infill will be drawn.
+support_material_create_internal_support|Support Everywhere|CHECK_BOX||If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
 support_material_enforce_layers|Enforce Support For First|INT|layers|Generate support material everywhere not touching the bed for n layers, regardless of angle.
 support_material_extruder|Support Material Extruder|INT||The index of the extruder to use for support material.
 support_material_extrusion_width|Support Material|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.

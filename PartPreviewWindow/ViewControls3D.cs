@@ -12,7 +12,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class ViewControls3D : FlowLayoutWidget
+    public class ViewControls3D : FlowLayoutWidget, IReceiveRootedWeakEvent
     {
         GuiWidget partSelectSeparator;
         MeshViewerWidget meshViewerWidget;
@@ -95,23 +95,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             SetMeshViewerDisplayTheme();
             partSelectButton.CheckedStateChanged += SetMeshViewerDisplayTheme;
+
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+        }
+
+        public void RootedEvent(string eventType, EventArgs e)
+        {
+            switch (eventType)
+            {
+                case "ThemeChanged":
+                    SetMeshViewerDisplayTheme(null, null);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         protected void SetMeshViewerDisplayTheme(object sender = null, EventArgs e = null)
         {
             meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            //if (partSelectButton.Checked)
-            {
-                meshViewerWidget.PartColor = RGBA_Bytes.White;
-                meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
-            }
-#if false
-            else
-            {
-                meshViewerWidget.PartColor = ActiveTheme.Instance.PrimaryAccentColor;
-                meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
-            }
-#endif
+
+            meshViewerWidget.PartColor = RGBA_Bytes.White;
             meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
             meshViewerWidget.BuildVolumeColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor.Red0To255, ActiveTheme.Instance.PrimaryAccentColor.Green0To255, ActiveTheme.Instance.PrimaryAccentColor.Blue0To255, 50);
         }

@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	}
 
 
-    public class ConnectionWidgetBase : GuiWidget
+    public class ConnectionWidgetBase : GuiWidget, IReceiveRootedWeakEvent
     {
         protected GuiWidget containerWindowToClose;
         protected RGBA_Bytes defaultTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             this.windowController = windowController;
             this.containerWindowToClose = containerWindowToClose;
-            AddHandlers();
+            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
         }
 
         public int GetPrinterRecordCount()
@@ -268,26 +268,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return Datastore.Instance.RecordCount("Printer");
         }
 
-        event EventHandler unregisterEvents;
-        private void AddHandlers()
+        public void RootedEvent(string eventType, EventArgs e)
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
+            switch (eventType)
             {
-                unregisterEvents(this, null);
+                case "ThemeChanged":
+                    this.linkTextColor = ActiveTheme.Instance.PrimaryAccentColor;
+                    this.Invalidate();
+                    break;
+
+                default:
+                    throw new NotImplementedException();
             }
-            base.OnClosed(e);
         }
-
-        private void onThemeChanged(object sender, EventArgs e)
-        {
-            this.linkTextColor = ActiveTheme.Instance.PrimaryAccentColor;
-            this.Invalidate();
-        }
-
     }
 }
