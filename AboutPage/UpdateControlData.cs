@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
         public enum UpdateRequestType { UserRequested, Automatic, FirstTimeEver };
         UpdateRequestType updateRequestType;
 
-        public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate };
+        public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate, UnableToConnectToServer };
 
         bool WaitingToCompleteTransaction()
         {
@@ -227,19 +227,31 @@ namespace MatterHackers.MatterControl
             SetUpdateStatus(UpdateStatusStates.UpToDate);
         }
 
+        int downloadAttempts = 0;
+        string updateFileName;
         public void InitiateUpdateDownload()
+        {
+            downloadAttempts = 0;
+            DownloadUpdate();
+        }
+
+        void DownloadUpdate()
         {
             if (!WaitingToCompleteTransaction())
             {
-                
+
                 string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 
                 if (downloadToken == null)
                 {
+#if DEBUG
+                    throw new Exception("Build token should not be null");
+#endif
                     //
                 }
                 else
                 {
+                    downloadAttempts++;
                     SetUpdateStatus(UpdateStatusStates.UpdateDownloading);
                     string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
 
@@ -264,7 +276,7 @@ namespace MatterHackers.MatterControl
                         System.IO.Directory.CreateDirectory(updateFileLocation);
                     }
 
-                    string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
+                    updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", downloadToken, InstallerExtension));
 
                     webClient = new WebClient();
                     webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompleted);
@@ -285,13 +297,41 @@ namespace MatterHackers.MatterControl
                 UpdateStatusChanged.CallEvents(this, e);
             });
         }
-
-        void DownloadCompleted(object sender, EventArgs e)
+        
+        void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            UiThread.RunOnIdle((state) =>
+            if (e.Error != null)
             {
-                SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
-            });
+                //Delete empty/partially downloaded file
+                if (System.IO.File.Exists(updateFileName))
+                {
+                    System.IO.File.Delete(updateFileName);
+                }
+                
+                //Try downloading again - one time
+                if (downloadAttempts == 1)
+                {
+                    DownloadUpdate();
+                }
+                else
+                {
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        SetUpdateStatus(UpdateStatusStates.UnableToConnectToServer);
+                    });
+                }
+                
+
+            }
+            else
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
+                });
+            }
+            
+            
 
             webClient.Dispose();
         }

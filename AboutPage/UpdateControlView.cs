@@ -154,6 +154,13 @@ namespace MatterHackers.MatterControl
                     checkUpdateLink.Visible = false;
                     break;
 
+                case UpdateControlData.UpdateStatusStates.UnableToConnectToServer:
+                    updateStatusText.Text = "Oops! Unable to connect to server.".Localize();
+                    downloadUpdateLink.Visible = false;
+                    installUpdateLink.Visible = false;
+                    checkUpdateLink.Visible = true;
+                    break;
+
                 case UpdateControlData.UpdateStatusStates.UpdateAvailable:
                     updateStatusText.Text = string.Format("There is a recommended update available.".Localize());
                     downloadUpdateLink.Visible = true;
