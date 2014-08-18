@@ -78,15 +78,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public bool RenderRetractions
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderRetractions") == "True"); }
-			set
-			{
-				UserSettings.Instance.set ("GcodeViewerRenderRetractions", value.ToString ());
-				Invalidate();
-			}
-		}
+        public bool RenderRetractions
+        {
+            get { return (UserSettings.Instance.get("GcodeViewerRenderRetractions") == "True"); }
+            set
+            {
+                UserSettings.Instance.set("GcodeViewerRenderRetractions", value.ToString());
+                Invalidate();
+            }
+        }
+
+        public bool RenderSpeeds
+        {
+            get { return (UserSettings.Instance.get("GcodeViewerRenderSpeeds") == "True"); }
+            set
+            {
+                UserSettings.Instance.set("GcodeViewerRenderSpeeds", value.ToString());
+                Invalidate();
+            }
+        }
+        public bool SimulateExtrusion
+        {
+            get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }
+            set
+            {
+                UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
+                Invalidate();
+            }
+        }
 
 		BackgroundWorker backgroundWorker = null;
 		Vector2 lastMousePosition = new Vector2(0, 0);
@@ -302,6 +321,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					renderType |= RenderType.Retractions;
 				}
+                if (RenderSpeeds)
+                {
+                    renderType |= RenderType.SpeedColors;
+                }
+                if (SimulateExtrusion)
+                {
+                    renderType |= RenderType.SimulateExtrusion;
+                }
 
 				gCodeRenderer.Render(graphics2D, activeLayerIndex, transform, layerScale, renderType, 
 					FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1);

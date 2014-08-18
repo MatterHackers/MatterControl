@@ -1139,7 +1139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             viewOptionContainer.AddChild(showBuildVolumeCheckBox);
                         }
 
-                        viewOptionContainer.AddChild(CreateRenderTypeDropDownMenu());
+                        CreateRenderTypeRadioButtons(viewOptionContainer);
                     }
                     buttonRightPanel.AddChild(viewOptionContainer);
                 }
@@ -1421,36 +1421,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             return presetScaleMenu;
         }
 
-        private DropDownMenu CreateRenderTypeDropDownMenu()
+        private void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
         {
-            DropDownMenu renderTypeMenu = new DropDownMenu(LocalizedString.Get("Render Type"), Direction.Down);
-            RectangleDouble presetBounds = renderTypeMenu.LocalBounds;
-            presetBounds.Inflate(new BorderDouble(5, 10, 10, 10));
-            renderTypeMenu.LocalBounds = presetBounds;
-            renderTypeMenu.MenuAsWideAsItems = false;
-            renderTypeMenu.HAnchor |= HAnchor.ParentLeftRight;
-
-            renderTypeMenu.AddItem("Shaded".Localize());
-            renderTypeMenu.AddItem("Outlines".Localize());
-            renderTypeMenu.AddItem("Polygons".Localize());
-
-            renderTypeMenu.SelectionChanged += (sender, e) =>
             {
-                switch (renderTypeMenu.SelectedIndex)
+                RadioButton renderTypeShaded = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                renderTypeShaded.Checked = true;
+                renderTypeShaded.CheckedStateChanged += (sender, e) =>
                 {
-                    case 0:
-                        meshViewerWidget.RenderType = RenderTypes.Shaded;
-                        break;
-                    case 1:
-                        meshViewerWidget.RenderType = RenderTypes.Outlines;
-                        break;
-                    case 2:
-                        meshViewerWidget.RenderType = RenderTypes.Polygons;
-                        break;
-                }
-            };
+                    meshViewerWidget.RenderType = RenderTypes.Shaded;
+                };
+                viewOptionContainer.AddChild(renderTypeShaded);
+            }
 
-            return renderTypeMenu;
+            {
+                RadioButton renderTypeOutlines = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                //renderTypeOutlines.Checked = true;
+                renderTypeOutlines.CheckedStateChanged += (sender, e) =>
+                {
+                    meshViewerWidget.RenderType = RenderTypes.Outlines;
+                };
+                viewOptionContainer.AddChild(renderTypeOutlines);
+            }
+
+            {
+                RadioButton renderTypePolygons = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                //renderTypePolygons.Checked = true;
+                renderTypePolygons.CheckedStateChanged += (sender, e) =>
+                {
+                    meshViewerWidget.RenderType = RenderTypes.Polygons;
+                };
+                viewOptionContainer.AddChild(renderTypePolygons);
+            }
         }
 
         private GuiWidget generateHorizontalRule()
