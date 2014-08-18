@@ -499,7 +499,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // put in a simulate extrusion checkbox
             {
-                CheckBox simulateExtrusion = new CheckBox(LocalizedString.Get("Amount"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                CheckBox simulateExtrusion = new CheckBox(LocalizedString.Get("Extrusion"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 simulateExtrusion.Checked = gcodeViewWidget.SimulateExtrusion;
                 simulateExtrusion.CheckedStateChanged += (sender, e) =>
                 {

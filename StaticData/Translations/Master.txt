@@ -2532,3 +2532,18 @@ Translated:The angle the support infill will be drawn.
 English:Infill Angle
 Translated:Infill Angle
 
+English:Grid
+Translated:Grid
+
+English:Moves
+Translated:Moves
+
+English:Retractions
+Translated:Retractions
+
+English:Speeds
+Translated:Speeds
+
+English:Extrusion
+Translated:Extrusion
+

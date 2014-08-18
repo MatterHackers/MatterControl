@@ -1839,22 +1839,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     {
                         if (firstLineToResendIndex < allCheckSumLinesSent.Count)
                         {
-                            WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++], null);
+                            WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++], "resend");
                         }
                         else
                         {
                             string lineToWrite = loadedGCode.Instruction(printerCommandQueueIndex).Line;
-                            if (lineToWrite == "MH_PAUSE")
+                            string[] splitOnSemicolon = lineToWrite.Split(';');
+                            string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
+                            if (trimedLine.Length > 0)
                             {
-                                pauseRequested = true;
-                            }
-                            else
-                            {
-                                WriteChecksumLineToPrinter(lineToWrite);
-                            }
+                                if (lineToWrite == "MH_PAUSE")
+                                {
+                                    pauseRequested = true;
+                                }
+                                else
+                                {
+                                    WriteChecksumLineToPrinter(lineToWrite);
+                                }
 
+                                firstLineToResendIndex++;
+                            }
                             printerCommandQueueIndex++;
-                            firstLineToResendIndex++;
                         }
                     }
                     else if (printWasCanceled)
@@ -2155,17 +2160,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             gcodeFileContents = gcodeFileContents.Replace("\r\n", "\n");
             gcodeFileContents = gcodeFileContents.Replace('\r', '\n');
             string[] gcodeLines = gcodeFileContents.Split('\n');
-            List<string> printableGCode = new List<string>();
+            List<string> printableGCode = new List<string>(gcodeLines.Length);
             foreach (string line in gcodeLines)
             {
-                string[] splitOnSemicolon = line.Split(';');
-                string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
-                if (trimedLine.Length < 1)
-                {
-                    continue;
-                }
-
-                printableGCode.Add(trimedLine);
+                printableGCode.Add(line);
             }
 
             ExtrusionRatio = 1;
