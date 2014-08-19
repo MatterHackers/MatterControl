@@ -180,6 +180,8 @@ namespace MatterHackers.MatterControl
         {
             lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
 
+            WidescreenPanel.PreChangePannels.CallEvents(null, null);
+
             // remove the advance control and replace it with new ones built for the selected printer
             int advancedControlsIndex = GetChildIndex(advancedControls2);
             RemoveChild(advancedControlsIndex);
