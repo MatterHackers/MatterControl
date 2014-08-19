@@ -251,6 +251,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 renderType |= RenderType.Retractions;
             }
+            if (gcodeViewWidget.RenderSpeeds)
+            {
+                renderType |= RenderType.SpeedColors;
+            }
+            if (gcodeViewWidget.SimulateExtrusion)
+            {
+                renderType |= RenderType.SimulateExtrusion;
+            }
 
             GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
             gcodeViewWidget.gCodeRenderer.Render3D(0, Math.Min(gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.LoadedGCode.NumChangesInZ), gcodeViewWidget.TotalTransform, 1, renderType,
@@ -445,7 +453,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // put in a show grid check box
             {
-                CheckBox showGrid = new CheckBox(LocalizedString.Get("Show Grid"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                CheckBox showGrid = new CheckBox(LocalizedString.Get("Grid"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 showGrid.Checked = gcodeViewWidget.RenderGrid;
                 meshViewerWidget.RenderBed = showGrid.Checked;
                 showGrid.CheckedStateChanged += (sender, e) =>
@@ -458,7 +466,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // put in a show moves checkbox
             {
-                CheckBox showMoves = new CheckBox(LocalizedString.Get("Show Moves"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                CheckBox showMoves = new CheckBox(LocalizedString.Get("Moves"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 showMoves.Checked = gcodeViewWidget.RenderMoves;
                 showMoves.CheckedStateChanged += (sender, e) =>
                 {
@@ -469,13 +477,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // put in a show Retractions checkbox
             {
-                CheckBox showRetractions = new CheckBox(LocalizedString.Get("Show Retractions"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                CheckBox showRetractions = new CheckBox(LocalizedString.Get("Retractions"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 showRetractions.Checked = gcodeViewWidget.RenderRetractions;
                 showRetractions.CheckedStateChanged += (sender, e) =>
                 {
                     gcodeViewWidget.RenderRetractions = showRetractions.Checked;
                 };
                 layerInfoContainer.AddChild(showRetractions);
+            }
+
+            // put in a show speed checkbox
+            {
+                CheckBox showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                showSpeeds.Checked = gcodeViewWidget.RenderSpeeds;
+                showSpeeds.CheckedStateChanged += (sender, e) =>
+                {
+                    gcodeViewWidget.RenderSpeeds = showSpeeds.Checked;
+                };
+                layerInfoContainer.AddChild(showSpeeds);
+            }
+
+            // put in a simulate extrusion checkbox
+            {
+                CheckBox simulateExtrusion = new CheckBox(LocalizedString.Get("Extrusion"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                simulateExtrusion.Checked = gcodeViewWidget.SimulateExtrusion;
+                simulateExtrusion.CheckedStateChanged += (sender, e) =>
+                {
+                    gcodeViewWidget.SimulateExtrusion = simulateExtrusion.Checked;
+                };
+                layerInfoContainer.AddChild(simulateExtrusion);
             }
 
             // put in a show 3D view checkbox
