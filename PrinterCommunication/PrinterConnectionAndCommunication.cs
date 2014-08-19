@@ -112,6 +112,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             get { return firmwareVersion; }
         }
 
+        string deviceCode;
+        public string DeviceCode
+        {
+            get { return deviceCode; }
+        }
+
         static PrinterConnectionAndCommunication globalInstance;
         string connectionFailureMessage = "Unknown Reason";
 
@@ -1148,6 +1154,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             string firmwareVersionReported = "";
             if (GCodeFile.GetFirstStringAfter("MACHINE_TYPE:", foundStringEventArgs.LineToCheck, " EXTRUDER_COUNT", ref firmwareVersionReported))
             {
+                char splitChar = '^';
+                if (firmwareVersionReported.Contains(splitChar))
+                {
+                    string[] split = firmwareVersionReported.Split(splitChar);
+                    if (split.Count() == 2)
+                    {
+                        deviceCode = split[0];
+                        firmwareVersionReported = split[1];
+                    }
+                }
+                
                 //Firmware version was detected and is different
                 if (firmwareVersionReported != "" && firmwareVersion != firmwareVersionReported)
                 {                    
