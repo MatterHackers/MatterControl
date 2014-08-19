@@ -52,7 +52,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-    public class WidescreenPanel : FlowLayoutWidget, IReceiveRootedWeakEvent
+    public class WidescreenPanel : FlowLayoutWidget
     {
         static bool leftBorderLineHiden;
         static bool rightBorderLineHiden;
@@ -90,21 +90,13 @@ namespace MatterHackers.MatterControl
 
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.Register(this, "ReloadAdvancedControlsPanelTrigger");
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
             this.BoundsChanged += new EventHandler(onBoundsChanges);
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public void ReloadAdvancedControlsPanelTrigger(object sender, EventArgs e)
         {
-            switch (eventType)
-            {
-                case "ReloadAdvancedControlsPanelTrigger":
-                    UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+            UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
         }
 
         public override void OnParentChanged(EventArgs e)

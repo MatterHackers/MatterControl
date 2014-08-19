@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	}
 
 
-    public class ConnectionWidgetBase : GuiWidget, IReceiveRootedWeakEvent
+    public class ConnectionWidgetBase : GuiWidget
     {
         protected GuiWidget containerWindowToClose;
         protected RGBA_Bytes defaultTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -254,13 +254,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         protected ConnectionWindow windowController;
         public ActionLinkFactory actionLinkFactory = new ActionLinkFactory();
 
+        event EventHandler unregisterEvents;
 
         public ConnectionWidgetBase(ConnectionWindow windowController, GuiWidget containerWindowToClose)
             : base()
         {
             this.windowController = windowController;
             this.containerWindowToClose = containerWindowToClose;
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
         public int GetPrinterRecordCount()
@@ -268,18 +269,19 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return Datastore.Instance.RecordCount("Printer");
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public void ThemeChanged(object sender, EventArgs e)
         {
-            switch (eventType)
-            {
-                case "ThemeChanged":
-                    this.linkTextColor = ActiveTheme.Instance.PrimaryAccentColor;
-                    this.Invalidate();
-                    break;
+            this.linkTextColor = ActiveTheme.Instance.PrimaryAccentColor;
+            this.Invalidate();
+        }
 
-                default:
-                    throw new NotImplementedException();
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
             }
+            base.OnClosed(e);
         }
     }
 }

@@ -12,7 +12,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class ViewControls3D : FlowLayoutWidget, IReceiveRootedWeakEvent
+    public class ViewControls3D : FlowLayoutWidget
     {
         GuiWidget partSelectSeparator;
         MeshViewerWidget meshViewerWidget;
@@ -96,20 +96,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             SetMeshViewerDisplayTheme();
             partSelectButton.CheckedStateChanged += SetMeshViewerDisplayTheme;
 
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
-        {
-            switch (eventType)
-            {
-                case "ThemeChanged":
-                    SetMeshViewerDisplayTheme(null, null);
-                    break;
+        event EventHandler unregisterEvents;
 
-                default:
-                    throw new NotImplementedException();
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
             }
+            base.OnClosed(e);
+        }
+
+        public void ThemeChanged(object sender, EventArgs e)
+        {
+            SetMeshViewerDisplayTheme(null, null);
         }
 
         protected void SetMeshViewerDisplayTheme(object sender = null, EventArgs e = null)

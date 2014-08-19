@@ -40,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CreatorPlugins
 {
-    public class PluginChooserWindow : SystemWindow, IReceiveRootedWeakEvent
+    public class PluginChooserWindow : SystemWindow
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory unlockButtonFactory = new TextImageButtonFactory();
@@ -66,20 +66,12 @@ namespace MatterHackers.MatterControl.CreatorPlugins
         event EventHandler unregisterEvents;
         protected void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public void ThemeChanged(object sender, EventArgs e)
         {
-            switch (eventType)
-            {
-                case "ThemeChanged":
-                    UiThread.RunOnIdle(Reload);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+            UiThread.RunOnIdle(Reload);
         }
 
         public void TriggerReload(object sender, EventArgs e)

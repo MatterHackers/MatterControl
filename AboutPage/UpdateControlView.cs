@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.VersionManagement;
 
 namespace MatterHackers.MatterControl
 {
-    public class UpdateControlView : FlowLayoutWidget, IReceiveRootedWeakEvent
+    public class UpdateControlView : FlowLayoutWidget
     {
         Button downloadUpdateLink;
         Button checkUpdateLink;
@@ -89,24 +89,11 @@ namespace MatterHackers.MatterControl
                 AddChild(installUpdateLink);
             }
 
-            UpdateControlData.Instance.UpdateStatusChanged.Register(this, "UpdateStatusChanged");
+            UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(UpdateStatusChanged, ref unregisterEvents);
 
             MinimumSize = new VectorMath.Vector2(0, 50);
 
             UpdateStatusChanged(null, null);
-        }
-
-        public void RootedEvent(string eventType, EventArgs e)
-        {
-            switch (eventType)
-            {
-                case "UpdateStatusChanged":
-                    this.UpdateStatusChanged(null, null);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
         }
 
         public void CheckForUpdate(object sender, MouseEventArgs e)

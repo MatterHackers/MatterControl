@@ -50,11 +50,11 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
-    public class ApplicationWidget : GuiWidget, IReceiveRootedWeakEvent
+    public class ApplicationWidget : GuiWidget
     {
         static ApplicationWidget globalInstance;
-        public RootedObjectWeakEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectWeakEventHandler();
-        public RootedObjectWeakEventHandler CloudSyncStatusChanged = new RootedObjectWeakEventHandler();
+        public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
+        public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 
 		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
 		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
@@ -66,20 +66,12 @@ namespace MatterHackers.MatterControl
         public ApplicationWidget()
         {
             Name = "MainSlidePanel";
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public void ThemeChanged(object sender, EventArgs e)
         {
-            switch (eventType)
-            {
-                case "ThemeChanged":
-                    ReloadAll(null, null);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+            ReloadAll(null, null);
         }
 
         WidescreenPanel widescreenPanel;

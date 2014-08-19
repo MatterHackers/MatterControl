@@ -17,7 +17,7 @@ using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl
 {
-    public class ActionBarPlus : FlowLayoutWidget, IReceiveRootedWeakEvent
+    public class ActionBarPlus : FlowLayoutWidget
     {
         QueueDataView queueDataView;
 
@@ -41,21 +41,13 @@ namespace MatterHackers.MatterControl
             this.Padding = new BorderDouble(bottom: 6);
 
             // Add Handlers
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public void ThemeChanged(object sender, EventArgs e)
         {
-            switch (eventType)
-            {
-                case "ThemeChanged":
-                    this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-                    this.Invalidate();
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            this.Invalidate();
         }
 
         public override void OnClosed(EventArgs e)
