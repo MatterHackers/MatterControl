@@ -212,10 +212,13 @@ namespace MatterHackers.MatterControl
             ColumnTwo.AnchorAll();
         }
 
+        static int ColumnThreeCount = 0;
         void LoadColumnThree(object state = null)
         {
-            ColumnThree.RemoveAllChildren();
-            ColumnThree.AddChild(new ThirdPanelTabView());
+            ColumnThree.CloseAndRemoveAllChildren();
+            ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView();
+            thirdPanelTabView.Name = "For - WideScreenPanel {0}".FormatWith(ColumnThreeCount++);
+            ColumnThree.AddChild(thirdPanelTabView);
             ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
         }
 
