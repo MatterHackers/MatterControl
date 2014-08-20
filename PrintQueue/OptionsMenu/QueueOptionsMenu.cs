@@ -94,6 +94,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click));
             menuItems.Add(new Tuple<string,Func<bool>>("GCode", null));
             menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click));
+            //menuItems.Add(new Tuple<string, Func<bool>>("X3G", null));
+            //menuItems.Add(new Tuple<string, Func<bool>>(LocalizedString.Get("Export to Folder"), exportX3GButton_Click));
 
             if (ActiveSliceSettings.Instance.HasSdCardReader())
             {
@@ -195,6 +197,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             return true;
         }
+
+		bool exportX3GButton_Click()
+		{
+			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			{
+				UiThread.RunOnIdle(MustSelectPrinterMessage);
+			}
+			else
+			{
+				UiThread.RunOnIdle(SelectLocationToExportGCode);
+			}
+			return true;
+
+		}
 
 		void ExportToFolderFeedbackWindow_Closed(object sender, EventArgs e)
 		{

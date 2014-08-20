@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
 using System.Globalization;
@@ -121,6 +122,20 @@ namespace MatterHackers.MatterControl
                     });
                     middleRowContainer.AddChild(exportToSdCard);
                 }
+
+                //if (ActiveSliceSettings.Instance.IsMakerbotGCodeFlavor() && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+                //{
+                //    string exportAsX3GText = "Export as X3G".Localize();
+                //    Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
+                //    exportAsX3G.HAnchor = HAnchor.ParentLeft;
+                //    exportAsX3G.Cursor = Cursors.Hand;
+                //    exportAsX3G.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
+                //        {
+                //            UiThread.RunOnIdle(ExportX3G_Click);
+
+                //        });
+                //    middleRowContainer.AddChild(exportAsX3G);
+                //}
             }
 
             middleRowContainer.AddChild(new VerticalSpacer());
@@ -312,6 +327,45 @@ namespace MatterHackers.MatterControl
             }
         }
 
+
+		void ExportX3G_Click(object state)
+		{
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
+			saveParams.Title = "MatterControl: Export File";
+			saveParams.ActionButtonLabel = "Export";
+
+			System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
+			if (streamToSaveTo != null) 
+			{
+				streamToSaveTo.Close ();
+
+				pathAndFilenameToSave = saveParams.FileName;
+				string extension = Path.GetExtension(pathAndFilenameToSave);
+				if(extension == "")
+				{
+					File.Delete(pathAndFilenameToSave);
+					pathAndFilenameToSave += ".gcode";
+				}
+
+				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
+				{
+					Close();
+					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+					printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+
+					/*ProcessStartInfo exportX3GProcess = new ProcessStartInfo(printItemWrapper.PrintItem.Name);
+					exportX3GProcess.UseShellExecute = true;
+					exportX3GProcess.FileName = "C:\\Users\\Matter Hackers 1\\GPX\\gpx-win32-1.3\\gpx-win32-1.3\\gpx.exe";
+					Process.Start(exportX3GProcess);*/
+				}
+				else if (partIsGCode)
+				{
+					Close();
+					SaveGCodeToNewLocation(printItemWrapper.FileLocation, pathAndFilenameToSave);
+				}
+			}
+		}
+
         private void SaveGCodeToNewLocation(string source, string dest)
         {
             if (ActivePrinterProfile.Instance.DoPrintLeveling)
@@ -430,6 +484,10 @@ namespace MatterHackers.MatterControl
 
             printItemWrapper.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
             SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), pathAndFilenameToSave);
+			ProcessStartInfo exportX3GProcess = new ProcessStartInfo(printItemWrapper.PrintItem.Name);
+			exportX3GProcess.UseShellExecute = true;
+			exportX3GProcess.FileName = "C:\\Users\\Matter Hackers 1\\GPX\\gpx-win32-1.3\\gpx-win32-1.3\\gpx.exe";
+			Process.Start(exportX3GProcess);
         }
     }
 }

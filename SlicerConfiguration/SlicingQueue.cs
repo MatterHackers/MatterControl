@@ -48,6 +48,47 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         static List<PrintItemWrapper> listOfSlicingItems = new List<PrintItemWrapper>();
         static bool haltSlicingThread = false;
 
+        static List<SliceEngineInfo> availableSliceEngines;
+        static public List<SliceEngineInfo> AvailableSliceEngines
+        {
+            get
+            {
+                if (availableSliceEngines == null)
+                {
+                    availableSliceEngines = new List<SliceEngineInfo>();
+                    Slic3rInfo slic3rEngineInfo = new Slic3rInfo();
+                    if (slic3rEngineInfo.Exists())
+                    {
+                        availableSliceEngines.Add(slic3rEngineInfo);
+                    }
+                    CuraEngineInfo curaEngineInfo = new CuraEngineInfo();
+                    if (curaEngineInfo.Exists())
+                    {
+                        availableSliceEngines.Add(curaEngineInfo);
+                    }
+                    MatterSliceInfo matterSliceEngineInfo = new MatterSliceInfo();
+                    if (matterSliceEngineInfo.Exists())
+                    {
+                        availableSliceEngines.Add(matterSliceEngineInfo);
+                    }
+                }
+                return availableSliceEngines;
+            }
+        }
+
+        static private SliceEngineInfo getSliceEngineInfoByType(ActivePrinterProfile.SlicingEngineTypes engineType)
+        {
+            foreach (SliceEngineInfo info in AvailableSliceEngines)
+            {
+                if (info.GetSliceEngineType() == engineType)
+                {
+                    return info;
+                }
+            }
+            return null;
+        }
+				
+
         SlicingQueue()
         {
             if (slicePartThread == null)
@@ -101,94 +142,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         static string getSlicerFullPath()
         {
-            switch (OsInformation.OperatingSystem)
+            SliceEngineInfo info = getSliceEngineInfoByType(ActivePrinterProfile.Instance.ActiveSliceEngineType);
+            if (info != null)
             {
-                case OSType.Windows:
-                    switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
-                    {
-                        case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
-                            {
-                                string slic3rRelativePath = Path.Combine("..", "Slic3r", "slic3r.exe");
-                                if (!File.Exists(slic3rRelativePath))
-                                {
-                                    slic3rRelativePath = Path.Combine(".", "Slic3r", "slic3r.exe");
-                                }
-                                return Path.GetFullPath(slic3rRelativePath);
-                            }
-
-                        case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-                            {
-                                string curaEngineRelativePath = Path.Combine("..", "CuraEngine.exe");
-                                if (!File.Exists(curaEngineRelativePath))
-                                {
-                                    curaEngineRelativePath = Path.Combine(".", "CuraEngine.exe");
-                                }
-                                return Path.GetFullPath(curaEngineRelativePath);
-                            }
-
-                        case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-                            {
-                                string materSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
-                                return Path.GetFullPath(materSliceRelativePath);
-                            }
-
-                        default:
-                            throw new NotImplementedException();
-                    }
-
-                case OSType.Mac:
-                    switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
-                    {
-                        case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
-                            {
-                                //string parentLocation = Directory.GetParent (ApplicationDataStorage.Instance.ApplicationPath).ToString ();
-                                string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "Slic3r.app", "Contents", "MacOS", "slic3r");
-                                return applicationPath;
-                            }
-                        case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-                            {
-                                string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
-                                return applicationPath;
-                            }
-                        case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-                            {
-                                string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "MatterSlice");
-                                return applicationPath;
-                            }
-
-                        default:
-                            throw new NotImplementedException();
-                    }
-
-                case OSType.X11:
-					switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
-					{
-						case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
-							{
-								//string parentLocation = Directory.GetParent (ApplicationDataStorage.Instance.ApplicationPath).ToString ();
-								string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "Slic3r.app", "Contents", "MacOS", "slic3r");
-								return applicationPath;
-							}
-						case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-							{
-								string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
-								return applicationPath;
-							}
-						case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
-							{
-								string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "MatterSlice");
-								return applicationPath;
-							}
-
-					default:
-						throw new NotImplementedException();
-					}
-					
-                default:
-                    throw new NotImplementedException();
+                return info.GetEnginePath();
             }
-        }
+            else
+            {
+                throw new Exception("Slice engine is unavailable");
+            }
 
+        }
+        public static bool runInProcess = false;
         static Process slicerProcess = null;
         static void CreateSlicedPartsThread()
         {
@@ -232,7 +197,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     break;
                             }
 
-                            bool runInProcess = false;
+                            
                             if ((OsInformation.OperatingSystem == OSType.Android || OsInformation.OperatingSystem == OSType.Mac || runInProcess)
                                 && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {

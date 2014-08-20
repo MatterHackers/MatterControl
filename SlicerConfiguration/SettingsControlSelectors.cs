@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -287,30 +288,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             AnchoredDropDownList engineMenuDropList = new AnchoredDropDownList("Engine   ");
             engineMenuDropList.Margin = new BorderDouble(0,3);
-            {
-                MenuItem slic3rMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.Slic3r.ToString());
-                slic3rMenuItem.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-                };
+			{
+				//Add Each SliceEngineInfo Objects to DropMenu
+                foreach (SliceEngineInfo engineMenuItem in SlicingQueue.AvailableSliceEngines)
+				{                    
+                    MenuItem item = engineMenuDropList.AddItem(engineMenuItem.Name);
+                    ActivePrinterProfile.SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
+                    item.Selected += (sender, e) =>
+                    {
+                        ActivePrinterProfile.Instance.ActiveSliceEngineType = itemEngineType;
+                        ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                    };
 
-                MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.CuraEngine.ToString());
-                curaEnginMenuItem.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-                };
+                    //Set item as selected if it matches the active slice engine
+                    if (engineMenuItem.GetSliceEngineType() == ActivePrinterProfile.Instance.ActiveSliceEngineType)
+                    {
+                        engineMenuDropList.SelectedLabel = engineMenuItem.Name;
+                    }
+				}
 
-                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.MatterSlice.ToString());
-                matterSliceMenuItem.Selected += (sender, e) =>
+                //If nothing is selected (ie selected engine is not available) set to 
+                if (engineMenuDropList.SelectedLabel == "")
                 {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-                };
+                    try
+                    {
+                        engineMenuDropList.SelectedLabel = MatterSliceInfo.DisplayName;
+                    }
+                    catch
+                    {
+                        throw new Exception("MatterSlice is not available, for some strange reason");
+                    }
 
-                engineMenuDropList.SelectedLabel = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
-            }
+                }				
+			}        
             engineMenuDropList.MinimumSize = new Vector2(engineMenuDropList.LocalBounds.Width, engineMenuDropList.LocalBounds.Height);
             return engineMenuDropList;
         }
