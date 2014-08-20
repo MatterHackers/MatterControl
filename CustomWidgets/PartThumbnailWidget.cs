@@ -45,7 +45,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-    public class PartThumbnailWidget : ClickWidget, IReceiveRootedWeakEvent
+    public class PartThumbnailWidget : ClickWidget
     {
         static BackgroundWorker createThumbnailWorker = null;
 
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
             this.Click += new ButtonEventHandler(OnMouseClick);
             this.MouseEnterBounds += new EventHandler(onEnter);
             this.MouseLeaveBounds += new EventHandler(onExit);
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
         void item_FileHasChanged(object sender, EventArgs e)
@@ -326,25 +326,17 @@ namespace MatterHackers.MatterControl
             createThumbnailWorker = null;
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public void ThemeChanged(object sender, EventArgs e)
         {
-            switch (eventType)
-            {
-                case "ThemeChanged":
-                    //Set background color to new theme
-                    this.normalBackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-                    this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            //Set background color to new theme
+            this.normalBackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
-                    //Regenerate thumbnails
-                    // The thumbnail color is currently white and does not change with this change.
-                    // If we eventually change the thumbnail color with the theme we will need to change this.
-                    //this.thumbNailHasBeenRequested = false;
-                    this.Invalidate();
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+            //Regenerate thumbnails
+            // The thumbnail color is currently white and does not change with this change.
+            // If we eventually change the thumbnail color with the theme we will need to change this.
+            //this.thumbNailHasBeenRequested = false;
+            this.Invalidate();
         }
 
         private void OnMouseClick(object sender, MouseEventArgs e)

@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
         private int defaultThemeIndex = 1;
         private int activeThemeIndex = -1;
 
-        public RootedObjectWeakEventHandler ThemeChanged = new RootedObjectWeakEventHandler();
+        public RootedObjectEventHandler ThemeChanged = new RootedObjectEventHandler();
 
         public List<Theme> AvailableThemes
         {

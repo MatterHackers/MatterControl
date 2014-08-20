@@ -50,7 +50,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-    public class QueueRowItem : GuiWidget, IReceiveRootedWeakEvent
+    public class QueueRowItem : GuiWidget
     {
         public PrintItemWrapper PrintItemWrapper { get; set; }
         public RGBA_Bytes WidgetTextColor;
@@ -316,7 +316,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
             PrintItemWrapper.SlicingOutputMessage.RegisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
 
@@ -468,23 +468,15 @@ namespace MatterHackers.MatterControl.PrintQueue
             });
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public void ThemeChanged(object sender, EventArgs e)
         {
-            switch (eventType)
+            if (this.isActivePrint)
             {
-                case "ThemeChanged":
-                    if (this.isActivePrint)
-                    {
-                        //Set background and text color to new theme
-                        this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-                        this.partLabel.TextColor = RGBA_Bytes.White;
-                        this.partStatus.TextColor = RGBA_Bytes.White;
-                        this.Invalidate();
-                    }
-                    break;
-
-                default:
-                    throw new NotImplementedException();
+                //Set background and text color to new theme
+                this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+                this.partLabel.TextColor = RGBA_Bytes.White;
+                this.partStatus.TextColor = RGBA_Bytes.White;
+                this.Invalidate();
             }
         }
 

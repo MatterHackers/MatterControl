@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.ContactForm
         }
     }
 
-    public class ContactFormWindow : SystemWindow, IReceiveRootedWeakEvent
+    public class ContactFormWindow : SystemWindow
     {
         static ContactFormWindow contactFormWindow;
         static bool contactFormIsOpen;
@@ -349,23 +349,25 @@ namespace MatterHackers.MatterControl.ContactForm
             MinimumSize = new Vector2(500, 550);
         }
 
+        event EventHandler unregisterEvents;
         private void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
             contactFormWidget.Closed += (sender, e) => { Close(); };
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public override void OnClosed(EventArgs e)
         {
-            switch (eventType)
+            if (unregisterEvents != null)
             {
-                case "ThemeChanged":
-                    this.Invalidate();
-                    break;
-
-                default:
-                    throw new NotImplementedException();
+                unregisterEvents(this, null);
             }
+            base.OnClosed(e);
+        }
+
+        public void ThemeChanged(object sender, EventArgs e)
+        {
+            this.Invalidate();
         }
     }
 }

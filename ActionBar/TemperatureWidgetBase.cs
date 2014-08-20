@@ -35,7 +35,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-    class TemperatureWidgetBase : GuiWidget, IReceiveRootedWeakEvent
+    class TemperatureWidgetBase : GuiWidget
     {
         protected TextWidget indicatorTextWidget;
         protected TextWidget labelTextWidget;
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 
             this.AddChild(container);
-            ActiveTheme.Instance.ThemeChanged.Register(this, "ThemeChanged");
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
             this.MouseEnterBounds += onEnterBounds;
             this.MouseLeaveBounds += onLeaveBounds;
@@ -133,18 +133,10 @@ namespace MatterHackers.MatterControl.ActionBar
             base.OnClosed(e);
         }
 
-        public void RootedEvent(string eventType, EventArgs e)
+        public void ThemeChanged(object sender, EventArgs e)
         {
-            switch (eventType)
-            {
-                case "ThemeChanged":
             this.indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
             this.Invalidate();
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
         }
 
         void onEnterBounds(Object sender, EventArgs e)

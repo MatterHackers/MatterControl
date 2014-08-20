@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public RootedObjectWeakEventHandler UpdateStatusChanged = new RootedObjectWeakEventHandler();
+        public RootedObjectEventHandler UpdateStatusChanged = new RootedObjectEventHandler();
 
         static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
         static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
