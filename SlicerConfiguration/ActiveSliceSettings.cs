@@ -200,6 +200,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return GetActiveValue("has_sd_card_reader") == "1";
         }
 
+		public bool IsMakerbotGCodeFlavor()
+		{
+			return GetActiveValue("gcode_flavor") == "makerbot";
+		}
+
         public bool HasHeatedBed()
         {
             return GetActiveValue("has_heated_bed") == "1";
