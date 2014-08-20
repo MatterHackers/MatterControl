@@ -123,19 +123,19 @@ namespace MatterHackers.MatterControl
                     middleRowContainer.AddChild(exportToSdCard);
                 }
 
-				if (ActiveSliceSettings.Instance.IsMakerbotGCodeFlavor() && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-				{
-					string exportAsX3GText = "Export as X3G".Localize();
-					Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
-					exportAsX3G.HAnchor = HAnchor.ParentLeft;
-					exportAsX3G.Cursor = Cursors.Hand;
-					exportAsX3G.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
-						{
-							UiThread.RunOnIdle(ExportX3G_Click);
+                //if (ActiveSliceSettings.Instance.IsMakerbotGCodeFlavor() && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+                //{
+                //    string exportAsX3GText = "Export as X3G".Localize();
+                //    Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
+                //    exportAsX3G.HAnchor = HAnchor.ParentLeft;
+                //    exportAsX3G.Cursor = Cursors.Hand;
+                //    exportAsX3G.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
+                //        {
+                //            UiThread.RunOnIdle(ExportX3G_Click);
 
-						});
-					middleRowContainer.AddChild(exportAsX3G);
-				}
+                //        });
+                //    middleRowContainer.AddChild(exportAsX3G);
+                //}
             }
 
             middleRowContainer.AddChild(new VerticalSpacer());
