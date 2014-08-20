@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         SetLayerWidget setLayerWidget;
         LayerNavigationWidget navigationWidget;
-        TextWidget layerStartRenderRationTitle;
+        TextWidget layerStartRenderRatioTitle;
         public Slider layerStartRenderRatioSlider;
         TextWidget layerEndRenderRationTitle;
         public Slider layerEndRenderRatioSlider;
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void SetAnimationPosition()
         {
             int currentLayer = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
-            if (currentLayer >= 1)
+            if (currentLayer >= 0)
             {
                 selectLayerSlider.Value = currentLayer-1;
                 layerEndRenderRatioSlider.Value = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
@@ -528,34 +528,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
                 syncToPrint.CheckedStateChanged += (sender, e) =>
                 {
-					UserSettings.Instance.set("LayerViewSyncToPrint", syncToPrint.Checked.ToString());
-
-					if (syncToPrint.Checked)
-                    {
-                        SetAnimationPosition();
-                        navigationWidget.Visible = false;
-                        setLayerWidget.Visible = false;
-                        layerStartRenderRationTitle.Visible = false;
-                        layerStartRenderRatioSlider.Visible = false;
-                        layerEndRenderRationTitle.Visible = false;
-                        layerEndRenderRatioSlider.Visible = false;
-                        selectLayerSlider.Visible = false;
-                    }
-                    else
-                    {
-                        if (layerEndRenderRatioSlider != null)
-                        {
-                            layerEndRenderRatioSlider.Value = 1;
-                            layerStartRenderRatioSlider.Value = 0;
-                        }
-                        navigationWidget.Visible = true;
-                        setLayerWidget.Visible = true;
-                        layerStartRenderRationTitle.Visible = true;
-                        layerStartRenderRatioSlider.Visible = true;
-                        layerEndRenderRationTitle.Visible = true;
-                        layerEndRenderRatioSlider.Visible = true;
-                        selectLayerSlider.Visible = true;
-                    }
+                    UserSettings.Instance.set("LayerViewSyncToPrint", syncToPrint.Checked.ToString());
+                    SetSyncToPrintVisibility();
                 };
                 layerInfoContainer.AddChild(syncToPrint);
 
@@ -572,6 +546,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     
                     // However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
                     PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        SetSyncToPrintVisibility();
+                    });
                 }
             }
 
@@ -580,6 +558,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonPanel.AddChild(layerInfoContainer);
 
             textImageButtonFactory.FixedWidth = oldWidth;
+        }
+
+        private void SetSyncToPrintVisibility()
+        {
+            if (!widgetHasCloseButton)
+            {
+                if (syncToPrint.Checked)
+                {
+                    SetAnimationPosition();
+                    //navigationWidget.Visible = false;
+                    //setLayerWidget.Visible = false;
+                    layerStartRenderRatioTitle.Visible = false;
+                    layerStartRenderRatioSlider.Visible = false;
+                    layerEndRenderRationTitle.Visible = false;
+                    layerEndRenderRatioSlider.Visible = false;
+                    selectLayerSlider.Visible = false;
+                }
+                else
+                {
+                    if (layerEndRenderRatioSlider != null)
+                    {
+                        layerEndRenderRatioSlider.Value = 1;
+                        layerStartRenderRatioSlider.Value = 0;
+                    }
+                    navigationWidget.Visible = true;
+                    setLayerWidget.Visible = true;
+                    layerStartRenderRatioTitle.Visible = true;
+                    layerStartRenderRatioSlider.Visible = true;
+                    layerEndRenderRationTitle.Visible = true;
+                    layerEndRenderRatioSlider.Visible = true;
+                    selectLayerSlider.Visible = true;
+                }
+            }
         }
 
 		void SetLayerViewType()
@@ -615,6 +626,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // register for done slicing and slicing messages
                 printItem.SlicingOutputMessage.RegisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
                 printItem.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+                SetSyncToPrintVisibility();
             }
         }
 
@@ -729,8 +741,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
-                layerStartRenderRationTitle = new TextWidget(LocalizedString.Get("start:"), 50, 77, 10, Agg.Font.Justification.Right);
-                AddChild(layerStartRenderRationTitle);
+                layerStartRenderRatioTitle = new TextWidget(LocalizedString.Get("start:"), 50, 77, 10, Agg.Font.Justification.Right);
+                AddChild(layerStartRenderRatioTitle);
                 layerStartRenderRatioSlider = new Slider(new Vector2(), 10);
                 layerStartRenderRatioSlider.ValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
                 AddChild(layerStartRenderRatioSlider);

@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl
             {
                 this.RightPanel.AddChild(new PrintProgressBar());
                 ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView(AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
+                thirdPanelTabView.Name = "For - CompactSlidePanel";
                 this.RightPanel.AddChild(thirdPanelTabView);
             }
 
