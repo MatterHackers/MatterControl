@@ -17,78 +17,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public abstract class SliceEngineInfo
 	{
+        public string Name { get; set; }
 
-		private string displayName;
-		private string slicePathWindows;
-		private string slicePathMac;
-		private string slicePathLinux;
+        protected abstract string getWindowsPath();
+        protected abstract string getMacPath();
+        protected abstract string getLinuxPath();
+        public abstract ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType();
 
-		public SliceEngineInfo()
+		public SliceEngineInfo(string name)
 		{
-
+            this.Name = name;
 		}
 
-        public virtual ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType();
+        public virtual bool Exists()
+        {
+            return System.IO.File.Exists(this.GetEnginePath());
+        }        
 
+        public string GetEnginePath()
+        {
+            switch (OsInformation.OperatingSystem)
+            {
+                case OSType.Windows:
+                    return getWindowsPath();
 
-		public SliceEngineInfo(string name, string winPath, string macPath, string linuxPath)
-		{
-			displayName = name;
-			slicePathWindows = winPath;
-			slicePathMac = macPath;
-			slicePathLinux = linuxPath;
-		}
+                case OSType.Mac:
+                    return getMacPath();
 
+                case OSType.X11:
+                    return getLinuxPath();
 
-		public string PathOnWindows
-		{
-			get
-			{
-				return slicePathWindows;
-			}
-			set
-			{
-				slicePathWindows = value;
-			
-			}
-		}
-
-		public string PathOnMac
-		{
-			get
-			{
-				return slicePathMac;
-			}
-			set
-			{
-				slicePathMac = value;
-
-			}
-		}
-
-		public string PathOnLinux
-		{
-			get
-			{
-				return slicePathLinux;
-			}
-			set
-			{
-				slicePathLinux = value;
-			}
-		}
-
-		public string Name
-		{
-			get
-			{
-				return displayName;
-			}
-			set
-			{
-				displayName = value; 
-			}
-		}
+                default:
+                    throw new NotImplementedException();
+            }
+        }
 	}
 }
 

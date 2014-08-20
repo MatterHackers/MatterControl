@@ -18,32 +18,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class MatterSliceInfo : SliceEngineInfo
 	{
 		public MatterSliceInfo()
-			:base("MatterSlice", getWindowsPath(), getMacPath(), getLinuxPath())
+            : base(MatterSliceInfo.DisplayName)
 		{
 		}
+
+        public static string DisplayName = "MatterSlice";
 
         public override ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType()
         {
             return ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
         }
-			
-		public static string getWindowsPath()
+
+        public override bool Exists()
+        {
+            if (OsInformation.OperatingSystem == OSType.Android || OsInformation.OperatingSystem == OSType.Mac || SlicingQueue.runInProcess)
+            {
+                return System.IO.File.Exists(this.GetEnginePath());
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        protected override string getWindowsPath()
 		{
 			string materSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
 			return Path.GetFullPath(materSliceRelativePath);
 		}
 
-		public static string getMacPath()
+        protected override string getMacPath()
 		{
 			string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "MatterSlice");
 			return applicationPath;
 		}
 
-		public static string getLinuxPath()
+        protected override string getLinuxPath()
 		{
 			string materSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
 			return Path.GetFullPath(materSliceRelativePath);
 		}
+
+       
+
 
 	}
 }

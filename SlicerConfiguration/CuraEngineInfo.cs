@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class CuraEngineInfo : SliceEngineInfo
 	{
 		public CuraEngineInfo()
-			:base("CuraEngine", getWindowsPath(), getMacPath(), getLinuxPath())
+			:base("CuraEngine")
 		{
 		}
 
@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
         }
 
-		public static string getWindowsPath()
+        protected override string getWindowsPath()
 		{
 			string curaEngineRelativePath = Path.Combine("..", "CuraEngine.exe");
 			if (!File.Exists(curaEngineRelativePath))
@@ -37,13 +37,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Path.GetFullPath(curaEngineRelativePath);
 		}
 
-		public static string getMacPath()
+        protected override string getMacPath()
 		{
 			string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "CuraEngine");
 			return applicationPath;
 		}
 
-		public static string getLinuxPath()
+        protected override string getLinuxPath()
 		{
 			string curaEngineRelativePath = Path.Combine("..", "CuraEngine.exe");
 			if (!File.Exists(curaEngineRelativePath))
