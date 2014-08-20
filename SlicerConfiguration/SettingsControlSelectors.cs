@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -287,30 +288,80 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             AnchoredDropDownList engineMenuDropList = new AnchoredDropDownList("Engine   ");
             engineMenuDropList.Margin = new BorderDouble(0,3);
-            {
-                MenuItem slic3rMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.Slic3r.ToString());
-                slic3rMenuItem.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-                };
+			{
+				//Instantiate SliceEngineInfo Objects
+				Slic3rInfo testSlic3r = new Slic3rInfo();
+				CuraEngineInfo testCura = new CuraEngineInfo();
+				MatterSliceInfo testMatterSlice = new MatterSliceInfo();
 
-                MenuItem curaEnginMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.CuraEngine.ToString());
-                curaEnginMenuItem.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-                };
+				//Create List of SliceEngineInfo Objects
+				List<SliceEngineInfo> listOfSliceEngines = new List<SliceEngineInfo>();
+				listOfSliceEngines.Add(testSlic3r);
+				listOfSliceEngines.Add(testCura);
+				listOfSliceEngines.Add(testMatterSlice);
 
-                MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.MatterSlice.ToString());
-                matterSliceMenuItem.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-                };
+				//Add Each SliceEngineInfo Objects to DropMenu
+				foreach (SliceEngineInfo engineMenuItem in listOfSliceEngines)
+				{
+					MenuItem item = engineMenuDropList.AddItem(engineMenuItem.Name.ToString());
+					if (engineMenuItem.Name == "Slic3r")
+					{
+						item.Selected += (sender, e) => 
+						{
+								ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
+								ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+						};
+					}
 
-                engineMenuDropList.SelectedLabel = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
-            }
+					if (engineMenuItem.Name == "CuraEngine")
+					{
+						item.Selected += (sender, e) => 
+							{
+								ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
+								ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+							};
+					}
+					if (engineMenuItem.Name == "MatterSlice")
+					{
+						item.Selected += (sender, e) => 
+							{
+								ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+								ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+							};
+					}
+				}
+
+
+
+
+				/*Slic3rInfo testSlic3 = new Slic3rInfo();	
+				MenuItem slic3rMenuItem = engineMenuDropList.AddItem(testSlic3r.Name.ToString());
+				slic3rMenuItem.Selected += (sender, e) =>
+				{
+					ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
+					ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+				};
+		
+				CuraEngineInfo testCuraeNG = new CuraEngineInfo();
+				MenuItem curaEngineMenuItem = engineMenuDropList.AddItem(testCura.Name.ToString());
+				curaEngineMenuItem.Selected += (sender, e) =>
+				{
+					ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
+					ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+				};
+
+
+				MatterSliceInfo testMatterSliceR = new MatterSliceInfo();
+				MenuItem matterSliceMenuItem = engineMenuDropList.AddItem(ActivePrinterProfile.SlicingEngineTypes.MatterSlice.ToString());
+				matterSliceMenuItem.Selected += (sender, e) =>
+				{
+					ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+					ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+				};*/
+
+				engineMenuDropList.SelectedLabel = ActivePrinterProfile.Instance.ActiveSliceEngineType.ToString();
+			}
+        
             engineMenuDropList.MinimumSize = new Vector2(engineMenuDropList.LocalBounds.Width, engineMenuDropList.LocalBounds.Height);
             return engineMenuDropList;
         }
