@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     break;
                             }
 
-                            bool runInProcess = true;
+                            bool runInProcess = false;
                             if ((OsInformation.OperatingSystem == OSType.Android || OsInformation.OperatingSystem == OSType.Mac || runInProcess)
                                 && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {
