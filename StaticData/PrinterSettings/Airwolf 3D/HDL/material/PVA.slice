@@ -1,0 +1,3 @@
+temperature = 195
+first_layer_temperature = 200
+bridge_fan_speed = 100
