@@ -242,7 +242,6 @@
     <Compile Include="EeProm\EePromRepetierStorage.cs" />
     <Compile Include="PartPreviewWindow\SaveAsWindow.cs" />
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
-    <Compile Include="ExportX3GToFolderProcess.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\SliceEngineInfo.cs" />
     <Compile Include="SlicerConfiguration\CuraEngineInfo.cs" />
     <Compile Include="SlicerConfiguration\MatterSliceInfo.cs" />
