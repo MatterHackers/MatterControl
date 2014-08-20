@@ -71,12 +71,7 @@ namespace MatterHackers.MatterControl
                 {
                     case "TEST":
                         Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
-                        string[] testCommands = new string[commandLineArgs.Length - 2];
-                        if (commandLineArgs.Length > 2)
-                        {
-                            commandLineArgs.CopyTo(testCommands, 2);
-                        }
-                        testDispatch.RunTests(testCommands);
+                        testDispatch.RunTests();
                         return;
 
                     case "CLEAR_CACHE":
@@ -255,6 +250,7 @@ namespace MatterHackers.MatterControl
         Stopwatch totalDrawTime = new Stopwatch();
         int drawCount = 0;
 
+        Gaming.Game.DataViewGraph msGraph = new Gaming.Game.DataViewGraph(new Vector2(20, 500), 50, 50, 0, 200);
         public override void OnDraw(Graphics2D graphics2D)
         {
             totalDrawTime.Restart();
@@ -285,6 +281,9 @@ namespace MatterHackers.MatterControl
                     }
                 }
             }
+
+            //msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
+            //msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
         }
 
         public void DoAutoConnectIfRequired(object state)

@@ -303,36 +303,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				//Add Each SliceEngineInfo Objects to DropMenu
 				foreach (SliceEngineInfo engineMenuItem in listOfSliceEngines)
 				{
-					MenuItem item = engineMenuDropList.AddItem(engineMenuItem.Name.ToString());
-					if (engineMenuItem.Name == "Slic3r")
-					{
-						item.Selected += (sender, e) => 
-						{
-								ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.Slic3r;
-								ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-						};
-					}
-
-					if (engineMenuItem.Name == "CuraEngine")
-					{
-						item.Selected += (sender, e) => 
-							{
-								ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
-								ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-							};
-					}
-					if (engineMenuItem.Name == "MatterSlice")
-					{
-						item.Selected += (sender, e) => 
-							{
-								ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
-								ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-							};
-					}
+					MenuItem item = engineMenuDropList.AddItem(engineMenuItem.Name);
+                    item.Selected += (sender, e) =>
+                    {
+                        ActivePrinterProfile.Instance.ActiveSliceEngineType = engineMenuItem.GetSliceEngineType();
+                        ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                    };
 				}
-
-
-
 
 				/*Slic3rInfo testSlic3 = new Slic3rInfo();	
 				MenuItem slic3rMenuItem = engineMenuDropList.AddItem(testSlic3r.Name.ToString());

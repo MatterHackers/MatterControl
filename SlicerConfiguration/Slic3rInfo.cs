@@ -22,6 +22,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 		}
 
+        public override ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType()
+        {
+            return ActivePrinterProfile.SlicingEngineTypes.Slic3r;
+        }
+
 		public static string getWindowsPath()
 		{
 			string slic3rRelativePathWindows = Path.Combine("..", "Slic3r", "slic3r.exe");

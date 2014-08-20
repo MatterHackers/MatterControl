@@ -52,7 +52,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-    public class WidescreenPanel : FlowLayoutWidget
+    public class WidescreenPanel : FlowLayoutWidget, IReceiveRootedWeakEvent
     {
         static bool leftBorderLineHiden;
         static bool rightBorderLineHiden;
@@ -90,8 +90,21 @@ namespace MatterHackers.MatterControl
 
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanel, ref unregisterEvents);
+            ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.Register(this, "ReloadAdvancedControlsPanelTrigger");
             this.BoundsChanged += new EventHandler(onBoundsChanges);
+        }
+
+        public void RootedEvent(string eventType, EventArgs e)
+        {
+            switch (eventType)
+            {
+                case "ReloadAdvancedControlsPanelTrigger":
+                    UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override void OnParentChanged(EventArgs e)
@@ -386,7 +399,7 @@ namespace MatterHackers.MatterControl
             LeftBorderLine.Click += new ClickWidget.ButtonEventHandler(onLeftBorderClick);
         }
 
-        public void ReloadAdvancedControlsPanel(object sender, EventArgs widgetEvent)
+        public void ReloadAdvancedControlsPanel(object state)
         {
             PreChangePannels.CallEvents(this, null);
             if (NumberOfVisiblePanels() > 1)

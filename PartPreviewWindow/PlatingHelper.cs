@@ -41,6 +41,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl
 {
@@ -150,21 +151,25 @@ namespace MatterHackers.MatterControl
             return output;
         }
 
-        public static void PlaceMeshOnBed(List<Mesh> meshesList, List<Matrix4X4> meshTransforms, int index, bool alsoCenterXY = true)
+        public static void PlaceMeshOnBed(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms, int index, bool alsoCenterXY = true)
         {
-            AxisAlignedBoundingBox bounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index]);
+            AxisAlignedBoundingBox bounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
             Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
             if (alsoCenterXY)
             {
-                meshTransforms[index] *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
+                ScaleRotateTranslate moved = meshTransforms[index];
+                moved.translation *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
+                meshTransforms[index] = moved;
             }
             else
             {
-                meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
+                ScaleRotateTranslate moved = meshTransforms[index];
+                moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
+                meshTransforms[index] = moved;
             }
         }
 
-        public static void PlaceAllMeshesOnBed(List<Mesh> meshesList, List<Matrix4X4> meshTransforms)
+        public static void PlaceAllMeshesOnBed(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
         {
             for (int i = 0; i < meshesList.Count; i++)
             {
@@ -172,7 +177,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public static void CenterMeshesXY(List<Mesh> meshesList, List<Matrix4X4> meshTransforms)
+        public static void CenterMeshesXY(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
         {
             bool first = true;
             AxisAlignedBoundingBox totalBounds = new AxisAlignedBoundingBox(new Vector3(), new Vector3());
@@ -180,12 +185,12 @@ namespace MatterHackers.MatterControl
             {
                 if(first)
                 {
-                    totalBounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index]);
+                    totalBounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
                     first = false;
                 }
                 else
                 {
-                    AxisAlignedBoundingBox bounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index]);
+                    AxisAlignedBoundingBox bounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
                     totalBounds = AxisAlignedBoundingBox.Union(totalBounds, bounds);
                 }
             }
@@ -195,11 +200,13 @@ namespace MatterHackers.MatterControl
 
             for (int index = 0; index < meshesList.Count; index++)
             {
-                meshTransforms[index] *= Matrix4X4.CreateTranslation(-boundsCenter);
+                ScaleRotateTranslate moved = meshTransforms[index];
+                moved.translation *= Matrix4X4.CreateTranslation(-boundsCenter);
+                meshTransforms[index] = moved;
             }
         }
 
-        public static void FindPositionForPartAndAddToPlate(Mesh meshToAdd, Matrix4X4 meshTransform, List<PlatingMeshData> perMeshInfo, List<Mesh> meshesToAvoid, List<Matrix4X4> meshTransforms)
+        public static void FindPositionForPartAndAddToPlate(Mesh meshToAdd, ScaleRotateTranslate meshTransform, List<PlatingMeshData> perMeshInfo, List<Mesh> meshesToAvoid, List<ScaleRotateTranslate> meshTransforms)
         {
             if (meshToAdd == null || meshToAdd.Vertices.Count < 3)
             {
@@ -218,11 +225,11 @@ namespace MatterHackers.MatterControl
             PlaceMeshOnBed(meshesToAvoid, meshTransforms, index, false);
         }
 
-        public static void MoveMeshToOpenPosition(int meshToMoveIndex, List<PlatingMeshData> perMeshInfo, List<Mesh> allMeshes, List<Matrix4X4> meshTransforms)
+        public static void MoveMeshToOpenPosition(int meshToMoveIndex, List<PlatingMeshData> perMeshInfo, List<Mesh> allMeshes, List<ScaleRotateTranslate> meshTransforms)
         {
             Mesh meshToMove = allMeshes[meshToMoveIndex];
             // find a place to put it that doesn't hit anything
-            AxisAlignedBoundingBox meshToMoveBounds = meshToMove.GetAxisAlignedBoundingBox(meshTransforms[meshToMoveIndex]);
+            AxisAlignedBoundingBox meshToMoveBounds = meshToMove.GetAxisAlignedBoundingBox(meshTransforms[meshToMoveIndex].TotalTransform);
             // add in a few mm so that it will not be touching
             meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
             meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
@@ -244,7 +251,7 @@ namespace MatterHackers.MatterControl
                     Mesh meshToTest = allMeshes[i];
                     if (meshToTest != meshToMove)
                     {
-                        AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(meshTransforms[i]);
+                        AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform);
                         AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
                         if (intersection.XSize > 0 && intersection.YSize > 0)
                         {
@@ -267,7 +274,9 @@ namespace MatterHackers.MatterControl
                 }
             }
 
-            meshTransforms[meshToMoveIndex] *= transform;
+            ScaleRotateTranslate moved = meshTransforms[meshToMoveIndex];
+            moved.translation *= transform;
+            meshTransforms[meshToMoveIndex] = moved;
         }
 
         public static void CreateITraceableForMesh(List<PlatingMeshData> perMeshInfo, List<Mesh> meshes, int i)

@@ -21,6 +21,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 		}
 
+
+        public override ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType()
+        {
+            return ActivePrinterProfile.SlicingEngineTypes.CuraEngine;
+        }
+
 		public static string getWindowsPath()
 		{
 			string curaEngineRelativePath = Path.Combine("..", "CuraEngine.exe");

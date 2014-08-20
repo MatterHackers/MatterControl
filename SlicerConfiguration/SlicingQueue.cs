@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     break;
                             }
 
-                            bool runInProcess = false;
+                            bool runInProcess = true;
                             if ((OsInformation.OperatingSystem == OSType.Android || OsInformation.OperatingSystem == OSType.Mac || runInProcess)
                                 && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                             {

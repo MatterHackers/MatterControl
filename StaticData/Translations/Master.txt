@@ -2532,9 +2532,18 @@ Translated:The angle the support infill will be drawn.
 English:Infill Angle
 Translated:Infill Angle
 
-English:Export to Folder
-Translated:Export to Folder
+English:Grid
+Translated:Grid
 
-English:Export as X3G
-Translated:Export as X3G
+English:Moves
+Translated:Moves
+
+English:Retractions
+Translated:Retractions
+
+English:Speeds
+Translated:Speeds
+
+English:Extrusion
+Translated:Extrusion
 

@@ -112,6 +112,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             get { return firmwareVersion; }
         }
 
+        string deviceCode;
+        public string DeviceCode
+        {
+            get { return deviceCode; }
+        }
+
         static PrinterConnectionAndCommunication globalInstance;
         string connectionFailureMessage = "Unknown Reason";
 
@@ -1148,6 +1154,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             string firmwareVersionReported = "";
             if (GCodeFile.GetFirstStringAfter("MACHINE_TYPE:", foundStringEventArgs.LineToCheck, " EXTRUDER_COUNT", ref firmwareVersionReported))
             {
+                char splitChar = '^';
+                if (firmwareVersionReported.Contains(splitChar))
+                {
+                    string[] split = firmwareVersionReported.Split(splitChar);
+                    if (split.Count() == 2)
+                    {
+                        deviceCode = split[0];
+                        firmwareVersionReported = split[1];
+                    }
+                }
+                
                 //Firmware version was detected and is different
                 if (firmwareVersionReported != "" && firmwareVersion != firmwareVersionReported)
                 {                    
@@ -1839,22 +1856,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     {
                         if (firstLineToResendIndex < allCheckSumLinesSent.Count)
                         {
-                            WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++], null);
+                            WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++], "resend");
                         }
                         else
                         {
                             string lineToWrite = loadedGCode.Instruction(printerCommandQueueIndex).Line;
-                            if (lineToWrite == "MH_PAUSE")
+                            string[] splitOnSemicolon = lineToWrite.Split(';');
+                            string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
+                            if (trimedLine.Length > 0)
                             {
-                                pauseRequested = true;
-                            }
-                            else
-                            {
-                                WriteChecksumLineToPrinter(lineToWrite);
-                            }
+                                if (lineToWrite == "MH_PAUSE")
+                                {
+                                    pauseRequested = true;
+                                }
+                                else
+                                {
+                                    WriteChecksumLineToPrinter(lineToWrite);
+                                }
 
+                                firstLineToResendIndex++;
+                            }
                             printerCommandQueueIndex++;
-                            firstLineToResendIndex++;
                         }
                     }
                     else if (printWasCanceled)
@@ -2155,17 +2177,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             gcodeFileContents = gcodeFileContents.Replace("\r\n", "\n");
             gcodeFileContents = gcodeFileContents.Replace('\r', '\n');
             string[] gcodeLines = gcodeFileContents.Split('\n');
-            List<string> printableGCode = new List<string>();
+            List<string> printableGCode = new List<string>(gcodeLines.Length);
             foreach (string line in gcodeLines)
             {
-                string[] splitOnSemicolon = line.Split(';');
-                string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
-                if (trimedLine.Length < 1)
-                {
-                    continue;
-                }
-
-                printableGCode.Add(trimedLine);
+                printableGCode.Add(line);
             }
 
             ExtrusionRatio = 1;

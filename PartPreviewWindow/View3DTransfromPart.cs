@@ -92,13 +92,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		SaveAsWindow saveAsWindow;
 
         List<Mesh> asynchMeshesList = new List<Mesh>();
-        List<Matrix4X4> asynchMeshTransforms = new List<Matrix4X4>();
+        List<ScaleRotateTranslate> asynchMeshTransforms = new List<ScaleRotateTranslate>();
         List<PlatingMeshData> asynchPlatingDataList = new List<PlatingMeshData>();
 
         List<PlatingMeshData> MeshExtraData;
         bool autoRotateEnabled = true;
 
-        public Matrix4X4 SelectedMeshTransform
+        public ScaleRotateTranslate SelectedMeshTransform
         {
             get { return meshViewerWidget.SelectedMeshTransform; }
             set { meshViewerWidget.SelectedMeshTransform = value; }
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             get { return meshViewerWidget.Meshes; }
         }
 
-        public List<Matrix4X4> MeshTransforms
+        public List<ScaleRotateTranslate> MeshTransforms
         {
             get { return meshViewerWidget.MeshTransforms; }
         }
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             List<IRayTraceable> mesheTraceables = new List<IRayTraceable>();
             for (int i = 0; i < MeshExtraData.Count; i++)
             {
-                mesheTraceables.Add(new Transform(MeshExtraData[i].traceableData, MeshTransforms[i]));
+                mesheTraceables.Add(new Transform(MeshExtraData[i].traceableData, MeshTransforms[i].TotalTransform));
             }
             IRayTraceable allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
 
@@ -186,7 +186,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
                         SelectedMeshIndex = meshHitIndex;
-                        transformOnMouseDown = SelectedMeshTransform;
+
+                        transformOnMouseDown = SelectedMeshTransform.translation;
+                        
                         Invalidate();
                         meshSelectInfo.downOnPart = true;
 
@@ -215,7 +217,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
                     totalTransfrom *= Matrix4X4.CreateTranslation(new Vector3(delta));
                     meshSelectInfo.lastMoveDelta = delta;
-                    SelectedMeshTransform *= totalTransfrom;
+                    
+                    ScaleRotateTranslate translated = SelectedMeshTransform;
+                    translated.translation *= totalTransfrom;
+                    SelectedMeshTransform = translated;
+                    
                     Invalidate();
                 }
             }
@@ -389,7 +395,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             if (meshSelectInfo.downOnPart)
                             {
                                 meshSelectInfo.downOnPart = false;
-                                SelectedMeshTransform = transformOnMouseDown;
+                                
+                                ScaleRotateTranslate translated = SelectedMeshTransform;
+                                translated.translation *= transformOnMouseDown;
+                                SelectedMeshTransform = translated;
+
                                 Invalidate();
                             }
                         }
@@ -632,18 +642,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
                 // move them all out of the way
-                foreach (Mesh mesh in asynchMeshesList)
+                for (int i = 0; i < asynchMeshesList.Count; i++)
                 {
-                    mesh.Translate(new Vector3(1000, 1000, 0));
+                    ScaleRotateTranslate translate = asynchMeshTransforms[i];
+                    translate.translation *= Matrix4X4.CreateTranslation(1000, 1000, 0);
+                    asynchMeshTransforms[i] = translate;
                 }
 
                 // sort them by size
                 for (int i = 0; i < asynchMeshesList.Count; i++)
                 {
-                    AxisAlignedBoundingBox iAABB = asynchMeshesList[i].GetAxisAlignedBoundingBox(asynchMeshTransforms[i]);
+                    AxisAlignedBoundingBox iAABB = asynchMeshesList[i].GetAxisAlignedBoundingBox(asynchMeshTransforms[i].TotalTransform);
                     for (int j = i + 1; j < asynchMeshesList.Count; j++)
                     {
-                        AxisAlignedBoundingBox jAABB = asynchMeshesList[j].GetAxisAlignedBoundingBox(asynchMeshTransforms[j]);
+                        AxisAlignedBoundingBox jAABB = asynchMeshesList[j].GetAxisAlignedBoundingBox(asynchMeshTransforms[j].TotalTransform);
                         if (Math.Max(iAABB.XSize, iAABB.YSize) < Math.Max(jAABB.XSize, jAABB.YSize))
                         {
                             PlatingMeshData tempData = asynchPlatingDataList[i];
@@ -654,9 +666,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             asynchMeshesList[i] = asynchMeshesList[j];
                             asynchMeshesList[j] = tempMesh;
 
-                            Matrix4X4 tempTransform = asynchMeshTransforms[i];
-                            asynchMeshTransforms[i] = asynchMeshTransforms[j];
-                            asynchMeshTransforms[j] = tempTransform;
+                            ScaleRotateTranslate iTransform = asynchMeshTransforms[i];
+                            ScaleRotateTranslate jTransform = asynchMeshTransforms[j];
+                            Matrix4X4 tempTransform = iTransform.translation;
+                            iTransform.translation = jTransform.translation;
+                            jTransform.translation = tempTransform;
+
+                            asynchMeshTransforms[i] = jTransform;
+                            asynchMeshTransforms[j] = iTransform;
 
                             iAABB = jAABB;
                         }
@@ -667,19 +684,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 for (int i = 0; i < asynchMeshesList.Count; i++)
                 {
                     Mesh mesh = asynchMeshesList[i];
-                    Vector3 meshCenter = mesh.GetAxisAlignedBoundingBox(asynchMeshTransforms[i]).Center;
-                    asynchMeshTransforms[i] *= Matrix4X4.CreateTranslation(-meshCenter);
+                    Vector3 meshCenter = mesh.GetAxisAlignedBoundingBox(asynchMeshTransforms[i].translation).Center;
+                    ScaleRotateTranslate atZero = asynchMeshTransforms[i];
+                    atZero.translation = Matrix4X4.Identity;
+                    asynchMeshTransforms[i] = atZero;
                     PlatingHelper.MoveMeshToOpenPosition(i, asynchPlatingDataList, asynchMeshesList, asynchMeshTransforms);
 
                     // and create the trace info so we can select it
                     PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshesList, i);
 
                     // and put it on the bed
-                    {
-                        AxisAlignedBoundingBox bounds = asynchMeshesList[i].GetAxisAlignedBoundingBox(asynchMeshTransforms[i]);
-                        Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-                        asynchMeshTransforms[i] *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
-                    }
+                    PlatingHelper.PlaceMeshOnBed(asynchMeshesList, asynchMeshTransforms, i, false);
 
                     int nextPercent = (i + 1) * 100 / asynchMeshesList.Count;
                     backgroundWorker.ReportProgress(nextPercent);
@@ -687,16 +702,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // and finally center whatever we have as a group
                 {
-                    AxisAlignedBoundingBox bounds = asynchMeshesList[0].GetAxisAlignedBoundingBox(asynchMeshTransforms[0]);
+                    AxisAlignedBoundingBox bounds = asynchMeshesList[0].GetAxisAlignedBoundingBox(asynchMeshTransforms[0].TotalTransform);
                     for (int i = 1; i < asynchMeshesList.Count; i++)
                     {
-                        bounds = AxisAlignedBoundingBox.Union(bounds, asynchMeshesList[i].GetAxisAlignedBoundingBox(asynchMeshTransforms[i]));
+                        bounds = AxisAlignedBoundingBox.Union(bounds, asynchMeshesList[i].GetAxisAlignedBoundingBox(asynchMeshTransforms[i].TotalTransform));
                     }
 
                     Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
                     for (int i = 0; i < asynchMeshesList.Count; i++)
                     {
-                        asynchMeshTransforms[i] *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
+                        ScaleRotateTranslate translate = asynchMeshTransforms[i];
+                        translate.translation *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
+                        asynchMeshTransforms[i] = translate;
                     }
                 }
             }
@@ -782,7 +799,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 Meshes.Add(mesh);
             }
             MeshTransforms.Clear();
-            foreach (Matrix4X4 transform in asynchMeshTransforms)
+            foreach (ScaleRotateTranslate transform in asynchMeshTransforms)
             {
                 MeshTransforms.Add(transform);
             }
@@ -821,7 +838,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             Vector3 soubMeshBoundsCenter = subMesh.GetAxisAlignedBoundingBox().Center;
                             soubMeshBoundsCenter.z = 0;
                             subMesh.Translate(-soubMeshBoundsCenter);
-                            PlatingHelper.FindPositionForPartAndAddToPlate(subMesh, Matrix4X4.Identity, asynchPlatingDataList, asynchMeshesList, asynchMeshTransforms);
+
+                            PlatingHelper.FindPositionForPartAndAddToPlate(subMesh, ScaleRotateTranslate.Identity(), asynchPlatingDataList, asynchMeshesList, asynchMeshTransforms);
                             PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshesList, asynchMeshesList.Count - 1);
 
                             backgroundWorker.ReportProgress(lastPercent + subMeshIndex + 1 * subLength / subMeshes.Length);
@@ -836,15 +854,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void meshViewerWidget_LoadDone(object sender, EventArgs e)
         {
-            switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+            if (windowType == WindowType.Embeded)
             {
-                case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-                case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-                    break;
+                switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+                {
+                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+                    case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+                        break;
 
-                default:
-                    UnlockEditControls();
-                    break;
+                    default:
+                        UnlockEditControls();
+                        break;
+                }
+            }
+            else
+            {
+                UnlockEditControls();
             }
         }
 
@@ -938,8 +963,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 PlatingMeshData newInfo = new PlatingMeshData();
                 asynchPlatingDataList.Add(newInfo);
                 asynchMeshesList.Add(meshes[i]);
-                asynchMeshTransforms.Add(Matrix4X4.Identity);
+                asynchMeshTransforms.Add(new ScaleRotateTranslate(SelectedMeshTransform.scale, SelectedMeshTransform.rotation, Matrix4X4.Identity));
 
+                Mesh mesh = asynchMeshesList[i];
+
+                // remember where it is now
+                AxisAlignedBoundingBox startingBounds = mesh.GetAxisAlignedBoundingBox(asynchMeshTransforms[i].TotalTransform);
+                Vector3 startingCenter = (startingBounds.maxXYZ + startingBounds.minXYZ) / 2;
+
+                // move the mesh to be centered on the origin
+                AxisAlignedBoundingBox meshBounds = mesh.GetAxisAlignedBoundingBox();
+                Vector3 meshCenter = (meshBounds.maxXYZ + meshBounds.minXYZ) / 2;
+                mesh.Translate(-meshCenter);
+
+                // set the transform to position it where it was
+                ScaleRotateTranslate meshTransform = asynchMeshTransforms[i];
+                meshTransform.translation = Matrix4X4.CreateTranslation(startingCenter);
+                asynchMeshTransforms[i] = meshTransform;
+                PlatingHelper.PlaceMeshOnBed(asynchMeshesList, asynchMeshTransforms, i, false);
+
+                // and create selection info
                 PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshesList, i);
                 if (meshes.Length > 1)
                 {
@@ -950,15 +993,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createDiscreteMeshesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            // remember the transform we have before spliting so we can put it on each of the parts after spliting.
-            Matrix4X4 transformBeforeSplit = SelectedMeshTransform;
             // remove the original mesh and replace it with these new meshes
             PullMeshDataFromAsynchLists();
-
-            for (int i = 0; i < Meshes.Count; i++)
-            {
-                meshViewerWidget.MeshTransforms[i] = transformBeforeSplit;
-            }
 
             UnlockEditControls();
 
@@ -1103,7 +1139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             viewOptionContainer.AddChild(showBuildVolumeCheckBox);
                         }
 
-                        viewOptionContainer.AddChild(CreateRenderTypeDropDownMenu());
+                        CreateRenderTypeRadioButtons(viewOptionContainer);
                     }
                     buttonRightPanel.AddChild(viewOptionContainer);
                 }
@@ -1311,7 +1347,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (sizeDisplay[0] != null && SelectedMesh != null)
             {
-                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
+                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform.scale);
                 sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
                 sizeDisplay[1].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[1]));
                 sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));
@@ -1385,36 +1421,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             return presetScaleMenu;
         }
 
-        private DropDownMenu CreateRenderTypeDropDownMenu()
+        private void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
         {
-            DropDownMenu renderTypeMenu = new DropDownMenu(LocalizedString.Get("Render Type"), Direction.Down);
-            RectangleDouble presetBounds = renderTypeMenu.LocalBounds;
-            presetBounds.Inflate(new BorderDouble(5, 10, 10, 10));
-            renderTypeMenu.LocalBounds = presetBounds;
-            renderTypeMenu.MenuAsWideAsItems = false;
-            renderTypeMenu.HAnchor |= HAnchor.ParentLeftRight;
-
-            renderTypeMenu.AddItem("Shaded".Localize());
-            renderTypeMenu.AddItem("Outlines".Localize());
-            renderTypeMenu.AddItem("Polygons".Localize());
-
-            renderTypeMenu.SelectionChanged += (sender, e) =>
             {
-                switch (renderTypeMenu.SelectedIndex)
+                RadioButton renderTypeShaded = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                renderTypeShaded.Checked = true;
+                renderTypeShaded.CheckedStateChanged += (sender, e) =>
                 {
-                    case 0:
-                        meshViewerWidget.RenderType = RenderTypes.Shaded;
-                        break;
-                    case 1:
-                        meshViewerWidget.RenderType = RenderTypes.Outlines;
-                        break;
-                    case 2:
-                        meshViewerWidget.RenderType = RenderTypes.Polygons;
-                        break;
-                }
-            };
+                    meshViewerWidget.RenderType = RenderTypes.Shaded;
+                };
+                viewOptionContainer.AddChild(renderTypeShaded);
+            }
 
-            return renderTypeMenu;
+            {
+                RadioButton renderTypeOutlines = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                //renderTypeOutlines.Checked = true;
+                renderTypeOutlines.CheckedStateChanged += (sender, e) =>
+                {
+                    meshViewerWidget.RenderType = RenderTypes.Outlines;
+                };
+                viewOptionContainer.AddChild(renderTypeOutlines);
+            }
+
+            {
+                RadioButton renderTypePolygons = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                //renderTypePolygons.Checked = true;
+                renderTypePolygons.CheckedStateChanged += (sender, e) =>
+                {
+                    meshViewerWidget.RenderType = RenderTypes.Polygons;
+                };
+                viewOptionContainer.AddChild(renderTypePolygons);
+            }
         }
 
         private GuiWidget generateHorizontalRule()
@@ -1492,10 +1529,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void ScaleAxis(double scaleIn, int axis)
         {
             AxisAlignedBoundingBox originalMeshBounds = SelectedMesh.GetAxisAlignedBoundingBox();
-            AxisAlignedBoundingBox scaledBounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-
-            Vector3 center = (scaledBounds.maxXYZ - scaledBounds.minXYZ) / 2 + scaledBounds.minXYZ;
-            Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-center);
+            AxisAlignedBoundingBox scaledBounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform.scale);
 
             // first we remove any scale we have applied and then scale to the new value
             Vector3 axisRemoveScalings = new Vector3();
@@ -1507,11 +1541,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             
             Vector3 newScale = MeshExtraData[SelectedMeshIndex].currentScale;
             newScale[axis] = scaleIn;
-            removeScaleMatrix *= Matrix4X4.CreateScale(newScale);
-            totalTransfrom *= removeScaleMatrix;
+            Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
 
-            totalTransfrom *= Matrix4X4.CreateTranslation(center);
-            SelectedMeshTransform *= totalTransfrom;
+            ScaleRotateTranslate scale = SelectedMeshTransform;
+            scale.scale *= totalScale;
+            SelectedMeshTransform = scale;
 
             PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
             saveButtons.Visible = true;
@@ -1557,17 +1591,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateXButton.Click += (object sender, MouseEventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                Vector3 startingCenter = bounds.Center;
-                // move it to the origin so it rotates about it's center
-                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-startingCenter);
                 // rotate it
-                totalTransfrom *= Matrix4X4.CreateRotationX(radians);
-                SelectedMeshTransform *= totalTransfrom;
-                // find the new center
-                bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                // and shift it back so the new center is where the old center was
-                SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
+                ScaleRotateTranslate rotated = SelectedMeshTransform;
+                rotated.rotation *= Matrix4X4.CreateRotationX(radians);
+                SelectedMeshTransform = rotated;
+
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
                 saveButtons.Visible = true;
                 Invalidate();
@@ -1580,17 +1608,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateYButton.Click += (object sender, MouseEventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                Vector3 startingCenter = bounds.Center;
-                // move it to the origin so it rotates about it's center
-                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-startingCenter);
                 // rotate it
-                totalTransfrom *= Matrix4X4.CreateRotationY(radians);
-                SelectedMeshTransform *= totalTransfrom;
-                // find the new center
-                bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                // and shift it back so the new center is where the old center was
-                SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
+                ScaleRotateTranslate rotated = SelectedMeshTransform;
+                rotated.rotation *= Matrix4X4.CreateRotationY(radians);
+                SelectedMeshTransform = rotated;
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
                 saveButtons.Visible = true;
                 Invalidate();
@@ -1603,17 +1624,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateZButton.Click += (object sender, MouseEventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                Vector3 startingCenter = bounds.Center;
-                // move it to the origin so it rotates about it's center
-                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-startingCenter);
                 // rotate it
-                totalTransfrom *= Matrix4X4.CreateRotationZ(radians);
-                SelectedMeshTransform *= totalTransfrom;
-                // find the new center
-                bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                // and shift it back so the new center is where the old center was
-                SelectedMeshTransform *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
+                ScaleRotateTranslate rotated = SelectedMeshTransform;
+                rotated.rotation *= Matrix4X4.CreateRotationZ(radians);
+                SelectedMeshTransform = rotated;
+
+                PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
                 saveButtons.Visible = true;
                 Invalidate();
             };
@@ -1653,13 +1669,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 SelectedMesh.ReverseFaceEdges();
 
-                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                Vector3 center = (bounds.maxXYZ - bounds.minXYZ) / 2 + bounds.minXYZ;
-                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-center);
-                totalTransfrom *= Matrix4X4.CreateScale(-1, 1, 1);
-                totalTransfrom *= Matrix4X4.CreateTranslation(center);
+                ScaleRotateTranslate scale = SelectedMeshTransform;
+                scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
+                SelectedMeshTransform = scale;
 
-                SelectedMeshTransform *= totalTransfrom;
+                PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
+
                 saveButtons.Visible = true;
                 Invalidate();
             };
@@ -1671,13 +1686,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 SelectedMesh.ReverseFaceEdges();
 
-                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                Vector3 center = (bounds.maxXYZ - bounds.minXYZ) / 2 + bounds.minXYZ;
-                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-center);
-                totalTransfrom *= Matrix4X4.CreateScale(1, -1, 1);
-                totalTransfrom *= Matrix4X4.CreateTranslation(center);
+                ScaleRotateTranslate scale = SelectedMeshTransform;
+                scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
+                SelectedMeshTransform = scale;
 
-                SelectedMeshTransform *= totalTransfrom;
+                PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
+
                 saveButtons.Visible = true;
                 Invalidate();
             };
@@ -1689,13 +1703,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 SelectedMesh.ReverseFaceEdges();
 
-                AxisAlignedBoundingBox bounds = SelectedMesh.GetAxisAlignedBoundingBox(SelectedMeshTransform);
-                Vector3 center = (bounds.maxXYZ - bounds.minXYZ) / 2 + bounds.minXYZ;
-                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-center);
-                totalTransfrom *= Matrix4X4.CreateScale(1, 1, -1);
-                totalTransfrom *= Matrix4X4.CreateTranslation(center);
+                ScaleRotateTranslate scale = SelectedMeshTransform;
+                scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
+                SelectedMeshTransform = scale;
 
-                SelectedMeshTransform *= totalTransfrom;
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
 
                 saveButtons.Visible = true;
@@ -1755,7 +1766,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // push all the transforms into the meshes
                 for (int i = 0; i < asynchMeshesList.Count; i++)
                 {
-                    asynchMeshesList[i].Transform(MeshTransforms[i]);
+                    asynchMeshesList[i].Transform(MeshTransforms[i].TotalTransform);
 
                     int nextPercent = (i + 1) * 40 / asynchMeshesList.Count;
                     backgroundWorker.ReportProgress(nextPercent);
@@ -1817,12 +1828,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             Mesh meshToLayFlat = Meshes[indexToLayFlat];
             Vertex lowestVertex = meshToLayFlat.Vertices[0];
-            Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, MeshTransforms[indexToLayFlat]);
+            Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, MeshTransforms[indexToLayFlat].rotation);
             // find the lowest point on the model
             for (int testIndex = 1; testIndex < meshToLayFlat.Vertices.Count; testIndex++)
             {
                 Vertex vertex = meshToLayFlat.Vertices[testIndex];
-                Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshTransforms[indexToLayFlat]);
+                Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshTransforms[indexToLayFlat].rotation);
                 if (vertexPosition.z < lowestVertexPosition.z)
                 {
                     lowestVertex = meshToLayFlat.Vertices[testIndex];
@@ -1840,7 +1851,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     if (faceVertex != lowestVertex)
                     {
-                        Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, MeshTransforms[indexToLayFlat]);
+                        Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, MeshTransforms[indexToLayFlat].rotation);
                         Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
                         double xLeg = new Vector2(pointRelLowest.x, pointRelLowest.y).Length;
                         double yLeg = pointRelLowest.z;
@@ -1858,44 +1869,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
             }
 
-            double maxDistFrom0 = 0;
+            double maxDistFromLowestZ = 0;
             List<Vector3> faceVertexes = new List<Vector3>();
             foreach (Vertex vertex in faceToLayFlat.Vertices())
             {
-                Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshTransforms[indexToLayFlat]);
+                Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshTransforms[indexToLayFlat].rotation);
                 faceVertexes.Add(vertexPosition);
-                maxDistFrom0 = Math.Max(maxDistFrom0, vertexPosition.z);
+                maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.z - lowestVertexPosition.z);
             }
 
-            if (maxDistFrom0 > .001)
+            if (maxDistFromLowestZ > .001)
             {
                 Vector3 xPositive = (faceVertexes[1] - faceVertexes[0]).GetNormal();
                 Vector3 yPositive = (faceVertexes[2] - faceVertexes[0]).GetNormal();
                 Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
 
-#if true
                 // this code takes the minimum rotation required and looks much better.
                 Quaternion rotation = new Quaternion(planeNormal, new Vector3(0, 0, -1));
                 Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
-#else
-                double planeOffset = Vector3.Dot(planeNormal, faceVertexes[1]);
 
-                Matrix4X4 partLevelMatrix = Matrix4X4.LookAt(Vector3.Zero, planeNormal, yPositive);
-#endif
-
-                AxisAlignedBoundingBox bounds = meshToLayFlat.GetAxisAlignedBoundingBox(MeshTransforms[indexToLayFlat]);
-
-                Vector3 startingCenter = bounds.Center;
-                // move it to the origin so it rotates about it's center
-                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(-startingCenter);
                 // rotate it
-                totalTransfrom *= partLevelMatrix;
-                MeshTransforms[indexToLayFlat] *= totalTransfrom;
-                // find the new center
-                bounds = SelectedMesh.GetAxisAlignedBoundingBox(MeshTransforms[indexToLayFlat]);
-                // and shift it back so the new center is where the old center was
-                MeshTransforms[indexToLayFlat] *= Matrix4X4.CreateTranslation(startingCenter - bounds.Center);
+                ScaleRotateTranslate rotated = SelectedMeshTransform;
+                rotated.rotation *= partLevelMatrix;
+                SelectedMeshTransform = rotated;
+
                 PlatingHelper.PlaceMeshOnBed(Meshes, MeshTransforms, SelectedMeshIndex, false);
+
                 saveButtons.Visible = true;
                 Invalidate();
             }

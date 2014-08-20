@@ -21,6 +21,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			:base("MatterSlice", getWindowsPath(), getMacPath(), getLinuxPath())
 		{
 		}
+
+        public override ActivePrinterProfile.SlicingEngineTypes GetSliceEngineType()
+        {
+            return ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+        }
 			
 		public static string getWindowsPath()
 		{
