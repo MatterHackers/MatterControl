@@ -1,197 +1,197 @@
 ﻿English:Connect
-Translated:Connect
+Translated:Bağlan
 
 English:Disconnect
-Translated:Disconnect
+Translated:Bağlantıyı Kes
 
 English:Status
-Translated:Status
+Translated:Durum
 
 English:Connected
-Translated:Connected
+Translated:Bağlandı
 
 English:Not Connected
-Translated:Not Connected
+Translated:Bağlanılamadı
 
 English:Select Printer
-Translated:Select Printer
+Translated:Yazıcı Seç
 
 English:Options
-Translated:Options
+Translated: Seçenekler
 
 English:Next Print
-Translated:Next Print
+Translated:Sonraki Baskı
 
 English:Add
-Translated:Add
+Translated:Ekle
 
 English:Add a file to be printed
-Translated:Add a file to be printed
+Translated:Yazılacak Bir Dosya Ekle
 
 English:Start
-Translated:Start
+Translated:Başlat
 
 English:Begin printing the selected item.
-Translated:Begin printing the selected item.
+Translated:Seçilen öğeyi yazmaya başla
 
 English:Skip
-Translated:Skip
+Translated:Atla
 
 English:Skip the current item and move to the next in queue
-Translated:Skip the current item and move to the next in queue
+Translated:Seçili öğeyi atla ve sıradakine geç
 
 English:Remove
-Translated:Remove
+Translated:Sil
 
 English:Remove current item from queue
-Translated:Remove current item from queue
+Translated:Seçili öğeyi yazma sırasından çıkart
 
 English:Pause
-Translated:Pause
+Translated:Duraklat
 
 English:Pause the current print
-Translated:Pause the current print
+Translated:Aktif baskıyı duraklat
 
 English:Cancel Connect
-Translated:Cancel Connect
+Translated:Bağlantıyı iptal et
 
 English:Stop trying to connect to the printer.
-Translated:Stop trying to connect to the printer.
+Translated:Yazıcıya bağlanmaya çalışmayı durdur
 
 English:Cancel
-Translated:Cancel
+Translated:İptal
 
 English:Stop the current print
-Translated:Stop the current print
+Translated: Aktif yazmayı durdur
 
 English:Resume
-Translated:Resume
+Translated:Devam et
 
 English:Resume the current print
-Translated:Resume the current print
+Translated:Aktif baskıyı devam ettir.
 
 English:Reprint
-Translated:Reprint
+Translated:Yeniden yazdır
 
 English:Print current item again
-Translated:Print current item again
+Translated:Aktif ögeyi yeniden yazdır
 
 English:Done
-Translated:Done
+Translated:Bitti
 
 English:Move to next print in queue
-Translated:Move to next print in queue
+Translated:Sıradaki yeni öğeye geç
 
 English:No printer selected.  Press 'Connect' to choose a printer.
-Translated:No printer selected.  Press 'Connect' to choose a printer.
+Translated:Herhangi bir yazıcı seçilmedi.  Yazıcı seçmek için " bağlan " a basınız. ( bağlan = connect )
 
 English:Press 'Add' to choose an item to print
-Translated:Press 'Add' to choose an item to print
+Translated: Yazılacak öğe seçmek için "ekle" ye basınız. ( ekle = Add )
 
 English:No items in the print queue
-Translated:No items in the print queue
+Translated: Yazma sırasında hiç öğe yok
 
 English:Queued to Print
-Translated:Queued to Print
+Translated:Baskı için sıraya alındı
 
 English:View
-Translated:View
+Translated:Göster
 
 English:Copy
-Translated:Copy
+Translated: Kopyala
 
 English:Add to Queue
-Translated:Add to Queue
+Translated: Sıraya Ekle
 
 English:Export
-Translated:Export
+Translated:Ver
 
 English:Est. Print Time
-Translated:Est. Print Time
+Translated:Tahmini Baskı Süresi
 
 English:Calculating...
-Translated:Calculating...
+Translated:Hesaplanıyor...
 
 English:complete
-Translated:complete
+Translated:Tamamlandı
 
 English:Remove All
-Translated:Remove All
+Translated:Hepsini Sil
 
 English:Queue Options
-Translated:Queue Options
+Translated:Sıralama Seçenekleri
 
 English: Import from Zip
-Translated: Import from Zip
+Translated: Zip'ten Dosya al
 
 English: Export to Zip
-Translated: Export to Zip
+Translated: Zip olarak kaydet
 
 English: Export to Folder
-Translated: Export to Folder
+Translated: Dosyaya ver
 
 English:Extra
 Translated:Extra
 
 English: Create Part Sheet
-Translated: Create Part Sheet
+Translated: Parça Dosyası oluştur
 
 English:Search
-Translated:Search
+Translated:Ara
 
 English:Import
-Translated:Import
+Translated:Dosya Al
 
 English:Create
-Translated:Create
+Translated:Oluştur
 
 English:Check for Update
-Translated:Check for Update
+Translated:Güncellemeleri Kontrol Et
 
 English:Download Update
-Translated:Download Update
+Translated:Güncellemeleri indir
 
 English:Install Update
-Translated:Install Update
+Translated:Güncellemeleri Yükle
 
 English:There are updates available.
-Translated:There are updates available.
+Translated:Güncellemeler Mevcut
 
 English:Checking for updates...
-Translated:Checking for updates...
+Translated:Güncellemeler kontrol ediliyor
 
 English:MatterControl
 Translated:MatterControl
 
 English:Version {0}
-Translated:Version {0}
+Translated:Versiyon {0}
 
 English:Developed by MatterHackers
-Translated:Developed by MatterHackers
+Translated: MatterHackers tarafından geliştirilmiştir.
 
 English:Please consider 
-Translated:Please consider 
+Translated:Lütfen Dikkate Alınız
 
 English:donating
 Translated:donating
 
 English: to help support and improve MatterControl.
-Translated: to help support and improve MatterControl.
+Translated: Destek Merkezine yardım etmek ve MatterControl'ü geliştirmek için
 
-English:Special thanks to Alessandro Ranellucci for his incredible work on 
-Translated:Special thanks to Alessandro Ranellucci for his incredible work on 
+English:Special thanks to Alessandro Ranellucci for his incredible work on
+Translated: Alessandro Ranellucci ' ye harika çalışmalarından ötürü teşekkürler.
 
 English:Slic3r
 Translated:Slic3r
 
 English:and to David Braam and Ultimaker BV, for the amazing 
-Translated:and to David Braam and Ultimaker BV, for the amazing 
+Translated:ayrıca David Braam ve Ultimaker BV' ye harika 
 
 English:CuraEngine
 Translated:CuraEngine
 
 English:Send Feedback
-Translated:Send Feedback
+Translated:Geri bildirim gönder
 
 English:www.matterhackers.com
 Translated:www.matterhackers.com
@@ -200,229 +200,233 @@ English:Copyright © 2014 MatterHackers, Inc.
 Translated:Copyright © 2014 MatterHackers, Inc.
 
 English:Build: {0} | 
-Translated:Build: {0} | 
+Translated:Build {0} | 
 
 English:Clear Cache
 Translated:Clear Cache
 
 English:Queue
-Translated:Queue
+Translated:Sırada
 
 English:Rotate
-Translated:Rotate
+Translated:Döndür
 
 English:Scale
-Translated:Scale
+Translated:Ölçeklendir
 
 English:Mirror
-Translated:Mirror
+Translated:Aynala
 
 English:Display
-Translated:Display
+Translated:Göster
 
 English:Show Print Bed
-Translated:Show Print Bed
+Translated:Baskı tablasını göster
 
 English:Show Print Area
-Translated:Show Print Area
+Translated:Baskı alanını göster
 
 English:Show Wireframe
-Translated:Show Wireframe
+Translated:Tel Kafes göster
 
 English:Auto-Arrange
-Translated:Auto-Arrange
+Translated:Otomatik Ayarla
 
 English:Save
-Translated:Save
-
+Translated:Kaydet
 English:Degrees
-Translated:Degrees
+Translated:Derece
 
 English:Align to Bed
-Translated:Align to Bed
+Translated:Tablaya Hizala
 
 English:Ratio
-Translated:Ratio
+Translated:Oran
 
 English:Conversions
-Translated:Conversions
+Translated:Dönüştürmeler
 
 English:reset
-Translated:reset
+Translated:Yenile
 
 English:Apply Scale
-Translated:Apply Scale
+Translated:Ölçeklendir
 
 English:Finding Parts
-Translated:Finding Parts
+Translated:Parçalar Bulunuyor
 
 English:Edit
-Translated:Edit
+Translated:Düzenle
 
 English:Delete
-Translated:Delete
+Translated:Sil
 
 English:Close
-Translated:Close
+Translated:Kapat
 
 English:Generate
-Translated:Generate
+Translated:Dilimle
 
 English:No GCode Available...
-Translated:No GCode Available...
+Translated:Ulaşılabilir Gcode yok...
 
 English:Loading GCode...
-Translated:Loading GCode...
+Translated: GCode Yükleniyor...
 
 English:Press 'generate' to view layers
-Translated:Press 'generate' to view layers
+Translated: Katmanları görmek için 'Dilimle' tuşuna basınız.
 
 English:Model
 Translated:Model
 
 English:Layer
-Translated:Layer
+Translated:Katman
 
 English:Library
-Translated:Library
+Translated:Kütüphane
 
 English:About
-Translated:About
+Translated:Hakkında
 
 English:Advanced\nControls
-Translated:Advanced\nControls
+Translated:Gelişmiş\Kontroller
 
 English:Print\nQueue
-Translated:Print\nQueue
+Translated:Yazdır\Sıra
 
 English:Actual
-Translated:Actual
+Translated:MEvcut
 
 English:Target
-Translated:Target
+Translated:Hedef
 
 English:Presets
-Translated:Presets
+Translated:Ayarla
 
 English:Movement Controls
-Translated:Movement Controls
+Translated:Hareket Kontrolleri
 
 English:ALL
-Translated:ALL
+Translated:Hepsi
 
 English:UNLOCK
-Translated:UNLOCK
+Translated:Kilidi Aç
 
 English:Retract
-Translated:Retract
+Translated:Çekilme
 
 English:Extrude
-Translated:Extrude
+Translated:Ekstruze et
 
 English:Communications
-Translated:Communications
+Translated:İletişim
 
 English:SHOW TERMINAL
-Translated:SHOW TERMINAL
+Translated:Bağlantıyı göster
 
 English:Fan Controls
-Translated:Fan Controls
+Translated:Fan Kontroller
 
 English:Fan Speed:
-Translated:Fan Speed:
+Translated:Fan Hızı:
 
 English:Macros
-Translated:Macros
+Translated:Makro
 
 English:No macros are currently setup for this printer.
-Translated:No macros are currently setup for this printer.
+Translated:Bu yazıcı için oluşturulmuş makro bulunmamaktadır.
 
 English:Tuning Adjustment (while printing)
-Translated:Tuning Adjustment (while printing)
+Translated:İlerleme hızı (Baskı sırasında)
 
 English:Speed Multiplier
-Translated:Speed Multiplier
+Translated:Extrüzyon hızı
 
 English:Set
-Translated:Set
+Translated:Ayarla
 
 English:Extrusion Multiplier
-Translated:Extrusion Multiplier
+Translated:Ekstrüzyon Hızı
 
 English:Controls
-Translated:Controls
+Translated:Kontroller
 
 English:Slice Settings
-Translated:Slice Settings
+Translated:Seçenekler
 
 English:Show Help
-Translated:Show Help
+Translated:Yardımı göster
 
 English:Show All Settings
-Translated:Show All Settings
+Translated:Tüm seçenekleri göster
 
 English:Active Settings
 Translated:Active Settings
 
 English:unsaved changes
-Translated:unsaved changes
+Translated:Kaydedilmemiş Ayarlar
 
 English:Revert
-Translated:Revert
+Translated:Geri AL
 
 English:Options   
-Translated:Options   
+Translated:Seçenekler   
 
 English:Slice Engine
-Translated:Slice Engine
+Translated:Dilimleme Motoru
 
 English:No Printer Selected
-Translated:No Printer Selected
+Translated:Yazıcı Seçilmedi
 
 English:No printer is currently selected. Select printer to edit slice settings.
-Translated:No printer is currently selected. Select printer to edit slice settings.
+Translated:Seçilmiş yazıcı yok. Dilimleme ayarları için yazıcı seçiniz.
 
 English:Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
-Translated:Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
+Translated:Kesişen çevre geometrilerini minimuma indir. Sızma ve yayılmaların azalmasına yardımcı olur.
 
 English:The shape of the physical print bed.
-Translated:The shape of the physical print bed.
+Translated:Baskı tablasının fiziksel şekli.
 
 English:The size of the print bed.
-Translated:The size of the print bed.
+Translated:Baskı tablasının ölçüleri.
 
 English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
-Translated:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
+Translated:İlk katman yazıldıktan sonraki tabla sıcaklığını ayarla.  0 değeri tabla sıcaklık komutlarını iptal eder.
 
 English:How many layers will be solid filled on the bottom surfaces of the object.
-Translated:How many layers will be solid filled on the bottom surfaces of the object.
+Translated:Yazdırılacak objenin üst yüzeyinde kaç adet katman olacağını belirler .
 
 English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
-Translated:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
+Translated:Köprü geçişlerindeki hızlanma.  0 değeri yazıcının hızlanma ayarlarını etkisiz hale getirir.
 
 English:The fan speed to use during bridging.
-Translated:The fan speed to use during bridging.
+Translated:Köprü geçişleri sırasındaki fan hızı.
 
 English:This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
-Translated:This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
+Translated:Köprüleme sırasındaki oranı kontrol eder. Bu değeri hafifçe azaltmak filamenti bir miktar germeye yarar, fan kullanmak ta çok yardımcı olur.
 
 English:The speed to move when bridging between walls.
-Translated:The speed to move when bridging between walls.
+Translated:Duvarlar arasında köprüleme yapma hızı .
 
 English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
-Translated:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
+Translated: Obje etrafında çizilecek Kenar çizgisinin değeri. Bu seçenek parçanın tablaya sabitlendiğinden emin olamk için kullanışlıdır.
 
 English:The height of the printable area. If set to 0 the parts height will not be validated.
-Translated:The height of the printable area. If set to 0 the parts height will not be validated.
+Translated:Yazdırılabilecek alanın yükseklik değeri. 0 olarak ayarlanırsa parçaların yüksekliği geçerli olmaz.
+
+
 
 English:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
 Translated:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
 
+
+
+
 English:Moves the extruder up off the part to allow cooling.
-Translated:Moves the extruder up off the part to allow cooling.
+Translated:Soğutmaya izin vermek için extruderi parça üzerinden uzaklaştırır.
 
 English:Turns on and off all cooling settings (all settings below this one).
-Translated:Turns on and off all cooling settings (all settings below this one).
+Translated:Tüm soğutma seçeneklerini açar ve kapatır (Buranın altındaki tüm seçenekleri).
 
 English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
 Translated:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
@@ -1822,43 +1826,43 @@ English:The default temperature to set the extruder to. Can sometimes be overrid
 Translated:The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
 
 English:Macro Editor
-Translated:Macro Editor
+Translated:Makro Editörü
 
 English:Macro Presets
 Translated:Macro Presets
 
 English:Edit Macro
-Translated:Edit Macro
+Translated:Makroyu düzenle
 
 English:Macro Name
-Translated:Macro Name
+Translated:Makro Adı
 
 English:Give your macro a name
-Translated:Give your macro a name
+Translated:Makronuza bir isim verin
 
 English:Macro Commands
-Translated:Macro Commands
+Translated:Makro Komutları
 
 English:This should be in 'Gcode'
-Translated:This should be in 'Gcode'
+Translated:Bu 'Gcode'içersinde olmalı
 
 English:3D Printer Setup
-Translated:3D Printer Setup
+Translated:3D Yazıcı Kurulum
 
 English:Give your printer a name.
-Translated:Give your printer a name.
+Translated:Yazıcınıza bir isim verin.
 
 English:Select Make
-Translated:Select Make
+Translated: Make Seçin
 
 English:Select the printer manufacturer
-Translated:Select the printer manufacturer
+Translated:Yazıcı Üreticisini Seçin
 
 English:Select the printer model
-Translated:Select the printer model
+Translated:Yazıcı Modelini Seçin
 
 English:Save & Continue
-Translated:Save & Continue
+Translated:Kaydet & Devam et
 
 English:MatterControl will now attempt to auto-detect printer.
 Translated:MatterControl will now attempt to auto-detect printer.
@@ -1873,7 +1877,7 @@ English:Press
 Translated:Press
 
 English:Continue
-Translated:Continue
+Translated:Devam Et
 
 English:Manual Configuration
 Translated:Manual Configuration
@@ -1906,7 +1910,7 @@ English:Preset
 Translated:Preset
 
 English:Max Temp.
-Translated:Max Temp.
+Translated:Max Sıcaklık.
 
 English:Bed Temperature Settings
 Translated:Bed Temperature Settings
@@ -1915,7 +1919,7 @@ English:Movement Speeds
 Translated:Movement Speeds
 
 English:Extruder
-Translated:Extruder
+Translated:Ekstruder
 
 English:Power on and connect printer
 Translated:Power on and connect printer
@@ -1924,22 +1928,22 @@ English:Attempting to connect
 Translated:Attempting to connect
 
 English:Connection succeeded
-Translated:Connection succeeded
+Translated:Başarıyla Bağlanıldı
 
 English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
 Translated:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
 
 English:Edit Preset
-Translated:Edit Preset
+Translated:Ayarları Düzenle
 
 English:Slice-Engine
-Translated:Slice-Engine
+Translated:Dilimleme Motoru
 
 English:Status: Completed
-Translated:Status: Completed
+Translated:Status: Tamamlandı
 
 English:Unlock
-Translated:Unlock
+Translated:Kilidi aç
 
 English:Show Terminal
 Translated:Show Terminal
@@ -1951,22 +1955,22 @@ English:Disable
 Translated:Disable
 
 English:Est. Weight
-Translated:Est. Weight
+Translated:Tah.Ağırlık
 
 English:Downloading updates...
-Translated:Downloading updates...
+Translated:Güncellemeler indiriliyor...
 
 English:Duplicate
 Translated:Duplicate
 
 English:End
-Translated:End
+Translated:Son
 
 English:The type of support to create inside of parts.
 Translated:The type of support to create inside of parts.
 
 English:Infill Type
-Translated:Infill Type
+Translated:Dolgu Şekli
 
 English:Release Options
 Translated:Release Options
@@ -1975,19 +1979,19 @@ English:No items to select. Press 'Add' to select a file to print.
 Translated:No items to select. Press 'Add' to select a file to print.
 
 English:Unknown
-Translated:Unknown
+Translated:Bilinmeyen
 
 English:Press 'Add' to select an item.
-Translated:Press 'Add' to select an item.
+Translated:Öğe eklemek için "ekle" ye basınız
 
 English:Shop
-Translated:Shop
+Translated:Market
 
 English:Slicing Error
-Translated:Slicing Error
+Translated:Dilimleme Hatası
 
 English:Ready to Print
-Translated:Ready to Print
+Translated:Yazdırmaya Hazır
 
 English:File Not Found\n'{0}'
 Translated:File Not Found\n'{0}'
@@ -2014,37 +2018,37 @@ English:Submit
 Translated:Submit
 
 English:How can we help?
-Translated:How can we help?
+Translated:Nasıl Yardımcı Olabiliriz?
 
 English:Submitting your information...
 Translated:Submitting your information...
 
 English:Question*
-Translated:Question*
+Translated:Soru*
 
 English:Briefly describe your question
 Translated:Briefly describe your question
 
 English:Details*
-Translated:Details*
+Translated:Detaylar*
 
 English:Fill in the details here
-Translated:Fill in the details here
+Translated:Detayları doldurunuz.
 
 English:Your Email Address*
-Translated:Your Email Address*
+Translated:E-mail Adresiniz*
 
 English:Your Name*
-Translated:Your Name*
+Translated:İsminiz*
 
 English:Version 
-Translated:Version 
+Translated:Versiyon
 
 English:Developed by:
 Translated:Developed by:
 
 English:Send FeedBack
-Translated:Send FeedBack
+Translated:Geri Bildirim Gönder
 
 English:Build: 
 Translated:Build: 
@@ -2053,40 +2057,40 @@ English:Update Feed
 Translated:Update Feed
 
 English:File
-Translated:File
+Translated:Dosya
 
 English:Import File
-Translated:Import File
+Translated:Dosya Al
 
 English:Exit
-Translated:Exit
+Translated:Çıkış
 
 English:Help
-Translated:Help
+Translated:Yardım
 
 English:Getting Started
-Translated:Getting Started
+Translated:Başlarken
 
 English:View Help
-Translated:View Help
+Translated:Yardımı Göster
 
 English:Manually Configure Connection
-Translated:Manually Configure Connection
+Translated:Bağlantı ayarlarını manuel yap
 
 English:Skip Connection Setup
-Translated:Skip Connection Setup
+Translated:Bağlantı Kurulumunu Atla
 
 English:Currently available serial ports.
 Translated:Currently available serial ports.
 
 English:What's this?
-Translated:What's this?
+Translated:Bu ne demek?
 
 English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
 Translated:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
 
 English:Connection succeeded!
-Translated:Connection succeeded!
+Translated:Bağlanma Başarılı!
 
 English:Oops! Unable to install update.
 Translated:Oops! Unable to install update.
@@ -2107,10 +2111,10 @@ English:Driver located. Would you like to install?
 Translated:Driver located. Would you like to install?
 
 English:Install Driver
-Translated:Install Driver
+Translated:Sürücü Yükle
 
 English:Apply
-Translated:Apply
+Translated:Uygula
 
 English:Buy Materials
 Translated:Buy Materials
@@ -2182,7 +2186,7 @@ English:Design Add-ons
 Translated:Design Add-ons
 
 English:Lock Ratio
-Translated:Lock Ratio
+Translated:Oranı Kitle
 
 English:Retrieving download info...
 Translated:Retrieving download info...
@@ -2197,10 +2201,10 @@ English:The percent of the 'Nozzle Diameter' that is the gap between the raft an
 Translated:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
 
 English:Distance
-Translated:Distance
+Translated:Mesafe
 
 English:Gap Percent
-Translated:Gap Percent
+Translated:Boşluk Yüzdesi
 
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
 Translated:Try to connect mesh edges when the actual mesh data is not all the way connected.
@@ -2215,7 +2219,7 @@ English:Make all overlap areas into one big area. This can make some unintended 
 Translated:Make all overlap areas into one big area. This can make some unintended holes go away..
 
 English:Repair
-Translated:Repair
+Translated:Tamir Et
 
 English:Connect Bad Edges
 Translated:Connect Bad Edges
@@ -2260,16 +2264,16 @@ English:Sync To Print
 Translated:Sync To Print
 
 English:Layers
-Translated:Layers
+Translated:Katmanlar
 
 English:Show 3D
-Translated:Show 3D
+Translated:3D Göster
 
 English:Uh-oh! Could not connect to printer.
 Translated:Uh-oh! Could not connect to printer.
 
 English:Installing
-Translated:Installing
+Translated:Yükleniyor
 
 English:Initial Printer Setup
 Translated:Initial Printer Setup
@@ -2299,7 +2303,7 @@ English:You are currently saving a parts sheet, are you sure you want to exit?
 Translated:You are currently saving a parts sheet, are you sure you want to exit?
 
 English:Confirm Exit
-Translated:Confirm Exit
+Translated:Çıkışı onayla
 
 English:Disconnect and cancel the current print?
 Translated:Disconnect and cancel the current print?
@@ -2323,22 +2327,22 @@ English:Waiting For Bed To Heat
 Translated:Waiting For Bed To Heat
 
 English:Cancel the current print?
-Translated:Cancel the current print?
+Translated:Mevcut yazma işlemini iptal et?
 
 English:Cancel Print?
-Translated:Cancel Print?
+Translated:Yazmayı İptal Et?
 
 English:There is a recommended update avalible for MatterControl. Would you like to download it now?
 Translated:There is a recommended update avalible for MatterControl. Would you like to download it now?
 
 English:Recommended Update Available
-Translated:Recommended Update Available
+Translated:Güncellemeler Mevcut
 
 English:Download Now
-Translated:Download Now
+Translated:Şimdi İndir
 
 English:Remind Me Later
-Translated:Remind Me Later
+Translated:Sonra Hatırlat
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:Oops! There is no eeprom mapping for your printer's firmware.
@@ -2365,7 +2369,7 @@ English:File export options:
 Translated:File export options:
 
 English:Report a Bug
-Translated:Report a Bug
+Translated:Hata Bildir
 
 English:About MatterControl
 Translated:About MatterControl
@@ -2374,10 +2378,10 @@ English:Oops! Printer could not be detected
 Translated:Oops! Printer could not be detected 
 
 English: Load Files
-Translated: Load Files
+Translated: Dosya Yükle
 
 English: Eject SD Card
-Translated: Eject SD Card
+Translated: Sd Kartı Çıkart
 
 English:Show Voxels
 Translated:Show Voxels
@@ -2398,16 +2402,16 @@ English:Specify if your printer has the ability to plug in an SD card.
 Translated:Specify if your printer has the ability to plug in an SD card.
 
 English:Has Fan
-Translated:Has Fan
+Translated:Fan Var
 
 English:Has Heated Bed
-Translated:Has Heated Bed
+Translated:Isıtmalı Tabla Var
 
 English:Has SD Card Reader
-Translated:Has SD Card Reader
+Translated:Sd Kart Okuyucusu Var
 
 English:Cloud Services
-Translated:Cloud Services
+Translated:Bulut Hizmetleri
 
 English:Cloud Monitoring (disabled)
 Translated:Cloud Monitoring (disabled)
@@ -2419,46 +2423,46 @@ English:First Layer Extrusion Width' must be less than or equal to the 'Nozzle D
 Translated:First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
 
 English:Export to SD Card
-Translated:Export to SD Card
+Translated:SD Karta Ver
 
 English:Notification Settings
-Translated:Notification Settings
+Translated:Uyarı Ayarları
 
 English:After a Print is Finished:
-Translated:After a Print is Finished:
+Translated:Yazma işlemi bittikten sonra:
 
 English:Saving your settings...
-Translated:Saving your settings...
+Translated:Ayarlarınız Kaydediliyor...
 
 English:Send an SMS notification
-Translated:Send an SMS notification
+Translated:SMS uyarısı gönder
 
 English:Experimental
 Translated:Experimental
 
 English:Have MatterControl send you a text message after your print is finished
-Translated:Have MatterControl send you a text message after your print is finished
+Translated:Yazma işlemi bittikten sonra SMS gönder
 
 English:Your Phone Number*
-Translated:Your Phone Number*
+Translated:Telefon numaranız*
 
 English:A U.S. or Canadian mobile phone number
-Translated:A U.S. or Canadian mobile phone number
+Translated:A U.S.A ve Kanada Cep telefonları
 
 English:Send an email notification
-Translated:Send an email notification
+Translated:E-mail uyarısı gönder
 
 English:Have MatterControl send you an email message after your print is finished
-Translated:Have MatterControl send you an email message after your print is finished
+Translated:Yazma işleminiz bittiğinde e-mail gönder
 
 English:A valid email address
-Translated:A valid email address
+Translated:Geçerli bir mail adresi giriniz
 
 English:Play a Sound
-Translated:Play a Sound
+Translated:Sesli Uyarı Ver
 
 English:Play a sound after your print is finished
-Translated:Play a sound after your print is finished
+Translated:Yazma işlemi bittiğinde sesli uyarı ver
 
 English:Printing From SD Card
 Translated:Printing From SD Card
@@ -2467,16 +2471,16 @@ English:Would you also like to remove this file from the Printer's SD Card?
 Translated:Would you also like to remove this file from the Printer's SD Card?
 
 English:Export to Printer SD Card
-Translated:Export to Printer SD Card
+Translated:Yazıcı Sd Kart'ına Ver
 
 English:Preparing To Send To SD Card
-Translated:Preparing To Send To SD Card
+Translated:Sd Kart'a göndermeye hazırlanıyor.
 
 English:Sending To SD Card
-Translated:Sending To SD Card
+Translated:Sd Kart'a Gönder
 
 English:Exporting to Folder
-Translated:Exporting to Folder
+Translated:Klasöre Ver
 
 English:Warning GCode file
 Translated:Warning GCode file
@@ -2485,16 +2489,16 @@ English:Release Notes
 Translated:Release Notes
 
 English:More Info
-Translated:More Info
+Translated:Daha Fazla
 
 English:Go To Status
-Translated:Go To Status
+Translated:Duruma Git
 
 English:View Status
-Translated:View Status
+Translated:Durumu Görüntüle
 
 English:Description
-Translated:Description
+Translated:Açıklama
 
 English:Value
 Translated:Value
@@ -2518,31 +2522,38 @@ English:This is the minimum amount of filament that must be extruded before a re
 Translated:This is the minimum amount of filament that must be extruded before a retraction can occur.
 
 English:Support Options
-Translated:Support Options
+Translated:Destek Seçenekleri
 
 English:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
 Translated:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
 
 English:Support Everywhere
-Translated:Support Everywhere
+Translated:Heryere Destek At
 
 English:The angle the support infill will be drawn.
 Translated:The angle the support infill will be drawn.
 
 English:Infill Angle
-Translated:Infill Angle
+Translated:Doldurma Açısı
 
 English:Grid
-Translated:Grid
+Translated:Kare
 
 English:Moves
-Translated:Moves
+Translated:Hareketler
 
 English:Retractions
 Translated:Retractions
 
 English:Speeds
-Translated:Speeds
+Translated:Hız
 
 English:Extrusion
-Translated:Extrusion
+Translated:Ekstrüzyon
+
+English:Special thanks to Alessandro Ranellucci for his incredible work on 
+Translated:Special thanks to Alessandro Ranellucci for his incredible work on 
+
+English:Dilimleme Motoru
+Translated:Dilimleme Motoru
+
