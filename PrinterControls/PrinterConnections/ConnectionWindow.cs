@@ -95,6 +95,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             UiThread.RunOnIdle(DoChangeToEditPrinter);
         }
 
+        private void DoChangeToEditPrinter(object state)
+        {
+            GuiWidget addConnectionWidget = new EditConnectionWidget(this, this, activePrinter);
+            this.RemoveAllChildren();
+            this.AddChild(addConnectionWidget);
+            this.Invalidate();
+
+        }
+
         public void ChangeToChoosePrinter(bool editMode = false)
         {
             this.editMode = editMode;
@@ -109,15 +118,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             this.Invalidate();
 
-        }
-
-		private void DoChangeToEditPrinter(object state)
-        {
-            GuiWidget addConnectionWidget = new EditConnectionWidget(this, this, activePrinter);
-            this.RemoveAllChildren();
-            this.AddChild(addConnectionWidget);
-            this.Invalidate();
-            
         }
 
         int GetPrinterRecordCount()
