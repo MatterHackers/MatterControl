@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 
@@ -41,7 +42,6 @@ namespace MatterHackers.MatterControl
         Button sendCommand;
 		CheckBox filterOutput;
         CheckBox autoUppercase;
-        CheckBox monitorPrinterTemperature;
         MHTextEditWidget manualCommandTextEdit;
         OutputScroll outputScrollWidget;
         RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -92,8 +92,8 @@ namespace MatterHackers.MatterControl
                 manualEntryTopToBottomLayout.Padding = new BorderDouble(5);
 
                 {
-                    FlowLayoutWidget OutputWindowsLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
-                    OutputWindowsLayout.HAnchor |= HAnchor.ParentLeft;
+                    FlowLayoutWidget topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+                    topBarControls.HAnchor |= HAnchor.ParentLeft;
 
 					string filterOutputChkTxt = LocalizedString.Get("Filter Output");
 
@@ -102,7 +102,8 @@ namespace MatterHackers.MatterControl
                     filterOutput.Checked = false;
                     filterOutput.TextColor = this.textColor;
                     filterOutput.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(SetCorrectFilterOutputBehavior);
-                    OutputWindowsLayout.AddChild(filterOutput);
+                    filterOutput.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                    topBarControls.AddChild(filterOutput);
 
 					string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
 
@@ -110,15 +111,21 @@ namespace MatterHackers.MatterControl
                     autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
                     autoUppercase.Checked = true;
                     autoUppercase.TextColor = this.textColor;
-                    OutputWindowsLayout.AddChild(autoUppercase);
+                    autoUppercase.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                    topBarControls.AddChild(autoUppercase);
 
-                    monitorPrinterTemperature = new CheckBox("Monitor Temperature");
-                    monitorPrinterTemperature.Margin = new BorderDouble(5, 5, 5, 2);
-                    monitorPrinterTemperature.Checked = PrinterConnectionAndCommunication.Instance.MonitorPrinterTemperature;
-                    monitorPrinterTemperature.TextColor = this.textColor;
-                    monitorPrinterTemperature.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(monitorPrinterTemperature_CheckedStateChanged);
+                    topBarControls.AddChild(new HorizontalSpacer());
 
-                    manualEntryTopToBottomLayout.AddChild(OutputWindowsLayout);
+                    Button clearConsol = controlButtonFactory.Generate(LocalizedString.Get("Clear"));
+                    clearConsol.Margin = new BorderDouble(5, 0);
+                    clearConsol.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                    clearConsol.Click += (sender, e) =>
+                    {
+                        outputScrollWidget.Clear();
+                    };
+                    topBarControls.AddChild(clearConsol);
+
+                    manualEntryTopToBottomLayout.AddChild(topBarControls);
                 }
 
                 {
@@ -139,7 +146,7 @@ namespace MatterHackers.MatterControl
                     manualCommandTextEdit = new MHTextEditWidget("");
                     manualCommandTextEdit.BackgroundColor = RGBA_Bytes.White;
                     manualCommandTextEdit.HAnchor = HAnchor.ParentLeftRight;
-                    manualCommandTextEdit.VAnchor = VAnchor.ParentCenter;
+                    manualCommandTextEdit.VAnchor = VAnchor.ParentBottom;
                     manualCommandTextEdit.ActualTextEditWidget.EnterPressed += new KeyEventHandler(manualCommandTextEdit_EnterPressed);
                     manualCommandTextEdit.ActualTextEditWidget.KeyDown += new KeyEventHandler(manualCommandTextEdit_KeyDown);
                     manualEntryLayout.AddChild(manualCommandTextEdit);

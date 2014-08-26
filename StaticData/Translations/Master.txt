@@ -2547,3 +2547,6 @@ Translated:Speeds
 English:Extrusion
 Translated:Extrusion
 
+English:Clear
+Translated:Clear
+
