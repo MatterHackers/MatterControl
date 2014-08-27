@@ -2546,3 +2546,12 @@ Translated:Speeds
 
 English:Extrusion
 Translated:Extrusion
+English:Special thanks to Alessandro Ranellucci for his incredible work on
+Translated:Special thanks to Alessandro Ranellucci for his incredible work on
+
+English:Dilimleme Motoru
+Translated:Dilimleme Motoru
+
+English:Clear
+Translated:Clear
+

@@ -2557,3 +2557,6 @@ Translated:Special thanks to Alessandro Ranellucci for his incredible work on
 English:Dilimleme Motoru
 Translated:Dilimleme Motoru
 
+English:Clear
+Translated:Clear
+
