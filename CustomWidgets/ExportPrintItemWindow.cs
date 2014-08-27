@@ -14,6 +14,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
@@ -22,14 +23,16 @@ namespace MatterHackers.MatterControl
         CheckBox showInFolderAfterSave;
         CheckBox applyLeveling;
         private PrintItemWrapper printItemWrapper;
-        string pathAndFilenameToSave;
+		string gcodePathAndFilenameToSave;
+		string x3gPathAndFilenameToSave;
         bool partIsGCode = false;
+		string documentsPath;
 
         public ExportPrintItemWindow(PrintItemWrapper printItemWraper)
             : base(400, 250)
         {
             this.printItemWrapper = printItemWraper;
-
+			documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
             if (Path.GetExtension(printItemWraper.FileLocation).ToUpper() == ".GCODE")
             {
                 partIsGCode = true;
@@ -123,19 +126,19 @@ namespace MatterHackers.MatterControl
                     middleRowContainer.AddChild(exportToSdCard);
                 }
 
-                //if (ActiveSliceSettings.Instance.IsMakerbotGCodeFlavor() && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-                //{
-                //    string exportAsX3GText = "Export as X3G".Localize();
-                //    Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
-                //    exportAsX3G.HAnchor = HAnchor.ParentLeft;
-                //    exportAsX3G.Cursor = Cursors.Hand;
-                //    exportAsX3G.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
-                //        {
-                //            UiThread.RunOnIdle(ExportX3G_Click);
-
-                //        });
-                //    middleRowContainer.AddChild(exportAsX3G);
-                //}
+				bool showExportX3GButton = ActiveSliceSettings.Instance.IsMakerbotGCodeFlavor();
+				if (showExportX3GButton)
+                {
+                    string exportAsX3GText = "Export as X3G".Localize();
+                    Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
+                    exportAsX3G.HAnchor = HAnchor.ParentLeft;
+                    exportAsX3G.Cursor = Cursors.Hand;
+                    exportAsX3G.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
+                        {
+                            UiThread.RunOnIdle(ExportX3G_Click);
+                        });
+                    middleRowContainer.AddChild(exportAsX3G);
+                }
             }
 
             middleRowContainer.AddChild(new VerticalSpacer());
@@ -297,7 +300,7 @@ namespace MatterHackers.MatterControl
 
         void ExportGCode_Click(object state)
         {
-            SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", initialDirectory: documentsPath, title: "Export GCode");
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
 
@@ -306,12 +309,12 @@ namespace MatterHackers.MatterControl
 			{
 				streamToSaveTo.Close ();
 
-                pathAndFilenameToSave = saveParams.FileName;
-                string extension = Path.GetExtension(pathAndFilenameToSave);
+                gcodePathAndFilenameToSave = saveParams.FileName;
+                string extension = Path.GetExtension(gcodePathAndFilenameToSave);
 				if(extension == "")
 				{
-                    File.Delete(pathAndFilenameToSave);
-                    pathAndFilenameToSave += ".gcode";
+                    File.Delete(gcodePathAndFilenameToSave);
+                    gcodePathAndFilenameToSave += ".gcode";
 				}
 
                 if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
@@ -323,7 +326,7 @@ namespace MatterHackers.MatterControl
                 else if (partIsGCode)
                 {
                     Close();
-                    SaveGCodeToNewLocation(printItemWrapper.FileLocation, pathAndFilenameToSave);
+                    SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
                 }
             }
         }
@@ -331,7 +334,7 @@ namespace MatterHackers.MatterControl
 
 		void ExportX3G_Click(object state)
 		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export X3G|*.x3g", initialDirectory: documentsPath, title: "Export X3G");
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
 
@@ -340,24 +343,24 @@ namespace MatterHackers.MatterControl
 			{
 				streamToSaveTo.Close ();
 
-				pathAndFilenameToSave = saveParams.FileName;
-				string extension = Path.GetExtension(pathAndFilenameToSave);
+				x3gPathAndFilenameToSave = saveParams.FileName;
+				string extension = Path.GetExtension(x3gPathAndFilenameToSave);
 				if(extension == "")
 				{
-					File.Delete(pathAndFilenameToSave);
-					pathAndFilenameToSave += ".gcode";
+					File.Delete(gcodePathAndFilenameToSave);
+					x3gPathAndFilenameToSave += ".x3g";
 				}
 
 				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
 				{
 					Close();
 					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                    printItemWrapper.SlicingDone.RegisterEvent(x3gItem_Done, ref unregisterEvents);
+					printItemWrapper.SlicingDone.RegisterEvent(x3gItemSlice_Complete, ref unregisterEvents);
 				}
 				else if (partIsGCode)
 				{
 					Close();
-					SaveGCodeToNewLocation(printItemWrapper.FileLocation, pathAndFilenameToSave);
+					generateX3GfromGcode(printItemWrapper.FileLocation, x3gPathAndFilenameToSave);
 				}
 			}
 		}
@@ -447,7 +450,7 @@ namespace MatterHackers.MatterControl
 
         void DoExportSTL_Click(object state)
         {
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");  
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl", initialDirectory: documentsPath);  
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
             saveParams.FileName = printItemWrapper.Name;
@@ -479,15 +482,54 @@ namespace MatterHackers.MatterControl
             PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
             printItemWrapper.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
-            SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), pathAndFilenameToSave);			
+            SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), gcodePathAndFilenameToSave);			
         }
 
-        void x3gItem_Done(object sender, EventArgs e)
+        void x3gItemSlice_Complete(object sender, EventArgs e)
         {
-            ProcessStartInfo exportX3GProcess = new ProcessStartInfo(printItemWrapper.PrintItem.Name);
-            exportX3GProcess.UseShellExecute = true;
-            exportX3GProcess.FileName = "C:\\Users\\Matter Hackers 1\\GPX\\gpx-win32-1.3\\gpx-win32-1.3\\gpx.exe";
-            Process.Start(exportX3GProcess);
+			PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
+			printItemWrapper.SlicingDone.UnregisterEvent(x3gItemSlice_Complete, ref unregisterEvents);
+			if (File.Exists(sliceItem.GetGCodePathAndFileName()))
+			{
+				generateX3GfromGcode(sliceItem.GetGCodePathAndFileName(), x3gPathAndFilenameToSave);
+			}
         }
+
+		string getGpxExectutablePath()
+		{
+			switch (OsInformation.OperatingSystem)
+			{
+				case OSType.Windows:
+					string gpxRelativePath = Path.Combine("..", "gpx.exe");
+					if (!File.Exists(gpxRelativePath))
+					{
+						gpxRelativePath = Path.Combine(".", "gpx.exe");
+					}
+					return Path.GetFullPath(gpxRelativePath);
+
+				case OSType.Mac:
+					return Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "gpx");
+
+				case OSType.X11:
+					return Path.GetFullPath(Path.Combine(".", "gpx.exe"));
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		void generateX3GfromGcode(string gcodeInputPath, string x3gOutputPath, string machineType="r2")
+		{
+			string gpxExecutablePath = getGpxExectutablePath();
+			string gpxArgs = string.Format("-p -m {2} \"{0}\" \"{1}\" ", gcodeInputPath, x3gOutputPath, machineType);
+
+			ProcessStartInfo exportX3GProcess = new ProcessStartInfo(gpxExecutablePath);
+			exportX3GProcess.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+			exportX3GProcess.Arguments = gpxArgs;
+			Process.Start(exportX3GProcess);
+			ShowFileIfRequested(x3gOutputPath);
+
+
+		}
     }
 }

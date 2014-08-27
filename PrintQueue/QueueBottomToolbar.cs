@@ -175,7 +175,8 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
 
-            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
+			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath);
 
             System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
             if (streamToSaveTo != null)
