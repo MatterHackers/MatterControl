@@ -284,16 +284,6 @@ namespace MatterHackers.MatterControl
                 Graphics2D partGraphics2D = tempImage.NewGraphics2D();
                 partGraphics2D.Clear(new RGBA_Bytes());
 
-                List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
-                if (nonManifoldEdges.Count > 0)
-                {
-                    if (File.Exists("RunUnitTests.txt"))
-                    {
-                        partGraphics2D.Circle(4, 4, 4, RGBA_Bytes.Red);
-                    }
-                }
-                nonManifoldEdges = null;
-
                 AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
                 double maxSize = Math.Max(aabb.XSize, aabb.YSize);
                 double scale = size.x / (maxSize * 1.2);
@@ -302,6 +292,15 @@ namespace MatterHackers.MatterControl
                     new Vector2((size.x / scale - bounds2D.Width) / 2 - bounds2D.Left,
                         (size.y / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
                     scale, RGBA_Bytes.White);
+
+                List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
+                if (nonManifoldEdges.Count > 0)
+                {
+                    if (File.Exists("RunUnitTests.txt"))
+                    {
+                        partGraphics2D.Circle(size.x / 4, size.x / 4, size.x / 8, RGBA_Bytes.Red);
+                    }
+                }
 
                 // and save it to disk
                 string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
