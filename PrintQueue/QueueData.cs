@@ -219,6 +219,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                             if(gotBeginFileList)
                             {
                                 bool sdCardItemInQueue = false;
+                                bool validSdCardItem = false;
 
                                 foreach (PrintItem item in CreateReadOnlyPartList())
                                 {
@@ -228,9 +229,17 @@ namespace MatterHackers.MatterControl.PrintQueue
                                         sdCardItemInQueue = true;
                                         break;
                                     }
+
+                                    string sdCardFileExtension = currentEvent.Data.ToUpper();
+
+                                    if (sdCardFileExtension.Contains(".GCO")
+                                        || sdCardFileExtension.Contains(".GCODE"))
+                                    {
+                                        validSdCardItem = true;
+                                    }
                                 }
 
-                                if (!sdCardItemInQueue)
+                                if (!sdCardItemInQueue && validSdCardItem)
                                 {
                                     // If there is not alread an sd card item in the queue with this name then add it.
                                     AddItem(new PrintItemWrapper(new PrintItem(currentEvent.Data, QueueData.SdCardFileName)));
