@@ -351,12 +351,7 @@ namespace MatterHackers.MatterControl
 				{
 					Close();
 					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-					printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
-
-					/*ProcessStartInfo exportX3GProcess = new ProcessStartInfo(printItemWrapper.PrintItem.Name);
-					exportX3GProcess.UseShellExecute = true;
-					exportX3GProcess.FileName = "C:\\Users\\Matter Hackers 1\\GPX\\gpx-win32-1.3\\gpx-win32-1.3\\gpx.exe";
-					Process.Start(exportX3GProcess);*/
+                    printItemWrapper.SlicingDone.RegisterEvent(x3gItem_Done, ref unregisterEvents);
 				}
 				else if (partIsGCode)
 				{
@@ -483,11 +478,15 @@ namespace MatterHackers.MatterControl
             PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
             printItemWrapper.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
-            SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), pathAndFilenameToSave);
-			ProcessStartInfo exportX3GProcess = new ProcessStartInfo(printItemWrapper.PrintItem.Name);
-			exportX3GProcess.UseShellExecute = true;
-			exportX3GProcess.FileName = "C:\\Users\\Matter Hackers 1\\GPX\\gpx-win32-1.3\\gpx-win32-1.3\\gpx.exe";
-			Process.Start(exportX3GProcess);
+            SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), pathAndFilenameToSave);			
+        }
+
+        void x3gItem_Done(object sender, EventArgs e)
+        {
+            ProcessStartInfo exportX3GProcess = new ProcessStartInfo(printItemWrapper.PrintItem.Name);
+            exportX3GProcess.UseShellExecute = true;
+            exportX3GProcess.FileName = "C:\\Users\\Matter Hackers 1\\GPX\\gpx-win32-1.3\\gpx-win32-1.3\\gpx.exe";
+            Process.Start(exportX3GProcess);
         }
     }
 }
