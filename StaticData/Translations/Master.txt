@@ -2547,3 +2547,6 @@ Translated:Speeds
 English:Extrusion
 Translated:Extrusion
 
+English:Export as X3G
+Translated:Export as X3G
+
