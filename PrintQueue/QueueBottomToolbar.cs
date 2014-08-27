@@ -175,7 +175,8 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
 
-            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
+			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath);
 
             System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
             if (streamToSaveTo != null)
@@ -281,7 +282,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void AddItemsToQueue(object state)
         {
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode;*.zip", multiSelect: true);
+            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode;*.zip", multiSelect: true, initialDirectory: documentsPath);
 			openParams.ActionButtonLabel = "Add to Queue";
 			openParams.Title = "MatterControl: Select A File";
 

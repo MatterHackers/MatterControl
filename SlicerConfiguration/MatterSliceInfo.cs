@@ -43,8 +43,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         protected override string getWindowsPath()
 		{
-			string materSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
-			return Path.GetFullPath(materSliceRelativePath);
+			string matterSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
+			return Path.GetFullPath(matterSliceRelativePath);
 		}
 
         protected override string getMacPath()
@@ -55,8 +55,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         protected override string getLinuxPath()
 		{
-			string materSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
-			return Path.GetFullPath(materSliceRelativePath);
+			string matterSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
+			return Path.GetFullPath(matterSliceRelativePath);
 		}
 
        

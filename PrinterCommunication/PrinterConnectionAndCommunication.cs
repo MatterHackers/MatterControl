@@ -819,6 +819,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 string lineToWrite = LinesToWriteQueue[0];
 
                 lineToWrite = KeepTrackOfPostionAndDestination(lineToWrite);
+                lineToWrite = RunPrintLevelingTranslations(lineToWrite);
 
                 LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
                 WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
@@ -1501,16 +1502,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     currentDestination = newDestination;
                     DestinationChanged.CallEvents(this, null);
                 }
+            }
 
-                if (ActivePrinter.DoPrintLeveling)
-                {
-                    string inputLine = lineBeingSent;
-                    lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, inputLine);
-                }
+            return lineBeingSent;
+        }
+
+        string RunPrintLevelingTranslations(string lineBeingSent)
+        {
+            if (ActivePrinter != null 
+                && ActivePrinter.DoPrintLeveling 
+                && lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
+            {
+                string inputLine = lineBeingSent;
+                lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, inputLine);
             }
 
             PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            if(levelingData != null)
+            if (levelingData != null)
             {
                 List<string> linesToWrite = null;
                 switch (levelingData.levelingSystem)
@@ -1677,6 +1685,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             lineToWrite = ApplyExtrusionMultiplier(lineToWrite);
             lineToWrite = ApplyFeedRateMultiplier(lineToWrite);
             lineToWrite = KeepTrackOfPostionAndDestination(lineToWrite);
+            lineToWrite = RunPrintLevelingTranslations(lineToWrite);
 
             string lineWithCount = "N" + (allCheckSumLinesSent.Count + 1).ToString() + " " + lineToWrite;
             string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount);

@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 
@@ -41,7 +42,6 @@ namespace MatterHackers.MatterControl
         Button sendCommand;
 		CheckBox filterOutput;
         CheckBox autoUppercase;
-        CheckBox monitorPrinterTemperature;
         MHTextEditWidget manualCommandTextEdit;
         OutputScroll outputScrollWidget;
         RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -81,19 +81,18 @@ namespace MatterHackers.MatterControl
             : base(400, 300)
         {
             this.BackgroundColor = backgroundColor;
-            this.Padding = new BorderDouble(5);
-
+            this.Padding = new BorderDouble(5, 0);
             FlowLayoutWidget topLeftToRightLayout = new FlowLayoutWidget();
             topLeftToRightLayout.AnchorAll();
 
             {
                 FlowLayoutWidget manualEntryTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 manualEntryTopToBottomLayout.VAnchor |= Agg.UI.VAnchor.ParentTop;
-                manualEntryTopToBottomLayout.Padding = new BorderDouble(5);
+                manualEntryTopToBottomLayout.Padding = new BorderDouble(top:8);
 
                 {
-                    FlowLayoutWidget OutputWindowsLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
-                    OutputWindowsLayout.HAnchor |= HAnchor.ParentLeft;
+                    FlowLayoutWidget topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+                    topBarControls.HAnchor |= HAnchor.ParentLeft;
 
 					string filterOutputChkTxt = LocalizedString.Get("Filter Output");
 
@@ -102,7 +101,8 @@ namespace MatterHackers.MatterControl
                     filterOutput.Checked = false;
                     filterOutput.TextColor = this.textColor;
                     filterOutput.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(SetCorrectFilterOutputBehavior);
-                    OutputWindowsLayout.AddChild(filterOutput);
+                    filterOutput.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                    topBarControls.AddChild(filterOutput);
 
 					string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
 
@@ -110,24 +110,21 @@ namespace MatterHackers.MatterControl
                     autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
                     autoUppercase.Checked = true;
                     autoUppercase.TextColor = this.textColor;
-                    OutputWindowsLayout.AddChild(autoUppercase);
+                    autoUppercase.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                    topBarControls.AddChild(autoUppercase);
+                    manualEntryTopToBottomLayout.AddChild(topBarControls);
 
-                    monitorPrinterTemperature = new CheckBox("Monitor Temperature");
-                    monitorPrinterTemperature.Margin = new BorderDouble(5, 5, 5, 2);
-                    monitorPrinterTemperature.Checked = PrinterConnectionAndCommunication.Instance.MonitorPrinterTemperature;
-                    monitorPrinterTemperature.TextColor = this.textColor;
-                    monitorPrinterTemperature.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(monitorPrinterTemperature_CheckedStateChanged);
-
-                    manualEntryTopToBottomLayout.AddChild(OutputWindowsLayout);
                 }
 
                 {
                     outputScrollWidget = new OutputScroll();
-                    outputScrollWidget.Height = 100;
-                    outputScrollWidget.BackgroundColor = RGBA_Bytes.White;
+                    //outputScrollWidget.Height = 100;
+                    outputScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+                    outputScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     outputScrollWidget.HAnchor = HAnchor.ParentLeftRight;
                     outputScrollWidget.VAnchor = VAnchor.ParentBottomTop;
-                    outputScrollWidget.Margin = new BorderDouble(0, 5);
+                    outputScrollWidget.Margin = new BorderDouble(0,5);
+                    outputScrollWidget.Padding = new BorderDouble(3, 0);
 
                     manualEntryTopToBottomLayout.AddChild(outputScrollWidget);
                 }
@@ -137,20 +134,47 @@ namespace MatterHackers.MatterControl
                 manualEntryLayout.HAnchor = HAnchor.ParentLeftRight;
                 {
                     manualCommandTextEdit = new MHTextEditWidget("");
-                    manualCommandTextEdit.BackgroundColor = RGBA_Bytes.White;
+                    //manualCommandTextEdit.BackgroundColor = RGBA_Bytes.White;
+                    manualCommandTextEdit.Margin = new BorderDouble(right: 3);
                     manualCommandTextEdit.HAnchor = HAnchor.ParentLeftRight;
-                    manualCommandTextEdit.VAnchor = VAnchor.ParentCenter;
+                    manualCommandTextEdit.VAnchor = VAnchor.ParentBottom;
                     manualCommandTextEdit.ActualTextEditWidget.EnterPressed += new KeyEventHandler(manualCommandTextEdit_EnterPressed);
                     manualCommandTextEdit.ActualTextEditWidget.KeyDown += new KeyEventHandler(manualCommandTextEdit_KeyDown);
-                    manualEntryLayout.AddChild(manualCommandTextEdit);
-
-					sendCommand = controlButtonFactory.Generate(LocalizedString.Get("Send"));
-                    sendCommand.Margin = new BorderDouble(5, 0);
-                    sendCommand.Click += new ButtonBase.ButtonEventHandler(sendManualCommandToPrinter_Click);
-                    manualEntryLayout.AddChild(sendCommand);
+                    manualEntryLayout.AddChild(manualCommandTextEdit);					
                 }
 
+
+
+
                 manualEntryTopToBottomLayout.AddChild(manualEntryLayout);
+
+                Button clearConsoleButton = controlButtonFactory.Generate(LocalizedString.Get("Clear"));
+                clearConsoleButton.Margin = new BorderDouble(0);
+                clearConsoleButton.Click += (sender, e) =>
+                {
+                    outputScrollWidget.Clear();
+                };
+
+
+                Button closeButton = controlButtonFactory.Generate(LocalizedString.Get("Close"));
+                closeButton.Click += (sender, e) =>
+                {
+                    UiThread.RunOnIdle(CloseWindow);
+                };
+
+                sendCommand = controlButtonFactory.Generate(LocalizedString.Get("Send"));
+                sendCommand.Click += new ButtonBase.ButtonEventHandler(sendManualCommandToPrinter_Click);
+
+                FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();
+                bottomRowContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                bottomRowContainer.Margin = new BorderDouble(0, 3);
+
+                bottomRowContainer.AddChild(sendCommand);
+                bottomRowContainer.AddChild(clearConsoleButton);
+                bottomRowContainer.AddChild(new HorizontalSpacer());
+                bottomRowContainer.AddChild(closeButton);
+
+                manualEntryTopToBottomLayout.AddChild(bottomRowContainer);
                 manualEntryTopToBottomLayout.AnchorAll();
 
                 topLeftToRightLayout.AddChild(manualEntryTopToBottomLayout);
@@ -171,6 +195,13 @@ namespace MatterHackers.MatterControl
         void AddHandlers()
         {
             PrinterConnectionAndCommunication.Instance.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
+        }
+
+        
+
+        private void CloseWindow(object state)
+        {
+            Close();
         }
 
         public override void OnClosed(EventArgs e)

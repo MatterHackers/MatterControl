@@ -1123,6 +1123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         {
                             CheckBox showBuildVolumeCheckBox = new CheckBox(LocalizedString.Get("Show Print Area"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                             showBuildVolumeCheckBox.Checked = false;
+                            showBuildVolumeCheckBox.Margin = new BorderDouble(bottom: 5);
                             showBuildVolumeCheckBox.CheckedStateChanged += (sender, e) =>
                             {
                                 meshViewerWidget.RenderBuildVolume = showBuildVolumeCheckBox.Checked;
@@ -1414,35 +1415,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
         {
+            string renderTypeString = UserSettings.Instance.get("defaultRenderSetting");
+            if (renderTypeString == null)
+            {
+                renderTypeString = "Outlines";
+                UserSettings.Instance.set("defaultRenderSetting", "Outlines");
+            }
+            RenderOpenGl.RenderTypes renderType;
+            bool canParse = Enum.TryParse<RenderOpenGl.RenderTypes>(renderTypeString, out renderType);
+            if (canParse)
+            {
+                meshViewerWidget.RenderType = renderType;
+            }
+            
             {
                 RadioButton renderTypeShaded = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                renderTypeShaded.Checked = true;
+                renderTypeShaded.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
+
                 renderTypeShaded.CheckedStateChanged += (sender, e) =>
-                {
+                {                    
                     meshViewerWidget.RenderType = RenderTypes.Shaded;
+                    UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
                 };
                 viewOptionContainer.AddChild(renderTypeShaded);
             }
 
             {
                 RadioButton renderTypeOutlines = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                //renderTypeOutlines.Checked = true;
+                renderTypeOutlines.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
                 renderTypeOutlines.CheckedStateChanged += (sender, e) =>
-                {
+                {                 
                     meshViewerWidget.RenderType = RenderTypes.Outlines;
+                    UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
                 };
                 viewOptionContainer.AddChild(renderTypeOutlines);
             }
 
             {
                 RadioButton renderTypePolygons = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                //renderTypePolygons.Checked = true;
+                renderTypePolygons.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
                 renderTypePolygons.CheckedStateChanged += (sender, e) =>
-                {
+                {                    
                     meshViewerWidget.RenderType = RenderTypes.Polygons;
+                    UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
                 };
                 viewOptionContainer.AddChild(renderTypePolygons);
             }
+            
         }
 
         private GuiWidget generateHorizontalRule()
