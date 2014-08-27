@@ -149,7 +149,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
             if (parts.Count > 0)
             {
-                SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf");
+				string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
+				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath);
 
 				saveParams.ActionButtonLabel = LocalizedString.Get("Save Parts Sheet");
 				string saveParamsTitleLabel = "MatterControl".Localize();
