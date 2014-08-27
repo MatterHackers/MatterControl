@@ -2561,3 +2561,6 @@ Translated:Lets the bed leveling code know if the printer can support the z axis
 English:Z Can Be Negative
 Translated:Z Can Be Negative
 
+English:Export as X3G
+Translated:Export as X3G
+
