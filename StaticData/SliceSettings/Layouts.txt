@@ -213,6 +213,7 @@ Advanced
         has_fan
         has_heated_bed
         has_sd_card_reader
+        z_can_be_negative
       Firmware
         gcode_flavor
         gcode_output_type
