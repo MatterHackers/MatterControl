@@ -1509,7 +1509,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         string RunPrintLevelingTranslations(string lineBeingSent)
         {
-            if (ActivePrinter.DoPrintLeveling 
+            if (ActivePrinter != null 
+                && ActivePrinter.DoPrintLeveling 
                 && lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
             {
                 string inputLine = lineBeingSent;

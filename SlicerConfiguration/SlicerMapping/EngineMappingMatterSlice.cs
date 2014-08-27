@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
              
             //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
             new MapItem("bottomClipAmount", "bottom_clip_amount"),
-            
+
             //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
             new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
             
@@ -198,6 +198,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new NotPassedItem("", "has_fan"),
             new NotPassedItem("", "has_heated_bed"),
             new NotPassedItem("", "has_sd_card_reader"),
+            new NotPassedItem("", "z_can_be_negative"),
 #endif
 
             //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
