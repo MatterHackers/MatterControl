@@ -93,6 +93,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.printItem = printItem;
 
             CreateAndAddChildren(null);
+
+            SliceSettingsWidget.PartPreviewSettingsChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+        }
+
+        void RecreateBedAndPartPosition(object sender, EventArgs e)
+        {
+            viewerVolume = new Vector3(ActiveSliceSettings.Instance.BedSize, ActiveSliceSettings.Instance.BuildHeight);
+            bedShape = ActiveSliceSettings.Instance.BedShape;
+            bedCenter = ActiveSliceSettings.Instance.BedCenter;
+
+            double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+
+            UiThread.RunOnIdle((state) =>
+            {
+                meshViewerWidget.CreatePrintBed(
+                    viewerVolume,
+                    bedCenter,
+                    bedShape);
+            });
         }
 
         void CreateAndAddChildren(object state)

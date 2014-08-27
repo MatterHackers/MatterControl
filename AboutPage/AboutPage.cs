@@ -63,11 +63,8 @@ namespace MatterHackers.MatterControl
 			buttonRowContainer.AddChild(new HorizontalSpacer());
 			buttonRowContainer.AddChild(cancelButton);
 
-
             this.Title = LocalizedString.Get("About MatterControl");
             this.ShowAsSystemWindow();
-
-
         }
 
 		private void CancelButton_Click()

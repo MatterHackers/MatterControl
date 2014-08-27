@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         bool addNewPrinterFlag = false;
 
-        public EditConnectionWidget(ConnectionWindow windowController, GuiWidget containerWindowToClose, Printer activePrinter = null)
+        public EditConnectionWidget(ConnectionWindow windowController, GuiWidget containerWindowToClose, Printer activePrinter = null, object state = null)
             : base(windowController, containerWindowToClose)
         {
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -200,6 +200,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 if (this.ActivePrinter.AutoConnectFlag)
                 {
                     enableAutoconnect.Checked = true;
+                }
+
+                if (state as StateBeforeRefresh != null)
+                {
+                    enableAutoconnect.Checked = ((StateBeforeRefresh)state).autoConnect;
                 }
 
                 ConnectionControlContainer.VAnchor = VAnchor.ParentBottomTop;
@@ -390,6 +395,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return comPortOption;
         }
 
+        internal class StateBeforeRefresh
+        {
+            internal bool autoConnect;
+
+            internal StateBeforeRefresh(bool autoConnect)
+            {
+                this.autoConnect = autoConnect;
+            }
+        }
+
         void RefreshComPorts(object sender, MouseEventArgs mouseEvent)
         {
             try
@@ -402,7 +417,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
 
             }
-            this.windowController.ChangedToEditPrinter(this.ActivePrinter);
+            this.windowController.ChangedToEditPrinter(this.ActivePrinter, new StateBeforeRefresh(enableAutoconnect.Checked));
         }
 
         void ReloadCurrentWidget(object sender, MouseEventArgs mouseEvent)
