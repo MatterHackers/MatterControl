@@ -201,17 +201,18 @@ namespace MatterHackers.MatterControl
         string Get8Name(string longName)
         {
             longName.Replace(' ', '_');
-            return longName.Substring(0, 8);
+            return longName.Substring(0, Math.Min(longName.Length, 8));
         }
 
         bool levelingEnabledStateBeforeSdOutput;
         void ExportToSdCard_Click(object state)
         {
-            if (applyLeveling.Checked) // check if the user wants that output leveled
+            if (applyLeveling != null && applyLeveling.Checked) // check if the user wants that output leveled
             {
                 // Check if the printer needs to run calibration to print
                 PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-                if (levelingData.needsPrintLeveling
+                if (levelingData != null
+                    && levelingData.needsPrintLeveling
                     && levelingData.sampledPosition0.z == 0
                     && levelingData.sampledPosition1.z == 0
                     && levelingData.sampledPosition2.z == 0)
@@ -233,7 +234,7 @@ namespace MatterHackers.MatterControl
 
             // check if we need to turn off the print leveling
             levelingEnabledStateBeforeSdOutput = ActivePrinterProfile.Instance.DoPrintLeveling;
-            if (!applyLeveling.Checked)
+            if (applyLeveling != null && !applyLeveling.Checked)
             {
                 ActivePrinterProfile.Instance.DoPrintLeveling = false;
             }
