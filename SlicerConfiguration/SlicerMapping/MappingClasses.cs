@@ -104,10 +104,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             foreach (string name in replaceWithSettingsStrings)
             {
+                // do the replacement with {} (curly brackets)
                 {
                     string thingToReplace = "{" + "{0}".FormatWith(name) + "}";
                     gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
                 }
+                // do the replacement with [] (square brackets)
                 {
                     string thingToReplace = "[" + "{0}".FormatWith(name) + "]";
                     gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));

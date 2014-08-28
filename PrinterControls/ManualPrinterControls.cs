@@ -614,7 +614,7 @@ namespace MatterHackers.MatterControl
                                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                                
-                                macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                                 break;
 
                             default:
