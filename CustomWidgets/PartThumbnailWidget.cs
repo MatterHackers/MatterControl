@@ -101,20 +101,19 @@ namespace MatterHackers.MatterControl
             switch(size)
             {
                 case ImageSizes.Size50x50:
-                    this.Width = 50;
-                    this.Height = 50;
-                    this.MinimumSize = new Vector2(50, 50);
+                    this.Width = 50 * TextWidget.GlobalPointSizeScaleRatio;
+                    this.Height = 50 * TextWidget.GlobalPointSizeScaleRatio;
                     break;
 
                 case ImageSizes.Size115x115:
-                    this.Width = 115;
-                    this.Height = 115;
-                    this.MinimumSize = new Vector2(115, 115);
+                    this.Width = 115 * TextWidget.GlobalPointSizeScaleRatio;
+                    this.Height = 115 * TextWidget.GlobalPointSizeScaleRatio;
                     break;
 
                 default:
                     throw new NotImplementedException();
             }
+            this.MinimumSize = new Vector2(this.Width, this.Height);
 
             this.BackgroundColor = normalBackgroundColor;
             this.Cursor = Cursors.Hand;
@@ -172,26 +171,22 @@ namespace MatterHackers.MatterControl
                         case ImageSizes.Size115x115:
                             {
                                 ImageIO.LoadImageData(this.GetImageLocation("icon_sd_card_115x115.png"), thumbnailWidget.thumbnailImage);
-                                thumbnailWidget.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
-                                Graphics2D graphics = thumbnailWidget.thumbnailImage.NewGraphics2D();
-                                Ellipse outline = new Ellipse(new Vector2(115 / 2.0, 115 / 2.0), 50);
-                                graphics.Render(new Stroke(outline, 4), RGBA_Bytes.White);
                             }
                             break;
 
                         case ImageSizes.Size50x50:
                             {
                                 ImageIO.LoadImageData(this.GetImageLocation("icon_sd_card_50x50.png"), thumbnailWidget.thumbnailImage);
-                                thumbnailWidget.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
-                                Graphics2D graphics = thumbnailWidget.thumbnailImage.NewGraphics2D();
-                                Ellipse outline = new Ellipse(new Vector2(50 / 2.0, 50 / 2.0), 22);
-                                graphics.Render(new Stroke(outline, 1.5), RGBA_Bytes.White);
                             }
                             break;
 
                         default:
                             throw new NotImplementedException();
                     }
+                    thumbnailWidget.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+                    Graphics2D graphics = thumbnailWidget.thumbnailImage.NewGraphics2D();
+                    Ellipse outline = new Ellipse(new Vector2(Width / 2.0, Height / 2.0), Width/2 + Width/12);
+                    graphics.Render(new Stroke(outline, 4), RGBA_Bytes.White);
 
                     UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
                     return;
@@ -226,7 +221,7 @@ namespace MatterHackers.MatterControl
                             halfWay2.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
                             halfWay2.NewGraphics2D().Render(halfWay1, 0, 0, 0, (double)halfWay2.Width / halfWay1.Width, (double)halfWay2.Height / halfWay1.Height);
 
-                            thumbnailWidget.thumbnailImage = new ImageBuffer(50, 50, 32, new BlenderBGRA());
+                            thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
                             thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
                             thumbnailWidget.thumbnailImage.NewGraphics2D().Render(halfWay2, 0, 0, 0, (double)thumbnailWidget.thumbnailImage.Width / halfWay2.Width, (double)thumbnailWidget.thumbnailImage.Height / halfWay2.Height);
                         }
@@ -238,7 +233,7 @@ namespace MatterHackers.MatterControl
                             halfWay1.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
                             halfWay1.NewGraphics2D().Render(bigRender, 0, 0, 0, (double)halfWay1.Width / bigRender.Width, (double)halfWay1.Height / bigRender.Height);
 
-                            thumbnailWidget.thumbnailImage = new ImageBuffer(115, 115, 32, new BlenderBGRA());
+                            thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
                             thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
                             thumbnailWidget.thumbnailImage.NewGraphics2D().Render(halfWay1, 0, 0, 0, (double)thumbnailWidget.thumbnailImage.Width / halfWay1.Width, (double)thumbnailWidget.thumbnailImage.Height / halfWay1.Height);
                         }
