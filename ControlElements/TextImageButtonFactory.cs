@@ -150,8 +150,8 @@ namespace MatterHackers.MatterControl
         public bool invertImageLocation = false;
         public bool AllowThemeToAdjustImage = true;
         FlowDirection flowDirection;
-        public int FixedWidth = 0;
-        public int FixedHeight = 40;
+        public double FixedWidth = 0;
+        public double FixedHeight = 40;
 
         public TooltipButton GenerateTooltipButton(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null)
         {

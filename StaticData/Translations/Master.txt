@@ -2564,3 +2564,6 @@ Translated:Z Can Be Negative
 English:Export as X3G
 Translated:Export as X3G
 
+English:Select an Image
+Translated:Select an Image
+
