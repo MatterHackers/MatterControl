@@ -1511,7 +1511,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (ActivePrinter != null 
                 && ActivePrinter.DoPrintLeveling 
-                && lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
+                && (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
             {
                 string inputLine = lineBeingSent;
                 lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, inputLine);

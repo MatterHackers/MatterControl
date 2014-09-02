@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
                     outputScrollWidget = new OutputScroll();
                     //outputScrollWidget.Height = 100;
                     outputScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-                    outputScrollWidget.TextColor = ActiveTheme.Instance.SecondaryTextColor;
+                    outputScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     outputScrollWidget.HAnchor = HAnchor.ParentLeftRight;
                     outputScrollWidget.VAnchor = VAnchor.ParentBottomTop;
                     outputScrollWidget.Margin = new BorderDouble(0,5);

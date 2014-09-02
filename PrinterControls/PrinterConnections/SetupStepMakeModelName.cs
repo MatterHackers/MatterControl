@@ -181,6 +181,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         string defaultMaterialPreset;
         string defaultQualityPreset;
+        string defaultMovementSpeeds;
         private void LoadSetupSettings(string make, string model)
         {
             Dictionary<string, string> settingsDict = LoadPrinterSetupFromFile(make, model);
@@ -220,6 +221,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             settingsDict.TryGetValue("default_material_presets", out defaultMaterialPreset);
             settingsDict.TryGetValue("default_quality_preset", out defaultQualityPreset);
+            settingsDict.TryGetValue("default_movement_speeds", out defaultMovementSpeeds);
 
             string defaultMacros;
             printerCustomCommands = new List<CustomCommands>();
@@ -449,6 +451,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 {
                     //Load the default slice settings for the make and model combination - if they exist
                     SliceSettingsCollection collection = LoadDefaultSliceSettings(this.ActivePrinter.Make, this.ActivePrinter.Model);
+
+                    if (defaultMovementSpeeds != null)
+                    {
+                        this.ActivePrinter.ManualMovementSpeeds = defaultMovementSpeeds;
+                    }
 
                     //Ordering matters - need to get Id for printer prior to loading slice presets
                     this.ActivePrinter.AutoConnectFlag = true;

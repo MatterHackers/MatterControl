@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             AddHandlers();
         }
 
-        void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+        RenderType GetRenderType()
         {
             RenderType renderType = RenderType.Extrusions;
             if (gcodeViewWidget.RenderMoves)
@@ -280,8 +280,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 renderType |= RenderType.SimulateExtrusion;
             }
 
+            return renderType;
+        }
+
+        void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+        {
             GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
-            gcodeViewWidget.gCodeRenderer.Render3D(0, Math.Min(gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.LoadedGCode.NumChangesInZ), gcodeViewWidget.TotalTransform, 1, renderType,
+            gcodeViewWidget.gCodeRenderer.Render3D(0, Math.Min(gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.LoadedGCode.NumChangesInZ), gcodeViewWidget.TotalTransform, 1, GetRenderType(),
                 gcodeViewWidget.FeatureToStartOnRatio0To1, gcodeViewWidget.FeatureToEndOnRatio0To1);
         }
 
@@ -345,7 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddModelInfo(FlowLayoutWidget buttonPanel)
         {
-            int oldWidth = textImageButtonFactory.FixedWidth;
+            double oldWidth = textImageButtonFactory.FixedWidth;
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -440,7 +445,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddLayerInfo(FlowLayoutWidget buttonPanel)
         {
-            int oldWidth = textImageButtonFactory.FixedWidth;
+            double oldWidth = textImageButtonFactory.FixedWidth;
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -464,7 +469,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddDisplayControls(FlowLayoutWidget buttonPanel)
         {
-            int oldWidth = textImageButtonFactory.FixedWidth; 
+            double oldWidth = textImageButtonFactory.FixedWidth; 
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);

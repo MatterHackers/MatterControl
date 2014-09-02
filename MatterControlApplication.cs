@@ -110,6 +110,8 @@ namespace MatterHackers.MatterControl
 
             GuiWidget.DefaultEnforceIntegerBounds = true;
 
+            //TextWidget.GlobalPointSizeScaleRatio = 1.63;
+
             this.AddChild(ApplicationWidget.Instance);
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 

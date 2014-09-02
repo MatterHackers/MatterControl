@@ -33,11 +33,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             if (OsInformation.OperatingSystem == OSType.Android || OsInformation.OperatingSystem == OSType.Mac || SlicingQueue.runInProcess)
             {
-                return System.IO.File.Exists(this.GetEnginePath());
+				return true;
             }
             else
             {
-                return true;
+				return System.IO.File.Exists(this.GetEnginePath());
             }
         }
 
