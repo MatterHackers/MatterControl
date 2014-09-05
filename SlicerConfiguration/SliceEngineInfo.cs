@@ -31,7 +31,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public virtual bool Exists()
         {
-            return System.IO.File.Exists(this.GetEnginePath());
+			if (this.GetEnginePath() == null)
+			{
+				return false;
+			}
+			else
+			{
+				return System.IO.File.Exists(this.GetEnginePath());
+			}
         }        
 
         public string GetEnginePath()
@@ -46,6 +53,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                 case OSType.X11:
                     return getLinuxPath();
+
+				case OSType.Android:
+					return null;
 
                 default:
                     throw new NotImplementedException();
