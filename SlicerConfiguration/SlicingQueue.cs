@@ -149,7 +149,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
             else
             {
-                throw new Exception("Slice engine is unavailable");
+                //throw new Exception("Slice engine is unavailable");
+				return null;
             }
 
         }

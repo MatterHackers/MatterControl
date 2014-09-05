@@ -759,8 +759,14 @@ namespace MatterHackers.MatterControl
         private void onPrinterStatusChanged(object sender, EventArgs e)
         {
             SetVisibleControls();
-            this.Invalidate();
+			UiThread.RunOnIdle(invalidateWidget);
+            
         }
+			
+		private void invalidateWidget(object state)
+		{
+			this.Invalidate();
+		}
 
         void disableMotors_Click(object sender, MouseEventArgs mouseEvent)
         {
