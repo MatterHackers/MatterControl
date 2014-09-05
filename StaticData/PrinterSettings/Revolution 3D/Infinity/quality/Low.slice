@@ -1,0 +1,11 @@
+layer_height = 0.3
+first_layer_height = 0.3
+perimeters = 2
+top_solid_layers = 2
+fill_density = 0.1
+fill_pattern = rectilinear
+perimeter_speed = 70
+top_solid_infill_speed = 65
+infill_speed = 80
+external_perimeter_speed = 70
+bottom_solid_layers = 2
