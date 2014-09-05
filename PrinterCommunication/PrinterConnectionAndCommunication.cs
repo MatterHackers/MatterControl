@@ -1511,7 +1511,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (ActivePrinter != null 
                 && ActivePrinter.DoPrintLeveling 
-                && lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
+                && (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
             {
                 string inputLine = lineBeingSent;
                 lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, inputLine);
@@ -1878,6 +1878,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                                 {
                                     pauseRequested = true;
                                 }
+                                else if(lineToWrite == "M226" || lineToWrite == "@pause")
+                                {
+                                    RequestPause(printerCommandQueueIndex+1);
+                                }
                                 else
                                 {
                                     WriteChecksumLineToPrinter(lineToWrite);
@@ -1924,8 +1928,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
-        public void RequestPause()
+        public void RequestPause(int injectionStartIndex = 0)
         {
+            if (injectionStartIndex == 0)
+            {
+                injectionStartIndex = printerCommandQueueIndex;
+            }
+
             if (PrinterIsPrinting)
             {
                 if (CommunicationState == CommunicationStates.PrintingFromSd)
@@ -1945,8 +1954,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     using (TimedLock.Lock(this, "RequestPause"))
                     {
-                        double currentFeedRate = loadedGCode.Instruction(printerCommandQueueIndex).FeedRate;
-                        int lastIndexAdded = InjectGCode(pauseGCode, printerCommandQueueIndex);
+                        double currentFeedRate = loadedGCode.Instruction(injectionStartIndex).FeedRate;
+                        int lastIndexAdded = InjectGCode(pauseGCode, injectionStartIndex);
 
                         // inject a marker to tell when we are done with the inserted pause code
                         lastIndexAdded = InjectGCode("MH_PAUSE", lastIndexAdded);

@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddModelInfo(FlowLayoutWidget buttonPanel)
         {
-            int oldWidth = textImageButtonFactory.FixedWidth;
+            double oldWidth = textImageButtonFactory.FixedWidth;
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -445,7 +445,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddLayerInfo(FlowLayoutWidget buttonPanel)
         {
-            int oldWidth = textImageButtonFactory.FixedWidth;
+            double oldWidth = textImageButtonFactory.FixedWidth;
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddDisplayControls(FlowLayoutWidget buttonPanel)
         {
-            int oldWidth = textImageButtonFactory.FixedWidth; 
+            double oldWidth = textImageButtonFactory.FixedWidth; 
             textImageButtonFactory.FixedWidth = 44;
 
             FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);

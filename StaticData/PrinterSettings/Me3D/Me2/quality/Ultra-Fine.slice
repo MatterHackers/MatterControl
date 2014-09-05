@@ -1,0 +1,7 @@
+layer_height = 0.05
+external_perimeter_speed = 10
+infill_speed = 30
+solid_infill_speed = 30
+support_material_speed = 30
+top_solid_infill_speed = 30
+perimeter_speed = 30

@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
             this.functionToCallOnSave = functionToCallOnSave;
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            int oldHeight = textImageButtonFactory.FixedHeight;
+            double oldHeight = textImageButtonFactory.FixedHeight;
             textImageButtonFactory.FixedHeight = 30;
 
             TextWidget tempTypeLabel = new TextWidget(windowTitle, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);

@@ -65,8 +65,8 @@ namespace MatterHackers.MatterControl
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
         FlowLayoutWidget ColumnThree;
-        int Max1ColumnWidth = 990;
-        int Max2ColumnWidth = 1590;
+        double Max1ColumnWidth = 990 * TextWidget.GlobalPointSizeScaleRatio;
+        double Max2ColumnWidth = 1590 * TextWidget.GlobalPointSizeScaleRatio;
 
         View3DTransformPart part3DView;
         ViewGcodeBasic partGcodeView;

@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            int oldHeight = textImageButtonFactory.FixedHeight;
+            double oldHeight = textImageButtonFactory.FixedHeight;
             textImageButtonFactory.FixedHeight = 30;
 
             // put in the movement edit controls

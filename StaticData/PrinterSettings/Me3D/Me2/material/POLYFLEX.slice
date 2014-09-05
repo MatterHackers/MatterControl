@@ -1,0 +1,11 @@
+fan_always_on = 1
+disable_fan_first_layers = 0
+retract_length = 0
+first_layer_temperature = 220
+temperature = 220
+external_perimeter_speed = 50
+infill_speed = 50
+solid_infill_speed = 50
+support_material_speed = 40
+top_solid_infill_speed = 50
+perimeter_speed = 40
