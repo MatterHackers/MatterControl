@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public PartPreviewMainWindow(PrintItemWrapper printItem, View3DTransformPart.AutoRotate autoRotate3DView)
             : base(690, 340)
         {
+            UseOpenGL = true;
             string partPreviewTitle = LocalizedString.Get("MatterControl");
             Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
