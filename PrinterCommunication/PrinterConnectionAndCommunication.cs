@@ -823,8 +823,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                 LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
                 WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
-                System.Threading.Thread.Sleep(1);
             }
+            System.Threading.Thread.Sleep(1);
         }
 
         public double TargetExtruderTemperature
