@@ -28,27 +28,21 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class PartPreview3DWidget : PartPreviewWidget
     {
+        protected bool autoRotateEnabled = false;
         public MeshViewerWidget meshViewerWidget;
         event EventHandler unregisterEvents;
 
@@ -70,7 +64,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
                     ActiveSliceSettings.Instance.BedCenter,
                     ActiveSliceSettings.Instance.BedShape);
+                PutOemImageOnBed();
             });
+        }
+
+        protected void PutOemImageOnBed()
+        {
+            // this is to add an image to the bed
+            string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "bedimage.png");
+            if (autoRotateEnabled && File.Exists(imagePathAndFile))
+            {
+                ImageBuffer wattermarkImage = new ImageBuffer();
+                ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);
+
+                ImageBuffer bedImage = meshViewerWidget.BedImage;
+                Graphics2D bedGraphics = bedImage.NewGraphics2D();
+                bedGraphics.Render(wattermarkImage,
+                    new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height) / 2));
+            }
         }
         
         public override void OnClosed(EventArgs e)
