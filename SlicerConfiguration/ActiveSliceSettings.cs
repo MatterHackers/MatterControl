@@ -546,7 +546,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     foreach (string line in lines)
                     {
                         //Ignore commented lines
-                        if (!line.StartsWith("#"))
+                        if (line.Trim() != "" && !line.StartsWith("#"))
                         {
                             string[] settingLine = line.Split('=');
                             string keyName = settingLine[0].Trim();

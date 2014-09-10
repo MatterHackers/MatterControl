@@ -2567,3 +2567,12 @@ Translated:Export as X3G
 English:Select an Image
 Translated:Select an Image
 
+English:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+Translated:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+
+English:Extruder Change
+Translated:Extruder Change
+
+English:Wipe Tower Size
+Translated:Wipe Tower Size
+

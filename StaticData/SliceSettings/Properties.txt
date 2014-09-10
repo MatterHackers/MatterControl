@@ -144,5 +144,6 @@ use_relative_e_distances|Use Relative E Distances|CHECK_BOX||Normally you will w
 vibration_limit|Vibration Limit|INT|Hz|This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 wipe|Wipe Before Retract|CHECK_BOX||This will cause the extruder to move while retracting to minimize blobs.
 wipe_shield_distance|Wipe Shield Distance|POSITIVE_DOUBLE|mm|If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+wipe_tower_size|Wipe Tower Size|POSITIVE_DOUBLE|mm|If greater than 0, this is the X by Y size of a tower to use to when changing extruders
 z_can_be_negative|Z Can Be Negative|CHECK_BOX||Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
 z_offset|Z Offset|OFFSET|mm|This value will be added to all of the z positions of the created gcode.

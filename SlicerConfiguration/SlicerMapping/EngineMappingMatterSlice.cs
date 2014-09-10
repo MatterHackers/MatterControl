@@ -256,9 +256,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             
             //wipeShieldDistanceFromObject=0 # If greater than 0 this creates an outline around shapes so the extrude will be wiped when entering.
             new MapItem("wipeShieldDistanceFromObject", "wipe_shield_distance"),
-            
+
             // TODO: We don't need this yet as it is only for dual extrusion
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
+            new MapItem("wipeTowerSize", "wipe_tower_size"),
 
             new NotPassedItem("", "pause_gcode"),
             new NotPassedItem("", "resume_gcode"),
