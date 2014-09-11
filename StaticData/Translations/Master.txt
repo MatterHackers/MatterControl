@@ -2576,3 +2576,6 @@ Translated:Extruder Change
 English:Wipe Tower Size
 Translated:Wipe Tower Size
 
+English:Sorry, we were unable to install the driver.
+Translated:Sorry, we were unable to install the driver.
+
