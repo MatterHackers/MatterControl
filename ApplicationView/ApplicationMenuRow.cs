@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl
             SetMenuItems();
 
             AddChild(MenuDropList);
-            this.Width = 44;
-            this.Height = 22;
+            this.Width = 44 * TextWidget.GlobalPointSizeScaleRatio;;
+            this.Height = 22 * TextWidget.GlobalPointSizeScaleRatio;;
             this.Margin = new BorderDouble(0);
             this.Padding = new BorderDouble(0);
             this.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
             //Add the menu items to the menu itself
             foreach (Tuple<string, Func<bool>> item in menuItems)
             {
-                MenuDropList.MenuItemsPadding = new BorderDouble(8,4,8,4);
+                MenuDropList.MenuItemsPadding = new BorderDouble(8,4,8,4) * TextWidget.GlobalPointSizeScaleRatio;
                 MenuDropList.AddItem(item.Item1,pointSize:10);
             }            
             MenuDropList.Padding = padding;
@@ -208,8 +208,8 @@ namespace MatterHackers.MatterControl
             SetMenuItems();
 
             AddChild(MenuDropList);
-            this.Width = 48;
-            this.Height = 22;
+            this.Width = 48 * TextWidget.GlobalPointSizeScaleRatio;
+            this.Height = 22 * TextWidget.GlobalPointSizeScaleRatio;
             this.Margin = new BorderDouble(0);
             this.Padding = new BorderDouble(0);
             this.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
             //Add the menu items to the menu itself
             foreach (Tuple<string, Func<bool>> item in menuItems)
             {
-                MenuDropList.MenuItemsPadding = new BorderDouble(8, 4, 8, 4);
+                MenuDropList.MenuItemsPadding = new BorderDouble(8, 4, 8, 4) * TextWidget.GlobalPointSizeScaleRatio;
                 MenuDropList.AddItem(item.Item1, pointSize: 10);
             }
             MenuDropList.Padding = padding;
