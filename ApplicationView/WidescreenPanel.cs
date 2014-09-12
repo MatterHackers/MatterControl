@@ -65,8 +65,8 @@ namespace MatterHackers.MatterControl
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
         FlowLayoutWidget ColumnThree;
-        double Max1ColumnWidth = 990 * TextWidget.GlobalPointSizeScaleRatio;
-        double Max2ColumnWidth = 1590 * TextWidget.GlobalPointSizeScaleRatio;
+        double Force1PanelWidth = 990 * TextWidget.GlobalPointSizeScaleRatio;
+        double Force2PanelWidth = 1590 * TextWidget.GlobalPointSizeScaleRatio;
 
         View3DTransformPart part3DView;
         ViewGcodeBasic partGcodeView;
@@ -224,11 +224,11 @@ namespace MatterHackers.MatterControl
 
         int NumberOfVisiblePanels()
         {
-            if (this.Width < Max1ColumnWidth)
+            if (this.Width < Force1PanelWidth)
             {
                 return 1;
             }
-            else if (this.Width < Max2ColumnWidth)
+            else if (this.Width < Force2PanelWidth)
             {
                 return 2;
             }
