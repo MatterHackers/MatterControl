@@ -44,14 +44,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class ViewGcodeBasic : PartPreview3DWidget
     {
-        public Slider selectLayerSlider;
+        public SolidSlider selectLayerSlider;
 
         SetLayerWidget setLayerWidget;
         LayerNavigationWidget navigationWidget;
-        TextWidget layerStartRenderRatioTitle;
-        public Slider layerStartRenderRatioSlider;
-        TextWidget layerEndRenderRationTitle;
-        public Slider layerEndRenderRatioSlider;
+        public DoubleSolidSlider layerRenderRatioSlider;
         
         TextWidget gcodeProcessingStateInfoText;
         ViewGcodeWidget gcodeViewWidget;
@@ -296,8 +293,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (currentLayer >= 0)
             {
                 selectLayerSlider.Value = currentLayer-1;
-                layerEndRenderRatioSlider.Value = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
-                layerStartRenderRatioSlider.Value = 0;
+                layerRenderRatioSlider.SecondValue = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
+                layerRenderRatioSlider.FirstValue = 0;
             }
         }
 
@@ -594,25 +591,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     SetAnimationPosition();
                     //navigationWidget.Visible = false;
                     //setLayerWidget.Visible = false;
-                    layerStartRenderRatioTitle.Visible = false;
-                    layerStartRenderRatioSlider.Visible = false;
-                    layerEndRenderRationTitle.Visible = false;
-                    layerEndRenderRatioSlider.Visible = false;
+                    layerRenderRatioSlider.Visible = false;
                     selectLayerSlider.Visible = false;
                 }
                 else
                 {
-                    if (layerEndRenderRatioSlider != null)
+                    if (layerRenderRatioSlider != null)
                     {
-                        layerEndRenderRatioSlider.Value = 1;
-                        layerStartRenderRatioSlider.Value = 0;
+                        layerRenderRatioSlider.FirstValue = 0;
+                        layerRenderRatioSlider.SecondValue = 1;
                     }
                     navigationWidget.Visible = true;
                     setLayerWidget.Visible = true;
-                    layerStartRenderRatioTitle.Visible = true;
-                    layerStartRenderRatioSlider.Visible = true;
-                    layerEndRenderRationTitle.Visible = true;
-                    layerEndRenderRatioSlider.Visible = true;
+                    layerRenderRatioSlider.Visible = true;
                     selectLayerSlider.Visible = true;
                 }
             }
@@ -761,23 +752,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
                 layerSelectionButtonsPanel.AddChild(navigationWidget);
 
-                selectLayerSlider = new Slider(new Vector2(), 10, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
+                selectLayerSlider = new SolidSlider(new Vector2(), 10, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
-                layerStartRenderRatioTitle = new TextWidget(LocalizedString.Get("start:"), 50, 77, 10, Agg.Font.Justification.Right);
-                AddChild(layerStartRenderRatioTitle);
-                layerStartRenderRatioSlider = new Slider(new Vector2(), 10);
-                layerStartRenderRatioSlider.ValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
-                AddChild(layerStartRenderRatioSlider);
-
-                layerEndRenderRationTitle = new TextWidget(LocalizedString.Get("end:"), 50, 57, 10, Agg.Font.Justification.Right);
-                AddChild(layerEndRenderRationTitle);
-                layerEndRenderRatioSlider = new Slider(new Vector2(), 10);
-                layerEndRenderRatioSlider.Value = 1;
-                layerEndRenderRatioSlider.ValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
-                AddChild(layerEndRenderRatioSlider);
+                layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), 10);
+                layerRenderRatioSlider.FirstValue = 0;
+                layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
+                layerRenderRatioSlider.SecondValue = 1;
+                layerRenderRatioSlider.SecondValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
+                AddChild(layerRenderRatioSlider);
 
                 SetSliderSizes();
 
@@ -793,25 +778,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
         {
-            if (layerEndRenderRatioSlider.Value < layerStartRenderRatioSlider.Value)
-            {
-                layerEndRenderRatioSlider.Value = layerStartRenderRatioSlider.Value;
-            }
-
-            gcodeViewWidget.FeatureToStartOnRatio0To1 = layerStartRenderRatioSlider.Value;
-            gcodeViewWidget.FeatureToEndOnRatio0To1 = layerEndRenderRatioSlider.Value;
+            gcodeViewWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+            gcodeViewWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
             gcodeViewWidget.Invalidate();
         }
 
         void layerEndRenderRatioSlider_ValueChanged(object sender, EventArgs e)
         {
-            if (layerStartRenderRatioSlider.Value > layerEndRenderRatioSlider.Value)
-            {
-                layerStartRenderRatioSlider.Value = layerEndRenderRatioSlider.Value;
-            }
-
-            gcodeViewWidget.FeatureToStartOnRatio0To1 = layerStartRenderRatioSlider.Value;
-            gcodeViewWidget.FeatureToEndOnRatio0To1 = layerEndRenderRatioSlider.Value;
+            gcodeViewWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+            gcodeViewWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
             gcodeViewWidget.Invalidate();
         }
 
@@ -838,11 +813,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDispalyWidget.Width - 20, 100);
             selectLayerSlider.TotalWidthInPixels = gcodeDispalyWidget.Height - 80;
 
-            layerStartRenderRatioSlider.OriginRelativeParent = new Vector2(60, 80);
-            layerStartRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 100;
-
-            layerEndRenderRatioSlider.OriginRelativeParent = new Vector2(60, 60);
-            layerEndRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 100;
+            layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 60);
+            layerRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 100;
         }
 
         private void AddHandlers()

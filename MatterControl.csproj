@@ -104,8 +104,10 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardBase.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingData.cs" />
     <Compile Include="CrashTracker.cs" />
+    <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
+    <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
