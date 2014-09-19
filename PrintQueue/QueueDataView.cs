@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(PrintItemChange, ref unregisterEvents);
 
-            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentlySelctedItemIndex, ref unregisterEvents);
+            WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentlySelctedItemIndex, ref unregisterEvents);
 
             selectedQueueItemIndex = Math.Min(selectedQueueItemIndex, QueueData.Instance.Count-1);
             SelectedIndex = selectedQueueItemIndex;

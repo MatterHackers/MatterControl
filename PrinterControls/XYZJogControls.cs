@@ -99,12 +99,13 @@ namespace MatterHackers.MatterControl
                         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
                         buttonFactory.FixedHeight = 20;
                         buttonFactory.FixedWidth = 30;
-                        buttonFactory.fontSize = 10;
+                        buttonFactory.fontSize = 8;
                         buttonFactory.Margin = new BorderDouble(0);
+                        buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
 
                         FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
                         
-                        RadioButton pointOneButton = buttonFactory.GenerateRadioButton(".1");
+                        RadioButton pointOneButton = buttonFactory.GenerateRadioButton("0.1");
                         pointOneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
                         pointOneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.1); };
                         moveRadioButtons.AddChild(pointOneButton);
@@ -129,7 +130,7 @@ namespace MatterHackers.MatterControl
                         setMoveDistanceControl.AddChild(moveRadioButtons);
                     }
 
-					TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
+					TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:8);
                     mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
                     setMoveDistanceControl.AddChild(mmLabel);
                     setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -230,8 +231,9 @@ namespace MatterHackers.MatterControl
                 TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
                 buttonFactory.FixedHeight = 20;
                 buttonFactory.FixedWidth = 30;
-                buttonFactory.fontSize = 10;
+                buttonFactory.fontSize = 8;
                 buttonFactory.Margin = new BorderDouble(0);
+                buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
 
                 FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
                 RadioButton oneButton = buttonFactory.GenerateRadioButton("1");
@@ -251,7 +253,7 @@ namespace MatterHackers.MatterControl
                 setMoveDistanceControl.AddChild(moveRadioButtons);
             }
 
-			TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
+			TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:8);
             mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
             setMoveDistanceControl.AddChild(mmLabel);
             setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -383,6 +385,14 @@ namespace MatterHackers.MatterControl
                 }
                 this.Height = 40;
                 this.Width = 40;
+            }
+
+            public override void OnDraw(Graphics2D graphics2D)
+            {
+                base.OnDraw(graphics2D);
+                RectangleDouble boarderRectangle = LocalBounds;
+                RoundedRect rectBorder = new RoundedRect(boarderRectangle, 0);
+                graphics2D.Render(new Stroke(rectBorder, 1), new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor,200));
             }
         }
 

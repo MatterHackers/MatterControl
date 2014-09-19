@@ -58,6 +58,9 @@ namespace MatterHackers.MatterControl
 			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;            
 			this.textImageButtonFactory.FixedHeight = 24;
 			this.textImageButtonFactory.fontSize = 12;
+            this.textImageButtonFactory.borderWidth = 1;
+            this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+            this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
 			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
 			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -89,7 +92,7 @@ namespace MatterHackers.MatterControl
         void AddChildElements()
         {
             Button editButton;
-			GroupBox groupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(LocalizedString.Get("Macros"), out editButton));
+			AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(LocalizedString.Get("Macros"), out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editSettingsWindow == null)
@@ -145,7 +148,7 @@ namespace MatterHackers.MatterControl
             }
             if (buttonCount == 0)
             {
-				TextWidget noMacrosFound = new TextWidget(LocalizedString.Get("No macros are currently setup for this printer."));
+				TextWidget noMacrosFound = new TextWidget(LocalizedString.Get("No macros are currently setup for this printer."), pointSize:10);
                 noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 macroButtonContainer.AddChild(noMacrosFound);
             }

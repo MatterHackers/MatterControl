@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                     buttonContainer.AddChild(timeLabel);
                     buttonContainer.AddChild(timeIndicator);
                     
-                    printAgainLink = linkButtonFactory.Generate("Reprint".Localize());
+                    printAgainLink = linkButtonFactory.Generate("Print Again".Localize());
                     printAgainLink.Margin = new BorderDouble(left: 0, right: 0);
                     printAgainLink.VAnchor = VAnchor.ParentCenter;
 

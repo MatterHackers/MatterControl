@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 
         event EventHandler unregisterEvents;
 
-        public static RootedObjectEventHandler PreChangePannels = new RootedObjectEventHandler();
+        public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
 
         QueueDataView queueDataView = null;
         
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl
                 leftBorderLineHiden = LeftBorderLine.Hidden;
                 rightBorderLineHiden = RightBorderLine.Hidden;
             }
-            PreChangePannels.CallEvents(this, null);
+            PreChangePanels.CallEvents(this, null);
             RemovePanelsAndCreateEmpties();
 
             switch (numberOfPanels)
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl
 
         public void ReloadAdvancedControlsPanel(object state)
         {
-            PreChangePannels.CallEvents(this, null);
+            PreChangePanels.CallEvents(this, null);
             if (NumberOfVisiblePanels() > 1)
             {
                 UiThread.RunOnIdle(LoadColumnThree);

@@ -132,6 +132,14 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public RGBA_Bytes TertiaryBackgroundColor
+        {
+            get
+            {
+                return loadedTheme.tertiaryBackgroundColor;
+            }
+        }
+
         public RGBA_Bytes PrimaryTextColor
         {
             get
@@ -272,6 +280,10 @@ namespace MatterHackers.MatterControl
         public RGBA_Bytes secondaryBackgroundColor;
         public RGBA_Bytes tabLabelSelectedColor;
         public RGBA_Bytes tabLabelUnselectedColor;
+
+        public RGBA_Bytes tertiaryBackgroundColor;
+        public RGBA_Bytes tertiaryBackgroundColorDisabled;
+
         string name;
         public string Name { get { return name; } }
         bool darkTheme;
@@ -290,11 +302,13 @@ namespace MatterHackers.MatterControl
                 
                 this.primaryBackgroundColor = new RGBA_Bytes(68, 68, 68);
                 this.secondaryBackgroundColor = new RGBA_Bytes(51, 51, 51);
+                
                 this.tabLabelSelectedColor = new RGBA_Bytes(255, 255, 255);
                 this.tabLabelUnselectedColor = new RGBA_Bytes(180, 180, 180);
                 this.primaryTextColor = new RGBA_Bytes(255, 255, 255);
                 this.secondaryTextColor = new RGBA_Bytes(200, 200, 200);
 
+                this.tertiaryBackgroundColor = new RGBA_Bytes(62, 62, 62);
             }
             else
             {
@@ -307,6 +321,8 @@ namespace MatterHackers.MatterControl
                 this.tabLabelUnselectedColor = new RGBA_Bytes(102, 102, 102);
                 this.primaryTextColor = new RGBA_Bytes(34, 34, 34);
                 this.secondaryTextColor = new RGBA_Bytes(51, 51, 51);
+
+                this.tertiaryBackgroundColor = new RGBA_Bytes(190, 190, 190);
             }
         }
     }

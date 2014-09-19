@@ -45,10 +45,10 @@ namespace MatterHackers.MatterControl
 {
     public class XYZColors
     {
-        public static RGBA_Bytes xColor = new RGBA_Bytes(190, 190, 190);
+        public static RGBA_Bytes xColor = new RGBA_Bytes(180, 180, 180);
         public static RGBA_Bytes yColor = new RGBA_Bytes(255, 255, 255);
         public static RGBA_Bytes zColor = new RGBA_Bytes(255, 255, 255);
-        public static RGBA_Bytes eColor = new RGBA_Bytes(190, 190, 190);
+        public static RGBA_Bytes eColor = new RGBA_Bytes(180, 180, 180);
         public XYZColors()
         {
         }
@@ -146,9 +146,9 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
             controlsTopToBottomLayout.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
             controlsTopToBottomLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
-            controlsTopToBottomLayout.Name = "ManualPrinterControls.ControlsContainer";
+            controlsTopToBottomLayout.Name = "ManualPrinterControls.ControlsContainer";            
 
-            controlsTopToBottomLayout.Padding = new BorderDouble(3, 0);
+            controlsTopToBottomLayout.Margin = new BorderDouble(0);
 
             AddTemperatureControls(controlsTopToBottomLayout);
 
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl
 
         private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-			GroupBox fanControlsGroupBox = new GroupBox(LocalizedString.Get("Fan Controls"));
+			AltGroupBox fanControlsGroupBox = new AltGroupBox(LocalizedString.Get("Fan Controls"));
 
             fanControlsGroupBox.Margin = new BorderDouble(0);
             fanControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl
 
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            GroupBox eePromControlsGroupBox = new GroupBox(LocalizedString.Get("EEProm Settings"));
+            AltGroupBox eePromControlsGroupBox = new AltGroupBox(LocalizedString.Get("EEProm Settings"));
 
 			eePromControlsGroupBox.Margin = new BorderDouble(0);
             eePromControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl
         private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
             Button editButton;
-			GroupBox movementControlsGroupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit("Movement Controls".Localize(), out editButton));
+			AltGroupBox movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit("Movement Controls".Localize(), out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editManualMovementSettingsWindow == null)
@@ -402,18 +402,21 @@ namespace MatterHackers.MatterControl
 
         private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-			GroupBox adjustmentControlsGroupBox = new GroupBox(LocalizedString.Get("Tuning Adjustment (while printing)"));
+			AltGroupBox adjustmentControlsGroupBox = new AltGroupBox(LocalizedString.Get("Tuning Adjustment"));
             adjustmentControlsGroupBox.Margin = new BorderDouble(0);
             adjustmentControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             adjustmentControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            adjustmentControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            adjustmentControlsGroupBox.Height = 90* TextWidget.GlobalPointSizeScaleRatio;
-
+            adjustmentControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;            
+            
             {
                 FlowLayoutWidget tuningRatiosLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                tuningRatiosLayout.Margin = new BorderDouble(0, 0, 0, 6)* TextWidget.GlobalPointSizeScaleRatio;
-                tuningRatiosLayout.AnchorAll();
+                tuningRatiosLayout.Margin = new BorderDouble(0, 0, 0, 0)* TextWidget.GlobalPointSizeScaleRatio;
+                tuningRatiosLayout.HAnchor = HAnchor.ParentLeftRight;
                 tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0)* TextWidget.GlobalPointSizeScaleRatio;
+
+                TextWidget subheader = new TextWidget("Fine-tune adjustment while actively printing", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                subheader.Margin = new BorderDouble(bottom:6);
+                tuningRatiosLayout.AddChild(subheader);
                 TextWidget feedRateDescription;
                 {
                     FlowLayoutWidget feedRateLeftToRight;
@@ -447,6 +450,9 @@ namespace MatterHackers.MatterControl
                         feedRateValue.Margin = new BorderDouble(0, 0, 5, 0)* TextWidget.GlobalPointSizeScaleRatio;
                         feedRateValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
+                        textImageButtonFactory.borderWidth = 1;
+                        textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor,200);
+                        textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
                         Button setFeedRateButton = textImageButtonFactory.Generate(LocalizedString.Get("Set"));
                         setFeedRateButton.VAnchor = VAnchor.ParentCenter;
@@ -644,6 +650,10 @@ namespace MatterHackers.MatterControl
             homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6)* TextWidget.GlobalPointSizeScaleRatio;
             homeButtonBar.Padding = new BorderDouble(0);
 
+            textImageButtonFactory.borderWidth = 1;
+            textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+            textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+
             string homeIconFile = "icon_home_white_24x24.png";
             string fileAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", homeIconFile);
             ImageBuffer helpIconImage = new ImageBuffer();
@@ -652,7 +662,7 @@ namespace MatterHackers.MatterControl
             homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2)* TextWidget.GlobalPointSizeScaleRatio;
             RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
-            textImageButtonFactory.normalFillColor = new RGBA_Bytes(190, 190, 190);
+            textImageButtonFactory.normalFillColor = new RGBA_Bytes(180, 180, 180);
 			homeAllButton = textImageButtonFactory.Generate(LocalizedString.Get("ALL"));
             this.textImageButtonFactory.normalFillColor = oldColor;
             homeAllButton.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
@@ -677,7 +687,7 @@ namespace MatterHackers.MatterControl
             GuiWidget spacer = new GuiWidget();
             spacer.HAnchor = HAnchor.ParentLeftRight;
 
-			disableMotors = textImageButtonFactory.Generate("Unlock".Localize().ToUpper());
+			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
             disableMotors.Margin = new BorderDouble(0);
             disableMotors.Click += new ButtonBase.ButtonEventHandler(disableMotors_Click);
 

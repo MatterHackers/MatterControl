@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
                 this.RightPanel.AddChild(thirdPanelTabView);
             }
 
-            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
+            WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
 
             SetPanelIndexImediate(lastPanelIndexBeforeReload);
         }

@@ -2579,3 +2579,12 @@ Translated:Wipe Tower Size
 English:Sorry, we were unable to install the driver.
 Translated:Sorry, we were unable to install the driver.
 
+English:Tuning Adjustment
+Translated:Tuning Adjustment
+
+English:Release
+Translated:Release
+
+English:No printer is currently selected. Select a printer to edit slice settings.
+Translated:No printer is currently selected. Select a printer to edit slice settings.
+

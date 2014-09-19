@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
         {
             DisableableWidget container = new DisableableWidget();   
             
-            GroupBox themeControlsGroupBox = new GroupBox(LocalizedString.Get("Theme Settings"));
+            AltGroupBox themeControlsGroupBox = new AltGroupBox(LocalizedString.Get("Theme Settings"));
             themeControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             themeControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             themeControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl
         {
             DisableableWidget container = new DisableableWidget();
             
-            GroupBox languageControlsGroupBox = new GroupBox(LocalizedString.Get("Language Settings"));
+            AltGroupBox languageControlsGroupBox = new AltGroupBox(LocalizedString.Get("Language Settings"));
             languageControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             languageControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             languageControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl
 			
 		public void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
 		{
-			GroupBox releaseOptionsGroupBox = new GroupBox(LocalizedString.Get("Update Feed"));
+			AltGroupBox releaseOptionsGroupBox = new AltGroupBox(LocalizedString.Get("Update Feed"));
             
             releaseOptionsGroupBox.Margin = new BorderDouble(0);
             releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -292,8 +292,8 @@ namespace MatterHackers.MatterControl
 
         private void AddTerminalControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            GroupBox terminalControlsContainer;
-            terminalControlsContainer = new GroupBox(LocalizedString.Get("Communications"));
+            AltGroupBox terminalControlsContainer;
+            terminalControlsContainer = new AltGroupBox(LocalizedString.Get("Communications"));
 
             terminalControlsContainer.Margin = new BorderDouble(0);
             terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl
         
         private GuiWidget CreateCloudMonitorControls()
         {
-            GroupBox cloudMonitorContainer = new GroupBox(LocalizedString.Get("Cloud Services"));
+            AltGroupBox cloudMonitorContainer = new AltGroupBox(LocalizedString.Get("Cloud Services"));
             
             cloudMonitorContainer.Margin = new BorderDouble(0);
             cloudMonitorContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl
 		{
 			DisableableWidget container = new DisableableWidget();
 
-			GroupBox notificationSettingsContainer = new GroupBox(LocalizedString.Get("Notification Settings"));
+			AltGroupBox notificationSettingsContainer = new AltGroupBox(LocalizedString.Get("Notification Settings"));
 
 			notificationSettingsContainer.Margin = new BorderDouble(0);
 			notificationSettingsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -492,7 +492,7 @@ namespace MatterHackers.MatterControl
         string groupBoxTitle = "EEProm Settings".Localize();
         private void AddEePromControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            GroupBox eePromControlsGroupBox = new GroupBox(groupBoxTitle);
+            AltGroupBox eePromControlsGroupBox = new AltGroupBox(groupBoxTitle);
             
 			eePromControlsGroupBox.Margin = new BorderDouble(0);
             eePromControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -586,7 +586,7 @@ namespace MatterHackers.MatterControl
         private GuiWidget CreatePrintLevelingControlsContainer()
         {
             Button editButton;
-            GroupBox printLevelingControlsContainer = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(LocalizedString.Get("Automatic Calibration"), out editButton));
+            AltGroupBox printLevelingControlsContainer = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(LocalizedString.Get("Automatic Calibration"), out editButton));
             editButton.Click += (sender, e) =>
             {
                 UiThread.RunOnIdle((state) =>

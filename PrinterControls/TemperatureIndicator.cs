@@ -77,6 +77,9 @@ namespace MatterHackers.MatterControl
             this.textImageButtonFactory.FixedWidth = 38* TextWidget.GlobalPointSizeScaleRatio;
             this.textImageButtonFactory.FixedHeight = 20* TextWidget.GlobalPointSizeScaleRatio;
             this.textImageButtonFactory.fontSize = 10;
+            this.textImageButtonFactory.borderWidth = 1;
+            this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+            this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
             
             this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
             this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -102,7 +105,7 @@ namespace MatterHackers.MatterControl
         void AddChildElements()
         {
             Button editButton;
-            GroupBox groupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(label, out editButton));
+            AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(label, out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editSettingsWindow == null)

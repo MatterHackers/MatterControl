@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
         TabControl categoryTabs;
-        GroupBox noConnectionMessageContainer;
+        AltGroupBox noConnectionMessageContainer;
         FlowLayoutWidget settingsControlBar;
         CheckBox showHelpBox;
         CheckBox showAllDetails;
@@ -91,14 +91,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsControlBar = new SettingsControlBar();
             pageTopToBottomLayout.AddChild(settingsControlBar);
 
-            noConnectionMessageContainer = new GroupBox(LocalizedString.Get("No Printer Selected"));
+            noConnectionMessageContainer = new AltGroupBox(LocalizedString.Get("No Printer Selected"));
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             noConnectionMessageContainer.Height = 80;
 
-            TextWidget noConnectionMessage = new TextWidget(LocalizedString.Get("No printer is currently selected. Select printer to edit slice settings."));
+            TextWidget noConnectionMessage = new TextWidget(LocalizedString.Get("No printer is currently selected. Select a printer to edit slice settings."), pointSize:10);
             noConnectionMessage.Margin = new BorderDouble(5);
             noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessage.VAnchor = VAnchor.ParentCenter;
@@ -357,11 +357,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     {
                         needToAddSubGroup = true;
                         string groupBoxLabel = LocalizedString.Get(subGroup.Name);
-                        GroupBox groupBox = new GroupBox(groupBoxLabel);
+                        AltGroupBox groupBox = new AltGroupBox(groupBoxLabel);
                         groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
                         groupBox.AddChild(topToBottomSettings);
                         groupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                        groupBox.Margin = new BorderDouble(3,3,3,0);
 
                         subGroupLayoutTopToBottom.AddChild(groupBox);
                     }
@@ -446,7 +447,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     }
                 }
 
-                GroupBox groupBox = new GroupBox(LocalizedString.Get("Extra"));
+                AltGroupBox groupBox = new AltGroupBox(LocalizedString.Get("Extra"));
                 groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
                 groupBox.AddChild(topToBottomSettings);
@@ -467,7 +468,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             string extraSettings = settingData.ExtraSettings;
             extraSettings = extraSettings.Replace("\\n", "\n");
-            TextWidget dataTypeInfo = new TextWidget(extraSettings, pointSize: 10);
+            TextWidget dataTypeInfo = new TextWidget(extraSettings, pointSize: 8);
             dataTypeInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             dataTypeInfo.Margin = new BorderDouble(5, 0);
             return dataTypeInfo;
@@ -515,8 +516,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string convertedNewLines = settingData.PresentationName.Replace("\\n ", "\n");
                     convertedNewLines = convertedNewLines.Replace("\\n", "\n");
                     convertedNewLines = LocalizedString.Get(convertedNewLines);
-                    TextWidget settingName = new TextWidget(convertedNewLines);
+                    TextWidget settingName = new TextWidget(convertedNewLines, pointSize:10);
                     settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                    settingName.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
                     if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
                     {
@@ -596,7 +598,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     case OrganizerSettingsData.DataEditTypes.DOUBLE_OR_PERCENT:
                         {
-                            MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 60, tabIndex: tabIndexForItem++);
+                            MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth-2, tabIndex: tabIndexForItem++);
                             stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
                             {
                                 TextEditWidget textEditWidget = (TextEditWidget)sender;
