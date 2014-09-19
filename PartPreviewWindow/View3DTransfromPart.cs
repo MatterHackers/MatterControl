@@ -35,11 +35,8 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations; //Added Namespace
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MeshVisualizer;
@@ -96,7 +93,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         List<PlatingMeshData> asynchPlatingDataList = new List<PlatingMeshData>();
 
         List<PlatingMeshData> MeshExtraData;
-        bool autoRotateEnabled = true;
 
         public ScaleRotateTranslate SelectedMeshTransform
         {
@@ -278,19 +274,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             viewArea.AnchorAll();
             {
                 meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "Press 'Add' to select an item.".Localize());
-                
-                // this is to add an image to the bed
-                string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "bedimage.png");
-                if (autoRotateEnabled && File.Exists(imagePathAndFile))
-                {
-                    ImageBuffer wattermarkImage = new ImageBuffer();
-                    ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);
 
-                    ImageBuffer bedImage = meshViewerWidget.BedImage;
-                    Graphics2D bedGraphics = bedImage.NewGraphics2D();
-                    bedGraphics.Render(wattermarkImage, 
-                        new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height)/2));
-                }
+                PutOemImageOnBed();
 
                 meshViewerWidget.AnchorAll();
             }

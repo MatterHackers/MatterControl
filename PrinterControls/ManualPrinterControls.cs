@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
         readonly double maxExtrusionRatio = 3;
         readonly double minFeedRateRatio = .5;
         readonly double maxFeedRateRatio = 2;
-        readonly int TallButtonHeight = 25;
+        readonly double TallButtonHeight = 25* TextWidget.GlobalPointSizeScaleRatio;
 
         Button disableMotors;
         Button manualMove;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl
             {
                 FlowLayoutWidget rightColumnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 AddFanControls(rightColumnContainer);
-                rightColumnContainer.Width = 200;
+                rightColumnContainer.Width = 200* TextWidget.GlobalPointSizeScaleRatio;
                 rightColumnContainer.VAnchor |= VAnchor.ParentTop;
                 centerControlsContainer.AddChild(rightColumnContainer);
             }
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl
                 FlowLayoutWidget fanControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 fanControlsLayout.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 fanControlsLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
-                fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
+                fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0)* TextWidget.GlobalPointSizeScaleRatio;
                 {
                     fanControlsLayout.AddChild(CreateFanControls());
                 }
@@ -233,19 +233,19 @@ namespace MatterHackers.MatterControl
             eePromControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             eePromControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             eePromControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-			eePromControlsGroupBox.Height = 68;
+            eePromControlsGroupBox.Height = 68* TextWidget.GlobalPointSizeScaleRatio;
 
             {
 				FlowLayoutWidget eePromControlsLayout = new FlowLayoutWidget();
 				eePromControlsLayout.HAnchor |= HAnchor.ParentLeftRight;
 				eePromControlsLayout.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-				eePromControlsLayout.Margin = new BorderDouble(3, 0, 3, 6);
+                eePromControlsLayout.Margin = new BorderDouble(3, 0, 3, 6)* TextWidget.GlobalPointSizeScaleRatio;
 				eePromControlsLayout.Padding = new BorderDouble(0);
                 {
 					Agg.Image.ImageBuffer eePromImage = new Agg.Image.ImageBuffer();
 					ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
-					eePromIcon.Margin = new BorderDouble (right: 6);
+                    eePromIcon.Margin = new BorderDouble (right: 6)* TextWidget.GlobalPointSizeScaleRatio;
 
                     Button openEePromWindow = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
                     openEePromWindow.Click += (sender, e) =>
@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl
                 FlowLayoutWidget manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 manualControlsLayout.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 manualControlsLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
-                manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
+                manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0)* TextWidget.GlobalPointSizeScaleRatio;
                 {
                     manualControlsLayout.AddChild(GetHomeButtonBar());
                     manualControlsLayout.AddChild(CreateSeparatorLine());
@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl
         {
             FlowLayoutWidget temperatureControlContainer = new FlowLayoutWidget();
             temperatureControlContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			temperatureControlContainer.Margin = new BorderDouble (top: 10);
+            temperatureControlContainer.Margin = new BorderDouble (top: 10)* TextWidget.GlobalPointSizeScaleRatio;
 
             extruderTemperatureControlWidget = new DisableableWidget();
             extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget());
@@ -358,7 +358,7 @@ namespace MatterHackers.MatterControl
             PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
 
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-            leftToRight.Padding = new BorderDouble(3, 0, 0, 5);
+            leftToRight.Padding = new BorderDouble(3, 0, 0, 5)* TextWidget.GlobalPointSizeScaleRatio;
 
 			TextWidget fanSpeedDescription = new TextWidget(LocalizedString.Get("Fan Speed:"), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
             fanSpeedDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -388,16 +388,16 @@ namespace MatterHackers.MatterControl
 
         private static GuiWidget CreateSeparatorLine()
         {
-            GuiWidget topLine = new GuiWidget(10, 1);
-            topLine.Margin = new BorderDouble(0, 5);
+            GuiWidget topLine = new GuiWidget(10* TextWidget.GlobalPointSizeScaleRatio, 1* TextWidget.GlobalPointSizeScaleRatio);
+            topLine.Margin = new BorderDouble(0, 5)* TextWidget.GlobalPointSizeScaleRatio;
             topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             topLine.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
             return topLine;
         }
 
         NumberEdit feedRateValue;
-        Slider feedRateRatioSlider;
-        Slider extrusionRatioSlider;
+        SolidSlider feedRateRatioSlider;
+        SolidSlider extrusionRatioSlider;
         NumberEdit extrusionValue;
 
         private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -407,18 +407,18 @@ namespace MatterHackers.MatterControl
             adjustmentControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             adjustmentControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             adjustmentControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            adjustmentControlsGroupBox.Height = 90;
+            adjustmentControlsGroupBox.Height = 90* TextWidget.GlobalPointSizeScaleRatio;
 
             {
                 FlowLayoutWidget tuningRatiosLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                tuningRatiosLayout.Margin = new BorderDouble(0, 0, 0, 6);
+                tuningRatiosLayout.Margin = new BorderDouble(0, 0, 0, 6)* TextWidget.GlobalPointSizeScaleRatio;
                 tuningRatiosLayout.AnchorAll();
-                tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0);
+                tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0)* TextWidget.GlobalPointSizeScaleRatio;
                 TextWidget feedRateDescription;
                 {
                     FlowLayoutWidget feedRateLeftToRight;
                     {
-						feedRateValue = new NumberEdit(0, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40);
+                        feedRateValue = new NumberEdit(0, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40* TextWidget.GlobalPointSizeScaleRatio);
 						feedRateValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
 					
                         feedRateLeftToRight = new FlowLayoutWidget();
@@ -427,7 +427,7 @@ namespace MatterHackers.MatterControl
                         feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         feedRateDescription.VAnchor = VAnchor.ParentCenter;
                         feedRateLeftToRight.AddChild(feedRateDescription);
-                        feedRateRatioSlider = new Slider(new Vector2(), 300, minFeedRateRatio, maxFeedRateRatio);
+                        feedRateRatioSlider = new SolidSlider(new Vector2(), 300* TextWidget.GlobalPointSizeScaleRatio, minFeedRateRatio, maxFeedRateRatio);
                         feedRateRatioSlider.Margin = new BorderDouble(5, 0);
 						feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
                         feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
@@ -444,7 +444,7 @@ namespace MatterHackers.MatterControl
                         tuningRatiosLayout.AddChild(feedRateLeftToRight);
 
                         feedRateLeftToRight.AddChild(feedRateValue);
-                        feedRateValue.Margin = new BorderDouble(0, 0, 5, 0);
+                        feedRateValue.Margin = new BorderDouble(0, 0, 5, 0)* TextWidget.GlobalPointSizeScaleRatio;
                         feedRateValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
 
@@ -456,18 +456,18 @@ namespace MatterHackers.MatterControl
 
                     TextWidget extrusionDescription;
                     {
-						extrusionValue = new NumberEdit(0, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40);
+                        extrusionValue = new NumberEdit(0, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40* TextWidget.GlobalPointSizeScaleRatio);
 						extrusionValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
 
                         FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-                        leftToRight.Margin = new BorderDouble(top: 10);
+                        leftToRight.Margin = new BorderDouble(top: 10)* TextWidget.GlobalPointSizeScaleRatio;
 
 						extrusionDescription = new TextWidget(LocalizedString.Get("Extrusion Multiplier"));
                         extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         extrusionDescription.VAnchor = VAnchor.ParentCenter;
                         leftToRight.AddChild(extrusionDescription);
-                        extrusionRatioSlider = new Slider(new Vector2(), 300, minExtrutionRatio, maxExtrusionRatio);
-                        extrusionRatioSlider.Margin = new BorderDouble(5, 0);
+                        extrusionRatioSlider = new SolidSlider(new Vector2(), 300* TextWidget.GlobalPointSizeScaleRatio, minExtrutionRatio, maxExtrusionRatio);
+                        extrusionRatioSlider.Margin = new BorderDouble(5, 0)* TextWidget.GlobalPointSizeScaleRatio;
                         extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
                         extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         extrusionRatioSlider.ValueChanged += (sender, e) =>
@@ -482,7 +482,7 @@ namespace MatterHackers.MatterControl
                         leftToRight.AddChild(extrusionRatioSlider);
                         tuningRatiosLayout.AddChild(leftToRight);
                         leftToRight.AddChild(extrusionValue);
-                        extrusionValue.Margin = new BorderDouble(0, 0, 5, 0);
+                        extrusionValue.Margin = new BorderDouble(0, 0, 5, 0)* TextWidget.GlobalPointSizeScaleRatio;
                         extrusionValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
                         Button setExtrusionButton = textImageButtonFactory.Generate(LocalizedString.Get("Set"));
@@ -641,7 +641,7 @@ namespace MatterHackers.MatterControl
         {
             FlowLayoutWidget homeButtonBar = new FlowLayoutWidget();
             homeButtonBar.HAnchor = HAnchor.ParentLeftRight;
-            homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6);
+            homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6)* TextWidget.GlobalPointSizeScaleRatio;
             homeButtonBar.Padding = new BorderDouble(0);
 
             string homeIconFile = "icon_home_white_24x24.png";
@@ -649,26 +649,26 @@ namespace MatterHackers.MatterControl
             ImageBuffer helpIconImage = new ImageBuffer();
             ImageIO.LoadImageData(fileAndPath, helpIconImage);
             ImageWidget homeIconImageWidget = new ImageWidget(helpIconImage);
-            homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
-            homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2);
+            homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
+            homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2)* TextWidget.GlobalPointSizeScaleRatio;
             RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
             textImageButtonFactory.normalFillColor = new RGBA_Bytes(190, 190, 190);
 			homeAllButton = textImageButtonFactory.Generate(LocalizedString.Get("ALL"));
             this.textImageButtonFactory.normalFillColor = oldColor;
-            homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
+            homeAllButton.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             homeAllButton.Click += new ButtonBase.ButtonEventHandler(homeAll_Click);
 
             textImageButtonFactory.FixedWidth = (int)homeAllButton.Width;
             homeXButton = textImageButtonFactory.Generate("X", centerText: true);
-            homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
+            homeXButton.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             homeXButton.Click += new ButtonBase.ButtonEventHandler(homeXButton_Click);
 
             homeYButton = textImageButtonFactory.Generate("Y", centerText: true);
-            homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
+            homeYButton.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             homeYButton.Click += new ButtonBase.ButtonEventHandler(homeYButton_Click);
 
             homeZButton = textImageButtonFactory.Generate("Z", centerText: true);
-            homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
+            homeZButton.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             homeZButton.Click += new ButtonBase.ButtonEventHandler(homeZButton_Click);
 
             textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
@@ -681,7 +681,7 @@ namespace MatterHackers.MatterControl
             disableMotors.Margin = new BorderDouble(0);
             disableMotors.Click += new ButtonBase.ButtonEventHandler(disableMotors_Click);
 
-            GuiWidget spacerReleaseShow = new GuiWidget(10, 0);
+            GuiWidget spacerReleaseShow = new GuiWidget(10* TextWidget.GlobalPointSizeScaleRatio, 0);
 
             homeButtonBar.AddChild(homeIconImageWidget);
             homeButtonBar.AddChild(homeAllButton);
@@ -699,35 +699,35 @@ namespace MatterHackers.MatterControl
         {
             FlowLayoutWidget manualMoveBar = new FlowLayoutWidget();
             manualMoveBar.HAnchor = HAnchor.ParentLeftRight;
-            manualMoveBar.Margin = new BorderDouble(3, 0, 3, 6);
+            manualMoveBar.Margin = new BorderDouble(3, 0, 3, 6)* TextWidget.GlobalPointSizeScaleRatio;
             manualMoveBar.Padding = new BorderDouble(0);
 
             TextWidget xMoveLabel = new TextWidget("X:");
-            xMoveLabel.Margin = new BorderDouble(0, 0, 6, 0);
+            xMoveLabel.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             xMoveLabel.VAnchor = VAnchor.ParentCenter;
 
             MHTextEditWidget xMoveEdit = new MHTextEditWidget("0");
-            xMoveEdit.Margin = new BorderDouble(0, 0, 6, 0);
+            xMoveEdit.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             xMoveEdit.VAnchor = VAnchor.ParentCenter;
 
             TextWidget yMoveLabel = new TextWidget("Y:");
-            yMoveLabel.Margin = new BorderDouble(0, 0, 6, 0);
+            yMoveLabel.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             yMoveLabel.VAnchor = VAnchor.ParentCenter;
 
             MHTextEditWidget yMoveEdit = new MHTextEditWidget("0");
-            yMoveEdit.Margin = new BorderDouble(0, 0, 6, 0);
+            yMoveEdit.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             yMoveEdit.VAnchor = VAnchor.ParentCenter;
 
             TextWidget zMoveLabel = new TextWidget("Z:");
-            zMoveLabel.Margin = new BorderDouble(0, 0, 6, 0);
+            zMoveLabel.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             zMoveLabel.VAnchor = VAnchor.ParentCenter;
 
             MHTextEditWidget zMoveEdit = new MHTextEditWidget("0");
-            zMoveEdit.Margin = new BorderDouble(0, 0, 6, 0);
+            zMoveEdit.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             zMoveEdit.VAnchor = VAnchor.ParentCenter;
 
             manualMove = textImageButtonFactory.Generate("MOVE TO");
-            manualMove.Margin = new BorderDouble(0, 0, 6, 0);
+            manualMove.Margin = new BorderDouble(0, 0, 6, 0)* TextWidget.GlobalPointSizeScaleRatio;
             manualMove.Click += new ButtonBase.ButtonEventHandler(disableMotors_Click);
 
             GuiWidget spacer = new GuiWidget();

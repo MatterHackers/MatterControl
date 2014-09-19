@@ -159,6 +159,9 @@ Advanced
         infill_extruder
         support_material_extruder
         support_material_interface_extruder
+      Extruder Change
+        wipe_shield_distance
+        wipe_tower_size
       Ooze Prevention
         ooze_prevention
         standby_temperature_delta

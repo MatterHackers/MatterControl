@@ -74,8 +74,8 @@ namespace MatterHackers.MatterControl
         {
             this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
 
-            this.textImageButtonFactory.FixedWidth = 38;
-            this.textImageButtonFactory.FixedHeight = 20;
+            this.textImageButtonFactory.FixedWidth = 38* TextWidget.GlobalPointSizeScaleRatio;
+            this.textImageButtonFactory.FixedHeight = 20* TextWidget.GlobalPointSizeScaleRatio;
             this.textImageButtonFactory.fontSize = 10;
             
             this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl
             groupBox.ClientArea.VAnchor = Agg.UI.VAnchor.FitToChildren;            
 
             FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-            controlRow.Margin = new BorderDouble(top: 5);
+            controlRow.Margin = new BorderDouble(top: 5)* TextWidget.GlobalPointSizeScaleRatio;
             controlRow.HAnchor |= HAnchor.ParentLeftRight;
             {
                 // put in the temperature slider and preset buttons
@@ -145,14 +145,14 @@ namespace MatterHackers.MatterControl
                 {
                     FlowLayoutWidget temperatureIndicator = new FlowLayoutWidget();
                     temperatureIndicator.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                    temperatureIndicator.Margin = new BorderDouble(bottom: 6);
-                    temperatureIndicator.Padding = new BorderDouble(0, 3);
+                    temperatureIndicator.Margin = new BorderDouble(bottom: 6)* TextWidget.GlobalPointSizeScaleRatio;
+                    temperatureIndicator.Padding = new BorderDouble(0, 3)* TextWidget.GlobalPointSizeScaleRatio;
 
                     // put in the actual temperature controls
                     {
                         FlowLayoutWidget extruderActualIndicator = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
                         
-                        extruderActualIndicator.Margin = new BorderDouble(3, 0);
+                        extruderActualIndicator.Margin = new BorderDouble(3, 0)* TextWidget.GlobalPointSizeScaleRatio;
 						string extruderActualLabelTxt = LocalizedString.Get ("Actual");
 						string extruderActualLabelTxtFull = string.Format ("{0}: ", extruderActualLabelTxt);
 						TextWidget extruderActualLabel = new TextWidget(extruderActualLabelTxtFull, pointSize: 10);
@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl
 						string extruderAboutLabelTxtFull = string.Format ("{0}: ", extruderAboutLabelTxt);
 
 						TextWidget extruderTargetLabel = new TextWidget(extruderAboutLabelTxtFull, pointSize: 10);
-                        extruderTargetLabel.Margin = new BorderDouble(left: 10);
+                        extruderTargetLabel.Margin = new BorderDouble(left: 10)* TextWidget.GlobalPointSizeScaleRatio;
                         extruderTargetLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         extruderTargetLabel.VAnchor = VAnchor.ParentCenter;
 
@@ -219,13 +219,13 @@ namespace MatterHackers.MatterControl
         private FlowLayoutWidget GetPresetsContainer()
         {
             FlowLayoutWidget presetsContainer = new FlowLayoutWidget();
-            presetsContainer.Margin = new BorderDouble(3, 0);
+            presetsContainer.Margin = new BorderDouble(3, 0)* TextWidget.GlobalPointSizeScaleRatio;
 
             string presetsLabelTxt = LocalizedString.Get("Presets");
             string presetsLabelTxtFull = string.Format("{0}: ", presetsLabelTxt);
 
             TextWidget presetsLabel = new TextWidget(presetsLabelTxtFull, pointSize: 10);
-            presetsLabel.Margin = new BorderDouble(right: 5);
+            presetsLabel.Margin = new BorderDouble(right: 5)* TextWidget.GlobalPointSizeScaleRatio;
             presetsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             presetsLabel.VAnchor = VAnchor.ParentCenter;
             //presetsContainer.AddChild(presetsLabel);
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl
             {
 
                 Button tempButton = textImageButtonFactory.Generate(keyValue.Value);
-                tempButton.Margin = new BorderDouble(right: 5);
+                tempButton.Margin = new BorderDouble(right: 5)* TextWidget.GlobalPointSizeScaleRatio;
                 presetsContainer.AddChild(tempButton);
 
                 // We push the value into a temp double so that the function will not point to a shared keyValue instance.
@@ -248,10 +248,10 @@ namespace MatterHackers.MatterControl
                 };
             }
 
-            this.textImageButtonFactory.FixedWidth = 76;
+            this.textImageButtonFactory.FixedWidth = 76* TextWidget.GlobalPointSizeScaleRatio;
             {
                 Button tempButton = textImageButtonFactory.Generate("PREHEAT");
-                tempButton.Margin = new BorderDouble(right: 5);
+                tempButton.Margin = new BorderDouble(right: 5)* TextWidget.GlobalPointSizeScaleRatio;
                 presetsContainer.AddChild(tempButton);
 
                 // We push the value into a temp double so that the function will not point to a shared keyValue instance.
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl
                     tempSliderContainer.Visible = false;
                 };
             }
-            this.textImageButtonFactory.FixedWidth = 38;
+            this.textImageButtonFactory.FixedWidth = 38* TextWidget.GlobalPointSizeScaleRatio;
 
             return presetsContainer;
         }
@@ -287,9 +287,9 @@ namespace MatterHackers.MatterControl
         private FlowLayoutWidget GetHelpTextWidget()
         {
             FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            double textRegionWidth = 260;
-            allText.Margin = new BorderDouble(3);
-            allText.Padding = new BorderDouble(3);
+            double textRegionWidth = 260* TextWidget.GlobalPointSizeScaleRatio;
+            allText.Margin = new BorderDouble(3)* TextWidget.GlobalPointSizeScaleRatio;
+            allText.Padding = new BorderDouble(3)* TextWidget.GlobalPointSizeScaleRatio;
             allText.HAnchor = HAnchor.ParentLeftRight;
             allText.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 
@@ -335,9 +335,9 @@ namespace MatterHackers.MatterControl
         {   
             GuiWidget sliderLabels = new GuiWidget();
             sliderLabels.HAnchor = HAnchor.ParentLeftRight;
-            sliderLabels.Height = 20;
+            sliderLabels.Height = 20* TextWidget.GlobalPointSizeScaleRatio;
             {
-                int buttonOffset = -10;
+                double buttonOffset = -10* TextWidget.GlobalPointSizeScaleRatio;
                 var offPosition = buttonOffset;
 
                 tempOffButton = textImageButtonFactory.Generate("Off");

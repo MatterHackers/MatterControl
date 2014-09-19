@@ -199,8 +199,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             }
 
                             
-                            if ((OsInformation.OperatingSystem == OSType.Android || OsInformation.OperatingSystem == OSType.Mac || runInProcess)
-                                && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
+							if (OsInformation.OperatingSystem == OSType.Android ||
+								((OsInformation.OperatingSystem == OSType.Mac || runInProcess)
+									&& ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice))
                             {
                                 itemCurrentlySlicing = itemToSlice;
                                 MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;

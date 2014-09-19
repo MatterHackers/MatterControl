@@ -814,17 +814,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         private void WriteNextLineFromQueue()
         {
+            string lineToWrite = LinesToWriteQueue[0];
+
             using (TimedLock.Lock(this, "WriteNextLineFromQueue"))
             {
-                string lineToWrite = LinesToWriteQueue[0];
-
                 lineToWrite = KeepTrackOfPostionAndDestination(lineToWrite);
                 lineToWrite = RunPrintLevelingTranslations(lineToWrite);
 
                 LinesToWriteQueue.RemoveAt(0); // remove the line first (in case we inject another command)
                 WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
-                System.Threading.Thread.Sleep(1);
             }
+            System.Threading.Thread.Sleep(1);
         }
 
         public double TargetExtruderTemperature
@@ -2263,39 +2263,43 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     while (serialPort != null 
                         && serialPort.BytesToRead > 0)
                     {
-                        char nextChar = (char)serialPort.ReadChar();
-                        using (TimedLock.Lock(this, "ReadFromPrinter"))
+                        int readCharAsInt = serialPort.ReadChar();
+                        if (readCharAsInt != -1)
                         {
-                            if (nextChar == '\r' || nextChar == '\n')
+                            char nextChar = (char)readCharAsInt;
+                            using (TimedLock.Lock(this, "ReadFromPrinter"))
                             {
-                                lastLineRead = lineBeingRead;
-                                lineBeingRead = "";
-
-                                // process this command
+                                if (nextChar == '\r' || nextChar == '\n')
                                 {
-                                    StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
-                                    CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
+                                    lastLineRead = lineBeingRead;
+                                    lineBeingRead = "";
 
-                                    FoundStringEventArgs foundResponse = new FoundStringEventArgs(currentEvent.Data);
-                                    ReadLineStartCallBacks.CheckForKeys(foundResponse);
-                                    ReadLineContainsCallBacks.CheckForKeys(foundResponse);
-
-                                    if (foundResponse.SendToDelegateFunctions)
+                                    // process this command
                                     {
-                                        ReadLine.CallEvents(this, currentEvent);
+                                        StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
+                                        CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
+
+                                        FoundStringEventArgs foundResponse = new FoundStringEventArgs(currentEvent.Data);
+                                        ReadLineStartCallBacks.CheckForKeys(foundResponse);
+                                        ReadLineContainsCallBacks.CheckForKeys(foundResponse);
+
+                                        if (foundResponse.SendToDelegateFunctions)
+                                        {
+                                            ReadLine.CallEvents(this, currentEvent);
+                                        }
+                                    }
+
+                                    if (CommunicationState == CommunicationStates.AttemptingToConnect)
+                                    {
+                                        CommunicationState = CommunicationStates.Connected;
                                     }
                                 }
-
-                                if (CommunicationState == CommunicationStates.AttemptingToConnect)
+                                else
                                 {
-                                    CommunicationState = CommunicationStates.Connected;
+                                    lineBeingRead += nextChar;
                                 }
+                                timeSinceLastReadAnything.Restart();
                             }
-                            else
-                            {
-                                lineBeingRead += nextChar;
-                            }
-                            timeSinceLastReadAnything.Restart();
                         }
                     }
 

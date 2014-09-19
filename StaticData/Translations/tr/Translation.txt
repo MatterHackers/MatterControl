@@ -2560,3 +2560,12 @@ Translated:Dilimleme Motoru
 English:Clear
 Translated:Clear
 
+English:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+Translated:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+
+English:Z Can Be Negative
+Translated:Z Can Be Negative
+
+English:Export as X3G
+Translated:Export as X3G
+
