@@ -47,48 +47,44 @@ namespace MatterHackers.MatterControl
 	public class ThemeColorSelectorWidget : FlowLayoutWidget
 	{
 		GuiWidget colorToChangeTo;
-
+        int containerHeight = 34;
+        int colorSelectSize = 32;
 		public ThemeColorSelectorWidget (GuiWidget colorToChangeTo)
-		{	
-
-			this.colorToChangeTo = colorToChangeTo;
-			//TextWidget colorText = new TextWidget("Accent Color", color: RGBA_Bytes.White);
-			//colorText.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			//this.AddChild(colorText);
-			//Temporary theme changer button
-
-			GuiWidget themeButtons = new GuiWidget(186, 42);
-
+		{
+            this.Padding = new BorderDouble(2, 0);
+			this.colorToChangeTo = colorToChangeTo;            
             int themeCount = ActiveTheme.Instance.AvailableThemes.Count;
-
-			themeButtons.BackgroundColor = RGBA_Bytes.White;
+			
 			int index = 0;
             for (int x = 0; x < themeCount/2; x++)
 			{
-                Button buttonOne = getThemeButton(index, x, 0);
-                Button buttonTwo = getThemeButton(index + themeCount/2, x, 1);
+                FlowLayoutWidget columnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
+                columnContainer.Width = containerHeight;
 
-                themeButtons.AddChild(buttonOne);
-                themeButtons.AddChild(buttonTwo);
+                Button buttonOne = getThemeButton(index);
+                Button buttonTwo = getThemeButton(index + themeCount/2);
+
+                columnContainer.AddChild(buttonTwo);
+                columnContainer.AddChild(buttonOne);
+                
+                this.AddChild(columnContainer);
                 index++;
 			}
-
-			this.AddChild (themeButtons);
-			this.VAnchor = VAnchor.ParentCenter;
+            this.BackgroundColor = RGBA_Bytes.White;
+            this.Width = containerHeight * (themeCount / 2);
 		}
 
-        public Button getThemeButton(int index, int x, int y)
+        public Button getThemeButton(int index)
         {
-            GuiWidget normal = new GuiWidget(16, 16);
+            GuiWidget normal = new GuiWidget(colorSelectSize, colorSelectSize);
 			normal.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].primaryAccentColor;
-			GuiWidget hover = new GuiWidget(16, 16);
+            GuiWidget hover = new GuiWidget(colorSelectSize, colorSelectSize);
 			hover.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].secondaryAccentColor;
-			GuiWidget pressed = new GuiWidget(16, 16);
+			GuiWidget pressed = new GuiWidget(colorSelectSize, colorSelectSize);
 			pressed.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].secondaryAccentColor;
-			GuiWidget disabled = new GuiWidget(16, 16);
-			new GuiWidget(16, 16);
+			GuiWidget disabled = new GuiWidget(colorSelectSize, colorSelectSize);
 
-            Button colorButton = new Button(4 + x * 18, 4 + y * 18, new ButtonViewStates(normal, hover, pressed, disabled));
+            Button colorButton = new Button(0,0, new ButtonViewStates(normal, hover, pressed, disabled));
 			colorButton.Name = index.ToString();
 			colorButton.Click += (sender, mouseEvent) => 
 			{                                

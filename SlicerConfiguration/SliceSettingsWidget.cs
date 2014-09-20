@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             CheckBox checkBox = sender as CheckBox;
             if (checkBox != null)
             {
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 
@@ -478,7 +478,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             if (settingToReloadUiWhenChanged.Contains(settingData.SlicerConfigName))
             {
-                ApplicationWidget.Instance.ReloadAll(null, null);
+                ApplicationController.Instance.ReloadAll(null, null);
             }
 
             if (settingsRequiringPreviewUpdate.Contains(settingData.SlicerConfigName))
@@ -850,15 +850,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     clickToEdit.OverlayColor = qualityOverlayColor;
                     editButton.Click += (sender, e) =>
                     {
-                        if (ApplicationWidget.Instance.EditQualityPresetsWindow == null)
+                        if (ApplicationController.Instance.EditQualityPresetsWindow == null)
                         {
-                            ApplicationWidget.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-                            ApplicationWidget.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditQualityPresetsWindow = null; };
+                            ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Quality", "quality", false, ActivePrinterProfile.Instance.ActiveQualitySettingsID);
+                            ApplicationController.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditQualityPresetsWindow = null; };
                         }
                         else
                         {
-                            ApplicationWidget.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
-                            ApplicationWidget.Instance.EditQualityPresetsWindow.BringToFront();
+                            ApplicationController.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.ActiveQualitySettingsID);
+                            ApplicationController.Instance.EditQualityPresetsWindow.BringToFront();
                         }
                     };
                 }
@@ -868,15 +868,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     clickToEdit.OverlayColor = materialOverlayColor;
                     editButton.Click += (sender, e) =>
                     {
-                        if (ApplicationWidget.Instance.EditMaterialPresetsWindow == null)
+                        if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
                         {
-                            ApplicationWidget.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
-                            ApplicationWidget.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditMaterialPresetsWindow = null; };
+                            ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, "Material", "material", false, ActivePrinterProfile.Instance.GetMaterialSetting(1));
+                            ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditMaterialPresetsWindow = null; };
                         }
                         else
                         {
-                            ApplicationWidget.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
-                            ApplicationWidget.Instance.EditMaterialPresetsWindow.BringToFront();
+                            ApplicationController.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(ActivePrinterProfile.Instance.GetMaterialSetting(1));
+                            ApplicationController.Instance.EditMaterialPresetsWindow.BringToFront();
                         }
                     };
                 }
@@ -910,7 +910,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         protected void ReloadOptions(object sender, EventArgs e)
         {
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();
         }
 
         private void SaveSetting(string slicerConfigName, string value)

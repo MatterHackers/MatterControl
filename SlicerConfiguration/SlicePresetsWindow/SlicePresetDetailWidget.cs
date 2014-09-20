@@ -856,7 +856,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     windowController.functionToCallOnSave(this, null);
                     windowController.ChangeToSlicePresetList();
                     ActiveSliceSettings.Instance.LoadAllSettings();
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                    ApplicationController.Instance.ReloadAdvancedControlsPanel();
                 }
             });
         }

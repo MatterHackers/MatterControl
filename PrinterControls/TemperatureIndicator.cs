@@ -477,7 +477,7 @@ namespace MatterHackers.MatterControl
             if (stringEvent != null && stringEvent.Data != null)
             {
                 UserSettings.Instance.set("Extruder1PresetTemps", stringEvent.Data);
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 
@@ -571,7 +571,7 @@ namespace MatterHackers.MatterControl
             if (stringEvent != null && stringEvent.Data != null)
             {
                 UserSettings.Instance.set("BedPresetTemps", stringEvent.Data);
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 

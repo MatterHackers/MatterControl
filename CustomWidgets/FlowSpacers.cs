@@ -61,6 +61,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
             BackgroundColor = ActiveTheme.Instance.SecondaryTextColor;
             HAnchor = Agg.UI.HAnchor.ParentLeftRight;
         }
+
+        public HorizontalLine(RGBA_Bytes backgroundColor)
+            :base(1,1)
+        {
+            BackgroundColor = backgroundColor;
+            HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+        }
     }
 
     public class VerticalLine : GuiWidget

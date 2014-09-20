@@ -19,6 +19,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
             iconTextImageButtonFactory.AllowThemeToAdjustImage = false;
+            iconTextImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
 
             BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
             iconTextImageButtonFactory.FixedHeight = 20;
@@ -50,6 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
 			iconTextImageButtonFactory.AllowThemeToAdjustImage = false;
+            iconTextImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
 
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 			iconTextImageButtonFactory.FixedHeight = 20;

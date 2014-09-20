@@ -2588,3 +2588,12 @@ Translated:Release
 English:No printer is currently selected. Select a printer to edit slice settings.
 Translated:No printer is currently selected. Select a printer to edit slice settings.
 
+English:Part Preview
+Translated:Part Preview
+
+English:Layer Preview
+Translated:Layer Preview
+
+English:Enable Cloud Monitoring (disabled)
+Translated:Enable Cloud Monitoring (disabled)
+

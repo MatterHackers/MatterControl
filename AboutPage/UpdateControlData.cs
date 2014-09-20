@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl
                         {
                             InitiateUpdateDownload();
                             // Switch to the about page so we can see the download progress.
-                            GuiWidget aboutTabWidget = FindNamedWidgetRecursive(ApplicationWidget.Instance, "About Tab");
+                            GuiWidget aboutTabWidget = FindNamedWidgetRecursive(ApplicationController.Instance, "About Tab");
                             Tab aboutTab = aboutTabWidget as Tab;
                             if (aboutTab != null)
                             {

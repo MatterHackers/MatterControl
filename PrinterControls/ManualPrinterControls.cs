@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
             {
                 ActivePrinterProfile.Instance.ActivePrinter.ManualMovementSpeeds = stringEvent.Data;
                 ActivePrinterProfile.Instance.ActivePrinter.Commit();
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 

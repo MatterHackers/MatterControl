@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.FixedHeight = 20;
             textImageButtonFactory.FixedWidth = 20;
             textImageButtonFactory.AllowThemeToAdjustImage = false;
+            textImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
 
             string rotateIconPath = Path.Combine("ViewTransformControls", "rotate.png");
             rotateButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
