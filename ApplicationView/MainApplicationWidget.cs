@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
     }
     
     
-    public class ApplicationController : GuiWidget
+    public class ApplicationController 
     {
         static ApplicationController globalInstance;
         public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl
 
 		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
 		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
-        public ApplicationView MainView;
+        public CompactApplicationView MainView;
 
         event EventHandler unregisterEvents;
 
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl
 
         public ApplicationController()
         {
-            Name = "MainSlidePanel";
+            //Name = "MainSlidePanel";
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl
                 if (globalInstance == null)
                 {
                     globalInstance = new ApplicationController();
-                    globalInstance.MainView = new ApplicationView();
+                    globalInstance.MainView = new CompactApplicationView();
                 }
                 return globalInstance;
             }
