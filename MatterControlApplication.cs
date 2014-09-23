@@ -319,8 +319,8 @@ namespace MatterHackers.MatterControl
                 width = Math.Max(int.Parse(sizes[0]), 600);
                 height = Math.Max(int.Parse(sizes[1]), 600);
             }
-            
-            new MatterControlApplication(1024, 600);
+
+            new MatterControlApplication(width, height);
         }
 
         public override void OnClosed(EventArgs e)

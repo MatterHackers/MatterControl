@@ -116,14 +116,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             settingsLabel.VAnchor = VAnchor.ParentTop;
 
-            GuiWidget optionsContainer = new GuiWidget();
+            FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            optionsContainer.Margin = new BorderDouble(bottom:6);
 
             StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Development",maxHeight:200);            
             releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
-            releaseOptionsDropList.VAnchor = Agg.UI.VAnchor.ParentTop;
 
             optionsContainer.AddChild(releaseOptionsDropList);
-            optionsContainer.Height = 50;
             optionsContainer.Width = 200;
 
             MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Release", "release");
@@ -166,17 +165,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
             controlsContainer.HAnchor = HAnchor.ParentLeftRight;
 
-            GuiWidget optionsContainer = new GuiWidget();
-            optionsContainer.Width = 200;
+            FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);            
+            optionsContainer.Margin = new BorderDouble(bottom: 6);
 
             LanguageSelector languageSelector = new LanguageSelector();
-            languageSelector.Margin = new BorderDouble(0, 4);
             languageSelector.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
             languageSelector.HAnchor = HAnchor.ParentLeftRight;
-            languageSelector.VAnchor = Agg.UI.VAnchor.ParentTop;
 
             optionsContainer.AddChild(languageSelector);
-            optionsContainer.Height = 50;
             optionsContainer.Width = 200;
 
             restartButton = textImageButtonFactory.Generate("Restart");

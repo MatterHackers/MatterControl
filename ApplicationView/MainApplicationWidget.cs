@@ -50,7 +50,13 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
-    public class CompactApplicationView : GuiWidget
+    public abstract class ApplicationView : GuiWidget
+    {
+        public abstract void AddElements();
+        
+    }
+
+    public class CompactApplicationView : ApplicationView
     {
         CompactTabView widescreenPanel;
         QueueDataView queueDataView;
@@ -60,7 +66,7 @@ namespace MatterHackers.MatterControl
             Initialize();
         }
         
-        public void AddElements()
+        public override void AddElements()
         {
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -93,17 +99,17 @@ namespace MatterHackers.MatterControl
             this.AnchorAll();
         }
     }
-    
-    public class ApplicationView : GuiWidget
+
+    public class ResponsiveApplicationView : ApplicationView
     {
         WidescreenPanel widescreenPanel;
-        public ApplicationView()
+        public ResponsiveApplicationView()
         {
             AddElements();
             Initialize();
         }
         
-        public void AddElements()
+        public override void AddElements()
         {
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -143,7 +149,7 @@ namespace MatterHackers.MatterControl
 
 		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
 		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
-        public CompactApplicationView MainView;
+        public ApplicationView MainView;
 
         event EventHandler unregisterEvents;
 
@@ -180,7 +186,7 @@ namespace MatterHackers.MatterControl
                 if (globalInstance == null)
                 {
                     globalInstance = new ApplicationController();
-                    globalInstance.MainView = new CompactApplicationView();
+                    globalInstance.MainView = new ResponsiveApplicationView();
                 }
                 return globalInstance;
             }
