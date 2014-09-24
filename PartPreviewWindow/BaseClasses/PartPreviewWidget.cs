@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class PartPreviewWidget : GuiWidget
     {
         protected readonly int ShortButtonHeight = 25;
-        protected readonly int SideBarButtonWidth = 138;
+        protected int SideBarButtonWidth;
 
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory checkboxButtonFactory = new TextImageButtonFactory();
@@ -62,6 +62,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public PartPreviewWidget()
         {
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                SideBarButtonWidth = 180;
+            }
+            else
+            {
+                SideBarButtonWidth = 138;
+            }
+            
             textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;

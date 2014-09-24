@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
         FlowLayoutWidget scaleOptionContainer;
+        FlowLayoutWidget mirrorOptionContainer;
+
 
         List<string> pendingPartsToLoad = new List<string>();
 
@@ -79,6 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         CheckBox expandViewOptions;
         CheckBox expandRotateOptions;
         CheckBox expandScaleOptions;
+        CheckBox expandMirrorOptions;
 
         Button autoArrangeButton;
         FlowLayoutWidget saveButtons;
@@ -1032,19 +1035,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in the mirror options
                 {
-                    CheckBox expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Mirror"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                    expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Mirror"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandMirrorOptions);
 
-                    FlowLayoutWidget mirrorOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                    mirrorOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                     mirrorOptionContainer.HAnchor = HAnchor.ParentLeftRight;
                     mirrorOptionContainer.Visible = false;
                     buttonRightPanel.AddChild(mirrorOptionContainer);
-
-                    expandMirrorOptions.CheckedStateChanged += (object sender, EventArgs e) =>
-                    {
-                        mirrorOptionContainer.Visible = expandMirrorOptions.Checked;
-                    };
 
                     AddMirrorControls(mirrorOptionContainer);
                 }
@@ -1094,6 +1092,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     viewOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                     viewOptionContainer.HAnchor = HAnchor.ParentLeftRight;
+                    viewOptionContainer.Padding = new BorderDouble(left: 4);
                     viewOptionContainer.Visible = false;
                     {
                         CheckBox showBedCheckBox = new CheckBox(LocalizedString.Get("Show Print Bed"), textColor: ActiveTheme.Instance.PrimaryTextColor);
@@ -1715,6 +1714,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void AddHandlers()
         {
             expandViewOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandViewOptions_CheckedStateChanged);
+            expandMirrorOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandMirrorOptions_CheckedStateChanged);            
             expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
             expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
         }
@@ -1796,17 +1796,60 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void expandViewOptions_CheckedStateChanged(object sender, EventArgs e)
         {
-            viewOptionContainer.Visible = expandViewOptions.Checked;
+            if (viewOptionContainer.Visible != expandViewOptions.Checked)
+            {
+                if (expandViewOptions.Checked == true)
+                {                    
+                    expandScaleOptions.Checked = false;
+                    expandRotateOptions.Checked = false;
+                    expandMirrorOptions.Checked = false;
+                }
+                viewOptionContainer.Visible = expandViewOptions.Checked;
+            }            
         }
+
+        void expandMirrorOptions_CheckedStateChanged(object sender, EventArgs e)
+        {
+            if (mirrorOptionContainer.Visible != expandMirrorOptions.Checked)
+            {
+                if (expandMirrorOptions.Checked == true)
+                {                    
+                    expandScaleOptions.Checked = false;
+                    expandRotateOptions.Checked = false;
+                    expandViewOptions.Checked = false;
+                }
+                mirrorOptionContainer.Visible = expandMirrorOptions.Checked;
+            }            
+        }
+
+        
 
         void expandRotateOptions_CheckedStateChanged(object sender, EventArgs e)
         {
-            rotateOptionContainer.Visible = expandRotateOptions.Checked;
+            if (rotateOptionContainer.Visible != expandRotateOptions.Checked)
+            {
+                if (expandRotateOptions.Checked == true)
+                {
+                    expandViewOptions.Checked = false;
+                    expandScaleOptions.Checked = false;
+                    expandMirrorOptions.Checked = false;
+                }
+                rotateOptionContainer.Visible = expandRotateOptions.Checked;
+            }
         }
 
         void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
         {
-            scaleOptionContainer.Visible = expandScaleOptions.Checked;
+            if (scaleOptionContainer.Visible != expandScaleOptions.Checked)
+            {
+                if (expandScaleOptions.Checked == true)
+                {
+                    expandViewOptions.Checked = false;
+                    expandRotateOptions.Checked = false;
+                    expandMirrorOptions.Checked = false;
+                }
+                scaleOptionContainer.Visible = expandScaleOptions.Checked;
+            }
         }
 
         bool scaleQueueMenu_Click()
