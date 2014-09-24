@@ -28,6 +28,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             mainContainer.AddChild(GetLanguageControl());
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+            mainContainer.AddChild(GetDisplayControl());
+            mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             mainContainer.AddChild(GetThemeControl()); 
             
             AddChild(mainContainer);
@@ -100,6 +102,46 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             return buttonRow;
         }
 
+        private FlowLayoutWidget GetDisplayControl()
+        {
+            FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+            buttonRow.HAnchor = HAnchor.ParentLeftRight;
+            buttonRow.Margin = new BorderDouble(top: 4);
+
+
+            TextWidget settingsLabel = new TextWidget("Change Display Mode");
+            settingsLabel.AutoExpandBoundsToText = true;
+            settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            settingsLabel.VAnchor = VAnchor.ParentTop;
+
+            FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            optionsContainer.Margin = new BorderDouble(bottom: 6);
+
+            StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+            releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+
+            optionsContainer.AddChild(releaseOptionsDropList);
+            optionsContainer.Width = 200;
+
+            MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Normal", "responsive");
+            MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Touchscreen", "touchscreen");
+
+            List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
+            string currentUpdateFeedType = UserSettings.Instance.get("ApplicationDisplayMode");
+
+            if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
+            {
+                UserSettings.Instance.set("ApplicationDisplayMode", "responsive");
+            }
+
+            releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("ApplicationDisplayMode");
+            releaseOptionsDropList.SelectionChanged += new EventHandler(DisplayOptionsDropList_SelectionChanged);
+
+            buttonRow.AddChild(settingsLabel);
+            buttonRow.AddChild(new HorizontalSpacer());
+            buttonRow.AddChild(optionsContainer);
+            return buttonRow;
+        }
 
         private FlowLayoutWidget GetUpdateControl()
         {
@@ -220,9 +262,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             UpdateControlData.Instance.CheckForUpdateUserRequested();
         }
 
+        private void DisplayOptionsDropList_SelectionChanged(object sender, EventArgs e)
+        {
+            string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+            if (releaseCode != UserSettings.Instance.get("ApplicationDisplayMode"))
+            {
+                UserSettings.Instance.set("ApplicationDisplayMode", releaseCode);
+            }
+        }
+
         private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
         {
-            string releaseCode = ((AnchoredDropDownList)sender).SelectedValue;
+            string releaseCode = ((StyledDropDownList)sender).SelectedValue;
             if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
             {
                 UserSettings.Instance.set("UpdateFeedType", releaseCode);

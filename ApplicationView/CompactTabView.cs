@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl
                     if (addedUpdateMark == null)
                     {
                         addedUpdateMark = new NotificationWidget();
-                        addedUpdateMark.OriginRelativeParent = new Vector2(70, 7);
+                        addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.tabTitle.Width + 3, 7);
                         AboutTabView.AddChild(addedUpdateMark);
                     }
                     addedUpdateMark.Visible = true;

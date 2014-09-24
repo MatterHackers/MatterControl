@@ -63,10 +63,9 @@ namespace MatterHackers.MatterControl.PrintQueue
             MenuDropList.BorderWidth = 1;
             MenuDropList.MenuAsWideAsItems = false;
             MenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
-            MenuDropList.Margin = new BorderDouble(4, 0, 4, 0);
+            MenuDropList.Margin = new BorderDouble(4, 0, 1, 0);
             
             SetMenuItems();
-            MenuDropList.Width = 60;
             this.MenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
         }
 

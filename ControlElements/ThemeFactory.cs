@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
         {
             get
             {
-                string displayMode = UserSettings.Instance.get("applicationDisplayMode");
+                string displayMode = UserSettings.Instance.get("ApplicationDisplayMode");
                 if (displayMode == "touchscreen")
                 {
                     return ApplicationDisplayType.Touchscreen;
