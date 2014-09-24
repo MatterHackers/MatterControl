@@ -186,7 +186,14 @@ namespace MatterHackers.MatterControl
                 if (globalInstance == null)
                 {
                     globalInstance = new ApplicationController();
-                    globalInstance.MainView = new ResponsiveApplicationView();
+                    if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+                    {
+                        globalInstance.MainView = new CompactApplicationView();
+                    }
+                    else
+                    {
+                        globalInstance.MainView = new ResponsiveApplicationView();
+                    }
                 }
                 return globalInstance;
             }
