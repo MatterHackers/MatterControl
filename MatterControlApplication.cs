@@ -110,7 +110,10 @@ namespace MatterHackers.MatterControl
 
             GuiWidget.DefaultEnforceIntegerBounds = true;
 
-            //TextWidget.GlobalPointSizeScaleRatio = 1.3;
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                TextWidget.GlobalPointSizeScaleRatio = 1.3;
+            }
 
             this.AddChild(ApplicationController.Instance.MainView);
             this.MinimumSize = new Vector2(400, 400);
@@ -319,8 +322,8 @@ namespace MatterHackers.MatterControl
                 width = Math.Max(int.Parse(sizes[0]), 600);
                 height = Math.Max(int.Parse(sizes[1]), 600);
             }
-            
-            new MatterControlApplication(1024, 600);
+
+            new MatterControlApplication(width, height);
         }
 
         public override void OnClosed(EventArgs e)

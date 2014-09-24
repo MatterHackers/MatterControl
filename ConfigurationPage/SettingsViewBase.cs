@@ -37,11 +37,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
             this.Margin = new BorderDouble(2, 4, 2, 0);
-            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
+            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
             this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
 
             this.textImageButtonFactory.FixedHeight = TallButtonHeight;
             this.textImageButtonFactory.fontSize = 11;
+            this.textImageButtonFactory.borderWidth = 1;
+            this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+            this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
             this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
             this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;

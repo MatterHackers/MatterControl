@@ -50,7 +50,13 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
-    public class CompactApplicationView : GuiWidget
+    public abstract class ApplicationView : GuiWidget
+    {
+        public abstract void AddElements();
+        
+    }
+
+    public class CompactApplicationView : ApplicationView
     {
         CompactTabView widescreenPanel;
         QueueDataView queueDataView;
@@ -60,7 +66,7 @@ namespace MatterHackers.MatterControl
             Initialize();
         }
         
-        public void AddElements()
+        public override void AddElements()
         {
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -93,17 +99,17 @@ namespace MatterHackers.MatterControl
             this.AnchorAll();
         }
     }
-    
-    public class ApplicationView : GuiWidget
+
+    public class ResponsiveApplicationView : ApplicationView
     {
         WidescreenPanel widescreenPanel;
-        public ApplicationView()
+        public ResponsiveApplicationView()
         {
             AddElements();
             Initialize();
         }
         
-        public void AddElements()
+        public override void AddElements()
         {
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -135,7 +141,7 @@ namespace MatterHackers.MatterControl
     }
     
     
-    public class ApplicationController : GuiWidget
+    public class ApplicationController 
     {
         static ApplicationController globalInstance;
         public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
@@ -151,7 +157,7 @@ namespace MatterHackers.MatterControl
 
         public ApplicationController()
         {
-            Name = "MainSlidePanel";
+            //Name = "MainSlidePanel";
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
@@ -180,7 +186,14 @@ namespace MatterHackers.MatterControl
                 if (globalInstance == null)
                 {
                     globalInstance = new ApplicationController();
-                    globalInstance.MainView = new ApplicationView();
+                    if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+                    {
+                        globalInstance.MainView = new CompactApplicationView();
+                    }
+                    else
+                    {
+                        globalInstance.MainView = new ResponsiveApplicationView();
+                    }
                 }
                 return globalInstance;
             }

@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     if(OemSettings.Instance.ShowShopButton)
                     {
                         shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), "icon_shopping_cart_32x32.png");
-                        buttonPanel1.AddChild(shopButton);
+                        //buttonPanel1.AddChild(shopButton);
                         shopButton.Margin = new BorderDouble(0, 0, 3, 0);
                         shopButton.Click += (sender, e) =>
                         {
@@ -127,9 +127,9 @@ namespace MatterHackers.MatterControl.PrintQueue
                     buttonPanel1.AddChild(spacer2);
 
                     FlowLayoutWidget queueMenuSpace = new FlowLayoutWidget();
-                    GuiWidget queueMenu = new QueueOptionsMenu();
-                    queueMenu.VAnchor = VAnchor.ParentTop;
-                    queueMenuSpace.AddChild(queueMenu);
+                    queueMenuSpace.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+                    QueueOptionsMenu queueMenu = new QueueOptionsMenu();
+                    queueMenuSpace.AddChild(queueMenu.MenuDropList);
                     buttonPanel1.AddChild(queueMenuSpace);
 
                     ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((object sender, EventArgs e) =>
@@ -137,8 +137,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                         queueMenuSpace.RemoveAllChildren();
                         // the printer changed reload the queueMenue
                         queueMenu = new QueueOptionsMenu();
-                        queueMenu.VAnchor = VAnchor.ParentTop;
-                        queueMenuSpace.AddChild(queueMenu);
+                        queueMenuSpace.AddChild(queueMenu.MenuDropList);
                     }, ref unregisterEvents);
                 }
                 allControls.AddChild(buttonPanel1);

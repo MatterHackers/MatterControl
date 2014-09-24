@@ -58,16 +58,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public QueueOptionsMenu()
         {
-			MenuDropList = new DropDownMenu(LocalizedString.Get("Queue Options"), Direction.Up);
-            MenuDropList.HAnchor |= HAnchor.ParentLeft;
-            MenuDropList.VAnchor |= VAnchor.ParentTop;
+			MenuDropList = new DropDownMenu(LocalizedString.Get("Options   "), Direction.Up);
+            MenuDropList.VAnchor = VAnchor.ParentBottomTop;
+            MenuDropList.BorderWidth = 1;
+            MenuDropList.MenuAsWideAsItems = false;
+            MenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
+            MenuDropList.Margin = new BorderDouble(4, 0, 1, 0);
+            
             SetMenuItems();
-
-            AddChild(MenuDropList);
-            this.Width = MenuDropList.Width;
-            this.Height = MenuDropList.Height;
-            this.Margin = new BorderDouble(4,0);
-            this.Padding = new BorderDouble(0);
             this.MenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
         }
 

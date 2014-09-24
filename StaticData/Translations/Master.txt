@@ -2597,3 +2597,6 @@ Translated:Layer Preview
 English:Enable Cloud Monitoring (disabled)
 Translated:Enable Cloud Monitoring (disabled)
 
+English:Warning - Moving Too Low
+Translated:Warning - Moving Too Low
+

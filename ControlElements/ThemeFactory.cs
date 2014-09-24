@@ -55,6 +55,24 @@ namespace MatterHackers.MatterControl
 
         public RootedObjectEventHandler ThemeChanged = new RootedObjectEventHandler();
 
+        public enum ApplicationDisplayType { Responsive, Touchscreen } ;
+
+        public ApplicationDisplayType DisplayMode
+        {
+            get
+            {
+                string displayMode = UserSettings.Instance.get("ApplicationDisplayMode");
+                if (displayMode == "touchscreen")
+                {
+                    return ApplicationDisplayType.Touchscreen;
+                }
+                else
+                {
+                    return ApplicationDisplayType.Responsive;
+                }
+            }
+        }
+
         public List<Theme> AvailableThemes
         {
             get

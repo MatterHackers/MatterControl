@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl
 
         void SetDisplayAttributes()
         {
-            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
+            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
 
             this.textImageButtonFactory.FixedWidth = 38* TextWidget.GlobalPointSizeScaleRatio;
             this.textImageButtonFactory.FixedHeight = 20* TextWidget.GlobalPointSizeScaleRatio;
