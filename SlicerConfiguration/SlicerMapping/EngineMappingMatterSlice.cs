@@ -91,11 +91,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //new MapItemToBool("extruder_2_offset", ""),
             //new MapItemToBool("temperature_extruder_2", ""),
             new NotPassedItem("", "extruder_count"),
-            
+
             //endCode=M104 S0
             new MapEndGCode("endCode", "end_gcode"),
 
             //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+            new MapItem("extruderOffsets", "extruder_offset"),
 
             //extrusionWidth=0.4 # The width of the line to extrude.
             new MapItem("extrusionWidth", "nozzle_diameter"),

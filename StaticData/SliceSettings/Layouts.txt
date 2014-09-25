@@ -37,8 +37,8 @@ Beginner
         bed_size
         print_center
         build_height
-    Extruder 1
-      Size
+    Extruder
+      Extruder X
         nozzle_diameter
 Advanced
   Print
@@ -99,12 +99,17 @@ Advanced
         bridge_acceleration
         first_layer_acceleration
         default_acceleration
-    Skirt and Brim
+    Skirt and Raft
       Skirt
         skirts
         skirt_distance
         skirt_height
         min_skirt_length
+      Raft
+        create_raft
+        raft_extra_distance_around_part
+        raft_air_gap
+        raft_layers
       Brim
         brim_width
     Support Material
@@ -124,11 +129,9 @@ Advanced
         support_material_z_distance
         support_material_z_gap_layers
         support_material_create_internal_support
-      Raft
-        create_raft
-        raft_extra_distance_around_part
-        raft_air_gap
-        raft_layers
+      Extruders
+        support_material_extruder
+        support_material_interface_extruder
     Repair
       Outlines
         repair_outlines_extensive_stitching
@@ -157,8 +160,6 @@ Advanced
       Extruders
         perimeter_extruder
         infill_extruder
-        support_material_extruder
-        support_material_interface_extruder
       Extruder Change
         wipe_shield_distance
         wipe_tower_size
@@ -191,6 +192,19 @@ Advanced
         temperature
         first_layer_bed_temperature
         bed_temperature
+      Retraction
+        retract_length
+        retract_length_tool_change
+        retract_speed
+        retract_lift
+        retract_restart_extra
+        retract_before_travel
+        retract_layer_change
+        min_extrusion_before_retract
+        wipe
+      Retraction On Tool Change
+        retract_restart_extra_toolchange
+        retract_restart_extra
     Cooling
       Enable
         fan_always_on
@@ -213,11 +227,13 @@ Advanced
         build_height
         z_offset
         bed_shape
+      Hardware
         has_fan
         has_heated_bed
         has_sd_card_reader
-        z_can_be_negative
+        extruder_count
       Firmware
+        z_can_be_negative
         gcode_flavor
         gcode_output_type
         use_relative_e_distances
@@ -241,21 +257,7 @@ Advanced
         resume_gcode
       Cancel G-Code
         cancel_gcode
-    Extruder 1
-      Size
+    Extruder
+      Extruder X
         nozzle_diameter
-      Position (for multi-extrude printers)
         extruder_offset
-      Retraction
-        retract_length
-        retract_length_tool_change
-        retract_lift
-        retract_speed
-        retract_restart_extra
-        retract_before_travel
-        retract_layer_change
-        min_extrusion_before_retract
-        wipe
-      Retraction When Tool is Disabled (for multi-extruders)
-        retract_restart_extra_toolchange
-        retract_restart_extra
