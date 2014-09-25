@@ -91,6 +91,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //endCode=M104 S0
             new MapEndGCode("endCode", "end_gcode"),
 
+            new MapItem("zOffset", "z_offset"),
+
             //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
 
             //extrusionWidth=0.4 # The width of the line to extrude.
