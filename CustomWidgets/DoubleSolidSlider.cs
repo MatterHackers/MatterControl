@@ -304,13 +304,14 @@ namespace MatterHackers.MatterControl
         public DoubleSolidSlider(Vector2 positionOfTrackFirstValue, double widthInPixels, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
         {
             View = new DoubleSolidSlideView(this);
+            View.TrackHeight = widthInPixels;
             OriginRelativeParent = positionOfTrackFirstValue;
             TotalWidthInPixels = widthInPixels;
             Orientation = orientation;
             Minimum = minimum;
             Maximum = maximum;
-            ThumbWidth = 10;
-            ThumbHeight = 14;
+            ThumbWidth = widthInPixels;
+            ThumbHeight = widthInPixels * 1.4;
 
             MinimumSize = new Vector2(Width, Height);
         }

@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
             this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
             this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+            this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             this.linkButtonFactory.fontSize = 11;

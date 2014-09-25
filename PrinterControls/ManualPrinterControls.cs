@@ -414,6 +414,10 @@ namespace MatterHackers.MatterControl
                 tuningRatiosLayout.HAnchor = HAnchor.ParentLeftRight;
                 tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0)* TextWidget.GlobalPointSizeScaleRatio;
 
+
+                int slideHeight = 10;
+
+
                 TextWidget subheader = new TextWidget("Fine-tune adjustment while actively printing", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
                 subheader.Margin = new BorderDouble(bottom:6);
                 tuningRatiosLayout.AddChild(subheader);
@@ -430,7 +434,7 @@ namespace MatterHackers.MatterControl
                         feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         feedRateDescription.VAnchor = VAnchor.ParentCenter;
                         feedRateLeftToRight.AddChild(feedRateDescription);
-                        feedRateRatioSlider = new SolidSlider(new Vector2(), 300* TextWidget.GlobalPointSizeScaleRatio, minFeedRateRatio, maxFeedRateRatio);
+                        feedRateRatioSlider = new SolidSlider(new Vector2(), slideHeight, minFeedRateRatio, maxFeedRateRatio);
                         feedRateRatioSlider.Margin = new BorderDouble(5, 0);
 						feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
                         feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
@@ -472,7 +476,7 @@ namespace MatterHackers.MatterControl
                         extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         extrusionDescription.VAnchor = VAnchor.ParentCenter;
                         leftToRight.AddChild(extrusionDescription);
-                        extrusionRatioSlider = new SolidSlider(new Vector2(), 300* TextWidget.GlobalPointSizeScaleRatio, minExtrutionRatio, maxExtrusionRatio);
+                        extrusionRatioSlider = new SolidSlider(new Vector2(), slideHeight, minExtrutionRatio, maxExtrusionRatio);
                         extrusionRatioSlider.Margin = new BorderDouble(5, 0)* TextWidget.GlobalPointSizeScaleRatio;
                         extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
                         extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();

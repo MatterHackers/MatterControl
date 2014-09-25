@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
             
             this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
             this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+            this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             this.HAnchor = HAnchor.ParentLeftRight;
