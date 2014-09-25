@@ -80,6 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Vector2 bedCenter;
         Vector3 viewerVolume;
         MeshViewerWidget.BedShape bedShape;
+        int sliderWidth;
 
         public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, bool addCloseButton)
         {
@@ -88,6 +89,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.bedCenter = bedCenter;
             widgetHasCloseButton = addCloseButton;
             this.printItem = printItem;
+
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                sliderWidth = 20;
+            }
+            else
+            {
+                sliderWidth = 10;
+            }
 
             CreateAndAddChildren(null);
 
@@ -753,12 +763,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
                 layerSelectionButtonsPanel.AddChild(navigationWidget);
 
-                selectLayerSlider = new SolidSlider(new Vector2(), 10, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
+                selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
-                layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), 10);
+                layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
                 layerRenderRatioSlider.FirstValue = 0;
                 layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
                 layerRenderRatioSlider.SecondValue = 1;
@@ -814,7 +824,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDisplayWidget.Width - 20, 70);
             selectLayerSlider.TotalWidthInPixels = gcodeDisplayWidget.Height - 80;
 
-            layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 60);
+            layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 70);
             layerRenderRatioSlider.TotalWidthInPixels = gcodeDisplayWidget.Width - 100;
         }
 
