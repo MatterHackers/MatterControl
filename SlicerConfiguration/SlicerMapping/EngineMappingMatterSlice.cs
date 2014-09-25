@@ -95,6 +95,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //endCode=M104 S0
             new MapEndGCode("endCode", "end_gcode"),
 
+            new MapItem("zOffset", "z_offset"),
+
             //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
             new MapItem("extruderOffsets", "extruder_offset"),
 
