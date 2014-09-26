@@ -48,12 +48,14 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintHistory;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-    class FirstPanelTabView : TabControl
+    class CompactTabView : TabControl
     {
         public static int firstPanelCurrentTab = 0;
+        static int lastAdvanceControlsIndex = 0;
 
         TabPage QueueTabPage;
         TabPage LibraryTabPage;
@@ -64,8 +66,15 @@ namespace MatterHackers.MatterControl
         GuiWidget addedUpdateMark = null;
         QueueDataView queueDataView;
         event EventHandler unregisterEvents;
+        SliceSettingsWidget sliceSettingsWidget;
+        GuiWidget part3DViewContainer;
+        View3DTransformPart part3DView;
+        GuiWidget partGcodeViewContainer;
+        ViewGcodeBasic partGcodeView;
+        int TabTextSize;
 
-        public FirstPanelTabView(QueueDataView queueDataView)
+        public CompactTabView(QueueDataView queueDataView)
+            :base(Orientation.Vertical)
         {
             this.queueDataView = queueDataView;
             this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -74,21 +83,63 @@ namespace MatterHackers.MatterControl
             this.TabBar.Padding = new BorderDouble(0, 2);
 
             this.Margin = new BorderDouble(top: 4);
+            this.TabTextSize = 15;
+
+            PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 
             QueueTabPage = new TabPage(new QueueBottomToolbar(queueDataView), LocalizedString.Get("Queue").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(QueueTabPage, "Queue Tab", 15,
+            this.AddTab(new SimpleTextTabWidget(QueueTabPage, "Queue Tab", TabTextSize,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             LibraryTabPage = new TabPage(new PrintLibraryWidget(), LocalizedString.Get("Library").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, "Library Tab", 15,
+            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, "Library Tab", TabTextSize,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             HistoryTabPage = new TabPage(new PrintHistoryWidget(), LocalizedString.Get("History").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", 15,
+            this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", TabTextSize,
                     ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
+            
+
+            GuiWidget manualPrinterControls = new ManualPrinterControls();
+            ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
+            manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+            manualPrinterControlsScrollArea.AnchorAll();
+            manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
+
+            part3DViewContainer = new GuiWidget();
+            part3DViewContainer.AnchorAll();
+
+            partGcodeViewContainer = new GuiWidget();
+            partGcodeViewContainer.AnchorAll();
+
+            GeneratePartViews();
+
+            string partPreviewLabel = LocalizedString.Get("Part Preview").ToUpper();
+            this.AddTab(new SimpleTextTabWidget(new TabPage(part3DViewContainer, partPreviewLabel), "Part Preview Tab", TabTextSize,
+                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            string layerPreviewLabel = LocalizedString.Get("Layer Preview").ToUpper();
+            this.AddTab(new SimpleTextTabWidget(new TabPage(partGcodeViewContainer, layerPreviewLabel), "Layer Preview Tab", TabTextSize,
+                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            //Add the tab contents for 'Advanced Controls'
+            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
+            this.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", TabTextSize,
+            ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
+            sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+            this.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", TabTextSize,
+                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
+            ScrollableWidget configurationControls = new PrinterConfigurationPage();
+            this.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", TabTextSize,
+                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
             AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
-            AboutTabView = new SimpleTextTabWidget(AboutTabPage, "About Tab", 15,
+            AboutTabView = new SimpleTextTabWidget(AboutTabPage, "About Tab", TabTextSize,
                         ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
             this.AddTab(AboutTabView);
 
@@ -99,9 +150,53 @@ namespace MatterHackers.MatterControl
             QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
             UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
-            WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
+            //WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
 
             SelectedTabIndex = firstPanelCurrentTab;
+        }
+
+        void onActivePrintItemChanged(object sender, EventArgs e)
+        {
+            UiThread.RunOnIdle(GeneratePartViews);
+        }
+
+        void GeneratePartViews(object state = null)
+        {
+            double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+            part3DView = new View3DTransformPart(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape,
+                View3DTransformPart.WindowType.Embeded,
+                View3DTransformPart.AutoRotate.Enabled);
+            part3DView.Margin = new BorderDouble(bottom: 4);
+            part3DView.AnchorAll();
+
+            part3DViewContainer.RemoveAllChildren();
+            part3DViewContainer.AddChild(part3DView);
+
+            partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape,
+                false);
+            partGcodeView.AnchorAll();
+
+            partGcodeViewContainer.RemoveAllChildren();
+            partGcodeViewContainer.AddChild(partGcodeView);
+
+        }
+        
+
+        static SliceSettingsWidgetUiState sliceSettingsUiState = new SliceSettingsWidgetUiState();
+        void SaveCurrentPanelIndex(object sender, EventArgs e)
+        {
+            sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
+
+            if (this.Children.Count > 0)
+            {
+                lastAdvanceControlsIndex = this.SelectedTabIndex;
+            }
         }
 
         void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
@@ -135,7 +230,7 @@ namespace MatterHackers.MatterControl
                     if (addedUpdateMark == null)
                     {
                         addedUpdateMark = new NotificationWidget();
-                        addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.Width - 25, 7);
+                        addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.tabTitle.Width + 3, 7);
                         AboutTabView.AddChild(addedUpdateMark);
                     }
                     addedUpdateMark.Visible = true;

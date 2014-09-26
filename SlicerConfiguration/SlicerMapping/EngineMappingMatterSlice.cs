@@ -88,10 +88,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
             new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
             
+            //new MapItemToBool("extruder_2_offset", ""),
+            //new MapItemToBool("temperature_extruder_2", ""),
+            new NotPassedItem("", "extruder_count"),
+
             //endCode=M104 S0
             new MapEndGCode("endCode", "end_gcode"),
 
+            new MapItem("zOffset", "z_offset"),
+
             //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+            new MapItem("extruderOffsets", "extruder_offset"),
 
             //extrusionWidth=0.4 # The width of the line to extrude.
             new MapItem("extrusionWidth", "nozzle_diameter"),
@@ -496,7 +503,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 get
                 {
-                    return base.MappedValue.Replace("\n", "\\n");
+                    string endGCode = base.MappedValue.Replace("\n", "\\n");
+                    return endGCode;
                 }
             }
 

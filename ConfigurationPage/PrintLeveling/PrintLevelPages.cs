@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         }
 
         static string zIsTooLowMessage = "You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.".Localize();
-        static string zTooLowTitle = "Waring Moving Too Low".Localize();
+        static string zTooLowTitle = "Warning - Moving Too Low".Localize();
         void zMinusControl_Click(object sender, MouseEventArgs mouseEvent)
         {
             if (!allowLessThan0

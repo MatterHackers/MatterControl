@@ -76,8 +76,8 @@ namespace MatterHackers.MatterControl
 
             AddChild(advancedControls2);
 
-            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
-			ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
+            WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
 
             AnchorAll();
         }
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl
         {
             lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
 
-            WidescreenPanel.PreChangePannels.CallEvents(null, null);
+            WidescreenPanel.PreChangePanels.CallEvents(null, null);
 
             // remove the advance control and replace it with new ones built for the selected printer
             int advancedControlsIndex = GetChildIndex(advancedControls2);

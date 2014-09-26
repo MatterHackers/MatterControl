@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         preset.Delete();
                         windowController.ChangeToSlicePresetList();
                         ActiveSliceSettings.Instance.LoadAllSettings();
-                        ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                        ApplicationController.Instance.ReloadAdvancedControlsPanel();
                     });
                 };
 

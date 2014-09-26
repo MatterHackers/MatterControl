@@ -110,9 +110,13 @@ namespace MatterHackers.MatterControl
 
             GuiWidget.DefaultEnforceIntegerBounds = true;
 
-            //TextWidget.GlobalPointSizeScaleRatio = 1.3;
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                TextWidget.GlobalPointSizeScaleRatio = 1.3;
+            }
 
-            this.AddChild(ApplicationWidget.Instance);
+            this.AddChild(ApplicationController.Instance.MainView);
+            this.MinimumSize = new Vector2(400, 400);
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
 #if false // this is to test freeing gcodefile memory
@@ -138,8 +142,6 @@ namespace MatterHackers.MatterControl
             }
 
             UiThread.RunOnIdle(CheckOnPrinter);
-
-            MinimumSize = new Vector2(590, 630);
 
             string desktopPosition = ApplicationSettings.Instance.get("DesktopPosition");
             if (desktopPosition != null && desktopPosition != "")
@@ -320,7 +322,7 @@ namespace MatterHackers.MatterControl
                 width = Math.Max(int.Parse(sizes[0]), 600);
                 height = Math.Max(int.Parse(sizes[1]), 600);
             }
-            
+
             new MatterControlApplication(width, height);
         }
 

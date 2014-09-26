@@ -174,6 +174,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
                 sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
                 sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
+                sliceOptionsMenuDropList.BorderWidth = 1;
+                sliceOptionsMenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
                 sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
 
                 SetMenuItems();
@@ -238,7 +240,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         void revertbutton_Click(object sender, MouseEventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();
         }
 
         void MenuDropList_SelectionChanged(object sender, EventArgs e)
@@ -282,7 +284,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 bool goodLoad = ActiveSliceSettings.Instance.LoadSettingsFromIni();
                 if (goodLoad)
                 {
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                    ApplicationController.Instance.ReloadAdvancedControlsPanel();
                 }
             });
 

@@ -36,7 +36,10 @@ namespace MatterHackers.MatterControl
             this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
             // Add Child Elements
-            this.AddChild(new ActionBar.PrinterActionRow());
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Responsive)
+            {
+                this.AddChild(new ActionBar.PrinterActionRow());
+            }
             this.AddChild(new PrintStatusRow(queueDataView));
             this.Padding = new BorderDouble(bottom: 6);
 

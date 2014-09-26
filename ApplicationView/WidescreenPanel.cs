@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 
         event EventHandler unregisterEvents;
 
-        public static RootedObjectEventHandler PreChangePannels = new RootedObjectEventHandler();
+        public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
 
         QueueDataView queueDataView = null;
         
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
+            ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
             this.BoundsChanged += new EventHandler(onBoundsChanges);
         }
 
@@ -260,14 +260,14 @@ namespace MatterHackers.MatterControl
                 leftBorderLineHiden = LeftBorderLine.Hidden;
                 rightBorderLineHiden = RightBorderLine.Hidden;
             }
-            PreChangePannels.CallEvents(this, null);
+            PreChangePanels.CallEvents(this, null);
             RemovePanelsAndCreateEmpties();
 
             switch (numberOfPanels)
             {
                 case 1:
                     {
-                        ApplicationWidget.Instance.WidescreenMode = false;
+                        ApplicationController.Instance.WidescreenMode = false;
 
                         LoadCompactView();
                     }
@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl
 
                 case 2:
                 case 3:
-                    ApplicationWidget.Instance.WidescreenMode = true;
+                    ApplicationController.Instance.WidescreenMode = true;
 
                     LoadColumnOne();
                     // make sure we restore the state of column one because LoadColumnThree is going to save it.
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl
 
         public void ReloadAdvancedControlsPanel(object state)
         {
-            PreChangePannels.CallEvents(this, null);
+            PreChangePanels.CallEvents(this, null);
             if (NumberOfVisiblePanels() > 1)
             {
                 UiThread.RunOnIdle(LoadColumnThree);
@@ -406,7 +406,7 @@ namespace MatterHackers.MatterControl
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
         {
             ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();
         }
     }    
 

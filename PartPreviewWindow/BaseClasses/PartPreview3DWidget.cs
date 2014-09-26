@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         protected static SolidSlider InsertUiForSlider(FlowLayoutWidget wordOptionContainer, string header, double min = 0, double max = .5)
         {
-            double scrollBarWidth = 100;
+            double scrollBarWidth = 10;
             TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor);
             spacingText.Margin = new BorderDouble(10, 3, 3, 5);
             spacingText.HAnchor = HAnchor.ParentLeft;

@@ -72,15 +72,18 @@ namespace MatterHackers.MatterControl
 
         void SetDisplayAttributes()
         {
-            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
+            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
 
             this.textImageButtonFactory.FixedWidth = 38* TextWidget.GlobalPointSizeScaleRatio;
             this.textImageButtonFactory.FixedHeight = 20* TextWidget.GlobalPointSizeScaleRatio;
             this.textImageButtonFactory.fontSize = 10;
+            this.textImageButtonFactory.borderWidth = 1;
+            this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+            this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
             
             this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
             this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+            this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             this.HAnchor = HAnchor.ParentLeftRight;
@@ -102,7 +105,7 @@ namespace MatterHackers.MatterControl
         void AddChildElements()
         {
             Button editButton;
-            GroupBox groupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(label, out editButton));
+            AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(label, out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editSettingsWindow == null)
@@ -474,7 +477,7 @@ namespace MatterHackers.MatterControl
             if (stringEvent != null && stringEvent.Data != null)
             {
                 UserSettings.Instance.set("Extruder1PresetTemps", stringEvent.Data);
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 
@@ -568,7 +571,7 @@ namespace MatterHackers.MatterControl
             if (stringEvent != null && stringEvent.Data != null)
             {
                 UserSettings.Instance.set("BedPresetTemps", stringEvent.Data);
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 

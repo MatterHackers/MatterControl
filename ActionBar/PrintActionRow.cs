@@ -53,7 +53,9 @@ namespace MatterHackers.MatterControl.ActionBar
             textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
             textImageButtonFactory.AllowThemeToAdjustImage = false;
 
-            textImageButtonFactory.borderWidth = -1;
+            textImageButtonFactory.borderWidth = 1;
+            textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255,255,255, 100);
+            textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255,255,255, 100);
             textImageButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryAccentColor;
         }
 

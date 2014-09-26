@@ -50,35 +50,26 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
-    public class ApplicationWidget : GuiWidget
+    public abstract class ApplicationView : GuiWidget
     {
-        static ApplicationWidget globalInstance;
-        public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
-        public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+        public abstract void AddElements();
+        
+    }
 
-		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
-		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
-
-        event EventHandler unregisterEvents;
-
-        public bool WidescreenMode { get; set; }
-
-        public ApplicationWidget()
+    public class CompactApplicationView : ApplicationView
+    {
+        CompactTabView widescreenPanel;
+        QueueDataView queueDataView;
+        public CompactApplicationView()
         {
-            Name = "MainSlidePanel";
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+            AddElements();
+            Initialize();
         }
-
-        public void ThemeChanged(object sender, EventArgs e)
-        {
-            ReloadAll(null, null);
-        }
-
-        WidescreenPanel widescreenPanel;
-        void AddElements()
+        
+        public override void AddElements()
         {
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            
+
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
             container.AnchorAll();
 
@@ -89,7 +80,50 @@ namespace MatterHackers.MatterControl
             menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
             menuSeparator.Height = 2;
             menuSeparator.HAnchor = HAnchor.ParentLeftRight;
-            menuSeparator.Margin = new BorderDouble(3, 6,3,3);
+            menuSeparator.Margin = new BorderDouble(3, 6, 3, 3);
+
+            container.AddChild(menuSeparator);
+
+            queueDataView = new QueueDataView();
+            container.AddChild(new ActionBarPlus(queueDataView));
+            container.AddChild(new PrintProgressBar());
+            widescreenPanel = new CompactTabView(queueDataView);
+            container.AddChild(widescreenPanel);
+
+            this.AddChild(container);
+        }
+
+
+        void Initialize()
+        {
+            this.AnchorAll();
+        }
+    }
+
+    public class ResponsiveApplicationView : ApplicationView
+    {
+        WidescreenPanel widescreenPanel;
+        public ResponsiveApplicationView()
+        {
+            AddElements();
+            Initialize();
+        }
+        
+        public override void AddElements()
+        {
+            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+            FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            container.AnchorAll();
+
+            ApplicationMenuRow menuRow = new ApplicationMenuRow();
+            container.AddChild(menuRow);
+
+            GuiWidget menuSeparator = new GuiWidget();
+            menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
+            menuSeparator.Height = 2;
+            menuSeparator.HAnchor = HAnchor.ParentLeftRight;
+            menuSeparator.Margin = new BorderDouble(3, 6, 3, 3);
 
             container.AddChild(menuSeparator);
 
@@ -99,31 +133,67 @@ namespace MatterHackers.MatterControl
             this.AddChild(container);
         }
 
-        public void ReloadAll(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                // give the widget a chance to hear about the close before they are actually colsed. 
-                WidescreenPanel.PreChangePannels.CallEvents(this, null);
-                this.CloseAndRemoveAllChildren();
-                AddElements();
-            });
-        }
 
         void Initialize()
         {
             this.AnchorAll();
         }
+    }
+    
+    
+    public class ApplicationController 
+    {
+        static ApplicationController globalInstance;
+        public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
+        public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 
-        public static ApplicationWidget Instance
+		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
+		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
+        public ApplicationView MainView;
+
+        event EventHandler unregisterEvents;
+
+        public bool WidescreenMode { get; set; }
+
+        public ApplicationController()
+        {
+            //Name = "MainSlidePanel";
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+        }
+
+        public void ThemeChanged(object sender, EventArgs e)
+        {
+            ReloadAll(null, null);
+        }      
+        
+
+        public void ReloadAll(object sender, EventArgs e)
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                // give the widget a chance to hear about the close before they are actually colsed. 
+                WidescreenPanel.PreChangePanels.CallEvents(this, null);
+                MainView.CloseAndRemoveAllChildren();
+                MainView.AddElements();
+            });
+        }
+
+
+        public static ApplicationController Instance
         {
             get
             {
                 if (globalInstance == null)
                 {
-                    globalInstance = new ApplicationWidget();                    
-                    globalInstance.AddElements();
-                    globalInstance.Initialize();
+                    globalInstance = new ApplicationController();
+                    if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+                    {
+                        globalInstance.MainView = new CompactApplicationView();
+                    }
+                    else
+                    {
+                        globalInstance.MainView = new ResponsiveApplicationView();
+                    }
                 }
                 return globalInstance;
             }

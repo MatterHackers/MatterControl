@@ -95,6 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new NotPassedItem("", "temperature"),
             new NotPassedItem("", "bed_temperature"),
             new NotPassedItem("", "bed_shape"),
+            new NotPassedItem("", "extruder_count"),
 
 #if true
             new NotPassedItem("", "has_fan"),

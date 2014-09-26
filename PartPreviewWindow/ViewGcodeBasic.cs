@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         CheckBox expandDisplayOptions;
         CheckBox syncToPrint;
 
-        GuiWidget gcodeDispalyWidget;
+        GuiWidget gcodeDisplayWidget;
 
         EventHandler unregisterEvents;
         bool widgetHasCloseButton;
@@ -80,6 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Vector2 bedCenter;
         Vector3 viewerVolume;
         MeshViewerWidget.BedShape bedShape;
+        int sliderWidth;
 
         public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, bool addCloseButton)
         {
@@ -88,6 +89,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.bedCenter = bedCenter;
             widgetHasCloseButton = addCloseButton;
             this.printItem = printItem;
+
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                sliderWidth = 20;
+            }
+            else
+            {
+                sliderWidth = 10;
+            }
 
             CreateAndAddChildren(null);
 
@@ -157,7 +167,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
             centerPartPreviewAndControls.AnchorAll();
 
-            gcodeDispalyWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
+            gcodeDisplayWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
 
             SetProcessingMessage("Press 'Add' to select an item.".Localize());
             if (printItem != null)
@@ -165,7 +175,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 SetProcessingMessage(LocalizedString.Get("Loading GCode..."));
                 if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
                 {
-                    gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
+                    gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
                 }
                 else
                 {
@@ -185,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                         if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
                         {
-                            gcodeDispalyWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
+                            gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
                         }
 
                         // we only hook these up to make sure we can regenerate the gcode when we want
@@ -203,7 +213,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 generateGCodeButton.Visible = false;
             }
 
-            centerPartPreviewAndControls.AddChild(gcodeDispalyWidget);
+            centerPartPreviewAndControls.AddChild(gcodeDisplayWidget);
 
             buttonRightPanel = CreateRightButtonPanel();
             centerPartPreviewAndControls.AddChild(buttonRightPanel);
@@ -219,7 +229,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "".Localize());
             meshViewerWidget.AnchorAll();
             meshViewerWidget.AlwaysRenderBed = true;
-            gcodeDispalyWidget.AddChild(meshViewerWidget);
+            gcodeDisplayWidget.AddChild(meshViewerWidget);
             meshViewerWidget.Visible = false;
             meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
 
@@ -319,11 +329,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				expandDisplayOptions = expandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandDisplayOptions.Margin = new BorderDouble(bottom: 2);
                 buttonRightPanel.AddChild(expandDisplayOptions);
-                expandDisplayOptions.Checked = true;
+                expandDisplayOptions.Checked = false;
 
                 displayOptionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 displayOptionsContainer.HAnchor = HAnchor.ParentLeftRight;
-                //displayOptionsContainer.Visible = false;
+                displayOptionsContainer.Padding = new BorderDouble(left: 6);
+                displayOptionsContainer.Visible = false;
                 buttonRightPanel.AddChild(displayOptionsContainer);
 
                 GuiWidget verticalSpacer = new GuiWidget();
@@ -715,7 +726,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 labelContainer.AddChild(gcodeProcessingStateInfoText);
                 labelContainer.Selectable = false;
 
-                gcodeDispalyWidget.AddChild(labelContainer);
+                gcodeDisplayWidget.AddChild(labelContainer);
             }
 
             if (message == "")
@@ -752,12 +763,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
                 layerSelectionButtonsPanel.AddChild(navigationWidget);
 
-                selectLayerSlider = new SolidSlider(new Vector2(), 10, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
+                selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
-                layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), 10);
+                layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
                 layerRenderRatioSlider.FirstValue = 0;
                 layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
                 layerRenderRatioSlider.SecondValue = 1;
@@ -810,11 +821,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void SetSliderSizes()
         {
-            selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDispalyWidget.Width - 20, 100);
-            selectLayerSlider.TotalWidthInPixels = gcodeDispalyWidget.Height - 80;
+            selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDisplayWidget.Width - 20, 70);
+            selectLayerSlider.TotalWidthInPixels = gcodeDisplayWidget.Height - 80;
 
-            layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 60);
-            layerRenderRatioSlider.TotalWidthInPixels = gcodeDispalyWidget.Width - 100;
+            layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 70);
+            layerRenderRatioSlider.TotalWidthInPixels = gcodeDisplayWidget.Width - 100;
         }
 
         private void AddHandlers()
@@ -822,15 +833,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandModelOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandModelOptions_CheckedStateChanged);
             expandDisplayOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandDisplayOptions_CheckedStateChanged);
         }
+        
 
         void expandModelOptions_CheckedStateChanged(object sender, EventArgs e)
         {
-            modelOptionsContainer.Visible = expandModelOptions.Checked;
+            if (modelOptionsContainer.Visible = expandModelOptions.Checked)
+            {
+                if (expandModelOptions.Checked == true)
+                {
+                    expandDisplayOptions.Checked = false;
+                }
+                modelOptionsContainer.Visible = expandModelOptions.Checked;
+            }
         }
 
         void expandDisplayOptions_CheckedStateChanged(object sender, EventArgs e)
         {
-            displayOptionsContainer.Visible = expandDisplayOptions.Checked;
+            if (displayOptionsContainer.Visible != expandDisplayOptions.Checked)
+            {
+                if (expandDisplayOptions.Checked == true)
+                {
+                    expandModelOptions.Checked = false;
+                }
+                displayOptionsContainer.Visible = expandDisplayOptions.Checked;
+            }
         }
 
         public override void OnClosed(EventArgs e)
