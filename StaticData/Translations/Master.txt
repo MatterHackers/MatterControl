@@ -2603,3 +2603,36 @@ Translated:Warning - Moving Too Low
 English:Oops! Could not find this file:
 Translated:Oops! Could not find this file:
 
+English:The number of extruders this machine has.
+Translated:The number of extruders this machine has.
+
+English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
+Translated:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
+
+English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
+Translated:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
+
+English:Minimum Print Speed
+Translated:Minimum Print Speed
+
+English:Skirt and Raft
+Translated:Skirt and Raft
+
+English:Length on Move
+Translated:Length on Move
+
+English:Length on Tool Change
+Translated:Length on Tool Change
+
+English:Minimum Extrusion\nRequiring Retraction
+Translated:Minimum Extrusion\nRequiring Retraction
+
+English:Minimum Fan Speed
+Translated:Minimum Fan Speed
+
+English:Extruder Count
+Translated:Extruder Count
+
+English:Hardware
+Translated:Hardware
+

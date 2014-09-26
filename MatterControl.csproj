@@ -394,7 +394,7 @@
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
-    <ProjectReference Include="Localizations\Localizations.csproj">
+    <ProjectReference Include="..\agg-sharp\Localizations\Localizations.csproj">
       <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
       <Name>Localizations</Name>
     </ProjectReference>
