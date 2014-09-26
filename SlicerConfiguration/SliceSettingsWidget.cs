@@ -45,7 +45,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             "has_fan", 
             "has_heated_bed", 
-            "has_sd_card_reader", 
+            "has_sd_card_reader",
+            "extruder_count",
         };
 
         static List<string> settingsRequiringPreviewUpdate = new List<string>() 
@@ -334,37 +335,52 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 bool needToAddSubGroup = false;
                 foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
                 {
-                    bool addedSettingToSubGroup = false;
-                    FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                    topToBottomSettings.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-
-                    foreach (OrganizerSettingsData settingInfo in subGroup.SettingDataList)
+                    string subGroupTitle = subGroup.Name;
+                    int numberOfCopies = 1;
+                    if (subGroup.Name == "Extruder X")
                     {
-                        if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName))
-                        {
-                            addedSettingToSubGroup = true;
-                            GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth);
-                            topToBottomSettings.AddChild(controlsForThisSetting);
-
-                            if (showHelpBox.Checked)
-                            {
-                                AddInHelpText(topToBottomSettings, settingInfo);
-                            }
-                        }
+                        numberOfCopies = int.Parse(ActiveSliceSettings.Instance.GetActiveValue("extruder_count"));
                     }
 
-                    if (addedSettingToSubGroup)
+                    for (int copyIndex = 0; copyIndex < numberOfCopies; copyIndex++)
                     {
-                        needToAddSubGroup = true;
-                        string groupBoxLabel = LocalizedString.Get(subGroup.Name);
-                        AltGroupBox groupBox = new AltGroupBox(groupBoxLabel);
-                        groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                        groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-                        groupBox.AddChild(topToBottomSettings);
-                        groupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                        groupBox.Margin = new BorderDouble(3,3,3,0);
+                        if (subGroup.Name == "Extruder X")
+                        {
+                            subGroupTitle = "Extruder {0}".FormatWith(copyIndex + 1);
+                        }
 
-                        subGroupLayoutTopToBottom.AddChild(groupBox);
+                        bool addedSettingToSubGroup = false;
+                        FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                        topToBottomSettings.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+                        foreach (OrganizerSettingsData settingInfo in subGroup.SettingDataList)
+                        {
+                            if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingInfo.SlicerConfigName))
+                            {
+                                addedSettingToSubGroup = true;
+                                GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, copyIndex);
+                                topToBottomSettings.AddChild(controlsForThisSetting);
+
+                                if (showHelpBox.Checked)
+                                {
+                                    AddInHelpText(topToBottomSettings, settingInfo);
+                                }
+                            }
+                        }
+
+                        if (addedSettingToSubGroup)
+                        {
+                            needToAddSubGroup = true;
+                            string groupBoxLabel = LocalizedString.Get(subGroupTitle);
+                            AltGroupBox groupBox = new AltGroupBox(groupBoxLabel);
+                            groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                            groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+                            groupBox.AddChild(topToBottomSettings);
+                            groupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                            groupBox.Margin = new BorderDouble(3, 3, 3, 0);
+
+                            subGroupLayoutTopToBottom.AddChild(groupBox);
+                        }
                     }
                 }
 
@@ -375,8 +391,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     subGroupLayoutTopToBottom.VAnchor = VAnchor.FitToChildren;
                     subGroupLayoutTopToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-                    //subGroupLayoutTopToBottom.DebugShowBounds = true;
-                    //scrollOnGroupTab.DebugShowBounds = true;
                     scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
                     groupTabPage.AddChild(scrollOnGroupTab);
                     groupTabs.AddTab(groupTabWidget);
@@ -441,7 +455,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, item.Key))
                     {
                         OrganizerSettingsData settingInfo = new OrganizerSettingsData(item.Key, item.Key, OrganizerSettingsData.DataEditTypes.STRING);
-                        GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth);
+                        GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, 0);
                         topToBottomSettings.AddChild(controlsForThisSetting);
                         count++;
                     }
@@ -487,7 +501,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth)
+        private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth, int extruderIndex)
         {
             GuiWidget container = new GuiWidget();
             FlowLayoutWidget leftToRightLayout = new FlowLayoutWidget();
@@ -774,13 +788,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             double currentXValue = 0;
                             double.TryParse(xyValueStrings[0], out currentXValue);
                             MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
-
                             double currentYValue = 0;
                             double.TryParse(xyValueStrings[1], out currentYValue);
                             MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
                             {
                                 xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
                                 {
+                                    int extruderIndexLocal = extruderIndex;
                                     SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
                                     CallEventsOnSettingsChange(settingData);
                                 };
@@ -793,6 +807,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             {
                                 yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
                                 {
+                                    int extruderIndexLocal = extruderIndex;
                                     SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
                                     CallEventsOnSettingsChange(settingData);
                                 };
