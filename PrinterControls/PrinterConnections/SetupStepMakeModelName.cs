@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return settingsDict;
         }
 
-        private SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
+        public SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
         {
             SliceSettingsCollection collection = null;
             Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(GetDefaultPrinterSlicePath(make, model));
@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return collection;
         }
 
-        private void LoadSlicePresets(string make, string model, string tag)
+        public void LoadSlicePresets(string make, string model, string tag)
         {
             string[] slicePresetPaths = GetSlicePresets(make, model, tag);
 
