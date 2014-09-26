@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget rotateOptionContainer;
         FlowLayoutWidget scaleOptionContainer;
         FlowLayoutWidget mirrorOptionContainer;
-
+        FlowLayoutWidget materialOptionContainer;
 
         List<string> pendingPartsToLoad = new List<string>();
 
@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         CheckBox expandRotateOptions;
         CheckBox expandScaleOptions;
         CheckBox expandMirrorOptions;
+        CheckBox expandMaterialOptions;
 
         Button autoArrangeButton;
         FlowLayoutWidget saveButtons;
@@ -546,6 +547,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void copyPartBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
             UnlockEditControls();
             PullMeshDataFromAsynchLists();
             saveButtons.Visible = true;
@@ -748,6 +753,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void arrangePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
             UnlockEditControls();
             saveButtons.Visible = true;
             viewControls3D.partSelectButton.ClickButton(null);
@@ -757,6 +766,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
             UnlockEditControls();
             saveButtons.Visible = true;
             viewControls3D.partSelectButton.ClickButton(null);
@@ -805,6 +818,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     string loadedFileName = filesToLoad[i];
                     Mesh copyMesh = StlProcessing.Load(Path.GetFullPath(loadedFileName));
+                    if (WidgetHasBeenClosed)
+                    {
+                        return;
+                    }
                     if (copyMesh != null)
                     {
                         int halfNextPercent = (nextPercent - lastPercent) / 2;
@@ -819,6 +836,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             subMesh.Translate(-soubMeshBoundsCenter);
 
                             PlatingHelper.FindPositionForPartAndAddToPlate(subMesh, ScaleRotateTranslate.Identity(), asynchPlatingDataList, asynchMeshesList, asynchMeshTransforms);
+                            if (WidgetHasBeenClosed)
+                            {
+                                return;
+                            }
                             PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshesList, asynchMeshesList.Count - 1);
 
                             backgroundWorker.ReportProgress(lastPercent + subMeshIndex + 1 * subLength / subMeshes.Length);
@@ -972,6 +993,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createDiscreteMeshesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
             // remove the original mesh and replace it with these new meshes
             PullMeshDataFromAsynchLists();
 
@@ -1045,6 +1070,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     buttonRightPanel.AddChild(mirrorOptionContainer);
 
                     AddMirrorControls(mirrorOptionContainer);
+                }
+
+                // put in the material options
+                //int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+                if(true)
+                {
+                    expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                    expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
+                    buttonRightPanel.AddChild(expandMaterialOptions);
+
+                    materialOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                    materialOptionContainer.HAnchor = HAnchor.ParentLeftRight;
+                    materialOptionContainer.Visible = false;
+                    buttonRightPanel.AddChild(materialOptionContainer);
+
+                    AddMaterialControls(materialOptionContainer);
                 }
 
 #if false // this is not finished yet so it is in here for reference in case we do finish it. LBB 2014/04/04
@@ -1711,12 +1752,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.FixedWidth = 0;
         }
 
+        void AddMaterialControls(FlowLayoutWidget buttonPanel)
+        {
+        }
+
         private void AddHandlers()
         {
-            expandViewOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandViewOptions_CheckedStateChanged);
-            expandMirrorOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandMirrorOptions_CheckedStateChanged);            
-            expandRotateOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandRotateOptions_CheckedStateChanged);
-            expandScaleOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandScaleOptions_CheckedStateChanged);
+            expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
+            expandMirrorOptions.CheckedStateChanged += expandMirrorOptions_CheckedStateChanged;
+            expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
+            expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
+            expandScaleOptions.CheckedStateChanged += expandScaleOptions_CheckedStateChanged;
         }
 
         bool partSelectButtonWasClicked = false;
@@ -1784,6 +1830,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
             UnlockEditControls();
             // NOTE: we do not pull the data back out of the asynch lists.
             saveButtons.Visible = false;
@@ -1803,6 +1853,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     expandScaleOptions.Checked = false;
                     expandRotateOptions.Checked = false;
                     expandMirrorOptions.Checked = false;
+                    expandMaterialOptions.Checked = false;
                 }
                 viewOptionContainer.Visible = expandViewOptions.Checked;
             }            
@@ -1817,12 +1868,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     expandScaleOptions.Checked = false;
                     expandRotateOptions.Checked = false;
                     expandViewOptions.Checked = false;
+                    expandMaterialOptions.Checked = false;
                 }
                 mirrorOptionContainer.Visible = expandMirrorOptions.Checked;
             }            
         }
 
-        
+        void expandMaterialOptions_CheckedStateChanged(object sender, EventArgs e)
+        {
+            if (expandMaterialOptions.Checked == true)
+            {
+                expandScaleOptions.Checked = false;
+                expandRotateOptions.Checked = false;
+                expandViewOptions.Checked = false;
+            }
+            materialOptionContainer.Visible = expandMaterialOptions.Checked;
+        }
 
         void expandRotateOptions_CheckedStateChanged(object sender, EventArgs e)
         {
@@ -1833,6 +1894,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     expandViewOptions.Checked = false;
                     expandScaleOptions.Checked = false;
                     expandMirrorOptions.Checked = false;
+                    expandMaterialOptions.Checked = false;
                 }
                 rotateOptionContainer.Visible = expandRotateOptions.Checked;
             }
@@ -1847,6 +1909,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     expandViewOptions.Checked = false;
                     expandRotateOptions.Checked = false;
                     expandMirrorOptions.Checked = false;
+                    expandMaterialOptions.Checked = false;
                 }
                 scaleOptionContainer.Visible = expandScaleOptions.Checked;
             }

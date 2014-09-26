@@ -368,6 +368,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public int ExtruderCount
+        {
+            get
+            {
+                return int.Parse(ActiveSliceSettings.Instance.GetActiveValue("extruder_count"));
+            }
+        }
+
         public double NozzleDiameter
         {
             get { return ParseDouble(GetActiveValue("nozzle_diameter")); }
