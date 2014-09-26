@@ -1569,7 +1569,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             degreesContainer.AddChild(degreesLabel);
             degreesContainer.AddChild(horizontalSpacer);
 
-            MHNumberEdit degreesControl = new MHNumberEdit(45, pixelWidth: 40, allowNegatives: true, increment: 5, minValue: -360, maxValue: 360);
+            MHNumberEdit degreesControl = new MHNumberEdit(45, pixelWidth: 40, allowNegatives: true, allowDecimals: true, increment: 5, minValue: -360, maxValue: 360);
             degreesControl.VAnchor = Agg.UI.VAnchor.ParentTop;
             degreesContainer.AddChild(degreesControl);
             rotateControls.Add(degreesControl);
