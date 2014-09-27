@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("zOffset", "z_offset"),
 
             //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
-            new MapItem("extruderOffsets", "extruder_offset"),
+            new ExtruderOffsets("extruderOffsets", "extruder_offset"),
 
             //extrusionWidth=0.4 # The width of the line to extrude.
             new MapItem("extrusionWidth", "nozzle_diameter"),
@@ -325,6 +325,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 : base(mappedKey, originalKey, scale)
             {
                 this.originalReference = originalReference;
+            }
+        }
+
+        public class ExtruderOffsets : MapItem
+        {
+            public override string MappedValue
+            {
+                get
+                {
+                    // map from 0x0,0x0,0x0
+                    // to [[0,0],[0,0]]
+                    StringBuilder final = new StringBuilder("[");
+                    string[] offsets = base.MappedValue.Split(',');
+                    bool first = true;
+                    int count = 0;
+                    foreach (string offset in offsets)
+                    {
+                        if(!first)
+                        {
+                            final.Append(",");
+                        }
+                        string[] xy = offset.Split('x');
+                        final.Append("[{0},{1}]".FormatWith(double.Parse(xy[0]), double.Parse(xy[1])));
+                        first = false;
+                        count++;
+                    }
+                    while (count < 16)
+                    {
+                        final.Append(",[0,0]");
+                        count++;
+                    }
+                    final.Append("]");
+
+                    return final.ToString();
+                }
+            }
+
+            public ExtruderOffsets(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
+            {
             }
         }
 

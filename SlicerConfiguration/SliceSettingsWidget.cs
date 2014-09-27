@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     int numberOfCopies = 1;
                     if (subGroup.Name == "Extruder X")
                     {
-                        numberOfCopies = int.Parse(ActiveSliceSettings.Instance.GetActiveValue("extruder_count"));
+                        numberOfCopies = ActiveSliceSettings.Instance.ExtruderCount;
                     }
 
                     for (int copyIndex = 0; copyIndex < numberOfCopies; copyIndex++)

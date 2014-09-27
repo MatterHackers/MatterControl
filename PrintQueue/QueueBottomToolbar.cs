@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         void AddItemsToQueue(object state)
         {
             string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode;*.zip", multiSelect: true, initialDirectory: documentsPath);
+            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true, initialDirectory: documentsPath);
 			openParams.ActionButtonLabel = "Add to Queue";
 			openParams.Title = "MatterControl: Select A File";
 

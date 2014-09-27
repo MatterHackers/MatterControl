@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.ActionBar
         void AddButtonOnIdle(object state)
         {
             string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode;*.zip", multiSelect: true, initialDirectory: documentsPath);
+            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true, initialDirectory: documentsPath);
             FileDialog.OpenFileDialog(ref openParams);
             if (openParams.FileNames != null)
             {

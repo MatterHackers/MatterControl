@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void loadFile_ClickOnIdle(object state)
         {
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode", multiSelect: true);
+            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
             FileDialog.OpenFileDialog(ref openParams);
             if (openParams.FileNames != null)
             {

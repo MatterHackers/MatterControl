@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         UiThread.RunOnIdle((state) =>
                         {
-                            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file|*.stl", multiSelect: true);
+                            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
 
                             FileDialog.OpenFileDialog(ref openParams);
                             LoadAndAddPartsToPlate(openParams.FileNames);
@@ -1010,7 +1010,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (OpenAddDialogWhenDone)
             {
                 OpenAddDialogWhenDone = false;
-                OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file|*.stl", multiSelect: true);
+                OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
 
                 FileDialog.OpenFileDialog(ref openParams);
                 LoadAndAddPartsToPlate(openParams.FileNames);

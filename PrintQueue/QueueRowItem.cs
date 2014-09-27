@@ -376,7 +376,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             if (thisIndexInQueue != -1 && File.Exists(PrintItemWrapper.FileLocation))
             {
                 string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-                string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "stl");
+                string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "design");
                 if (!Directory.Exists(stagingFolder))
                 {
                     Directory.CreateDirectory(stagingFolder);
