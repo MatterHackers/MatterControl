@@ -286,6 +286,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 renderType |= RenderType.SimulateExtrusion;
             }
+            if (gcodeViewWidget.HideExtruderOffsets)
+            {
+                renderType |= RenderType.DrawUsingExtruderOffsets;
+            }
 
             return renderType;
         }
@@ -293,8 +297,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
         {
             GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
-            gcodeViewWidget.gCodeRenderer.Render3D(0, Math.Min(gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.LoadedGCode.NumChangesInZ), gcodeViewWidget.TotalTransform, 1, GetRenderType(),
-                gcodeViewWidget.FeatureToStartOnRatio0To1, gcodeViewWidget.FeatureToEndOnRatio0To1);
+            
+            GCodeRenderInfo renderInfo = new GCodeRenderInfo(0, 
+                Math.Min(gcodeViewWidget.ActiveLayerIndex + 1,gcodeViewWidget.LoadedGCode.NumChangesInZ),
+                gcodeViewWidget.TotalTransform,
+                1, 
+                GetRenderType(),
+                gcodeViewWidget.FeatureToStartOnRatio0To1, 
+                gcodeViewWidget.FeatureToEndOnRatio0To1,
+                new Vector2[] { ActiveSliceSettings.Instance.GetOffset(0), ActiveSliceSettings.Instance.GetOffset(1) });
+
+            gcodeViewWidget.gCodeRenderer.Render3D(renderInfo);
         }
 
         private void SetAnimationPosition()
@@ -539,6 +552,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     gcodeViewWidget.SimulateExtrusion = simulateExtrusion.Checked;
                 };
                 layerInfoContainer.AddChild(simulateExtrusion);
+            }
+
+            // put in a simulate extrusion checkbox
+            if(ActiveSliceSettings.Instance.ExtruderCount > 1)
+            {
+                CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: ActiveTheme.Instance.PrimaryTextColor);
+                hideExtruderOffsets.Checked = gcodeViewWidget.HideExtruderOffsets;
+                hideExtruderOffsets.CheckedStateChanged += (sender, e) =>
+                {
+                    gcodeViewWidget.HideExtruderOffsets = hideExtruderOffsets.Checked;
+                };
+                layerInfoContainer.AddChild(hideExtruderOffsets);
             }
 
             // put in a show 3D view checkbox

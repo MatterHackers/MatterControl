@@ -376,6 +376,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public Vector2 GetOffset(int extruderIndex)
+        {
+            string currentOffsets = ActiveSliceSettings.Instance.GetActiveValue("extruder_offset");
+            string[] offsets = currentOffsets.Split(',');
+            int count = 0;
+            foreach (string offset in offsets)
+            {
+                if (count == extruderIndex)
+                {
+                    string[] xy = offset.Split('x');
+                    return new Vector2(double.Parse(xy[0]), double.Parse(xy[1]));
+                }
+                count++;
+            }
+
+            return Vector2.Zero;
+        }
+
         public double NozzleDiameter
         {
             get { return ParseDouble(GetActiveValue("nozzle_diameter")); }
