@@ -101,8 +101,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             CreateAndAddChildren(null);
 
-            SliceSettingsWidget.PartPreviewSettingsChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("bed_size", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("print_center", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("build_height", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("bed_shape", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("center_part_on_bed", RecreateBedAndPartPosition, ref unregisterEvents);
+
+            SliceSettingsWidget.RegisterForSettingsChange("extruder_offset", Clear3DGCode, ref unregisterEvents);
+
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+        }
+
+        void Clear3DGCode(object sender, EventArgs e)
+        {
+            gcodeViewWidget.gCodeRenderer.Clear3DGCode();
+            gcodeViewWidget.Invalidate();
         }
 
         void RecreateBedAndPartPosition(object sender, EventArgs e)

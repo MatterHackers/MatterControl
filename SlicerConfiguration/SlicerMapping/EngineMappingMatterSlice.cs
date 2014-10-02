@@ -88,8 +88,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
             new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
             
-            //new MapItemToBool("extruder_2_offset", ""),
-            //new MapItemToBool("temperature_extruder_2", ""),
             new NotPassedItem("", "extruder_count"),
 
             //endCode=M104 S0

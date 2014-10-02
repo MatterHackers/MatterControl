@@ -50,7 +50,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public PartPreview3DWidget()
         {
-            SliceSettingsWidget.PartPreviewSettingsChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("bed_size", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("print_center", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("build_height", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("bed_shape", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("center_part_on_bed", RecreateBedAndPartPosition, ref unregisterEvents);
+#if false
+            "extruder_offset",
+#endif
+
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
         }
 

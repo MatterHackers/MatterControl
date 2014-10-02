@@ -49,18 +49,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             "extruder_count",
         };
 
-        static List<string> settingsRequiringPreviewUpdate = new List<string>() 
-        {
-            "bed_size", 
-            "print_center", 
-            "build_height", 
-            "bed_shape", 
-            "center_part_on_bed",
-            "extruder_offset",
-        };
-
-        public static RootedObjectEventHandler PartPreviewSettingsChanged = new RootedObjectEventHandler();
-
         const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
         const string SliceSettingsLevelEntry = "SliceSettingsLevel";
         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
@@ -489,16 +477,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return dataTypeInfo;
         }
 
+        static Dictionary<string, RootedObjectEventHandler> functionsToCallOnChange = new Dictionary<string, RootedObjectEventHandler>();
+        public static void RegisterForSettingsChange(string settingName, EventHandler functionToCallOnChange, ref EventHandler functionThatWillBeCalledToUnregisterEvent)
+        {
+            if (!functionsToCallOnChange.ContainsKey(settingName))
+            {
+                functionsToCallOnChange.Add(settingName, new RootedObjectEventHandler());
+            }
+
+            RootedObjectEventHandler rootedEvent = functionsToCallOnChange[settingName];
+            rootedEvent.RegisterEvent(functionToCallOnChange, ref functionThatWillBeCalledToUnregisterEvent);
+        }
+
         private void CallEventsOnSettingsChange(OrganizerSettingsData settingData)
         {
+            foreach (KeyValuePair<string, RootedObjectEventHandler> keyValue in functionsToCallOnChange)
+            {
+                if (keyValue.Key == settingData.SlicerConfigName)
+                {
+                    keyValue.Value.CallEvents(null, null);
+                }
+            }
+
             if (settingToReloadUiWhenChanged.Contains(settingData.SlicerConfigName))
             {
                 ApplicationController.Instance.ReloadAll(null, null);
-            }
-
-            if (settingsRequiringPreviewUpdate.Contains(settingData.SlicerConfigName))
-            {
-                PartPreviewSettingsChanged.CallEvents(this, null);
             }
         }
 
