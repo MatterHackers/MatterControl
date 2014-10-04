@@ -817,7 +817,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     int subLength = nextPercent - lastPercent;
 
                     string loadedFileName = filesToLoad[i];
-                    Mesh copyMesh = StlProcessing.Load(Path.GetFullPath(loadedFileName));
+                    Mesh copyMesh = null;
+                    switch (Path.GetExtension(loadedFileName).ToUpper())
+                    {
+                        case ".STL":
+                            StlProcessing.Load(Path.GetFullPath(loadedFileName));
+                            break;
+
+                        case ".AMF":
+                            AmfProcessing.Load(Path.GetFullPath(loadedFileName));
+                            break;
+                    }
+
                     if (WidgetHasBeenClosed)
                     {
                         return;
