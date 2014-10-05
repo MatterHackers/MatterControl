@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsControlBar = new SettingsControlBar();
             pageTopToBottomLayout.AddChild(settingsControlBar);
 
-            noConnectionMessageContainer = new AltGroupBox(LocalizedString.Get("No Printer Selected"));
+            noConnectionMessageContainer = new AltGroupBox(new TextWidget(LocalizedString.Get("No Printer Selected"), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;

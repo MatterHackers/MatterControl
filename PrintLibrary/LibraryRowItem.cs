@@ -51,7 +51,7 @@ using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-    public class LibraryRowItem : ClickWidget
+    public class LibraryRowItem : GuiWidget
     {
         public PrintItemWrapper printItemWrapper;
         public RGBA_Bytes WidgetTextColor;
@@ -59,49 +59,55 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         public bool isActivePrint = false;
         public bool isSelectedItem = false;
-        public bool isHoverItem = false;
+        
+        private bool isHoverItem = false;
         TextWidget partLabel;
-        Button viewLink;
-        Button removeLink;
-        Button exportLink;
-        Button addToQueueLink;
         public CheckBox selectionCheckBox;
-        FlowLayoutWidget buttonContainer;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		bool exportWindowIsOpen = false;
-		bool viewWindowIsOpen = false;
-		PartPreviewMainWindow viewingWindow;
-		ExportPrintItemWindow exportingWindow;
+        bool viewWindowIsOpen = false;
+        PartPreviewMainWindow viewingWindow;
         LibraryDataView libraryDataView;
+        SlideWidget rightButtonOverlay;
+        GuiWidget selectionCheckBoxContainer;
+        bool editMode = false;
+        public bool EditMode
+        {
+            get { return editMode; }
+            set
+            {
+                if (this.editMode != value)
+                {
+                    this.editMode = value;
+                }
+            }
+        }
 
-		private void OpenExportWindow()
-		{
-			if (exportWindowIsOpen == false)
-			{
-				exportingWindow = new ExportPrintItemWindow(this.printItemWrapper);
-				this.exportWindowIsOpen = true;
-				exportingWindow.Closed += new EventHandler(ExportLibraryItemWindow_Closed);
-				exportingWindow.ShowAsSystemWindow ();
-			}
-			else 
-			{
-				if (exportingWindow != null)
-				{
-					exportingWindow.BringToFront ();
-				}
-			}
-
-		}
-
-		void ExportLibraryItemWindow_Closed(object sender, EventArgs e)
-		{
-			this.exportWindowIsOpen = false;
-		}
+        public bool IsHoverItem
+        {
+            get { return isHoverItem; }
+            set
+            {
+                if (this.isHoverItem != value)
+                {
+                    this.isHoverItem = value;
+                    if (value == true && !this.libraryDataView.EditMode)
+                    {
+                        this.rightButtonOverlay.SlideIn();
+                    }
+                    else
+                    {
+                        this.rightButtonOverlay.SlideOut(); 
+                    }
+                }
+            }
+        }
 
         public LibraryRowItem(PrintItemWrapper printItem, LibraryDataView libraryDataView)
         {
             this.libraryDataView = libraryDataView;
             this.printItemWrapper = printItem;
+            this.Cursor = Cursors.Hand;
+
             linkButtonFactory.fontSize = 10;
             linkButtonFactory.textColor = RGBA_Bytes.White;
 
@@ -114,105 +120,142 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
             mainContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            mainContainer.VAnchor = VAnchor.ParentBottomTop;
             {
-                GuiWidget selectionCheckBoxContainer = new GuiWidget();
-                selectionCheckBoxContainer.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-                selectionCheckBoxContainer.HAnchor = Agg.UI.HAnchor.FitToChildren;
+                GuiWidget primaryContainer = new GuiWidget();
+                primaryContainer.HAnchor = HAnchor.ParentLeftRight;
+                primaryContainer.VAnchor = VAnchor.ParentBottomTop;
+
+                FlowLayoutWidget primaryFlow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+                primaryFlow.HAnchor = HAnchor.ParentLeftRight;
+                primaryFlow.VAnchor = VAnchor.ParentBottomTop;
+
+                PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(printItem, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
+
+                selectionCheckBoxContainer = new GuiWidget();
+                selectionCheckBoxContainer.VAnchor = VAnchor.ParentBottomTop;
+                selectionCheckBoxContainer.Width = 40;
+                selectionCheckBoxContainer.Visible = false;
                 selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
                 selectionCheckBox = new CheckBox("");
                 selectionCheckBox.VAnchor = VAnchor.ParentCenter;
                 selectionCheckBox.HAnchor = HAnchor.ParentCenter;
                 selectionCheckBoxContainer.AddChild(selectionCheckBox);
-                
-                FlowLayoutWidget leftColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                leftColumn.VAnchor |= VAnchor.ParentTop;
 
-
-                FlowLayoutWidget middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                GuiWidget middleColumn = new GuiWidget(0, 0);
                 middleColumn.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-                middleColumn.Padding = new BorderDouble(0,6);
-                middleColumn.Margin = new BorderDouble(10,0);
+                middleColumn.Margin = new BorderDouble(10, 6);                
                 {
                     string labelName = textInfo.ToTitleCase(printItem.Name);
                     labelName = labelName.Replace('_', ' ');
-                    partLabel = new TextWidget(labelName, pointSize: 12);
+                    partLabel = new TextWidget(labelName, pointSize: 14);
                     partLabel.TextColor = WidgetTextColor;
-                    partLabel.MinimumSize = new Vector2(1, 16);
+                    partLabel.MinimumSize = new Vector2(1, 18);
+                    partLabel.VAnchor = VAnchor.ParentCenter;
                     middleColumn.AddChild(partLabel);
                 }
+                primaryFlow.AddChild(selectionCheckBoxContainer);
+                primaryFlow.AddChild(thumbnailWidget);
+                primaryFlow.AddChild(middleColumn);
 
-                FlowLayoutWidget rightColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                rightColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;                
+                primaryContainer.AddChild(primaryFlow);
 
-                buttonContainer = new FlowLayoutWidget();
-                buttonContainer.Margin = new BorderDouble(0,6);
-                buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight; 
-                {
-					addToQueueLink = linkButtonFactory.Generate(LocalizedString.Get("Add to Queue"));
-                    addToQueueLink.Margin = new BorderDouble(left: 0, right: 10);
-                    addToQueueLink.VAnchor = VAnchor.ParentCenter;
+                primaryClickContainer = new ClickWidget();
+                primaryClickContainer.HAnchor = HAnchor.ParentLeftRight;
+                primaryClickContainer.VAnchor = VAnchor.ParentBottomTop;
 
-                    addToQueueLink.Click += (sender, e) =>
-                    {
-                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(this.printItemWrapper.Name, this.printItemWrapper.FileLocation)));
-                    };
+                primaryContainer.AddChild(primaryClickContainer);
 
-					viewLink = linkButtonFactory.Generate(LocalizedString.Get("View"));
-                    viewLink.Margin = new BorderDouble(left: 0, right:10);
-                    viewLink.VAnchor = VAnchor.ParentCenter;                    
+                rightButtonOverlay = getItemActionButtons();
+                rightButtonOverlay.Visible = false;
 
-					exportLink = linkButtonFactory.Generate(LocalizedString.Get("Export"));
-                    exportLink.Margin = new BorderDouble(left: 0, right: 10);
-                    exportLink.VAnchor = VAnchor.ParentCenter;
+                mainContainer.AddChild(primaryContainer);
+                mainContainer.AddChild(rightButtonOverlay);
 
-                    exportLink.Click += (sender, e) =>
-                    {
-						OpenExportWindow();
-                    };
-
-					removeLink = linkButtonFactory.Generate(LocalizedString.Get("Remove"));
-                    removeLink.Margin = new BorderDouble(left: 10, right: 10);
-                    removeLink.VAnchor = VAnchor.ParentCenter;
-
-                    buttonContainer.AddChild(addToQueueLink);
-                    buttonContainer.AddChild(viewLink);
-                    buttonContainer.AddChild(exportLink);
-                    buttonContainer.AddChild(removeLink);
-                }
-                middleColumn.AddChild(buttonContainer);
-                //rightColumn.AddChild(buttonContainer);
-
-                mainContainer.AddChild(selectionCheckBoxContainer);
-                {
-                    PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(printItem, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-                    mainContainer.AddChild(thumbnailWidget);
-                }
-                mainContainer.AddChild(leftColumn);
-                mainContainer.AddChild(middleColumn);                
-                mainContainer.AddChild(rightColumn);
             }
             this.AddChild(mainContainer);
             AddHandlers();
         }
 
-        void SetDisplayAttributes()
+        ClickWidget primaryClickContainer;
+
+        SlideWidget getItemActionButtons()
         {
-            this.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
-            this.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-            this.Height = 28;
-			this.BackgroundColor = this.WidgetBackgroundColor;
-            this.Padding = new BorderDouble(0);
-            this.Margin = new BorderDouble(6,0,6,6);
+            SlideWidget buttonContainer = new SlideWidget();
+            buttonContainer.VAnchor = VAnchor.ParentBottomTop;
+
+            FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+            buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
+            
+            ClickWidget printButton = new ClickWidget();
+            printButton.VAnchor = VAnchor.ParentBottomTop;
+            printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            printButton.Width = 80;
+
+            TextWidget printLabel = new TextWidget("Print".Localize());
+            printLabel.TextColor = RGBA_Bytes.White;
+            printLabel.VAnchor = VAnchor.ParentCenter;
+            printLabel.HAnchor = HAnchor.ParentCenter;
+
+            printButton.AddChild(printLabel);
+            printButton.Click += (sender, e) =>
+            {
+                QueueData.Instance.AddItem(this.printItemWrapper,0);
+                this.Invalidate();
+
+            };;
+
+            ClickWidget editButton = new ClickWidget();
+            editButton.VAnchor = VAnchor.ParentBottomTop;
+            editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+            editButton.Width = 80;
+
+            TextWidget editLabel = new TextWidget("Edit".Localize());
+            editLabel.TextColor = RGBA_Bytes.White;
+            editLabel.VAnchor = VAnchor.ParentCenter;
+            editLabel.HAnchor = HAnchor.ParentCenter;
+
+            editButton.AddChild(editLabel);
+            editButton.Click += onEditPartClick;
+
+            buttonFlowContainer.AddChild(editButton);
+            buttonFlowContainer.AddChild(printButton);
+
+            buttonContainer.AddChild(buttonFlowContainer);
+            buttonContainer.Width = 160;
+
+            return buttonContainer;
         }
 
+        void SetDisplayAttributes()
+        {
+            this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            this.Height = 65;
+            this.Padding = new BorderDouble(0);
+            this.Margin = new BorderDouble(6, 0, 6, 6);
+        }
+        
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-            //this.Click += new ButtonEventHandler(PrintLibraryListItem_Click);
-            viewLink.Click += new ButtonBase.ButtonEventHandler(onViewLinkClick);
-            removeLink.Click += new ButtonBase.ButtonEventHandler(onRemoveLinkClick);
+            //ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+            primaryClickContainer.Click += onLibraryItemClick;
+            GestureFling += (object sender, FlingEventArgs eventArgs) =>
+            {
+                if (!this.libraryDataView.EditMode)
+                {
+                    if (eventArgs.Direction == FlingDirection.Left)
+                    {
+                        this.rightButtonOverlay.SlideIn();
+                    }
+                    else if (eventArgs.Direction == FlingDirection.Right)
+                    {
+                        this.rightButtonOverlay.SlideOut();
+                    }
+                }
+                this.Invalidate();
+            };
             selectionCheckBox.CheckedStateChanged += selectionCheckBox_CheckedStateChanged;
         }
 
@@ -230,17 +273,28 @@ namespace MatterHackers.MatterControl.PrintLibrary
             base.OnClosed(e);
         }
 
-        private void onClick(object sender, MouseEventArgs e)
+        private void onLibraryItemClick(object sender, MouseEventArgs e)
         {
-            if (this.isSelectedItem == false)
+            if (this.EditMode == false)
             {
-                this.isSelectedItem = true;
-                libraryDataView.SelectedItems.Add(this);
+                UiThread.RunOnIdle((state) =>
+                {
+                    openPartView(state);
+                });
+                
+            }
+            else
+            {
+                if (this.isSelectedItem == false)
+                {
+                    this.isSelectedItem = true;
+                    libraryDataView.SelectedItems.Add(this);
+                }
             }
         }
 
         private void selectionCheckBox_CheckedStateChanged(object sender, EventArgs e)
-        {            
+        {
             if (selectionCheckBox.Checked == true)
             {
                 this.isSelectedItem = true;
@@ -267,47 +321,58 @@ namespace MatterHackers.MatterControl.PrintLibrary
             UiThread.RunOnIdle(RemoveThisFromPrintLibrary);
         }
 
-        private void onViewLinkClick(object sender, MouseEventArgs e)
+        private void onOpenPartViewClick(object sender, MouseEventArgs e)
         {
-            UiThread.RunOnIdle(onViewLinkClick);
+            UiThread.RunOnIdle((state) =>
+            {
+                openPartView(state);
+            });
+        }
+
+        private void onEditPartClick(object sender, MouseEventArgs e)
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                openPartView(state, true);
+            });
         }
 
 
-		private void OpenPartViewWindow()
-		{
-			if (viewWindowIsOpen == false)
-			{
-				viewingWindow =  new PartPreviewMainWindow(this.printItemWrapper, View3DTransformPart.AutoRotate.Enabled);
-				this.viewWindowIsOpen = true;
-				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed); 
-			}
-			else
-			{
-				if(viewingWindow != null)
-				{
-					viewingWindow.BringToFront();
-				}
-			}
-
-		}
-
-		void PartPreviewMainWindow_Closed(object sender, EventArgs e)
-		{
-			viewWindowIsOpen = false;
-		}
-
-
-        private void onViewLinkClick(object state)
+        private void OpenPartViewWindow(bool openInEditMode = false)
         {
-            string pathAndFile = this.printItemWrapper.FileLocation;
-            Console.WriteLine(pathAndFile);
-            if (File.Exists(pathAndFile))
+            if (viewWindowIsOpen == false)
             {
-				OpenPartViewWindow ();
+                viewingWindow = new PartPreviewMainWindow(this.printItemWrapper, View3DTransformPart.AutoRotate.Enabled, openInEditMode);
+                this.viewWindowIsOpen = true;
+                viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
             }
             else
             {
-                string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the queue?", pathAndFile);
+                if (viewingWindow != null)
+                {
+                    viewingWindow.BringToFront();
+                    viewingWindow.EnterEditMode();
+                }
+            }
+
+        }
+
+        void PartPreviewMainWindow_Closed(object sender, EventArgs e)
+        {
+            viewWindowIsOpen = false;
+        }
+
+
+        private void openPartView(object state, bool openInEditMode = false)
+        {
+            string pathAndFile = this.printItemWrapper.FileLocation;
+            if (File.Exists(pathAndFile))
+            {
+                OpenPartViewWindow(openInEditMode);
+            }
+            else
+            {
+                string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the library?", pathAndFile);
                 if (StyledMessageBox.ShowMessageBox(message, "Item not found", StyledMessageBox.MessageType.YES_NO))
                 {
                     libraryDataView.RemoveChild(this);
@@ -315,23 +380,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        public void ThemeChanged(object sender, EventArgs e)
+        private void onThemeChanged(object sender, EventArgs e)
         {
+            //Set background and text color to new theme
             this.Invalidate();
         }
 
         public override void OnDraw(Graphics2D graphics2D)
-        {
+        { 
 
-            if (this.isHoverItem)
+            if (this.libraryDataView.EditMode)
             {
-                buttonContainer.Visible = true;
+                selectionCheckBoxContainer.Visible = true;
+                rightButtonOverlay.Visible = false;                
             }
-            else
-            {
-                buttonContainer.Visible = false;
-            }
-            
+
             base.OnDraw(graphics2D);
 
             if (this.isSelectedItem)
@@ -339,22 +402,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
                 this.partLabel.TextColor = RGBA_Bytes.White;
                 this.selectionCheckBox.TextColor = RGBA_Bytes.White;
-
-                //RectangleDouble Bounds = LocalBounds;
-                //RoundedRect rectBorder = new RoundedRect(Bounds, 0);
-                //graphics2D.Render(new Stroke(rectBorder, 3), RGBA_Bytes.White);
             }
-
-            else if (this.isHoverItem)
+            else if (this.IsHoverItem)
             {
                 RectangleDouble Bounds = LocalBounds;
                 RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
-                this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-                this.partLabel.TextColor = RGBA_Bytes.White;
-                this.selectionCheckBox.TextColor = RGBA_Bytes.White;
-
-                graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.PrimaryAccentColor);
+                this.BackgroundColor = RGBA_Bytes.White;
+                graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
             }
             else
             {
