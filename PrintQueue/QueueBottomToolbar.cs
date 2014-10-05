@@ -227,7 +227,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE" || extension == ".ZIP")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE" 
+                    || extension == ".ZIP")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -240,7 +243,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE" || extension == ".ZIP")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE" 
+                    || extension == ".ZIP")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -253,7 +259,9 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE")
                 {
                     QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
                 }

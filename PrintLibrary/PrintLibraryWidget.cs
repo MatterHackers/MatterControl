@@ -193,7 +193,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -206,7 +208,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -219,7 +223,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE")
                 {
                     PrintItem printItem = new PrintItem();
                     printItem.Name = Path.GetFileNameWithoutExtension(droppedFileName);
