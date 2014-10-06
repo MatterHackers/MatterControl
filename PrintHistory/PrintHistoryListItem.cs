@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PrintHistory
         TextWidget partLabel;        
         public CheckBox selectionCheckBox;
         FlowLayoutWidget buttonContainer;
-        FlowLayoutWidget actionButtonColumn;
+        SlideWidget actionButtonContainer;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
         public PrintHistoryListItem(PrintTask printTask, bool showTimestamp)
@@ -156,10 +156,11 @@ namespace MatterHackers.MatterControl.PrintHistory
                 this.AddChild(middleColumn);
 
 
-                actionButtonColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                actionButtonColumn.VAnchor = VAnchor.ParentBottomTop;
-                actionButtonColumn.Visible = false;
-
+                actionButtonContainer = new SlideWidget();
+                actionButtonContainer.VAnchor = VAnchor.ParentBottomTop;
+                actionButtonContainer.Width = 160;
+                actionButtonContainer.Visible = false;
+                
                 FlowLayoutWidget rightMiddleColumnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
                 rightMiddleColumnContainer.VAnchor = VAnchor.ParentBottomTop;
                 {
@@ -190,15 +191,15 @@ namespace MatterHackers.MatterControl.PrintHistory
                     printButton.AddChild(printLabel);
                     printButton.Click += (sender, e) =>
                     {
-                        QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId));
+                        QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId),0);                        
                     };
                     rightMiddleColumnContainer.AddChild(printButton);
 
 
                 }
-                actionButtonColumn.AddChild(rightMiddleColumnContainer);
+                actionButtonContainer.AddChild(rightMiddleColumnContainer);
 
-                this.AddChild(actionButtonColumn);
+                
 
                 if (showTimestamp)
                 {
@@ -259,6 +260,8 @@ namespace MatterHackers.MatterControl.PrintHistory
                     timestampColumn.Width = 220;
                     this.AddChild(timestampColumn);                    
                 }
+
+                this.AddChild(actionButtonContainer);
             }
         }
 
@@ -354,13 +357,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 
         void HistoryItem_MouseLeaveBounds(object sender, EventArgs e)
-        {
-            actionButtonColumn.Visible = false;
+        {            
+            actionButtonContainer.SlideOut();
         }
 
         void HistoryItem_MouseEnterBounds(object sender, EventArgs e)
         {
-            actionButtonColumn.Visible = true;
+            actionButtonContainer.SlideIn();
         }
 
 
@@ -380,15 +383,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         public override void OnDraw(Graphics2D graphics2D)
         {
-
-            if (this.isHoverItem)
-            {
-                //buttonContainer.Visible = true;
-            }
-            else
-            {
-                //buttonContainer.Visible = false;
-            }
 
             base.OnDraw(graphics2D);
 

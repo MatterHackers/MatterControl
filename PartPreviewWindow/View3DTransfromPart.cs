@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public enum WindowType { Embeded, StandAlone };
         public enum AutoRotate { Enabled, Disabled };
 
-        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate)
+        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate, bool openInEditMode = false)
         {
             this.windowType = windowType;
             autoRotateEnabled = (autoRotate == AutoRotate.Enabled);
@@ -471,6 +471,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+
+            if (openInEditMode)
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    EnterEditAndSplitIntoMeshes();
+                });
+                
+            }
+
         }
 
         public void ThemeChanged(object sender, EventArgs e)
@@ -922,7 +932,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void DeleteSelectedMesh()
         {
-            // don't ever delet the last mesh
+            // don't ever delete the last mesh
             if (Meshes.Count > 1)
             {
                 Meshes.RemoveAt(SelectedMeshIndex);
@@ -934,7 +944,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        void EnterEditAndSplitIntoMeshes()
+        public void EnterEditAndSplitIntoMeshes()
         {
             if (enterEditButtonsContainer.Visible == true)
             {
