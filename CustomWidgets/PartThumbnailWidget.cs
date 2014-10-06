@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl
                 ImageBuffer bigRender = LoadImageFromDisk(thumbnailWidget, stlHashCode, bigRenderSize);
                 if (bigRender == null)
                 {
-                    Mesh loadedMesh = StlProcessing.Load(thumbnailWidget.PrintItem.FileLocation);
+                    Mesh loadedMesh = MeshLoading.Load(thumbnailWidget.PrintItem.FileLocation);
 
                     thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
                     thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
