@@ -932,7 +932,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void DeleteSelectedMesh()
         {
-            // don't ever delet the last mesh
+            // don't ever delete the last mesh
             if (Meshes.Count > 1)
             {
                 Meshes.RemoveAt(SelectedMeshIndex);

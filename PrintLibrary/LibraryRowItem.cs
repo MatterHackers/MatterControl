@@ -230,8 +230,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void SetDisplayAttributes()
         {
+            //this.VAnchor = Agg.UI.VAnchor.FitToChildren;
             this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            this.Height = 65;
+            this.Height = 50;
             this.Padding = new BorderDouble(0);
             this.Margin = new BorderDouble(6, 0, 6, 6);
         }
@@ -256,12 +257,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 }
                 this.Invalidate();
             };
-            selectionCheckBox.CheckedStateChanged += selectionCheckBox_CheckedStateChanged;
-        }
-
-        void PrintLibraryListItem_Click(object sender, EventArgs e)
-        {
-            selectionCheckBox.Checked = !selectionCheckBox.Checked;
+            //selectionCheckBox.CheckedStateChanged += selectionCheckBox_CheckedStateChanged;
         }
 
         public override void OnClosed(EventArgs e)
@@ -275,20 +271,26 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         private void onLibraryItemClick(object sender, MouseEventArgs e)
         {
-            if (this.EditMode == false)
+            if (this.libraryDataView.EditMode == false)
             {
                 UiThread.RunOnIdle((state) =>
                 {
                     openPartView(state);
-                });
-                
+                });                
             }
             else
             {
                 if (this.isSelectedItem == false)
                 {
                     this.isSelectedItem = true;
+                    this.selectionCheckBox.Checked = true;
                     libraryDataView.SelectedItems.Add(this);
+                }
+                else
+                {
+                    this.isSelectedItem = false;
+                    this.selectionCheckBox.Checked = false;
+                    libraryDataView.SelectedItems.Remove(this);
                 }
             }
         }
@@ -338,7 +340,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         }
 
 
-        private void OpenPartViewWindow(bool openInEditMode = false)
+        public void OpenPartViewWindow(bool openInEditMode = false)
         {
             if (viewWindowIsOpen == false)
             {
@@ -387,12 +389,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
         }
 
         public override void OnDraw(Graphics2D graphics2D)
-        { 
+        {
 
             if (this.libraryDataView.EditMode)
             {
                 selectionCheckBoxContainer.Visible = true;
-                rightButtonOverlay.Visible = false;                
+                rightButtonOverlay.Visible = false;
+            }
+            else
+            {
+                selectionCheckBoxContainer.Visible = false;
             }
 
             base.OnDraw(graphics2D);
@@ -409,6 +415,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
                 this.BackgroundColor = RGBA_Bytes.White;
+                this.partLabel.TextColor = RGBA_Bytes.Black;
+                this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+
                 graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
             }
             else

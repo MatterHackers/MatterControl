@@ -89,10 +89,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 if (this.editMode != value)
                 {
                     this.editMode = value;
-
-                    foreach (LibraryRowItem item in topToBottomItemList.Children)
+                    if (this.editMode == false)
                     {
-                        item.EditMode = this.editMode;
+                        this.ClearSelectedItems();
                     }
 
                 }
@@ -124,17 +123,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         public void ClearSelectedItems()
         {
-            List<LibraryRowItem> itemsToClear = new List<LibraryRowItem>();
-
             foreach (LibraryRowItem item in SelectedItems)
-            {
-                itemsToClear.Add(item);
-            }
-            foreach (LibraryRowItem item in itemsToClear)
             {
                 item.isSelectedItem = false;
                 item.selectionCheckBox.Checked = false;
             }
+            this.SelectedItems.Clear();
         }
 
         public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
