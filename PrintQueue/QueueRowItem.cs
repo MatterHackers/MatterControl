@@ -66,11 +66,32 @@ namespace MatterHackers.MatterControl.PrintQueue
 		PartPreviewMainWindow viewingWindow;
 		bool exportingWindowIsOpen = false;
 		bool viewWindowIsOpen = false;
-        QueueDataView queueDataViewThisIsIn;
+        QueueDataView queueDataView;
+        SlideWidget actionButtonContainer;
 
-        public QueueRowItem(PrintItemWrapper printItemWrapper, QueueDataView queueDataViewThisIsIn)
+        public bool IsHoverItem
         {
-            this.queueDataViewThisIsIn = queueDataViewThisIsIn;
+            get { return isHoverItem; }
+            set
+            {
+                if (this.isHoverItem != value)
+                {
+                    this.isHoverItem = value;
+                    if (value == true && !this.queueDataView.EditMode)
+                    {
+                        this.actionButtonContainer.SlideIn();
+                    }
+                    else
+                    {
+                        this.actionButtonContainer.SlideOut();
+                    }
+                }
+            }
+        }
+
+        public QueueRowItem(PrintItemWrapper printItemWrapper, QueueDataView queueDataView)
+        {
+            this.queueDataView = queueDataView;
             this.PrintItemWrapper = printItemWrapper;
             ConstructPrintQueueItem();
         }
@@ -129,7 +150,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 topContentsFlowLayout.AddChild(leftColumn);
                 topContentsFlowLayout.AddChild(middleColumn);
-                topContentsFlowLayout.AddChild(editControls);
+                //topContentsFlowLayout.AddChild(editControls);
 
                 editControls.Visible = false;
             }
@@ -137,53 +158,123 @@ namespace MatterHackers.MatterControl.PrintQueue
             topToBottomLayout.AddChild(topContentsFlowLayout);
             this.AddChild(topToBottomLayout);
 
+            actionButtonContainer = getItemActionButtons();
+            actionButtonContainer.Visible = false;
+
+            this.AddChild(actionButtonContainer);
+
+
             AddHandlers();
         }
 
-		private void OpenExportWindow()
-		{
-			if(exportingWindowIsOpen == false)
-			{
-				exportingWindow = new ExportPrintItemWindow (this.PrintItemWrapper);
-				this.exportingWindowIsOpen = true;
-				exportingWindow.Closed += new EventHandler (ExportQueueItemWindow_Closed);
-				exportingWindow.ShowAsSystemWindow();
-			} 
-			else 
-			{
-				if (exportingWindow != null)
-				{
-					exportingWindow.BringToFront ();
-				}
-			}
-		}
+        SlideWidget getItemActionButtons()
+        {
+            SlideWidget buttonContainer = new SlideWidget();
+            buttonContainer.VAnchor = VAnchor.ParentBottomTop;
+            buttonContainer.HAnchor = HAnchor.ParentRight;
+
+            FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+            buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
+
+            ClickWidget printButton = new ClickWidget();
+            printButton.VAnchor = VAnchor.ParentBottomTop;
+            printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            printButton.Width = 80;
+
+            TextWidget printLabel = new TextWidget("Remove".Localize());
+            printLabel.TextColor = RGBA_Bytes.White;
+            printLabel.VAnchor = VAnchor.ParentCenter;
+            printLabel.HAnchor = HAnchor.ParentCenter;
+
+            printButton.AddChild(printLabel);
+            printButton.Click += (sender, e) =>
+            {
+                UiThread.RunOnIdle(DeletePartFromQueue);
+            }; ;
+
+            ClickWidget editButton = new ClickWidget();
+            editButton.VAnchor = VAnchor.ParentBottomTop;
+            editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+            editButton.Width = 80;
+
+            TextWidget editLabel = new TextWidget("Edit".Localize());
+            editLabel.TextColor = RGBA_Bytes.White;
+            editLabel.VAnchor = VAnchor.ParentCenter;
+            editLabel.HAnchor = HAnchor.ParentCenter;
+
+            editButton.AddChild(editLabel);
+            editButton.Click += onEditPartClick;
+
+            //buttonFlowContainer.AddChild(editButton);
+            buttonFlowContainer.AddChild(printButton);
+
+            buttonContainer.AddChild(buttonFlowContainer);
+            //buttonContainer.Width = 160;
+            buttonContainer.Width = 80;
+
+            return buttonContainer;
+        }
+
+        private void onEditPartClick(object sender, MouseEventArgs e)
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                OpenPartViewWindow(true);
+            });
+        }
+
+
+        
+
+        private void OpenExportWindow()
+        {
+            if (exportingWindowIsOpen == false)
+            {
+                exportingWindow = new ExportPrintItemWindow(this.PrintItemWrapper);
+                this.exportingWindowIsOpen = true;
+                exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
+                exportingWindow.ShowAsSystemWindow();
+            }
+            else
+            {
+                if (exportingWindow != null)
+                {
+                    exportingWindow.BringToFront();
+                }
+            }
+        }
 
 		void ExportQueueItemWindow_Closed(object sender, EventArgs e)
 		{
 			this.exportingWindowIsOpen = false;
 		}
 
-		private void OpenViewWindow()
-		{
-			if (viewWindowIsOpen == false)
-			{
-				viewingWindow = new PartPreviewMainWindow(PrintItemWrapper, View3DTransformPart.AutoRotate.Enabled);
-				this.viewWindowIsOpen = true;
-				viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
-			}
-			else
-			{
-				if(viewingWindow != null) 
-				{
-					viewingWindow.BringToFront();
-				}
-			}
-		}
+        public void OpenPartViewWindow(bool openInEditMode = false)
+        {
+            if (viewWindowIsOpen == false)
+            {
+                viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DTransformPart.AutoRotate.Enabled, openInEditMode);
+                this.viewWindowIsOpen = true;
+                viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
+            }
+            else
+            {
+                if (viewingWindow != null)
+                {
+                    viewingWindow.BringToFront();
+                    viewingWindow.EnterEditMode();
+                }
+            }
+
+        }
+
 
 		void PartPreviewWindow_Closed(object sender, EventArgs e)
 		{
 			this.viewWindowIsOpen = false;
 		}
+
+
 
         private void CreateEditControls()
         {
@@ -207,7 +298,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                             string pathAndFile = PrintItemWrapper.FileLocation;
                             if (File.Exists(pathAndFile))
                             {
-                                OpenViewWindow();
+                                OpenPartViewWindow();
                             }
                             else
                             {
@@ -502,7 +593,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 //graphics2D.Render(new Stroke(rectBorder, 4), ActiveTheme.Instance.SecondaryAccentColor);
             }            
-            else if (this.isHoverItem)
+            else if (this.IsHoverItem)
             {
                 RectangleDouble Bounds = LocalBounds;
                 RoundedRect rectBorder = new RoundedRect(Bounds, 0);

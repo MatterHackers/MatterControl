@@ -56,6 +56,24 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
 		}
 
+        bool editMode = false;
+        public bool EditMode
+        {
+            get { return editMode; }
+            set
+            {
+                if (this.editMode != value)
+                {
+                    this.editMode = value;
+                    if (this.editMode == false)
+                    {
+                        //Clear selected items
+                    }
+
+                }
+            }
+        }
+
 		private void AddWatermark()
 		{
 			string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "watermark.png");
@@ -303,11 +321,11 @@ namespace MatterHackers.MatterControl.PrintQueue
                         GuiWidget child = topToBottomItemList.Children[index];
                         if (index == HoverIndex)
                         {                            
-                            ((QueueRowItem)child.Children[0]).isHoverItem = true;
+                            ((QueueRowItem)child.Children[0]).IsHoverItem = true;
                         }
-                        else if (((QueueRowItem)child.Children[0]).isHoverItem == true)
+                        else if (((QueueRowItem)child.Children[0]).IsHoverItem == true)
                         {
-                            ((QueueRowItem)child.Children[0]).isHoverItem = false;
+                            ((QueueRowItem)child.Children[0]).IsHoverItem = false;
                         }
                         child.Invalidate();
                     }
