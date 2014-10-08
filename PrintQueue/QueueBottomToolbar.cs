@@ -227,7 +227,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE" || extension == ".ZIP")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE" 
+                    || extension == ".ZIP")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -240,7 +243,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE" || extension == ".ZIP")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE" 
+                    || extension == ".ZIP")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -253,7 +259,9 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE")
                 {
                     QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
                 }
@@ -282,7 +290,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         void AddItemsToQueue(object state)
         {
             string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode;*.zip", multiSelect: true, initialDirectory: documentsPath);
+            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true, initialDirectory: documentsPath);
 			openParams.ActionButtonLabel = "Add to Queue";
 			openParams.Title = "MatterControl: Select A File";
 

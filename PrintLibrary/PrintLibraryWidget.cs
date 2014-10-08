@@ -44,16 +44,24 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
     public class PrintLibraryWidget : GuiWidget
     {        
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+        TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
         TextImageButtonFactory searchButtonFactory = new TextImageButtonFactory();
-        Button deleteFromLibraryButton;
+        TextWidget navigationLabel;
+        Button removeFromLibraryButton;
         Button addToQueueButton;
         Button searchButton;
+        Button exportItemButton;
+        Button editItemButton;
+        Button addToLibraryButton;
+        Button enterEditModeButton;
+        Button leaveEditModeButton;
         MHTextEditWidget searchInput;
         LibraryDataView libraryDataView;
 
@@ -70,51 +78,101 @@ namespace MatterHackers.MatterControl.PrintLibrary
             searchButtonFactory.borderWidth = 0;
             searchButtonFactory.FixedWidth = 80;
 
+            editButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+            editButtonFactory.hoverTextColor = RGBA_Bytes.White;
+            editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+            editButtonFactory.pressedTextColor = RGBA_Bytes.White;
+            editButtonFactory.borderWidth = 0;
+            editButtonFactory.FixedWidth = 50;
+
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            {   
+            {
+                enterEditModeButton = editButtonFactory.Generate("Edit".Localize());
+                leaveEditModeButton = editButtonFactory.Generate("Done".Localize());
+                leaveEditModeButton.Visible = false;
+                
                 FlowLayoutWidget searchPanel = new FlowLayoutWidget();
                 searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
                 searchPanel.HAnchor = HAnchor.ParentLeftRight;
                 searchPanel.Padding = new BorderDouble(0);                
                 {
-                    searchInput = new MHTextEditWidget();
+                    searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected:"Search Library".Localize());
                     searchInput.Margin = new BorderDouble(6, 3, 0, 0);
                     searchInput.HAnchor = HAnchor.ParentLeftRight;
                     searchInput.VAnchor = VAnchor.ParentCenter;
+                    
 
 					searchButton = searchButtonFactory.Generate(LocalizedString.Get("Search"),centerText:true);
+
+                    searchPanel.AddChild(enterEditModeButton);
+                    searchPanel.AddChild(leaveEditModeButton);
 
                     searchPanel.AddChild(searchInput);
                     searchPanel.AddChild(searchButton);
                 }
 
+                FlowLayoutWidget navigationPanel = new FlowLayoutWidget();
+                navigationPanel.HAnchor = HAnchor.ParentLeftRight;
+                navigationPanel.Padding = new BorderDouble(0);
+                navigationPanel.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
+
+                navigationLabel = new TextWidget("My Library".Localize(), pointSize: 14);
+                navigationLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
+                navigationLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+                
+
+
+                navigationPanel.AddChild(new GuiWidget(50,0)); //Add this as temporary balance to edit buttons
+                navigationPanel.AddChild(new HorizontalSpacer());
+                navigationPanel.AddChild(navigationLabel);
+                navigationPanel.AddChild(new HorizontalSpacer());
+                //navigationPanel.AddChild(enterEditModeButton);
+                //navigationPanel.AddChild(leaveEditModeButton);
+
+                
+
+
                 FlowLayoutWidget buttonPanel = new FlowLayoutWidget();
                 buttonPanel.HAnchor = HAnchor.ParentLeftRight;
                 buttonPanel.Padding = new BorderDouble(0, 3);
+                buttonPanel.MinimumSize = new Vector2(0, 46);
                 {
-					Button addToLibrary = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
-                    buttonPanel.AddChild(addToLibrary);
-                    addToLibrary.Margin = new BorderDouble(0, 0, 3, 0);
-                    addToLibrary.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
+					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
+                    buttonPanel.AddChild(addToLibraryButton);
+                    addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
+                    addToLibraryButton.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
 
-					addToQueueButton = textImageButtonFactory.Generate("Add to Queue");
+                    addToQueueButton = textImageButtonFactory.Generate("Add to Queue".Localize());
                     addToQueueButton.Margin = new BorderDouble(3, 0);
                     addToQueueButton.Click += new ButtonBase.ButtonEventHandler(addToQueueButton_Click);
                     addToQueueButton.Visible = false;
                     buttonPanel.AddChild(addToQueueButton);
 
-					deleteFromLibraryButton = textImageButtonFactory.Generate("Remove");
-                    deleteFromLibraryButton.Margin = new BorderDouble(3, 0);
-                    deleteFromLibraryButton.Click += new ButtonBase.ButtonEventHandler(deleteFromQueueButton_Click);
-                    deleteFromLibraryButton.Visible = false;
-                    buttonPanel.AddChild(deleteFromLibraryButton);
+                    exportItemButton = textImageButtonFactory.Generate("Export".Localize());
+                    exportItemButton.Margin = new BorderDouble(3, 0);
+                    exportItemButton.Click += new ButtonBase.ButtonEventHandler(exportButton_Click);
+                    exportItemButton.Visible = false;
+                    buttonPanel.AddChild(exportItemButton);
+
+                    editItemButton = textImageButtonFactory.Generate("Edit".Localize());
+                    editItemButton.Margin = new BorderDouble(3, 0);
+                    editItemButton.Click += new ButtonBase.ButtonEventHandler(editButton_Click);
+                    editItemButton.Visible = false;
+                    buttonPanel.AddChild(editItemButton);
+
+					removeFromLibraryButton = textImageButtonFactory.Generate("Remove".Localize());
+                    removeFromLibraryButton.Margin = new BorderDouble(3, 0);
+                    removeFromLibraryButton.Click += new ButtonBase.ButtonEventHandler(deleteFromQueueButton_Click);
+                    removeFromLibraryButton.Visible = false;
+                    buttonPanel.AddChild(removeFromLibraryButton);
 
                     GuiWidget spacer = new GuiWidget();
                     spacer.HAnchor = HAnchor.ParentLeftRight;
                     buttonPanel.AddChild(spacer);
                 }
-
-                allControls.AddChild(searchPanel);
+                //allControls.AddChild(navigationPanel);
+                allControls.AddChild(searchPanel);                                
                 libraryDataView = new LibraryDataView();
                 allControls.AddChild(libraryDataView);
                 allControls.AddChild(buttonPanel);
@@ -134,6 +192,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
             searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
             searchButton.Click += searchButtonClick;
             searchInput.ActualTextEditWidget.KeyUp += searchInputKeyUp;
+            enterEditModeButton.Click += enterEditModeButtonClick;
+            leaveEditModeButton.Click += leaveEditModeButtonClick;
         }
 
         void searchInputKeyUp(object sender, KeyEventArgs keyEvent)
@@ -144,6 +204,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
         void searchInputEnterPressed(object sender, KeyEventArgs keyEvent)
         {
             searchButtonClick(null, null);
+        }
+
+        void enterEditModeButtonClick(object sender, MouseEventArgs mouseEvent)
+        {
+            enterEditModeButton.Visible = false;
+            leaveEditModeButton.Visible = true;
+            libraryDataView.EditMode = true;
+            addToLibraryButton.Visible = false;
+            SetVisibleButtons();
+        }
+
+        void leaveEditModeButtonClick(object sender, MouseEventArgs mouseEvent)
+        {
+            enterEditModeButton.Visible = true;
+            leaveEditModeButton.Visible = false;
+            libraryDataView.EditMode = false;
+            addToLibraryButton.Visible = true;
+            SetVisibleButtons();
+            
         }
 
         void searchButtonClick(object sender, MouseEventArgs mouseEvent)
@@ -163,16 +242,36 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         private void onLibraryItemsSelected(object sender, EventArgs e)
         {
-            List<LibraryRowItem> selectedItemsList = (List<LibraryRowItem>)sender;
+            SetVisibleButtons();
+            
+        }
+
+        private void SetVisibleButtons()
+        {            
+            List<LibraryRowItem> selectedItemsList = libraryDataView.SelectedItems;
             if (selectedItemsList.Count > 0)
             {
+                if (selectedItemsList.Count == 1)
+                {
+                    exportItemButton.Visible = true;
+                    editItemButton.Visible = true;
+                }
+                else
+                {
+                    exportItemButton.Visible = false;
+                    editItemButton.Visible = false;
+                }
+                
                 addToQueueButton.Visible = true;
-                deleteFromLibraryButton.Visible = true;
+                removeFromLibraryButton.Visible = true;
             }
             else
             {
                 addToQueueButton.Visible = false;
-                deleteFromLibraryButton.Visible = false;
+                removeFromLibraryButton.Visible = false;
+                exportItemButton.Visible = false;
+                editItemButton.Visible = false;
+                
             }
         }
 
@@ -186,6 +285,55 @@ namespace MatterHackers.MatterControl.PrintLibrary
         void deleteFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
         {
             libraryDataView.RemoveSelectedItems();
+            SetVisibleButtons();
+
+        }
+
+
+        ExportPrintItemWindow exportingWindow;
+        bool exportingWindowIsOpen = false;
+        void exportButton_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            //Open export options
+            if (libraryDataView.SelectedItems.Count == 1)
+            {
+                LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
+                OpenExportWindow(libraryItem.printItemWrapper);
+            }
+        }
+
+        void editButton_Click(object sender, MouseEventArgs mouseEvent)
+        {
+            //Open export options
+            if (libraryDataView.SelectedItems.Count == 1)
+            {
+                LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
+                libraryItem.OpenPartViewWindow(openInEditMode:true);
+            }
+
+        }
+
+        private void OpenExportWindow(PrintItemWrapper printItem)
+        {
+            if (exportingWindowIsOpen == false)
+            {
+                exportingWindow = new ExportPrintItemWindow(printItem);
+                this.exportingWindowIsOpen = true;
+                exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
+                exportingWindow.ShowAsSystemWindow();
+            }
+            else
+            {
+                if (exportingWindow != null)
+                {
+                    exportingWindow.BringToFront();
+                }
+            }
+        }
+
+        void ExportQueueItemWindow_Closed(object sender, EventArgs e)
+        {
+            this.exportingWindowIsOpen = false;
         }
 
         public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
@@ -193,7 +341,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -206,7 +356,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -219,7 +371,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (extension == ".STL" || extension == ".GCODE")
+                if (extension == ".STL" 
+                    || extension == ".AMF"
+                    || extension == ".GCODE")
                 {
                     PrintItem printItem = new PrintItem();
                     printItem.Name = Path.GetFileNameWithoutExtension(droppedFileName);
@@ -241,7 +395,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void loadFile_ClickOnIdle(object state)
         {
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode", multiSelect: true);
+            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
             FileDialog.OpenFileDialog(ref openParams);
             if (openParams.FileNames != null)
             {

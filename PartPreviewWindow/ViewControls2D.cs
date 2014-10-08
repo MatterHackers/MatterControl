@@ -94,26 +94,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string scaleIconPath = Path.Combine("ViewTransformControls", "3d.png");
 			threeDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", scaleIconPath);
 			threeDimensionButton.Margin = new BorderDouble(3);
-			AddChild(threeDimensionButton);
 
+			if (ActiveTheme.Instance.DisplayMode != ActiveTheme.ApplicationDisplayType.Touchscreen)
+			{
+
+				AddChild(threeDimensionButton);
+
+				if (UserSettings.Instance.get("LayerViewDefault") == "3D Layer")
+				{
+					threeDimensionButton.Checked = true;
+				}
+				else
+				{
+					twoDimensionButton.Checked = true;
+				}
+			}
+			else
+			{
+				twoDimensionButton.Checked = true;
+			}
 			Margin = new BorderDouble(5,5,200,5);
 			HAnchor |= Agg.UI.HAnchor.ParentRight;
 			VAnchor = Agg.UI.VAnchor.ParentTop;
-			string defaultView = UserSettings.Instance.get ("LayerViewDefault");
-
-			if (defaultView == null) 
-			{
-				UserSettings.Instance.set ("LayerViewDefault", "2D Layer");
-			}
-
-			if (defaultView == "2D Layer") {
-				twoDimensionButton.Checked = true;
-			} else if (defaultView == "3D Layer") {
-				threeDimensionButton.Checked = true;
-			} else {
-				twoDimensionButton.Checked = true;
-			}
-
 		}
 	}
 }

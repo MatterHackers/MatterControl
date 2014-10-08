@@ -146,8 +146,8 @@ namespace MatterHackers.MatterControl
         bool importFile_Click()
         {
             UiThread.RunOnIdle((state) =>
-            {  
-                OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode", multiSelect: true);
+            {
+                OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
                 openParams.ActionButtonLabel = "Add to Queue";
                 openParams.Title = "MatterControl: Select A File";
 

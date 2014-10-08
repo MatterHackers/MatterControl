@@ -49,17 +49,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             "extruder_count",
         };
 
-        static List<string> settingsRequiringPreviewUpdate = new List<string>() 
-        {
-            "bed_size", 
-            "print_center", 
-            "build_height", 
-            "bed_shape", 
-            "center_part_on_bed",
-        };
-
-        public static RootedObjectEventHandler PartPreviewSettingsChanged = new RootedObjectEventHandler();
-
         const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
         const string SliceSettingsLevelEntry = "SliceSettingsLevel";
         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
@@ -92,7 +81,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsControlBar = new SettingsControlBar();
             pageTopToBottomLayout.AddChild(settingsControlBar);
 
-            noConnectionMessageContainer = new AltGroupBox(LocalizedString.Get("No Printer Selected"));
+            noConnectionMessageContainer = new AltGroupBox(new TextWidget(LocalizedString.Get("No Printer Selected"), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -339,14 +328,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     int numberOfCopies = 1;
                     if (subGroup.Name == "Extruder X")
                     {
-                        numberOfCopies = int.Parse(ActiveSliceSettings.Instance.GetActiveValue("extruder_count"));
+                        numberOfCopies = ActiveSliceSettings.Instance.ExtruderCount;
                     }
 
                     for (int copyIndex = 0; copyIndex < numberOfCopies; copyIndex++)
                     {
                         if (subGroup.Name == "Extruder X")
                         {
-                            subGroupTitle = "Extruder {0}".FormatWith(copyIndex + 1);
+                            subGroupTitle = "{0} {1}".FormatWith("Extruder".Localize(), copyIndex + 1);
                         }
 
                         bool addedSettingToSubGroup = false;
@@ -371,7 +360,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         if (addedSettingToSubGroup)
                         {
                             needToAddSubGroup = true;
-                            string groupBoxLabel = LocalizedString.Get(subGroupTitle);
+                            string groupBoxLabel = subGroupTitle;
                             AltGroupBox groupBox = new AltGroupBox(groupBoxLabel);
                             groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                             groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -488,16 +477,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return dataTypeInfo;
         }
 
+        static Dictionary<string, RootedObjectEventHandler> functionsToCallOnChange = new Dictionary<string, RootedObjectEventHandler>();
+        public static void RegisterForSettingsChange(string settingName, EventHandler functionToCallOnChange, ref EventHandler functionThatWillBeCalledToUnregisterEvent)
+        {
+            if (!functionsToCallOnChange.ContainsKey(settingName))
+            {
+                functionsToCallOnChange.Add(settingName, new RootedObjectEventHandler());
+            }
+
+            RootedObjectEventHandler rootedEvent = functionsToCallOnChange[settingName];
+            rootedEvent.RegisterEvent(functionToCallOnChange, ref functionThatWillBeCalledToUnregisterEvent);
+        }
+
         private void CallEventsOnSettingsChange(OrganizerSettingsData settingData)
         {
+            foreach (KeyValuePair<string, RootedObjectEventHandler> keyValue in functionsToCallOnChange)
+            {
+                if (keyValue.Key == settingData.SlicerConfigName)
+                {
+                    keyValue.Value.CallEvents(null, null);
+                }
+            }
+
             if (settingToReloadUiWhenChanged.Contains(settingData.SlicerConfigName))
             {
                 ApplicationController.Instance.ReloadAll(null, null);
-            }
-
-            if (settingsRequiringPreviewUpdate.Contains(settingData.SlicerConfigName))
-            {
-                PartPreviewSettingsChanged.CallEvents(this, null);
             }
         }
 
@@ -780,22 +784,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     case OrganizerSettingsData.DataEditTypes.OFFSET2:
                         {
-                            string[] xyValueStrings = sliceSettingValue.Split('x');
-                            if (xyValueStrings.Length != 2)
-                            {
-                                xyValueStrings = new string[] { "0", "0" };
-                            }
-                            double currentXValue = 0;
-                            double.TryParse(xyValueStrings[0], out currentXValue);
-                            MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
-                            double currentYValue = 0;
-                            double.TryParse(xyValueStrings[1], out currentYValue);
-                            MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+                            Vector2 offset = ActiveSliceSettings.Instance.GetOffset(extruderIndex);
+                            MHNumberEdit xEditWidget = new MHNumberEdit(offset.x, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+                            MHNumberEdit yEditWidget = new MHNumberEdit(offset.y, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
                             {
                                 xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
                                 {
                                     int extruderIndexLocal = extruderIndex;
-                                    SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
+                                    SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
                                     CallEventsOnSettingsChange(settingData);
                                 };
                                 leftToRightLayout.AddChild(xEditWidget);
@@ -808,7 +804,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
                                 {
                                     int extruderIndexLocal = extruderIndex;
-                                    SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
+                                    SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
                                     CallEventsOnSettingsChange(settingData);
                                 };
                                 leftToRightLayout.AddChild(yEditWidget);
@@ -921,6 +917,36 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 
             return container;
+        }
+
+        private void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, string slicerConfigName, string newSingleValue)
+        {
+            string[] settings = ActiveSliceSettings.Instance.GetActiveValue(slicerConfigName).Split(',');
+            if (settings.Length > extruderIndexLocal)
+            {
+                settings[extruderIndexLocal] = newSingleValue;
+            }
+            else
+            {
+                string[] newSettings = new string[extruderIndexLocal + 1];
+                for (int i = 0; i < extruderIndexLocal + 1; i++)
+                {
+                    newSettings[i] = "";
+                    if (i < settings.Length)
+                    {
+                        newSettings[i] = settings[i];
+                    }
+                    else if(i == extruderIndexLocal)
+                    {
+                        newSettings[i] = newSingleValue;
+                    }
+                }
+
+                settings = newSettings;
+            }
+
+            string newValue = string.Join(",", settings);
+            SaveSetting(slicerConfigName, newValue);
         }
 
         protected void ReloadOptions(object sender, EventArgs e)

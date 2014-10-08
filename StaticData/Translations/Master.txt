@@ -2636,3 +2636,9 @@ Translated:Extruder Count
 English:Hardware
 Translated:Hardware
 
+English:Search Library
+Translated:Search Library
+
+English:My Library
+Translated:My Library
+

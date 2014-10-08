@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl
         Dictionary<string, string> languageDict;
 
         public LanguageSelector()
-            : base("Default",maxHeight:120)
+            : base("Default")
         {            
             //string pathToModels = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", manufacturer);
             //if (Directory.Exists(pathToModels))
@@ -29,8 +29,8 @@ namespace MatterHackers.MatterControl
             //    }
             //}
 
-            this.MinimumSize = new Vector2(Math.Min(this.LocalBounds.Width,400), this.LocalBounds.Height);
-            this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
+
             CreateLanguageDict();
 
             string languageCode = UserSettings.Instance.get("Language");
@@ -56,9 +56,11 @@ namespace MatterHackers.MatterControl
             languageDict["Default"] = "EN";
             languageDict["English"] = "EN";
             languageDict["Español"] = "ES";
-            //languageDict["Français"] = "FR";
+			//languageDict["Français"] = "FR";
             languageDict["Deutsch"] = "DE";
-            languageDict["Türkçe"] = "TR";
+			languageDict["Polski"] = "PL";
+			languageDict["Türkçe"] = "TR";
+
         }
     }
 }
