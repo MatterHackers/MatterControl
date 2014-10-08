@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
     public static class CreateDiscreteMeshes
     {
-        public static Mesh[] SplitIntoMeshes(Mesh meshToSplit, Vector3 buildVolume, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
+        public static List<MeshGroup> SplitIntoMeshes(MeshGroup meshToSplit, Vector3 buildVolume, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
         {
             int lengthPercent = endPercent-startPercent;
             // check if the part is bigger than the build plate (if it is we need to use that as our size)
@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl
             double scaleFactor = 5;
             ImageBuffer partPlate = new ImageBuffer((int)(buildVolume.x * scaleFactor), (int)(buildVolume.y * scaleFactor), 32, new BlenderBGRA());
             Vector2 renderOffset = new Vector2(buildVolume.x / 2, buildVolume.y / 2) - new Vector2(partBounds.Center.x, partBounds.Center.y);
+                throw new NotImplementedException();
+#if false
             PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);
 
             if (backgroundWorker != null)
@@ -166,6 +168,7 @@ namespace MatterHackers.MatterControl
             }
 
             return discreteMeshes;
+#endif
         }
 
         public static bool PointInPolygon(Polygon polygon, IntPoint testPosition)

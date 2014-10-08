@@ -198,11 +198,11 @@ namespace MatterHackers.MatterControl
                 ImageBuffer bigRender = LoadImageFromDisk(thumbnailWidget, stlHashCode, bigRenderSize);
                 if (bigRender == null)
                 {
-                    Mesh loadedMesh = MeshLoading.Load(thumbnailWidget.PrintItem.FileLocation);
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(thumbnailWidget.PrintItem.FileLocation);
 
                     thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
                     thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-                    bigRender = BuildImageFromSTL(loadedMesh, stlHashCode, bigRenderSize);
+                    bigRender = BuildImageFromSTL(loadedMeshGroups, stlHashCode, bigRenderSize);
                     if (bigRender == null)
                     {
                         bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
@@ -271,29 +271,35 @@ namespace MatterHackers.MatterControl
             return null;
         }
 
-        private static ImageBuffer BuildImageFromSTL(Mesh loadedMesh, string stlHashCode, Point2D size)
+        private static ImageBuffer BuildImageFromSTL(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
         {
-            if(loadedMesh != null)
+            if (loadedMeshGroups != null && loadedMeshGroups.Count > 0 && loadedMeshGroups[0].Meshes != null)
             {
                 ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
                 Graphics2D partGraphics2D = tempImage.NewGraphics2D();
                 partGraphics2D.Clear(new RGBA_Bytes());
 
-                AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
+                AxisAlignedBoundingBox aabb = loadedMeshGroups[0].GetAxisAlignedBoundingBox();
                 double maxSize = Math.Max(aabb.XSize, aabb.YSize);
                 double scale = size.x / (maxSize * 1.2);
                 RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
-                PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
-                    new Vector2((size.x / scale - bounds2D.Width) / 2 - bounds2D.Left,
-                        (size.y / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
-                    scale, RGBA_Bytes.White);
-
-                List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
-                if (nonManifoldEdges.Count > 0)
+                foreach (Mesh loadedMesh in loadedMeshGroups[0].Meshes)
                 {
-                    if (File.Exists("RunUnitTests.txt"))
+                    PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
+                        new Vector2((size.x / scale - bounds2D.Width) / 2 - bounds2D.Left,
+                            (size.y / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
+                        scale, RGBA_Bytes.White);
+                }
+
+                if (File.Exists("RunUnitTests.txt"))
+                {
+                    foreach (Mesh loadedMesh in loadedMeshGroups[0].Meshes)
                     {
-                        partGraphics2D.Circle(size.x / 4, size.x / 4, size.x / 8, RGBA_Bytes.Red);
+                        List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
+                        if (nonManifoldEdges.Count > 0)
+                        {
+                            partGraphics2D.Circle(size.x / 4, size.x / 4, size.x / 8, RGBA_Bytes.Red);
+                        }
                     }
                 }
 
