@@ -262,19 +262,14 @@ namespace MatterHackers.MatterControl.PrintQueue
                 if (viewingWindow != null)
                 {
                     viewingWindow.BringToFront();
-                    viewingWindow.EnterEditMode();
                 }
             }
-
         }
-
 
 		void PartPreviewWindow_Closed(object sender, EventArgs e)
 		{
 			this.viewWindowIsOpen = false;
 		}
-
-
 
         private void CreateEditControls()
         {

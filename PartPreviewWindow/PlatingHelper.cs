@@ -209,11 +209,9 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public static void FindPositionForPartAndAddToPlate(MeshGroup meshGroupToAdd, ScaleRotateTranslate meshTransform, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> meshesGroupsToAvoid, List<ScaleRotateTranslate> meshTransforms)
+        public static void FindPositionForGroupAndAddToPlate(MeshGroup meshGroupToAdd, ScaleRotateTranslate meshTransform, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> meshesGroupsToAvoid, List<ScaleRotateTranslate> meshTransforms)
         {
-                throw new NotImplementedException();
-#if false
-            if (meshGroupToAdd == null || meshGroupToAdd.Vertices.Count < 3)
+            if (meshGroupToAdd == null || meshGroupToAdd.Meshes.Count < 1)
             {
                 return;
             }
@@ -224,18 +222,17 @@ namespace MatterHackers.MatterControl
             perMeshInfo.Add(newMeshInfo);
             meshTransforms.Add(meshTransform);
 
-            int index = meshesGroupsToAvoid.Count-1;
-            MoveMeshToOpenPosition(index, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
+            int meshGroupIndex = meshesGroupsToAvoid.Count-1;
+            MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
 
-            PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, index, false);
-#endif
+            PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex, false);
         }
 
-        public static void MoveMeshToOpenPosition(int meshToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<Mesh> allMeshes, List<ScaleRotateTranslate> meshTransforms)
+        public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms)
         {
-            Mesh meshToMove = allMeshes[meshToMoveIndex];
+            MeshGroup meshGroupToMove = allMeshGroups[meshGroupToMoveIndex];
             // find a place to put it that doesn't hit anything
-            AxisAlignedBoundingBox meshToMoveBounds = meshToMove.GetAxisAlignedBoundingBox(meshTransforms[meshToMoveIndex].TotalTransform);
+            AxisAlignedBoundingBox meshToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(meshTransforms[meshGroupToMoveIndex].TotalTransform);
             // add in a few mm so that it will not be touching
             meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
             meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
@@ -252,10 +249,10 @@ namespace MatterHackers.MatterControl
                 transform = Matrix4X4.CreateTranslation(newPosition);
                 AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
                 bool foundHit = false;
-                for(int i=0; i<allMeshes.Count; i++)
+                for(int i=0; i<allMeshGroups.Count; i++)
                 {
-                    Mesh meshToTest = allMeshes[i];
-                    if (meshToTest != meshToMove)
+                    MeshGroup meshToTest = allMeshGroups[i];
+                    if (meshToTest != meshGroupToMove)
                     {
                         AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform);
                         AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
@@ -280,9 +277,9 @@ namespace MatterHackers.MatterControl
                 }
             }
 
-            ScaleRotateTranslate moved = meshTransforms[meshToMoveIndex];
+            ScaleRotateTranslate moved = meshTransforms[meshGroupToMoveIndex];
             moved.translation *= transform;
-            meshTransforms[meshToMoveIndex] = moved;
+            meshTransforms[meshGroupToMoveIndex] = moved;
         }
 
         public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex)

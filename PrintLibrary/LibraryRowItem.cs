@@ -353,7 +353,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 if (viewingWindow != null)
                 {
                     viewingWindow.BringToFront();
-                    viewingWindow.EnterEditMode();
                 }
             }
 

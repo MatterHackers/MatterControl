@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         ProgressControl processingProgressControl;
         FlowLayoutWidget enterEditButtonsContainer;
         FlowLayoutWidget doEdittingButtonsContainer;
-        bool OpenAddDialogWhenDone = false;
         
         Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
 
@@ -326,15 +325,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         UiThread.RunOnIdle((state) =>
                         {
-                            EnterEditAndSplitIntoMeshes();
-                            OpenAddDialogWhenDone = true;
+                            EnterEdit();
+
+                            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
+
+                            FileDialog.OpenFileDialog(ref openParams);
+                            LoadAndAddPartsToPlate(openParams.FileNames);
                         });
                     };
 
                     Button enterEdittingButton = textImageButtonFactory.Generate(LocalizedString.Get("Edit"));
                     enterEdittingButton.Click += (sender, e) =>
                     {
-                        EnterEditAndSplitIntoMeshes();
+                        EnterEdit();
                     };
 
                     enterEditButtonsContainer.AddChild(enterEdittingButton);
@@ -482,7 +485,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 UiThread.RunOnIdle((state) =>
                 {
-                    EnterEditAndSplitIntoMeshes();
+                    EnterEdit();
                 });
                 
             }
@@ -598,7 +601,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }));
             }
 
-            PlatingHelper.FindPositionForPartAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
+            PlatingHelper.FindPositionForGroupAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
             PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count-1);
 
             backgroundWorker.ReportProgress(95);
@@ -752,7 +755,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshGroup newMeshGroup = new MeshGroup();
                 for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
                 {
-                    Mesh mesh = meshGroup.Meshes[meshGroupIndex];
+                    Mesh mesh = meshGroup.Meshes[meshIndex];
                     newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
                     asynchMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
                 }
@@ -936,7 +939,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     viewControls3D.PartSelectVisible = true;
                     doEdittingButtonsContainer.Visible = true;
-                    doEdittingButtonsContainer.Visible = true;
                 }
             }
             else
@@ -961,31 +963,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        public void EnterEditAndSplitIntoMeshes()
+        void UngroupSelectedMeshGroup()
         {
-            if (enterEditButtonsContainer.Visible == true)
+            if (MeshGroups.Count > 0)
             {
-                enterEditButtonsContainer.Visible = false;
+                processingProgressControl.Visible = true;
+                LockEditControls();
+                viewIsInEditModePreLock = true;
 
-                throw new NotImplementedException();
-#if false
-                if (Meshes.Count > 0)
-                {
-                    processingProgressControl.Visible = true;
-                    LockEditControls();
-                    viewIsInEditModePreLock = true;
+                BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
+                createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
+                createDiscreteMeshesBackgroundWorker.WorkerReportsProgress = true;
 
-                    BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
-                    createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
-                    createDiscreteMeshesBackgroundWorker.WorkerReportsProgress = true;
+                createDiscreteMeshesBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
+                createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createDiscreteMeshesBackgroundWorker_RunWorkerCompleted);
+                createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(createDiscreteMeshesBackgroundWorker_DoWork);
 
-                    createDiscreteMeshesBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
-                    createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createDiscreteMeshesBackgroundWorker_RunWorkerCompleted);
-                    createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(createDiscreteMeshesBackgroundWorker_DoWork);
-
-                    createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
-                }
-#endif
+                createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
             }
         }
 
@@ -1035,6 +1029,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #endif
         }
 
+        void EnterEdit()
+        {
+            if (enterEditButtonsContainer.Visible == true)
+            {
+                enterEditButtonsContainer.Visible = false;
+            }
+            if (pendingPartsToLoad.Count > 0)
+            {
+                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+            }
+            viewControls3D.PartSelectVisible = true;
+            doEdittingButtonsContainer.Visible = true;
+        }
+
         void createDiscreteMeshesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (WidgetHasBeenClosed)
@@ -1046,24 +1054,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             UnlockEditControls();
 
-            autoArrangeButton.Visible = true;
-            viewControls3D.partSelectButton.ClickButton(null);
-
             Invalidate();
-
-            if (OpenAddDialogWhenDone)
-            {
-                OpenAddDialogWhenDone = false;
-                OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
-
-                FileDialog.OpenFileDialog(ref openParams);
-                LoadAndAddPartsToPlate(openParams.FileNames);
-            }
-
-            if (pendingPartsToLoad.Count > 0)
-            {
-                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-            }
         }
 
         void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1206,7 +1197,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
 
                 autoArrangeButton = whiteButtonFactory.Generate(LocalizedString.Get("Auto-Arrange"), centerText: true);
-                autoArrangeButton.Visible = false;
                 autoArrangeButton.Cursor = Cursors.Hand;
                 buttonRightPanel.AddChild(autoArrangeButton);
 
@@ -1596,7 +1586,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
             if (enterEditModeBeforeAddingParts)
             {
-                EnterEditAndSplitIntoMeshes();
+                EnterEdit();
             }
             else
             {
