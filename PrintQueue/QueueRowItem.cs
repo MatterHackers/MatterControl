@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl.PrintQueue
     public class QueueRowItem : GuiWidget
     {
         public PrintItemWrapper PrintItemWrapper { get; set; }
+		//public PrintItemWrapper printItemWrapper;
         public RGBA_Bytes WidgetTextColor;
         public RGBA_Bytes WidgetBackgroundColor;
         public bool isActivePrint = false;
@@ -60,6 +61,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         public bool isHoverItem = false;
         TextWidget partLabel;
         TextWidget partStatus;
+		Button addToLibraryLink;
         FlowLayoutWidget editControls;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		ExportPrintItemWindow exportingWindow;
@@ -337,6 +339,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     layoutLeftToRight.AddChild(new GuiWidget(10, 10));
                 }
+					
 
                 // delete button
                 {
@@ -347,13 +350,22 @@ namespace MatterHackers.MatterControl.PrintQueue
                     };
                     layoutLeftToRight.AddChild(deleteLink);
                 }
-
+					
                 // push off to the right the rest spacer
                 {
                     GuiWidget spaceFiller = new GuiWidget(10, 10);
                     //layoutLeftToRight.AddChild(spaceFiller);
                 }
 
+				{
+					addToLibraryLink = linkButtonFactory.Generate(LocalizedString.Get("Add to Library"));
+					addToLibraryLink.Click += (sender, e) =>
+						{
+							LibraryData.Instance.AddItem(new PrintItemWrapper(new PrintItem(this.PrintItemWrapper.Name, this.PrintItemWrapper.FileLocation)));
+						};
+					//layoutLeftToRight.AddChild(addToLibraryLink);
+				}
+					
                 // up and down buttons
                 {
                     FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
