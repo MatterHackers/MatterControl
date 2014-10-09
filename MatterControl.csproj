@@ -352,6 +352,10 @@
       <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
       <Name>SerialPortCommunication</Name>
     </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
+      <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
+      <Name>WindowsFileDialogs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MatterSlice\MatterSlice.csproj">
       <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
       <Name>MatterSlice</Name>
