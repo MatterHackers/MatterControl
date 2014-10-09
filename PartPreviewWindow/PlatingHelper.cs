@@ -220,6 +220,7 @@ namespace MatterHackers.MatterControl
 
             PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
             perMeshInfo.Add(newMeshInfo);
+            meshTransform.SetCenteringForMeshGroup(meshGroupToAdd);
             meshTransforms.Add(meshTransform);
 
             int meshGroupIndex = meshesGroupsToAvoid.Count-1;
