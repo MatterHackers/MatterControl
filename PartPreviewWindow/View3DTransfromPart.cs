@@ -185,7 +185,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
                 {
-                    viewControls3D.partSelectButton.ClickButton(null);
                     int meshGroupHitIndex;
                     if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
                     {
@@ -564,28 +563,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        void copyGroupBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (WidgetHasBeenClosed)
-            {
-                return;
-            }
-            UnlockEditControls();
-            PullMeshGroupDataFromAsynchLists();
-            saveButtons.Visible = true;
-            viewControls3D.partSelectButton.ClickButton(null);
-
-            // now set the selection to the new copy
-            MeshGroupExtraData[MeshGroups.Count - 1].currentScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
-            SelectedMeshGroupIndex = MeshGroups.Count - 1;
-        }
-
         void copyGroupBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
-            PushMeshGroupDataToAsynchLists(true);
+            PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DO_COPY);
 
             MeshGroup meshGroupToCopy = asynchMeshGroupsList[SelectedMeshGroupIndex];
             MeshGroup copyMeshGroup = new MeshGroup();
@@ -607,6 +590,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             backgroundWorker.ReportProgress(95);
         }
 
+        void copyGroupBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
+
+            UnlockEditControls();
+            PullMeshGroupDataFromAsynchLists();
+            saveButtons.Visible = true;
+
+            // now set the selection to the new copy
+            MeshGroupExtraData[MeshGroups.Count - 1].currentScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
+            SelectedMeshGroupIndex = MeshGroups.Count - 1;
+        }
+
         private void AutoArangePartsInBackground()
         {
             if (MeshGroups.Count > 0)
@@ -618,7 +617,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
 
-                PushMeshGroupDataToAsynchLists(false);
+                PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DONT_COPY);
 
                 BackgroundWorker arrangeMeshGroupsBackgroundWorker = null;
                 arrangeMeshGroupsBackgroundWorker = new BackgroundWorker();
@@ -731,7 +730,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
 
-                PushMeshGroupDataToAsynchLists(true);
+                PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DO_COPY);
 
                 BackgroundWorker loadAndAddPartsToPlateBackgroundWorker = null;
                 loadAndAddPartsToPlateBackgroundWorker = new BackgroundWorker();
@@ -745,7 +744,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void PushMeshGroupDataToAsynchLists(bool copyTraceInfo)
+        enum TranceInfoOpperation { DONT_COPY, DO_COPY };
+        private void PushMeshGroupDataToAsynchLists(TranceInfoOpperation tranceInfoOpperation)
         {
             asynchMeshGroupsList.Clear();
             asynchMeshGroupTransforms.Clear();
@@ -762,6 +762,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 asynchMeshGroupsList.Add(newMeshGroup);
             }
             asynchPlatingDataList.Clear();
+
             for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
             {
                 PlatingMeshGroupData meshData = new PlatingMeshGroupData();
@@ -769,7 +770,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshGroup meshGroup = MeshGroups[meshGroupIndex];
                 for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
                 {
-                    if (copyTraceInfo)
+                    if (tranceInfoOpperation == TranceInfoOpperation.DO_COPY)
                     {
                         meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
                     }
@@ -786,7 +787,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             UnlockEditControls();
             saveButtons.Visible = true;
-            viewControls3D.partSelectButton.ClickButton(null);
 
             PullMeshGroupDataFromAsynchLists();
         }
@@ -799,7 +799,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             UnlockEditControls();
             saveButtons.Visible = true;
-            viewControls3D.partSelectButton.ClickButton(null);
 
             if (asynchMeshGroupsList.Count == MeshGroups.Count + 1)
             {
@@ -844,51 +843,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     int subLength = nextPercent - lastPercent;
 
                     string loadedFileName = filesToLoad[i];
-                    Mesh copyMesh = null;
-                    switch (Path.GetExtension(loadedFileName).ToUpper())
-                    {
-                        case ".STL":
-                            StlProcessing.Load(Path.GetFullPath(loadedFileName));
-                            break;
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName));
 
-                        case ".AMF":
-                            AmfProcessing.Load(Path.GetFullPath(loadedFileName));
-                            break;
-                    }
-
-                throw new NotImplementedException();
-#if false
                     if (WidgetHasBeenClosed)
                     {
                         return;
                     }
-                    if (copyMesh != null)
+                    if (loadedMeshGroups != null)
                     {
                         int halfNextPercent = (nextPercent - lastPercent) / 2;
-                        Mesh[] subMeshes = CreateDiscreteMeshes.SplitIntoMeshes(copyMesh, meshViewerWidget.DisplayVolume, backgroundWorker, lastPercent, halfNextPercent);
                         lastPercent = halfNextPercent;
 
-                        for (int subMeshIndex = 0; subMeshIndex < subMeshes.Length; subMeshIndex++)
+                        for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++ )
                         {
-                            Mesh subMesh = subMeshes[subMeshIndex];
-                            Vector3 soubMeshBoundsCenter = subMesh.GetAxisAlignedBoundingBox().Center;
-                            soubMeshBoundsCenter.z = 0;
-                            subMesh.Translate(-soubMeshBoundsCenter);
+                            MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
 
-                            PlatingHelper.FindPositionForPartAndAddToPlate(subMesh, ScaleRotateTranslate.Identity(), asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
+                            PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, ScaleRotateTranslate.Identity(), asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
                             if (WidgetHasBeenClosed)
                             {
                                 return;
                             }
-                            PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count - 1);
+                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count - 1);
 
-                            backgroundWorker.ReportProgress(lastPercent + subMeshIndex + 1 * subLength / subMeshes.Length);
+                            backgroundWorker.ReportProgress(lastPercent + subMeshIndex + 1 * subLength / loadedMeshGroups.Count);
                         }
 
                         backgroundWorker.ReportProgress(nextPercent);
                         lastPercent = nextPercent;
                     }
-#endif
                 }
             }
         }
@@ -922,10 +904,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             doEdittingButtonsContainer.Visible = false;
             buttonRightPanelDisabledCover.Visible = true;
             viewControls3D.PartSelectVisible = false;
-            if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
-            {
-                viewControls3D.rotateButton.ClickButton(null);
-            }
         }
 
         void UnlockEditControls()
@@ -1013,8 +991,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
+            PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DONT_COPY);
+
             asynchPlatingDataList.Clear();
-            asynchMeshGroupTransforms.Clear();
             for (int i = 0; i < asynchMeshGroupsList.Count; i++)
             {
                 PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
@@ -1022,23 +1001,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 MeshGroup meshGroup = asynchMeshGroupsList[i];
 
-                // remember where it is now
-                AxisAlignedBoundingBox startingBounds = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].TotalTransform);
-                Vector3 startingCenter = (startingBounds.maxXYZ + startingBounds.minXYZ) / 2;
-
-                ScaleRotateTranslate meshTransform = asynchMeshGroupTransforms[i];
-
-                // move the mesh to be centered on the origin
-                AxisAlignedBoundingBox meshBounds = meshGroup.GetAxisAlignedBoundingBox();
-                Vector3 meshCenter = (meshBounds.maxXYZ + meshBounds.minXYZ) / 2;
-                meshTransform.centering = Matrix4X4.CreateTranslation(-meshCenter);
-
-                // set the transform to position it where it was
-                meshTransform.translation = Matrix4X4.CreateTranslation(startingCenter);
-                asynchMeshGroupTransforms[i] = meshTransform;
-                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, i, false);
-
-                // and create selection info
+                // create the selection info
                 PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, i);
                 if (asynchMeshGroupsList.Count > 1)
                 {
@@ -1869,7 +1832,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandScaleOptions.CheckedStateChanged += expandScaleOptions_CheckedStateChanged;
         }
 
-        bool partSelectButtonWasClicked = false;
         private void MergeAndSavePartsToStl(PrintItemWrapper printItemWarpperToSwitchTo = null)
         {
             if (printItemWarpperToSwitchTo != null)
@@ -1949,11 +1911,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             UnlockEditControls();
             // NOTE: we do not pull the data back out of the asynch lists.
             saveButtons.Visible = false;
-
-            if (partSelectButtonWasClicked)
-            {
-                viewControls3D.partSelectButton.ClickButton(null);
-            }
         }
 
         void expandViewOptions_CheckedStateChanged(object sender, EventArgs e)
