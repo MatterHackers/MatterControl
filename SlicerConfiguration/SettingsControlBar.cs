@@ -281,13 +281,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             UiThread.RunOnIdle((state) =>
             {
-                bool goodLoad = ActiveSliceSettings.Instance.LoadSettingsFromIni();
-                if (goodLoad)
-                {
-                    ApplicationController.Instance.ReloadAdvancedControlsPanel();
-                }
+                ActiveSliceSettings.Instance.LoadSettingsFromIni(state);
             });
-
             return true;
         }
 
