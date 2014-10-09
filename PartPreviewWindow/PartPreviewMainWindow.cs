@@ -114,12 +114,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-
-        public void EnterEditMode()
-        {
-            partPreviewView.EnterEditAndSplitIntoMeshes();
-        }
-
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {

@@ -190,10 +190,10 @@ namespace MatterHackers.MatterControl
             // first create images for all the parts
             foreach (FileNameAndPresentationName stlFileNames in stlFilesToPrint)
             {
-                Mesh loadedMesh = StlProcessing.Load(stlFileNames.fileName);
-                if (loadedMesh != null)
+                List<MeshGroup> loadedMeshGroups = StlProcessing.Load(stlFileNames.fileName);
+                if (loadedMeshGroups[0] != null)
                 {
-                    AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
+                    AxisAlignedBoundingBox aabb = loadedMeshGroups[0].GetAxisAlignedBoundingBox();
                     RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
                     double widthInMM = bounds2D.Width + PartMarginMM * 2;
                     double textSpaceMM = 5;
@@ -216,7 +216,10 @@ namespace MatterHackers.MatterControl
                     Stroke rectOutline = new Stroke(rect, strokeWidth);
                     partGraphics2D.Render(rectOutline, RGBA_Bytes.DarkGray);
 
-                    PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
+                    foreach (Mesh loadedMesh in loadedMeshGroups[0].Meshes)
+                    {
+                        PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
+                    }
                     partGraphics2D.Render(typeFacePrinter, RGBA_Bytes.Black);
 
                     partImagesToPrint.Add(new PartImage(imageOfPart));
