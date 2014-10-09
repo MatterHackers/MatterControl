@@ -38,6 +38,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <ReleaseVersion>1.1.4</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -351,10 +352,6 @@
       <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
       <Name>SerialPortCommunication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
-      <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
-      <Name>WindowsFileDialogs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MatterSlice\MatterSlice.csproj">
       <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
       <Name>MatterSlice</Name>
@@ -370,10 +367,6 @@
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
       <Project>{F1653F20-D47D-4F29-8C55-3C835542AF5F}</Project>
       <Name>Community.CsharpSqlite</Name>
-    </ProjectReference>
-    <ProjectReference Include="Launcher\Launcher.csproj">
-      <Project>{3DF4CB3D-9A03-4256-9A81-70523AAD828B}</Project>
-      <Name>Launcher</Name>
     </ProjectReference>
     <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
       <Project>{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}</Project>
@@ -395,17 +388,17 @@
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\Localizations\Localizations.csproj">
-      <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
-      <Name>Localizations</Name>
-    </ProjectReference>
     <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj">
       <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
       <Name>MatterControlPluginSystem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\Agg\Agg.csproj">
+    <ProjectReference Include="..\agg-sharp\agg\Agg.csproj">
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\Localizations\Localizations.csproj">
+      <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
+      <Name>Localizations</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

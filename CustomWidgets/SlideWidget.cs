@@ -13,7 +13,7 @@ namespace MatterHackers.MatterControl
         Stopwatch timeHasBeenChanging = new Stopwatch();
 
         public SlideWidget()
-            :base(0,0)
+            :base(0.0,0.0)
         {
             
         }

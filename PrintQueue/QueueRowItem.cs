@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             ClickWidget printButton = new ClickWidget();
             printButton.VAnchor = VAnchor.ParentBottomTop;
             printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            printButton.Width = 80;
+            printButton.Width = 100;
 
             TextWidget printLabel = new TextWidget("Remove".Localize());
             printLabel.TextColor = RGBA_Bytes.White;
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             ClickWidget editButton = new ClickWidget();
             editButton.VAnchor = VAnchor.ParentBottomTop;
             editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-            editButton.Width = 80;
+            editButton.Width = 100;
 
             TextWidget editLabel = new TextWidget("Edit".Localize());
             editLabel.TextColor = RGBA_Bytes.White;
@@ -211,8 +211,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             buttonFlowContainer.AddChild(printButton);
 
             buttonContainer.AddChild(buttonFlowContainer);
-            //buttonContainer.Width = 160;
-            buttonContainer.Width = 80;
+            //buttonContainer.Width = 200;
+            buttonContainer.Width = 100;
 
             return buttonContainer;
         }

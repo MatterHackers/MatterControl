@@ -90,12 +90,16 @@ namespace MatterHackers.MatterControl
                 PrivateClick(this, mouseEvent);
             }
         }
-			
+
+		public bool GetChildClicks = false;
         override public void OnMouseUp(MouseEventArgs mouseEvent)
         {
-			if (PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y) && this.MouseCaptured == true)
+			if (PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
             {
-                ClickButton(mouseEvent);
+				if (GetChildClicks || this.MouseCaptured == true)
+				{
+					ClickButton(mouseEvent);
+				}
             }
 
             base.OnMouseUp(mouseEvent);
