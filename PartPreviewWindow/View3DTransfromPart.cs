@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         UiThread.RunOnIdle((state) =>
                         {
-                            EnterEdit();
+                            EnterEditAndCreateSelectionData();
 
                             OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
 
@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     Button enterEdittingButton = textImageButtonFactory.Generate(LocalizedString.Get("Edit"));
                     enterEdittingButton.Click += (sender, e) =>
                     {
-                        EnterEdit();
+                        EnterEditAndCreateSelectionData();
                     };
 
                     enterEditButtonsContainer.AddChild(enterEdittingButton);
@@ -485,7 +485,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 UiThread.RunOnIdle((state) =>
                 {
-                    EnterEdit();
+                    EnterEditAndCreateSelectionData();
                 });
                 
             }
@@ -983,9 +983,92 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
+        void EnterEditAndCreateSelectionData()
+        {
+            if (enterEditButtonsContainer.Visible == true)
+            {
+                enterEditButtonsContainer.Visible = false;
+            }
+
+            if (MeshGroups.Count > 0)
+            {
+                processingProgressControl.Visible = true;
+                LockEditControls();
+                viewIsInEditModePreLock = true;
+
+                BackgroundWorker createSelectionDataBackgroundWorker = null;
+                createSelectionDataBackgroundWorker = new BackgroundWorker();
+                createSelectionDataBackgroundWorker.WorkerReportsProgress = true;
+
+                createSelectionDataBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
+                createSelectionDataBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createSelectionDataBackgroundWorker_RunWorkerCompleted);
+                createSelectionDataBackgroundWorker.DoWork += new DoWorkEventHandler(createSelectionDataBackgroundWorker_DoWork);
+
+                createSelectionDataBackgroundWorker.RunWorkerAsync();
+            }
+        }
+
+        void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
+
+            asynchPlatingDataList.Clear();
+            asynchMeshGroupTransforms.Clear();
+            for (int i = 0; i < asynchMeshGroupsList.Count; i++)
+            {
+                PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
+                asynchPlatingDataList.Add(newInfo);
+
+                MeshGroup meshGroup = asynchMeshGroupsList[i];
+
+                // remember where it is now
+                AxisAlignedBoundingBox startingBounds = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].TotalTransform);
+                Vector3 startingCenter = (startingBounds.maxXYZ + startingBounds.minXYZ) / 2;
+
+                ScaleRotateTranslate meshTransform = asynchMeshGroupTransforms[i];
+
+                // move the mesh to be centered on the origin
+                AxisAlignedBoundingBox meshBounds = meshGroup.GetAxisAlignedBoundingBox();
+                Vector3 meshCenter = (meshBounds.maxXYZ + meshBounds.minXYZ) / 2;
+                meshTransform.centering = Matrix4X4.CreateTranslation(-meshCenter);
+
+                // set the transform to position it where it was
+                meshTransform.translation = Matrix4X4.CreateTranslation(startingCenter);
+                asynchMeshGroupTransforms[i] = meshTransform;
+                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, i, false);
+
+                // and create selection info
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, i);
+                if (asynchMeshGroupsList.Count > 1)
+                {
+                    backgroundWorker.ReportProgress(50 + i * 50 / (asynchMeshGroupsList.Count - 1));
+                }
+            }
+        }
+
+        void createSelectionDataBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
+            // remove the original mesh and replace it with these new meshes
+            PullMeshGroupDataFromAsynchLists();
+
+            UnlockEditControls();
+
+            if (pendingPartsToLoad.Count > 0)
+            {
+                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+            }
+
+            Invalidate();
+        }
+
         void createDiscreteMeshesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-                throw new NotImplementedException();
+            throw new NotImplementedException();
 #if false
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
@@ -1027,20 +1110,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
             }
 #endif
-        }
-
-        void EnterEdit()
-        {
-            if (enterEditButtonsContainer.Visible == true)
-            {
-                enterEditButtonsContainer.Visible = false;
-            }
-            if (pendingPartsToLoad.Count > 0)
-            {
-                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-            }
-            viewControls3D.PartSelectVisible = true;
-            doEdittingButtonsContainer.Visible = true;
         }
 
         void createDiscreteMeshesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1586,7 +1655,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
             if (enterEditModeBeforeAddingParts)
             {
-                EnterEdit();
+                EnterEditAndCreateSelectionData();
             }
             else
             {
