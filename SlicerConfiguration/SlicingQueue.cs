@@ -39,6 +39,8 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -154,6 +156,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
 
         }
+
+        public static string[] GetStlFileLocations(string fileToSlice)
+        {
+            switch (Path.GetExtension(fileToSlice).ToUpper())
+            {
+                case ".STL":
+                    return new string[] { fileToSlice };
+
+                case ".AMF":
+                    List<MeshGroup> meshGroups = MeshFileIo.Load(fileToSlice);
+                    List<MeshGroup> extruder1Group = new List<MeshGroup>();
+                    extruder1Group.Add(meshGroups[0]);
+                
+                    string fileName = string.Format("{0}.stl", Path.GetRandomFileName());
+                    string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+                    string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
+                    if (!Directory.Exists(folderToSaveStlsTo))
+                    {
+                        Directory.CreateDirectory(folderToSaveStlsTo);
+                    }
+                    string stlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
+                    MeshFileIo.Save(extruder1Group, stlFileToSlice);
+                    return new string[] { stlFileToSlice };
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         public static bool runInProcess = false;
         static Process slicerProcess = null;
         static void CreateSlicedPartsThread()
@@ -165,8 +196,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null && listOfSlicingItems.Count > 0)
                 {
                     PrintItemWrapper itemToSlice = listOfSlicingItems[0];
+                    string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation);
+                    string fileToSlice = stlFileLocations[0];
                     // check that the STL file is currently on disk
-                    if (File.Exists(itemToSlice.FileLocation))
+                    if (File.Exists(fileToSlice))
                     {
                         itemToSlice.CurrentlySlicing = true;
 
@@ -183,17 +216,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                             {
                                 case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
-                                    commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-                                    commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + fileToSlice + "\"";
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
                                     {
                                         EngineMappingsMatterSlice.WriteMatterSliceSettingsFile(currentConfigurationFileAndPath);
-                                        commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                        commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\" \"" + fileToSlice + "\"";
                                     }
                                     break;
                             }

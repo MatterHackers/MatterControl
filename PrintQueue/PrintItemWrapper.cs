@@ -195,8 +195,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        public string PartToSlicePathAndFileName { get { return PrintItem.FileLocation; } }
-
         public bool IsGCodeFileComplete(string gcodePathAndFileName)
         {
             if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
