@@ -509,21 +509,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.activeSettingsLayers.Add(defaultSettingsLayer);
         }
 
-        public bool LoadSettingsFromIni()
+		public void LoadSettingsFromIni(object state)
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Configuration|*.slice;*.ini");
 			openParams.ActionButtonLabel = "Load Configuration";
 			openParams.Title = "MatterControl: Select A File";
 
-            FileDialog.OpenFileDialog(ref openParams);
-			if (openParams.FileNames != null)
-            {
-                LoadConfigurationSettingsFromFileAsUnsaved(openParams.FileName);
-                return true;
-            }
+			FileDialog.OpenFileDialog(openParams, onSettingsFileSelected);
 
-            return false;
         }
+
+		void onSettingsFileSelected(OpenFileDialogParams openParams)
+		{
+			if (openParams.FileNames != null)
+			{
+				LoadConfigurationSettingsFromFileAsUnsaved(openParams.FileName);
+				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+			}
+		}
 
         public SettingsLayer LoadConfigurationSettingsFromFile(string pathAndFileName, DataStorage.SliceSettingsCollection collection)
         {
@@ -640,14 +643,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
 			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration|*." + configFileExtension,documentsPath);
-
-			System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog (ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                GenerateConfigFile(saveParams.FileName);
-            }
+			saveParams.FileName = "default_settings.ini";
+			FileDialog.SaveFileDialog(saveParams, onExportFileSelected);
         }
+
+		void onExportFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null)
+			{
+				GenerateConfigFile(saveParams.FileName);
+			}
+
+		}
 
         public override int GetHashCode()
         {
@@ -677,6 +684,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 configFileAsList.Add(settingString);
             }
             string configFileAsString = string.Join("\n", configFileAsList.ToArray());
+
+			//To do - add file extension if it doesn't exist
 
             FileStream fs = new FileStream(fileName, FileMode.Create);
             StreamWriter sw = new System.IO.StreamWriter(fs);

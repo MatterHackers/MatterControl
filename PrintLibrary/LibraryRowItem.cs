@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 selectionCheckBox.HAnchor = HAnchor.ParentCenter;
                 selectionCheckBoxContainer.AddChild(selectionCheckBox);
 
-                GuiWidget middleColumn = new GuiWidget(0, 0);
+                GuiWidget middleColumn = new GuiWidget(0.0, 0.0);
                 middleColumn.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
                 middleColumn.Margin = new BorderDouble(10, 6);                
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             ClickWidget printButton = new ClickWidget();
             printButton.VAnchor = VAnchor.ParentBottomTop;
             printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            printButton.Width = 80;
+            printButton.Width = 100;
 
             TextWidget printLabel = new TextWidget("Print".Localize());
             printLabel.TextColor = RGBA_Bytes.White;
@@ -209,21 +209,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
             ClickWidget editButton = new ClickWidget();
             editButton.VAnchor = VAnchor.ParentBottomTop;
             editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-            editButton.Width = 80;
+            editButton.Width = 100;
 
-            TextWidget editLabel = new TextWidget("Edit".Localize());
+            TextWidget editLabel = new TextWidget("View".Localize());
             editLabel.TextColor = RGBA_Bytes.White;
             editLabel.VAnchor = VAnchor.ParentCenter;
             editLabel.HAnchor = HAnchor.ParentCenter;
 
             editButton.AddChild(editLabel);
-            editButton.Click += onEditPartClick;
+            editButton.Click += onViewPartClick;
 
             buttonFlowContainer.AddChild(editButton);
             buttonFlowContainer.AddChild(printButton);
 
             buttonContainer.AddChild(buttonFlowContainer);
-            buttonContainer.Width = 160;
+            buttonContainer.Width = 200;
 
             return buttonContainer;
         }
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             //this.VAnchor = Agg.UI.VAnchor.FitToChildren;
             this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            this.Height = 50;
+            this.Height = 65;
             this.Padding = new BorderDouble(0);
             this.Margin = new BorderDouble(6, 0, 6, 6);
         }
@@ -273,10 +273,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             if (this.libraryDataView.EditMode == false)
             {
-                UiThread.RunOnIdle((state) =>
-                {
-                    openPartView(state);
-                });                
+                //UiThread.RunOnIdle((state) =>
+                //{
+                //    openPartView(state);
+                //});                
             }
             else
             {
@@ -331,11 +331,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
             });
         }
 
-        private void onEditPartClick(object sender, MouseEventArgs e)
+        private void onViewPartClick(object sender, MouseEventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
-                openPartView(state, true);
+                openPartView(state, false);
             });
         }
 

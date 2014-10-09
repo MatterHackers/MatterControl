@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
             editButtonFactory.pressedTextColor = RGBA_Bytes.White;
             editButtonFactory.borderWidth = 0;
-            editButtonFactory.FixedWidth = 50;
+            editButtonFactory.FixedWidth = 70;
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {

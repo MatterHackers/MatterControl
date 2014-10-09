@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                 actionButtonContainer = new SlideWidget();
                 actionButtonContainer.VAnchor = VAnchor.ParentBottomTop;
-                actionButtonContainer.Width = 160;
+                actionButtonContainer.Width = 200;
                 actionButtonContainer.Visible = false;
                 
                 FlowLayoutWidget rightMiddleColumnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                     ClickWidget viewButton = new ClickWidget();
                     viewButton.VAnchor = VAnchor.ParentBottomTop;
                     viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-                    viewButton.Width = 80;
+                    viewButton.Width = 100;
 
                     TextWidget viewLabel = new TextWidget("View".Localize());
                     viewLabel.TextColor = RGBA_Bytes.White;
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                     ClickWidget printButton = new ClickWidget();
                     printButton.VAnchor = VAnchor.ParentBottomTop;
                     printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-                    printButton.Width = 80;
+                    printButton.Width = 100;
 
                     TextWidget printLabel = new TextWidget("Print".Localize());
                     printLabel.TextColor = RGBA_Bytes.White;
