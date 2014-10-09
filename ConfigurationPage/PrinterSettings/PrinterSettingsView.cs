@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         event EventHandler unregisterEvents;
 
         public HardwareSettingsWidget()
-            : base("Hardware Settings")
+			: base(LocalizedString.Get("Hardware Settings"))
         {
 
             eePromControlsContainer = new DisableableWidget();

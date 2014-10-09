@@ -2642,3 +2642,12 @@ Translated:Search Library
 English:My Library
 Translated:My Library
 
+English:Jakość
+Translated:Jakość
+
+English:Materiał
+Translated:Materiał
+
+English:Extruder Temperature Override
+Translated:Extruder Temperature Override
+
