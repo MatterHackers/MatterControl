@@ -1999,18 +1999,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Vertex lowestVertex = MeshGroups[indexToLayFlat].Meshes[0].Vertices[0];
             Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
             Mesh meshToLayFlat = null;
-            foreach (Mesh mesh in MeshGroups[indexToLayFlat].Meshes)
+            foreach (Mesh meshToCheck in MeshGroups[indexToLayFlat].Meshes)
             {
                 // find the lowest point on the model
-                for (int testIndex = 1; testIndex < meshToLayFlat.Vertices.Count; testIndex++)
+                for (int testIndex = 1; testIndex < meshToCheck.Vertices.Count; testIndex++)
                 {
-                    Vertex vertex = meshToLayFlat.Vertices[testIndex];
+                    Vertex vertex = meshToCheck.Vertices[testIndex];
                     Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
                     if (vertexPosition.z < lowestVertexPosition.z)
                     {
-                        lowestVertex = meshToLayFlat.Vertices[testIndex];
+                        lowestVertex = meshToCheck.Vertices[testIndex];
                         lowestVertexPosition = vertexPosition;
-                        meshToLayFlat = mesh;
+                        meshToLayFlat = meshToCheck;
                     }
                 }
             }
