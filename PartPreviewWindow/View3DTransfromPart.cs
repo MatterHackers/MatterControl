@@ -60,6 +60,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class View3DTransformPart : PartPreview3DWidget
     {
         public WindowType windowType { get; set; }
+		public PrintItemWrapper PrintItemWrapper { 
+			get { return this.printItemWrapper; }
+		}
 
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
@@ -88,9 +91,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget saveButtons;
         Button applyScaleButton;
 
-        PrintItemWrapper printItemWrapper;
+		PrintItemWrapper printItemWrapper;
 		bool saveAsWindowIsOpen = false;
 		SaveAsWindow saveAsWindow;
+		ExportPrintItemWindow exportingWindow;
+		bool exportingWindowIsOpen = false;
 
         List<MeshGroup> asynchMeshGroupsList = new List<MeshGroup>();
         List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
@@ -337,7 +342,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         EnterEditAndSplitIntoMeshes();
                     };
 
+					Button exportButton = textImageButtonFactory.Generate(LocalizedString.Get("Export"));
+					exportButton.Margin = new BorderDouble(right: 10);
+					exportButton.Click += (sender, e) => 
+					{
+						UiThread.RunOnIdle((state) =>
+						{
+							OpenExportWindow();
+
+						});
+
+					};
+
                     enterEditButtonsContainer.AddChild(enterEdittingButton);
+					enterEditButtonsContainer.AddChild(exportButton);
                 }
                 editToolBar.AddChild(enterEditButtonsContainer);
 
@@ -488,6 +506,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
         }
+
+		private void OpenExportWindow()
+		{
+			if (exportingWindowIsOpen == false)
+			{
+				exportingWindow = new ExportPrintItemWindow(this.PrintItemWrapper);//
+				this.exportingWindowIsOpen = true;
+				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
+				exportingWindow.ShowAsSystemWindow();
+			}
+			else
+			{
+				if (exportingWindow != null)
+				{
+					exportingWindow.BringToFront();
+				}
+			}
+		}
+
+		void ExportQueueItemWindow_Closed(object sender, EventArgs e)
+		{
+			this.exportingWindowIsOpen = false;
+		}
 
         public void ThemeChanged(object sender, EventArgs e)
         {
