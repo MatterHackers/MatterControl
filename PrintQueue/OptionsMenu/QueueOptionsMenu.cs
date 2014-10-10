@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         void SetMenuItems()
         {
             menuItems = new TupleList<string, Func<bool>>();
-            menuItems.Add(new Tuple<string,Func<bool>>("Design", null));
+			menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Design"), null));
             menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Import from Zip"), importQueueFromZipMenu_Click));
             menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click));
             menuItems.Add(new Tuple<string,Func<bool>>("GCode", null));
