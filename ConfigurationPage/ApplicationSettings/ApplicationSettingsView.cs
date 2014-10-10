@@ -63,7 +63,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
             buttonRow.Margin = new BorderDouble(0, 6);
 
-			TextWidget settingLabel = new TextWidget(LocalizedString.Get("Theme/Display Options"));
+			string settingLabelBeggining = LocalizedString.Get("Theme");
+			string settingLabelEnd = LocalizedString.Get("Display Options");
+			string settingLabelFull = String.Format("{0}/{1}", settingLabelBeggining, settingLabelEnd);
+			TextWidget settingLabel = new TextWidget(settingLabelFull);//"Theme/Display Options"
             settingLabel.AutoExpandBoundsToText = true;
             settingLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             settingLabel.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -123,8 +126,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             optionsContainer.AddChild(releaseOptionsDropList);
             optionsContainer.Width = 200;
 
-            MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Normal", "responsive");
-            MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Touchscreen", "touchscreen");
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
 
             List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
             string currentUpdateFeedType = UserSettings.Instance.get("ApplicationDisplayMode");
