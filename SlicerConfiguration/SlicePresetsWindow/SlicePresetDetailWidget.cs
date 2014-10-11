@@ -948,13 +948,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension, documentsPath);
             saveParams.FileName = presetNameInput.Text;
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                GenerateConfigFile(saveParams.FileName);
-            }
+			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
+            
         }
+
+		void onSaveFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null)
+			{
+				GenerateConfigFile(saveParams.FileName);
+			}
+		}
 
         public void GenerateConfigFile(string fileName)
         {

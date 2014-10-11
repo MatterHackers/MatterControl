@@ -155,13 +155,16 @@ namespace MatterHackers.MatterControl
 			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.zip", initialDirectory: documentsPath);
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                ExportToProjectArchive(saveParams.FileName);
-            }
+			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
         }
+
+		void onSaveFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null)
+			{
+				ExportToProjectArchive(saveParams.FileName);
+			}
+		}
 
         static string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
         static string defaultManifestPathAndFileName = Path.Combine(applicationDataPath, "data", "temp", "project-assembly", "manifest.json");
