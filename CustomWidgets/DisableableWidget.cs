@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
                     break;
 
                 case EnableLevel.ConfigOnly:
-                    disableOverlay.Margin = new BorderDouble(0, 0, 0, 20);
+                    disableOverlay.Margin = new BorderDouble(0, 0, 0, 26);
                     disableOverlay.Visible = true;
                     break;
 
