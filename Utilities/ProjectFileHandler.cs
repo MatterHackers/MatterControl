@@ -41,6 +41,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -239,21 +240,29 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public List<PrintItem> OpenFromDialog()
+		public void  OpenFromDialog()
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Zip file|*.zip");
+			FileDialog.OpenFileDialog(openParams, onProjectArchiveLoad);
 
-            FileDialog.OpenFileDialog(ref openParams);
-			if (openParams.FileNames != null)
-            {
-                string loadedFileName = openParams.FileName;
-                return ImportFromProjectArchive(loadedFileName);
-            }
-            else
-            {
-                return null;
-            }
         }
+
+		void onProjectArchiveLoad(OpenFileDialogParams openParams)
+		{
+			List<PrintItem> partFiles;
+			if (openParams.FileNames != null)
+			{
+				string loadedFileName = openParams.FileName;
+				partFiles =  ImportFromProjectArchive(loadedFileName);
+				if (partFiles != null)
+				{                
+					foreach (PrintItem part in partFiles)
+					{
+						QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+					}
+				}
+			}
+		}
 
         public List<PrintItem> ImportFromProjectArchive(string loadedFileName = null)
         {

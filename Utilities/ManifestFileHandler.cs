@@ -143,21 +143,20 @@ namespace MatterHackers.MatterControl
             sw.Close();
         }
 
-        public List<PrintItem> OpenFromDialog()
+        public void OpenFromDialog()
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Select a Project file|*.mcp");
-
-            System.IO.Stream streamToLoadFrom = FileDialog.OpenFileDialog(ref openParams);
-            if (streamToLoadFrom != null)
-            {
-                string loadedFileName = openParams.FileName;
-                return ImportFromJson(loadedFileName);
-            }
-            else
-            {
-                return null;
-            }
+			FileDialog.OpenFileDialog(openParams, onManifestFileLoad);
         }
+
+		void onManifestFileLoad(OpenFileDialogParams openParams)
+		{
+			if (openParams.FileName != null)
+			{
+				string loadedFileName = openParams.FileName;
+				List<PrintItem> printItems = ImportFromJson(loadedFileName);
+			}
+		}
 
         public List<PrintItem> ImportFromJson(string loadedFileName = null)
         {

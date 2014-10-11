@@ -165,49 +165,54 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
             openParams.ActionButtonLabel = "Load Slice Preset";
-            openParams.Title = "MatterControl: Select A File";
+            openParams.Title = "MatterControl: Select A File"; 
 
-            FileDialog.OpenFileDialog(ref openParams);
-            if (openParams.FileNames != null)
-            {                
-                DataStorage.SliceSettingsCollection settingsCollection;
-                try
-                {
-                    if (File.Exists(openParams.FileName))
-                    {
-
-                        settingsCollection = new SliceSettingsCollection();
-                        settingsCollection.Tag = windowController.filterTag;
-                        settingsCollection.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
-                        settingsCollection.Name = System.IO.Path.GetFileNameWithoutExtension(openParams.FileName);
-                        settingsCollection.Commit();
-                        
-                        string[] lines = System.IO.File.ReadAllLines(openParams.FileName);
-                        foreach (string line in lines)
-                        {
-                            //Ignore commented lines
-                            if (!line.StartsWith("#"))
-                            {
-                                string[] settingLine = line.Split('=');
-                                string keyName = settingLine[0].Trim();
-                                string settingDefaultValue = settingLine[1].Trim();
-
-                                DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
-                                sliceSetting.Name = keyName;
-                                sliceSetting.Value = settingDefaultValue;                                
-                                sliceSetting.SettingsCollectionId = settingsCollection.Id;
-                                sliceSetting.Commit();
-                            }
-                        }
-                        windowController.ChangeToSlicePresetList();
-                    }
-                }
-                catch (Exception e)
-                {                    
-                    // Error loading configuration
-                }
-            }
+			FileDialog.OpenFileDialog(openParams, onPresetLoad);
         }
+
+		void onPresetLoad(OpenFileDialogParams openParams)
+		{
+			if (openParams.FileNames != null)
+			{                
+				DataStorage.SliceSettingsCollection settingsCollection;
+				try
+				{
+					if (File.Exists(openParams.FileName))
+					{
+						//Create collection to hold preset settings
+						settingsCollection = new SliceSettingsCollection();
+						settingsCollection.Tag = windowController.filterTag;
+						settingsCollection.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+						settingsCollection.Name = System.IO.Path.GetFileNameWithoutExtension(openParams.FileName);
+						settingsCollection.Commit();
+
+						string[] lines = System.IO.File.ReadAllLines(openParams.FileName);
+						foreach (string line in lines)
+						{
+							//Ignore commented lines
+							if (!line.StartsWith("#"))
+							{
+								string[] settingLine = line.Split('=');
+								string keyName = settingLine[0].Trim();
+								string settingDefaultValue = settingLine[1].Trim();
+
+								//To do - validate imported settings as valid (KP)
+								DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+								sliceSetting.Name = keyName;
+								sliceSetting.Value = settingDefaultValue;                                
+								sliceSetting.SettingsCollectionId = settingsCollection.Id;
+								sliceSetting.Commit();
+							}
+						}
+						windowController.ChangeToSlicePresetList();
+					}
+				}
+				catch (Exception e)
+				{                    
+					// Error loading configuration
+				}
+			}
+		}
 
         IEnumerable<DataStorage.SliceSettingsCollection> GetCollections()
         {

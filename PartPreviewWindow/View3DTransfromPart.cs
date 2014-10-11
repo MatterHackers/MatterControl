@@ -328,8 +328,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                             OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
 
-                            FileDialog.OpenFileDialog(ref openParams);
-                            LoadAndAddPartsToPlate(openParams.FileNames);
+                            FileDialog.OpenFileDialog(openParams, onAddPartFileSelected);
+                            
                         });
                     };
 
@@ -355,9 +355,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         UiThread.RunOnIdle((state) =>
                         {
                             OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
-
-                            FileDialog.OpenFileDialog(ref openParams);
-                            LoadAndAddPartsToPlate(openParams.FileNames);
+							FileDialog.OpenFileDialog(openParams, onAddPartFileSelected);
                         });
                     };
 
@@ -490,6 +488,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
         }
+
+		void onAddPartFileSelected(OpenFileDialogParams openParams)
+		{
+			if (openParams.FileName != null)
+			{
+				LoadAndAddPartsToPlate(openParams.FileNames);
+			}
+		}
 
         public void ThemeChanged(object sender, EventArgs e)
         {
