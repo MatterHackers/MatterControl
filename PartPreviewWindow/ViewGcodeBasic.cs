@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             if (gcodeViewWidget.HideExtruderOffsets)
             {
-                renderType |= RenderType.DrawUsingExtruderOffsets;
+                renderType |= RenderType.HideExtruderOffsets;
             }
 
             return renderType;

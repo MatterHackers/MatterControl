@@ -125,7 +125,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 string value = UserSettings.Instance.get("GcodeViewerHideExtruderOffsets");
                 if (value == null)
                 {
-                    RenderGrid = true;
                     return true;
                 }
                 return (value == "True");
@@ -361,7 +360,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
                 if (HideExtruderOffsets)
                 {
-                    renderType |= RenderType.DrawUsingExtruderOffsets;
+                    renderType |= RenderType.HideExtruderOffsets;
                 }
 
                 GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, renderType,
