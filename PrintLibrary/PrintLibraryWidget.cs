@@ -396,20 +396,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
         void loadFile_ClickOnIdle(object state)
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
-            FileDialog.OpenFileDialog(ref openParams);
-            if (openParams.FileNames != null)
-            {
-                foreach (string loadedFileName in openParams.FileNames)
-                {
-                    PrintItem printItem = new PrintItem();
-                    printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
-                    printItem.FileLocation = Path.GetFullPath(loadedFileName);
-                    printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-                    printItem.Commit();
-
-                    LibraryData.Instance.AddItem(new PrintItemWrapper(printItem));
-                }
-            }
+			FileDialog.OpenFileDialog(openParams, onLibraryLoadFileSelected);            
         }
+
+		void onLibraryLoadFileSelected(OpenFileDialogParams openParams)
+		{
+			if (openParams.FileNames != null)
+			{
+				foreach (string loadedFileName in openParams.FileNames)
+				{
+					PrintItem printItem = new PrintItem();
+					printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
+					printItem.FileLocation = Path.GetFullPath(loadedFileName);
+					printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+					printItem.Commit();
+
+					LibraryData.Instance.AddItem(new PrintItemWrapper(printItem));
+				}
+			}
+		}
     }
 }
