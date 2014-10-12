@@ -2654,3 +2654,6 @@ Translated:Ungroup
 English:Align...
 Translated:Align...
 
+English:Selection
+Translated:Selection
+

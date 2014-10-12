@@ -243,11 +243,10 @@ namespace MatterHackers.MatterControl
             }
         }
 
-		public void  OpenFromDialog()
+		public void OpenFromDialog()
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Zip file|*.zip");
 			FileDialog.OpenFileDialog(openParams, onProjectArchiveLoad);
-
         }
 
 		void onProjectArchiveLoad(OpenFileDialogParams openParams)

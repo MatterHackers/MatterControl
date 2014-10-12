@@ -207,6 +207,8 @@ namespace MatterHackers.MatterControl.PrintQueue
         void importQueueButton_Click(object sender, MouseEventArgs mouseEvent)
         {
             ProjectFileHandler project = new ProjectFileHandler(null);
+            throw new NotImplementedException();
+#if false
             List<PrintItem> partFiles = project.OpenFromDialog();
             if (partFiles != null)
             {                
@@ -215,6 +217,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
                 }
             }
+#endif
         }
 
         void deleteAllFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
