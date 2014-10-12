@@ -1031,48 +1031,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createDiscreteMeshesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            throw new NotImplementedException();
-#if false
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
-            List<Mesh> meshGroups = CreateDiscreteMeshes.SplitIntoMeshes(SelectedMeshGroup, meshViewerWidget.DisplayVolume, backgroundWorker, 0, 50);
+            List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitAllVolumesIntoMeshes(SelectedMeshGroup, backgroundWorker, 0, 50);
 
             asynchMeshGroupsList.Clear();
             asynchPlatingDataList.Clear();
             asynchMeshGroupTransforms.Clear();
-            for (int i = 0; i < meshes.Length; i++)
+            for (int meshIndex = 0; meshIndex < discreetMeshes.Count; meshIndex++)
             {
                 PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
                 asynchPlatingDataList.Add(newInfo);
-                asynchMeshGroupsList.Add(meshes[i]);
+                asynchMeshGroupsList.Add(new MeshGroup(discreetMeshes[meshIndex]));
                 asynchMeshGroupTransforms.Add(new ScaleRotateTranslate(SelectedMeshGroupTransform.scale, SelectedMeshGroupTransform.rotation, Matrix4X4.Identity));
 
-                Mesh mesh = asynchMeshGroupsList[i];
+                MeshGroup meshGroup = asynchMeshGroupsList[meshIndex];
 
                 // remember where it is now
-                AxisAlignedBoundingBox startingBounds = mesh.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].TotalTransform);
+                AxisAlignedBoundingBox startingBounds = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[meshIndex].TotalTransform);
                 Vector3 startingCenter = (startingBounds.maxXYZ + startingBounds.minXYZ) / 2;
 
                 // move the mesh to be centered on the origin
-                AxisAlignedBoundingBox meshBounds = mesh.GetAxisAlignedBoundingBox();
+                AxisAlignedBoundingBox meshBounds = meshGroup.GetAxisAlignedBoundingBox();
                 Vector3 meshCenter = (meshBounds.maxXYZ + meshBounds.minXYZ) / 2;
-                mesh.Translate(-meshCenter);
+                meshGroup.Translate(-meshCenter);
 
                 // set the transform to position it where it was
-                ScaleRotateTranslate meshTransform = asynchMeshGroupTransforms[i];
+                ScaleRotateTranslate meshTransform = asynchMeshGroupTransforms[meshIndex];
                 meshTransform.translation = Matrix4X4.CreateTranslation(startingCenter);
-                asynchMeshGroupTransforms[i] = meshTransform;
-                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, i, false);
+                asynchMeshGroupTransforms[meshIndex] = meshTransform;
+                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, meshIndex, false);
 
                 // and create selection info
-                PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshGroupsList, i);
-                if (meshes.Length > 1)
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, meshIndex);
+                if (discreetMeshes.Count > 1)
                 {
-                    backgroundWorker.ReportProgress(50 + i * 50 / (meshes.Length - 1));
+                    backgroundWorker.ReportProgress(50 + meshIndex * 50 / (discreetMeshes.Count - 1));
                 }
             }
-#endif
         }
 
         void createDiscreteMeshesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1143,7 +1140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 //int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
                 if(true)
                 {
-                    expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                    expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Selection"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandMaterialOptions);
 
@@ -1821,6 +1818,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void AddMaterialControls(FlowLayoutWidget buttonPanel)
         {
+            {
+                Button Group = whiteButtonFactory.Generate(LocalizedString.Get("Group"), centerText: true);
+                Group.Cursor = Cursors.Hand;
+                buttonPanel.AddChild(Group);
+
+                Group.Click += (object sender, MouseEventArgs mouseEvent) =>
+                {
+                    //UngroupSelectedMeshGroup();
+                };
+            }
+
+            {
+                Button Ungroup = whiteButtonFactory.Generate(LocalizedString.Get("Ungroup"), centerText: true);
+                Ungroup.Cursor = Cursors.Hand;
+                buttonPanel.AddChild(Ungroup);
+
+                Ungroup.Click += (object sender, MouseEventArgs mouseEvent) =>
+                {
+                    UngroupSelectedMeshGroup();
+                };
+            }
+
+            {
+                Button Align = whiteButtonFactory.Generate(LocalizedString.Get("Align..."), centerText: true);
+                Align.Cursor = Cursors.Hand;
+                buttonPanel.AddChild(Align);
+
+                Align.Click += (object sender, MouseEventArgs mouseEvent) =>
+                {
+                };
+            }
         }
 
         private void AddHandlers()

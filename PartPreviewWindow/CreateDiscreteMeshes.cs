@@ -50,9 +50,71 @@ namespace MatterHackers.MatterControl
 
     public static class CreateDiscreteMeshes
     {
-        public static List<MeshGroup> SplitIntoMeshes(MeshGroup meshToSplit, Vector3 buildVolume, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
+        public static List<Mesh> SplitAllVolumesIntoMeshes(MeshGroup meshGroupToSplit, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
         {
-            int lengthPercent = endPercent-startPercent;
+            List<Mesh> discreteMeshes = new List<Mesh>();
+            foreach(Mesh mesh in meshGroupToSplit.Meshes)
+            {
+                List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh);
+                discreteMeshes.AddRange(discreteVolumes);
+            }
+
+            return discreteMeshes;
+        }
+
+        public static List<Mesh> SplitVolumesIntoMeshes(Mesh mesh)
+        {
+            List<Mesh> discreetVolumes = new List<Mesh>();
+            HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
+            Mesh currentVolume = null;
+            Stack<Face> attachedFaces = new Stack<Face>();
+            foreach(Face currentFace in mesh.Faces)
+            {
+                // If this face as not been added to any volume, create a new volume and add all of the attached faces.
+                if (!facesThatHaveBeenAdded.Contains(currentFace))
+                {
+                    attachedFaces.Push(currentFace);
+                    currentVolume = new Mesh();
+                    while (attachedFaces.Count > 0)
+                    {
+                        Face faceToAdd = attachedFaces.Pop();
+                        foreach (Vertex attachedVertex in faceToAdd.Vertices())
+                        {
+                            foreach (Face faceAttachedToVertex in attachedVertex.ConnectedFaces())
+                            {
+                                if (!facesThatHaveBeenAdded.Contains(faceAttachedToVertex))
+                                {
+                                    // marke that this face has been taken care of
+                                    facesThatHaveBeenAdded.Add(faceAttachedToVertex);
+                                    // add it to the list of faces we need to walk
+                                    attachedFaces.Push(faceAttachedToVertex);
+
+                                    // Add a new face to the new mesh we are creating.
+                                    List<Vertex> faceVertices = new List<Vertex>();
+                                    foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
+                                    {
+                                        Vertex newVertex = currentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
+                                        faceVertices.Add(newVertex);
+                                    }
+
+                                    currentVolume.CreateFace(faceVertices.ToArray(), true);
+                                }
+                            }
+                        }
+                    }
+
+                    currentVolume.CleanAndMergMesh();
+                    discreetVolumes.Add(currentVolume);
+                    currentVolume = null;
+                }
+            }
+
+            return discreetVolumes;
+        }
+
+        public static Mesh[] SplitIntoMeshesOnOrthographicZ(Mesh meshToSplit, Vector3 buildVolume, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
+        {
+            int lengthPercent = endPercent - startPercent;
             // check if the part is bigger than the build plate (if it is we need to use that as our size)
             AxisAlignedBoundingBox partBounds = meshToSplit.GetAxisAlignedBoundingBox();
 
@@ -66,8 +128,7 @@ namespace MatterHackers.MatterControl
             double scaleFactor = 5;
             ImageBuffer partPlate = new ImageBuffer((int)(buildVolume.x * scaleFactor), (int)(buildVolume.y * scaleFactor), 32, new BlenderBGRA());
             Vector2 renderOffset = new Vector2(buildVolume.x / 2, buildVolume.y / 2) - new Vector2(partBounds.Center.x, partBounds.Center.y);
-                throw new NotImplementedException();
-#if false
+
             PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);
 
             if (backgroundWorker != null)
@@ -168,7 +229,6 @@ namespace MatterHackers.MatterControl
             }
 
             return discreteMeshes;
-#endif
         }
 
         public static bool PointInPolygon(Polygon polygon, IntPoint testPosition)

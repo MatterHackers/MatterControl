@@ -2645,3 +2645,12 @@ Translated:My Library
 English:Add to Library
 Translated:Add to Library
 
+English:Group
+Translated:Group
+
+English:Ungroup
+Translated:Ungroup
+
+English:Align...
+Translated:Align...
+
