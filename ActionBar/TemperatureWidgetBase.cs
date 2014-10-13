@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -105,7 +106,7 @@ namespace MatterHackers.MatterControl.ActionBar
             buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             buttonContainer.Height = 18* TextWidget.GlobalPointSizeScaleRatio;
 
-            preheatButton = whiteButtonFactory.Generate("PREHEAT");
+            preheatButton = whiteButtonFactory.Generate("Preheat".Localize().ToUpper());
             preheatButton.Cursor = Cursors.Hand;
             preheatButton.Visible = false;
 

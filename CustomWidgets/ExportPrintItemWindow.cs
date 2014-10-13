@@ -28,12 +28,12 @@ namespace MatterHackers.MatterControl
         bool partIsGCode = false;
 		string documentsPath;
 
-        public ExportPrintItemWindow(PrintItemWrapper printItemWraper)
+        public ExportPrintItemWindow(PrintItemWrapper printItemWrapper)
             : base(400, 250)
         {
-            this.printItemWrapper = printItemWraper;
+            this.printItemWrapper = printItemWrapper;
 			documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-            if (Path.GetExtension(printItemWraper.FileLocation).ToUpper() == ".GCODE")
+            if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
             {
                 partIsGCode = true;
             }

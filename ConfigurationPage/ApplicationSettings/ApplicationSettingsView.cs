@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         Button configureLanguageButton;
         
         public ApplicationSettingsWidget()
-            : base("Application Settings")
+			: base(LocalizedString.Get("Application Settings"))
         {
             mainContainer.AddChild(GetUpdateControl());
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -63,7 +63,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
             buttonRow.Margin = new BorderDouble(0, 6);
 
-            TextWidget settingLabel = new TextWidget("Theme/Display Options");
+			string settingLabelBeggining = LocalizedString.Get("Theme");
+			string settingLabelEnd = LocalizedString.Get("Display Options");
+			string settingLabelFull = String.Format("{0}/{1}", settingLabelBeggining, settingLabelEnd);
+			TextWidget settingLabel = new TextWidget(settingLabelFull);//"Theme/Display Options"
             settingLabel.AutoExpandBoundsToText = true;
             settingLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             settingLabel.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -109,7 +112,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.Margin = new BorderDouble(top: 4);
 
 
-            TextWidget settingsLabel = new TextWidget("Change Display Mode");
+			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Change Display Mode"));
             settingsLabel.AutoExpandBoundsToText = true;
             settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             settingsLabel.VAnchor = VAnchor.ParentTop;
@@ -123,8 +126,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             optionsContainer.AddChild(releaseOptionsDropList);
             optionsContainer.Width = 200;
 
-            MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Normal", "responsive");
-            MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Touchscreen", "touchscreen");
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
 
             List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
             string currentUpdateFeedType = UserSettings.Instance.get("ApplicationDisplayMode");
@@ -153,7 +156,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
             configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
 
-            TextWidget settingsLabel = new TextWidget("Update Notification Feed");
+			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Update Notification Feed"));
             settingsLabel.AutoExpandBoundsToText = true;
             settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             settingsLabel.VAnchor = VAnchor.ParentTop;
@@ -167,13 +170,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             optionsContainer.AddChild(releaseOptionsDropList);
             optionsContainer.Width = 200;
 
-            MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Release", "release");
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Release"), "release");
             releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
 
-            MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Pre-Release", "pre-release");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Pre-Release"), "pre-release");
             preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
 
-            MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Development", "development");
+			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Development"), "development");
             developmentDropDownItem.Selected += new EventHandler(FixTabDot);
             
             List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
@@ -199,7 +202,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
             buttonRow.Margin = new BorderDouble(top: 4);
 
-            TextWidget settingsLabel = new TextWidget("Language Options");
+			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Language Options"));
             settingsLabel.AutoExpandBoundsToText = true;
             settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             settingsLabel.VAnchor = VAnchor.ParentTop;
