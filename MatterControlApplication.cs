@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl
 {
@@ -86,6 +87,12 @@ namespace MatterHackers.MatterControl
                         ShowMemoryUsed = true;
                         DoCGCollectEveryDraw = true;
                         break;
+                }
+
+                if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
+                {
+                    // If we are the only instance running then do nothing.
+                    // Else send these to the running instance so it can load them.
                 }
             }
 
@@ -279,7 +286,9 @@ namespace MatterHackers.MatterControl
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
-                    if (Path.GetExtension(arg).ToUpper() == ".STL")
+                    if (arg.Length > 4
+                        && arg.Contains(".")
+                        && MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(arg).ToUpper()))
                     {
                         QueueData.Instance.AddItem(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
                     }

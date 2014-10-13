@@ -284,6 +284,8 @@ namespace MatterHackers.MatterControl.PrintQueue
         void ImportQueueFromZipMenuOnIdle(object state)
         {
             ProjectFileHandler project = new ProjectFileHandler(null);
+            throw new NotImplementedException();
+#if false
             List<PrintItem> partFiles = project.OpenFromDialog();
             if (partFiles != null)
             {                
@@ -292,6 +294,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
                 }
             }
+#endif
         }
 
 		bool removeAllFromQueueButton_Click()

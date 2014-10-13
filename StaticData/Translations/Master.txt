@@ -2642,48 +2642,27 @@ Translated:Search Library
 English:My Library
 Translated:My Library
 
-English:Jakość
-Translated:Jakość
-
-English:Materiał
-Translated:Materiał
-
-English:Extruder Temperature Override
-Translated:Extruder Temperature Override
-
 English:Add to Library
 Translated:Add to Library
 
-English:PREHEAT
-Translated:PREHEAT
+English:Group
+Translated:Group
 
-English:Bed Temperature Override
-Translated:Bed Temperature Override
+English:Ungroup
+Translated:Ungroup
 
-English:Hardware Settings
-Translated:Hardware Settings
+English:Align...
+Translated:Align...
 
-English:Cloud Settings
-Translated:Cloud Settings
+English:Selection
+Translated:Selection
 
-English:Application Settings
-Translated:Application Settings
+English:Entering Editor
+Translated:Entering Editor
 
-English:Update Notification Feed
-Translated:Update Notification Feed
+English:Creating Edit Data
+Translated:Creating Edit Data
 
-English:Pre-Release
-Translated:Pre-Release
-
-English:Development
-Translated:Development
-
-English:Language Options
-Translated:Language Options
-
-English:Change Display Mode
-Translated:Change Display Mode
-
-English:Theme/Display Options
-Translated:Theme/Display Options
+English:Finding Meshes
+Translated:Finding Meshes
 

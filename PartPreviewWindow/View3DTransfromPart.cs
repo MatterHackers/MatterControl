@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         ProgressControl processingProgressControl;
         FlowLayoutWidget enterEditButtonsContainer;
         FlowLayoutWidget doEdittingButtonsContainer;
-        
+
         Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
 
         MHNumberEdit scaleRatioControl;
@@ -88,8 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Button applyScaleButton;
 
         PrintItemWrapper printItemWrapper;
-		bool saveAsWindowIsOpen = false;
-		SaveAsWindow saveAsWindow;
+        bool saveAsWindowIsOpen = false;
+        SaveAsWindow saveAsWindow;
 
         List<MeshGroup> asynchMeshGroupsList = new List<MeshGroup>();
         List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
@@ -183,7 +183,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnMouseDown(mouseEvent);
             if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
             {
-                if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+                if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+                    && mouseEvent.Button == MouseButtons.Left
+                    && ModifierKeys != Keys.Shift
+                    && ModifierKeys != Keys.Control
+                    && ModifierKeys != Keys.Alt)
                 {
                     int meshGroupHitIndex;
                     if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
@@ -192,7 +196,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         SelectedMeshGroupIndex = meshGroupHitIndex;
 
                         transformOnMouseDown = SelectedMeshGroupTransform.translation;
-                        
+
                         Invalidate();
                         meshSelectInfo.downOnPart = true;
 
@@ -221,11 +225,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
                     totalTransfrom *= Matrix4X4.CreateTranslation(new Vector3(delta));
                     meshSelectInfo.lastMoveDelta = delta;
-                    
+
                     ScaleRotateTranslate translated = SelectedMeshGroupTransform;
                     translated.translation *= totalTransfrom;
                     SelectedMeshGroupTransform = translated;
-                    
+
                     Invalidate();
                 }
             }
@@ -305,7 +309,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 FlowLayoutWidget editToolBar = new FlowLayoutWidget();
 
-                string progressFindPartsLabel = LocalizedString.Get("Finding Parts");
+                string progressFindPartsLabel = LocalizedString.Get("Entering Editor");
                 string progressFindPartsLabelFull = "{0}:".FormatWith(progressFindPartsLabel);
 
                 processingProgressControl = new ProgressControl(progressFindPartsLabelFull, ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor);
@@ -392,7 +396,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             if (meshSelectInfo.downOnPart)
                             {
                                 meshSelectInfo.downOnPart = false;
-                                
+
                                 ScaleRotateTranslate translated = SelectedMeshGroupTransform;
                                 translated.translation *= transformOnMouseDown;
                                 SelectedMeshGroupTransform = translated;
@@ -486,7 +490,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     EnterEditAndCreateSelectionData();
                 });
-                
+
             }
 
         }
@@ -495,7 +499,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             processingProgressControl.fillColor = ActiveTheme.Instance.PrimaryAccentColor;
         }
-        
+
         void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
         {
             if (windowType == WindowType.Embeded)
@@ -544,9 +548,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (MeshGroups.Count > 0)
             {
-				string makingCopyLabel = LocalizedString.Get("Making Copy");
-				string makingCopyLabelFull = string.Format ("{0}:", makingCopyLabel);
-				processingProgressControl.textWidget.Text = makingCopyLabelFull;
+                string makingCopyLabel = LocalizedString.Get("Making Copy");
+                string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+                processingProgressControl.textWidget.Text = makingCopyLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
@@ -573,7 +577,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             MeshGroup meshGroupToCopy = asynchMeshGroupsList[SelectedMeshGroupIndex];
             MeshGroup copyMeshGroup = new MeshGroup();
             double meshCount = meshGroupToCopy.Meshes.Count;
-            for(int i=0; i<meshCount; i++)
+            for (int i = 0; i < meshCount; i++)
             {
                 Mesh mesh = asynchMeshGroupsList[SelectedMeshGroupIndex].Meshes[i];
                 copyMeshGroup.Meshes.Add(Mesh.Copy(mesh, (progress0To1, processingState) =>
@@ -585,7 +589,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             PlatingHelper.FindPositionForGroupAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
-            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count-1);
+            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count - 1);
 
             backgroundWorker.ReportProgress(95);
         }
@@ -610,9 +614,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (MeshGroups.Count > 0)
             {
-				string progressArrangeParts = LocalizedString.Get ("Arranging Parts");
-				string progressArrangePartsFull = string.Format ("{0}:", progressArrangeParts);
-				processingProgressControl.textWidget.Text = progressArrangePartsFull;
+                string progressArrangeParts = LocalizedString.Get("Arranging Parts");
+                string progressArrangePartsFull = string.Format("{0}:", progressArrangeParts);
+                processingProgressControl.textWidget.Text = progressArrangePartsFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
@@ -633,8 +637,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void arrangeMeshGroupsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-                throw new NotImplementedException();
-#if false
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             if (asynchMeshGroupsList.Count > 0)
             {
@@ -661,9 +663,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             asynchPlatingDataList[i] = asynchPlatingDataList[j];
                             asynchPlatingDataList[j] = tempData;
 
-                            Mesh tempMesh = asynchMeshGroupsList[i];
+                            MeshGroup tempMeshGroup = asynchMeshGroupsList[i];
                             asynchMeshGroupsList[i] = asynchMeshGroupsList[j];
-                            asynchMeshGroupsList[j] = tempMesh;
+                            asynchMeshGroupsList[j] = tempMeshGroup;
 
                             ScaleRotateTranslate iTransform = asynchMeshGroupTransforms[i];
                             ScaleRotateTranslate jTransform = asynchMeshGroupTransforms[j];
@@ -682,15 +684,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // put them onto the plate (try the center) starting with the biggest and moving down
                 for (int i = 0; i < asynchMeshGroupsList.Count; i++)
                 {
-                    Mesh mesh = asynchMeshGroupsList[i];
-                    Vector3 meshCenter = mesh.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].translation).Center;
+                    MeshGroup meshGroup = asynchMeshGroupsList[i];
+                    Vector3 meshCenter = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].translation).Center;
                     ScaleRotateTranslate atZero = asynchMeshGroupTransforms[i];
                     atZero.translation = Matrix4X4.Identity;
                     asynchMeshGroupTransforms[i] = atZero;
-                    PlatingHelper.MoveMeshToOpenPosition(i, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
+                    PlatingHelper.MoveMeshGroupToOpenPosition(i, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
 
                     // and create the trace info so we can select it
-                    PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshGroupsList, i);
+                    PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, i);
 
                     // and put it on the bed
                     PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, i, false);
@@ -716,16 +718,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                 }
             }
-#endif
         }
 
         private void LoadAndAddPartsToPlate(string[] filesToLoad)
         {
             if (MeshGroups.Count > 0 && filesToLoad != null && filesToLoad.Length > 0)
             {
-				string loadingPartLabel = LocalizedString.Get("Loading Parts");
-				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
-				processingProgressControl.textWidget.Text = loadingPartLabelFull;
+                string loadingPartLabel = LocalizedString.Get("Loading Parts");
+                string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
+                processingProgressControl.textWidget.Text = loadingPartLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
@@ -854,7 +855,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         int halfNextPercent = (nextPercent - lastPercent) / 2;
                         lastPercent = halfNextPercent;
 
-                        for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++ )
+                        for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++)
                         {
                             MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
 
@@ -988,6 +989,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            string makingCopyLabel = LocalizedString.Get("Creating Edit Data");
+            string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+            processingProgressControl.textWidget.Text = makingCopyLabelFull;
+
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
@@ -1031,48 +1036,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createDiscreteMeshesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            throw new NotImplementedException();
-#if false
+            string makingCopyLabel = LocalizedString.Get("Finding Meshes");
+            string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+            processingProgressControl.textWidget.Text = makingCopyLabelFull;
+
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
-            List<Mesh> meshGroups = CreateDiscreteMeshes.SplitIntoMeshes(SelectedMeshGroup, meshViewerWidget.DisplayVolume, backgroundWorker, 0, 50);
+            List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitAllVolumesIntoMeshes(SelectedMeshGroup, backgroundWorker, 0, 50);
 
             asynchMeshGroupsList.Clear();
             asynchPlatingDataList.Clear();
             asynchMeshGroupTransforms.Clear();
-            for (int i = 0; i < meshes.Length; i++)
+            for (int meshIndex = 0; meshIndex < discreetMeshes.Count; meshIndex++)
             {
                 PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
                 asynchPlatingDataList.Add(newInfo);
-                asynchMeshGroupsList.Add(meshes[i]);
+                asynchMeshGroupsList.Add(new MeshGroup(discreetMeshes[meshIndex]));
                 asynchMeshGroupTransforms.Add(new ScaleRotateTranslate(SelectedMeshGroupTransform.scale, SelectedMeshGroupTransform.rotation, Matrix4X4.Identity));
 
-                Mesh mesh = asynchMeshGroupsList[i];
+                MeshGroup meshGroup = asynchMeshGroupsList[meshIndex];
 
                 // remember where it is now
-                AxisAlignedBoundingBox startingBounds = mesh.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].TotalTransform);
+                AxisAlignedBoundingBox startingBounds = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[meshIndex].TotalTransform);
                 Vector3 startingCenter = (startingBounds.maxXYZ + startingBounds.minXYZ) / 2;
 
                 // move the mesh to be centered on the origin
-                AxisAlignedBoundingBox meshBounds = mesh.GetAxisAlignedBoundingBox();
+                AxisAlignedBoundingBox meshBounds = meshGroup.GetAxisAlignedBoundingBox();
                 Vector3 meshCenter = (meshBounds.maxXYZ + meshBounds.minXYZ) / 2;
-                mesh.Translate(-meshCenter);
+                meshGroup.Translate(-meshCenter);
 
                 // set the transform to position it where it was
-                ScaleRotateTranslate meshTransform = asynchMeshGroupTransforms[i];
+                ScaleRotateTranslate meshTransform = asynchMeshGroupTransforms[meshIndex];
                 meshTransform.translation = Matrix4X4.CreateTranslation(startingCenter);
-                asynchMeshGroupTransforms[i] = meshTransform;
-                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, i, false);
+                asynchMeshGroupTransforms[meshIndex] = meshTransform;
+                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, meshIndex, false);
 
                 // and create selection info
-                PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshGroupsList, i);
-                if (meshes.Length > 1)
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, meshIndex);
+                if (discreetMeshes.Count > 1)
                 {
-                    backgroundWorker.ReportProgress(50 + i * 50 / (meshes.Length - 1));
+                    backgroundWorker.ReportProgress(50 + meshIndex * 50 / (discreetMeshes.Count - 1));
                 }
             }
-#endif
         }
 
         void createDiscreteMeshesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1141,9 +1147,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in the material options
                 //int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
-                if(true)
+                if (true)
                 {
-                    expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                    expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Selection"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandMaterialOptions);
 
@@ -1266,7 +1272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             saveButtons.AddChild(saveButton);
             saveButton.Click += (sender, e) =>
             {
-                MergeAndSavePartsToStl();
+                MergeAndSavePartsToMeshFile();
             };
 
             //Create Save As Button 	
@@ -1276,19 +1282,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             saveButtons.AddChild(saveAsButton);
             saveAsButton.Click += (sender, e) =>
             {
-				if(saveAsWindowIsOpen == false)
-				{
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToStl);
-				this.saveAsWindowIsOpen = true;
-				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
-				}
-				else
-				{
-					if(saveAsWindowIsOpen != null)
-					{
-						saveAsWindow.BringToFront();
-					}
-				}
+                if (saveAsWindowIsOpen == false)
+                {
+                    saveAsWindow = new SaveAsWindow(MergeAndSavePartsToMeshFile);
+                    this.saveAsWindowIsOpen = true;
+                    saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
+                }
+                else
+                {
+                    if (saveAsWindowIsOpen != null)
+                    {
+                        saveAsWindow.BringToFront();
+                    }
+                }
             };
 
             saveButtons.Visible = false;
@@ -1296,10 +1302,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             return saveButtons;
         }
 
-		void SaveAsWindow_Closed(object sender, EventArgs e)
-		{
-			this.saveAsWindowIsOpen = false;
-		}
+        void SaveAsWindow_Closed(object sender, EventArgs e)
+        {
+            this.saveAsWindowIsOpen = false;
+        }
 
         private void AddScaleControls(FlowLayoutWidget buttonPanel)
         {
@@ -1367,7 +1373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 uniformScale = new CheckBox(LocalizedString.Get("Lock Ratio"), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 uniformScale.Checked = true;
-                
+
                 FlowLayoutWidget leftToRight = new FlowLayoutWidget();
                 leftToRight.Padding = new BorderDouble(5, 3);
 
@@ -1428,7 +1434,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void UpdateSizeInfo()
         {
-            if (sizeDisplay[0] != null 
+            if (sizeDisplay[0] != null
                 && SelectedMeshGroup != null)
             {
                 AxisAlignedBoundingBox bounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.scale);
@@ -1519,13 +1525,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 meshViewerWidget.RenderType = renderType;
             }
-            
+
             {
                 RadioButton renderTypeShaded = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 renderTypeShaded.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
 
                 renderTypeShaded.CheckedStateChanged += (sender, e) =>
-                {                    
+                {
                     meshViewerWidget.RenderType = RenderTypes.Shaded;
                     UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
                 };
@@ -1536,7 +1542,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 RadioButton renderTypeOutlines = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 renderTypeOutlines.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
                 renderTypeOutlines.CheckedStateChanged += (sender, e) =>
-                {                 
+                {
                     meshViewerWidget.RenderType = RenderTypes.Outlines;
                     UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
                 };
@@ -1547,13 +1553,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 RadioButton renderTypePolygons = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 renderTypePolygons.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
                 renderTypePolygons.CheckedStateChanged += (sender, e) =>
-                {                    
+                {
                     meshViewerWidget.RenderType = RenderTypes.Polygons;
                     UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
                 };
                 viewOptionContainer.AddChild(renderTypePolygons);
             }
-            
+
         }
 
         private GuiWidget generateHorizontalRule()
@@ -1640,7 +1646,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             axisRemoveScalings.z = scaledBounds.Size.z / originalMeshBounds.Size.z;
 
             Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(1 / axisRemoveScalings);
-            
+
             Vector3 newScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
             newScale[axis] = scaleIn;
             Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
@@ -1659,7 +1665,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void AddRotateControls(FlowLayoutWidget buttonPanel)
         {
             List<GuiWidget> rotateControls = new List<GuiWidget>();
-			transformControls.Add(LocalizedString.Get("Rotate"), rotateControls);
+            transformControls.Add(LocalizedString.Get("Rotate"), rotateControls);
 
             textImageButtonFactory.FixedWidth = 44;
 
@@ -1670,8 +1676,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             GuiWidget horizontalSpacer = new GuiWidget();
             horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-			string degreesLabelText = LocalizedString.Get("Degrees");
-			string degreesLabelTextFull = "{0}:".FormatWith(degreesLabelText);
+            string degreesLabelText = LocalizedString.Get("Degrees");
+            string degreesLabelTextFull = "{0}:".FormatWith(degreesLabelText);
             TextWidget degreesLabel = new TextWidget(degreesLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
             degreesContainer.AddChild(degreesLabel);
             degreesContainer.AddChild(horizontalSpacer);
@@ -1738,7 +1744,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(rotateButtonContainer);
 
-			Button layFlatButton = whiteButtonFactory.Generate(LocalizedString.Get("Align to Bed"), centerText: true);
+            Button layFlatButton = whiteButtonFactory.Generate(LocalizedString.Get("Align to Bed"), centerText: true);
             layFlatButton.Cursor = Cursors.Hand;
             buttonPanel.AddChild(layFlatButton);
 
@@ -1821,6 +1827,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void AddMaterialControls(FlowLayoutWidget buttonPanel)
         {
+            {
+                Button Group = whiteButtonFactory.Generate(LocalizedString.Get("Group"), centerText: true);
+                Group.Cursor = Cursors.Hand;
+                buttonPanel.AddChild(Group);
+
+                Group.Click += (object sender, MouseEventArgs mouseEvent) =>
+                {
+                    //UngroupSelectedMeshGroup();
+                };
+            }
+
+            {
+                Button Ungroup = whiteButtonFactory.Generate(LocalizedString.Get("Ungroup"), centerText: true);
+                Ungroup.Cursor = Cursors.Hand;
+                buttonPanel.AddChild(Ungroup);
+
+                Ungroup.Click += (object sender, MouseEventArgs mouseEvent) =>
+                {
+                    UngroupSelectedMeshGroup();
+                };
+            }
+
+            {
+                Button Align = whiteButtonFactory.Generate(LocalizedString.Get("Align..."), centerText: true);
+                Align.Cursor = Cursors.Hand;
+                buttonPanel.AddChild(Align);
+
+                Align.Click += (object sender, MouseEventArgs mouseEvent) =>
+                {
+                };
+            }
         }
 
         private void AddHandlers()
@@ -1832,19 +1869,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             expandScaleOptions.CheckedStateChanged += expandScaleOptions_CheckedStateChanged;
         }
 
-        private void MergeAndSavePartsToStl(PrintItemWrapper printItemWarpperToSwitchTo = null)
+        private void MergeAndSavePartsToMeshFile(PrintItemWrapper printItemWarpperToSwitchTo = null)
         {
             if (printItemWarpperToSwitchTo != null)
             {
                 printItemWrapper = printItemWarpperToSwitchTo;
             }
 
-                throw new NotImplementedException();
-#if false
-            if (Meshes.Count > 0)
+            if (MeshGroups.Count > 0)
             {
-                partSelectButtonWasClicked = viewControls3D.partSelectButton.Checked;
-
                 string progressSavingPartsLabel = LocalizedString.Get("Saving");
                 string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
                 processingProgressControl.textWidget.Text = progressSavingPartsLabelFull;
@@ -1861,15 +1894,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 mergeAndSavePartsBackgroundWorker.RunWorkerAsync();
             }
-#endif
         }
 
         void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-                throw new NotImplementedException();
-#if false
             // we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
-            PushMeshGroupDataToAsynchLists(true);
+            PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DO_COPY);
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
@@ -1884,10 +1914,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     backgroundWorker.ReportProgress(nextPercent);
                 }
 
-                Mesh mergedMesh = PlatingHelper.DoMerge(asynchMeshGroupsList, backgroundWorker, 40, 80);
-
-                MeshOutputInfo outputInfo = new MeshOutputInfo(MeshOutputInfo.OutputType.Binary, new string[] { "Created By", "MatterControl" });
-                MeshFileIo.Save(mergedMesh, mergedMesh, printItemWrapper.FileLocation, outputInfo);
+                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
+                MeshFileIo.Save(asynchMeshGroupsList, printItemWrapper.FileLocation, outputInfo);
                 printItemWrapper.OnFileHasChanged();
             }
             catch (System.UnauthorizedAccessException)
@@ -1899,7 +1927,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 StyledMessageBox.ShowMessageBox("Oops! Unable to save changes.", "Unable to save");
             }
-#endif
         }
 
         void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1918,14 +1945,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (viewOptionContainer.Visible != expandViewOptions.Checked)
             {
                 if (expandViewOptions.Checked == true)
-                {                    
+                {
                     expandScaleOptions.Checked = false;
                     expandRotateOptions.Checked = false;
                     expandMirrorOptions.Checked = false;
                     expandMaterialOptions.Checked = false;
                 }
                 viewOptionContainer.Visible = expandViewOptions.Checked;
-            }            
+            }
         }
 
         void expandMirrorOptions_CheckedStateChanged(object sender, EventArgs e)
@@ -1933,14 +1960,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (mirrorOptionContainer.Visible != expandMirrorOptions.Checked)
             {
                 if (expandMirrorOptions.Checked == true)
-                {                    
+                {
                     expandScaleOptions.Checked = false;
                     expandRotateOptions.Checked = false;
                     expandViewOptions.Checked = false;
                     expandMaterialOptions.Checked = false;
                 }
                 mirrorOptionContainer.Visible = expandMirrorOptions.Checked;
-            }            
+            }
         }
 
         void expandMaterialOptions_CheckedStateChanged(object sender, EventArgs e)

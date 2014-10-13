@@ -304,32 +304,35 @@ namespace MatterHackers.MatterControl
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-			if (streamToSaveTo != null) 
-			{
-				streamToSaveTo.Close ();
+			FileDialog.SaveFileDialog(saveParams, onExportGcodeFileSelected);
 
-                gcodePathAndFilenameToSave = saveParams.FileName;
-                string extension = Path.GetExtension(gcodePathAndFilenameToSave);
+        }
+
+		void onExportGcodeFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null) 
+			{
+				gcodePathAndFilenameToSave = saveParams.FileName;
+				string extension = Path.GetExtension(gcodePathAndFilenameToSave);
 				if(extension == "")
 				{
-                    File.Delete(gcodePathAndFilenameToSave);
-                    gcodePathAndFilenameToSave += ".gcode";
+					File.Delete(gcodePathAndFilenameToSave);
+					gcodePathAndFilenameToSave += ".gcode";
 				}
 
-                if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
-                {
-                    Close();
-                    SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                    printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
-                }
-                else if (partIsGCode)
-                {
-                    Close();
-                    SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
-                }
-            }
-        }
+				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
+				{
+					Close();
+					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+					printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+				}
+				else if (partIsGCode)
+				{
+					Close();
+					SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
+				}
+			}
+		}
 
 
 		void ExportX3G_Click(object state)
@@ -338,11 +341,13 @@ namespace MatterHackers.MatterControl
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
 
-			System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-			if (streamToSaveTo != null) 
-			{
-				streamToSaveTo.Close ();
+			FileDialog.SaveFileDialog(saveParams, onExportX3gFileSelected);
+		}
 
+		void onExportX3gFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null) 
+			{
 				x3gPathAndFilenameToSave = saveParams.FileName;
 				string extension = Path.GetExtension(x3gPathAndFilenameToSave);
 				if(extension == "")
@@ -455,27 +460,29 @@ namespace MatterHackers.MatterControl
 			saveParams.ActionButtonLabel = "Export";
             saveParams.FileName = printItemWrapper.Name;
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
+            FileDialog.SaveFileDialog(saveParams, onExportStlFileSelected);
 
-			if (streamToSaveTo != null) 
-			{
-				streamToSaveTo.Close ();
-				Close();
-			}
-			
-			string filePathToSave = saveParams.FileName;
-            if (filePathToSave != null && filePathToSave != "")
-            {
-                string extension = Path.GetExtension(filePathToSave);
-                if (extension == "")
-                {
-                    File.Delete(filePathToSave);
-                    filePathToSave += ".stl";
-                }
-                File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-                ShowFileIfRequested(filePathToSave);
-            }
         }
+
+		void onExportStlFileSelected(SaveFileDialogParams saveParams)
+		{
+			Close();
+			if (saveParams.FileName != null)
+			{
+				string filePathToSave = saveParams.FileName;
+				if (filePathToSave != null && filePathToSave != "")
+				{
+					string extension = Path.GetExtension(filePathToSave);
+					if (extension == "")
+					{
+						File.Delete(filePathToSave);
+						filePathToSave += ".stl";
+					}
+					File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+					ShowFileIfRequested(filePathToSave);
+				}
+			}
+		}
 
         void sliceItem_Done(object sender, EventArgs e)
         {
