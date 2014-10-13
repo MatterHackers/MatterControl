@@ -167,22 +167,54 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 case ".AMF":
                     List<MeshGroup> meshGroups = MeshFileIo.Load(fileToSlice);
                     List<MeshGroup> extruder1Group = new List<MeshGroup>();
-                    extruder1Group.Add(meshGroups[0]);
-                
-                    string fileName = string.Format("{0}.stl", Path.GetRandomFileName());
-                    string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-                    string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
-                    if (!Directory.Exists(folderToSaveStlsTo))
+                    extruder1Group.Add(new MeshGroup());
+                    List<MeshGroup> extruder2Group = new List<MeshGroup>();
+                    extruder2Group.Add(new MeshGroup());
+                    foreach (MeshGroup meshGroup in meshGroups)
                     {
-                        Directory.CreateDirectory(folderToSaveStlsTo);
+                        foreach (Mesh mesh in meshGroup.Meshes)
+                        {
+                            MeshMaterialData material = MeshMaterialData.Get(mesh);
+                            switch (material.MaterialIndex)
+                            {
+                                case 1:
+                                    extruder1Group[0].Meshes.Add(mesh);
+                                    break;
+
+                                case 2:
+                                    extruder2Group[0].Meshes.Add(mesh);
+                                    break;
+                            }
+                        }
                     }
-                    string stlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
-                    MeshFileIo.Save(extruder1Group, stlFileToSlice);
-                    return new string[] { stlFileToSlice };
+
+                    string extruder1StlFileToSlice = SaveAndGetFilenameForExtruder(extruder1Group, 1);
+                    if (extruder2Group.Count > 0)
+                    {
+                        string extruder2StlFileToSlice = SaveAndGetFilenameForExtruder(extruder2Group, 2);
+                        return new string[] { extruder1StlFileToSlice, extruder2StlFileToSlice };
+                    }
+                    return new string[] { extruder1StlFileToSlice };
 
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private static string SaveAndGetFilenameForExtruder(List<MeshGroup> extruder1Group, int extruderIndex)
+        {
+            string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".stl");
+            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+            string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
+            if (!Directory.Exists(folderToSaveStlsTo))
+            {
+                Directory.CreateDirectory(folderToSaveStlsTo);
+            }
+            MeshOutputSettings settings = new MeshOutputSettings();
+            settings.StlOnlySaveUseMaterialIndex = extruderIndex;
+            string extruder1StlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
+            MeshFileIo.Save(extruder1Group, extruder1StlFileToSlice, settings);
+            return extruder1StlFileToSlice;
         }
 
         public static bool runInProcess = true;
@@ -226,7 +258,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
                                     {
                                         EngineMappingsMatterSlice.WriteMatterSliceSettingsFile(currentConfigurationFileAndPath);
-                                        commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\" \"" + fileToSlice + "\"";
+                                        commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\"";
+                                        foreach (string filename in stlFileLocations)
+                                        {
+                                            commandArgs = commandArgs + " \"" + filename + "\"";
+                                        }
                                     }
                                     break;
                             }
