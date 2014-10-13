@@ -38,7 +38,6 @@ using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using MatterHackers.MeshVisualizer;
@@ -57,48 +56,6 @@ namespace MatterHackers.MatterControl
 
     public static class PlatingHelper
     {
-        public static Mesh DoMerge(List<Mesh> meshesToMerge, BackgroundWorker backgroundWorker, int startPercent, int endPercent, bool doCSGMerge = false)
-        {
-            int lengthPercent = endPercent - startPercent;
-
-            Mesh allPolygons = new Mesh();
-            if (doCSGMerge)
-            {
-                for (int i = 0; i < meshesToMerge.Count; i++)
-                {
-                    Mesh mesh = meshesToMerge[i];
-                    allPolygons = CsgOperations.PerformOperation(allPolygons, mesh, CsgNode.Union);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < meshesToMerge.Count; i++)
-                {
-                    Mesh mesh = meshesToMerge[i];
-                    foreach (Face face in mesh.Faces)
-                    {
-                        List<Vertex> faceVertices = new List<Vertex>();
-                        foreach (FaceEdge faceEdgeToAdd in face.FaceEdges())
-                        {
-                            // we allow duplicates (the true) to make sure we are not changing the loaded models acuracy.
-                            Vertex newVertex = allPolygons.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
-                            faceVertices.Add(newVertex);
-                        }
-
-                        // we allow duplicates (the true) to make sure we are not changing the loaded models acuracy.
-                        allPolygons.CreateFace(faceVertices.ToArray(), true);
-                    }
-
-                    int nextPercent = startPercent + (i + 1) * lengthPercent / meshesToMerge.Count;
-                    backgroundWorker.ReportProgress(nextPercent);
-                }
-
-                allPolygons.CleanAndMergMesh();
-            }
-
-            return allPolygons;
-        }
-
         public static PathStorage PolygonToPathStorage(Polygon polygon)
         {
             PathStorage output = new PathStorage();

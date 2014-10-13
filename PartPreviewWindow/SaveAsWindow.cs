@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
             string newName = textToAddWidget.ActualTextEditWidget.Text;
             if (newName != "")
             {
-                string fileName = "{0}.stl".FormatWith(Path.GetRandomFileName());
+                string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
                 string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
                 PrintItem printItem = new PrintItem();

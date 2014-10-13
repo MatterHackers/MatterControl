@@ -273,7 +273,10 @@ namespace MatterHackers.MatterControl
 
         private static ImageBuffer BuildImageFromSTL(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
         {
-            if (loadedMeshGroups != null && loadedMeshGroups.Count > 0 && loadedMeshGroups[0].Meshes != null)
+            if (loadedMeshGroups != null 
+                && loadedMeshGroups.Count > 0 
+                && loadedMeshGroups[0].Meshes != null
+                && loadedMeshGroups[0].Meshes[0] != null)
             {
                 ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
                 Graphics2D partGraphics2D = tempImage.NewGraphics2D();
