@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
             configureNotificationSettingsButton.Click += new ButtonBase.ButtonEventHandler(configureNotificationSettingsButton_Click);
 
-            notificationSettingsLabel = new TextWidget("Notification Settings");
+			notificationSettingsLabel = new TextWidget(LocalizedString.Get("Notification Settings"));
             notificationSettingsLabel.AutoExpandBoundsToText = true;
             notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;

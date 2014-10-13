@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl
 
             this.textImageButtonFactory.FixedWidth = 76* TextWidget.GlobalPointSizeScaleRatio;
             {
-				Button tempButton = textImageButtonFactory.Generate(LocalizedString.Get("PREHEAT"));
+				Button tempButton = textImageButtonFactory.Generate("Preheat".Localize().ToUpper());
                 tempButton.Margin = new BorderDouble(right: 5)* TextWidget.GlobalPointSizeScaleRatio;
                 presetsContainer.AddChild(tempButton);
 
