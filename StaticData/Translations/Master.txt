@@ -2660,3 +2660,9 @@ Translated:Selection
 English:Entering Editor
 Translated:Entering Editor
 
+English:Creating Edit Data
+Translated:Creating Edit Data
+
+English:Finding Meshes
+Translated:Finding Meshes
+

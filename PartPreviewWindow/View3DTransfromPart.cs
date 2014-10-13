@@ -989,6 +989,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            string makingCopyLabel = LocalizedString.Get("Creating Edit Data");
+            string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+            processingProgressControl.textWidget.Text = makingCopyLabelFull;
+
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
@@ -1032,6 +1036,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createDiscreteMeshesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            string makingCopyLabel = LocalizedString.Get("Finding Meshes");
+            string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+            processingProgressControl.textWidget.Text = makingCopyLabelFull;
+
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
