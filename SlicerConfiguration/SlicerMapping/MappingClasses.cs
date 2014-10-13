@@ -144,9 +144,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             string extruderTemperature = ActiveSliceSettings.Instance.GetActiveValue("temperature");
             if (extruderTemperature != "0")
             {
+                bool printUsesExtruder2 = false;
+                if(ActiveSliceSettings.Instance.ExtruderCount > 1
+                    && printUsesExtruder2)
+                {
+                    // start heating the extra extruders 
+                    //M104 T1 S190.000000
+                }
                 string setTempString = string.Format("M104 S{0}", extruderTemperature);
                 AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, "set temperature");
             }
+            // make sure we are on extruder 0
+
+            AddDefaultIfNotPresent(preStartGCode, "T0", preStartGCodeLines, "set the active extruder to 0");
             preStartGCode.Add("; settings from start_gcode");
 
             return preStartGCode;
@@ -165,6 +175,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 string setTempString = "M109 S{0}".FormatWith(extruderTemperature);
                 AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, "wait for temperature");
             }
+            bool printUsesExtruder2 = false;
+            double extruder2Temp = 0;
+            if (ActiveSliceSettings.Instance.ExtruderCount > 1
+                && printUsesExtruder2
+                && extruder2Temp > 0)
+            {
+                // start heating the extra extruders 
+                //M109 T1 S190.000000
+            }
+
             AddDefaultIfNotPresent(postStartGCode, "G90", postStartGCodeLines, "use absolute coordinates");
             postStartGCode.Add(string.Format("{0} ; {1}", "G92 E0", "reset the expected extruder position"));
             AddDefaultIfNotPresent(postStartGCode, "M82", postStartGCodeLines, "use absolute distance for extrusion");
