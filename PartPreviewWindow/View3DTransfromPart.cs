@@ -183,7 +183,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnMouseDown(mouseEvent);
             if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
             {
-                if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+                if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+                    && mouseEvent.Button == MouseButtons.Left
+                    && ModifierKeys != Keys.Shift
+                    && ModifierKeys != Keys.Control
+                    && ModifierKeys != Keys.Alt)
                 {
                     int meshGroupHitIndex;
                     if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
@@ -305,7 +309,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 FlowLayoutWidget editToolBar = new FlowLayoutWidget();
 
-                string progressFindPartsLabel = LocalizedString.Get("Finding Parts");
+                string progressFindPartsLabel = LocalizedString.Get("Entering Editor");
                 string progressFindPartsLabelFull = "{0}:".FormatWith(progressFindPartsLabel);
 
                 processingProgressControl = new ProgressControl(progressFindPartsLabelFull, ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor);
@@ -328,8 +332,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                             OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
 
-                            FileDialog.OpenFileDialog(openParams, onAddPartFileSelected);
-                            
+                            FileDialog.OpenFileDialog(ref openParams);
+                            LoadAndAddPartsToPlate(openParams.FileNames);
                         });
                     };
 
@@ -355,7 +359,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         UiThread.RunOnIdle((state) =>
                         {
                             OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
-							FileDialog.OpenFileDialog(openParams, onAddPartFileSelected);
+
+                            FileDialog.OpenFileDialog(ref openParams);
+                            LoadAndAddPartsToPlate(openParams.FileNames);
                         });
                     };
 
@@ -488,14 +494,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
         }
-
-		void onAddPartFileSelected(OpenFileDialogParams openParams)
-		{
-			if (openParams.FileName != null)
-			{
-				LoadAndAddPartsToPlate(openParams.FileNames);
-			}
-		}
 
         public void ThemeChanged(object sender, EventArgs e)
         {
@@ -639,8 +637,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void arrangeMeshGroupsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-                throw new NotImplementedException();
-#if false
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             if (asynchMeshGroupsList.Count > 0)
             {
@@ -667,9 +663,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             asynchPlatingDataList[i] = asynchPlatingDataList[j];
                             asynchPlatingDataList[j] = tempData;
 
-                            Mesh tempMesh = asynchMeshGroupsList[i];
+                            MeshGroup tempMeshGroup = asynchMeshGroupsList[i];
                             asynchMeshGroupsList[i] = asynchMeshGroupsList[j];
-                            asynchMeshGroupsList[j] = tempMesh;
+                            asynchMeshGroupsList[j] = tempMeshGroup;
 
                             ScaleRotateTranslate iTransform = asynchMeshGroupTransforms[i];
                             ScaleRotateTranslate jTransform = asynchMeshGroupTransforms[j];
@@ -688,15 +684,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // put them onto the plate (try the center) starting with the biggest and moving down
                 for (int i = 0; i < asynchMeshGroupsList.Count; i++)
                 {
-                    Mesh mesh = asynchMeshGroupsList[i];
-                    Vector3 meshCenter = mesh.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].translation).Center;
+                    MeshGroup meshGroup = asynchMeshGroupsList[i];
+                    Vector3 meshCenter = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[i].translation).Center;
                     ScaleRotateTranslate atZero = asynchMeshGroupTransforms[i];
                     atZero.translation = Matrix4X4.Identity;
                     asynchMeshGroupTransforms[i] = atZero;
-                    PlatingHelper.MoveMeshToOpenPosition(i, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
+                    PlatingHelper.MoveMeshGroupToOpenPosition(i, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
 
                     // and create the trace info so we can select it
-                    PlatingHelper.CreateITraceableForMesh(asynchPlatingDataList, asynchMeshGroupsList, i);
+                    PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, i);
 
                     // and put it on the bed
                     PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, i, false);
@@ -722,7 +718,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                 }
             }
-#endif
         }
 
         private void LoadAndAddPartsToPlate(string[] filesToLoad)

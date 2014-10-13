@@ -2657,3 +2657,6 @@ Translated:Align...
 English:Selection
 Translated:Selection
 
+English:Entering Editor
+Translated:Entering Editor
+
