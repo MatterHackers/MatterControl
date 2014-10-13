@@ -2702,3 +2702,18 @@ Translated:Change Display Mode
 English:Theme/Display Options
 Translated:Theme/Display Options
 
+English:Design
+Translated:Design
+
+English:Normal
+Translated:Normal
+
+English:Touchscreen
+Translated:Touchscreen
+
+English:Theme
+Translated:Theme
+
+English:Display Options
+Translated:Display Options
+

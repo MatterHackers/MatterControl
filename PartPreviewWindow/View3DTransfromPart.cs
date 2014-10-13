@@ -90,17 +90,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget saveButtons;
         Button applyScaleButton;
 
-<<<<<<< HEAD
-        PrintItemWrapper printItemWrapper;
-        bool saveAsWindowIsOpen = false;
-        SaveAsWindow saveAsWindow;
-=======
 		PrintItemWrapper printItemWrapper;
 		bool saveAsWindowIsOpen = false;
 		SaveAsWindow saveAsWindow;
 		ExportPrintItemWindow exportingWindow;
 		bool exportingWindowIsOpen = false;
->>>>>>> Greg/development
 
         List<MeshGroup> asynchMeshGroupsList = new List<MeshGroup>();
         List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
