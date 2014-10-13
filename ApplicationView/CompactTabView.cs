@@ -61,16 +61,22 @@ namespace MatterHackers.MatterControl
         TabPage LibraryTabPage;
         TabPage HistoryTabPage;
         TabPage AboutTabPage;
-        SimpleTextTabWidget AboutTabView;
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
         GuiWidget addedUpdateMark = null;
         QueueDataView queueDataView;
         event EventHandler unregisterEvents;
-        SliceSettingsWidget sliceSettingsWidget;
         GuiWidget part3DViewContainer;
         View3DTransformPart part3DView;
         GuiWidget partGcodeViewContainer;
         ViewGcodeBasic partGcodeView;
+		SimpleTextTabWidget aboutTabWidget;
+		SliceSettingsWidget sliceSettingsWidget;
+
+		TabPage sliceTabPage;
+		TabPage manualControlsPage;
+		TabPage configurationPage;
+
+
         int TabTextSize;
 
         public CompactTabView(QueueDataView queueDataView)
@@ -84,6 +90,10 @@ namespace MatterHackers.MatterControl
 
             this.Margin = new BorderDouble(top: 4);
             this.TabTextSize = 15;
+
+			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
 
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 
@@ -102,10 +112,10 @@ namespace MatterHackers.MatterControl
             
 
             GuiWidget manualPrinterControls = new ManualPrinterControls();
-            ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
-            manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-            manualPrinterControlsScrollArea.AnchorAll();
-            manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
+			ScrollableWidget manualPrinterControlsWidget = new ScrollableWidget(true);
+            manualPrinterControlsWidget.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+            manualPrinterControlsWidget.AnchorAll();
+            manualPrinterControlsWidget.AddChild(manualPrinterControls);
 
             part3DViewContainer = new GuiWidget();
             part3DViewContainer.AnchorAll();
@@ -116,6 +126,7 @@ namespace MatterHackers.MatterControl
             GeneratePartViews();
 
             string partPreviewLabel = LocalizedString.Get("Part Preview").ToUpper();
+
             this.AddTab(new SimpleTextTabWidget(new TabPage(part3DViewContainer, partPreviewLabel), "Part Preview Tab", TabTextSize,
                         ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
@@ -125,23 +136,27 @@ namespace MatterHackers.MatterControl
 
             //Add the tab contents for 'Advanced Controls'
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            this.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", TabTextSize,
+			manualControlsPage = new TabPage(manualPrinterControlsWidget, printerControlsLabel);
+            this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
             ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
-            sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-            this.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", TabTextSize,
-                        ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+			string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
+			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+			sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
+
+			this.AddTab(new SimpleTextTabWidget(sliceTabPage, "Slice Settings Tab", TabTextSize,
+				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
-            ScrollableWidget configurationControls = new PrinterConfigurationPage();
-            this.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", TabTextSize,
+			PrinterConfigurationScrollWidget printerConfigurationWidget = new PrinterConfigurationScrollWidget();
+			configurationPage = new TabPage(printerConfigurationWidget, configurationLabel);
+			this.AddTab(new SimpleTextTabWidget(configurationPage, "Configuration Tab", TabTextSize,
                         ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
-            AboutTabView = new SimpleTextTabWidget(AboutTabPage, "About Tab", TabTextSize,
+            aboutTabWidget = new SimpleTextTabWidget(AboutTabPage, "About Tab", TabTextSize,
                         ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
-            this.AddTab(AboutTabView);
+            this.AddTab(aboutTabWidget);
 
             NumQueueItemsChanged(this, null);
             SetUpdateNotification(this, null);
@@ -159,6 +174,43 @@ namespace MatterHackers.MatterControl
         {
             UiThread.RunOnIdle(GeneratePartViews);
         }
+
+		public void ReloadAdvancedControlsPanelTrigger(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
+		}
+
+
+
+		void reloadSliceSettingsWidget()
+		{
+			//Store the UI state from the current display
+			sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
+
+			sliceTabPage.RemoveAllChildren();
+			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+			sliceSettingsWidget.AnchorAll();
+			sliceTabPage.AddChild(sliceSettingsWidget);
+		}
+
+		void reloadControlsWidget()
+		{
+
+			GuiWidget manualPrinterControls = new ManualPrinterControls();
+			ScrollableWidget manualPrinterControlsWidget = new ScrollableWidget(true);
+			manualPrinterControlsWidget.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			manualPrinterControlsWidget.AnchorAll();
+			manualPrinterControlsWidget.AddChild(manualPrinterControls);
+
+			manualControlsPage.RemoveAllChildren();
+			manualControlsPage.AddChild(manualPrinterControlsWidget);
+		}
+
+		void reloadConfigurationWidget()
+		{
+			configurationPage.RemoveAllChildren();
+			configurationPage.AddChild(new PrinterConfigurationScrollWidget());
+		}
 
         void GeneratePartViews(object state = null)
         {
@@ -219,6 +271,25 @@ namespace MatterHackers.MatterControl
             }
         }
 
+		public void ReloadAdvancedControlsPanel(object state)
+		{
+			UiThread.RunOnIdle(LoadAdvancedControls);
+		}
+
+		void LoadAdvancedControls(object state = null)
+		{
+			reloadControlsWidget();
+			reloadConfigurationWidget();
+			reloadSliceSettingsWidget();
+			this.Invalidate();
+		}
+
+		public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
+		{
+			ActiveSliceSettings.Instance.LoadAllSettings();
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+		}
+
         public void SetUpdateNotification(object sender, EventArgs widgetEvent)
         {
             switch (UpdateControlData.Instance.UpdateStatus)
@@ -230,8 +301,8 @@ namespace MatterHackers.MatterControl
                     if (addedUpdateMark == null)
                     {
                         addedUpdateMark = new NotificationWidget();
-                        addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.tabTitle.Width + 3, 7);
-                        AboutTabView.AddChild(addedUpdateMark);
+                        addedUpdateMark.OriginRelativeParent = new Vector2(aboutTabWidget.tabTitle.Width + 3, 7);
+                        aboutTabWidget.AddChild(addedUpdateMark);
                     }
                     addedUpdateMark.Visible = true;
                     break;
