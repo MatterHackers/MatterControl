@@ -19,6 +19,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
     {
         Button configureAutoLevelButton;
         Button configureEePromButton;
+		Button openGcodeTerminalButton;
 
         DisableableWidget eePromControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
@@ -27,18 +28,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         event EventHandler unregisterEvents;
 
         public HardwareSettingsWidget()
-            : base("Hardware Settings")
+			: base(LocalizedString.Get("Hardware Settings"))
         {
 
             eePromControlsContainer = new DisableableWidget();
             eePromControlsContainer.AddChild(GetEEPromControl());
             terminalCommunicationsContainer = new DisableableWidget();
+			terminalCommunicationsContainer.AddChild(GetGcodeTerminalControl());
             printLevelingContainer = new DisableableWidget();
             printLevelingContainer.AddChild(GetAutoLevelControl());
 
-            mainContainer.AddChild(printLevelingContainer); ;
+            mainContainer.AddChild(printLevelingContainer); 
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             mainContainer.AddChild(eePromControlsContainer);
+			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+
+			mainContainer.AddChild(terminalCommunicationsContainer);
+
 
             AddChild(mainContainer);
 
@@ -143,6 +149,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             return buttonRow;
         }
 
+		private FlowLayoutWidget GetGcodeTerminalControl()
+		{
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Margin = new BorderDouble(0,4);
+
+			TextWidget gcodeTerminalLabel = new TextWidget("Gcode Terminal");
+			gcodeTerminalLabel.AutoExpandBoundsToText = true;
+			gcodeTerminalLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;
+
+			openGcodeTerminalButton = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
+			openGcodeTerminalButton.Click += new ButtonBase.ButtonEventHandler(openGcodeTerminalButton_Click);
+
+			buttonRow.AddChild(gcodeTerminalLabel);
+			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(openGcodeTerminalButton);
+
+			return buttonRow;
+
+
+		}
+
         static EePromMarlinWidget openEePromMarlinWidget = null;
         static EePromRepetierWidget openEePromRepetierWidget = null;
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
@@ -242,6 +271,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 //Do stuff
             });
         }
+
+		void openGcodeTerminalButton_Click(object sender, MouseEventArgs mouseEvent)
+		{
+
+			UiThread.RunOnIdle((state) =>
+				{
+					OutputScrollWindow.Show();
+				});
+			
+		}
 
         private void onPrinterStatusChanged(object sender, EventArgs e)
         {

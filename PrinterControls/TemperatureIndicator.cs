@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl
             this.editWindowLabel = editWindowLabel;
             SetDisplayAttributes();
             AddChildElements();
+			tempOffButton.DebugShowBounds = true;
         }
 
         protected abstract double GetActualTemperature();
@@ -253,7 +254,7 @@ namespace MatterHackers.MatterControl
 
             this.textImageButtonFactory.FixedWidth = 76* TextWidget.GlobalPointSizeScaleRatio;
             {
-                Button tempButton = textImageButtonFactory.Generate("PREHEAT");
+				Button tempButton = textImageButtonFactory.Generate(LocalizedString.Get("PREHEAT"));
                 tempButton.Margin = new BorderDouble(right: 5)* TextWidget.GlobalPointSizeScaleRatio;
                 presetsContainer.AddChild(tempButton);
 
@@ -343,7 +344,7 @@ namespace MatterHackers.MatterControl
                 double buttonOffset = -10* TextWidget.GlobalPointSizeScaleRatio;
                 var offPosition = buttonOffset;
 
-                tempOffButton = textImageButtonFactory.Generate("Off");
+				tempOffButton = textImageButtonFactory.Generate("Off");
                 tempOffButton.OriginRelativeParent = new Vector2(offPosition, 0);
 
                 //sliderLabels.AddChild(tempOffButton);
@@ -424,7 +425,7 @@ namespace MatterHackers.MatterControl
     public class ExtruderTemperatureControlWidget : TemperatureControlBase
     {
         public ExtruderTemperatureControlWidget()
-			: base("Extruder Temperature Override", "Extruder Temperature Settings")
+			: base(LocalizedString.Get("Extruder Temperature Override"), LocalizedString.Get("Extruder Temperature Settings"))
         {   
             AddHandlers();
         }
@@ -519,7 +520,7 @@ namespace MatterHackers.MatterControl
     public class BedTemperatureControlWidget : TemperatureControlBase
     {
         public BedTemperatureControlWidget()
-            : base("Bed Temperature Override", "Bed Temperature Settings")
+			: base(LocalizedString.Get("Bed Temperature Override"), LocalizedString.Get("Bed Temperature Settings"))
         {   
             AddHandlers();
         }

@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public static bool runInProcess = false;
+        public static bool runInProcess = true;
         static Process slicerProcess = null;
         static void CreateSlicedPartsThread()
         {

@@ -29,7 +29,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         Button configureNotificationSettingsButton;
         
         public CloudSettingsWidget()
-            : base("Cloud Settings")
+			: base(LocalizedString.Get("Cloud Settings"))
         {
             cloudMonitorContainer = new DisableableWidget();
             cloudMonitorContainer.AddChild(GetCloudMonitorControls());
