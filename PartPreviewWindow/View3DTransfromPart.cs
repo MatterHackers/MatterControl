@@ -1915,7 +1915,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     foreach (Mesh mesh in SelectedMeshGroup.Meshes)
                     {
                         MeshMaterialData material = MeshMaterialData.Get(mesh);
-                        material.MaterialIndex = (int)extruderControl.ActuallNumberEdit.Value;
+                        if(material.MaterialIndex != (int)extruderControl.ActuallNumberEdit.Value)
+                        {
+                            material.MaterialIndex = (int)extruderControl.ActuallNumberEdit.Value;
+                            saveButtons.Visible = true;
+                        }
                     }
                 };
 
@@ -1926,7 +1930,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     if (extruderControl.ActuallNumberEdit.Value != material.MaterialIndex)
                     {
                         extruderControl.ActuallNumberEdit.Value = material.MaterialIndex;
-                        saveButtons.Visible = true;
                     }
                 };
 
