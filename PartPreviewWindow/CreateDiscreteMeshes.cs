@@ -62,19 +62,24 @@ namespace MatterHackers.MatterControl
             return discreteMeshes;
         }
 
-        public static List<Mesh> SplitVolumesIntoMeshes(Mesh mesh)
+        public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit)
         {
             List<Mesh> discreetVolumes = new List<Mesh>();
             HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
-            Mesh currentVolume = null;
+            Mesh meshFromCurrentVolume = null;
             Stack<Face> attachedFaces = new Stack<Face>();
-            foreach(Face currentFace in mesh.Faces)
+            foreach(Face currentFace in meshToSplit.Faces)
             {
                 // If this face as not been added to any volume, create a new volume and add all of the attached faces.
                 if (!facesThatHaveBeenAdded.Contains(currentFace))
                 {
                     attachedFaces.Push(currentFace);
-                    currentVolume = new Mesh();
+                    meshFromCurrentVolume = new Mesh();
+
+                    MeshMaterialData materialDataToCopy = MeshMaterialData.Get(meshToSplit);
+                    MeshMaterialData newMaterialData = MeshMaterialData.Get(meshFromCurrentVolume);
+                    newMaterialData.MaterialIndex = materialDataToCopy.MaterialIndex;
+
                     while (attachedFaces.Count > 0)
                     {
                         Face faceToAdd = attachedFaces.Pop();
@@ -93,19 +98,19 @@ namespace MatterHackers.MatterControl
                                     List<Vertex> faceVertices = new List<Vertex>();
                                     foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
                                     {
-                                        Vertex newVertex = currentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
+                                        Vertex newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
                                         faceVertices.Add(newVertex);
                                     }
 
-                                    currentVolume.CreateFace(faceVertices.ToArray(), true);
+                                    meshFromCurrentVolume.CreateFace(faceVertices.ToArray(), true);
                                 }
                             }
                         }
                     }
 
-                    currentVolume.CleanAndMergMesh();
-                    discreetVolumes.Add(currentVolume);
-                    currentVolume = null;
+                    meshFromCurrentVolume.CleanAndMergMesh();
+                    discreetVolumes.Add(meshFromCurrentVolume);
+                    meshFromCurrentVolume = null;
                 }
             }
 

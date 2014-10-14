@@ -180,6 +180,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 categoryTabs.SelectTab(uiState.selectedCategory.index);
             }
+			this.AnchorAll();
         }
 
         public bool ShowingHelp

@@ -2666,3 +2666,63 @@ Translated:Creating Edit Data
 English:Finding Meshes
 Translated:Finding Meshes
 
+English:Preheat
+Translated:Preheat
+
+English:Extruder Temperature Override
+Translated:Extruder Temperature Override
+
+English:Bed Temperature Override
+Translated:Bed Temperature Override
+
+English:Hardware Settings
+Translated:Hardware Settings
+
+English:Cloud Settings
+Translated:Cloud Settings
+
+English:Application Settings
+Translated:Application Settings
+
+English:Update Notification Feed
+Translated:Update Notification Feed
+
+English:Pre-Release
+Translated:Pre-Release
+
+English:Development
+Translated:Development
+
+English:Language Options
+Translated:Language Options
+
+English:Change Display Mode
+Translated:Change Display Mode
+
+English:Theme/Display Options
+Translated:Theme/Display Options
+
+English:Design
+Translated:Design
+
+English:Normal
+Translated:Normal
+
+English:Touchscreen
+Translated:Touchscreen
+
+English:Theme
+Translated:Theme
+
+English:Display Options
+Translated:Display Options
+
+English:Set this if the extruders run off the same heater, if there is only one heater.
+Translated:Set this if the extruders run off the same heater, if there is only one heater.
+
+English:Share Temperature
+Translated:Share Temperature
+
+English:Export...
+Translated:Export...
+

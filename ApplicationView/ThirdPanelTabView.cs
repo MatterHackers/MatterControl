@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
-            ScrollableWidget configurationControls = new PrinterConfigurationPage();
+            ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", textSize,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 

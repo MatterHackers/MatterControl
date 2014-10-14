@@ -87,8 +87,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
-                enterEditModeButton = editButtonFactory.Generate("Edit".Localize());
-                leaveEditModeButton = editButtonFactory.Generate("Done".Localize());
+                enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText:true);
+                leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
                 leaveEditModeButton.Visible = false;
                 
                 FlowLayoutWidget searchPanel = new FlowLayoutWidget();
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 searchPanel.Padding = new BorderDouble(0);                
                 {
                     searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected:"Search Library".Localize());
-                    searchInput.Margin = new BorderDouble(6, 3, 0, 0);
+                    searchInput.Margin = new BorderDouble(0, 3, 0, 0);
                     searchInput.HAnchor = HAnchor.ParentLeftRight;
                     searchInput.VAnchor = VAnchor.ParentCenter;
                     

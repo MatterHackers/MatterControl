@@ -376,6 +376,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public bool ExtrudersShareTemperature 
+        { 
+            get
+            {
+                return (int.Parse(ActiveSliceSettings.Instance.GetActiveValue("extruders_share_temperature")) == 1);
+            }
+        }
+
         public Vector2 GetOffset(int extruderIndex)
         {
             string currentOffsets = ActiveSliceSettings.Instance.GetActiveValue("extruder_offset");

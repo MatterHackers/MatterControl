@@ -139,13 +139,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
 
 			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
-            saveButton.VAnchor = VAnchor.ParentTop;
+            saveButton.VAnchor = VAnchor.ParentCenter;
             saveButton.Visible = false;
             saveButton.Margin = new BorderDouble(0, 0, 0, 10);
 			saveButton.Click += new ButtonBase.ButtonEventHandler(saveButton_Click);
 
 			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert"));
-            revertbutton.VAnchor = VAnchor.ParentTop;
+            revertbutton.VAnchor = VAnchor.ParentCenter;
             revertbutton.Visible = false;
             revertbutton.Margin = new BorderDouble(0,0,0,10);
             revertbutton.Click += new ButtonBase.ButtonEventHandler(revertbutton_Click);		
@@ -175,6 +175,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
                 sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
                 sliceOptionsMenuDropList.BorderWidth = 1;
+                sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
                 sliceOptionsMenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
                 sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
 

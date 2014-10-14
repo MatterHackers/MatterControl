@@ -45,14 +45,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-    public class PrinterConfigurationPage : ScrollableWidget
+    public class PrinterConfigurationScrollWidget : ScrollableWidget
     {
-        public PrinterConfigurationPage()
+        public PrinterConfigurationScrollWidget()
             : base(true)
         {
             ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             AnchorAll();
-            AddChild(new PrinterConfigurationWidget());
+			AddChild(new PrinterConfigurationWidget());
         }
     }
     

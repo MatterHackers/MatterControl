@@ -414,29 +414,39 @@ namespace MatterHackers.MatterControl
                 tuningRatiosLayout.HAnchor = HAnchor.ParentLeftRight;
                 tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0)* TextWidget.GlobalPointSizeScaleRatio;
 
-
-                int slideHeight = 10;
-
+                double sliderWidth;
+                if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+                {
+                    sliderWidth = 20;
+                }
+                else
+                {
+                    sliderWidth = 10;
+                }
 
                 TextWidget subheader = new TextWidget("Fine-tune adjustment while actively printing", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
                 subheader.Margin = new BorderDouble(bottom:6);
                 tuningRatiosLayout.AddChild(subheader);
                 TextWidget feedRateDescription;
                 {
+                    
                     FlowLayoutWidget feedRateLeftToRight;
                     {
                         feedRateValue = new NumberEdit(0, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40* TextWidget.GlobalPointSizeScaleRatio);
 						feedRateValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.FeedRateRatio * 100 + .5)) / 100.0;
 					
                         feedRateLeftToRight = new FlowLayoutWidget();
+                        feedRateLeftToRight.HAnchor = HAnchor.ParentLeftRight;
 
 						feedRateDescription = new TextWidget(LocalizedString.Get("Speed Multiplier"));
+                        feedRateDescription.MinimumSize = new Vector2(140, 0) * TextWidget.GlobalPointSizeScaleRatio;
                         feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         feedRateDescription.VAnchor = VAnchor.ParentCenter;
                         feedRateLeftToRight.AddChild(feedRateDescription);
-                        feedRateRatioSlider = new SolidSlider(new Vector2(), slideHeight, minFeedRateRatio, maxFeedRateRatio);
+                        feedRateRatioSlider = new SolidSlider(new Vector2(), sliderWidth, minFeedRateRatio, maxFeedRateRatio);
                         feedRateRatioSlider.Margin = new BorderDouble(5, 0);
 						feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
+                        feedRateRatioSlider.TotalWidthInPixels = 300;
                         feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         feedRateRatioSlider.ValueChanged += (sender, e) =>
                         {
@@ -451,7 +461,7 @@ namespace MatterHackers.MatterControl
                         tuningRatiosLayout.AddChild(feedRateLeftToRight);
 
                         feedRateLeftToRight.AddChild(feedRateValue);
-                        feedRateValue.Margin = new BorderDouble(0, 0, 5, 0)* TextWidget.GlobalPointSizeScaleRatio;
+                        feedRateValue.Margin = new BorderDouble(0, 0, 5, 0);
                         feedRateValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
                         textImageButtonFactory.borderWidth = 1;
@@ -470,14 +480,17 @@ namespace MatterHackers.MatterControl
 						extrusionValue.Value = ((int)(PrinterConnectionAndCommunication.Instance.ExtrusionRatio * 100 + .5)) / 100.0;
 
                         FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+                        leftToRight.HAnchor = HAnchor.ParentLeftRight;
                         leftToRight.Margin = new BorderDouble(top: 10)* TextWidget.GlobalPointSizeScaleRatio;
 
 						extrusionDescription = new TextWidget(LocalizedString.Get("Extrusion Multiplier"));
+                        extrusionDescription.MinimumSize = new Vector2(140, 0) * TextWidget.GlobalPointSizeScaleRatio;
                         extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         extrusionDescription.VAnchor = VAnchor.ParentCenter;
                         leftToRight.AddChild(extrusionDescription);
-                        extrusionRatioSlider = new SolidSlider(new Vector2(), slideHeight, minExtrutionRatio, maxExtrusionRatio);
-                        extrusionRatioSlider.Margin = new BorderDouble(5, 0)* TextWidget.GlobalPointSizeScaleRatio;
+                        extrusionRatioSlider = new SolidSlider(new Vector2(), sliderWidth, minExtrutionRatio, maxExtrusionRatio,Orientation.Horizontal);
+                        extrusionRatioSlider.TotalWidthInPixels = 300;
+                        extrusionRatioSlider.Margin = new BorderDouble(5, 0);
                         extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
                         extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         extrusionRatioSlider.ValueChanged += (sender, e) =>
@@ -492,17 +505,13 @@ namespace MatterHackers.MatterControl
                         leftToRight.AddChild(extrusionRatioSlider);
                         tuningRatiosLayout.AddChild(leftToRight);
                         leftToRight.AddChild(extrusionValue);
-                        extrusionValue.Margin = new BorderDouble(0, 0, 5, 0)* TextWidget.GlobalPointSizeScaleRatio;
+                        extrusionValue.Margin = new BorderDouble(0, 0, 5, 0);
                         extrusionValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
                         Button setExtrusionButton = textImageButtonFactory.Generate(LocalizedString.Get("Set"));
                         setExtrusionButton.VAnchor = VAnchor.ParentCenter;
 						leftToRight.AddChild(setExtrusionButton);
                     }
-
-                    feedRateDescription.Width = extrusionDescription.Width;
-                    feedRateDescription.MinimumSize = new Vector2(extrusionDescription.Width, feedRateDescription.MinimumSize.y);
-                    feedRateLeftToRight.HAnchor = HAnchor.FitToChildren;
                     feedRateLeftToRight.VAnchor = VAnchor.FitToChildren;
                 }
 
