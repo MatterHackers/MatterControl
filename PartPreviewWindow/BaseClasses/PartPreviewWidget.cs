@@ -65,10 +65,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
             {
                 SideBarButtonWidth = 180;
+                ShortButtonHeight = 40;
             }
             else
             {
                 SideBarButtonWidth = 138;
+                ShortButtonHeight = 30;
             }
             
             textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -82,6 +84,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
             whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
             whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
+            whiteButtonFactory.borderWidth = 1;
+            whiteButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+            whiteButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
             expandMenuOptionFactory.FixedWidth = SideBarButtonWidth;
             expandMenuOptionFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;

@@ -1210,17 +1210,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 // put in the material options
                 int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+                
+                expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
+
                 if (numberOfExtruders > 1)
                 {
-                    expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-                    expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandMaterialOptions);
 
                     materialOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                     materialOptionContainer.HAnchor = HAnchor.ParentLeftRight;
                     materialOptionContainer.Visible = false;
-                    buttonRightPanel.AddChild(materialOptionContainer);
 
+                    buttonRightPanel.AddChild(materialOptionContainer);
                     AddMaterialControls(materialOptionContainer);
                 }
 

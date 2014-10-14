@@ -232,7 +232,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             //this.VAnchor = Agg.UI.VAnchor.FitToChildren;
             this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            this.Height = 65;
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                this.Height = 65;
+            }
+            else
+            {
+                this.Height = 50;
+            }
+            
             this.Padding = new BorderDouble(0);
             this.Margin = new BorderDouble(6, 0, 6, 6);
         }
