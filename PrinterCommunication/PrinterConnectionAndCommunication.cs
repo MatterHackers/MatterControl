@@ -2371,6 +2371,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
+        public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber=0)
+        {
+            if (moveAmountMm != 0)
+            {
+                SetMovementToRelative();
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T{0}".FormatWith(extruderNumber)); //Set active extruder
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 F{0}".FormatWith(feedRateMmPerMinute));
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G1 E{0}".FormatWith(moveAmountMm));
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("T0".FormatWith(extruderNumber)); //Reset back to extruder one
+                SetMovementToAbsolute();
+            }
+        }
+
         public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
         {
             SetMovementToAbsolute();
