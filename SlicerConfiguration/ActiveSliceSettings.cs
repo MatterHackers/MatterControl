@@ -160,6 +160,42 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public string GetMaterialValue(string sliceSetting, int extruderIndex)
+        {
+            int numberOfActiveLayers = activeSettingsLayers.Count;
+            string settingValue = null;
+            if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex) != 0)
+            {
+                int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex);
+                DataStorage.SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
+                SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+                if (printerSettingsLayer.settingsDictionary.ContainsKey(sliceSetting))
+                {
+                    settingValue = printerSettingsLayer.settingsDictionary[sliceSetting].Value;
+                }
+            }
+
+            if (settingValue == null)
+            {
+                //Go through settings layers one-by-one, starting with quality (index = 2), in reverse order, until we find a layer that contains the value
+                int startingLayer = Math.Min(numberOfActiveLayers - 1, 2);
+                for (int i = startingLayer; i >= 0; i--)
+                {
+                    if (activeSettingsLayers[i].settingsDictionary.ContainsKey(sliceSetting))
+                    {
+                        settingValue = activeSettingsLayers[i].settingsDictionary[sliceSetting].Value;
+                    }
+                }
+            }
+
+            if (settingValue == null)
+            {
+                settingValue = "Unknown";
+            }
+
+            return "Unknown";
+        }
+
         public void LoadSettingsForQuality()
         {
             if (ActivePrinterProfile.Instance.ActivePrinter != null)

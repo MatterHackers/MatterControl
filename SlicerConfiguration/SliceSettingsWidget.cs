@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             "has_heated_bed", 
             "has_sd_card_reader",
             "extruder_count",
+            "extruders_share_temperature",
         };
 
         const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
