@@ -1950,6 +1950,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 for (int i = 0; i < asynchMeshGroupsList.Count; i++)
                 {
                     asynchMeshGroupsList[i].Transform(MeshGroupTransforms[i].TotalTransform);
+                    foreach (Mesh mesh in asynchMeshGroupsList[i].Meshes)
+                    {
+                        mesh.SortVertices();
+                    }
 
                     int nextPercent = (i + 1) * 40 / asynchMeshGroupsList.Count;
                     backgroundWorker.ReportProgress(nextPercent);

@@ -89,6 +89,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
             
             new NotPassedItem("", "extruder_count"),
+            new NotPassedItem("", "extruders_share_temperature"),
 
             //endCode=M104 S0
             new MapEndGCode("endCode", "end_gcode"),

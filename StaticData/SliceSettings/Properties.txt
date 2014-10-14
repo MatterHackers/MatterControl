@@ -28,6 +28,7 @@ extruder_clearance_height|Extruder Clearance Height|POSITIVE_DOUBLE|mm|This is u
 extruder_clearance_radius|Extruder Clearance Radius|POSITIVE_DOUBLE|mm|This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
 extruder_count|Extruder Count|INT||The number of extruders this machine has.
 extruder_offset|Extruder Offset|OFFSET2|mm|This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+extruders_share_temperature|Share Temperature|CHECK_BOX||Set this if the extruders run off the same heater, if there is only one heater.
 extrusion_axis|Extrusion Axis|STRING||This is the identifier used in the gcode to specify the extruder.
 extrusion_multiplier|Extrusion Multiplier|POSITIVE_DOUBLE||All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
 extrusion_width|Default Extrusion Width|DOUBLE_OR_PERCENT|mm or %\nleave 0 for auto|Leave this as 0 to allow automatic calculation of extrusion width.

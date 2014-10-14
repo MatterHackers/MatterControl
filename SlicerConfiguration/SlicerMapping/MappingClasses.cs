@@ -144,9 +144,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             string extruderTemperature = ActiveSliceSettings.Instance.GetActiveValue("temperature");
             if (extruderTemperature != "0")
             {
-                string setTempString = string.Format("M104 S{0}", extruderTemperature);
-                AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, "set temperature");
+                string setTempString = string.Format("M104 T0 S{0}", extruderTemperature);
+                AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, "set extruder 1 temperature");
             }
+
+            double extruder2Temp = 0;
+            if (extruder2Temp > 0
+                && ActiveSliceSettings.Instance.ExtruderCount > 1
+                && !ActiveSliceSettings.Instance.ExtrudersShareTemperature)
+            {
+                // start heating the extra extruders 
+                string setTempString = string.Format("M104 T1 S{0}", extruder2Temp);
+                AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, "set extruder 2 temperature");
+            }
+
+            // make sure we are on extruder 0
+            AddDefaultIfNotPresent(preStartGCode, "T0", preStartGCodeLines, "set the active extruder to 0");
             preStartGCode.Add("; settings from start_gcode");
 
             return preStartGCode;
@@ -162,9 +175,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             string extruderTemperature = ActiveSliceSettings.Instance.GetActiveValue("temperature");
             if (extruderTemperature != "0")
             {
-                string setTempString = "M109 S{0}".FormatWith(extruderTemperature);
-                AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, "wait for temperature");
+                string setTempString = "M109 T0 S{0}".FormatWith(extruderTemperature);
+                AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, "wait for extruder 1 temperature");
             }
+
+            double extruder2Temp = 0;
+            if (extruder2Temp > 0
+                && ActiveSliceSettings.Instance.ExtruderCount > 1
+                && !ActiveSliceSettings.Instance.ExtrudersShareTemperature)
+            {
+                // now make sure the second extruder is at temp
+                //M104 T1 S190.000000
+                string setTempString = string.Format("M190 T1 S{0}", extruder2Temp);
+                AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, "wait for extruder 2 temperature");
+            }
+
             AddDefaultIfNotPresent(postStartGCode, "G90", postStartGCodeLines, "use absolute coordinates");
             postStartGCode.Add(string.Format("{0} ; {1}", "G92 E0", "reset the expected extruder position"));
             AddDefaultIfNotPresent(postStartGCode, "M82", postStartGCodeLines, "use absolute distance for extrusion");
