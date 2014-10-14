@@ -207,6 +207,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     enableAutoconnect.Checked = ((StateBeforeRefresh)state).autoConnect;
                 }
 
+				SerialPortControl serialPortScroll = new SerialPortControl();
+				serialPortScroll.AddChild(comPortContainer);
+
                 ConnectionControlContainer.VAnchor = VAnchor.ParentBottomTop;
                 ConnectionControlContainer.AddChild(printerNameLabel);
                 ConnectionControlContainer.AddChild(printerNameInput);
@@ -508,4 +511,39 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             throw new Exception(LocalizedString.Get("Could not find a selected button."));
         }
     }
+
+	class SerialPortControl : ScrollableWidget
+	{
+		FlowLayoutWidget topToBottomItemList;
+
+		public SerialPortControl()
+		{                
+			this.AnchorAll();
+			this.AutoScroll = true;
+			this.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+
+			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			topToBottomItemList.Margin = new BorderDouble(top: 3);
+
+			base.AddChild(topToBottomItemList);
+		}
+
+		public void RemoveScrollChildren()
+		{
+			topToBottomItemList.RemoveAllChildren();
+		}
+
+		public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
+		{
+			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
+			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
+			itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			itemHolder.AddChild(child);
+			itemHolder.VAnchor = VAnchor.FitToChildren;
+
+			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
+		}
+	}
+
 }
