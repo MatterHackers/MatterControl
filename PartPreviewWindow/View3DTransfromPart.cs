@@ -39,6 +39,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations; //Added Namespace
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -63,6 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrintItemWrapper PrintItemWrapper { 
 			get { return this.printItemWrapper; }
 		}
+
+        EventHandler SelectionChanged;
 
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
@@ -205,7 +208,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         Invalidate();
                         meshSelectInfo.downOnPart = true;
 
-                        SetApplyScaleVisability();
+                        if (SelectionChanged != null)
+                        {
+                            SelectionChanged(this, null);
+                        }
                     }
                 }
             }
@@ -343,21 +349,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     };
 
                     Button enterEdittingButton = textImageButtonFactory.Generate(LocalizedString.Get("Edit"));
+                    enterEdittingButton.Margin = new BorderDouble(right: 10);
                     enterEdittingButton.Click += (sender, e) =>
                     {
                         EnterEditAndCreateSelectionData();
                     };
 
-					Button exportButton = textImageButtonFactory.Generate(LocalizedString.Get("Export"));
+					Button exportButton = textImageButtonFactory.Generate(LocalizedString.Get("Export..."));
 					exportButton.Margin = new BorderDouble(right: 10);
 					exportButton.Click += (sender, e) => 
 					{
 						UiThread.RunOnIdle((state) =>
 						{
 							OpenExportWindow();
-
 						});
-
 					};
 
                     enterEditButtonsContainer.AddChild(enterEdittingButton);
@@ -383,6 +388,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
+                    Button ungroupButton = textImageButtonFactory.Generate(LocalizedString.Get("Ungroup"));
+                    doEdittingButtonsContainer.AddChild(ungroupButton);
+                    ungroupButton.Click += (sender, e) =>
+                    {
+                        UngroupSelectedMeshGroup();
+                    };
+
                     Button copyButton = textImageButtonFactory.Generate(LocalizedString.Get("Copy"));
                     doEdittingButtonsContainer.AddChild(copyButton);
                     copyButton.Click += (sender, e) =>
@@ -391,11 +403,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     };
 
                     Button deleteButton = textImageButtonFactory.Generate(LocalizedString.Get("Delete"));
-                    deleteButton.Margin = new BorderDouble(left: 20);
+                    deleteButton.Margin = new BorderDouble(left: 20, right: 10);
                     doEdittingButtonsContainer.AddChild(deleteButton);
                     deleteButton.Click += (sender, e) =>
                     {
                         DeleteSelectedMesh();
+                    };
+
+                    Button exportButton = textImageButtonFactory.Generate(LocalizedString.Get("Export..."));
+                    exportButton.Margin = new BorderDouble(right: 10);
+                    exportButton.Click += (sender, e) =>
+                    {
+                        UiThread.RunOnIdle((state) =>
+                        {
+                            OpenExportWindow();
+                        });
                     };
                 }
 
@@ -1187,10 +1209,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
 
                 // put in the material options
-                //int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
-                if (true)
+                int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+                if (numberOfExtruders > 1)
                 {
-                    expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Selection"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+                    expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                     expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
                     buttonRightPanel.AddChild(expandMaterialOptions);
 
@@ -1375,12 +1397,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 scaleRatioContainer.AddChild(scaleRatioControl);
                 scaleRatioControl.ActuallNumberEdit.KeyPressed += (sender, e) =>
                 {
-                    SetApplyScaleVisability();
+                    SetApplyScaleVisability(this, null);
                 };
 
                 scaleRatioControl.ActuallNumberEdit.KeyDown += (sender, e) =>
                 {
-                    SetApplyScaleVisability();
+                    SetApplyScaleVisability(this, null);
                 };
 
                 scaleRatioControl.ActuallNumberEdit.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
@@ -1485,7 +1507,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void SetApplyScaleVisability()
+        private void SetApplyScaleVisability(Object sender, EventArgs e)
         {
             double scale = scaleRatioControl.ActuallNumberEdit.Value;
             if (scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[0]
@@ -1700,7 +1722,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             saveButtons.Visible = true;
             Invalidate();
             MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
-            SetApplyScaleVisability();
+            SetApplyScaleVisability(this, null);
         }
 
         private void AddRotateControls(FlowLayoutWidget buttonPanel)
@@ -1869,35 +1891,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void AddMaterialControls(FlowLayoutWidget buttonPanel)
         {
             {
-                Button Group = whiteButtonFactory.Generate(LocalizedString.Get("Group"), centerText: true);
-                Group.Cursor = Cursors.Hand;
-                buttonPanel.AddChild(Group);
+                FlowLayoutWidget extruderIndexContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+                extruderIndexContainer.HAnchor = HAnchor.ParentLeftRight;
+                extruderIndexContainer.Padding = new BorderDouble(5);
 
-                Group.Click += (object sender, MouseEventArgs mouseEvent) =>
+                GuiWidget horizontalSpacer = new GuiWidget();
+                horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
+
+                string extruderLabelText = LocalizedString.Get("Extruder");
+                string extruderLabelTextFull = "{0}:".FormatWith(extruderLabelText);
+                TextWidget extruderLabel = new TextWidget(extruderLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                extruderIndexContainer.AddChild(extruderLabel);
+                extruderIndexContainer.AddChild(horizontalSpacer);
+
+                MHNumberEdit extruderControl = new MHNumberEdit(1, pixelWidth: 20, allowNegatives: false, allowDecimals: false, increment: 1, minValue: 1, maxValue: 2);
+                extruderControl.VAnchor = Agg.UI.VAnchor.ParentTop;
+                extruderIndexContainer.AddChild(extruderControl);
+
+                extruderControl.ActuallNumberEdit.EditComplete += (sender, e) =>
                 {
-                    //UngroupSelectedMeshGroup();
+                    foreach (Mesh mesh in SelectedMeshGroup.Meshes)
+                    {
+                        MeshMaterialData material = MeshMaterialData.Get(mesh);
+                        material.MaterialIndex = (int)extruderControl.ActuallNumberEdit.Value;
+                    }
                 };
-            }
 
-            {
-                Button Ungroup = whiteButtonFactory.Generate(LocalizedString.Get("Ungroup"), centerText: true);
-                Ungroup.Cursor = Cursors.Hand;
-                buttonPanel.AddChild(Ungroup);
-
-                Ungroup.Click += (object sender, MouseEventArgs mouseEvent) =>
+                SelectionChanged += (sender, e) =>
                 {
-                    UngroupSelectedMeshGroup();
+                    Mesh mesh = SelectedMeshGroup.Meshes[0];
+                    MeshMaterialData material = MeshMaterialData.Get(mesh);
+                    if (extruderControl.ActuallNumberEdit.Value != material.MaterialIndex)
+                    {
+                        extruderControl.ActuallNumberEdit.Value = material.MaterialIndex;
+                        saveButtons.Visible = true;
+                    }
                 };
-            }
 
-            {
-                Button Align = whiteButtonFactory.Generate(LocalizedString.Get("Align..."), centerText: true);
-                Align.Cursor = Cursors.Hand;
-                buttonPanel.AddChild(Align);
-
-                Align.Click += (object sender, MouseEventArgs mouseEvent) =>
-                {
-                };
+                buttonPanel.AddChild(extruderIndexContainer);
             }
         }
 
@@ -1905,9 +1936,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
             expandMirrorOptions.CheckedStateChanged += expandMirrorOptions_CheckedStateChanged;
-            expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
+            if (expandMaterialOptions != null)
+            {
+                expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
+            }
             expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
             expandScaleOptions.CheckedStateChanged += expandScaleOptions_CheckedStateChanged;
+
+            SelectionChanged += SetApplyScaleVisability;
         }
 
         private void MergeAndSavePartsToMeshFile(PrintItemWrapper printItemWarpperToSwitchTo = null)

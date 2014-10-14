@@ -2723,3 +2723,6 @@ Translated:Set this if the extruders run off the same heater, if there is only o
 English:Share Temperature
 Translated:Share Temperature
 
+English:Export...
+Translated:Export...
+
