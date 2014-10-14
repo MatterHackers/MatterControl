@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl
                         feedRateLeftToRight.HAnchor = HAnchor.ParentLeftRight;
 
 						feedRateDescription = new TextWidget(LocalizedString.Get("Speed Multiplier"));
-                        feedRateDescription.MinimumSize = new Vector2(220, 0);
+                        feedRateDescription.MinimumSize = new Vector2(140, 0) * TextWidget.GlobalPointSizeScaleRatio;
                         feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         feedRateDescription.VAnchor = VAnchor.ParentCenter;
                         feedRateLeftToRight.AddChild(feedRateDescription);
@@ -461,7 +461,7 @@ namespace MatterHackers.MatterControl
                         tuningRatiosLayout.AddChild(feedRateLeftToRight);
 
                         feedRateLeftToRight.AddChild(feedRateValue);
-                        feedRateValue.Margin = new BorderDouble(0, 0, 5, 0)* TextWidget.GlobalPointSizeScaleRatio;
+                        feedRateValue.Margin = new BorderDouble(0, 0, 5, 0);
                         feedRateValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
                         textImageButtonFactory.borderWidth = 1;
@@ -484,13 +484,13 @@ namespace MatterHackers.MatterControl
                         leftToRight.Margin = new BorderDouble(top: 10)* TextWidget.GlobalPointSizeScaleRatio;
 
 						extrusionDescription = new TextWidget(LocalizedString.Get("Extrusion Multiplier"));
-                        extrusionDescription.MinimumSize = new Vector2(220, 0);
+                        extrusionDescription.MinimumSize = new Vector2(140, 0) * TextWidget.GlobalPointSizeScaleRatio;
                         extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         extrusionDescription.VAnchor = VAnchor.ParentCenter;
                         leftToRight.AddChild(extrusionDescription);
                         extrusionRatioSlider = new SolidSlider(new Vector2(), sliderWidth, minExtrutionRatio, maxExtrusionRatio,Orientation.Horizontal);
                         extrusionRatioSlider.TotalWidthInPixels = 300;
-                        extrusionRatioSlider.Margin = new BorderDouble(5, 0)* TextWidget.GlobalPointSizeScaleRatio;
+                        extrusionRatioSlider.Margin = new BorderDouble(5, 0);
                         extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
                         extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         extrusionRatioSlider.ValueChanged += (sender, e) =>
@@ -505,16 +505,13 @@ namespace MatterHackers.MatterControl
                         leftToRight.AddChild(extrusionRatioSlider);
                         tuningRatiosLayout.AddChild(leftToRight);
                         leftToRight.AddChild(extrusionValue);
-                        extrusionValue.Margin = new BorderDouble(0, 0, 5, 0)* TextWidget.GlobalPointSizeScaleRatio;
+                        extrusionValue.Margin = new BorderDouble(0, 0, 5, 0);
                         extrusionValue.VAnchor = VAnchor.ParentCenter;
                         textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
                         Button setExtrusionButton = textImageButtonFactory.Generate(LocalizedString.Get("Set"));
                         setExtrusionButton.VAnchor = VAnchor.ParentCenter;
 						leftToRight.AddChild(setExtrusionButton);
                     }
-
-                    feedRateDescription.Width = extrusionDescription.Width;
-                    feedRateDescription.MinimumSize = new Vector2(extrusionDescription.Width, feedRateDescription.MinimumSize.y);
                     feedRateLeftToRight.VAnchor = VAnchor.FitToChildren;
                 }
 
