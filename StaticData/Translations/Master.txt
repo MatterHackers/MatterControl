@@ -2717,3 +2717,9 @@ Translated:Theme
 English:Display Options
 Translated:Display Options
 
+English:Set this if the extruders run off the same heater, if there is only one heater.
+Translated:Set this if the extruders run off the same heater, if there is only one heater.
+
+English:Share Temperature
+Translated:Share Temperature
+
