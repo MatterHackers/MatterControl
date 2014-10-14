@@ -17,9 +17,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
     public class ApplicationSettingsWidget : SettingsViewBase
     {
-        Button restartButton;
+		Button languageRestartButton;
         Button configureUpdateFeedButton;
         Button configureLanguageButton;
+		Button displayControlRestartButton;
         
         public ApplicationSettingsWidget()
 			: base(LocalizedString.Get("Application Settings"))
@@ -117,6 +118,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             settingsLabel.VAnchor = VAnchor.ParentTop;
 
+			displayControlRestartButton = textImageButtonFactory.Generate("Restart");
+			displayControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			displayControlRestartButton.Visible = false;
+			displayControlRestartButton.Margin = new BorderDouble(right: 6);
+			displayControlRestartButton.Click += (sender, e) =>
+			{
+				RestartApplication();
+			};
+
+
             FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             optionsContainer.Margin = new BorderDouble(bottom: 6);
 
@@ -142,6 +153,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
             buttonRow.AddChild(settingsLabel);
             buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(displayControlRestartButton);
             buttonRow.AddChild(optionsContainer);
             return buttonRow;
         }
@@ -220,18 +232,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             optionsContainer.AddChild(languageSelector);
             optionsContainer.Width = 200;
 
-            restartButton = textImageButtonFactory.Generate("Restart");
-            restartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            restartButton.Visible = false;
-            restartButton.Margin = new BorderDouble(right: 6);
-            restartButton.Click += (sender, e) =>
+			languageRestartButton = textImageButtonFactory.Generate("Restart");
+			languageRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			languageRestartButton.Visible = false;
+			languageRestartButton.Margin = new BorderDouble(right: 6);
+			languageRestartButton.Click += (sender, e) =>
             {
                 RestartApplication();
             };
 
             buttonRow.AddChild(settingsLabel);
             buttonRow.AddChild(new HorizontalSpacer());
-            buttonRow.AddChild(restartButton);
+			buttonRow.AddChild(languageRestartButton);
             buttonRow.AddChild(optionsContainer);
             
 
@@ -271,6 +283,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             if (releaseCode != UserSettings.Instance.get("ApplicationDisplayMode"))
             {
                 UserSettings.Instance.set("ApplicationDisplayMode", releaseCode);
+				displayControlRestartButton.Visible = true;
             }
         }
 
@@ -280,6 +293,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
             {
                 UserSettings.Instance.set("UpdateFeedType", releaseCode);
+
             }
         }
 
@@ -289,7 +303,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             if (languageCode != UserSettings.Instance.get("Language"))
             {
                 UserSettings.Instance.set("Language", languageCode);
-                restartButton.Visible = true;
+				languageRestartButton.Visible = true;
             }
         }
 
