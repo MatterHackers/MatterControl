@@ -652,7 +652,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             PlatingHelper.FindPositionForGroupAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
-            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count - 1);
+            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count - 1, null);
 
             backgroundWorker.ReportProgress(95);
         }
@@ -755,7 +755,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     PlatingHelper.MoveMeshGroupToOpenPosition(i, asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupTransforms);
 
                     // and create the trace info so we can select it
-                    PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, i);
+                    PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, i, null);
 
                     // and put it on the bed
                     PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, i, false);
@@ -927,7 +927,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             {
                                 return;
                             }
-                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count - 1);
+                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, asynchMeshGroupsList.Count - 1, null);
 
                             backgroundWorker.ReportProgress(lastPercent + subMeshIndex + 1 * subLength / loadedMeshGroups.Count);
                         }
@@ -1070,11 +1070,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshGroup meshGroup = asynchMeshGroupsList[i];
 
                 // create the selection info
-                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, i);
-                if (asynchMeshGroupsList.Count > 1)
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, i, (double progress0To1, string processingState) =>
                 {
-                    backgroundWorker.ReportProgress(50 + i * 50 / (asynchMeshGroupsList.Count - 1));
-                }
+                    backgroundWorker.ReportProgress((int)(progress0To1 * 100));
+                    return true;
+                });
             }
         }
 
@@ -1106,22 +1106,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
-            List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitAllVolumesIntoMeshes(SelectedMeshGroup, backgroundWorker, 0, 50);
+            PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DO_COPY);
 
-            asynchMeshGroupsList.Clear();
-            asynchPlatingDataList.Clear();
-            asynchMeshGroupTransforms.Clear();
-            for (int meshIndex = 0; meshIndex < discreetMeshes.Count; meshIndex++)
+            int indexBeingReplaced = MeshGroups.IndexOf(SelectedMeshGroup);
+            asynchMeshGroupsList[indexBeingReplaced].Transform(asynchMeshGroupTransforms[indexBeingReplaced].TotalTransform);
+            List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroupsList[indexBeingReplaced], backgroundWorker, 0, 50);
+
+            asynchMeshGroupsList.RemoveAt(indexBeingReplaced);
+            asynchPlatingDataList.RemoveAt(indexBeingReplaced);
+            asynchMeshGroupTransforms.RemoveAt(indexBeingReplaced);
+            for (int discreetMeshIndex = 0; discreetMeshIndex < discreetMeshes.Count; discreetMeshIndex++)
             {
                 PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
                 asynchPlatingDataList.Add(newInfo);
-                asynchMeshGroupsList.Add(new MeshGroup(discreetMeshes[meshIndex]));
+                asynchMeshGroupsList.Add(new MeshGroup(discreetMeshes[discreetMeshIndex]));
                 asynchMeshGroupTransforms.Add(new ScaleRotateTranslate(SelectedMeshGroupTransform.scale, SelectedMeshGroupTransform.rotation, Matrix4X4.Identity));
 
-                MeshGroup meshGroup = asynchMeshGroupsList[meshIndex];
+                int addedMeshIndex = asynchMeshGroupsList.Count - 1;
+
+                MeshGroup meshGroup = asynchMeshGroupsList[addedMeshIndex];
 
                 // remember where it is now
-                AxisAlignedBoundingBox startingBounds = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[meshIndex].TotalTransform);
+                AxisAlignedBoundingBox startingBounds = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[addedMeshIndex].TotalTransform);
                 Vector3 startingCenter = (startingBounds.maxXYZ + startingBounds.minXYZ) / 2;
 
                 // move the mesh to be centered on the origin
@@ -1130,16 +1136,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 meshGroup.Translate(-meshCenter);
 
                 // set the transform to position it where it was
-                ScaleRotateTranslate meshTransform = asynchMeshGroupTransforms[meshIndex];
+                ScaleRotateTranslate meshTransform = asynchMeshGroupTransforms[addedMeshIndex];
                 meshTransform.translation = Matrix4X4.CreateTranslation(startingCenter);
-                asynchMeshGroupTransforms[meshIndex] = meshTransform;
-                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, meshIndex, false);
+                asynchMeshGroupTransforms[addedMeshIndex] = meshTransform;
+                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroupsList, asynchMeshGroupTransforms, addedMeshIndex, false);
 
                 // and create selection info
-                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, meshIndex);
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDataList, asynchMeshGroupsList, addedMeshIndex, null);
                 if (discreetMeshes.Count > 1)
                 {
-                    backgroundWorker.ReportProgress(50 + meshIndex * 50 / (discreetMeshes.Count - 1));
+                    backgroundWorker.ReportProgress(50 + addedMeshIndex * 50 / (discreetMeshes.Count - 1));
                 }
             }
         }
@@ -1152,6 +1158,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             // remove the original mesh and replace it with these new meshes
             PullMeshGroupDataFromAsynchLists();
+
+            SelectedMeshGroupIndex = MeshGroups.Count - 1;
 
             UnlockEditControls();
 
@@ -1653,7 +1661,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL")
+                if (MeshFileIo.ValidFileExtensions().Contains(extension))
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -1666,7 +1674,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL")
+                if (MeshFileIo.ValidFileExtensions().Contains(extension))
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -1680,7 +1688,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (extension == ".STL")
+                if (MeshFileIo.ValidFileExtensions().Contains(extension))
                 {
                     pendingPartsToLoad.Add(droppedFileName);
                 }
