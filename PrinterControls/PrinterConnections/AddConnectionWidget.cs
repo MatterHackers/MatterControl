@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 ConnectionControlContainer.AddChild(printerMakeContainer);
                 ConnectionControlContainer.AddChild(printerModelContainer);
                 ConnectionControlContainer.AddChild(comPortLabelWidget);
-                ConnectionControlContainer.AddChild(comPortContainer);
+				ConnectionControlContainer.AddChild(serialPortScroll);
                 ConnectionControlContainer.AddChild(baudRateLabel);
                 ConnectionControlContainer.AddChild(baudRateWidget);
                 ConnectionControlContainer.AddChild(enableAutoconnect);
