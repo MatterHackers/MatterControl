@@ -56,10 +56,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         string filterLabel;
         public AnchoredDropDownList DropDownList;
         private TupleList<string, Func<bool>> DropDownMenuItems = new TupleList<string, Func<bool>>();
+        int presetIndex; //For multiple materials
         
-        public SliceSelectorWidget(string label, RGBA_Bytes accentColor, string tag=null)
+        public SliceSelectorWidget(string label, RGBA_Bytes accentColor, string tag=null, int presetIndex=1)
             : base(FlowDirection.TopToBottom)
         {
+            this.presetIndex = presetIndex;
             this.filterLabel = label;
             if (tag == null)
             {
@@ -160,9 +162,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             MenuItem item = (MenuItem)sender;
             if (filterTag == "material")
             {
-                if (ActivePrinterProfile.Instance.GetMaterialSetting(1) != Int32.Parse(item.Value))
+                if (ActivePrinterProfile.Instance.GetMaterialSetting(presetIndex) != Int32.Parse(item.Value))
                 {
-                    ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                    ActivePrinterProfile.Instance.SetMaterialSetting(presetIndex, Int32.Parse(item.Value));
                 }
             }
             else if (filterTag == "quality")
@@ -237,7 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 try
                 {
-                    dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(1).ToString();
+                    dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(presetIndex).ToString();
                 }
                 catch
                 {

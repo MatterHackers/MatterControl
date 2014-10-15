@@ -184,6 +184,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     if (activeSettingsLayers[i].settingsDictionary.ContainsKey(sliceSetting))
                     {
                         settingValue = activeSettingsLayers[i].settingsDictionary[sliceSetting].Value;
+                        return settingValue;
                     }
                 }
             }
@@ -193,7 +194,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 settingValue = "Unknown";
             }
 
-            return "Unknown";
+            return settingValue;
         }
 
         public void LoadSettingsForQuality()
