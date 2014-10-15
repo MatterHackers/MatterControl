@@ -2726,3 +2726,6 @@ Translated:Share Temperature
 English:Export...
 Translated:Export...
 
+English:Temperature
+Translated:Temperature
+

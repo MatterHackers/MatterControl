@@ -1998,7 +1998,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // push all the transforms into the meshes
                 for (int i = 0; i < asynchMeshGroupsList.Count; i++)
                 {
-                    asynchMeshGroupsList[i].Transform(MeshGroupTransforms[i].TotalTransform);
+                    asynchMeshGroupsList[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
 
                     int nextPercent = (i + 1) * 40 / asynchMeshGroupsList.Count;
                     backgroundWorker.ReportProgress(nextPercent);
