@@ -162,6 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             switch (Path.GetExtension(fileToSlice).ToUpper())
             {
                 case ".STL":
+                case ".GCODE":
                     return new string[] { fileToSlice };
 
                 case ".AMF":
@@ -183,6 +184,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                                 case 2:
                                     extruder2Group[0].Meshes.Add(mesh);
+                                    break;
+
+                                default:
+                                    extruder1Group[0].Meshes.Add(mesh);
                                     break;
                             }
                         }

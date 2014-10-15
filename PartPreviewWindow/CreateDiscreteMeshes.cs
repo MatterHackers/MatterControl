@@ -50,26 +50,39 @@ namespace MatterHackers.MatterControl
 
     public static class CreateDiscreteMeshes
     {
-        public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
+        public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, ReportProgress reportProgress)
         {
             List<Mesh> discreteMeshes = new List<Mesh>();
-            foreach(Mesh mesh in meshGroupToSplit.Meshes)
+            double ratioPerDiscreetMesh = 1.0 / meshGroupToSplit.Meshes.Count;
+            double currentRatioDone = 0;
+            foreach (Mesh mesh in meshGroupToSplit.Meshes)
             {
-                List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh);
+                List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, (double progress0To1, string processingState) =>
+                {
+                    if (reportProgress != null)
+                    {
+                        double progress = (currentRatioDone + ratioPerDiscreetMesh * progress0To1);
+                        reportProgress(progress, "Split Into Meshes");
+                    }
+                    return true;
+                });
                 discreteMeshes.AddRange(discreteVolumes);
+
+                currentRatioDone += ratioPerDiscreetMesh;
             }
 
             return discreteMeshes;
         }
 
-        public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit)
+        public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, ReportProgress reportProgress)
         {
             List<Mesh> discreetVolumes = new List<Mesh>();
             HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
             Mesh meshFromCurrentVolume = null;
             Stack<Face> attachedFaces = new Stack<Face>();
-            foreach(Face currentFace in meshToSplit.Faces)
+            for (int faceIndex = 0; faceIndex < meshToSplit.Faces.Count; faceIndex++)
             {
+                Face currentFace = meshToSplit.Faces[faceIndex];
                 // If this face as not been added to any volume, create a new volume and add all of the attached faces.
                 if (!facesThatHaveBeenAdded.Contains(currentFace))
                 {
@@ -111,6 +124,11 @@ namespace MatterHackers.MatterControl
                     meshFromCurrentVolume.CleanAndMergMesh();
                     discreetVolumes.Add(meshFromCurrentVolume);
                     meshFromCurrentVolume = null;
+                }
+                if (reportProgress != null)
+                {
+                    double progress = faceIndex / (double)meshToSplit.Faces.Count;
+                    reportProgress(progress, "Split Into Meshes");
                 }
             }
 
