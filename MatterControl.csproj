@@ -130,6 +130,13 @@
     <Compile Include="PrinterCommunication\Io\PrinterIoBase.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterIoGCodeFile.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterIoInjectionFifo.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PrintHistory\PrintHistoryData.cs" />
     <Compile Include="PrintLibrary\LibraryData.cs" />
     <Compile Include="PrintQueue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
@@ -160,7 +167,7 @@
     <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PrinterControls\MacroControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
     <Compile Include="PrinterControls\EditMacrosWindow.cs" />
     <Compile Include="CustomWidgets\PluginChooserWindow.cs" />

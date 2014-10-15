@@ -35,9 +35,19 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.PrinterControls
 {
-    public class MacroControls : FlowLayoutWidget
+
+    public class MacroControls : ControlWidgetBase
+    {
+        protected override void AddChildElements()
+        {
+            this.AddChild(new MacroControlsWidget());
+        }
+    }
+    
+    
+    public class MacroControlsWidget : FlowLayoutWidget
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         protected FlowLayoutWidget presetButtonsContainer;
@@ -46,7 +56,7 @@ namespace MatterHackers.MatterControl
         protected string editWindowLabel;
 
 
-        public MacroControls()
+        public MacroControlsWidget()
             : base(FlowDirection.TopToBottom)
         {
             SetDisplayAttributes();
@@ -92,7 +102,7 @@ namespace MatterHackers.MatterControl
         void AddChildElements()
         {
             Button editButton;
-			AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(LocalizedString.Get("Macros"), out editButton));
+            AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editSettingsWindow == null)
@@ -106,7 +116,7 @@ namespace MatterHackers.MatterControl
                 }
             };
 
-            groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            
             groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             groupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             // make sure the client area will get smaller when the contents get smaller

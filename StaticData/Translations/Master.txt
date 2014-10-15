@@ -2726,3 +2726,15 @@ Translated:Share Temperature
 English:Export...
 Translated:Export...
 
+English:Temperature
+Translated:Temperature
+
+English:Material 1
+Translated:Material 1
+
+English:Material 2
+Translated:Material 2
+
+English:Material 3
+Translated:Material 3
+
