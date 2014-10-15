@@ -63,8 +63,6 @@ namespace MatterHackers.MatterControl
         {
             moveButtonFactory.normalTextColor = RGBA_Bytes.Black;
 
-            
-
 			double distanceBetweenControls = 12; 
             double buttonSeparationDistance = 10;
 

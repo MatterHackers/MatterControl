@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl
 
                     thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
                     thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-                    bigRender = BuildImageFromSTL(loadedMeshGroups, stlHashCode, bigRenderSize);
+                    bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, bigRenderSize);
                     if (bigRender == null)
                     {
                         bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl
             return null;
         }
 
-        private static ImageBuffer BuildImageFromSTL(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
+        private static ImageBuffer BuildImageFromMeshGroups(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
         {
             if (loadedMeshGroups != null 
                 && loadedMeshGroups.Count > 0 
@@ -283,15 +283,22 @@ namespace MatterHackers.MatterControl
                 partGraphics2D.Clear(new RGBA_Bytes());
 
                 AxisAlignedBoundingBox aabb = loadedMeshGroups[0].GetAxisAlignedBoundingBox();
+                for (int meshGroupIndex = 1; meshGroupIndex < loadedMeshGroups.Count; meshGroupIndex++)
+                {
+                    aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[meshGroupIndex].GetAxisAlignedBoundingBox());
+                }
                 double maxSize = Math.Max(aabb.XSize, aabb.YSize);
                 double scale = size.x / (maxSize * 1.2);
                 RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
-                foreach (Mesh loadedMesh in loadedMeshGroups[0].Meshes)
+                foreach (MeshGroup meshGroup in loadedMeshGroups)
                 {
-                    PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
-                        new Vector2((size.x / scale - bounds2D.Width) / 2 - bounds2D.Left,
-                            (size.y / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
-                        scale, RGBA_Bytes.White);
+                    foreach (Mesh loadedMesh in meshGroup.Meshes)
+                    {
+                        PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
+                            new Vector2((size.x / scale - bounds2D.Width) / 2 - bounds2D.Left,
+                                (size.y / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
+                            scale, RGBA_Bytes.White);
+                    }
                 }
 
                 if (File.Exists("RunUnitTests.txt"))

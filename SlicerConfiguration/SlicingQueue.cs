@@ -162,6 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             switch (Path.GetExtension(fileToSlice).ToUpper())
             {
                 case ".STL":
+                case ".GCODE":
                     return new string[] { fileToSlice };
 
                 case ".AMF":

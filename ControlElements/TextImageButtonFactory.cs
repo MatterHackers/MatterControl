@@ -196,9 +196,25 @@ namespace MatterHackers.MatterControl
         public Button GenerateEditButton()
         {
             Button editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
-            editButton.Margin = new BorderDouble(2, -2, 2, 0);
+            editButton.Margin = new BorderDouble(2, 2, 2, 0);
             editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
             return editButton;
+        }
+
+
+        public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
+        {
+            FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
+
+			editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
+            editButton.Margin = new BorderDouble(2, 2, 2, 0);
+            editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
+            textWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+            groupLableAndEditControl.AddChild(textWidget);
+            groupLableAndEditControl.AddChild(editButton);
+
+            return groupLableAndEditControl;
+            
         }
 
         public GuiWidget GenerateGroupBoxLabelWithEdit(string label, out Button editButton)
@@ -206,10 +222,10 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 
 			editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
-            editButton.Margin = new BorderDouble(2, -2, 2, 0);
-            editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
+            editButton.Margin = new BorderDouble(2, 2, 2, 0);
+            editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
             TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:12);
-            textLabel.VAnchor = Agg.UI.VAnchor.ParentTop;
+            textLabel.VAnchor = Agg.UI.VAnchor.ParentBottom;
             groupLableAndEditControl.AddChild(textLabel);
             groupLableAndEditControl.AddChild(editButton);
 

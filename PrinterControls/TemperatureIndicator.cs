@@ -36,6 +36,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -57,9 +58,7 @@ namespace MatterHackers.MatterControl
         {
             this.label = label;
             this.editWindowLabel = editWindowLabel;
-            SetDisplayAttributes();
-            AddChildElements();
-			tempOffButton.DebugShowBounds = true;
+            SetDisplayAttributes();            
         }
 
         protected abstract double GetActualTemperature();
@@ -103,7 +102,7 @@ namespace MatterHackers.MatterControl
         }
         protected FlowLayoutWidget tempSliderContainer;
         EditTemperaturePresetsWindow editSettingsWindow;
-        void AddChildElements()
+        protected void AddChildElements()
         {
             Button editButton;
             AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(label, out editButton));
@@ -127,7 +126,7 @@ namespace MatterHackers.MatterControl
             groupBox.ClientArea.VAnchor = Agg.UI.VAnchor.FitToChildren;            
 
             FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-            controlRow.Margin = new BorderDouble(top: 5)* TextWidget.GlobalPointSizeScaleRatio;
+            controlRow.Margin = new BorderDouble(top: 2)* TextWidget.GlobalPointSizeScaleRatio;
             controlRow.HAnchor |= HAnchor.ParentLeftRight;
             {
                 // put in the temperature slider and preset buttons
@@ -149,7 +148,7 @@ namespace MatterHackers.MatterControl
                 {
                     FlowLayoutWidget temperatureIndicator = new FlowLayoutWidget();
                     temperatureIndicator.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                    temperatureIndicator.Margin = new BorderDouble(bottom: 6)* TextWidget.GlobalPointSizeScaleRatio;
+                    temperatureIndicator.Margin = new BorderDouble(bottom: 0)* TextWidget.GlobalPointSizeScaleRatio;
                     temperatureIndicator.Padding = new BorderDouble(0, 3)* TextWidget.GlobalPointSizeScaleRatio;
 
                     // put in the actual temperature controls
@@ -207,10 +206,13 @@ namespace MatterHackers.MatterControl
                     //temperatureIndicator.AddChild(helpTextLink);
 
                     this.presetButtonsContainer = GetPresetsContainer();
+                    temperatureIndicator.AddChild(new HorizontalSpacer());
+                    temperatureIndicator.AddChild(presetButtonsContainer);
+
 
                     controlRow.AddChild(temperatureIndicator);
                     //controlRow.AddChild(helperTextWidget);
-                    controlRow.AddChild(this.presetButtonsContainer);                    
+                    //controlRow.AddChild(this.presetButtonsContainer);                    
                     //controlRow.AddChild(tempSliderContainer);
                 }
             }
@@ -234,7 +236,7 @@ namespace MatterHackers.MatterControl
             presetsLabel.VAnchor = VAnchor.ParentCenter;
             //presetsContainer.AddChild(presetsLabel);
 
-            SortedDictionary<double, string> labels = GetTemperaturePresetLabels();
+            SortedDictionary<double, string> labels = GetTemperaturePresetLabels();            
 
             foreach (KeyValuePair<double, string> keyValue in labels)
             {
@@ -252,10 +254,10 @@ namespace MatterHackers.MatterControl
                 };
             }
 
-            this.textImageButtonFactory.FixedWidth = 76* TextWidget.GlobalPointSizeScaleRatio;
+            this.textImageButtonFactory.FixedWidth = 76 * TextWidget.GlobalPointSizeScaleRatio;
             {
-				Button tempButton = textImageButtonFactory.Generate("Preheat".Localize().ToUpper());
-                tempButton.Margin = new BorderDouble(right: 5)* TextWidget.GlobalPointSizeScaleRatio;
+                Button tempButton = textImageButtonFactory.Generate("Preheat".Localize().ToUpper());
+                tempButton.Margin = new BorderDouble(right: 5) * TextWidget.GlobalPointSizeScaleRatio;
                 presetsContainer.AddChild(tempButton);
 
                 // We push the value into a temp double so that the function will not point to a shared keyValue instance.
@@ -266,7 +268,7 @@ namespace MatterHackers.MatterControl
                     tempSliderContainer.Visible = false;
                 };
             }
-            this.textImageButtonFactory.FixedWidth = 38* TextWidget.GlobalPointSizeScaleRatio;
+            this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
 
             return presetsContainer;
         }
@@ -424,9 +426,20 @@ namespace MatterHackers.MatterControl
 
     public class ExtruderTemperatureControlWidget : TemperatureControlBase
     {
+        int extruderNumber = 1;
+        
         public ExtruderTemperatureControlWidget()
-			: base(LocalizedString.Get("Extruder Temperature Override"), LocalizedString.Get("Extruder Temperature Settings"))
-        {   
+			: base(LocalizedString.Get("Extruder Temperature"), LocalizedString.Get("Extruder Temperature Settings"))
+        {
+            AddChildElements();
+            AddHandlers();
+        }
+
+        public ExtruderTemperatureControlWidget(int extruderNumber)
+            : base(string.Format("{0} {1}", "Extruder Temperature".Localize(), extruderNumber), LocalizedString.Get("Extruder Temperature Settings"))
+        {            
+            this.extruderNumber = extruderNumber;
+            AddChildElements();
             AddHandlers();
         }
 
@@ -461,14 +474,14 @@ namespace MatterHackers.MatterControl
         protected override string GetTemperaturePresets()
         {
             string default_presets = ",0,,0,,0,250";
-            string presets;
 
-            if (UserSettings.Instance.get("Extruder1PresetTemps") == null)
+            string presets;
+            string presetKey = string.Format("Extruder{0}PresetTemps", this.extruderNumber);
+            if (UserSettings.Instance.get(presetKey) == null)
             {
-                UserSettings.Instance.set("Extruder1PresetTemps", default_presets);
-                
+                UserSettings.Instance.set(presetKey, default_presets);                
             }
-            presets = UserSettings.Instance.get("Extruder1PresetTemps");
+            presets = UserSettings.Instance.get(presetKey);
             return presets;
         }
 
@@ -477,14 +490,22 @@ namespace MatterHackers.MatterControl
             StringEventArgs stringEvent = e as StringEventArgs;
             if (stringEvent != null && stringEvent.Data != null)
             {
-                UserSettings.Instance.set("Extruder1PresetTemps", stringEvent.Data);
+                UserSettings.Instance.set(string.Format("Extruder{0}PresetTemps", extruderNumber), stringEvent.Data);
                 ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 
         protected override double GetPreheatTemperature()
         {
-            return Convert.ToDouble(ActiveSliceSettings.Instance.GetActiveValue("first_layer_temperature"));
+            string tempValue = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderNumber);
+            if (tempValue == "Unknown")
+            {
+                return 0.0;
+            }
+            else
+            {
+                return Convert.ToDouble(tempValue);
+            }
         } 
 
         protected override double GetTargetTemperature()
@@ -520,8 +541,9 @@ namespace MatterHackers.MatterControl
     public class BedTemperatureControlWidget : TemperatureControlBase
     {
         public BedTemperatureControlWidget()
-			: base(LocalizedString.Get("Bed Temperature Override"), LocalizedString.Get("Bed Temperature Settings"))
-        {   
+			: base(LocalizedString.Get("Bed Temperature"), LocalizedString.Get("Bed Temperature Settings"))
+        {
+            AddChildElements();
             AddHandlers();
         }
 

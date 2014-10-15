@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
     public static class CreateDiscreteMeshes
     {
-        public static List<Mesh> SplitAllVolumesIntoMeshes(MeshGroup meshGroupToSplit, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
+        public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
         {
             List<Mesh> discreteMeshes = new List<Mesh>();
             foreach(Mesh mesh in meshGroupToSplit.Meshes)

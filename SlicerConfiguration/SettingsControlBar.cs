@@ -50,11 +50,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {                     
             this.HAnchor = HAnchor.ParentLeftRight;
             //this.AddChild(GetSliceEngineContainer());
-            this.AddChild(new SliceEngineSelector("Slice Engine".Localize(), RGBA_Bytes.YellowGreen));
-            this.AddChild(new GuiWidget(8, 0));
+
+            int numberOfHeatedExtruders = 1;
+            if (ActiveSliceSettings.Instance.GetActiveValue("extruders_share_temperature") == "0")
+            {
+                numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+            }
+
+
+            if (numberOfHeatedExtruders == 1)
+            {
+                this.AddChild(new SliceEngineSelector("Slice Engine".Localize(), RGBA_Bytes.YellowGreen));
+                this.AddChild(new GuiWidget(8, 0));
+            }
             this.AddChild(new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality"));
             this.AddChild(new GuiWidget(8, 0));
-            this.AddChild(new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material"));
+
+            if (numberOfHeatedExtruders > 1)
+            {
+                List<RGBA_Bytes> colorList = new List<RGBA_Bytes>() { RGBA_Bytes.Orange, RGBA_Bytes.Violet, RGBA_Bytes.YellowGreen };
+                
+                for (int i = 0; i < numberOfHeatedExtruders; i++)
+                {
+                    if (i > 0)
+                    {
+                        this.AddChild(new GuiWidget(8, 0));
+                    }
+                    int colorIndex = i % colorList.Count;
+                    RGBA_Bytes color = colorList[colorIndex];
+                    this.AddChild(new SliceSelectorWidget(string.Format("{0} {1}", "Material".Localize(), i + 1), color, "material", i+1));
+                    
+                }
+            }
+            else
+            {
+                this.AddChild(new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material"));
+            }
+
             //this.AddChild(new GuiWidget(6, 0));
             //this.AddChild(new SliceSelectorWidget("Item", RGBA_Bytes.Violet)); 
             this.Height = 70;

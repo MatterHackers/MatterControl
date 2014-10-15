@@ -69,7 +69,8 @@ namespace MatterHackers.MatterControl
         Button homeYButton;
         Button homeZButton;
 
-        DisableableWidget extruderTemperatureControlWidget;
+        List<DisableableWidget> extruderWidgetContainers = new List<DisableableWidget>();
+        
         DisableableWidget bedTemperatureControlWidget;
         DisableableWidget movementControlsContainer;
         DisableableWidget fanControlsContainer;
@@ -288,9 +289,9 @@ namespace MatterHackers.MatterControl
         }
 
         private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {
+        {            
             Button editButton;
-			AltGroupBox movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit("Movement Controls".Localize(), out editButton));
+            AltGroupBox movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement Controls".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editManualMovementSettingsWindow == null)
@@ -333,23 +334,52 @@ namespace MatterHackers.MatterControl
 
         private void AddTemperatureControls(FlowLayoutWidget controlsTopToBottomLayout)
         {
-            FlowLayoutWidget temperatureControlContainer = new FlowLayoutWidget();
-            temperatureControlContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            temperatureControlContainer.Margin = new BorderDouble (top: 10)* TextWidget.GlobalPointSizeScaleRatio;
+            AltGroupBox temperatureGroupBox = new AltGroupBox(new TextWidget("Temperature".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+            temperatureGroupBox.Margin = new BorderDouble(2, 4, 2, 5);
+            
+            FlowLayoutWidget mainContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
+            mainContainer.HAnchor = HAnchor.ParentLeftRight;
+            mainContainer.Margin = new BorderDouble(left: 0);
 
-            extruderTemperatureControlWidget = new DisableableWidget();
-            extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget());
-            temperatureControlContainer.AddChild(extruderTemperatureControlWidget);
+            temperatureGroupBox.AddChild(mainContainer);
+            RGBA_Bytes separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
+
+            int numberOfHeatedExtruders = 1;
+            if (ActiveSliceSettings.Instance.GetActiveValue("extruders_share_temperature") == "0")
+            {
+                numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+            }
+
+            if (numberOfHeatedExtruders > 1)
+            {
+                for (int i = 0; i < numberOfHeatedExtruders; i++)
+                {
+                    DisableableWidget extruderTemperatureControlWidget = new DisableableWidget();
+                    extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget(i+1));
+                    mainContainer.AddChild(extruderTemperatureControlWidget);
+                    mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+                    extruderWidgetContainers.Add(extruderTemperatureControlWidget);
+                    
+                }
+            }
+            else
+            {
+                DisableableWidget extruderTemperatureControlWidget = new DisableableWidget();
+                extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget());
+                mainContainer.AddChild(extruderTemperatureControlWidget);
+                mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+                extruderWidgetContainers.Add(extruderTemperatureControlWidget);
+            }
 
             bedTemperatureControlWidget = new DisableableWidget();
             bedTemperatureControlWidget.AddChild(new BedTemperatureControlWidget());
 
             if (ActiveSliceSettings.Instance.HasHeatedBed())
             {
-                temperatureControlContainer.AddChild(bedTemperatureControlWidget);
+                mainContainer.AddChild(bedTemperatureControlWidget);
             }
 
-            controlsTopToBottomLayout.AddChild(temperatureControlContainer);
+            controlsTopToBottomLayout.AddChild(temperatureGroupBox);
         }
 
         EditableNumberDisplay fanSpeedDisplay;
@@ -566,7 +596,10 @@ namespace MatterHackers.MatterControl
             if (ActivePrinterProfile.Instance.ActivePrinter == null)
             {
                 // no printer selected
-                extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                foreach(DisableableWidget extruderTemperatureControlWidget in extruderWidgetContainers)
+                {
+                    extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                }
                 bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
@@ -583,7 +616,10 @@ namespace MatterHackers.MatterControl
                     case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
                     case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
                     case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        foreach (DisableableWidget extruderTemperatureControlWidget in extruderWidgetContainers)
+                        {
+                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+                        }
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
@@ -593,7 +629,10 @@ namespace MatterHackers.MatterControl
 
                     case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
                     case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        foreach (DisableableWidget extruderTemperatureControlWidget in extruderWidgetContainers)
+                        {
+                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        }
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                        
@@ -602,7 +641,10 @@ namespace MatterHackers.MatterControl
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
-                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        foreach (DisableableWidget extruderTemperatureControlWidget in extruderWidgetContainers)
+                        {
+                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+                        }
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
@@ -611,7 +653,10 @@ namespace MatterHackers.MatterControl
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        foreach (DisableableWidget extruderTemperatureControlWidget in extruderWidgetContainers)
+                        {
+                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        }
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -628,7 +673,10 @@ namespace MatterHackers.MatterControl
                             case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
                             case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
                             case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
-                                extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                foreach (DisableableWidget extruderTemperatureControlWidget in extruderWidgetContainers)
+                                {
+                                    extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                                }
                                 bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
                                 fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -642,7 +690,10 @@ namespace MatterHackers.MatterControl
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-                        extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        foreach (DisableableWidget extruderTemperatureControlWidget in extruderWidgetContainers)
+                        {
+                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+                        }
                         bedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
