@@ -40,6 +40,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+    public class Cover : GuiWidget
+    {
+        public Cover(HAnchor hAnchor = HAnchor.None, VAnchor vAnchor = VAnchor.None)
+            : base(hAnchor, vAnchor)
+        {
+        }
+    }
+
     public class PartPreview3DWidget : PartPreviewWidget
     {
         protected bool autoRotateEnabled = false;

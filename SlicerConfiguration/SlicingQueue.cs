@@ -185,6 +185,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 case 2:
                                     extruder2Group[0].Meshes.Add(mesh);
                                     break;
+
+                                default:
+                                    extruder1Group[0].Meshes.Add(mesh);
+                                    break;
                             }
                         }
                     }

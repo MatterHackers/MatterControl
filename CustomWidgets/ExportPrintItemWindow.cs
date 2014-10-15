@@ -15,6 +15,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl
 {
@@ -320,7 +321,8 @@ namespace MatterHackers.MatterControl
 					gcodePathAndFilenameToSave += ".gcode";
 				}
 
-				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
+                string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+                if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
 				{
 					Close();
 					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);

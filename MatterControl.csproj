@@ -119,6 +119,10 @@
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DAutoArange.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DCopyGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DUngroup.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
     <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
@@ -156,7 +160,7 @@
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreviewWidget.cs" />
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
-    <Compile Include="PartPreviewWindow\View3DTransfromPart.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DTransfromPart.cs" />
     <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
       <SubType>Code</SubType>
     </Compile>

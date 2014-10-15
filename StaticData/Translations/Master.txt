@@ -2729,3 +2729,6 @@ Translated:Export...
 English:Temperature
 Translated:Temperature
 
+English:Align
+Translated:Align
+
