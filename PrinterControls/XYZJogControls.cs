@@ -40,6 +40,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrinterControls;
 
 namespace MatterHackers.MatterControl
 {
@@ -198,7 +199,7 @@ namespace MatterHackers.MatterControl
 
                 if (extruderCount == 1)
                 {
-                    ExtrudeButton eMinusControl = moveButtonFactory.Generate("E-", ManualPrinterControls.EFeedRate(0),0);
+                    ExtrudeButton eMinusControl = moveButtonFactory.Generate("E-", MovementControls.EFeedRate(0),0);
                     eMinusControl.Margin = extrusionMargin;
                     eMinusButtonAndText.AddChild(eMinusControl);
                     eMinusButtons.Add(eMinusControl);
@@ -207,7 +208,7 @@ namespace MatterHackers.MatterControl
                 {
                     for (int i = 0; i < extruderCount; i++)
                     {
-                        ExtrudeButton eMinusControl = moveButtonFactory.Generate(string.Format("E{0}-", i + 1), ManualPrinterControls.EFeedRate(0), i);
+                        ExtrudeButton eMinusControl = moveButtonFactory.Generate(string.Format("E{0}-", i + 1), MovementControls.EFeedRate(0), i);
                         eMinusControl.Margin = extrusionMargin;
                         eMinusButtonAndText.AddChild(eMinusControl);
                         eMinusButtons.Add(eMinusControl);
@@ -244,7 +245,7 @@ namespace MatterHackers.MatterControl
                 FlowLayoutWidget ePlusButtonAndText = new FlowLayoutWidget();
                 if (extruderCount == 1)
                 {
-                    ExtrudeButton ePlusControl = moveButtonFactory.Generate("E+", ManualPrinterControls.EFeedRate(0), 0);
+                    ExtrudeButton ePlusControl = moveButtonFactory.Generate("E+", MovementControls.EFeedRate(0), 0);
                     ePlusControl.Margin = extrusionMargin;
                     ePlusButtonAndText.AddChild(ePlusControl);
                     ePlusButtons.Add(ePlusControl);
@@ -253,7 +254,7 @@ namespace MatterHackers.MatterControl
                 {
                     for (int i = 0; i < extruderCount; i++)
                     {
-                        ExtrudeButton ePlusControl = moveButtonFactory.Generate(string.Format("E{0}+", i + 1), ManualPrinterControls.EFeedRate(0), i);
+                        ExtrudeButton ePlusControl = moveButtonFactory.Generate(string.Format("E{0}+", i + 1), MovementControls.EFeedRate(0), i);
                         ePlusControl.Margin = extrusionMargin;
                         ePlusButtonAndText.AddChild(ePlusControl);
                         ePlusButtons.Add(ePlusControl);
@@ -323,7 +324,7 @@ namespace MatterHackers.MatterControl
             {
                 MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
                 moveButtonFactory.normalFillColor = color;
-                zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, ManualPrinterControls.ZSpeed);
+                zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
                 zButtons.AddChild(zPlusControl);
 
                 GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
@@ -331,7 +332,7 @@ namespace MatterHackers.MatterControl
                 spacer.BackgroundColor = XYZColors.zColor;
                 zButtons.AddChild(spacer);
 
-                zMinusControl = moveButtonFactory.Generate("Z-", PrinterConnectionAndCommunication.Axis.Z, ManualPrinterControls.ZSpeed);
+                zMinusControl = moveButtonFactory.Generate("Z-", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
                 zButtons.AddChild(zMinusControl);
             }
             zButtons.Margin = new BorderDouble(0, 5);
@@ -347,7 +348,7 @@ namespace MatterHackers.MatterControl
                     moveButtonFactory.normalFillColor = XYZColors.xColor;
                     xButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
                     xButtons.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                    xMinusControl = moveButtonFactory.Generate("X-", PrinterConnectionAndCommunication.Axis.X, ManualPrinterControls.XSpeed);
+                    xMinusControl = moveButtonFactory.Generate("X-", PrinterConnectionAndCommunication.Axis.X, MovementControls.XSpeed);
                     xButtons.AddChild(xMinusControl);
 
                     GuiWidget spacer = new GuiWidget(xMinusControl.Width + buttonSeparationDistance * 2, 2);
@@ -355,7 +356,7 @@ namespace MatterHackers.MatterControl
                     spacer.BackgroundColor = XYZColors.xColor;
                     xButtons.AddChild(spacer);
 
-                    xPlusControl = moveButtonFactory.Generate("X+", PrinterConnectionAndCommunication.Axis.X, ManualPrinterControls.XSpeed);
+                    xPlusControl = moveButtonFactory.Generate("X+", PrinterConnectionAndCommunication.Axis.X, MovementControls.XSpeed);
                     xButtons.AddChild(xPlusControl);
                 }
                 xyGrid.AddChild(xButtons);
@@ -365,7 +366,7 @@ namespace MatterHackers.MatterControl
                     moveButtonFactory.normalFillColor = XYZColors.yColor;
                     yButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
                     yButtons.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                    yPlusControl = moveButtonFactory.Generate("Y+", PrinterConnectionAndCommunication.Axis.Y, ManualPrinterControls.YSpeed);
+                    yPlusControl = moveButtonFactory.Generate("Y+", PrinterConnectionAndCommunication.Axis.Y, MovementControls.YSpeed);
                     yButtons.AddChild(yPlusControl);
 
                     GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
@@ -373,7 +374,7 @@ namespace MatterHackers.MatterControl
                     spacer.BackgroundColor = XYZColors.yColor;
                     yButtons.AddChild(spacer);
 
-                    yMinusControl = moveButtonFactory.Generate("Y-", PrinterConnectionAndCommunication.Axis.Y, ManualPrinterControls.YSpeed);
+                    yMinusControl = moveButtonFactory.Generate("Y-", PrinterConnectionAndCommunication.Axis.Y, MovementControls.YSpeed);
                     yButtons.AddChild(yMinusControl);
                 }
                 xyGrid.AddChild(yButtons);
