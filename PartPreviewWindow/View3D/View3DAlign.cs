@@ -44,9 +44,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void AlignSelectedMeshGroup()
         {
             AxisAlignedBoundingBox selectedOriginalBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
+            Vector3 selectedOriginalCenter = selectedOriginalBounds.Center;
             AxisAlignedBoundingBox selectedCurrentBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
-            foreach (MeshGroup meshGroup in MeshGroups)
+            Vector3 selctedCurrentCenter = selectedCurrentBounds.Center;
+            for(int meshGroupToMoveIndex = 0; meshGroupToMoveIndex < MeshGroups.Count; meshGroupToMoveIndex++)
             {
+                MeshGroup meshGroupToMove = MeshGroups[meshGroupToMoveIndex];
+                if (meshGroupToMove != SelectedMeshGroup)
+                {
+                    AxisAlignedBoundingBox groupToMoveOriginalBounds = meshGroupToMove.GetAxisAlignedBoundingBox();
+                    Vector3 groupToMoveOriginalCenter = groupToMoveOriginalBounds.Center;
+                    AxisAlignedBoundingBox groupToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(MeshGroupTransforms[meshGroupToMoveIndex].TotalTransform);
+                    Vector3 groupToMoveCenter = groupToMoveBounds.Center;
+
+                    Vector3 originalCoordinatesDelta = groupToMoveOriginalCenter - selectedOriginalCenter;
+                    Vector3 currentCoordinatesDelta = groupToMoveCenter - selctedCurrentCenter;
+
+                    Vector3 deltaRequired = originalCoordinatesDelta - currentCoordinatesDelta;
+
+                    if (deltaRequired.Length > .0001)
+                    {
+                        ScaleRotateTranslate translated = MeshGroupTransforms[meshGroupToMoveIndex];
+                        translated.translation *= Matrix4X4.CreateTranslation(deltaRequired);
+                        MeshGroupTransforms[meshGroupToMoveIndex] = translated;
+                        saveButtons.Visible = true;
+                    }
+                }
             }
         }
     }
