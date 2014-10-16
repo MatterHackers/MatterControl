@@ -58,16 +58,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
     /// </summary>
     public class TemperatureEventArgs : EventArgs
     {
+        int index0Based;
         double temperature;
 
-        public TemperatureEventArgs(double temperature)
+        public int Index0Based
         {
-            this.temperature = temperature;
+            get { return index0Based; }
         }
 
         public double Temperature
         {
             get { return temperature; }
+        }
+
+        public TemperatureEventArgs(int index0Based, double temperature)
+        {
+            this.index0Based = index0Based;
+            this.temperature = temperature;
         }
     }
 
@@ -246,8 +253,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         bool stopTryingToConnect = false;
 
-        double actualExtruderTemperature;
-        double targetExtruderTemperature;
+        static readonly int MAX_EXTRUDERS = 4;
+        double[] actualExtruderTemperature = new double[MAX_EXTRUDERS];
+        double[] targetExtruderTemperature = new double[MAX_EXTRUDERS];
         double actualBedTemperature;
         double targetBedTemperature;
         string printJobDisplayName = null;
@@ -438,6 +446,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReadLineStartCallBacks.AddCallBackToKey("Done saving file", PrintingCanContinue);
 
             ReadLineStartCallBacks.AddCallBackToKey("ok T:", ReadTemperatures); // marlin
+            ReadLineStartCallBacks.AddCallBackToKey("ok T0:", ReadTemperatures); // marlin
             ReadLineStartCallBacks.AddCallBackToKey("T:", ReadTemperatures); // repatier
 
             ReadLineStartCallBacks.AddCallBackToKey("SD printing byte", ReadSdProgress); // repatier
@@ -533,7 +542,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         return "Waiting for Bed to Heat to {0}°".FormatWith(TargetBedTemperature);
 
                     case DetailedPrintingState.HeatingExtruder:
-                        return "Waiting for Extruder to Heat to {0}°".FormatWith(TargetExtruderTemperature);
+                        return "Waiting for Extruder to Heat to {0}°".FormatWith(GetTargetExtruderTemperature(0));
 
                     case DetailedPrintingState.Printing:
                         return "Currently Printing:";
@@ -827,54 +836,47 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             System.Threading.Thread.Sleep(1);
         }
 
-        public double TargetExtruderTemperature
+        public double GetTargetExtruderTemperature(int extruderIndex0Based)
         {
-            get
+            return targetExtruderTemperature[extruderIndex0Based];
+        }
+
+        public void SetTargetExtruderTemperature(int extruderIndex0Based, double temperature)
+        {
+            if (targetExtruderTemperature[extruderIndex0Based] != temperature)
             {
-                return targetExtruderTemperature;
-            }
-            set
-            {
-                if (targetExtruderTemperature != value)
+                targetExtruderTemperature[extruderIndex0Based] = temperature;
+                OnExtruderTemperatureSet(new TemperatureEventArgs(extruderIndex0Based, temperature));
+                if (PrinterIsConnected)
                 {
-                    targetExtruderTemperature = value;
-                    OnExtruderTemperatureSet(new TemperatureEventArgs(TargetExtruderTemperature));
-                    if (PrinterIsConnected)
-                    {
-                        SendLineToPrinterNow("M104 S{0}".FormatWith(targetExtruderTemperature));
-                    }
-                    
+                    SendLineToPrinterNow("M104 T{0} S{1}".FormatWith(extruderIndex0Based, targetExtruderTemperature[extruderIndex0Based]));
                 }
             }
         }
 
-        public double ActualExtruderTemperature
+        public double GetActualExtruderTemperature(int extruderIndex0Based)
         {
-            get
-            {
-                return actualExtruderTemperature;
-            }
+            return actualExtruderTemperature[extruderIndex0Based];
         }
 
         public void ExtruderTemperatureWasWritenToPrinter(object sender, EventArgs e)
         {
             FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 
-            string[] splitOnS = foundStringEventArgs.LineToCheck.Split('S');
-            if (splitOnS.Length == 2)
+            double tempBeingSet = 0;
+            if (GCodeFile.GetFirstNumberAfter("S", foundStringEventArgs.LineToCheck, ref tempBeingSet))
             {
-                string temp = splitOnS[1];
-                try
+                double exturderIndex = 0;
+                if (GCodeFile.GetFirstNumberAfter("T", foundStringEventArgs.LineToCheck, ref exturderIndex))
                 {
-                    double tempBeingSet = double.Parse(temp);
+                    SetTargetExtruderTemperature((int)exturderIndex, tempBeingSet);
+                }
+                else
+                {
                     // we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-                    targetExtruderTemperature = tempBeingSet;
-                    OnExtruderTemperatureSet(new TemperatureEventArgs(TargetExtruderTemperature));
+                    SetTargetExtruderTemperature(0, tempBeingSet);
                 }
-                catch
-                {
-                    Debug.WriteLine("Unable to Parse Extruder Temperature: {0}".FormatWith(temp));
-                }
+                OnExtruderTemperatureSet(e);
             }
         }
 
@@ -904,7 +906,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 if (targetBedTemperature != value)
                 {
                     targetBedTemperature = value;
-                    OnBedTemperatureSet(new TemperatureEventArgs(TargetBedTemperature));
+                    OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
                     if (PrinterIsConnected)
                     {
                         SendLineToPrinterNow("M140 S{0}".FormatWith(targetBedTemperature));
@@ -937,7 +939,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     {
                         // we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
                         targetBedTemperature = tempBeingSet;
-                        OnBedTemperatureSet(new TemperatureEventArgs(TargetBedTemperature));
+                        OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
                     }
                 }
                 catch
@@ -1044,56 +1046,42 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             string temperatureString = foundStringEventArgs.LineToCheck;
             {
-                int extruderTempLocationInString = temperatureString.IndexOf("T:");
-                if (extruderTempLocationInString > -1)
+                double readExtruderTemp = 0;
+                if (GCodeFile.GetFirstNumberAfter("T:", temperatureString, ref readExtruderTemp))
                 {
-                    extruderTempLocationInString += 2;
-                    int endOfExtruderTempInString = temperatureString.IndexOf(" ", extruderTempLocationInString);
-                    if (endOfExtruderTempInString < 0)
+                    if (actualExtruderTemperature[0] != readExtruderTemp)
                     {
-                        endOfExtruderTempInString = temperatureString.Length;
+                        actualExtruderTemperature[0] = readExtruderTemp;
+                        OnExtruderTemperatureRead(new TemperatureEventArgs(0, GetActualExtruderTemperature(0)));
+                    }
+                }
+                else if (GCodeFile.GetFirstNumberAfter("T0:", temperatureString, ref readExtruderTemp))
+                {
+                    if (actualExtruderTemperature[0] != readExtruderTemp)
+                    {
+                        actualExtruderTemperature[0] = readExtruderTemp;
+                        OnExtruderTemperatureRead(new TemperatureEventArgs(0, GetActualExtruderTemperature(0)));
                     }
 
-                    string extruderTemp = temperatureString.Substring(extruderTempLocationInString, endOfExtruderTempInString - extruderTempLocationInString);
-                    try
+                    double readExtruder2Temp = 0;
+                    if (GCodeFile.GetFirstNumberAfter("T1:", temperatureString, ref readExtruder2Temp))
                     {
-                        double readExtruderTemp = double.Parse(extruderTemp);
-                        if (actualExtruderTemperature != readExtruderTemp)
+                        if (actualExtruderTemperature[1] != readExtruder2Temp)
                         {
-                            actualExtruderTemperature = readExtruderTemp;
-                            OnExtruderTemperatureRead(new TemperatureEventArgs(ActualExtruderTemperature));
+                            actualExtruderTemperature[1] = readExtruder2Temp;
+                            OnExtruderTemperatureRead(new TemperatureEventArgs(1, GetActualExtruderTemperature(1)));
                         }
-                    }
-                    catch
-                    {
-                        Debug.WriteLine("Unable to Parse Extruder Temperature: {0}".FormatWith(extruderTemp));
                     }
                 }
             }
             {
-                int bedTempLocationInString = temperatureString.IndexOf("B:");
-                if (bedTempLocationInString > -1)
+                double readBedTemp = 0;
+                if (GCodeFile.GetFirstNumberAfter("B:", temperatureString, ref readBedTemp))
                 {
-                    bedTempLocationInString += 2;
-                    int endOfbedTempInString = temperatureString.IndexOf(" ", bedTempLocationInString);
-                    if (endOfbedTempInString < 0)
+                    if (actualBedTemperature != readBedTemp)
                     {
-                        endOfbedTempInString = temperatureString.Length;
-                    }
-
-                    string bedTemp = temperatureString.Substring(bedTempLocationInString, endOfbedTempInString - bedTempLocationInString);
-                    try
-                    {
-                        double readBedTemp = double.Parse(bedTemp);
-                        if (actualBedTemperature != readBedTemp)
-                        {
-                            actualBedTemperature = readBedTemp;
-                            OnBedTemperatureRead(new TemperatureEventArgs(ActualBedTemperature));
-                        }
-                    }
-                    catch
-                    {
-                        Debug.WriteLine("Unable to Parse Bed Temperature: {0}".FormatWith(bedTemp));
+                        actualBedTemperature = readBedTemp;
+                        OnBedTemperatureRead(new TemperatureEventArgs(0, ActualBedTemperature));
                     }
                 }
             }
@@ -1779,8 +1767,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 // the motors and heaters (a good idea ane something for the future).
                 ForceImmediateWrites = true;
                 ReleaseMotors();
-                TargetExtruderTemperature = 0;
-                TargetBedTemperature = 0;
+                TurnOffBedAndExtruders();
                 FanSpeed0To255 = 0;
                 ForceImmediateWrites = false;
 
@@ -1798,8 +1785,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             else
             {
                 //Need to reset UI - even if manual disconnect                
-                TargetExtruderTemperature = 0;
-                TargetBedTemperature = 0;
+                TurnOffBedAndExtruders();
                 FanSpeed0To255 = 0;
             }
             OnEnabledChanged(null);
@@ -1897,8 +1883,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         CommunicationState = CommunicationStates.Connected;
                         // never leave the extruder and the bed hot
                         ReleaseMotors();
-                        TargetExtruderTemperature = 0;
-                        TargetBedTemperature = 0;
+                        TurnOffBedAndExtruders();
                         printWasCanceled = false;
                     }
                     else
@@ -1911,8 +1896,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                             
                             // never leave the extruder and the bed hot
                             ReleaseMotors();
-                            TargetExtruderTemperature = 0;
-                            TargetBedTemperature = 0;                            
+                            TurnOffBedAndExtruders();
                         }
                         else if (!PrinterIsPaused)
                         {
@@ -2070,8 +2054,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         SendLineToPrinterNow("M26"); // : Set SD position
                         // never leave the extruder and the bed hot
                         ReleaseMotors();
-                        TargetExtruderTemperature = 0;
-                        TargetBedTemperature = 0;
+                        TurnOffBedAndExtruders();
                     }
                     break;
 
@@ -2169,6 +2152,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             return true;
         }
 
+        void TurnOffBedAndExtruders()
+        {
+            SetTargetExtruderTemperature(0, 0);
+            SetTargetExtruderTemperature(1, 0);
+            TargetBedTemperature = 0;
+        }
+
         void DonePrintingSdFile(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
@@ -2180,9 +2170,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             printJobDisplayName = null;
 
             // never leave the extruder and the bed hot
+            TurnOffBedAndExtruders();
+
             ReleaseMotors();
-            TargetExtruderTemperature = 0;
-            TargetBedTemperature = 0;
         }
 
         public bool StartPrint(string gcodeFileContents)

@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl
                 for (int i = 0; i < numberOfHeatedExtruders; i++)
                 {
                     DisableableWidget extruderTemperatureControlWidget = new DisableableWidget();
-                    extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget(i+1));
+                    extruderTemperatureControlWidget.AddChild(new ExtruderTemperatureControlWidget(i));
                     mainContainer.AddChild(extruderTemperatureControlWidget);
                     mainContainer.AddChild(new HorizontalLine(separatorLineColor));
                     extruderWidgetContainers.Add(extruderTemperatureControlWidget);
