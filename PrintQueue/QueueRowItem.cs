@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             if (viewWindowIsOpen == false)
             {
-                viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DTransformPart.AutoRotate.Enabled, openInEditMode);
+                viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DWidget.AutoRotate.Enabled, openInEditMode);
                 this.viewWindowIsOpen = true;
                 viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
             }

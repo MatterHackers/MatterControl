@@ -50,7 +50,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public partial class View3DTransformPart : PartPreview3DWidget
+    public partial class View3DWidget : PartPreview3DWidget
     {
         public WindowType windowType { get; set; }
 		public PrintItemWrapper PrintItemWrapper { 
@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public enum WindowType { Embeded, StandAlone };
         public enum AutoRotate { Enabled, Disabled };
 
-        public View3DTransformPart(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate, bool openInEditMode = false)
+        public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate, bool openInEditMode = false)
         {
             this.windowType = windowType;
             autoRotateEnabled = (autoRotate == AutoRotate.Enabled);
@@ -612,7 +612,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
 
-                PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DO_COPY);
+                PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
                 BackgroundWorker loadAndAddPartsToPlateBackgroundWorker = null;
                 loadAndAddPartsToPlateBackgroundWorker = new BackgroundWorker();
@@ -626,8 +626,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        enum TranceInfoOpperation { DONT_COPY, DO_COPY };
-        private void PushMeshGroupDataToAsynchLists(TranceInfoOpperation tranceInfoOpperation)
+        enum TraceInfoOpperation { DONT_COPY, DO_COPY };
+        private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation)
         {
             asynchMeshGroups.Clear();
             asynchMeshGroupTransforms.Clear();
@@ -652,7 +652,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshGroup meshGroup = MeshGroups[meshGroupIndex];
                 for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
                 {
-                    if (tranceInfoOpperation == TranceInfoOpperation.DO_COPY)
+                    if (traceInfoOpperation == TraceInfoOpperation.DO_COPY)
                     {
                         meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
                     }
@@ -817,85 +817,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 saveButtons.Visible = true;
                 Invalidate();
             }
-        }
-
-        void EnterEditAndCreateSelectionData()
-        {
-            if (enterEditButtonsContainer.Visible == true)
-            {
-                enterEditButtonsContainer.Visible = false;
-            }
-
-            autoArrangeButton.Visible = true;
-
-            if (MeshGroups.Count > 0)
-            {
-                processingProgressControl.Visible = true;
-                LockEditControls();
-                viewIsInEditModePreLock = true;
-
-                BackgroundWorker createSelectionDataBackgroundWorker = null;
-                createSelectionDataBackgroundWorker = new BackgroundWorker();
-                createSelectionDataBackgroundWorker.WorkerReportsProgress = true;
-
-                createSelectionDataBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
-                createSelectionDataBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createSelectionDataBackgroundWorker_RunWorkerCompleted);
-                createSelectionDataBackgroundWorker.DoWork += new DoWorkEventHandler(createSelectionDataBackgroundWorker_DoWork);
-
-                createSelectionDataBackgroundWorker.RunWorkerAsync();
-            }
-        }
-
-        void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            string makingCopyLabel = LocalizedString.Get("Creating Edit Data");
-            string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-            processingProgressControl.textWidget.Text = makingCopyLabelFull;
-
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
-
-            PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DONT_COPY);
-
-            asynchPlatingDatas.Clear();
-            double ratioPerMeshGroup = 1.0 / asynchMeshGroups.Count;
-            double currentRatioDone = 0;
-            for (int i = 0; i < asynchMeshGroups.Count; i++)
-            {
-                PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-                asynchPlatingDatas.Add(newInfo);
-
-                MeshGroup meshGroup = asynchMeshGroups[i];
-
-                // create the selection info
-                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState) =>
-                {
-                    int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
-                    backgroundWorker.ReportProgress(nextPercent);
-                    return true;
-                });
-
-                currentRatioDone += ratioPerMeshGroup;
-            }
-        }
-
-        void createSelectionDataBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (WidgetHasBeenClosed)
-            {
-                return;
-            }
-            // remove the original mesh and replace it with these new meshes
-            PullMeshGroupDataFromAsynchLists();
-
-            UnlockEditControls();
-
-            if (pendingPartsToLoad.Count > 0)
-            {
-                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-            }
-
-            Invalidate();
         }
 
         void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1726,7 +1647,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             // we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
-            PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DO_COPY);
+            PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;

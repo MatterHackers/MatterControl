@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
         QueueDataView queueDataView;
         event EventHandler unregisterEvents;
         GuiWidget part3DViewContainer;
-        View3DTransformPart part3DView;
+        View3DWidget part3DView;
         GuiWidget partGcodeViewContainer;
         ViewGcodeBasic partGcodeView;
 		SimpleTextTabWidget aboutTabWidget;
@@ -211,12 +211,12 @@ namespace MatterHackers.MatterControl
         void GeneratePartViews(object state = null)
         {
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-            part3DView = new View3DTransformPart(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+            part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
                 new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
                 ActiveSliceSettings.Instance.BedCenter,
                 ActiveSliceSettings.Instance.BedShape,
-                View3DTransformPart.WindowType.Embeded,
-                View3DTransformPart.AutoRotate.Enabled);
+                View3DWidget.WindowType.Embeded,
+                View3DWidget.AutoRotate.Enabled);
             part3DView.Margin = new BorderDouble(bottom: 4);
             part3DView.AnchorAll();
 

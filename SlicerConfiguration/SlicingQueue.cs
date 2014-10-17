@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 Directory.CreateDirectory(folderToSaveStlsTo);
             }
             MeshOutputSettings settings = new MeshOutputSettings();
-            settings.StlOnlySaveUseMaterialIndex = extruderIndex;
+            settings.OnlySaveMaterialIndex = extruderIndex;
             string extruder1StlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
             MeshFileIo.Save(extruder1Group, extruder1StlFileToSlice, settings);
             return extruder1StlFileToSlice;
