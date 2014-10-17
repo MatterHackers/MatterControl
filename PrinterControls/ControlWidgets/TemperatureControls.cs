@@ -27,11 +27,15 @@ namespace MatterHackers.MatterControl.PrinterControls
         protected override void AddChildElements()
         {
             AltGroupBox temperatureGroupBox = new AltGroupBox(new TextWidget("Temperature".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
-            temperatureGroupBox.Margin = new BorderDouble(2, 4, 2, 5);
+            temperatureGroupBox.Margin = new BorderDouble(0);
 
             FlowLayoutWidget mainContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
             mainContainer.HAnchor = HAnchor.ParentLeftRight;
             mainContainer.Margin = new BorderDouble(left: 0);
+
+			TextWidget subheader = new TextWidget("Temporarily override target temperature", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			subheader.Margin = new BorderDouble(bottom:6);
+			mainContainer.AddChild(subheader);
 
             temperatureGroupBox.AddChild(mainContainer);
             RGBA_Bytes separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
