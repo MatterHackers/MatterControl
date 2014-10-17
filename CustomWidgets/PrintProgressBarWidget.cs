@@ -48,6 +48,13 @@ namespace MatterHackers.MatterControl
             container.AddChild(printTimeRemaining);
 
             AddChild(container);
+
+			ClickWidget clickOverlay = new ClickWidget();
+			clickOverlay.AnchorAll();
+			clickOverlay.Click += onProgressBarClick;
+
+			AddChild(clickOverlay);
+
             AddHandlers();
             SetThemedColors();
             UpdatePrintStatus();            
@@ -63,6 +70,11 @@ namespace MatterHackers.MatterControl
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
+
+		public void onProgressBarClick(object sender, MouseEventArgs e)
+		{
+			ApplicationController.Instance.MainView.ToggleTopContainer();
+		}
 
         public override void OnClosed(EventArgs e)
         {
