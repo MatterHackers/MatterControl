@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public partial class View3DTransformPart
+    public partial class View3DWidget
     {
         private void AutoArangePartsInBackground()
         {
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         void arrangeMeshGroupsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DONT_COPY);
+            PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
 
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 

@@ -39,7 +39,7 @@ using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public partial class View3DTransformPart
+    public partial class View3DWidget
     {
         void AlignSelectedMeshGroup()
         {

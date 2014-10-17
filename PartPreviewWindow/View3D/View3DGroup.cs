@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public partial class View3DWidget
     {
-        void UngroupSelectedMeshGroup()
+        void GroupSelectedMeshGroup()
         {
             if (MeshGroups.Count > 0)
             {
@@ -60,9 +60,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        void ungroupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        void groupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string makingCopyLabel = LocalizedString.Get("Finding Meshes");
+            string makingCopyLabel = LocalizedString.Get("Grouping Meshes");
             string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
             processingProgressControl.textWidget.Text = makingCopyLabelFull;
 
@@ -70,47 +70,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
             PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-            int indexBeingReplaced = MeshGroups.IndexOf(SelectedMeshGroup);
-            asynchMeshGroups[indexBeingReplaced].Transform(asynchMeshGroupTransforms[indexBeingReplaced].TotalTransform);
-            List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroups[indexBeingReplaced], (double progress0To1, string processingState) =>
-            {
-                int nextPercent = (int)(progress0To1 * 50);
-                backgroundWorker.ReportProgress(nextPercent);
-                return true;
-            });
-
-            asynchMeshGroups.RemoveAt(indexBeingReplaced);
-            asynchPlatingDatas.RemoveAt(indexBeingReplaced);
-            asynchMeshGroupTransforms.RemoveAt(indexBeingReplaced);
-            double ratioPerDiscreetMesh = 1.0 / discreetMeshes.Count;
-            double currentRatioDone = 0;
-            for (int discreetMeshIndex = 0; discreetMeshIndex < discreetMeshes.Count; discreetMeshIndex++)
-            {
-                PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
-                asynchPlatingDatas.Add(newInfo);
-                asynchMeshGroups.Add(new MeshGroup(discreetMeshes[discreetMeshIndex]));
-                int addedMeshIndex = asynchMeshGroups.Count - 1;
-                MeshGroup addedMeshGroup = asynchMeshGroups[addedMeshIndex];
-
-                ScaleRotateTranslate transform = ScaleRotateTranslate.Identity();
-                transform.SetCenteringForMeshGroup(addedMeshGroup);
-                asynchMeshGroupTransforms.Add(transform);
-
-                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, addedMeshIndex, false);
-
-                // and create selection info
-                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, addedMeshIndex, (double progress0To1, string processingState) =>
-                {
-                    int nextPercent = (int)((currentRatioDone + ratioPerDiscreetMesh * progress0To1) * 50) + 50;
-                    backgroundWorker.ReportProgress(nextPercent);
-                    return true;
-                });
-                currentRatioDone += ratioPerDiscreetMesh;
-            }
         }
 
-        void ungroupSelectedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        void groupSelectedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (WidgetHasBeenClosed)
             {

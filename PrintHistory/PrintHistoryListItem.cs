@@ -296,11 +296,11 @@ namespace MatterHackers.MatterControl.PrintHistory
                     bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
                     if (shiftKeyDown)
                     {
-                        OpenPartPreviewWindow(printItem, View3DTransformPart.AutoRotate.Disabled);
+                        OpenPartPreviewWindow(printItem, View3DWidget.AutoRotate.Disabled);
                     }
                     else
                     {
-                        OpenPartPreviewWindow(printItem, View3DTransformPart.AutoRotate.Enabled);
+                        OpenPartPreviewWindow(printItem, View3DWidget.AutoRotate.Enabled);
                     }
                 }
                 else
@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl.PrintHistory
         }
 
         PartPreviewMainWindow partPreviewWindow;
-        private void OpenPartPreviewWindow(PrintItem printItem, View3DTransformPart.AutoRotate autoRotate)
+        private void OpenPartPreviewWindow(PrintItem printItem, View3DWidget.AutoRotate autoRotate)
         {
 
             PrintItemWrapper itemWrapper = new PrintItemWrapper(printItem.Id);

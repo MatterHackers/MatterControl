@@ -35,7 +35,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public partial class View3DTransformPart
+    public partial class View3DWidget
     {
         private void MakeCopyOfGroup()
         {
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
-            PushMeshGroupDataToAsynchLists(TranceInfoOpperation.DO_COPY);
+            PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
             MeshGroup meshGroupToCopy = asynchMeshGroups[SelectedMeshGroupIndex];
             MeshGroup copyMeshGroup = new MeshGroup();

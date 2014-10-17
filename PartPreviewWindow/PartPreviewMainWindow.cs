@@ -43,11 +43,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class PartPreviewMainWindow : SystemWindow
     {
-        View3DTransformPart partPreviewView;
+        View3DWidget partPreviewView;
         ViewGcodeBasic viewGcodeBasic;
         bool OpenInEditMode;
 
-        public PartPreviewMainWindow(PrintItemWrapper printItem, View3DTransformPart.AutoRotate autoRotate3DView, bool openInEditMode = false)
+        public PartPreviewMainWindow(PrintItemWrapper printItem, View3DWidget.AutoRotate autoRotate3DView, bool openInEditMode = false)
             : base(690, 340)
         {
             UseOpenGL = true;
@@ -68,11 +68,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 string part3DViewLabelFull = string.Format("{0} {1} ", "3D", "View".Localize());
 
-                partPreviewView = new View3DTransformPart(printItem,
+                partPreviewView = new View3DWidget(printItem,
                     new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
                     ActiveSliceSettings.Instance.BedCenter,
                     ActiveSliceSettings.Instance.BedShape,
-                    View3DTransformPart.WindowType.StandAlone,
+                    View3DWidget.WindowType.StandAlone,
                     autoRotate3DView,
                     openInEditMode);
 
