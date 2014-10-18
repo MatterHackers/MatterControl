@@ -109,7 +109,6 @@ namespace MatterHackers.MatterControl
             this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", TabTextSize,
                     ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            
 			GuiWidget manualPrinterControls = new ManualControlsWidget();
 
             part3DViewContainer = new GuiWidget();

@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using MatterHackers.MatterControl.CustomWidgets;
 using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
@@ -1056,9 +1057,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
                 scaleRatioContainer.AddChild(scaleRatioLabel);
 
-                GuiWidget horizontalSpacer = new GuiWidget();
-                horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
-                scaleRatioContainer.AddChild(horizontalSpacer);
+                scaleRatioContainer.AddChild(new HorizontalSpacer());
 
                 scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50, allowDecimals: true, increment: .05);
                 scaleRatioControl.VAnchor = VAnchor.ParentCenter;
@@ -1404,14 +1403,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             degreesContainer.HAnchor = HAnchor.ParentLeftRight;
             degreesContainer.Padding = new BorderDouble(5);
 
-            GuiWidget horizontalSpacer = new GuiWidget();
-            horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
-
             string degreesLabelText = LocalizedString.Get("Degrees");
             string degreesLabelTextFull = "{0}:".FormatWith(degreesLabelText);
             TextWidget degreesLabel = new TextWidget(degreesLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
             degreesContainer.AddChild(degreesLabel);
-            degreesContainer.AddChild(horizontalSpacer);
+            degreesContainer.AddChild(new HorizontalSpacer());
 
             MHNumberEdit degreesControl = new MHNumberEdit(45, pixelWidth: 40, allowNegatives: true, allowDecimals: true, increment: 5, minValue: -360, maxValue: 360);
             degreesControl.VAnchor = Agg.UI.VAnchor.ParentTop;
@@ -1563,14 +1559,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 extruderIndexContainer.HAnchor = HAnchor.ParentLeftRight;
                 extruderIndexContainer.Padding = new BorderDouble(5);
 
-                GuiWidget horizontalSpacer = new GuiWidget();
-                horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
-
                 string extruderLabelText = LocalizedString.Get("Extruder");
                 string extruderLabelTextFull = "{0}:".FormatWith(extruderLabelText);
                 TextWidget extruderLabel = new TextWidget(extruderLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
                 extruderIndexContainer.AddChild(extruderLabel);
-                extruderIndexContainer.AddChild(horizontalSpacer);
+                extruderIndexContainer.AddChild(new HorizontalSpacer());
 
                 MHNumberEdit extruderControl = new MHNumberEdit(1, pixelWidth: 20, allowNegatives: false, allowDecimals: false, increment: 1, minValue: 1, maxValue: 2);
                 extruderControl.VAnchor = Agg.UI.VAnchor.ParentTop;
@@ -1600,7 +1593,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 };
 
                 buttonPanel.AddChild(extruderIndexContainer);
+
+                for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount; extruderIndex++)
+                {
+                    AddMaterialColorSelect(extruderIndex, buttonPanel);
+                }
             }
+        }
+
+        private void AddMaterialColorSelect(int i, FlowLayoutWidget buttonPanel)
+        {
+            FlowLayoutWidget extruderIndexContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+            extruderIndexContainer.HAnchor = HAnchor.ParentLeftRight;
+            extruderIndexContainer.Padding = new BorderDouble(5);
+
+            string extruderLabelText = "Color {0}".Localize().FormatWith(i);
+            TextWidget extruderLabel = new TextWidget(extruderLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            extruderIndexContainer.AddChild(extruderLabel);
+            extruderIndexContainer.AddChild(new HorizontalSpacer());
         }
 
         private void AddHandlers()
