@@ -448,6 +448,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReadLineStartCallBacks.AddCallBackToKey("ok T:", ReadTemperatures); // marlin
             ReadLineStartCallBacks.AddCallBackToKey("ok T0:", ReadTemperatures); // marlin
             ReadLineStartCallBacks.AddCallBackToKey("T:", ReadTemperatures); // repatier
+            ReadLineStartCallBacks.AddCallBackToKey("B:", ReadTemperatures); // smoothie
 
             ReadLineStartCallBacks.AddCallBackToKey("SD printing byte", ReadSdProgress); // repatier
 
