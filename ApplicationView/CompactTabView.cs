@@ -109,7 +109,8 @@ namespace MatterHackers.MatterControl
             this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", TabTextSize,
                     ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			GuiWidget manualPrinterControls = new ManualControlsWidget();
+            
+			GuiWidget manualPrinterControls = new ManualPrinterControls();
 
             part3DViewContainer = new GuiWidget();
             part3DViewContainer.AnchorAll();
@@ -190,7 +191,7 @@ namespace MatterHackers.MatterControl
 		void reloadControlsWidget()
 		{
 
-			GuiWidget manualPrinterControls = new ManualControlsWidget();
+			GuiWidget manualPrinterControls = new ManualPrinterControls();
 
 			//ScrollableWidget manualPrinterControlsWidget = new ScrollableWidget(true);
 			//manualPrinterControlsWidget.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;

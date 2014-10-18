@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -773,6 +774,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 UnlockEditControls();
             }
+
+            SelectionChanged(this, null);
         }
 
         bool viewIsInEditModePreLock = false;
@@ -967,7 +970,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 autoArrangeButton.Visible = false;
                 autoArrangeButton.Click += (sender, e) =>
                 {
-                    AutoArangePartsInBackground();
+                    AutoArrangePartsInBackground();
                 };
 
                 GuiWidget verticalSpacer = new GuiWidget();
@@ -1552,65 +1555,65 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.FixedWidth = 0;
         }
 
+        ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
         void AddMaterialControls(FlowLayoutWidget buttonPanel)
         {
+            extruderButtons.Clear();
+            for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount; extruderIndex++)
             {
-                FlowLayoutWidget extruderIndexContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-                extruderIndexContainer.HAnchor = HAnchor.ParentLeftRight;
-                extruderIndexContainer.Padding = new BorderDouble(5);
+                FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+                colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
+                colorSelectionContainer.Padding = new BorderDouble(5);
 
-                string extruderLabelText = LocalizedString.Get("Extruder");
-                string extruderLabelTextFull = "{0}:".FormatWith(extruderLabelText);
-                TextWidget extruderLabel = new TextWidget(extruderLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
-                extruderIndexContainer.AddChild(extruderLabel);
-                extruderIndexContainer.AddChild(new HorizontalSpacer());
-
-                MHNumberEdit extruderControl = new MHNumberEdit(1, pixelWidth: 20, allowNegatives: false, allowDecimals: false, increment: 1, minValue: 1, maxValue: 2);
-                extruderControl.VAnchor = Agg.UI.VAnchor.ParentTop;
-                extruderIndexContainer.AddChild(extruderControl);
-
-                extruderControl.ActuallNumberEdit.EditComplete += (sender, e) =>
+                string colorLabelText = "Extruder {0}".Localize().FormatWith(extruderIndex + 1);
+                RadioButton extruderSelection = new RadioButton(colorLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                extruderButtons.Add(extruderSelection);
+                extruderSelection.SiblingRadioButtonList = extruderButtons;
+                colorSelectionContainer.AddChild(extruderSelection);
+                colorSelectionContainer.AddChild(new HorizontalSpacer());
+                int extruderIndexLocal = extruderIndex;
+                extruderSelection.Click += (sender, e) =>
                 {
                     foreach (Mesh mesh in SelectedMeshGroup.Meshes)
                     {
                         MeshMaterialData material = MeshMaterialData.Get(mesh);
-                        if(material.MaterialIndex != (int)extruderControl.ActuallNumberEdit.Value)
+                        if (material.MaterialIndex != extruderIndexLocal-1)
                         {
-                            material.MaterialIndex = (int)extruderControl.ActuallNumberEdit.Value;
+                            material.MaterialIndex = extruderIndexLocal+1;
                             saveButtons.Visible = true;
                         }
                     }
                 };
 
-                SelectionChanged += (sender, e) =>
+                this.SelectionChanged += (sender, e) =>
                 {
                     Mesh mesh = SelectedMeshGroup.Meshes[0];
                     MeshMaterialData material = MeshMaterialData.Get(mesh);
-                    if (extruderControl.ActuallNumberEdit.Value != material.MaterialIndex)
+
+                    for (int i = 0; i < extruderButtons.Count; i++)
                     {
-                        extruderControl.ActuallNumberEdit.Value = material.MaterialIndex;
+                        if (material.MaterialIndex-1 == i)
+                        {
+                            ((RadioButton)extruderButtons[i]).Checked = true;
+                        }
                     }
                 };
 
-                buttonPanel.AddChild(extruderIndexContainer);
-
-                for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount; extruderIndex++)
+                GuiWidget colorSwatch = new GuiWidget(15,15);
+                colorSwatch.Draw += (sender, e) =>
                 {
-                    AddMaterialColorSelect(extruderIndex, buttonPanel);
-                }
+                    DrawEventArgs drawEvent = e as DrawEventArgs;
+                    GuiWidget widget = sender as GuiWidget;
+                    if(widget != null && drawEvent != null && drawEvent.graphics2D != null)
+                    {
+                        drawEvent.graphics2D.Rectangle(widget.LocalBounds, RGBA_Bytes.Black);
+                    }
+                };
+                colorSwatch.BackgroundColor = meshViewerWidget.GetMaterialColor(extruderIndex+1);
+                colorSelectionContainer.AddChild(colorSwatch);
+
+                buttonPanel.AddChild(colorSelectionContainer);
             }
-        }
-
-        private void AddMaterialColorSelect(int i, FlowLayoutWidget buttonPanel)
-        {
-            FlowLayoutWidget extruderIndexContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-            extruderIndexContainer.HAnchor = HAnchor.ParentLeftRight;
-            extruderIndexContainer.Padding = new BorderDouble(5);
-
-            string extruderLabelText = "Color {0}".Localize().FormatWith(i);
-            TextWidget extruderLabel = new TextWidget(extruderLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
-            extruderIndexContainer.AddChild(extruderLabel);
-            extruderIndexContainer.AddChild(new HorizontalSpacer());
         }
 
         private void AddHandlers()

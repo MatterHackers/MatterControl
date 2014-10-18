@@ -406,7 +406,7 @@ namespace MatterHackers.MatterControl
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
         {
             ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationController.Instance.ReloadAdvancedControlsPanel();
+            ApplicationController.Instance.ReloadAll(null, null); 
         }
     }    
 

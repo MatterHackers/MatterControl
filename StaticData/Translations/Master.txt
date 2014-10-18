@@ -2744,3 +2744,9 @@ Translated:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
 Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
 
+English:Color {0}
+Translated:Color {0}
+
+English:Extruder {0}
+Translated:Extruder {0}
+
