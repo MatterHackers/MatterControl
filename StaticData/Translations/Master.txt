@@ -2738,3 +2738,9 @@ Translated:Material 1
 English:Material 2
 Translated:Material 2
 
+English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+
