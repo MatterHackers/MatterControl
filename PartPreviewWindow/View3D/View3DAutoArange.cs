@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public partial class View3DWidget
     {
-        private void AutoArangePartsInBackground()
+        private void AutoArrangePartsInBackground()
         {
             if (MeshGroups.Count > 0)
             {

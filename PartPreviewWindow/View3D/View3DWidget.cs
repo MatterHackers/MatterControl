@@ -966,7 +966,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 autoArrangeButton.Visible = false;
                 autoArrangeButton.Click += (sender, e) =>
                 {
-                    AutoArangePartsInBackground();
+                    AutoArrangePartsInBackground();
                 };
 
                 GuiWidget verticalSpacer = new GuiWidget();
