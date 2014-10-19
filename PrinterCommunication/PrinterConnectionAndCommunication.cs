@@ -1342,10 +1342,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
 			if (OsInformation.OperatingSystem == OSType.Windows)
 			{
-				int dwFlagsAndAttributes = 0x40000000;
+				const int dwFlagsAndAttributes = 0x40000000;
+				const int GENERIC_READ = unchecked((int)0x80000000);
+				const int GENERIC_WRITE = 0x40000000;
 
 				//Borrowed from Microsoft's Serial Port Open Method :)
-				SafeFileHandle hFile = CreateFile(@"\\.\" + portName, -1073741824, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero);
+				SafeFileHandle hFile = CreateFile(@"\\.\" + portName, GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero);
 				if (hFile.IsInvalid)
 				{
 					return true;
