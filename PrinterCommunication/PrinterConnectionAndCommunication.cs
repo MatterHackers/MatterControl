@@ -1354,15 +1354,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 const int GENERIC_WRITE = 0x40000000;
 
                 //Borrowed from Microsoft's Serial Port Open Method :)
-                SafeFileHandle hFile = CreateFile(@"\\.\" + portName, GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero);
-                if (hFile.IsInvalid)
+                using (SafeFileHandle hFile = CreateFile(@"\\.\" + portName, GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero))
                 {
-                    return true;
+                    hFile.Close();
+                    return hFile.IsInvalid;
                 }
-
-                hFile.Close();
-
-                return false;
             }
             else
             {
