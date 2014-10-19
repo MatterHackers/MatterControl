@@ -1428,6 +1428,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     }
                 }
             }
+            else
+            {
+                connectionFailureMessage = (serialPortIsAlreadyOpen ? "Port already in use" : "Port not found");
+                OnConnectionFailed(null);
+            }
         }
 
         public void OnPrintFinished(EventArgs e)
