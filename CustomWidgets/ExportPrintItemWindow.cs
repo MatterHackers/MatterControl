@@ -305,6 +305,7 @@ namespace MatterHackers.MatterControl
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", initialDirectory: documentsPath, title: "Export GCode");
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
+            saveParams.FileName = Path.GetFileNameWithoutExtension(printItemWrapper.Name);
 
 			FileDialog.SaveFileDialog(saveParams, onExportGcodeFileSelected);
 
