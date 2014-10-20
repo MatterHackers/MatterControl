@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 
         public double GetValue()
         {
-            double targetTemp = Convert.ToDouble(numberInputField.Text);
+            double targetTemp = numberInputField.ActuallNumberEdit.Value;
             return targetTemp;
         }
     }
