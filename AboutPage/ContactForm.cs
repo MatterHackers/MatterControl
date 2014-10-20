@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.ContactForm
         {
             GuiWidget labelContainer = new GuiWidget();
             labelContainer.HAnchor = HAnchor.ParentLeftRight;
-            labelContainer.Height = height;
+			labelContainer.Height = height * TextWidget.GlobalPointSizeScaleRatio;
 
             TextWidget formLabel = new TextWidget(labelText, pointSize: fontSize);
             formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;

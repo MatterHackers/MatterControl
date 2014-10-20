@@ -51,11 +51,12 @@ namespace MatterHackers.MatterControl
         
         protected string label;
         protected string editWindowLabel;
-              
+        protected int extruderIndex0Based = 0;
 
-        protected TemperatureControlBase(string label, string editWindowLabel)
+        protected TemperatureControlBase(int extruderIndex0Based, string label, string editWindowLabel)
             : base(FlowDirection.TopToBottom)
         {
+            this.extruderIndex0Based = extruderIndex0Based;
             this.label = label;
             this.editWindowLabel = editWindowLabel;
             SetDisplayAttributes();            
@@ -408,7 +409,7 @@ namespace MatterHackers.MatterControl
         protected void onTemperatureRead(Object sender, EventArgs e)
         {
             TemperatureEventArgs tempArgs = e as TemperatureEventArgs;
-            if (tempArgs != null)
+            if (tempArgs != null && tempArgs.Index0Based == extruderIndex0Based)
             {
                 actualTempIndicator.Text = string.Format("{0:0.0}°C", tempArgs.Temperature);
             }
@@ -417,7 +418,7 @@ namespace MatterHackers.MatterControl
         protected void onTemperatureSet(Object sender, EventArgs e)
         {
             TemperatureEventArgs tempArgs = e as TemperatureEventArgs;
-            if (tempArgs != null)
+            if (tempArgs != null && tempArgs.Index0Based == extruderIndex0Based)
             {
                 SetTargetTemperature(tempArgs.Temperature);
             }
@@ -426,19 +427,16 @@ namespace MatterHackers.MatterControl
 
     public class ExtruderTemperatureControlWidget : TemperatureControlBase
     {
-        int extruderNumber = 1;
-        
         public ExtruderTemperatureControlWidget()
-			: base(LocalizedString.Get("Extruder Temperature"), LocalizedString.Get("Extruder Temperature Settings"))
+			: base(0, LocalizedString.Get("Extruder Temperature"), LocalizedString.Get("Extruder Temperature Settings"))
         {
             AddChildElements();
             AddHandlers();
         }
 
-        public ExtruderTemperatureControlWidget(int extruderNumber)
-            : base(string.Format("{0} {1}", "Extruder Temperature".Localize(), extruderNumber), LocalizedString.Get("Extruder Temperature Settings"))
-        {            
-            this.extruderNumber = extruderNumber;
+        public ExtruderTemperatureControlWidget(int extruderIndex0Based)
+            : base(extruderIndex0Based, string.Format("{0} {1}", "Extruder Temperature".Localize(), extruderIndex0Based + 1), LocalizedString.Get("Extruder Temperature Settings"))
+        {
             AddChildElements();
             AddHandlers();
         }
@@ -476,7 +474,7 @@ namespace MatterHackers.MatterControl
             string default_presets = ",0,,0,,0,250";
 
             string presets;
-            string presetKey = string.Format("Extruder{0}PresetTemps", this.extruderNumber);
+            string presetKey = string.Format("Extruder{0}PresetTemps", extruderIndex0Based+1);
             if (UserSettings.Instance.get(presetKey) == null)
             {
                 UserSettings.Instance.set(presetKey, default_presets);                
@@ -490,14 +488,14 @@ namespace MatterHackers.MatterControl
             StringEventArgs stringEvent = e as StringEventArgs;
             if (stringEvent != null && stringEvent.Data != null)
             {
-                UserSettings.Instance.set(string.Format("Extruder{0}PresetTemps", extruderNumber), stringEvent.Data);
+                UserSettings.Instance.set(string.Format("Extruder{0}PresetTemps", extruderIndex0Based + 1), stringEvent.Data);
                 ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 
         protected override double GetPreheatTemperature()
         {
-            string tempValue = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderNumber);
+            string tempValue = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex0Based+1);
             if (tempValue == "Unknown")
             {
                 return 0.0;
@@ -510,12 +508,12 @@ namespace MatterHackers.MatterControl
 
         protected override double GetTargetTemperature()
         {
-            return PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature;
+            return PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based);
         }
 
         protected override double GetActualTemperature()
         {
-            return PrinterConnectionAndCommunication.Instance.ActualExtruderTemperature;
+            return PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex0Based);
         }
 
         protected override void SetTargetTemperature(double targetTemp)
@@ -523,16 +521,16 @@ namespace MatterHackers.MatterControl
             double goalTemp = (int)(targetTemp + .5);
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
                 && PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder
-                && goalTemp != PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature)
+                && goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based))
             {
                 string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
-                string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature, sliceSettingsNote);
+                string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based), sliceSettingsNote);
                 StyledMessageBox.ShowMessageBox(message, "Waiting For Extruder To Heat");
             }
             else
             {
-                PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature = (int)(targetTemp + .5);
-                string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature);
+                PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderIndex0Based, (int)(targetTemp + .5));
+                string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based));
                 targetTemperatureDisplay.SetDisplayString(displayString);                
             }
         }
@@ -541,7 +539,7 @@ namespace MatterHackers.MatterControl
     public class BedTemperatureControlWidget : TemperatureControlBase
     {
         public BedTemperatureControlWidget()
-			: base(LocalizedString.Get("Bed Temperature"), LocalizedString.Get("Bed Temperature Settings"))
+			: base(0, LocalizedString.Get("Bed Temperature"), LocalizedString.Get("Bed Temperature Settings"))
         {
             AddChildElements();
             AddHandlers();

@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
         QueueDataView queueDataView;
         event EventHandler unregisterEvents;
         GuiWidget part3DViewContainer;
-        View3DTransformPart part3DView;
+        View3DWidget part3DView;
         GuiWidget partGcodeViewContainer;
         ViewGcodeBasic partGcodeView;
 		SimpleTextTabWidget aboutTabWidget;
@@ -86,9 +86,9 @@ namespace MatterHackers.MatterControl
             this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
             this.TabBar.Margin = new BorderDouble(0, 0);
-            this.TabBar.Padding = new BorderDouble(0, 2);
+            this.TabBar.Padding = new BorderDouble(0, 4);
 
-            this.Margin = new BorderDouble(top: 4);
+            this.Margin = new BorderDouble(top: 0);
             this.TabTextSize = 15;
 
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
@@ -110,12 +110,7 @@ namespace MatterHackers.MatterControl
                     ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             
-
-            GuiWidget manualPrinterControls = new ManualPrinterControls();
-			ScrollableWidget manualPrinterControlsWidget = new ScrollableWidget(true);
-            manualPrinterControlsWidget.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-            manualPrinterControlsWidget.AnchorAll();
-            manualPrinterControlsWidget.AddChild(manualPrinterControls);
+			GuiWidget manualPrinterControls = new ManualPrinterControls();
 
             part3DViewContainer = new GuiWidget();
             part3DViewContainer.AnchorAll();
@@ -136,7 +131,7 @@ namespace MatterHackers.MatterControl
 
             //Add the tab contents for 'Advanced Controls'
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-			manualControlsPage = new TabPage(manualPrinterControlsWidget, printerControlsLabel);
+			manualControlsPage = new TabPage(manualPrinterControls, printerControlsLabel);
             this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
             ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
@@ -197,13 +192,14 @@ namespace MatterHackers.MatterControl
 		{
 
 			GuiWidget manualPrinterControls = new ManualPrinterControls();
-			ScrollableWidget manualPrinterControlsWidget = new ScrollableWidget(true);
-			manualPrinterControlsWidget.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			manualPrinterControlsWidget.AnchorAll();
-			manualPrinterControlsWidget.AddChild(manualPrinterControls);
+
+			//ScrollableWidget manualPrinterControlsWidget = new ScrollableWidget(true);
+			//manualPrinterControlsWidget.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			//manualPrinterControlsWidget.AnchorAll();
+			//manualPrinterControlsWidget.AddChild(manualPrinterControls);
 
 			manualControlsPage.RemoveAllChildren();
-			manualControlsPage.AddChild(manualPrinterControlsWidget);
+			manualControlsPage.AddChild(manualPrinterControls);
 		}
 
 		void reloadConfigurationWidget()
@@ -215,12 +211,12 @@ namespace MatterHackers.MatterControl
         void GeneratePartViews(object state = null)
         {
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-            part3DView = new View3DTransformPart(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+            part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
                 new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
                 ActiveSliceSettings.Instance.BedCenter,
                 ActiveSliceSettings.Instance.BedShape,
-                View3DTransformPart.WindowType.Embeded,
-                View3DTransformPart.AutoRotate.Enabled);
+                View3DWidget.WindowType.Embeded,
+                View3DWidget.AutoRotate.Enabled);
             part3DView.Margin = new BorderDouble(bottom: 4);
             part3DView.AnchorAll();
 

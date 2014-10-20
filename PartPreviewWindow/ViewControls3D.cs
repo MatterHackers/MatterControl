@@ -130,8 +130,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            meshViewerWidget.PartColor = RGBA_Bytes.White;
-            meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
+            //meshViewerWidget.MaterialColor = RGBA_Bytes.White;
+            //meshViewerWidget.SelectedMaterialColor = ActiveTheme.Instance.PrimaryAccentColor;
             meshViewerWidget.BuildVolumeColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor.Red0To255, ActiveTheme.Instance.PrimaryAccentColor.Green0To255, ActiveTheme.Instance.PrimaryAccentColor.Blue0To255, 50);
         }
     }

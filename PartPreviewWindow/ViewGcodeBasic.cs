@@ -114,8 +114,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void Clear3DGCode(object sender, EventArgs e)
         {
-            gcodeViewWidget.gCodeRenderer.Clear3DGCode();
-            gcodeViewWidget.Invalidate();
+            if (gcodeViewWidget != null)
+            {
+                gcodeViewWidget.gCodeRenderer.Clear3DGCode();
+                gcodeViewWidget.Invalidate();
+            }
         }
 
         void RecreateBedAndPartPosition(object sender, EventArgs e)

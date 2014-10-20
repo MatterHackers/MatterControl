@@ -64,8 +64,9 @@ namespace MatterHackers.MatterControl.PrintQueue
             MenuDropList.MenuAsWideAsItems = false;
             MenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
             MenuDropList.Margin = new BorderDouble(4, 0, 1, 0);
+			MenuDropList.AlignToRightEdge = true;
             
-            SetMenuItems();
+			SetMenuItems();
             this.MenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
         }
 
@@ -119,21 +120,21 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             BorderDouble padding = MenuDropList.MenuItemsPadding;
             //Add the menu items to the menu itself
-            foreach (Tuple<string, Func<bool>> item in menuItems)
-            {
-                if (item.Item2 == null)
-                {
-                    MenuDropList.MenuItemsPadding = new BorderDouble(5, 0, padding.Right, 3);
-                }
-                else
-                {
-                    MenuDropList.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
-                }
+				foreach (Tuple<string, Func<bool>> item in menuItems)
+				{
+					if (item.Item2 == null)
+					{
+						MenuDropList.MenuItemsPadding = new BorderDouble(5, 0, padding.Right, 3);
+					}
+					else
+					{
+						MenuDropList.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
+					}
 
-                MenuDropList.AddItem(item.Item1);
-            }
+					MenuDropList.AddItem(item.Item1);
+				}
 
-            MenuDropList.Padding = padding;
+				MenuDropList.Padding = padding;
         }
 
         bool createPartsSheetsButton_Click()

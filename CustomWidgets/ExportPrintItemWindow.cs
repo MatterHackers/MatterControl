@@ -15,6 +15,8 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl
 {
@@ -320,7 +322,8 @@ namespace MatterHackers.MatterControl
 					gcodePathAndFilenameToSave += ".gcode";
 				}
 
-				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
+                string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+                if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
 				{
 					Close();
 					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
@@ -461,7 +464,6 @@ namespace MatterHackers.MatterControl
             saveParams.FileName = printItemWrapper.Name;
 
             FileDialog.SaveFileDialog(saveParams, onExportStlFileSelected);
-
         }
 
 		void onExportStlFileSelected(SaveFileDialogParams saveParams)
@@ -478,7 +480,15 @@ namespace MatterHackers.MatterControl
 						File.Delete(filePathToSave);
 						filePathToSave += ".stl";
 					}
-					File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+                    if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+                    {
+                        File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+                    }
+                    else
+                    {
+                        List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
+                        MeshFileIo.Save(meshGroups, filePathToSave);
+                    }
 					ShowFileIfRequested(filePathToSave);
 				}
 			}

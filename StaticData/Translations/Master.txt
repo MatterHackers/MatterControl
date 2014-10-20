@@ -2729,6 +2729,24 @@ Translated:Export...
 English:Temperature
 Translated:Temperature
 
-English:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
-Translated:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
+English:Align
+Translated:Align
+
+English:Material 1
+Translated:Material 1
+
+English:Material 2
+Translated:Material 2
+
+English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+
+English:Color {0}
+Translated:Color {0}
+
+English:Extruder {0}
+Translated:Extruder {0}
 

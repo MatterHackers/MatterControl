@@ -40,8 +40,18 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+    public class Cover : GuiWidget
+    {
+        public Cover(HAnchor hAnchor = HAnchor.None, VAnchor vAnchor = VAnchor.None)
+            : base(hAnchor, vAnchor)
+        {
+        }
+    }
+
     public class PartPreview3DWidget : PartPreviewWidget
     {
+        protected static readonly int DefaultScrollBarWidth = 120;
+
         protected bool autoRotateEnabled = false;
         public MeshViewerWidget meshViewerWidget;
         event EventHandler unregisterEvents;
@@ -109,6 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             spacingText.HAnchor = HAnchor.ParentLeft;
             wordOptionContainer.AddChild(spacingText);
             SolidSlider namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1);
+            namedSlider.TotalWidthInPixels = DefaultScrollBarWidth;
             namedSlider.Minimum = min;
             namedSlider.Maximum = max;
             namedSlider.Margin = new BorderDouble(3, 5, 3, 3);

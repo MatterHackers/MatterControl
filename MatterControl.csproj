@@ -119,6 +119,13 @@
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DCreateSelecitonData.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DAutoArange.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DCopyGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DUngroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
     <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
@@ -130,6 +137,13 @@
     <Compile Include="PrinterCommunication\Io\PrinterIoBase.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterIoGCodeFile.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterIoInjectionFifo.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PrintHistory\PrintHistoryData.cs" />
     <Compile Include="PrintLibrary\LibraryData.cs" />
     <Compile Include="PrintQueue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
@@ -156,11 +170,10 @@
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreviewWidget.cs" />
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
-    <Compile Include="PartPreviewWindow\View3DTransfromPart.cs" />
     <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PrinterControls\MacroControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
     <Compile Include="PrinterControls\EditMacrosWindow.cs" />
     <Compile Include="CustomWidgets\PluginChooserWindow.cs" />

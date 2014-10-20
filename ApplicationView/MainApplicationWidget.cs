@@ -52,7 +52,10 @@ namespace MatterHackers.MatterControl
 {
     public abstract class ApplicationView : GuiWidget
     {
-        public abstract void AddElements();
+		public TopContainerWidget TopContainer;
+
+		public abstract void AddElements();
+		public abstract void ToggleTopContainer();
         
     }
 
@@ -60,12 +63,19 @@ namespace MatterHackers.MatterControl
     {
         CompactTabView widescreenPanel;
         QueueDataView queueDataView;
+		GuiWidget menuSeparator;
         public CompactApplicationView()
         {
             AddElements();
             Initialize();
         }
         
+		public override void ToggleTopContainer()
+		{
+			this.menuSeparator.Visible = this.TopContainer.Visible;
+			this.TopContainer.Visible = !this.TopContainer.Visible;
+		}
+
         public override void AddElements()
         {
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -73,32 +83,52 @@ namespace MatterHackers.MatterControl
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
             container.AnchorAll();
 
+			TopContainer = new TopContainerWidget(); 
+			TopContainer.HAnchor = HAnchor.ParentLeftRight;
+
             ApplicationMenuRow menuRow = new ApplicationMenuRow();
-            container.AddChild(menuRow);
+			TopContainer.AddChild(menuRow);
 
-            GuiWidget menuSeparator = new GuiWidget();
-            menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
-            menuSeparator.Height = 2;
+            menuSeparator = new GuiWidget();
+            menuSeparator.Height = 12;
             menuSeparator.HAnchor = HAnchor.ParentLeftRight;
-            menuSeparator.Margin = new BorderDouble(3, 6, 3, 3);
-
-            container.AddChild(menuSeparator);
+			menuSeparator.MinimumSize = new Vector2(0, 12);
+			menuSeparator.Visible = false;            
 
             queueDataView = new QueueDataView();
-            container.AddChild(new ActionBarPlus(queueDataView));
+			TopContainer.AddChild(new ActionBarPlus(queueDataView));
+			TopContainer.SetOriginalHeight();
+
+			container.AddChild(TopContainer);
             container.AddChild(new PrintProgressBar());
+			container.AddChild(menuSeparator);
             widescreenPanel = new CompactTabView(queueDataView);
             container.AddChild(widescreenPanel);
 
             this.AddChild(container);
         }
 
-
         void Initialize()
         {
             this.AnchorAll();
         }
     }
+
+	public class TopContainerWidget : FlowLayoutWidget
+	{
+		double originalHeight;
+		public TopContainerWidget()
+			: base(FlowDirection.TopToBottom)
+		{
+
+		}
+
+
+		public void SetOriginalHeight()
+		{
+			originalHeight = this.Height;
+		}
+	}
 
     public class ResponsiveApplicationView : ApplicationView
     {
@@ -108,6 +138,11 @@ namespace MatterHackers.MatterControl
             AddElements();
             Initialize();
         }
+
+		public override void ToggleTopContainer()
+		{
+
+		}
         
         public override void AddElements()
         {

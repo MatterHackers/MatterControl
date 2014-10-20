@@ -364,11 +364,11 @@ namespace MatterHackers.MatterControl
                     bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
                     if (shiftKeyDown)
                     {
-                        OpenPartPreviewWindow (View3DTransformPart.AutoRotate.Disabled);
+                        OpenPartPreviewWindow (View3DWidget.AutoRotate.Disabled);
                     }
                     else
                     {
-                        OpenPartPreviewWindow (View3DTransformPart.AutoRotate.Enabled);
+                        OpenPartPreviewWindow (View3DWidget.AutoRotate.Enabled);
                     }
                 }
                 else
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl
             this.partPreviewWindow = null;
 		}
 
-		private void OpenPartPreviewWindow(View3DTransformPart.AutoRotate autoRotate)
+		private void OpenPartPreviewWindow(View3DWidget.AutoRotate autoRotate)
 		{
             if (partPreviewWindow == null)
 			{
