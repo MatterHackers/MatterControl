@@ -175,22 +175,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     {
                         foreach (Mesh mesh in meshGroup.Meshes)
                         {
-                            MeshMaterialData material = MeshMaterialData.Get(mesh);
-                            switch (material.MaterialIndex)
+                            if (ActiveSliceSettings.Instance.ExtruderCount > 1)
                             {
-                                case 1:
-                                    extruder1Group[0].Meshes.Add(mesh);
-                                    break;
+                                MeshMaterialData material = MeshMaterialData.Get(mesh);
+                                switch (material.MaterialIndex)
+                                {
+                                    case 1:
+                                        extruder1Group[0].Meshes.Add(mesh);
+                                        break;
 
-                                case 2:
-                                    extruder2Group[0].Meshes.Add(mesh);
-                                    break;
+                                    case 2:
+                                        extruder2Group[0].Meshes.Add(mesh);
+                                        break;
+
+                                    default:
+                                        extruder1Group[0].Meshes.Add(mesh);
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                extruder1Group[0].Meshes.Add(mesh);
                             }
                         }
                     }
 
-                    string extruder1StlFileToSlice = SaveAndGetFilenameForExtruder(extruder1Group, 1);
-                    if (extruder2Group.Count > 0)
+                    string extruder1StlFileToSlice;
+                    if (ActiveSliceSettings.Instance.ExtruderCount > 1)
+                    {
+                        extruder1StlFileToSlice = SaveAndGetFilenameForExtruder(extruder1Group, 1);
+                    }
+                    else
+                    {
+                        extruder1StlFileToSlice = SaveAndGetFilenameForExtruder(extruder1Group, -1);
+                    }
+                    if (extruder2Group.Count > 0
+                        && extruder2Group[0].Meshes != null
+                        && extruder2Group[0].Meshes.Count > 0)
                     {
                         string extruder2StlFileToSlice = SaveAndGetFilenameForExtruder(extruder2Group, 2);
                         return new string[] { extruder1StlFileToSlice, extruder2StlFileToSlice };

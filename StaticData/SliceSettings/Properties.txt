@@ -120,7 +120,7 @@ support_material_infill_angle|Infill Angle|POSITIVE_DOUBLE|degrees|The angle the
 support_material_create_internal_support|Support Everywhere|CHECK_BOX||If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
 support_material_enforce_layers|Enforce Support For First|INT|layers|Generate support material everywhere not touching the bed for n layers, regardless of angle.
 support_material_extruder|Support Material Extruder|INT||The index of the extruder to use for support material.
-support_material_extrusion_width|Support Material|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.
+support_material_extrusion_width|Support Material|DOUBLE_OR_PERCENT|mm or %|You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
 support_material_interface_extruder|Support Interface Extruder|INT||The index of the extruder to use for support material interface layers.
 support_material_interface_layers|Interface Layers|INT|layers|The number of layers to print between the supports and the part.
 support_material_interface_spacing|Interface Pattern Spacing|POSITIVE_DOUBLE|mm|The space between lines of the interface layers (0 is solid).

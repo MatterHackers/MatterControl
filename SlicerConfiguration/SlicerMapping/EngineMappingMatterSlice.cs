@@ -237,7 +237,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
 
             //supportLineSpacing=2
-            new MapItem("supportLineSpacing", "support_material_spacing"),            
+            new MapItem("supportLineSpacing", "support_material_spacing"),
+
+            new SupportExtrusionWidth("supportExtrusionPercent","support_material_extrusion_width"),
 
             //supportMaterialSpeed=50 # mm/s.
             new MapItem("supportMaterialSpeed", "support_material_speed"),
@@ -448,6 +450,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             public FanTranslator(string mappedKey, string originalKey)
                 : base(mappedKey, originalKey)
             {
+            }
+        }
+
+        public class SupportExtrusionWidth : MapItem
+        {
+            public SupportExtrusionWidth(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
+            {
+            }
+
+            public override string MappedValue
+            {
+                get
+                {
+                    double nozzleDiameter = ActiveSliceSettings.Instance.NozzleDiameter;
+                    if (OriginalValue == "0")
+                    {
+                        return "100";
+                    }
+
+                    if (OriginalValue.Contains("%"))
+                    {
+                        string withoutPercent = OriginalValue.Replace("%", "");
+                        return withoutPercent;
+                    }
+
+                    double originalValue;
+                    if (!double.TryParse(OriginalValue, out originalValue))
+                    {
+                        originalValue = nozzleDiameter;
+                    }
+
+                    return (originalValue / nozzleDiameter * 100).ToString();
+                }
             }
         }
 

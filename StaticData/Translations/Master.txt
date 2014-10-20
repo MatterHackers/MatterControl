@@ -2729,3 +2729,6 @@ Translated:Export...
 English:Temperature
 Translated:Temperature
 
+English:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
+Translated:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
+
