@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         double targetBedTemperature;
         string printJobDisplayName = null;
         GCodeFile loadedGCode = new GCodeFile();
-		IFrostedSerialPort serialPort;
+        IFrostedSerialPort serialPort;
         Thread readFromPrinterThread;
         Thread connectThread;
 
@@ -564,9 +564,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         return "Not Connected".Localize();
                     case CommunicationStates.Disconnecting:
                         return "Disconnecting".Localize();
-					case CommunicationStates.AttemptingToConnect:
+                    case CommunicationStates.AttemptingToConnect:
                         string connectingMessageTxt = "Connecting".Localize();
-						return "{0}...".FormatWith(connectingMessageTxt);
+                        return "{0}...".FormatWith(connectingMessageTxt);
                     case CommunicationStates.ConnectionLost:
                         return "Connection Lost".Localize();
                     case CommunicationStates.FailedToConnect:
@@ -1283,14 +1283,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                 //Create and start connection thread
                 connectThread = new Thread(Connect_Thread);
-				connectThread.Name = "Connect To Printer";
+                connectThread.Name = "Connect To Printer";
                 connectThread.IsBackground = true;
                 connectThread.Start();
             }
             else
             {
                 Debug.WriteLine("Connection failed: {0}".FormatWith(this.ActivePrinter.ComPort));
-				connectionFailureMessage = "Unavailable";
+                connectionFailureMessage = "Unavailable";
                 OnConnectionFailed(null);
             }
         }
@@ -1341,21 +1341,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         //Windows-only function
         bool SerialPortAlreadyOpen(string portName)
         {
-			if (OsInformation.OperatingSystem == OSType.Windows)
-			{
-				int dwFlagsAndAttributes = 0x40000000;
+            if (OsInformation.OperatingSystem == OSType.Windows)
+            {
+                const int dwFlagsAndAttributes = 0x40000000;
+                const int GENERIC_READ = unchecked((int)0x80000000);
+                const int GENERIC_WRITE = 0x40000000;
 
-				//Borrowed from Microsoft's Serial Port Open Method :)
-				SafeFileHandle hFile = CreateFile(@"\\.\" + portName, -1073741824, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero);
-				if (hFile.IsInvalid)
-				{
-					return true;
-				}
+                //Borrowed from Microsoft's Serial Port Open Method :)
+                SafeFileHandle hFile = CreateFile(@"\\.\" + portName, GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero);
+                if (hFile.IsInvalid)
+                {
+                    return true;
+                }
 
-				hFile.Close();
+                hFile.Close();
 
-				return false;
-			}
+                return false;
+            }
             else
             {
                 return false;
@@ -1396,9 +1398,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     try
                     {
-						serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, DtrEnableOnConnect);
+                        serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, DtrEnableOnConnect);
 
-						readFromPrinterThread = new Thread(ReadFromPrinter);
+                        readFromPrinterThread = new Thread(ReadFromPrinter);
                         readFromPrinterThread.Name = "Read From Printer";
                         readFromPrinterThread.IsBackground = true;
                         readFromPrinterThread.Start();
