@@ -284,9 +284,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void deleteFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            libraryDataView.RemoveSelectedItems();
-            SetVisibleButtons();
+			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
+			{
+				LibraryData.Instance.RemoveItem(item.printItemWrapper);
+			}
 
+			libraryDataView.ClearSelectedItems();
         }
 
 
