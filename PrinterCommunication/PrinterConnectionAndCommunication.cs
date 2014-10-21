@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         bool stopTryingToConnect = false;
 
-        static readonly int MAX_EXTRUDERS = 4;
+        static readonly int MAX_EXTRUDERS = 16;
         double[] actualExtruderTemperature = new double[MAX_EXTRUDERS];
         double[] targetExtruderTemperature = new double[MAX_EXTRUDERS];
         double actualBedTemperature;
@@ -839,11 +839,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public double GetTargetExtruderTemperature(int extruderIndex0Based)
         {
+            extruderIndex0Based = Math.Max(extruderIndex0Based, MAX_EXTRUDERS - 1);
+
             return targetExtruderTemperature[extruderIndex0Based];
         }
 
         public void SetTargetExtruderTemperature(int extruderIndex0Based, double temperature)
         {
+            extruderIndex0Based = Math.Max(extruderIndex0Based, MAX_EXTRUDERS - 1);
+
             if (targetExtruderTemperature[extruderIndex0Based] != temperature)
             {
                 targetExtruderTemperature[extruderIndex0Based] = temperature;
@@ -857,6 +861,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public double GetActualExtruderTemperature(int extruderIndex0Based)
         {
+            extruderIndex0Based = Math.Max(extruderIndex0Based, MAX_EXTRUDERS - 1);
+
             return actualExtruderTemperature[extruderIndex0Based];
         }
 

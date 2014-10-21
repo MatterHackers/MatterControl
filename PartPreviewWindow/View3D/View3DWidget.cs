@@ -1577,7 +1577,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     foreach (Mesh mesh in SelectedMeshGroup.Meshes)
                     {
                         MeshMaterialData material = MeshMaterialData.Get(mesh);
-                        if (material.MaterialIndex != extruderIndexLocal-1)
+                        if (material.MaterialIndex != extruderIndexLocal+1)
                         {
                             material.MaterialIndex = extruderIndexLocal+1;
                             saveButtons.Visible = true;
@@ -1609,12 +1609,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         drawEvent.graphics2D.Rectangle(widget.LocalBounds, RGBA_Bytes.Black);
                     }
                 };
-                colorSwatch.BackgroundColor = meshViewerWidget.GetMaterialColor(extruderIndex+1);
-                colorSelectionContainer.AddChild(colorSwatch);
+                colorSwatch.BackgroundColor = meshViewerWidget.GetMaterialColor(extruderIndexLocal+1);
+                Button swatchButton = new Button(0, 0, colorSwatch);
+                swatchButton.Click += (sender, e) =>
+                {
+                    nextColor++;
+                    RGBA_Bytes color = SelectionColors[nextColor % SelectionColors.Length];
+                    meshViewerWidget.SetMaterialColor(extruderIndexLocal+1, color);
+                    colorSwatch.BackgroundColor = color;
+                };
+                colorSelectionContainer.AddChild(swatchButton);
 
                 buttonPanel.AddChild(colorSelectionContainer);
             }
         }
+
+        int nextColor = 0;
+        RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 
         private void AddHandlers()
         {
