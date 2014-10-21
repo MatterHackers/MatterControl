@@ -144,8 +144,6 @@ Advanced
     Output Options
       Center Print
         center_part_on_bed
-      Wipe Shield
-        wipe_shield_distance
       Sequential Printing
         complete_objects
         extruder_clearance_height
