@@ -1426,6 +1426,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
             else
             {
+                // If the serial port isn't avaiable (i.e. the specified port name wasn't found in GetPortNames()) or the serial
+                // port is already opened in another instance or process, then report the connection problem back to the user
                 connectionFailureMessage = (serialPortIsAlreadyOpen ? 
                     LocalizedString.Get("Port already in use") : 
                     LocalizedString.Get("Port not found"));
