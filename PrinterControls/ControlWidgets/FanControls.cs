@@ -51,6 +51,8 @@ namespace MatterHackers.MatterControl.PrinterControls
     {
         event EventHandler unregisterEvents;
         EditableNumberDisplay fanSpeedDisplay;
+		Button disableFanButton;
+		Button enableFanButton;
         
         protected override void AddChildElements()
         {
@@ -101,6 +103,19 @@ namespace MatterHackers.MatterControl.PrinterControls
             fanSpeedPercent.VAnchor = Agg.UI.VAnchor.ParentCenter;
             leftToRight.AddChild(fanSpeedPercent);
 
+			//Matt's test editing to add a on/off button
+			//Creates a button with the text On centered in button.
+			disableFanButton = textImageButtonFactory.Generate ("Disable Fan", centerText: true);
+			disableFanButton.Click += new ButtonBase.ButtonEventHandler (DisableFan_Click);
+
+			enableFanButton = textImageButtonFactory.Generate ("Enable Fan", centerText: true);
+			enableFanButton.Click += new ButtonBase.ButtonEventHandler (EnableFan_Click);
+
+			leftToRight.AddChild (disableFanButton);
+			leftToRight.AddChild (enableFanButton);
+
+			setFanButtonVisiblity ();
+
             return leftToRight;
         }
 
@@ -109,6 +124,24 @@ namespace MatterHackers.MatterControl.PrinterControls
             int printerFanSpeed = PrinterConnectionAndCommunication.Instance.FanSpeed0To255;
 
             fanSpeedDisplay.SetDisplayString(((int)(printerFanSpeed * 100.5 / 255)).ToString());
+			setFanButtonVisiblity ();
         }
+
+		void DisableFan_Click(object sender, MouseEventArgs mouseEvent)
+		{
+			PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 0;
+		}
+
+		void EnableFan_Click(object sender, MouseEventArgs mouseEvent)
+		{
+			PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 255;
+		}
+
+		void setFanButtonVisiblity()
+		{
+			bool disableVisible = (PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0);
+			disableFanButton.Visible = disableVisible;
+			enableFanButton.Visible = !disableVisible;
+		}
     }
 }
