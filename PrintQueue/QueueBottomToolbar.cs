@@ -35,21 +35,28 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.SettingsManagement;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-    public class QueueBottomToolbar : GuiWidget
+    public class QueueDataWidget : GuiWidget
     {
+        TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         PluginChooserWindow pluginChooserWindow;
         QueueDataView queueDataView;
+        Button enterEditModeButton;
+        Button leaveEditModeButton;
+
+        Button addToQueueButton;
+        Button createButton;
 
         static Button shopButton;
         event EventHandler unregisterEvents;
 
-        public QueueBottomToolbar(QueueDataView queueDataView)
+        public QueueDataWidget(QueueDataView queueDataView)
         {
             this.queueDataView = queueDataView;
 
@@ -61,9 +68,33 @@ namespace MatterHackers.MatterControl.PrintQueue
             textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.borderWidth = 0;
 
-            FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
+            editButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+            editButtonFactory.hoverTextColor = RGBA_Bytes.White;
+            editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+            editButtonFactory.pressedTextColor = RGBA_Bytes.White;
+            editButtonFactory.borderWidth = 0;
+            editButtonFactory.FixedWidth = 70;
+
+            FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
+
+                enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+                leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
+                leaveEditModeButton.Visible = false;
+
+                FlowLayoutWidget searchPanel = new FlowLayoutWidget();
+                searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+                searchPanel.HAnchor = HAnchor.ParentLeftRight;
+                searchPanel.Padding = new BorderDouble(0);
+
+                searchPanel.AddChild(enterEditModeButton);
+                searchPanel.AddChild(leaveEditModeButton);
+
+                searchPanel.AddChild(new HorizontalSpacer());
+                
+                allControls.AddChild(searchPanel);
+                
                 {                    
                     // Ensure the form opens with no rows selected.
                     //ActiveQueueList.Instance.ClearSelected();
@@ -76,17 +107,17 @@ namespace MatterHackers.MatterControl.PrintQueue
                 buttonPanel1.Padding = new BorderDouble(0, 3);
 
                 {
-                    Button addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+                    addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     buttonPanel1.AddChild(addToQueueButton);
                     addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
                     addToQueueButton.Click += new ButtonBase.ButtonEventHandler(addToQueueButton_Click);
 
                     // put in the creator button
                     {
-                        Button runCreator = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
-                        buttonPanel1.AddChild(runCreator);
-                        runCreator.Margin = new BorderDouble(0, 0, 3, 0);
-                        runCreator.Click += (sender, e) =>
+                        createButton = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
+                        buttonPanel1.AddChild(createButton);
+                        createButton.Margin = new BorderDouble(0, 0, 3, 0);
+                        createButton.Click += (sender, e) =>
                         {
                             OpenPluginChooserWindow();
                         };
@@ -117,27 +148,21 @@ namespace MatterHackers.MatterControl.PrintQueue
                     deleteAllFromQueueButton.Margin = new BorderDouble(3, 0);
                     deleteAllFromQueueButton.Click += new ButtonBase.ButtonEventHandler(deleteAllFromQueueButton_Click);
                     //buttonPanel1.AddChild(deleteAllFromQueueButton);
+                    
+                    buttonPanel1.AddChild(new HorizontalSpacer());
 
-                    GuiWidget spacer1 = new GuiWidget();
-                    spacer1.HAnchor = HAnchor.ParentLeftRight;
-                    buttonPanel1.AddChild(spacer1);
-
-                    GuiWidget spacer2 = new GuiWidget();
-                    spacer2.HAnchor = HAnchor.ParentLeftRight;
-                    buttonPanel1.AddChild(spacer2);
-
-                    FlowLayoutWidget queueMenuSpace = new FlowLayoutWidget();
-                    queueMenuSpace.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-                    QueueOptionsMenu queueMenu = new QueueOptionsMenu();
-                    queueMenuSpace.AddChild(queueMenu.MenuDropList);
-                    buttonPanel1.AddChild(queueMenuSpace);
+                    queueMenuContainer = new FlowLayoutWidget();
+                    queueMenuContainer.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+                    queueMenu = new QueueOptionsMenu();
+                    queueMenuContainer.AddChild(queueMenu.MenuDropList);
+                    buttonPanel1.AddChild(queueMenuContainer);
 
                     ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((object sender, EventArgs e) =>
                     {
-                        queueMenuSpace.RemoveAllChildren();
+                        queueMenuContainer.RemoveAllChildren();
                         // the printer changed reload the queueMenue
                         queueMenu = new QueueOptionsMenu();
-                        queueMenuSpace.AddChild(queueMenu.MenuDropList);
+                        queueMenuContainer.AddChild(queueMenu.MenuDropList);
                     }, ref unregisterEvents);
                 }
                 allControls.AddChild(buttonPanel1);
@@ -145,6 +170,44 @@ namespace MatterHackers.MatterControl.PrintQueue
             allControls.AnchorAll();
             
             this.AddChild(allControls);
+            AddHandlers();
+        }
+
+        QueueOptionsMenu queueMenu;
+        FlowLayoutWidget queueMenuContainer;
+
+        void AddHandlers()
+        {
+            enterEditModeButton.Click += enterEditModeButtonClick;
+            leaveEditModeButton.Click += leaveEditModeButtonClick;
+        }
+
+        void enterEditModeButtonClick(object sender, MouseEventArgs mouseEvent)
+        {
+            enterEditModeButton.Visible = false;
+            leaveEditModeButton.Visible = true;
+            queueDataView.EditMode = true;
+            addToQueueButton.Visible = false;
+            createButton.Visible = false;
+            queueMenuContainer.Visible = false;
+            SetVisibleButtons();
+        }
+
+        void leaveEditModeButtonClick(object sender, MouseEventArgs mouseEvent)
+        {
+            enterEditModeButton.Visible = true;
+            leaveEditModeButton.Visible = false;
+            queueDataView.EditMode = false;
+            addToQueueButton.Visible = true;
+            createButton.Visible = true;
+            queueMenuContainer.Visible = true;
+            SetVisibleButtons();
+
+        }
+
+        void SetVisibleButtons()
+        {
+            
         }
 
         private void SetDisplayAttributes()

@@ -75,10 +75,22 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             get { return printItems; }
         }
+
+        private int selectedIndex = -1;
+        public int SelectedIndex
+        {
+            get { return selectedIndex; }
+            set 
+            {
+                selectedIndex = value;
+                OnSelectedIndexChanged(new IndexArgs(value)); 
+            }
+        }
         
         public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
         public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
         public RootedObjectEventHandler OrderChanged = new RootedObjectEventHandler();
+        public RootedObjectEventHandler SelectedIndexChanged = new RootedObjectEventHandler();
 
         static QueueData instance;
         public static QueueData Instance
@@ -157,6 +169,11 @@ namespace MatterHackers.MatterControl.PrintQueue
         public void OnItemRemoved(EventArgs e)
         {
             ItemRemoved.CallEvents(this, e);
+        }
+
+        public void OnSelectedIndexChanged(EventArgs e)
+        {
+            SelectedIndexChanged.CallEvents(this, e);
         }
 
         public PrintItemWrapper GetPrintItemWrapper(int index)

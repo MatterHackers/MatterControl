@@ -201,8 +201,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
         //RGBA_Bytes selectedColor = new RGBA_Bytes(0, 95, 107, 255);
         RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
-
-        int selectedIndex = -1;
+        
         int hoverIndex = -1;
         int dragIndex = -1;
 
@@ -218,58 +217,11 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             get
             {
-                return selectedIndex;
+                return QueueData.Instance.SelectedIndex;
             }
             set
             {
-                if (value < -1 || value >= topToBottomItemList.Children.Count)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                
-                selectedIndex = value;
-                OnSelectedIndexChanged();
-
-                for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-                {
-                    GuiWidget child = topToBottomItemList.Children[index];
-                    if (index == selectedIndex)
-                    {
-                        ((QueueRowItem)child.Children[0]).isSelectedItem = true;
-                        if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-                        {
-                            ((QueueRowItem)child.Children[0]).isActivePrint = true;
-                            PrinterConnectionAndCommunication.Instance.ActivePrintItem = ((QueueRowItem)child.Children[0]).PrintItemWrapper;
-                        }
-                        else if (((QueueRowItem)child.Children[0]).PrintItemWrapper == PrinterConnectionAndCommunication.Instance.ActivePrintItem)
-                        {
-                            // the selection must be the active print item
-                            ((QueueRowItem)child.Children[0]).isActivePrint = true;
-                        }
-                    }
-                    else
-                    {
-                        if (((QueueRowItem)child.Children[0]).isSelectedItem)
-                        {
-                            ((QueueRowItem)child.Children[0]).isSelectedItem = false;
-                        }
-                        if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-                        {
-                            if (((QueueRowItem)child.Children[0]).isActivePrint)
-                            {
-                                ((QueueRowItem)child.Children[0]).isActivePrint = false;
-                            }
-                        }
-                    }
-                    child.Invalidate();
-
-                    Invalidate();
-                }
-
-                if (QueueData.Instance.Count == 0)
-                {
-                    PrinterConnectionAndCommunication.Instance.ActivePrintItem = null;
-                }
+                QueueData.Instance.SelectedIndex = value;
             }
         }
 
@@ -356,7 +308,9 @@ namespace MatterHackers.MatterControl.PrintQueue
                 AddChild(queueItem);
             }
 
-            QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
+            this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
+            QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
+            QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);            
             QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToQueue, ref unregisterEvents);
             QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
 
@@ -377,6 +331,51 @@ namespace MatterHackers.MatterControl.PrintQueue
         void PrintItemChange(object sender, EventArgs e)
         {
             SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+        }
+
+        void SelectedIndexChanged(object sender, EventArgs e)
+        {
+            OnSelectedIndexChanged();
+            for (int index = 0; index < topToBottomItemList.Children.Count; index++)
+            {
+                GuiWidget child = topToBottomItemList.Children[index];
+                if (index == SelectedIndex)
+                {
+                    ((QueueRowItem)child.Children[0]).isSelectedItem = true;
+                    if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+                    {
+                        ((QueueRowItem)child.Children[0]).isActivePrint = true;
+                        PrinterConnectionAndCommunication.Instance.ActivePrintItem = ((QueueRowItem)child.Children[0]).PrintItemWrapper;
+                    }
+                    else if (((QueueRowItem)child.Children[0]).PrintItemWrapper == PrinterConnectionAndCommunication.Instance.ActivePrintItem)
+                    {
+                        // the selection must be the active print item
+                        ((QueueRowItem)child.Children[0]).isActivePrint = true;
+                    }
+                }
+                else
+                {
+                    if (((QueueRowItem)child.Children[0]).isSelectedItem)
+                    {
+                        ((QueueRowItem)child.Children[0]).isSelectedItem = false;
+                    }
+                    if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+                    {
+                        if (((QueueRowItem)child.Children[0]).isActivePrint)
+                        {
+                            ((QueueRowItem)child.Children[0]).isActivePrint = false;
+                        }
+                    }
+                }
+                child.Invalidate();
+
+                Invalidate();
+            }
+
+            if (QueueData.Instance.Count == 0)
+            {
+                PrinterConnectionAndCommunication.Instance.ActivePrintItem = null;
+            }
         }
 
         void ItemAddedToQueue(object sender, EventArgs e)
@@ -423,6 +422,11 @@ namespace MatterHackers.MatterControl.PrintQueue
                 unregisterEvents(this, null);
             }
             base.OnClosed(e);
+        }
+
+        void control_MouseLeaveBounds(object sender, EventArgs e)
+        {
+            HoverIndex = -1;
         }
 
         public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
@@ -545,9 +549,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public void ClearSelected()
         {
-            if (selectedIndex != -1)
+            if (SelectedIndex != -1)
             {
-                selectedIndex = -1;
+                SelectedIndex = -1;
                 OnSelectedIndexChanged();
             }
         }        

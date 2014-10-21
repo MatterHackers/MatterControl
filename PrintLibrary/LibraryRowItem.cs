@@ -202,6 +202,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             printButton.Click += (sender, e) =>
             {
                 QueueData.Instance.AddItem(this.printItemWrapper,0);
+                QueueData.Instance.SelectedIndex = 0;
                 this.Invalidate();
 
             };;

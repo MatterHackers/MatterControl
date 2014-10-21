@@ -199,29 +199,29 @@ namespace MatterHackers.MatterControl.PrintQueue
             editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
             editButton.Width = 100;
 
-            TextWidget editLabel = new TextWidget("Edit".Localize());
+            TextWidget editLabel = new TextWidget("View".Localize());
             editLabel.TextColor = RGBA_Bytes.White;
             editLabel.VAnchor = VAnchor.ParentCenter;
             editLabel.HAnchor = HAnchor.ParentCenter;
 
             editButton.AddChild(editLabel);
-            editButton.Click += onEditPartClick;
+            editButton.Click += onViewPartClick;
 
-            //buttonFlowContainer.AddChild(editButton);
+            buttonFlowContainer.AddChild(editButton);
             buttonFlowContainer.AddChild(printButton);
 
             buttonContainer.AddChild(buttonFlowContainer);
-            //buttonContainer.Width = 200;
-            buttonContainer.Width = 100;
+            buttonContainer.Width = 200;
+            //buttonContainer.Width = 100;
 
             return buttonContainer;
         }
 
-        private void onEditPartClick(object sender, MouseEventArgs e)
+        private void onViewPartClick(object sender, MouseEventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
-                OpenPartViewWindow(true);
+                OpenPartViewWindow(false);
             });
         }
 
@@ -415,11 +415,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         void AddHandlers()
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-
             PrintItemWrapper.SlicingOutputMessage.RegisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
-
-            MouseEnterBounds += new EventHandler(PrintQueueItem_MouseEnterBounds);
-            MouseLeaveBounds += new EventHandler(PrintQueueItem_MouseLeaveBounds);
         }
 
         void PrintItem_SlicingOutputMessage(object sender, EventArgs e)
@@ -436,16 +432,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.BackgroundColor = this.WidgetBackgroundColor;
             this.Padding = new BorderDouble(0);
             this.Margin = new BorderDouble(6,0,6,6);
-        }
-
-        void PrintQueueItem_MouseLeaveBounds(object sender, EventArgs e)
-        {
-            editControls.Visible = false;
-        }
-
-        void PrintQueueItem_MouseEnterBounds(object sender, EventArgs e)
-        {
-            editControls.Visible = true;
         }
 
         class PartToAddToQueue
@@ -539,7 +525,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
 
             int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
-            QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);
+            QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);   
+            
         }
 
         public static void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
