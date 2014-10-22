@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void onMouse_Enter(object sender, EventArgs args)
         {
-			this.rightButtonOverlay.SlideOut ();
+			this.rightButtonOverlay.SlideIn ();
             this.BackgroundColor = this.hoverBackgroundColor;
             this.printerName.TextColor = this.hoverTextColor;
 
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void onMouse_Leave(object sender, EventArgs args)
         {
-			this.rightButtonOverlay.SlideIn ();
+			this.rightButtonOverlay.SlideOut ();
             this.BackgroundColor = this.defaultBackgroundColor;
             this.printerName.TextColor = this.defaultTextColor;  
 
