@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.ActionBar
                     && goalTemp != PrinterConnectionAndCommunication.Instance.TargetBedTemperature)
                 {
                     string message = string.Format(waitingForBedToHeatMessage, PrinterConnectionAndCommunication.Instance.TargetBedTemperature, sliceSettingsNote);
-                    StyledMessageBox.ShowMessageBox(message, waitingForBedToHeatTitle);
+                    StyledMessageBox.ShowMessageBox(null, message, waitingForBedToHeatTitle);
                 }
                 else
                 {

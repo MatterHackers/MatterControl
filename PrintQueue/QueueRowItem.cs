@@ -517,11 +517,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             if (PrintItemWrapper.PrintItem.FileLocation == QueueData.SdCardFileName)
             {
-                if (StyledMessageBox.ShowMessageBox(alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO))
-                {
-                    // The firmware only understands the names when lowercase.
-                    PrinterConnectionAndCommunication.Instance.DeleteFileFromSdCard(PrintItemWrapper.PrintItem.Name);
-                }
+                StyledMessageBox.ShowMessageBox(onDeleteFileConfirm, alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO);
             }
 
             int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
@@ -529,8 +525,18 @@ namespace MatterHackers.MatterControl.PrintQueue
             
         }
 
+        void onDeleteFileConfirm(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                // The firmware only understands the names when lowercase.
+                PrinterConnectionAndCommunication.Instance.DeleteFileFromSdCard(PrintItemWrapper.PrintItem.Name);
+            }
+        }
+
         public static void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
         {
+            itemToRemove = printItemWrapper;
             UiThread.RunOnIdle((state) =>
             {
                 string maxLengthName = printItemWrapper.FileLocation;
@@ -546,11 +552,18 @@ namespace MatterHackers.MatterControl.PrintQueue
 				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
 				string message = "{0}:\n'{1}'\n\n{2}?".FormatWith(notFoundMessage, maxLengthName,notFoundMessageEnd);
 				string titleLabel = LocalizedString.Get("Item not Found");
-					if (StyledMessageBox.ShowMessageBox(message, titleLabel, StyledMessageBox.MessageType.YES_NO))
-                {
-                    QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(printItemWrapper));
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO);
+                
             });
+        }
+
+        static PrintItemWrapper itemToRemove;
+        static void onConfirmRemove(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(itemToRemove));
+            }
         }
 
         public void ThemeChanged(object sender, EventArgs e)
