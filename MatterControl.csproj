@@ -385,6 +385,10 @@
       <Project>{F1653F20-D47D-4F29-8C55-3C835542AF5F}</Project>
       <Name>Community.CsharpSqlite</Name>
     </ProjectReference>
+    <ProjectReference Include="Launcher\Launcher.csproj">
+      <Project>{3DF4CB3D-9A03-4256-9A81-70523AAD828B}</Project>
+      <Name>Launcher</Name>
+    </ProjectReference>
     <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
       <Project>{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}</Project>
       <Name>InfInstaller</Name>
