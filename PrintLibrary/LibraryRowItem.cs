@@ -383,10 +383,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
             else
             {
                 string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the library?", pathAndFile);
-                if (StyledMessageBox.ShowMessageBox(message, "Item not found", StyledMessageBox.MessageType.YES_NO))
-                {
-                    libraryDataView.RemoveChild(this);
-                }
+                StyledMessageBox.ShowMessageBox(null, message, "Item not found", StyledMessageBox.MessageType.YES_NO);
+            }
+        }
+
+        void onConfirmRemove(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                libraryDataView.RemoveChild(this);
             }
         }
 

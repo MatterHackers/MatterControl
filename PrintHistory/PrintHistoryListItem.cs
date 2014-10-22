@@ -314,6 +314,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         public void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
         {
+            itemToRemove = printItemWrapper;
             UiThread.RunOnIdle((state) =>
             {
                 string maxLengthName = printItemWrapper.FileLocation;
@@ -328,11 +329,17 @@ namespace MatterHackers.MatterControl.PrintHistory
                 string notFoundMessage = LocalizedString.Get("Oops! Could not find this file:");
                 string message = "{0}:\n'{1}'".FormatWith(notFoundMessage, maxLengthName);
                 string titleLabel = LocalizedString.Get("Item not Found");
-                if (StyledMessageBox.ShowMessageBox(message, titleLabel, StyledMessageBox.MessageType.OK))
-                {
-                    QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(printItemWrapper));
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.OK);
             });
+        }
+        PrintItemWrapper itemToRemove;
+
+        void onConfirmRemove(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(itemToRemove));
+            }
         }
 
         PartPreviewMainWindow partPreviewWindow;

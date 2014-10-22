@@ -17,28 +17,29 @@ namespace MatterHackers.MatterControl
         String unwrappedMessage;
         TextWidget messageContainer;
         FlowLayoutWidget middleRowContainer;
-        public EventHandler ClickedOk;
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+
+        public delegate void MessageBoxDelegate(bool response);
+        MessageBoxDelegate responseCallback;
 
         public enum MessageType { OK, YES_NO };
 
-        public static bool ShowMessageBox(String message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string no = "")
+        public static void ShowMessageBox(MessageBoxDelegate callback, String message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string no = "")
         {
-            return ShowMessageBox(message, caption, null, messageType, yesOk, no);
+            ShowMessageBox(callback, message, caption, null, messageType, yesOk, no);
         }
 
-        public static bool ShowMessageBox(string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string no = "")
+        public static void ShowMessageBox(MessageBoxDelegate callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string no = "")
         {
-            StyledMessageBox messageBox = new StyledMessageBox(message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, no);
-            bool okClicked = false;
-            messageBox.ClickedOk += (sender, e) => { okClicked = true; };
+            StyledMessageBox messageBox = new StyledMessageBox(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, no);            
             messageBox.ShowAsSystemWindow();
-            return okClicked;
+            
         }
 
-        public StyledMessageBox(String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string no)
+        public StyledMessageBox(MessageBoxDelegate callback, String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string no)
             : base(width, height)
         {
+            responseCallback = callback;
             unwrappedMessage = message;
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
             topToBottom.AnchorAll();
@@ -182,17 +183,22 @@ namespace MatterHackers.MatterControl
         }
 
         void noButton_Click(object sender, MouseEventArgs mouseEvent)
-        {
+        {            
             UiThread.RunOnIdle(CloseOnIdle);
+            if (responseCallback != null)
+            {
+                responseCallback(false);
+            }
         }
 
         void okButton_Click(object sender, MouseEventArgs mouseEvent)
         {
-            if (ClickedOk != null)
-            {
-                ClickedOk(this, null);
-            }
             UiThread.RunOnIdle(CloseOnIdle);
+            if (responseCallback != null)
+            {
+                responseCallback(true);
+            }
+            
         }
 
         void CloseOnIdle(object state)
