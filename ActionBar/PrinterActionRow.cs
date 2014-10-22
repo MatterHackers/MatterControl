@@ -207,23 +207,24 @@ namespace MatterHackers.MatterControl.ActionBar
         string disconnectAndCancelMessage = "Disconnect and cancel the current print?".Localize();
         string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?".Localize();
         void OnIdleDisconnect(object state)
-        {
-            bool doCancel = true;
+        {            
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
-                if (StyledMessageBox.ShowMessageBox(disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO))
-                {
-                    PrinterConnectionAndCommunication.Instance.Stop();
-                }
-                else
-                {
-                    doCancel = false;
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO);                
             }
-
-            if (doCancel)
+            else
             {
                 PrinterConnectionAndCommunication.Instance.Disable();                
+                selectActivePrinterButton.Invalidate();
+            }
+        }
+
+        void onConfirmStopPrint(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                PrinterConnectionAndCommunication.Instance.Stop();
+                PrinterConnectionAndCommunication.Instance.Disable();
                 selectActivePrinterButton.Invalidate();
             }
         }

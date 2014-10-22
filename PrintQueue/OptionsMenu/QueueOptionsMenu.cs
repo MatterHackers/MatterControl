@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         string pleaseSelectPrinterTitle = "Please select a printer";
         void MustSelectPrinterMessage(object state)
         {
-            StyledMessageBox.ShowMessageBox(pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
+            StyledMessageBox.ShowMessageBox(null, pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
         }
 
         bool exportGCodeToFolderButton_Click()

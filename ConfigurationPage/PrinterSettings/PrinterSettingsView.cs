@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         static EePromMarlinWidget openEePromMarlinWidget = null;
         static EePromRepetierWidget openEePromRepetierWidget = null;
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
-        string noEepromMappingTitle = "Warning no eeprom mapping".Localize();
+        string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
         string groupBoxTitle = "EEProm Settings".Localize();
         private FlowLayoutWidget GetEEPromControl()
         {
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                             break;
 
                         default:
-                            StyledMessageBox.ShowMessageBox(noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
+                            StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
                             break;
                     }
 #endif
