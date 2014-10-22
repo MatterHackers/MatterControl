@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             {
                 UiThread.RunOnIdle( (state) => 
                 {
-                    StyledMessageBox.ShowMessageBox(zIsTooLowMessage, zTooLowTitle, StyledMessageBox.MessageType.OK);
+                    StyledMessageBox.ShowMessageBox(null, zIsTooLowMessage, zTooLowTitle, StyledMessageBox.MessageType.OK);
                 });
                 // don't move the bed lower it will not work when we print.
                 return;

@@ -373,24 +373,29 @@ namespace MatterHackers.MatterControl
 
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
-                StyledMessageBox.ShowMessageBox(unableToExitMessage, unableToExitTitle);
+                StyledMessageBox.ShowMessageBox(null, unableToExitMessage, unableToExitTitle);
                 CancelClose = true;
             }
             else if (PartsSheet.IsSaving())
             {
-                if (!StyledMessageBox.ShowMessageBox(savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO))
-                {
-                    CancelClose = true;
-                }
-                else
-                {
-                    base.OnClosing(out CancelClose);
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmExit, savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO);
+                CancelClose = true;
             }
             else
             {
                 base.OnClosing(out CancelClose);
             }
+        }
+
+        bool cancelClose;
+        void onConfirmExit(bool messageBoxResponse)
+        {
+            bool CancelClose;
+            if (messageBoxResponse)
+            {
+                base.OnClosing(out CancelClose);
+            }
+
         }
     }
 }

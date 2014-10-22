@@ -264,11 +264,7 @@ namespace MatterHackers.MatterControl.ActionBar
                                 ApplicationSettings.Instance.set("HideGCodeWarning", null);
                             }
                         };
-                        if (!StyledMessageBox.ShowMessageBox(gcodeWarningMessage, "Warning GCode file".Localize(), new GuiWidget[] { hideGCodeWaringCheckBox }, StyledMessageBox.MessageType.YES_NO))
-                        {
-                            // the user selected 'no' they don't want to print the file
-                            return;
-                        }
+                        StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { hideGCodeWaringCheckBox }, StyledMessageBox.MessageType.YES_NO);
                     }
 
                     PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
@@ -279,11 +275,27 @@ namespace MatterHackers.MatterControl.ActionBar
                 else
                 {
                     string message = String.Format(removeFromQueueMessage, pathAndFile);
-                    if (StyledMessageBox.ShowMessageBox(message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO))
-                    {
-                        QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
-                    }
+                    StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO);
                 }
+            }
+        }
+
+        void onConfirmPrint(bool messageBoxResponse)
+        {
+            if (!messageBoxResponse)
+            {
+                PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+                PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+                SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
+                partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
+            }
+        }
+
+        void onRemoveMessageConfirm(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
             }
         }
 
@@ -327,13 +339,18 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
             {
-                if (StyledMessageBox.ShowMessageBox(cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO))
-				{	
-                    CancelPrinting();
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO);                
             }
             else
             {
+                CancelPrinting();
+            }
+        }
+
+        void onConfirmCancelPrint(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+			{	
                 CancelPrinting();
             }
         }

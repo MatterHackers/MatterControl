@@ -747,7 +747,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = LocalizedString.Get("'Layer Height' must be less than or equal to the 'Nozzle Diameter'.");
                     string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}", LayerHeight, NozzleDiameter);
                     string location = LocalizedString.Get("Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'");
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
                 else if (FirstLayerHeight > NozzleDiameter)
@@ -755,7 +755,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = LocalizedString.Get("First Layer Height' must be less than or equal to the 'Nozzle Diameter'.");
                     string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}", FirstLayerHeight, NozzleDiameter);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
 
@@ -764,7 +764,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = LocalizedString.Get("First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.");
                     string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}", GetActiveValue("first_layer_extrusion_width"), NozzleDiameter);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
 
@@ -773,7 +773,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = "The Min Fan Speed can only go as high as 100%.";
                     string details = string.Format("It is currently set to {0}.", MinFanSpeed);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (show all settings)";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
 
@@ -782,7 +782,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = "The Max Fan Speed can only go as high as 100%.";
                     string details = string.Format("It is currently set to {0}.", MaxFanSpeed);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (show all settings)";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
                 if (FillDensity < 0 || FillDensity > 1)
@@ -790,7 +790,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = "The Fill Density must be between 0 and 1 inclusive.";
                     string details = string.Format("It is currently set to {0}.", FillDensity);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
 
@@ -840,7 +840,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 string error = string.Format("The '{0}' must be greater than 0.", SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting).PresentationName);
                 string details = string.Format("It is currently set to {0}.", actualSpeedValueString);
                 string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'";
-                StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                 return false;
             }
 
