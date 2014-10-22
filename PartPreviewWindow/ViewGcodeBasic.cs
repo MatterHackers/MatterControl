@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            RemoveAllChildren();
+            CloseAndRemoveAllChildren();
             gcodeViewWidget = null;
             gcodeProcessingStateInfoText = null;
 
@@ -387,6 +387,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddModelInfo(FlowLayoutWidget buttonPanel)
         {
+            buttonPanel.CloseAndRemoveAllChildren();
+
             double oldWidth = textImageButtonFactory.FixedWidth;
             textImageButtonFactory.FixedWidth = 44;
 
@@ -506,6 +508,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddDisplayControls(FlowLayoutWidget buttonPanel)
         {
+            buttonPanel.CloseAndRemoveAllChildren();
+
             double oldWidth = textImageButtonFactory.FixedWidth; 
             textImageButtonFactory.FixedWidth = 44;
 
@@ -787,6 +791,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             SetProcessingMessage(string.Format("Loading GCode {0}%...", e.ProgressPercentage));
         }
 
+        void CloseIfNotNull(GuiWidget widget)
+        {
+            if (widget != null)
+            {
+                widget.Close();
+            }
+        }
+
         void DoneLoadingGCode(object sender, EventArgs e)
         {
             SetProcessingMessage("");
@@ -796,19 +808,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 CreateOptionsContent();
 
+                CloseIfNotNull(setLayerWidget);
                 setLayerWidget = new SetLayerWidget(gcodeViewWidget);
                 setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
                 layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
+                CloseIfNotNull(navigationWidget);
                 navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
                 navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
                 layerSelectionButtonsPanel.AddChild(navigationWidget);
 
+                CloseIfNotNull(selectLayerSlider);
                 selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
+                CloseIfNotNull(layerRenderRatioSlider);
                 layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
                 layerRenderRatioSlider.FirstValue = 0;
                 layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
