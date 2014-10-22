@@ -12,7 +12,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         
         List<GuiWidget> radioButtonsOfKnownPrinters = new List<GuiWidget>();
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
         Button closeButton;
+		Button enterEditModeButton;
+		Button leaveEditModeButton;
+
         bool editMode;
 
         public ChooseConnectionWidget(ConnectionWindow windowController, SystemWindow container, bool editMode = false)
@@ -26,6 +30,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 				textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 textImageButtonFactory.borderWidth = 0;
+
+				editButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+				editButtonFactory.hoverTextColor = RGBA_Bytes.White;
+				editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+				editButtonFactory.pressedTextColor = RGBA_Bytes.White;
+				editButtonFactory.borderWidth = 0;
+				editButtonFactory.FixedWidth = 50;
                 
                 this.AnchorAll();
                 this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -39,7 +50,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
                 headerRow.HAnchor = HAnchor.ParentLeftRight;
                 headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-                headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+                headerRow.Padding = new BorderDouble(0, 3, 0, 0);
                 
                 {
                     string chooseThreeDPrinterConfigLabel = LocalizedString.Get("Choose a 3D Printer Configuration");
@@ -48,24 +59,31 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					TextWidget elementHeader = new TextWidget(string.Format(chooseThreeDPrinterConfigFull), pointSize: 14);
                     elementHeader.TextColor = this.defaultTextColor;
                     elementHeader.HAnchor = HAnchor.ParentLeftRight;
-                    elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                    elementHeader.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
-                    ActionLink editModeLink;
-                    if (!this.editMode)
-                    {
-                        editModeLink = actionLinkFactory.Generate(LocalizedString.Get("Edit"), 12, EditModeOnLink_Click);
-                    }
-                    else
-                    {
-                        editModeLink = actionLinkFactory.Generate(LocalizedString.Get("Done"), 12, EditModeOffLink_Click);
-                    }
+                   // ActionLink editModeLink;
 
-					//editModeLink.TextColor = new RGBA_Bytes(250, 250, 250);
-					editModeLink.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                    editModeLink.VAnchor = Agg.UI.VAnchor.ParentBottom;
+					enterEditModeButton = editButtonFactory.Generate (LocalizedString.Get ("Edit"), centerText: true);
+					enterEditModeButton.Click += EditModeOnLink_Click;
+					leaveEditModeButton = editButtonFactory.Generate (LocalizedString.Get ("Done"), centerText: true);
+					leaveEditModeButton.Click += EditModeOffLink_Click;
 
-                    headerRow.AddChild(elementHeader);
-                    headerRow.AddChild(editModeLink);
+					if (!this.editMode)
+					{
+						leaveEditModeButton.Visible = false;
+						enterEditModeButton.Visible = true;
+					} 
+					else
+					{
+						leaveEditModeButton.Visible = true;
+						enterEditModeButton.Visible = false;
+					}
+
+
+
+					headerRow.AddChild(enterEditModeButton);
+					headerRow.AddChild (leaveEditModeButton);
+					headerRow.AddChild(elementHeader);
                 }
 
                 //To do - replace with scrollable widget
@@ -137,15 +155,22 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             closeButton.UnbindClickEvents();
             closeButton.Click += new ButtonBase.ButtonEventHandler(CloseWindow);
         }
+			
 
         void EditModeOnLink_Click(object sender, MouseEventArgs mouseEvent)
         {
-            this.windowController.ChangeToChoosePrinter(true);
+
+			this.windowController.ChangeToChoosePrinter(true);
+			enterEditModeButton.Visible = false;
+			leaveEditModeButton.Visible = true;
         }
 
         void EditModeOffLink_Click(object sender, MouseEventArgs mouseEvent)
         {
-            this.windowController.ChangeToChoosePrinter(false);
+
+			this.windowController.ChangeToChoosePrinter(false);
+			enterEditModeButton.Visible = true;
+			leaveEditModeButton.Visible = false;
         }
 
         void AddConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
