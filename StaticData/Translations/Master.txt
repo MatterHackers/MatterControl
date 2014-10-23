@@ -2780,3 +2780,6 @@ Translated:Cancelled
 English:You can only connect when not currently connected.
 Translated:You can only connect when not currently connected.
 
+English:Warning - No EEProm Mapping
+Translated:Warning - No EEProm Mapping
+
