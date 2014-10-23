@@ -260,11 +260,17 @@ namespace MatterHackers.MatterControl
             return textImageCheckBoxButton;
         }
 
-        public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
+		public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false, GuiWidget.MouseEventHandler clickEvent = null)
         {
             //Create button based on view container widget
             ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName, centerText);
             Button textImageButton = new Button(0, 0, buttonViewWidget);
+
+			if (clickEvent != null)
+			{
+				textImageButton.MouseUp += new  GuiWidget.MouseEventHandler(clickEvent);                
+
+			}
             textImageButton.Margin = new BorderDouble(0);
             textImageButton.Padding = new BorderDouble(0);
 

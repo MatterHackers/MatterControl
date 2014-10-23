@@ -107,7 +107,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public void ChangeToChoosePrinter(bool editMode = false)
         {
             this.editMode = editMode;
-			UiThread.RunOnIdle(DoChangeToChoosePrinter);
+			//DoChangeToChoosePrinter(null);
+			UiThread.RunOnIdle(DoChangeToChoosePrinter, null);
         }
 
 		public void DoChangeToChoosePrinter(object state)
@@ -115,7 +116,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             GuiWidget chooseConnectionWidget = new ChooseConnectionWidget(this, this, this.editMode);
             this.RemoveAllChildren();
             this.AddChild(chooseConnectionWidget);
-
             this.Invalidate();
 
         }
