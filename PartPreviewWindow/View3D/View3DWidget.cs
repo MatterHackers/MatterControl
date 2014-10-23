@@ -1692,12 +1692,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             catch (System.UnauthorizedAccessException)
             {
-                //Do something special when unauthorized?
-                StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                UiThread.RunOnIdle((state) =>
+                {
+                    //Do something special when unauthorized?
+                    StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                });
             }
             catch
             {
-                StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                UiThread.RunOnIdle((state) =>
+                {
+                    StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                });
             }
         }
 
