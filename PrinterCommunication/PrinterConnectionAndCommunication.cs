@@ -839,14 +839,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public double GetTargetExtruderTemperature(int extruderIndex0Based)
         {
-            extruderIndex0Based = Math.Max(extruderIndex0Based, MAX_EXTRUDERS - 1);
+            extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
 
             return targetExtruderTemperature[extruderIndex0Based];
         }
 
         public void SetTargetExtruderTemperature(int extruderIndex0Based, double temperature)
         {
-            extruderIndex0Based = Math.Max(extruderIndex0Based, MAX_EXTRUDERS - 1);
+            extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
 
             if (targetExtruderTemperature[extruderIndex0Based] != temperature)
             {
@@ -861,7 +861,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public double GetActualExtruderTemperature(int extruderIndex0Based)
         {
-            extruderIndex0Based = Math.Max(extruderIndex0Based, MAX_EXTRUDERS - 1);
+            extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
 
             return actualExtruderTemperature[extruderIndex0Based];
         }

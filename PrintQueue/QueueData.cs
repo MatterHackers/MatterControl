@@ -246,14 +246,14 @@ namespace MatterHackers.MatterControl.PrintQueue
                                         sdCardItemInQueue = true;
                                         break;
                                     }
+                                }
 
-                                    string sdCardFileExtension = currentEvent.Data.ToUpper();
+                                string sdCardFileExtension = currentEvent.Data.ToUpper();
 
-                                    if (sdCardFileExtension.Contains(".GCO")
-                                        || sdCardFileExtension.Contains(".GCODE"))
-                                    {
-                                        validSdCardItem = true;
-                                    }
+                                if (sdCardFileExtension.Contains(".GCO")
+                                    || sdCardFileExtension.Contains(".GCODE"))
+                                {
+                                    validSdCardItem = true;
                                 }
 
                                 if (!sdCardItemInQueue && validSdCardItem)
