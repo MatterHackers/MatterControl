@@ -524,9 +524,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     EnterEditAndCreateSelectionData();
                 });
-
             }
-
         }
 
 		private void OpenExportWindow()
