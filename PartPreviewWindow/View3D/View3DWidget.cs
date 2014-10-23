@@ -1692,8 +1692,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             catch (System.UnauthorizedAccessException)
             {
-                //Do something special when unauthorized?
-                StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                // Invoke the ShowMessageBox call on the UI thread, preventing the confusing Drag Drop exception described in #81246446
+                this.Invoke((Action)(() =>
+                {
+                    //Do something special when unauthorized?
+                    StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.\r\nYou may not have write permissions or the file may be read only", "Unable to save");
+                }));
             }
             catch
             {
