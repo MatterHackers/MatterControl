@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
                     buttonPanel.AddChild(addToLibraryButton);
                     addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
-                    addToLibraryButton.Click += new EventHandler(loadFile_Click);
+                    addToLibraryButton.Click += new EventHandler(importToLibraryloadFile_Click);
 
                     addToQueueButton = textImageButtonFactory.Generate("Add to Queue".Localize());
                     addToQueueButton.Margin = new BorderDouble(3, 0);
@@ -391,12 +391,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
             base.OnDragDrop(fileDropEventArgs);
         }
 
-        void loadFile_Click(object sender, EventArgs mouseEvent)
+        void importToLibraryloadFile_Click(object sender, EventArgs mouseEvent)
         {
-            UiThread.RunOnIdle(loadFile_ClickOnIdle);
+            UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle);
         }
 
-        void loadFile_ClickOnIdle(object state)
+        void importToLibraryloadFile_ClickOnIdle(object state)
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
 			FileDialog.OpenFileDialog(openParams, onLibraryLoadFileSelected);            
@@ -406,16 +406,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (openParams.FileNames != null)
 			{
-				foreach (string loadedFileName in openParams.FileNames)
-				{
-					PrintItem printItem = new PrintItem();
-					printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
-					printItem.FileLocation = Path.GetFullPath(loadedFileName);
-					printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-					printItem.Commit();
-
-					LibraryData.Instance.AddItem(new PrintItemWrapper(printItem));
-				}
+                LibraryData.Instance.LoadFilesIntoLibrary(openParams.FileNames);
 			}
 		}
     }

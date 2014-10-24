@@ -41,6 +41,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -1720,23 +1721,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     backgroundWorker.ReportProgress(nextPercent);
                 }
 
-                if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
-                {
-                    MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
-                    MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
-                }
-                else // save a copy to the library and update this to point at it
-                {
-                    string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
-                    printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
-
-                    MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
-                    MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
-
-                    printItemWrapper.PrintItem.Commit();
-                }
-             
-                printItemWrapper.OnFileHasChanged();
+                LibraryData.SaveToLibrary(printItemWrapper, asynchMeshGroups);
             }
             catch (System.UnauthorizedAccessException)
             {

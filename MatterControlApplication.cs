@@ -286,9 +286,9 @@ namespace MatterHackers.MatterControl
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
-                    if (arg.Length > 4
-                        && arg.Contains(".")
-                        && MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(arg).ToUpper()))
+                    string argExtension = Path.GetExtension(arg).ToUpper();
+                    if (argExtension.Length > 1
+                        && MeshFileIo.ValidFileExtensions().Contains(argExtension))
                     {
                         QueueData.Instance.AddItem(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
                     }
