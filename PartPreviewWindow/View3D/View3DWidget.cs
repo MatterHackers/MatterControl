@@ -492,10 +492,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
                 // parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
                 // when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
-                bool centerPartOnBed = !printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
+                MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
+                if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+                {
+                    centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
+                }
 
                 // don't load the mesh until we get all the rest of the interface built
-                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerPartOnBed);
+                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
                 meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
             }
 
