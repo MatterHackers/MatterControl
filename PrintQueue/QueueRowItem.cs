@@ -194,25 +194,25 @@ namespace MatterHackers.MatterControl.PrintQueue
                 UiThread.RunOnIdle(DeletePartFromQueue);
             }; ;
 
-            ClickWidget editButton = new ClickWidget();
-            editButton.VAnchor = VAnchor.ParentBottomTop;
-            editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-            editButton.Width = 100;
+            ClickWidget viewButton = new ClickWidget();
+            viewButton.VAnchor = VAnchor.ParentBottomTop;
+            viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+            viewButton.Width = 100;
 
             TextWidget editLabel = new TextWidget("View".Localize());
             editLabel.TextColor = RGBA_Bytes.White;
             editLabel.VAnchor = VAnchor.ParentCenter;
             editLabel.HAnchor = HAnchor.ParentCenter;
 
-            editButton.AddChild(editLabel);
-            editButton.Click += onViewPartClick;
+            viewButton.AddChild(editLabel);
+            viewButton.Click += onViewPartClick;
 
-            buttonFlowContainer.AddChild(editButton);
+            //buttonFlowContainer.AddChild(viewButton);
             buttonFlowContainer.AddChild(printButton);
 
             buttonContainer.AddChild(buttonFlowContainer);
-            buttonContainer.Width = 200;
-            //buttonContainer.Width = 100;
+            //buttonContainer.Width = 200;
+            buttonContainer.Width = 100;
 
             return buttonContainer;
         }
