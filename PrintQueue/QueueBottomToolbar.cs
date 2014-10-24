@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         QueueDataView queueDataView;
         Button enterEditModeButton;
         Button leaveEditModeButton;
+		QueueRowItem queueRowItem;
 
         Button addToQueueButton;
         Button createButton;

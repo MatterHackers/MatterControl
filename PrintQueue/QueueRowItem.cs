@@ -70,6 +70,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 		bool viewWindowIsOpen = false;
         QueueDataView queueDataView;
         SlideWidget actionButtonContainer;
+		GuiWidget selectionCheckBoxContainer;
+		public CheckBox selectionCheckBox;
+		ClickWidget primaryClickContainer;
+		bool editMode = false;
+		public bool EditMode
+		{
+			get { return editMode; }
+			set
+			{
+				if (this.editMode != value)
+				{
+					this.editMode = value;
+				}
+			}
+		}
+
 
         public bool IsHoverItem
         {
@@ -116,12 +132,30 @@ namespace MatterHackers.MatterControl.PrintQueue
             FlowLayoutWidget topContentsFlowLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
             topContentsFlowLayout.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             {
-                FlowLayoutWidget leftColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				FlowLayoutWidget leftColumn = new FlowLayoutWidget(FlowDirection.LeftToRight);
                 leftColumn.VAnchor = VAnchor.ParentTop | Agg.UI.VAnchor.FitToChildren;
                 {
+				
+					selectionCheckBoxContainer = new GuiWidget();
+					selectionCheckBoxContainer.VAnchor = VAnchor.ParentBottomTop;
+					selectionCheckBoxContainer.Width = 40;
+					selectionCheckBoxContainer.Visible = false;
+					selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
+					selectionCheckBox = new CheckBox("");
+					selectionCheckBox.VAnchor = VAnchor.ParentCenter;
+					selectionCheckBox.HAnchor = HAnchor.ParentCenter;
+					selectionCheckBoxContainer.AddChild(selectionCheckBox);
+
                     PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(PrintItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-                    leftColumn.AddChild(thumbnailWidget);
+					if (this.editMode)
+					{
+						leftColumn.AddChild(selectionCheckBoxContainer);
+					}
+
+					leftColumn.AddChild(thumbnailWidget);
                 }
+
+
 
                 FlowLayoutWidget middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 middleColumn.VAnchor = VAnchor.ParentTop | Agg.UI.VAnchor.FitToChildren;
@@ -143,7 +177,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     partStatus.AutoExpandBoundsToText = true;
                     partStatus.TextColor = WidgetTextColor;
                     partStatus.MinimumSize = new Vector2(50, 12);
-
+					middleColumn.DebugShowBounds = true;
 					middleColumn.AddChild(partLabel);
                     middleColumn.AddChild(partStatus);
                 }
@@ -156,6 +190,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 editControls.Visible = false;
             }
+
+			primaryClickContainer = new ClickWidget();
+			primaryClickContainer.HAnchor = HAnchor.ParentLeftRight;
+			primaryClickContainer.VAnchor = VAnchor.ParentBottomTop;
 
             topToBottomLayout.AddChild(topContentsFlowLayout);
             this.AddChild(topToBottomLayout);
@@ -224,7 +262,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                 OpenPartViewWindow(false);
             });
         }
-
 
         
 
@@ -548,6 +585,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 				this.BackgroundColor = RGBA_Bytes.White;
                 SetTextColors(RGBA_Bytes.Black);                
 			}
+
         }
+			
     }
 }
