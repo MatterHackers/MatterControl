@@ -115,6 +115,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
             }
 
+            viewControls3D.partSelectButton.ClickButton(null);
+
             Invalidate();
         }
     }

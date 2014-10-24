@@ -149,6 +149,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         public string FileLocation
         {
             get { return this.PrintItem.FileLocation; }
+            set { this.PrintItem.FileLocation = value; }
         }
 
         public int StlFileHashCode

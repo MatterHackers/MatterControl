@@ -33,12 +33,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using MatterHackers.MatterControl.CustomWidgets;
 using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -55,9 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public partial class View3DWidget : PartPreview3DWidget
     {
         public WindowType windowType { get; set; }
-		public PrintItemWrapper PrintItemWrapper { 
-			get { return this.printItemWrapper; }
-		}
 
         EventHandler SelectionChanged;
 
@@ -490,8 +488,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (printItemWrapper != null)
             {
+                // Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
+                // not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
+                // parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
+                // when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
+                MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
+                if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+                {
+                    centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
+                }
+
                 // don't load the mesh until we get all the rest of the interface built
-                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
+                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
                 meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
             }
 
@@ -526,16 +534,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     EnterEditAndCreateSelectionData();
                 });
-
             }
-
         }
 
 		private void OpenExportWindow()
 		{
 			if (exportingWindowIsOpen == false)
 			{
-				exportingWindow = new ExportPrintItemWindow(this.PrintItemWrapper);//
+				exportingWindow = new ExportPrintItemWindow(this.printItemWrapper);
 				this.exportingWindowIsOpen = true;
 				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
 				exportingWindow.ShowAsSystemWindow();
@@ -1686,8 +1692,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     backgroundWorker.ReportProgress(nextPercent);
                 }
 
-                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
-                MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
+                if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+                {
+                    MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
+                    MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
+                }
+                else // save a copy to the library and update this to point at it
+                {
+                    string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
+                    printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+                    MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
+                    MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
+
+                    printItemWrapper.PrintItem.Commit();
+                }
+             
                 printItemWrapper.OnFileHasChanged();
             }
             catch (System.UnauthorizedAccessException)

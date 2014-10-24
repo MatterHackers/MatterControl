@@ -305,16 +305,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                         layoutLeftToRight.AddChild(viewLink);
                     }
 
-                    // copy button
-                    {
-                        Button copyLink = linkButtonFactory.Generate(LocalizedString.Get("Copy"));
-                        copyLink.Click += (sender, e) =>
-                        {
-                            CreateCopyInQueue();
-                        };
-                        layoutLeftToRight.AddChild(copyLink);
-                    }
-
                     // add to library button
                     {
                         if (this.PrintItemWrapper.PrintItem.PrintItemCollectionID == LibraryData.Instance.LibraryCollection.Id)
@@ -452,63 +442,6 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             PartToAddToQueue partToAddToQueue = (PartToAddToQueue)state;
             QueueData.Instance.AddItem(new PrintItemWrapper( new PrintItem(partToAddToQueue.Name, partToAddToQueue.FileLocation)), partToAddToQueue.insertAfterIndex);
-        }
-
-        public void CreateCopyInQueue()
-        {
-            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
-            if (thisIndexInQueue != -1 && File.Exists(PrintItemWrapper.FileLocation))
-            {
-                string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-                string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "design");
-                if (!Directory.Exists(stagingFolder))
-                {
-                    Directory.CreateDirectory(stagingFolder);
-                }
-
-                string newCopyFilename;
-                int infiniteBlocker = 0;
-                do
-                {
-                    newCopyFilename = Path.Combine(stagingFolder, Path.ChangeExtension(Path.GetRandomFileName(), "stl"));
-                    newCopyFilename = Path.GetFullPath(newCopyFilename);
-                    infiniteBlocker++;
-                } while (File.Exists(newCopyFilename) && infiniteBlocker < 100);
-
-                File.Copy(PrintItemWrapper.FileLocation, newCopyFilename);
-
-                string newName = PrintItemWrapper.Name;
-
-                if (!newName.Contains(" - copy"))
-                {
-                    newName += " - copy";
-                }
-                else
-                {
-                    int index = newName.LastIndexOf(" - copy");
-                    newName = newName.Substring(0, index) + " - copy";
-                }
-
-                int copyNumber = 2;
-                string testName = newName;
-                string[] itemNames = QueueData.Instance.GetItemNames();
-                // figure out if we have a copy already and increment the number if we do
-                while (true)
-                {
-                    if (itemNames.Contains(testName))
-                    {
-                        testName = "{0} {1}".FormatWith(newName, copyNumber);
-                        copyNumber++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                newName = testName;
-
-                UiThread.RunOnIdle(AddPartToQueue, new PartToAddToQueue(newName, newCopyFilename, thisIndexInQueue + 1));
-            }
         }
 
         string alsoRemoveFromSdCardMessage = "Would you also like to remove this file from the Printer's SD Card?".Localize();
