@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 mainContainer.Padding = new BorderDouble(3, 0, 3, 5);
                 mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-                FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+				FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
                 headerRow.HAnchor = HAnchor.ParentLeftRight;
                 headerRow.Margin = new BorderDouble(0, 3, 0, 0);
                 headerRow.Padding = new BorderDouble(0, 3, 0, 0);
@@ -91,30 +91,31 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     elementHeader.HAnchor = HAnchor.ParentLeftRight;
                     elementHeader.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
-                   // ActionLink editModeLink;
-
-					enterEditModeButton = editButtonFactory.Generate (LocalizedString.Get ("Edit"), centerText: true);
-					enterEditModeButton.Click += EditModeOnLink_Click;
-					leaveEditModeButton = editButtonFactory.Generate (LocalizedString.Get ("Done"), centerText: true);
-					leaveEditModeButton.Click += EditModeOffLink_Click;
-
-					if (!this.editMode)
-					{
-						leaveEditModeButton.Visible = false;
-						enterEditModeButton.Visible = true;
-					} 
-					else
-					{
-						leaveEditModeButton.Visible = true;
-						enterEditModeButton.Visible = false;
-					}
-
-
-
-					headerRow.AddChild(enterEditModeButton);
-					headerRow.AddChild (leaveEditModeButton);
 					headerRow.AddChild(elementHeader);
+
                 }
+
+				FlowLayoutWidget editButtonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+				editButtonRow.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+				editButtonRow.HAnchor = HAnchor.ParentLeftRight;
+				editButtonRow.Margin = new BorderDouble(0, 3, 0, 0);
+				editButtonRow.Padding = new BorderDouble(0, 3, 0, 0);
+
+				 
+				Button enterLeaveEditModeButton;
+				if (!this.editMode)
+				{
+					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Edit"), clickEvent:EditModeOnLink_Click);
+
+
+				}
+				else
+				{
+					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Done"), clickEvent:EditModeOffLink_Click);
+
+				}
+
+				editButtonRow.AddChild(enterLeaveEditModeButton);
 
                 //To do - replace with scrollable widget
                 FlowLayoutWidget printerListContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -171,6 +172,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 }
 
                 mainContainer.AddChild(headerRow);
+				mainContainer.AddChild(editButtonRow);
                 mainContainer.AddChild(printerListContainer);
                 mainContainer.AddChild(buttonContainer);
 
@@ -191,16 +193,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
 
 			this.windowController.ChangeToChoosePrinter(true);
-			enterEditModeButton.Visible = false;
-			leaveEditModeButton.Visible = true;
-        }
+
+		}
 
         void EditModeOffLink_Click(object sender, EventArgs mouseEvent)
         {
 
 			this.windowController.ChangeToChoosePrinter(false);
-			enterEditModeButton.Visible = true;
-			leaveEditModeButton.Visible = false;
         }
 
         void AddConnectionLink_Click(object sender, EventArgs mouseEvent)

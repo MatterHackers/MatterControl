@@ -459,6 +459,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
             buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
             buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
+
+            viewControls3D.PartSelectVisible = false;
             LockEditControls();
 
             GuiWidget leftRightSpacer = new GuiWidget();
@@ -482,7 +484,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
             AddChild(viewControls3D);
-            viewControls3D.PartSelectVisible = false;
 
             AddHandlers();
 
@@ -794,11 +795,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonRightPanelDisabledCover.Visible = true;
             if (viewControls3D.PartSelectVisible == true)
             {
-                wasInSelectMode = true;
                 viewControls3D.PartSelectVisible = false;
-                viewControls3D.rotateButton.ClickButton(null);
-                viewControls3D.scaleButton.Click += StopReturnToSelectionButton;
-                viewControls3D.translateButton.Click += StopReturnToSelectionButton;
+                if (viewControls3D.partSelectButton.Checked)
+                {
+                    wasInSelectMode = true;
+                    viewControls3D.rotateButton.ClickButton(null);
+                    viewControls3D.scaleButton.Click += StopReturnToSelectionButton;
+                    viewControls3D.translateButton.Click += StopReturnToSelectionButton;
+                }
             }
         }
 
