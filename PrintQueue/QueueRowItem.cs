@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             return buttonContainer;
         }
 
-        private void onViewPartClick(object sender, MouseEventArgs e)
+        private void onViewPartClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {

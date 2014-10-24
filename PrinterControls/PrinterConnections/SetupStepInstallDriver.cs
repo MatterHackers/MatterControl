@@ -30,10 +30,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 //Construct buttons
 				installButton = textImageButtonFactory.Generate(LocalizedString.Get("Install Driver"));
-                installButton.Click += new ButtonBase.ButtonEventHandler(installButton_Click);
+                installButton.Click += new EventHandler(installButton_Click);
 
 				skipButton = textImageButtonFactory.Generate(LocalizedString.Get("Skip"));
-                skipButton.Click += new ButtonBase.ButtonEventHandler(skipButton_Click);
+                skipButton.Click += new EventHandler(skipButton_Click);
 
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void installButton_Click(object sender, MouseEventArgs mouseEvent)
+        void installButton_Click(object sender, EventArgs mouseEvent)
         {
             bool canContinue = this.OnSave();
             if (canContinue)
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void skipButton_Click(object sender, MouseEventArgs mouseEvent)
+        void skipButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(MoveToNextWidget);
         }

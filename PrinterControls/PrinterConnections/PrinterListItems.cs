@@ -145,10 +145,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.MouseLeave += new EventHandler(onMouse_Leave);
             this.MouseUp += new MouseEventHandler(onMouse_Up);
         }
-			
 
-        void onMouse_Up(object sender, MouseEventArgs mouseEvent)
+
+        void onMouse_Up(object sender, EventArgs e)
         {
+            MouseEventArgs mouseEvent = e as MouseEventArgs;
             //Turns this into a standard 'click' event
             if (this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
             {
@@ -227,16 +228,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         public void BindHandlers()
         {
-            editLink.Click += new ButtonBase.ButtonEventHandler(EditConnectionLink_Click);
-            removeLink.Click += new ButtonBase.ButtonEventHandler(RemoveConnectionLink_Click);            
+            editLink.Click += new EventHandler(EditConnectionLink_Click);
+            removeLink.Click += new EventHandler(RemoveConnectionLink_Click);            
         }
 
-        void EditConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+        void EditConnectionLink_Click(object sender, EventArgs mouseEvent)
         {            
             this.windowController.ChangedToEditPrinter(this.printerRecord);
         }
 
-        void RemoveConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+        void RemoveConnectionLink_Click(object sender, EventArgs mouseEvent)
         {
 
             if (ActivePrinterProfile.Instance.ActivePrinter != null)

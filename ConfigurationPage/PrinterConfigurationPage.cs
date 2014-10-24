@@ -399,21 +399,21 @@ namespace MatterHackers.MatterControl
         //        enableCloudMonitorButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
         //        enableCloudMonitorButton.Margin = new BorderDouble(left: 6);
         //        enableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
-        //        enableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(enableCloudMonitor_Click);
+        //        enableCloudMonitorButton.Click += new EventHandler(enableCloudMonitor_Click);
 
         //        disableCloudMonitorButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
         //        disableCloudMonitorButton.Margin = new BorderDouble(left: 6);
         //        disableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
-        //        disableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(disableCloudMonitor_Click);
+        //        disableCloudMonitorButton.Click += new EventHandler(disableCloudMonitor_Click);
 
         //        cloudMonitorInstructionsLink = linkButtonFactory.Generate("More Info".Localize().ToUpper());
         //        cloudMonitorInstructionsLink.VAnchor = VAnchor.ParentCenter;
-        //        cloudMonitorInstructionsLink.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringInstructionsButton_Click);
+        //        cloudMonitorInstructionsLink.Click += new EventHandler(goCloudMonitoringInstructionsButton_Click);
         //        cloudMonitorInstructionsLink.Margin = new BorderDouble (left: 6);
 
         //        goCloudMonitoringWebPageButton = linkButtonFactory.Generate("View Status".Localize().ToUpper());
         //        goCloudMonitoringWebPageButton.VAnchor = VAnchor.ParentCenter;
-        //        goCloudMonitoringWebPageButton.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringWebPageButton_Click);
+        //        goCloudMonitoringWebPageButton.Click += new EventHandler(goCloudMonitoringWebPageButton_Click);
         //        goCloudMonitoringWebPageButton.Margin = new BorderDouble(left: 6);
 
         //        cloudMonitorStatusLabel = new TextWidget("");
@@ -600,12 +600,12 @@ namespace MatterHackers.MatterControl
                 enablePrintLevelingButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
 				enablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-				enablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(enablePrintLeveling_Click);
+				enablePrintLevelingButton.Click += new EventHandler(enablePrintLeveling_Click);
 
                 disablePrintLevelingButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
 				disablePrintLevelingButton.Margin = new BorderDouble(left:6);
 				disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-				disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);
+				disablePrintLevelingButton.Click += new EventHandler(disablePrintLeveling_Click);
 
 				printLevelingStatusLabel = new TextWidget ("");
 				printLevelingStatusLabel.AutoExpandBoundsToText = true;
@@ -739,7 +739,7 @@ namespace MatterHackers.MatterControl
 
         //public delegate void OpenNotificationFormWindow(object state);
         //public static OpenNotificationFormWindow openPrintNotificationFunction = null;
-        //void configureNotificationSettingsButton_Click(object sender, MouseEventArgs mouseEvent)
+        //void configureNotificationSettingsButton_Click(object sender, EventArgs mouseEvent)
         //{
         //    if(openPrintNotificationFunction != null)
         //    {
@@ -750,12 +750,12 @@ namespace MatterHackers.MatterControl
         //    }
         //}
 
-        void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+        void enablePrintLeveling_Click(object sender, EventArgs mouseEvent)
         {
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
         }
 
-        void disablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+        void disablePrintLeveling_Click(object sender, EventArgs mouseEvent)
         {
             ActivePrinterProfile.Instance.DoPrintLeveling = false;
         }

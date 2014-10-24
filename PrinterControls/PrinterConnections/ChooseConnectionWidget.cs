@@ -1,4 +1,34 @@
-﻿using System.Collections.Generic;
+﻿/*
+Copyright (c) 2014, Kevin Pope
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -119,10 +149,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
 
                     Button addPrinterButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
-                    addPrinterButton.Click += new ButtonBase.ButtonEventHandler(AddConnectionLink_Click);
+                    addPrinterButton.Click += new EventHandler(AddConnectionLink_Click);
 
                     Button refreshListButton = textImageButtonFactory.Generate(LocalizedString.Get("Refresh"));
-                    refreshListButton.Click += new ButtonBase.ButtonEventHandler(EditModeOffLink_Click);
+                    refreshListButton.Click += new EventHandler(EditModeOffLink_Click);
 
                     GuiWidget spacer = new GuiWidget();
                     spacer.HAnchor = HAnchor.ParentLeftRight;
@@ -153,11 +183,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         void BindCloseButtonClick()
         {
             closeButton.UnbindClickEvents();
-            closeButton.Click += new ButtonBase.ButtonEventHandler(CloseWindow);
+            closeButton.Click += new EventHandler(CloseWindow);
         }
-			
 
-        void EditModeOnLink_Click(object sender, MouseEventArgs mouseEvent)
+
+        void EditModeOnLink_Click(object sender, EventArgs mouseEvent)
         {
 
 			this.windowController.ChangeToChoosePrinter(true);
@@ -165,7 +195,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			leaveEditModeButton.Visible = true;
         }
 
-        void EditModeOffLink_Click(object sender, MouseEventArgs mouseEvent)
+        void EditModeOffLink_Click(object sender, EventArgs mouseEvent)
         {
 
 			this.windowController.ChangeToChoosePrinter(false);
@@ -173,18 +203,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			leaveEditModeButton.Visible = false;
         }
 
-        void AddConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+        void AddConnectionLink_Click(object sender, EventArgs mouseEvent)
         {
             this.windowController.ChangeToAddPrinter();
-        }        
+        }
 
-        void EditConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+        void EditConnectionLink_Click(object sender, EventArgs mouseEvent)
         {
             PrinterActionLink actionLink = (PrinterActionLink)sender;
             this.windowController.ChangedToEditPrinter(actionLink.LinkedPrinter);
         }
 
-        void CloseWindow(object o, MouseEventArgs e)
+        void CloseWindow(object o, EventArgs e)
         {
             //Stop listening for connection events (if set) and close window
             UiThread.RunOnIdle(CloseOnIdle);

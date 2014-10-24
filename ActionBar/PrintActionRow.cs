@@ -139,17 +139,17 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-            addButton.Click += new ButtonBase.ButtonEventHandler(onAddButton_Click);
-            startButton.Click += new ButtonBase.ButtonEventHandler(onStartButton_Click);
-            skipButton.Click += new ButtonBase.ButtonEventHandler(onSkipButton_Click);
-            removeButton.Click += new ButtonBase.ButtonEventHandler(onRemoveButton_Click);
-            resumeButton.Click += new ButtonBase.ButtonEventHandler(onResumeButton_Click);
-            pauseButton.Click += new ButtonBase.ButtonEventHandler(onPauseButton_Click);
+            addButton.Click += new EventHandler(onAddButton_Click);
+            startButton.Click += new EventHandler(onStartButton_Click);
+            skipButton.Click += new EventHandler(onSkipButton_Click);
+            removeButton.Click += new EventHandler(onRemoveButton_Click);
+            resumeButton.Click += new EventHandler(onResumeButton_Click);
+            pauseButton.Click += new EventHandler(onPauseButton_Click);
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
             cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
-            reprintButton.Click += new ButtonBase.ButtonEventHandler(onReprintButton_Click);
-            doneWithCurrentPartButton.Click += new ButtonBase.ButtonEventHandler(onDoneWithCurrentPartButton_Click);
+            reprintButton.Click += new EventHandler(onReprintButton_Click);
+            doneWithCurrentPartButton.Click += new EventHandler(onDoneWithCurrentPartButton_Click);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 			
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.ActionBar
             this.Invalidate();
         }
 
-        void onAddButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onAddButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(AddButtonOnIdle);
         }
@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        void onStartButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onStartButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.ActionBar
             });
         }
 
-        void onSkipButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onSkipButton_Click(object sender, EventArgs mouseEvent)
         {
             if (QueueData.Instance.Count > 1)
             {
@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        void onResumeButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onResumeButton_Click(object sender, EventArgs mouseEvent)
         {
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
             {
@@ -323,12 +323,12 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        void onRemoveButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onRemoveButton_Click(object sender, EventArgs mouseEvent)
         {
             QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
         }
 
-        void onPauseButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onPauseButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.RequestPause();
         }
@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.ActionBar
             timeSincePrintStarted.Reset();
         }
 
-        void onDoneWithCurrentPartButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.ResetToReadyState();
             QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl.ActionBar
             // we were on.
         }
 
-        void onReprintButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onReprintButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {

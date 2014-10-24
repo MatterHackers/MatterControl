@@ -130,20 +130,20 @@ namespace MatterHackers.MatterControl.PrinterControls
             homeAllButton = textImageButtonFactory.Generate(LocalizedString.Get("ALL"));
             this.textImageButtonFactory.normalFillColor = oldColor;
             homeAllButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
-            homeAllButton.Click += new ButtonBase.ButtonEventHandler(homeAll_Click);
+            homeAllButton.Click += new EventHandler(homeAll_Click);
 
             textImageButtonFactory.FixedWidth = (int)homeAllButton.Width;
             homeXButton = textImageButtonFactory.Generate("X", centerText: true);
             homeXButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
-            homeXButton.Click += new ButtonBase.ButtonEventHandler(homeXButton_Click);
+            homeXButton.Click += new EventHandler(homeXButton_Click);
 
             homeYButton = textImageButtonFactory.Generate("Y", centerText: true);
             homeYButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
-            homeYButton.Click += new ButtonBase.ButtonEventHandler(homeYButton_Click);
+            homeYButton.Click += new EventHandler(homeYButton_Click);
 
             homeZButton = textImageButtonFactory.Generate("Z", centerText: true);
             homeZButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
-            homeZButton.Click += new ButtonBase.ButtonEventHandler(homeZButton_Click);
+            homeZButton.Click += new EventHandler(homeZButton_Click);
 
             textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
             textImageButtonFactory.FixedWidth = 0;
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
             disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
             disableMotors.Margin = new BorderDouble(0);
-            disableMotors.Click += new ButtonBase.ButtonEventHandler(disableMotors_Click);
+            disableMotors.Click += new EventHandler(disableMotors_Click);
 
             GuiWidget spacerReleaseShow = new GuiWidget(10 * TextWidget.GlobalPointSizeScaleRatio, 0);
 
@@ -222,27 +222,27 @@ namespace MatterHackers.MatterControl.PrinterControls
             }
         }
 
-        void disableMotors_Click(object sender, MouseEventArgs mouseEvent)
+        void disableMotors_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.ReleaseMotors();
         }
 
-        void homeXButton_Click(object sender, MouseEventArgs mouseEvent)
+        void homeXButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
         }
 
-        void homeYButton_Click(object sender, MouseEventArgs mouseEvent)
+        void homeYButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
         }
 
-        void homeZButton_Click(object sender, MouseEventArgs mouseEvent)
+        void homeZButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
         }
 
-        void homeAll_Click(object sender, MouseEventArgs mouseEvent)
+        void homeAll_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
         }

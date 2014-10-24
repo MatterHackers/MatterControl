@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
                 };
 
                 sendCommand = controlButtonFactory.Generate(LocalizedString.Get("Send"));
-                sendCommand.Click += new ButtonBase.ButtonEventHandler(sendManualCommandToPrinter_Click);
+                sendCommand.Click += new EventHandler(sendManualCommandToPrinter_Click);
 
                 FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();
                 bottomRowContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl
             sendManualCommandToPrinter_Click(null, null);
         }
 
-        void sendManualCommandToPrinter_Click(object sender, MouseEventArgs mouseEvent)
+        void sendManualCommandToPrinter_Click(object sender, EventArgs mouseEvent)
         {
             string textToSend = manualCommandTextEdit.Text.Trim();
             if (autoUppercase.Checked)

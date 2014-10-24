@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 
 
             Button addMacroButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
-            addMacroButton.Click += new ButtonBase.ButtonEventHandler(saveMacro_Click);
+            addMacroButton.Click += new EventHandler(saveMacro_Click);
 
             Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
             cancelPresetsButton.Click += (sender, e) =>
@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        void saveMacro_Click(object sender, MouseEventArgs mouseEvent)
+        void saveMacro_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -334,7 +334,7 @@ namespace MatterHackers.MatterControl
 
 
             Button addMacroButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
-            addMacroButton.Click += new ButtonBase.ButtonEventHandler(addMacro_Click);
+            addMacroButton.Click += new EventHandler(addMacro_Click);
 
             Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
             cancelPresetsButton.Click += (sender, e) => {
@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl
             return results;
         }
 
-        void addMacro_Click(object sender, MouseEventArgs mouseEvent)
+        void addMacro_Click(object sender, EventArgs mouseEvent)
         {            
             windowController.ChangeToMacroDetail();
         }

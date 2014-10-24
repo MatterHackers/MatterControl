@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
                 advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
                 advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
                 advancedControlsLinkButton.Cursor = Cursors.Hand;
-                advancedControlsLinkButton.Click += new ButtonBase.ButtonEventHandler(AdvancedControlsButton_Click);
+                advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
                 advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsAdvancedControlsLink);
                 advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsAdvancedControlsLink);
 
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
             lastPanelIndexBeforeReload = PanelIndex;
         }
 
-        void AdvancedControlsButton_Click(object sender, MouseEventArgs mouseEvent)
+        void AdvancedControlsButton_Click(object sender, EventArgs mouseEvent)
         {
             if (this.PanelIndex == 0)
             {

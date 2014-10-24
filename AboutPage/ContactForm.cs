@@ -249,10 +249,10 @@ namespace MatterHackers.MatterControl.ContactForm
                     Close();
                 });
             };
-            submitButton.Click += new ButtonBase.ButtonEventHandler(SubmitContactForm);
+            submitButton.Click += new EventHandler(SubmitContactForm);
         }
 
-        void SubmitContactForm(object sender, MouseEventArgs mouseEvent)
+        void SubmitContactForm(object sender, EventArgs mouseEvent)
         {
             if (ValidateContactForm())
             {

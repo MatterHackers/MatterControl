@@ -141,29 +141,29 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
                     buttonPanel.AddChild(addToLibraryButton);
                     addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
-                    addToLibraryButton.Click += new ButtonBase.ButtonEventHandler(loadFile_Click);
+                    addToLibraryButton.Click += new EventHandler(loadFile_Click);
 
                     addToQueueButton = textImageButtonFactory.Generate("Add to Queue".Localize());
                     addToQueueButton.Margin = new BorderDouble(3, 0);
-                    addToQueueButton.Click += new ButtonBase.ButtonEventHandler(addToQueueButton_Click);
+                    addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
                     addToQueueButton.Visible = false;
                     buttonPanel.AddChild(addToQueueButton);
 
                     exportItemButton = textImageButtonFactory.Generate("Export".Localize());
                     exportItemButton.Margin = new BorderDouble(3, 0);
-                    exportItemButton.Click += new ButtonBase.ButtonEventHandler(exportButton_Click);
+                    exportItemButton.Click += new EventHandler(exportButton_Click);
                     exportItemButton.Visible = false;
                     buttonPanel.AddChild(exportItemButton);
 
                     editItemButton = textImageButtonFactory.Generate("Edit".Localize());
                     editItemButton.Margin = new BorderDouble(3, 0);
-                    editItemButton.Click += new ButtonBase.ButtonEventHandler(editButton_Click);
+                    editItemButton.Click += new EventHandler(editButton_Click);
                     editItemButton.Visible = false;
                     buttonPanel.AddChild(editItemButton);
 
 					removeFromLibraryButton = textImageButtonFactory.Generate("Remove".Localize());
                     removeFromLibraryButton.Margin = new BorderDouble(3, 0);
-                    removeFromLibraryButton.Click += new ButtonBase.ButtonEventHandler(deleteFromQueueButton_Click);
+                    removeFromLibraryButton.Click += new EventHandler(deleteFromQueueButton_Click);
                     removeFromLibraryButton.Visible = false;
                     buttonPanel.AddChild(removeFromLibraryButton);
 
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             searchButtonClick(null, null);
         }
 
-        void enterEditModeButtonClick(object sender, MouseEventArgs mouseEvent)
+        void enterEditModeButtonClick(object sender, EventArgs mouseEvent)
         {
             enterEditModeButton.Visible = false;
             leaveEditModeButton.Visible = true;
@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             SetVisibleButtons();
         }
 
-        void leaveEditModeButtonClick(object sender, MouseEventArgs mouseEvent)
+        void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
         {
             enterEditModeButton.Visible = true;
             leaveEditModeButton.Visible = false;
@@ -225,13 +225,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
             
         }
 
-        void searchButtonClick(object sender, MouseEventArgs mouseEvent)
+        void searchButtonClick(object sender, EventArgs mouseEvent)
         {
             string textToSend = searchInput.Text.Trim();
             LibraryData.Instance.KeywordFilter = textToSend;
         }
 
-        private void addToQueueButton_Click(object sender, MouseEventArgs e)
+        private void addToQueueButton_Click(object sender, EventArgs e)
         {
             foreach (LibraryRowItem item in libraryDataView.SelectedItems)
             {
@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             this.AnchorAll();
         }
 
-        void deleteFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
+        void deleteFromQueueButton_Click(object sender, EventArgs mouseEvent)
         {
 			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
 			{
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         ExportPrintItemWindow exportingWindow;
         bool exportingWindowIsOpen = false;
-        void exportButton_Click(object sender, MouseEventArgs mouseEvent)
+        void exportButton_Click(object sender, EventArgs mouseEvent)
         {
             //Open export options
             if (libraryDataView.SelectedItems.Count == 1)
@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        void editButton_Click(object sender, MouseEventArgs mouseEvent)
+        void editButton_Click(object sender, EventArgs mouseEvent)
         {
             //Open export options
             if (libraryDataView.SelectedItems.Count == 1)
@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             base.OnDragDrop(fileDropEventArgs);
         }
 
-        void loadFile_Click(object sender, MouseEventArgs mouseEvent)
+        void loadFile_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(loadFile_ClickOnIdle);
         }

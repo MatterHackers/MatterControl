@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             generateGCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Generate"));
-            generateGCodeButton.Click += new ButtonBase.ButtonEventHandler(generateButton_Click);
+            generateGCodeButton.Click += new EventHandler(generateButton_Click);
             buttonBottomPanel.AddChild(generateGCodeButton);
 
             layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft);
@@ -941,7 +941,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnClosed(e);
         }
 
-        void generateButton_Click(object sender, MouseEventArgs mouseEvent)
+        void generateButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(DoGenerateButton_Click, sender);
         }
@@ -1008,7 +1008,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			setLayerButton = textImageButtonFactory.Generate(LocalizedString.Get("Go"));
             setLayerButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            setLayerButton.Click += new Button.ButtonEventHandler(layerCountTextWidget_EditComplete);
+            setLayerButton.Click += new EventHandler(layerCountTextWidget_EditComplete);
             this.AddChild(setLayerButton);
         }
 
@@ -1023,7 +1023,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
         }
 
-        void layerCountTextWidget_EditComplete(object sender, MouseEventArgs e)
+        void layerCountTextWidget_EditComplete(object sender, EventArgs e)
         {
             gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
         }
@@ -1048,7 +1048,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             
             prevLayerButton = textImageButtonFactory.Generate("<<");
-            prevLayerButton.Click += new Button.ButtonEventHandler(prevLayer_ButtonClick);
+            prevLayerButton.Click += new EventHandler(prevLayer_ButtonClick);
             this.AddChild(prevLayerButton);            
 
             layerCountTextWidget = new TextWidget("/1____", 12);
@@ -1059,16 +1059,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AddChild(layerCountTextWidget);
 
             nextLayerButton = textImageButtonFactory.Generate(">>");
-            nextLayerButton.Click += new Button.ButtonEventHandler(nextLayer_ButtonClick);
+            nextLayerButton.Click += new EventHandler(nextLayer_ButtonClick);
             this.AddChild(nextLayerButton);            
         }
 
-        void nextLayer_ButtonClick(object sender, MouseEventArgs mouseEvent)
+        void nextLayer_ButtonClick(object sender, EventArgs mouseEvent)
         {
             gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex + 1);
         }
 
-        void prevLayer_ButtonClick(object sender, MouseEventArgs mouseEvent)
+        void prevLayer_ButtonClick(object sender, EventArgs mouseEvent)
         {
             gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex - 1);
         }

@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             base.OnClosed(e);
         }
 
-        private void onLibraryItemClick(object sender, MouseEventArgs e)
+        private void onLibraryItemClick(object sender, EventArgs e)
         {
             if (this.libraryDataView.EditMode == false)
             {
@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        private void onAddLinkClick(object sender, MouseEventArgs e)
+        private void onAddLinkClick(object sender, EventArgs e)
         {
         }
 
@@ -327,12 +327,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
             LibraryData.Instance.RemoveItem(this.printItemWrapper);
         }
 
-        private void onRemoveLinkClick(object sender, MouseEventArgs e)
+        private void onRemoveLinkClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle(RemoveThisFromPrintLibrary);
         }
 
-        private void onOpenPartViewClick(object sender, MouseEventArgs e)
+        private void onOpenPartViewClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             });
         }
 
-        private void onViewPartClick(object sender, MouseEventArgs e)
+        private void onViewPartClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {

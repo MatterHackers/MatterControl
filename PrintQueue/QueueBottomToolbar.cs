@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     buttonPanel1.AddChild(addToQueueButton);
                     addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
-                    addToQueueButton.Click += new ButtonBase.ButtonEventHandler(addToQueueButton_Click);
+                    addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
 
                     // put in the creator button
                     {
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                     Button deleteAllFromQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Remove All"));
                     deleteAllFromQueueButton.Margin = new BorderDouble(3, 0);
-                    deleteAllFromQueueButton.Click += new ButtonBase.ButtonEventHandler(deleteAllFromQueueButton_Click);
+                    deleteAllFromQueueButton.Click += new EventHandler(deleteAllFromQueueButton_Click);
                     //buttonPanel1.AddChild(deleteAllFromQueueButton);
                     
                     buttonPanel1.AddChild(new HorizontalSpacer());
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             leaveEditModeButton.Click += leaveEditModeButtonClick;
         }
 
-        void enterEditModeButtonClick(object sender, MouseEventArgs mouseEvent)
+        void enterEditModeButtonClick(object sender, EventArgs mouseEvent)
         {
             enterEditModeButton.Visible = false;
             leaveEditModeButton.Visible = true;
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             SetVisibleButtons();
         }
 
-        void leaveEditModeButtonClick(object sender, MouseEventArgs mouseEvent)
+        void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
         {
             enterEditModeButton.Visible = true;
             leaveEditModeButton.Visible = false;
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
-        void createPartsSheetsButton_Click(object sender, MouseEventArgs mouseEvent)
+        void createPartsSheetsButton_Click(object sender, EventArgs mouseEvent)
         {
             List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
 
@@ -260,14 +260,14 @@ namespace MatterHackers.MatterControl.PrintQueue
             ExportToFolderProcess exportToSDProcess = (ExportToFolderProcess)sender;
         }
 
-        void exportQueueButton_Click(object sender, MouseEventArgs mouseEvent)
+        void exportQueueButton_Click(object sender, EventArgs mouseEvent)
         {
             List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
             ProjectFileHandler project = new ProjectFileHandler(partList);
             project.SaveAs();
         }
 
-        void importQueueButton_Click(object sender, MouseEventArgs mouseEvent)
+        void importQueueButton_Click(object sender, EventArgs mouseEvent)
         {
             ProjectFileHandler project = new ProjectFileHandler(null);
             throw new NotImplementedException();
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 #endif
         }
 
-        void deleteAllFromQueueButton_Click(object sender, MouseEventArgs mouseEvent)
+        void deleteAllFromQueueButton_Click(object sender, EventArgs mouseEvent)
         {
             QueueData.Instance.RemoveAll();
         }
@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             base.OnDragDrop(fileDropEventArgs);
         }
 
-        void addToQueueButton_Click(object sender, MouseEventArgs mouseEvent)
+        void addToQueueButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(AddItemsToQueue);
         }

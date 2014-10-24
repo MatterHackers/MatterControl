@@ -84,10 +84,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void AddHandlers()
         {
-            savePresetButton.Click += new ButtonBase.ButtonEventHandler(savePresets_Click);
-            duplicatePresetButton.Click += new ButtonBase.ButtonEventHandler(duplicatePresets_Click);
-            importPresetButton.Click += new ButtonBase.ButtonEventHandler(importPresets_Click);
-            exportPresetButton.Click += new ButtonBase.ButtonEventHandler(exportPresets_Click);
+            savePresetButton.Click += new EventHandler(savePresets_Click);
+            duplicatePresetButton.Click += new EventHandler(duplicatePresets_Click);
+            importPresetButton.Click += new EventHandler(importPresets_Click);
+            exportPresetButton.Click += new EventHandler(exportPresets_Click);
         }
 
 
@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return Convert.ToInt32(result);
         }
 
-        void savePresets_Click(object sender, MouseEventArgs mouseEvent)
+        void savePresets_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -862,7 +862,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         }
 
 
-        void duplicatePresets_Click(object sender, MouseEventArgs mouseEvent)
+        void duplicatePresets_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {                 
@@ -886,7 +886,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 
         string configFileExtension = "slice";
-        void importPresets_Click(object sender, MouseEventArgs mouseEvent)
+        void importPresets_Click(object sender, EventArgs mouseEvent)
         {   
             OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
             openParams.ActionButtonLabel = "Load Slice Preset";
@@ -934,10 +934,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-
-
-
-        void exportPresets_Click(object sender, MouseEventArgs mouseEvent)
+        void exportPresets_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(SaveAs);
         }

@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl
         {
             PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.ExtruderTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-            tempOffButton.Click += new ButtonBase.ButtonEventHandler(onOffButtonClicked);
+            tempOffButton.Click += new EventHandler(onOffButtonClicked);
         }
 
         public override void OnClosed(EventArgs e)
@@ -464,7 +464,7 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        void onOffButtonClicked(object sender, MouseEventArgs e)
+        void onOffButtonClicked(object sender, EventArgs e)
         {
             SetTargetTemperature(0);
         }
@@ -555,7 +555,7 @@ namespace MatterHackers.MatterControl
         {
             PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.BedTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-            tempOffButton.Click += new ButtonBase.ButtonEventHandler(onOffButtonClicked);
+            tempOffButton.Click += new EventHandler(onOffButtonClicked);
         }
 
         public override void OnClosed(EventArgs e)
@@ -567,7 +567,7 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        void onOffButtonClicked(object sender, MouseEventArgs e)
+        void onOffButtonClicked(object sender, EventArgs e)
         {
             SetTargetTemperature(0);
         }

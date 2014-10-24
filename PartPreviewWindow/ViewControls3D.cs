@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
 
             string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
-            RadioButton scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
+            scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
             scaleButton.Margin = new BorderDouble(3);
             AddChild(scaleButton);
             scaleButton.Click += (sender, e) =>

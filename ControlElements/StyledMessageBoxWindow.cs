@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl
                             textImageButtonFactory.FixedWidth = 0;
                         }
                         yesButton.Width = Math.Max(minButtonWidth, yesButton.Width);
-                        yesButton.Click += new ButtonBase.ButtonEventHandler(okButton_Click);
+                        yesButton.Click += new EventHandler(okButton_Click);
                         yesButton.Cursor = Cursors.Hand;
                         buttonRow.AddChild(yesButton);
 
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
                             textImageButtonFactory.FixedWidth = 0;
                         }
                         noButton.Width = Math.Max(minButtonWidth, noButton.Width);
-                        noButton.Click += new ButtonBase.ButtonEventHandler(noButton_Click);
+                        noButton.Click += new EventHandler(noButton_Click);
                         noButton.Cursor = Cursors.Hand;
                         buttonRow.AddChild(noButton);
                     }
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
                         }
                         okButton.Width = Math.Max(minButtonWidth, okButton.Width);
                         okButton.Cursor = Cursors.Hand;
-                        okButton.Click += new ButtonBase.ButtonEventHandler(okButton_Click);
+                        okButton.Click += new EventHandler(okButton_Click);
                         buttonRow.AddChild(okButton);
                     }
                     break;
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        void noButton_Click(object sender, MouseEventArgs mouseEvent)
+        void noButton_Click(object sender, EventArgs mouseEvent)
         {            
             UiThread.RunOnIdle(CloseOnIdle);
             if (responseCallback != null)
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        void okButton_Click(object sender, MouseEventArgs mouseEvent)
+        void okButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(CloseOnIdle);
             if (responseCallback != null)

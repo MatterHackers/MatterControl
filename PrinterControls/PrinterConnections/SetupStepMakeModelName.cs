@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             //Construct buttons
 			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Save & Continue"));
-            nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
+            nextButton.Click += new EventHandler(NextButton_Click);
 
             GuiWidget hSpacer = new GuiWidget();
             hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -423,7 +423,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void NextButton_Click(object sender, MouseEventArgs mouseEvent)
+        void NextButton_Click(object sender, EventArgs mouseEvent)
         {
             bool canContinue = this.OnSave();
             if (canContinue)

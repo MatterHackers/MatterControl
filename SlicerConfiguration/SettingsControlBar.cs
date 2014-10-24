@@ -174,13 +174,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             saveButton.VAnchor = VAnchor.ParentCenter;
             saveButton.Visible = false;
             saveButton.Margin = new BorderDouble(0, 0, 0, 10);
-			saveButton.Click += new ButtonBase.ButtonEventHandler(saveButton_Click);
+			saveButton.Click += new EventHandler(saveButton_Click);
 
 			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert"));
             revertbutton.VAnchor = VAnchor.ParentCenter;
             revertbutton.Visible = false;
             revertbutton.Margin = new BorderDouble(0,0,0,10);
-            revertbutton.Click += new ButtonBase.ButtonEventHandler(revertbutton_Click);		
+            revertbutton.Click += new EventHandler(revertbutton_Click);		
             
             bottomRow.AddChild(settingsStatusLabelContainer);
 
@@ -264,13 +264,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 unsavedChangesIndicator.Visible = false;
             }         
         }
-			
-        void saveButton_Click(object sender, MouseEventArgs mouseEvent)
+
+        void saveButton_Click(object sender, EventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.CommitChanges();
         }
 
-        void revertbutton_Click(object sender, MouseEventArgs mouseEvent)
+        void revertbutton_Click(object sender, EventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.LoadAllSettings();
             ApplicationController.Instance.ReloadAdvancedControlsPanel();

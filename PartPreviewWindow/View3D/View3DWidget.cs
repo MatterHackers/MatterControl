@@ -499,8 +499,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
 
                 // don't load the mesh until we get all the rest of the interface built
-                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
                 meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
+                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
             }
 
             UiThread.RunOnIdle(AutoSpin);
@@ -785,13 +785,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
 
         bool viewIsInEditModePreLock = false;
+        bool wasInSelectMode = false;
         void LockEditControls()
         {
             viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
             enterEditButtonsContainer.Visible = false;
             doEdittingButtonsContainer.Visible = false;
             buttonRightPanelDisabledCover.Visible = true;
-            viewControls3D.PartSelectVisible = false;
+            if (viewControls3D.PartSelectVisible == true)
+            {
+                wasInSelectMode = true;
+                viewControls3D.PartSelectVisible = false;
+                viewControls3D.rotateButton.ClickButton(null);
+                viewControls3D.scaleButton.Click += StopReturnToSelectionButton;
+                viewControls3D.translateButton.Click += StopReturnToSelectionButton;
+            }
+        }
+
+        void StopReturnToSelectionButton(object sender, EventArgs e)
+        {
+            wasInSelectMode = false;
+            RadioButton button = sender as RadioButton;
+            button.Click -= StopReturnToSelectionButton;
         }
 
         void UnlockEditControls()
@@ -811,6 +826,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 enterEditButtonsContainer.Visible = true;
             }
+
+            if (wasInSelectMode)
+            {
+                viewControls3D.partSelectButton.ClickButton(null);
+                wasInSelectMode = false;
+            }
+
+            viewControls3D.scaleButton.Click -= StopReturnToSelectionButton;
+            viewControls3D.translateButton.Click -= StopReturnToSelectionButton;
 
             UpdateSizeInfo();
         }
@@ -1099,7 +1123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonPanel.AddChild(applyScaleButton);
 
             scaleControls.Add(applyScaleButton);
-            applyScaleButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            applyScaleButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 ApplyScaleFromEditField();
             };
@@ -1432,7 +1456,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             TextWidget centeredX = new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredX.Margin = new BorderDouble(3, 0, 0, 0); centeredX.AnchorCenter(); rotateXButton.AddChild(centeredX);
             rotateButtonContainer.AddChild(rotateXButton);
             rotateControls.Add(rotateXButton);
-            rotateXButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            rotateXButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
                 // rotate it
@@ -1449,7 +1473,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             TextWidget centeredY = new TextWidget("Y", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredY.Margin = new BorderDouble(3, 0, 0, 0); centeredY.AnchorCenter(); rotateYButton.AddChild(centeredY);
             rotateButtonContainer.AddChild(rotateYButton);
             rotateControls.Add(rotateYButton);
-            rotateYButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            rotateYButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
                 // rotate it
@@ -1465,7 +1489,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             TextWidget centeredZ = new TextWidget("Z", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredZ.Margin = new BorderDouble(3, 0, 0, 0); centeredZ.AnchorCenter(); rotateZButton.AddChild(centeredZ);
             rotateButtonContainer.AddChild(rotateZButton);
             rotateControls.Add(rotateZButton);
-            rotateZButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            rotateZButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
                 // rotate it
@@ -1484,7 +1508,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layFlatButton.Cursor = Cursors.Hand;
             buttonPanel.AddChild(layFlatButton);
 
-            layFlatButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            layFlatButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 MakeLowestFaceFlat(SelectedMeshGroupIndex);
 
@@ -1509,7 +1533,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Button mirrorXButton = textImageButtonFactory.Generate("X", centerText: true);
             buttonContainer.AddChild(mirrorXButton);
             mirrorControls.Add(mirrorXButton);
-            mirrorXButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 SelectedMeshGroup.ReverseFaceEdges();
 
@@ -1526,7 +1550,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Button mirrorYButton = textImageButtonFactory.Generate("Y", centerText: true);
             buttonContainer.AddChild(mirrorYButton);
             mirrorControls.Add(mirrorYButton);
-            mirrorYButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 SelectedMeshGroup.ReverseFaceEdges();
 
@@ -1543,7 +1567,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Button mirrorZButton = textImageButtonFactory.Generate("Z", centerText: true);
             buttonContainer.AddChild(mirrorZButton);
             mirrorControls.Add(mirrorZButton);
-            mirrorZButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 SelectedMeshGroup.ReverseFaceEdges();
 
