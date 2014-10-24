@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printLabel.HAnchor = HAnchor.ParentCenter;
 
 			removeButton.AddChild(printLabel);
-			//removeButton.Click += RemoveConnectionLink_Click;
+			removeButton.Click += RemoveConnectionLink_Click;
 
 			ClickWidget editButton = new ClickWidget();
 			editButton.VAnchor = VAnchor.ParentBottomTop;
@@ -198,10 +198,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			editLabel.HAnchor = HAnchor.ParentCenter;
 
 			editButton.AddChild(editLabel);
-			//editButton.Click += (sender, e) => 
-			//{
-			//};
-
+			editButton.Click += EditConnectionLink_Click;
 
 
 			buttonFlowContainer.AddChild(editButton);
