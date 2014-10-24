@@ -1721,7 +1721,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     backgroundWorker.ReportProgress(nextPercent);
                 }
 
-                LibraryData.SaveToLibrary(printItemWrapper, asynchMeshGroups);
+                LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups);
             }
             catch (System.UnauthorizedAccessException)
             {

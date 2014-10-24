@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        static public void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups)
+        static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups)
         {
             if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
             {
@@ -163,7 +163,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     libraryCollection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
                 }
 
-
                 if (libraryCollection == null)
                 {
                     libraryCollection = new PrintItemCollection();
@@ -222,7 +221,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 foreach (PrintItem part in partFiles)
                 {
                     PrintItems.Add(new PrintItemWrapper(part));
-                    
                 }
             }
             OnDataReloaded(null);
@@ -283,45 +281,30 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
                 printItem.Commit();
 
-                LibraryData.Instance.AddItem(new PrintItemWrapper(printItem));
-            }
-#if false
-            SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups);            
-            
-            // we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
-            PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
+                List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
 
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
-            try
-            {
-                // push all the transforms into the meshes
-                for (int i = 0; i < asynchMeshGroups.Count; i++)
+                try
                 {
-                    asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
-
-                    int nextPercent = (i + 1) * 40 / asynchMeshGroups.Count;
-                    backgroundWorker.ReportProgress(nextPercent);
+                    PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+                    LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave);
+                    LibraryData.Instance.AddItem(printItemWrapper);
                 }
-
-                LibraryData.SaveToLibrary(printItemWrapper, asynchMeshGroups);
-            }
-            catch (System.UnauthorizedAccessException)
-            {
-                UiThread.RunOnIdle((state) =>
+                catch (System.UnauthorizedAccessException)
                 {
-                    //Do something special when unauthorized?
-                    StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-                });
-            }
-            catch
-            {
-                UiThread.RunOnIdle((state) =>
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        //Do something special when unauthorized?
+                        StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
+                    });
+                }
+                catch
                 {
-                    StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-                });
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                    });
+                }
             }
-#endif
         }
 
         void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
