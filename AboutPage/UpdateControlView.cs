@@ -96,6 +96,15 @@ namespace MatterHackers.MatterControl
             UpdateStatusChanged(null, null);
         }
 
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+
         public void CheckForUpdate(object sender, EventArgs e)
         {
             UpdateControlData.Instance.CheckForUpdateUserRequested();

@@ -173,6 +173,15 @@ namespace MatterHackers.MatterControl.PrintQueue
             AddHandlers();
         }
 
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+
         QueueOptionsMenu queueMenu;
         FlowLayoutWidget queueMenuContainer;
 

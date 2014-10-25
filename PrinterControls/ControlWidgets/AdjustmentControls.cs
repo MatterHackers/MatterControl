@@ -40,7 +40,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
     public class AdjustmentControls : ControlWidgetBase
     {
-
         NumberEdit feedRateValue;
         SolidSlider feedRateRatioSlider;
         SolidSlider extrusionRatioSlider;
@@ -171,6 +170,15 @@ namespace MatterHackers.MatterControl.PrinterControls
             }
 
             this.AddChild(adjustmentControlsGroupBox);
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
         }
 
         void ExtrusionRatioChanged_Event(object sender, EventArgs e)

@@ -239,6 +239,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             }
         }
 
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
