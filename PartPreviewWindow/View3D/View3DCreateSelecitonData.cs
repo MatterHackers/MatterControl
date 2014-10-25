@@ -31,6 +31,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -109,15 +111,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             PullMeshGroupDataFromAsynchLists();
 
             UnlockEditControls();
-
-            if (pendingPartsToLoad.Count > 0)
-            {
-                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-            }
-
             viewControls3D.partSelectButton.ClickButton(null);
 
             Invalidate();
+
+            if (DoAddFileAfterCreatingEditData)
+            {
+                OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
+
+                FileDialog.OpenFileDialog(ref openParams);
+                LoadAndAddPartsToPlate(openParams.FileNames);
+            }
+            else if (pendingPartsToLoad.Count > 0)
+            {
+                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+            }
         }
     }
 }

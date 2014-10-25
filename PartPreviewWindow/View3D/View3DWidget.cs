@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget materialOptionContainer;
 
         List<string> pendingPartsToLoad = new List<string>();
+        bool DoAddFileAfterCreatingEditData { get; set; }
 
         ProgressControl processingProgressControl;
         FlowLayoutWidget enterEditButtonsContainer;
@@ -332,12 +333,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         UiThread.RunOnIdle((state) =>
                         {
+                            DoAddFileAfterCreatingEditData = true;
                             EnterEditAndCreateSelectionData();
-
-                            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
-
-                            FileDialog.OpenFileDialog(ref openParams);
-                            LoadAndAddPartsToPlate(openParams.FileNames);
                         });
                     };
 
@@ -724,14 +721,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             string[] filesToLoad = e.Argument as string[];
             if (filesToLoad != null && filesToLoad.Length > 0)
             {
-                int lastPercent = 0;
+                double ratioPerFile = 1.0 / filesToLoad.Length;
+                double currentRatioDone = 0;
+
                 for (int i = 0; i < filesToLoad.Length; i++)
                 {
-                    int nextPercent = i + 1 * 100 / filesToLoad.Length;
-                    int subLength = nextPercent - lastPercent;
-
                     string loadedFileName = filesToLoad[i];
-                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName));
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState) =>
+                    {
+                        double ratioAvailable = (ratioPerFile * .5);
+                        double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
+                        backgroundWorker.ReportProgress((int)(currentRatio * 100));
+                        return true;
+                    });
 
                     if (WidgetHasBeenClosed)
                     {
@@ -739,8 +741,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                     if (loadedMeshGroups != null)
                     {
-                        int halfNextPercent = (nextPercent - lastPercent) / 2;
-                        lastPercent = halfNextPercent;
+                        double ratioPerSubMesh = 1.0 / loadedMeshGroups.Count;
+                        double currentPlatingRatioDone = 0;
 
                         for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++)
                         {
@@ -751,15 +753,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             {
                                 return;
                             }
-                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, null);
+                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, (double progress0To1, string processingState) =>
+                            {
+                                double ratioAvailable = (ratioPerFile * .5);
+                                double currentRatio = currentRatioDone + currentPlatingRatioDone + ratioAvailable + progress0To1 * ratioAvailable;
+                                backgroundWorker.ReportProgress((int)(currentRatio * 100));
+                                return true;
+                            });
 
-                            backgroundWorker.ReportProgress(lastPercent + subMeshIndex + 1 * subLength / loadedMeshGroups.Count);
+                            currentPlatingRatioDone += ratioPerSubMesh;
                         }
-
-                        backgroundWorker.ReportProgress(nextPercent);
-                        lastPercent = nextPercent;
                     }
                 }
+
+                currentRatioDone += ratioPerFile;
             }
         }
 

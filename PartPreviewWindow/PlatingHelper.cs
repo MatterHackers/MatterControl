@@ -276,11 +276,16 @@ namespace MatterHackers.MatterControl
 
                         if (reportProgress != null)
                         {
-                            reportProgress(currentAction++ / (double)totalActionCount, "Creating Trace Data");
+                            if((currentAction % 256) == 0)
+                            {
+                                reportProgress(currentAction / (double)totalActionCount * .5, "Creating Trace Data");
+                            }
+                            currentAction++;
                         }
                     }
 
                     perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(BoundingVolumeHierarchy.CreateNewHierachy(allPolys));
+                    reportProgress(1, "Creating Trace Data");
                 }
             }
         }
