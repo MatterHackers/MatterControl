@@ -149,7 +149,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             return buttonRow;
         }
 
-		private FlowLayoutWidget GetGcodeTerminalControl()
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+        
+        private FlowLayoutWidget GetGcodeTerminalControl()
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
