@@ -198,9 +198,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             actionButtonContainer = getItemActionButtons();
             actionButtonContainer.Visible = false;
 
-            this.AddChild(actionButtonContainer);
             this.AddChild(primaryClickContainer);
-
+            this.AddChild(actionButtonContainer);
 
             AddHandlers();
         }
