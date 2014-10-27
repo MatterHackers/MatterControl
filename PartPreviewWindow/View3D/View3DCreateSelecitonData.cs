@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string makingCopyLabel = LocalizedString.Get("Creating Edit Data");
+            string makingCopyLabel = LocalizedString.Get("Preparing Meshes");
             string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
             processingProgressControl.textWidget.Text = makingCopyLabelFull;
 
@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // remove the original mesh and replace it with these new meshes
             PullMeshGroupDataFromAsynchLists();
 
+			buttonRightPanel.Visible = true;
             UnlockEditControls();
             viewControls3D.partSelectButton.ClickButton(null);
 

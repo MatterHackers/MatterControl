@@ -307,6 +307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             buttonRightPanel = CreateRightButtonPanel(viewerVolume.y);
+			buttonRightPanel.Visible = false;
 
             CreateOptionsContent();
 

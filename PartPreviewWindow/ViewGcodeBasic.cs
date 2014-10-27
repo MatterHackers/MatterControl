@@ -232,6 +232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             centerPartPreviewAndControls.AddChild(gcodeDisplayWidget);
 
             buttonRightPanel = CreateRightButtonPanel();
+			buttonRightPanel.Visible = false;
             centerPartPreviewAndControls.AddChild(buttonRightPanel);
 
             // add in a spacer
@@ -342,8 +343,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
             buttonRightPanel.Width = 200;
             {
-                BorderDouble buttonMargin = new BorderDouble(top: 3);
-
                 string label = "Model".Localize().ToUpper();
 				expandModelOptions = expandMenuOptionFactory.GenerateCheckBoxButton(label, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandModelOptions.Margin = new BorderDouble(bottom: 2);
@@ -807,6 +806,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 && gcodeViewWidget.LoadedGCode.Count > 0)
             {
                 CreateOptionsContent();
+				buttonRightPanel.Visible = true;
 
                 CloseIfNotNull(setLayerWidget);
                 setLayerWidget = new SetLayerWidget(gcodeViewWidget);
