@@ -392,7 +392,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void createPartsSheetsButton_Click(object sender, EventArgs mouseEvent)
         {
-            List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
+			#if !__ANDROID__          
+			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
 
 			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath);
@@ -410,6 +411,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				PartsSheet currentPartsInQueue = new PartsSheet(parts, partFileName);
                 currentPartsInQueue.SaveSheets();
             }
+			#endif
         }
 
         private void onLibraryItemsSelectChanged(object sender, EventArgs e)
