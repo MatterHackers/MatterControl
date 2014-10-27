@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     if(OemSettings.Instance.ShowShopButton)
                     {
                         shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), "icon_shopping_cart_32x32.png");
-                        //buttonPanel1.AddChild(shopButton);
+                        buttonPanel1.AddChild(shopButton);
                         shopButton.Margin = new BorderDouble(0, 0, 3, 0);
                         shopButton.Click += (sender, e) =>
                         {
@@ -225,6 +225,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             queueDataView.EditMode = true;
             addToQueueButton.Visible = false;
             createButton.Visible = false;
+            shopButton.Visible = false;
             queueMenuContainer.Visible = false;
             SetVisibleButtons();
         }
@@ -236,6 +237,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             queueDataView.EditMode = false;
             addToQueueButton.Visible = true;
             createButton.Visible = true;
+            shopButton.Visible = true && OemSettings.Instance.ShowShopButton;
             queueMenuContainer.Visible = true;
             SetVisibleButtons();
         }
