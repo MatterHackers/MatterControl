@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "".Localize());
             meshViewerWidget.AnchorAll();
-            meshViewerWidget.AlwaysRenderBed = true;
+            meshViewerWidget.AllowBedRenderingWhenEmpty = true;
             gcodeDisplayWidget.AddChild(meshViewerWidget);
             meshViewerWidget.Visible = false;
             meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);

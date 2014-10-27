@@ -1629,14 +1629,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 this.SelectionChanged += (sender, e) =>
                 {
-                    Mesh mesh = SelectedMeshGroup.Meshes[0];
-                    MeshMaterialData material = MeshMaterialData.Get(mesh);
-
-                    for (int i = 0; i < extruderButtons.Count; i++)
+                    if (SelectedMeshGroup != null)
                     {
-                        if (material.MaterialIndex-1 == i)
+                        Mesh mesh = SelectedMeshGroup.Meshes[0];
+                        MeshMaterialData material = MeshMaterialData.Get(mesh);
+
+                        for (int i = 0; i < extruderButtons.Count; i++)
                         {
-                            ((RadioButton)extruderButtons[i]).Checked = true;
+                            if (material.MaterialIndex - 1 == i)
+                            {
+                                ((RadioButton)extruderButtons[i]).Checked = true;
+                            }
                         }
                     }
                 };
