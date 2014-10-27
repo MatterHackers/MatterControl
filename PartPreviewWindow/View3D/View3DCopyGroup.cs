@@ -73,11 +73,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             for (int i = 0; i < meshCount; i++)
             {
                 Mesh mesh = asynchMeshGroups[SelectedMeshGroupIndex].Meshes[i];
-                copyMeshGroup.Meshes.Add(Mesh.Copy(mesh, (progress0To1, processingState) =>
+                copyMeshGroup.Meshes.Add(Mesh.Copy(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
+                    continueProcessing = true;
                     int nextPercent = (int)(100 * (progress0To1 * .8 * i / meshCount));
                     backgroundWorker.ReportProgress(nextPercent);
-                    return true;
                 }));
             }
 

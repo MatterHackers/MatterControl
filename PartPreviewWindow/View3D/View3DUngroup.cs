@@ -73,11 +73,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             int indexBeingReplaced = MeshGroups.IndexOf(SelectedMeshGroup);
             asynchMeshGroups[indexBeingReplaced].Transform(asynchMeshGroupTransforms[indexBeingReplaced].TotalTransform);
-            List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroups[indexBeingReplaced], (double progress0To1, string processingState) =>
+            List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroups[indexBeingReplaced], (double progress0To1, string processingState, out bool continueProcessing) =>
             {
+                continueProcessing = true;
                 int nextPercent = (int)(progress0To1 * 50);
                 backgroundWorker.ReportProgress(nextPercent);
-                return true;
             });
 
             asynchMeshGroups.RemoveAt(indexBeingReplaced);
@@ -100,11 +100,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, addedMeshIndex, false);
 
                 // and create selection info
-                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, addedMeshIndex, (double progress0To1, string processingState) =>
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, addedMeshIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
+                    continueProcessing = true;
                     int nextPercent = (int)((currentRatioDone + ratioPerDiscreetMesh * progress0To1) * 50) + 50;
                     backgroundWorker.ReportProgress(nextPercent);
-                    return true;
                 });
                 currentRatioDone += ratioPerDiscreetMesh;
             }

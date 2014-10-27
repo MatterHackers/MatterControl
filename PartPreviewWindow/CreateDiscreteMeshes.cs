@@ -50,21 +50,24 @@ namespace MatterHackers.MatterControl
 
     public static class CreateDiscreteMeshes
     {
-        public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, ReportProgress reportProgress)
+        public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, ReportProgressRatio reportProgress)
         {
             List<Mesh> discreteMeshes = new List<Mesh>();
             double ratioPerDiscreetMesh = 1.0 / meshGroupToSplit.Meshes.Count;
             double currentRatioDone = 0;
             foreach (Mesh mesh in meshGroupToSplit.Meshes)
             {
-                List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, (double progress0To1, string processingState) =>
+                List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
                     if (reportProgress != null)
                     {
                         double progress = (currentRatioDone + ratioPerDiscreetMesh * progress0To1);
-                        reportProgress(progress, "Split Into Meshes");
+                        reportProgress(progress, "Split Into Meshes", out continueProcessing);
                     }
-                    return true;
+                    else
+                    {
+                        continueProcessing = true;
+                    }
                 });
                 discreteMeshes.AddRange(discreteVolumes);
 
@@ -74,7 +77,7 @@ namespace MatterHackers.MatterControl
             return discreteMeshes;
         }
 
-        public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, ReportProgress reportProgress)
+        public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, ReportProgressRatio reportProgress)
         {
             List<Mesh> discreetVolumes = new List<Mesh>();
             HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
@@ -128,7 +131,8 @@ namespace MatterHackers.MatterControl
                 if (reportProgress != null)
                 {
                     double progress = faceIndex / (double)meshToSplit.Faces.Count;
-                    reportProgress(progress, "Split Into Meshes");
+                    bool continueProcessing;
+                    reportProgress(progress, "Split Into Meshes", out continueProcessing);
                 }
             }
 

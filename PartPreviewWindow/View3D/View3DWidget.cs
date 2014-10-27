@@ -668,27 +668,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (WidgetHasBeenClosed)
-            {
-                return;
-            }
-            UnlockEditControls();
-            saveButtons.Visible = true;
-
-            if (asynchMeshGroups.Count == MeshGroups.Count + 1)
-            {
-                // if we are only adding one part to the plate set the selection to it
-                SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
-            }
-
-            if (MeshGroups.Count > 0)
-            {
-                PullMeshGroupDataFromAsynchLists();
-            }
-        }
-
         private void PullMeshGroupDataFromAsynchLists()
         {
             if (MeshGroups.Count != asynchMeshGroups.Count)
@@ -727,12 +706,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 for (int i = 0; i < filesToLoad.Length; i++)
                 {
                     string loadedFileName = filesToLoad[i];
-                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState) =>
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
                     {
+                        continueProcessing = !this.WidgetHasBeenClosed;
                         double ratioAvailable = (ratioPerFile * .5);
                         double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
                         backgroundWorker.ReportProgress((int)(currentRatio * 100));
-                        return true;
                     });
 
                     if (WidgetHasBeenClosed)
@@ -753,12 +732,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             {
                                 return;
                             }
-                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, (double progress0To1, string processingState) =>
+                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
                             {
+                                continueProcessing = !this.WidgetHasBeenClosed;
                                 double ratioAvailable = (ratioPerFile * .5);
                                 double currentRatio = currentRatioDone + currentPlatingRatioDone + ratioAvailable + progress0To1 * ratioAvailable;
                                 backgroundWorker.ReportProgress((int)(currentRatio * 100));
-                                return true;
                             });
 
                             currentPlatingRatioDone += ratioPerSubMesh;
@@ -767,6 +746,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
 
                 currentRatioDone += ratioPerFile;
+            }
+        }
+
+        void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
+            UnlockEditControls();
+            saveButtons.Visible = true;
+
+            if (asynchMeshGroups.Count == MeshGroups.Count + 1)
+            {
+                // if we are only adding one part to the plate set the selection to it
+                SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
+            }
+
+            if (MeshGroups.Count > 0)
+            {
+                PullMeshGroupDataFromAsynchLists();
             }
         }
 

@@ -90,11 +90,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshGroup meshGroup = asynchMeshGroups[i];
 
                 // create the selection info
-                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState) =>
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
+                    continueProcessing = true;
                     int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
                     backgroundWorker.ReportProgress(nextPercent);
-                    return true;
                 });
 
                 currentRatioDone += ratioPerMeshGroup;

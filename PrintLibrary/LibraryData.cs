@@ -254,8 +254,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        ReportProgress fileLoadReportProgress = null;
-        public void LoadFilesIntoLibrary(string[] files, ReportProgress reportProgress = null)
+        ReportProgressRatio fileLoadReportProgress = null;
+        public void LoadFilesIntoLibrary(string[] files, ReportProgressRatio reportProgress = null)
         {
             this.fileLoadReportProgress = reportProgress;
             if (files != null && files.Length > 0)
