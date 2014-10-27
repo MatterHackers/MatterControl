@@ -165,7 +165,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 primaryClickContainer.HAnchor = HAnchor.ParentLeftRight;
                 primaryClickContainer.VAnchor = VAnchor.ParentBottomTop;
 
-
                 primaryContainer.AddChild(primaryClickContainer);
 
                 rightButtonOverlay = getItemActionButtons();
