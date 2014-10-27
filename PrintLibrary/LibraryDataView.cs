@@ -43,29 +43,7 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-    public class SelectedPrintItems<T> : List<T>
-    {
-        public event EventHandler OnAdd;
-        public event EventHandler OnRemove;
-
-        new public void Add(T item)
-        {
-            base.Add(item);
-            if (null != OnAdd)
-            {
-                OnAdd(this, null);
-            }
-        }
-
-        new public void Remove(T item)
-        {
-            base.Remove(item);
-            if (null != OnRemove)
-            {
-                OnRemove(this, null);
-            }
-        }
-    }
+   
 
     public class LibraryDataView : ScrollableWidget
     {
@@ -142,7 +120,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
         RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
 
-        public SelectedPrintItems<LibraryRowItem> SelectedItems = new SelectedPrintItems<LibraryRowItem>();
+        public SelectedListItems<LibraryRowItem> SelectedItems = new SelectedListItems<LibraryRowItem>();
         int selectedIndex = -1;
         int hoverIndex = -1;
         int dragIndex = -1;
