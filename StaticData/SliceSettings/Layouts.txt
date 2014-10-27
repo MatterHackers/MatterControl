@@ -78,13 +78,16 @@ Advanced
         infill_first
         infill_overlap_perimeter
     Speed
-      Speed for Print Moves
+      Speed for Infill
         infill_speed
         solid_infill_speed
         top_solid_infill_speed
+        raft_print_speed
+      Speed for Perimeters
         perimeter_speed
         small_perimeter_speed
         external_perimeter_speed
+      Speeds for Other Printing 
         support_material_speed
         bridge_speed
         gap_fill_speed
@@ -109,6 +112,7 @@ Advanced
         raft_extra_distance_around_part
         raft_air_gap
         raft_layers
+        raft_fan_speed_percent
       Brim
         brim_width
     Support Material
