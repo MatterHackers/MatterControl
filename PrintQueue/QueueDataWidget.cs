@@ -29,24 +29,30 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
     public class QueueDataWidget : GuiWidget
     {
-        TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+        TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
         PluginChooserWindow pluginChooserWindow;
         QueueDataView queueDataView;
+        Button exportItemButton;
+        Button copyItemButton;
+        Button removeItemButton;
         Button enterEditModeButton;
         Button leaveEditModeButton;
 		QueueRowItem queueRowItem;
@@ -79,11 +85,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
-
                 enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
                 leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
                 leaveEditModeButton.Visible = false;
-
+                
                 FlowLayoutWidget searchPanel = new FlowLayoutWidget();
                 searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
                 searchPanel.HAnchor = HAnchor.ParentLeftRight;
@@ -106,7 +111,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 FlowLayoutWidget buttonPanel1 = new FlowLayoutWidget();
                 buttonPanel1.HAnchor = HAnchor.ParentLeftRight;
                 buttonPanel1.Padding = new BorderDouble(0, 3);
-
+                buttonPanel1.MinimumSize = new Vector2(0, 46);
                 {
                     addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
                     buttonPanel1.AddChild(addToQueueButton);
@@ -123,6 +128,24 @@ namespace MatterHackers.MatterControl.PrintQueue
                             OpenPluginChooserWindow();
                         };
                     }
+
+                    exportItemButton = textImageButtonFactory.Generate("Export".Localize());
+                    exportItemButton.Margin = new BorderDouble(3, 0);
+                    exportItemButton.Click += new EventHandler(exportButton_Click);
+                    exportItemButton.Visible = false;
+                    buttonPanel1.AddChild(exportItemButton);
+
+                    copyItemButton = textImageButtonFactory.Generate("Copy".Localize());
+                    copyItemButton.Margin = new BorderDouble(3, 0);
+                    copyItemButton.Click += new EventHandler(copy_Button_Click);
+                    copyItemButton.Visible = false;
+                    buttonPanel1.AddChild(copyItemButton);
+
+                    removeItemButton = textImageButtonFactory.Generate("Remove".Localize());
+                    removeItemButton.Margin = new BorderDouble(3, 0);
+                    removeItemButton.Click += new EventHandler(removeButton_Click);
+                    removeItemButton.Visible = false;
+                    buttonPanel1.AddChild(removeItemButton);
 
                     if(OemSettings.Instance.ShowShopButton)
                     {
@@ -188,6 +211,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void AddHandlers()
         {
+            queueDataView.SelectedItems.OnAdd += onLibraryItemsSelectChanged;
+            queueDataView.SelectedItems.OnRemove += onLibraryItemsSelectChanged;
+            
             enterEditModeButton.Click += enterEditModeButtonClick;
             leaveEditModeButton.Click += leaveEditModeButtonClick;
         }
@@ -212,13 +238,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             createButton.Visible = true;
             queueMenuContainer.Visible = true;
             SetVisibleButtons();
-
         }
 
-        void SetVisibleButtons()
-        {
-            
-        }
 
         private void SetDisplayAttributes()
         {
@@ -226,6 +247,132 @@ namespace MatterHackers.MatterControl.PrintQueue
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.AnchorAll();
         }
+
+        void exportButton_Click(object sender, EventArgs mouseEvent)
+        {
+            //Open export options
+            if (queueDataView.SelectedItems.Count == 1)
+            {
+                QueueRowItem libraryItem = queueDataView.SelectedItems[0];
+                OpenExportWindow(libraryItem.PrintItemWrapper);
+            }
+        }
+
+        void removeButton_Click(object sender, EventArgs mouseEvent)
+        {
+            // Sort by index in the QueueData list to prevent positions shifting due to removes
+            var sortedByIndexPos = this.queueDataView.SelectedItems.OrderByDescending(rowItem => QueueData.Instance.GetIndex(rowItem.PrintItemWrapper));
+
+            // Once sorted, remove each selected item
+            foreach (var item in sortedByIndexPos)
+            {
+                item.DeletePartFromQueue(null);
+            }
+
+            this.queueDataView.SelectedItems.Clear();
+        }
+
+        void copy_Button_Click(object sender, EventArgs mouseEvent)
+        {
+            CreateCopyInQueue();
+        }
+
+        public void CreateCopyInQueue()
+        {
+            // Guard for single item selection
+            if (this.queueDataView.SelectedItems.Count != 1) return;
+
+            var queueRowItem = this.queueDataView.SelectedItems[0];
+
+            var printItem = queueRowItem.PrintItemWrapper;
+
+            int thisIndexInQueue = QueueData.Instance.GetIndex(printItem);
+            if (thisIndexInQueue != -1 && File.Exists(printItem.FileLocation))
+            {
+                string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+                string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "stl");
+                if (!Directory.Exists(stagingFolder))
+                {
+                    Directory.CreateDirectory(stagingFolder);
+                }
+
+                string newCopyFilename;
+                int infiniteBlocker = 0;
+                do
+                {
+                    newCopyFilename = Path.Combine(stagingFolder, Path.ChangeExtension(Path.GetRandomFileName(), "stl"));
+                    newCopyFilename = Path.GetFullPath(newCopyFilename);
+                    infiniteBlocker++;
+                } while (File.Exists(newCopyFilename) && infiniteBlocker < 100);
+
+                File.Copy(printItem.FileLocation, newCopyFilename);
+
+                string newName = printItem.Name;
+
+                if (!newName.Contains(" - copy"))
+                {
+                    newName += " - copy";
+                }
+                else
+                {
+                    int index = newName.LastIndexOf(" - copy");
+                    newName = newName.Substring(0, index) + " - copy";
+                }
+
+                int copyNumber = 2;
+                string testName = newName;
+                string[] itemNames = QueueData.Instance.GetItemNames();
+                // figure out if we have a copy already and increment the number if we do
+                while (true)
+                {
+                    if (itemNames.Contains(testName))
+                    {
+                        testName = "{0} {1}".FormatWith(newName, copyNumber);
+                        copyNumber++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                newName = testName;
+
+                UiThread.RunOnIdle(AddPartCopyToQueue, new PartToAddToQueue()
+                {
+                    Name = newName,
+                    FileLocation = newCopyFilename,
+                    InsertAfterIndex = thisIndexInQueue + 1
+                });
+            }
+        }
+
+        class PartToAddToQueue
+        {
+            internal string Name { get; set; }
+            internal string FileLocation { get; set; }
+            internal int InsertAfterIndex { get; set; }
+        }
+
+        ExportPrintItemWindow exportingWindow;
+        bool exportingWindowIsOpen = false;
+        private void OpenExportWindow(PrintItemWrapper printItem)
+        {
+            if (exportingWindowIsOpen == false)
+            {
+                exportingWindow = new ExportPrintItemWindow(printItem);
+                this.exportingWindowIsOpen = true;
+                exportingWindow.Closed += (source, e) => this.exportingWindowIsOpen = false;
+                exportingWindow.ShowAsSystemWindow();
+            }
+            else
+            {
+                if (exportingWindow != null)
+                {
+                    exportingWindow.BringToFront();
+                }
+            }
+        }
+
 
         private void OpenPluginChooserWindow()
         {
@@ -264,6 +411,43 @@ namespace MatterHackers.MatterControl.PrintQueue
                 currentPartsInQueue.SaveSheets();
             }
         }
+
+        private void onLibraryItemsSelectChanged(object sender, EventArgs e)
+        {
+            SetVisibleButtons();
+        }
+
+        private void SetVisibleButtons()
+        {
+            int selectedCount = queueDataView.SelectedItems.Count;
+            if (selectedCount > 0 && queueDataView.EditMode)
+            {
+                if (selectedCount == 1)
+                {
+                    exportItemButton.Visible = true;
+                    copyItemButton.Visible = true;
+                    removeItemButton.Visible = true;
+                }
+                else
+                {
+                    exportItemButton.Visible = false;
+                    copyItemButton.Visible = false;
+                    removeItemButton.Visible = true;
+                }
+
+                //addToQueueButton.Visible = false;
+                //createButton.Visible = false;
+            }
+            else
+            {
+                //addToQueueButton.Visible = true;
+                //createButton.Visible = true;
+                exportItemButton.Visible = false;
+                copyItemButton.Visible = false;
+                removeItemButton.Visible = false;
+            }
+        }
+
 
         void exportToSDProcess_UpdateRemainingItems(object sender, EventArgs e)
         {
@@ -361,6 +545,12 @@ namespace MatterHackers.MatterControl.PrintQueue
         void addToQueueButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(AddItemsToQueue);
+        }
+
+        void AddPartCopyToQueue(object state)
+        {
+            var partInfo = state as PartToAddToQueue;
+            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(partInfo.Name, partInfo.FileLocation)), partInfo.InsertAfterIndex);
         }
 
         void AddItemsToQueue(object state)

@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
-                enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText:true);
+                enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
                 leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
                 leaveEditModeButton.Visible = false;
                 
