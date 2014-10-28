@@ -140,6 +140,7 @@ namespace MatterHackers.MatterControl
                     outputScrollWidget.Margin = new BorderDouble(0,5);
                     outputScrollWidget.Padding = new BorderDouble(3, 0);
 
+
                     manualEntryTopToBottomLayout.AddChild(outputScrollWidget);
                 }
 
@@ -169,6 +170,15 @@ namespace MatterHackers.MatterControl
                     outputScrollWidget.Clear();
                 };
 
+				//Output Console text to screen
+				Button exportConsoleTextButton = controlButtonFactory.Generate (LocalizedString.Get ("Export..."));
+				exportConsoleTextButton.Click += (sender, mouseEvent) => 
+				{
+					string logFilePath = String.Format("{0}\\logs\\{1}ConsoleOutput.txt",
+													   System.IO.Directory.GetCurrentDirectory(),
+													   System.Diagnostics.Stopwatch.GetTimestamp());
+					outputScrollWidget.WriteToFile(logFilePath);
+				};
 
                 Button closeButton = controlButtonFactory.Generate(LocalizedString.Get("Close"));
                 closeButton.Click += (sender, e) =>
@@ -185,6 +195,7 @@ namespace MatterHackers.MatterControl
 
                 bottomRowContainer.AddChild(sendCommand);
                 bottomRowContainer.AddChild(clearConsoleButton);
+				bottomRowContainer.AddChild (exportConsoleTextButton);
                 bottomRowContainer.AddChild(new HorizontalSpacer());
 
 				if (showInWindow)
