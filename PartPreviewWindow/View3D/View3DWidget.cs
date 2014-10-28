@@ -390,7 +390,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     doEdittingButtonsContainer.AddChild(alignButton);
                     alignButton.Click += (sender, e) =>
                     {
-                        AlignSelectedMeshGroup();
+                        AlignToSelectedMeshGroup();
                     };
 
                     Button copyButton = textImageButtonFactory.Generate(LocalizedString.Get("Copy"));
@@ -637,6 +637,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         enum TraceInfoOpperation { DONT_COPY, DO_COPY };
         private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation)
         {
+            if (MeshGroups.Count != MeshGroupTransforms.Count
+                || MeshGroups.Count != MeshGroupExtraData.Count)
+            {
+                throw new Exception("These all need to remain in sync.");
+            }
+
             asynchMeshGroups.Clear();
             asynchMeshGroupTransforms.Clear();
             for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
@@ -647,9 +653,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     Mesh mesh = meshGroup.Meshes[meshIndex];
                     newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
-                    asynchMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
                 }
                 asynchMeshGroups.Add(newMeshGroup);
+                asynchMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
             }
             asynchPlatingDatas.Clear();
 
@@ -690,6 +696,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             foreach (PlatingMeshGroupData meshData in asynchPlatingDatas)
             {
                 MeshGroupExtraData.Add(meshData);
+            }
+
+            if (MeshGroups.Count != MeshGroupTransforms.Count
+                || MeshGroups.Count != MeshGroupExtraData.Count)
+            {
+                throw new Exception("These all need to remain in sync.");
             }
         }
 

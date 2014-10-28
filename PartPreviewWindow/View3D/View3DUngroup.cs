@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
-            int indexBeingReplaced = MeshGroups.IndexOf(SelectedMeshGroup);
+            int indexBeingReplaced = SelectedMeshGroupIndex;
             asynchMeshGroups[indexBeingReplaced].Transform(asynchMeshGroupTransforms[indexBeingReplaced].TotalTransform);
             List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroups[indexBeingReplaced], (double progress0To1, string processingState, out bool continueProcessing) =>
             {
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 transform.SetCenteringForMeshGroup(addedMeshGroup);
                 asynchMeshGroupTransforms.Add(transform);
 
-                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, addedMeshIndex, false);
+                //PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, addedMeshIndex, false);
 
                 // and create selection info
                 PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, addedMeshIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
