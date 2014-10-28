@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         bool stopTryingToConnect = false;
 
-        static readonly int MAX_EXTRUDERS = 4;
+        static readonly int MAX_EXTRUDERS = 16;
         double[] actualExtruderTemperature = new double[MAX_EXTRUDERS];
         double[] targetExtruderTemperature = new double[MAX_EXTRUDERS];
         double actualBedTemperature;
@@ -839,11 +839,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public double GetTargetExtruderTemperature(int extruderIndex0Based)
         {
+            extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
+
             return targetExtruderTemperature[extruderIndex0Based];
         }
 
         public void SetTargetExtruderTemperature(int extruderIndex0Based, double temperature)
         {
+            extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
+
             if (targetExtruderTemperature[extruderIndex0Based] != temperature)
             {
                 targetExtruderTemperature[extruderIndex0Based] = temperature;
@@ -857,6 +861,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         public double GetActualExtruderTemperature(int extruderIndex0Based)
         {
+            extruderIndex0Based = Math.Min(extruderIndex0Based, MAX_EXTRUDERS - 1);
+
             return actualExtruderTemperature[extruderIndex0Based];
         }
 
@@ -1197,7 +1203,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
                     Disable();
-                    connectionFailureMessage = "Cancelled";
+                    connectionFailureMessage = LocalizedString.Get("Cancelled");
                     OnConnectionFailed(null);
                     return false;
                 }
@@ -1290,7 +1296,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             else
             {
                 Debug.WriteLine("Connection failed: {0}".FormatWith(this.ActivePrinter.ComPort));
-                connectionFailureMessage = "Unavailable";
+                connectionFailureMessage = LocalizedString.Get("Unavailable");
                 OnConnectionFailed(null);
             }
         }
@@ -1348,15 +1354,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 const int GENERIC_WRITE = 0x40000000;
 
                 //Borrowed from Microsoft's Serial Port Open Method :)
-                SafeFileHandle hFile = CreateFile(@"\\.\" + portName, GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero);
-                if (hFile.IsInvalid)
+                using (SafeFileHandle hFile = CreateFile(@"\\.\" + portName, GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero))
                 {
-                    return true;
+                    hFile.Close();
+                    return hFile.IsInvalid;
                 }
-
-                hFile.Close();
-
-                return false;
             }
             else
             {
@@ -1381,11 +1383,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         void AttemptToConnect(string serialPortName, int baudRate)
         {
-            connectionFailureMessage = "Unknown Reason";
+            connectionFailureMessage = LocalizedString.Get("Unknown Reason");
 
             if (PrinterIsConnected)
             {
-                throw new Exception("You can only connect when not currently connected.");
+                throw new Exception(LocalizedString.Get("You can only connect when not currently connected."));
             }
 
             CommunicationState = CommunicationStates.AttemptingToConnect;
@@ -1412,7 +1414,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     }
                     catch (System.ArgumentOutOfRangeException)
                     {
-                        connectionFailureMessage = "Unsupported Baud Rate";
+                        connectionFailureMessage = LocalizedString.Get("Unsupported Baud Rate");
                         OnConnectionFailed(null);
                     }
 
@@ -1421,6 +1423,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         OnConnectionFailed(null);
                     }
                 }
+            }
+            else
+            {
+                // If the serial port isn't avaiable (i.e. the specified port name wasn't found in GetPortNames()) or the serial
+                // port is already opened in another instance or process, then report the connection problem back to the user
+                connectionFailureMessage = (serialPortIsAlreadyOpen ? 
+                    LocalizedString.Get("Port already in use") : 
+                    LocalizedString.Get("Port not found"));
+
+                OnConnectionFailed(null);
             }
         }
 

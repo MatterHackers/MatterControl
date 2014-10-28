@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            RemoveAllChildren();
+            CloseAndRemoveAllChildren();
             gcodeViewWidget = null;
             gcodeProcessingStateInfoText = null;
 
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             generateGCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Generate"));
-            generateGCodeButton.Click += new ButtonBase.ButtonEventHandler(generateButton_Click);
+            generateGCodeButton.Click += new EventHandler(generateButton_Click);
             buttonBottomPanel.AddChild(generateGCodeButton);
 
             layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft);
@@ -232,6 +232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             centerPartPreviewAndControls.AddChild(gcodeDisplayWidget);
 
             buttonRightPanel = CreateRightButtonPanel();
+			buttonRightPanel.Visible = false;
             centerPartPreviewAndControls.AddChild(buttonRightPanel);
 
             // add in a spacer
@@ -244,7 +245,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "".Localize());
             meshViewerWidget.AnchorAll();
-            meshViewerWidget.AlwaysRenderBed = true;
+            meshViewerWidget.AllowBedRenderingWhenEmpty = true;
             gcodeDisplayWidget.AddChild(meshViewerWidget);
             meshViewerWidget.Visible = false;
             meshViewerWidget.TrackballTumbleWidget.DrawGlContent += new EventHandler(TrackballTumbleWidget_DrawGlContent);
@@ -258,9 +259,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.Visible = false;
 
 			viewControlsToggle = new ViewControlsToggle ();
+            viewControlsToggle.HAnchor = Agg.UI.HAnchor.ParentRight;
 			AddChild (viewControlsToggle);
+            viewControlsToggle.Visible = false;
 
-            
             //viewControls3D.translateButton.ClickButton(null);
             
             // move things into the right place and scale
@@ -342,8 +344,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
             buttonRightPanel.Width = 200;
             {
-                BorderDouble buttonMargin = new BorderDouble(top: 3);
-
                 string label = "Model".Localize().ToUpper();
 				expandModelOptions = expandMenuOptionFactory.GenerateCheckBoxButton(label, "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
                 expandModelOptions.Margin = new BorderDouble(bottom: 2);
@@ -387,6 +387,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddModelInfo(FlowLayoutWidget buttonPanel)
         {
+            buttonPanel.CloseAndRemoveAllChildren();
+
             double oldWidth = textImageButtonFactory.FixedWidth;
             textImageButtonFactory.FixedWidth = 44;
 
@@ -506,6 +508,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void AddDisplayControls(FlowLayoutWidget buttonPanel)
         {
+            buttonPanel.CloseAndRemoveAllChildren();
+
             double oldWidth = textImageButtonFactory.FixedWidth; 
             textImageButtonFactory.FixedWidth = 44;
 
@@ -787,6 +791,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             SetProcessingMessage(string.Format("Loading GCode {0}%...", e.ProgressPercentage));
         }
 
+        void CloseIfNotNull(GuiWidget widget)
+        {
+            if (widget != null)
+            {
+                widget.Close();
+            }
+        }
+
         void DoneLoadingGCode(object sender, EventArgs e)
         {
             SetProcessingMessage("");
@@ -795,20 +807,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 && gcodeViewWidget.LoadedGCode.Count > 0)
             {
                 CreateOptionsContent();
+				buttonRightPanel.Visible = true;
+                viewControlsToggle.Visible = true;
 
+                CloseIfNotNull(setLayerWidget);
                 setLayerWidget = new SetLayerWidget(gcodeViewWidget);
                 setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
                 layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
+                CloseIfNotNull(navigationWidget);
                 navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
                 navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
                 layerSelectionButtonsPanel.AddChild(navigationWidget);
 
+                CloseIfNotNull(selectLayerSlider);
                 selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
                 selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
                 gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
                 AddChild(selectLayerSlider);
 
+                CloseIfNotNull(layerRenderRatioSlider);
                 layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
                 layerRenderRatioSlider.FirstValue = 0;
                 layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
@@ -925,7 +943,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnClosed(e);
         }
 
-        void generateButton_Click(object sender, MouseEventArgs mouseEvent)
+        void generateButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(DoGenerateButton_Click, sender);
         }
@@ -992,7 +1010,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			setLayerButton = textImageButtonFactory.Generate(LocalizedString.Get("Go"));
             setLayerButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            setLayerButton.Click += new Button.ButtonEventHandler(layerCountTextWidget_EditComplete);
+            setLayerButton.Click += new EventHandler(layerCountTextWidget_EditComplete);
             this.AddChild(setLayerButton);
         }
 
@@ -1007,7 +1025,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
         }
 
-        void layerCountTextWidget_EditComplete(object sender, MouseEventArgs e)
+        void layerCountTextWidget_EditComplete(object sender, EventArgs e)
         {
             gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
         }
@@ -1032,7 +1050,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             
             prevLayerButton = textImageButtonFactory.Generate("<<");
-            prevLayerButton.Click += new Button.ButtonEventHandler(prevLayer_ButtonClick);
+            prevLayerButton.Click += new EventHandler(prevLayer_ButtonClick);
             this.AddChild(prevLayerButton);            
 
             layerCountTextWidget = new TextWidget("/1____", 12);
@@ -1043,16 +1061,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AddChild(layerCountTextWidget);
 
             nextLayerButton = textImageButtonFactory.Generate(">>");
-            nextLayerButton.Click += new Button.ButtonEventHandler(nextLayer_ButtonClick);
+            nextLayerButton.Click += new EventHandler(nextLayer_ButtonClick);
             this.AddChild(nextLayerButton);            
         }
 
-        void nextLayer_ButtonClick(object sender, MouseEventArgs mouseEvent)
+        void nextLayer_ButtonClick(object sender, EventArgs mouseEvent)
         {
             gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex + 1);
         }
 
-        void prevLayer_ButtonClick(object sender, MouseEventArgs mouseEvent)
+        void prevLayer_ButtonClick(object sender, EventArgs mouseEvent)
         {
             gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex - 1);
         }

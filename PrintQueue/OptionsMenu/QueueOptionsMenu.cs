@@ -105,16 +105,16 @@ namespace MatterHackers.MatterControl.PrintQueue
             
             // The pdf export library is not working on the mac at the moment so we don't include the 
             // part sheet export option on mac.
-            if (OsInformation.OperatingSystem == OSType.Mac)
+			if (OsInformation.OperatingSystem == OSType.Windows)
             {
                 // mac cannot export to pdf
                 menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Other"), null));
+				menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click));
                 menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Remove All"), removeAllFromQueueButton_Click));
             }
             else
             {
-                menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Other"), null));
-                menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click));
+                menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Other"), null));                
                 menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Remove All"), removeAllFromQueueButton_Click));
             }
 
@@ -145,7 +145,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void PartSheetClickOnIdle(object state)
         {
-            List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
+			#if !__ANDROID__
+			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
             if (parts.Count > 0)
             {
 				string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
@@ -175,13 +176,14 @@ namespace MatterHackers.MatterControl.PrintQueue
                     feedbackWindow.ShowAsSystemWindow();
                 }
             }
+			#endif
         }
 
         string pleaseSelectPrinterMessage = "Before you can export printable files, you must select a printer.";
         string pleaseSelectPrinterTitle = "Please select a printer";
         void MustSelectPrinterMessage(object state)
         {
-            StyledMessageBox.ShowMessageBox(pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
+            StyledMessageBox.ShowMessageBox(null, pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
         }
 
         bool exportGCodeToFolderButton_Click()

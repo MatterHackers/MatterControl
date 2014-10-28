@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
 
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 
-            QueueTabPage = new TabPage(new QueueBottomToolbar(queueDataView), LocalizedString.Get("Queue").ToUpper());
+            QueueTabPage = new TabPage(new QueueDataWidget(queueDataView), LocalizedString.Get("Queue").ToUpper());
             this.AddTab(new SimpleTextTabWidget(QueueTabPage, "Queue Tab", TabTextSize,
                     ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 

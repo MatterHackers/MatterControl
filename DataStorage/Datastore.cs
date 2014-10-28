@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.DataStorage
                 GenerateSampleData sampleData = new GenerateSampleData();
             }
             else 
-            {
+            {                 
                 ValidateSchema();
             }
             StartSession();

@@ -202,6 +202,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             printButton.Click += (sender, e) =>
             {
                 QueueData.Instance.AddItem(this.printItemWrapper,0);
+                QueueData.Instance.SelectedIndex = 0;
                 this.Invalidate();
 
             };;
@@ -277,7 +278,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             base.OnClosed(e);
         }
 
-        private void onLibraryItemClick(object sender, MouseEventArgs e)
+        private void onLibraryItemClick(object sender, EventArgs e)
         {
             if (this.libraryDataView.EditMode == false)
             {
@@ -317,7 +318,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        private void onAddLinkClick(object sender, MouseEventArgs e)
+        private void onAddLinkClick(object sender, EventArgs e)
         {
         }
 
@@ -326,12 +327,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
             LibraryData.Instance.RemoveItem(this.printItemWrapper);
         }
 
-        private void onRemoveLinkClick(object sender, MouseEventArgs e)
+        private void onRemoveLinkClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle(RemoveThisFromPrintLibrary);
         }
 
-        private void onOpenPartViewClick(object sender, MouseEventArgs e)
+        private void onOpenPartViewClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -339,7 +340,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             });
         }
 
-        private void onViewPartClick(object sender, MouseEventArgs e)
+        private void onViewPartClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -382,10 +383,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
             else
             {
                 string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the library?", pathAndFile);
-                if (StyledMessageBox.ShowMessageBox(message, "Item not found", StyledMessageBox.MessageType.YES_NO))
-                {
-                    libraryDataView.RemoveChild(this);
-                }
+                StyledMessageBox.ShowMessageBox(null, message, "Item not found", StyledMessageBox.MessageType.YES_NO);
+            }
+        }
+
+        void onConfirmRemove(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                libraryDataView.RemoveChild(this);
             }
         }
 

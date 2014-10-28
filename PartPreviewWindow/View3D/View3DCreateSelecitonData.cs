@@ -31,6 +31,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -68,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string makingCopyLabel = LocalizedString.Get("Creating Edit Data");
+            string makingCopyLabel = LocalizedString.Get("Preparing Meshes");
             string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
             processingProgressControl.textWidget.Text = makingCopyLabelFull;
 
@@ -88,11 +90,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshGroup meshGroup = asynchMeshGroups[i];
 
                 // create the selection info
-                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState) =>
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
+                    continueProcessing = true;
                     int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
                     backgroundWorker.ReportProgress(nextPercent);
-                    return true;
                 });
 
                 currentRatioDone += ratioPerMeshGroup;
@@ -108,14 +110,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // remove the original mesh and replace it with these new meshes
             PullMeshGroupDataFromAsynchLists();
 
+			buttonRightPanel.Visible = true;
             UnlockEditControls();
+            viewControls3D.partSelectButton.ClickButton(null);
 
-            if (pendingPartsToLoad.Count > 0)
+            Invalidate();
+
+            if (DoAddFileAfterCreatingEditData)
+            {
+                OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
+
+                FileDialog.OpenFileDialog(ref openParams);
+                LoadAndAddPartsToPlate(openParams.FileNames);
+            }
+            else if (pendingPartsToLoad.Count > 0)
             {
                 LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
             }
-
-            Invalidate();
         }
     }
 }

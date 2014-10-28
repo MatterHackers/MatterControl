@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         RGBA_Bytes defaultTextColor = new RGBA_Bytes(34, 34, 34);
         RGBA_Bytes hoverTextColor = new RGBA_Bytes(34, 34, 34);
 
+
         public PrinterListItemView(Printer printerRecord, ConnectionWindow windowController)
             :base(printerRecord, windowController)
         {            
@@ -73,12 +74,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             availableIndicator.Padding = new BorderDouble(3, 0, 0, 3);
             availableIndicator.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
+
             this.AddChild(printerName);
             this.AddChild(availableIndicator);
             this.HAnchor = HAnchor.ParentLeftRight;
 
             BindHandlers();
         }
+
+
 
         public void BindHandlers()
         {
@@ -87,8 +91,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.MouseUp += new MouseEventHandler(onMouse_Up);
         }
 
-        void onMouse_Up(object sender, MouseEventArgs mouseEvent)
+
+        void onMouse_Up(object sender, EventArgs e)
         {
+            MouseEventArgs mouseEvent = e as MouseEventArgs;
             //Turns this into a standard 'click' event
             if (this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
             {
@@ -107,20 +113,20 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.BackgroundColor = this.hoverBackgroundColor;
             this.printerName.TextColor = this.hoverTextColor;
         }
+			
 
         void onMouse_Leave(object sender, EventArgs args)
         {
+	
             this.BackgroundColor = this.defaultBackgroundColor;
-            this.printerName.TextColor = this.defaultTextColor;            
+            this.printerName.TextColor = this.defaultTextColor;  
+
         }
     }
 
     class PrinterListItemEdit : PrinterListItem
     {
         TextWidget printerName;
-
-        Button editLink;
-        Button removeLink;
 
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
         
@@ -129,6 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         RGBA_Bytes defaultTextColor = new RGBA_Bytes(34, 34, 34);
         RGBA_Bytes hoverTextColor = new RGBA_Bytes(250, 250, 250);
+		SlideWidget rightButtonOverlay;
 
         public PrinterListItemEdit(Printer printerRecord, ConnectionWindow windowController)
             :base(printerRecord, windowController)
@@ -147,31 +154,69 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerName.TextColor = this.defaultTextColor;
             printerName.HAnchor = HAnchor.ParentLeftRight;
 
-			editLink = linkButtonFactory.Generate(LocalizedString.Get("edit"));
-            editLink.VAnchor = VAnchor.ParentCenter;
-
-			removeLink = linkButtonFactory.Generate(LocalizedString.Get("remove"));
-            removeLink.VAnchor = VAnchor.ParentCenter;
 
             this.AddChild(printerName);
-            this.AddChild(editLink);
-            this.AddChild(removeLink);     
 
-            BindHandlers();
+			this.rightButtonOverlay = getItemActionButtons();
+			this.rightButtonOverlay.Visible = true;
+
+			this.AddChild(rightButtonOverlay);
+            
+
+            //BindHandlers();
         }
 
-        public void BindHandlers()
-        {
-            editLink.Click += new ButtonBase.ButtonEventHandler(EditConnectionLink_Click);
-            removeLink.Click += new ButtonBase.ButtonEventHandler(RemoveConnectionLink_Click);            
-        }
+		SlideWidget getItemActionButtons()
+		{
+			SlideWidget buttonContainer = new SlideWidget();
+			buttonContainer.VAnchor = VAnchor.ParentBottomTop;
 
-        void EditConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
+
+			ClickWidget removeButton = new ClickWidget();
+			removeButton.VAnchor = VAnchor.ParentBottomTop;
+			removeButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+			removeButton.Width = 60;
+
+			TextWidget printLabel = new TextWidget("Remove".Localize());
+			printLabel.TextColor = RGBA_Bytes.White;
+			printLabel.VAnchor = VAnchor.ParentCenter;
+			printLabel.HAnchor = HAnchor.ParentCenter;
+
+			removeButton.AddChild(printLabel);
+			removeButton.Click += RemoveConnectionLink_Click;
+
+			ClickWidget editButton = new ClickWidget();
+			editButton.VAnchor = VAnchor.ParentBottomTop;
+			editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+			editButton.Width = 60;
+
+
+			TextWidget editLabel = new TextWidget("Edit".Localize());
+			editLabel.TextColor = RGBA_Bytes.White;
+			editLabel.VAnchor = VAnchor.ParentCenter;
+			editLabel.HAnchor = HAnchor.ParentCenter;
+
+			editButton.AddChild(editLabel);
+			editButton.Click += EditConnectionLink_Click;
+
+
+			buttonFlowContainer.AddChild(editButton);
+			buttonFlowContainer.AddChild(removeButton);
+
+			buttonContainer.AddChild(buttonFlowContainer);
+			buttonContainer.Width = 120;
+
+			return buttonContainer;
+		}
+
+        void EditConnectionLink_Click(object sender, EventArgs mouseEvent)
         {            
             this.windowController.ChangedToEditPrinter(this.printerRecord);
         }
 
-        void RemoveConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+        void RemoveConnectionLink_Click(object sender, EventArgs mouseEvent)
         {
 
             if (ActivePrinterProfile.Instance.ActivePrinter != null)

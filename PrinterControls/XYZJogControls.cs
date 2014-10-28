@@ -400,10 +400,10 @@ namespace MatterHackers.MatterControl
                 this.moveAxis = axis;
                 this.movementFeedRate = movementFeedRate;
 
-                this.Click += new ButtonBase.ButtonEventHandler(moveAxis_Click);
+                this.Click += new EventHandler(moveAxis_Click);
             }
 
-            void moveAxis_Click(object sender, MouseEventArgs mouseEvent)
+            void moveAxis_Click(object sender, EventArgs mouseEvent)
             {
                 MoveButton moveButton = (MoveButton)sender;
 
@@ -426,10 +426,10 @@ namespace MatterHackers.MatterControl
                 this.ExtruderNumber = extruderNumber;
                 this.movementFeedRate = movementFeedRate;
 
-                this.Click += new ButtonBase.ButtonEventHandler(moveAxis_Click);
+                this.Click += new EventHandler(moveAxis_Click);
             }
 
-            void moveAxis_Click(object sender, MouseEventArgs mouseEvent)
+            void moveAxis_Click(object sender, EventArgs mouseEvent)
             {
                 ExtrudeButton moveButton = (ExtrudeButton)sender;
 

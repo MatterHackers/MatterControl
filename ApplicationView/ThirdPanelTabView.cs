@@ -58,13 +58,13 @@ namespace MatterHackers.MatterControl
 
         Button advancedControlsLinkButton;
         SliceSettingsWidget sliceSettingsWidget;
-        ButtonBase.ButtonEventHandler AdvancedControlsButton_Click;
+        EventHandler AdvancedControlsButton_Click;
         EventHandler onMouseEnterBoundsPrintQueueLink;
         EventHandler onMouseLeaveBoundsPrintQueueLink;
 
         TabControl advancedControls2;
 
-        public ThirdPanelTabView(ButtonBase.ButtonEventHandler AdvancedControlsButton_Click = null,
+        public ThirdPanelTabView(EventHandler AdvancedControlsButton_Click = null,
             EventHandler onMouseEnterBoundsPrintQueueLink = null,
             EventHandler onMouseLeaveBoundsPrintQueueLink = null)
         {
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        private TabControl CreateNewAdvancedControls(ButtonBase.ButtonEventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
+        private TabControl CreateNewAdvancedControls(EventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
         {
             TabControl advancedControls = new TabControl();
 
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
                 advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
                 advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
                 advancedControlsLinkButton.Cursor = Cursors.Hand;
-                advancedControlsLinkButton.Click += new ButtonBase.ButtonEventHandler(AdvancedControlsButton_Click);
+                advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
                 advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsPrintQueueLink);
                 advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsPrintQueueLink);
 
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 
             if (advancedControlsLinkButton != null)
             {
-                advancedControlsLinkButton.Click -= new ButtonBase.ButtonEventHandler(AdvancedControlsButton_Click);
+                advancedControlsLinkButton.Click -= new EventHandler(AdvancedControlsButton_Click);
                 advancedControlsLinkButton.MouseEnterBounds -= new EventHandler(onMouseEnterBoundsPrintQueueLink);
                 advancedControlsLinkButton.MouseLeaveBounds -= new EventHandler(onMouseLeaveBoundsPrintQueueLink);
             }

@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 
 				if(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 				{
-						StyledMessageBox.ShowMessageBox(cannotExitWhileActiveMessage, cannotExitWhileActiveTitle);
+						StyledMessageBox.ShowMessageBox(null, cannotExitWhileActiveMessage, cannotExitWhileActiveTitle);
 				}
 				else
 				{

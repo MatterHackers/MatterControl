@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl
             meshTransforms[meshGroupToMoveIndex] = moved;
         }
 
-        public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgress reportProgress)
+        public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio reportProgress)
         {
             if (meshGroups != null)
             {
@@ -257,6 +257,7 @@ namespace MatterHackers.MatterControl
                     Mesh mesh = meshGroup.Meshes[i];
                     List<IRayTraceable> allPolys = new List<IRayTraceable>();
                     List<Vector3> positions = new List<Vector3>();
+                    bool continueProcessing;
                     foreach (Face face in mesh.Faces)
                     {
                         positions.Clear();
@@ -276,11 +277,19 @@ namespace MatterHackers.MatterControl
 
                         if (reportProgress != null)
                         {
-                            reportProgress(currentAction++ / (double)totalActionCount, "Creating Trace Data");
+                            if((currentAction % 256) == 0)
+                            {
+                                reportProgress(currentAction / (double)totalActionCount * .5, "Creating Trace Data", out continueProcessing);
+                            }
+                            currentAction++;
                         }
                     }
 
                     perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(BoundingVolumeHierarchy.CreateNewHierachy(allPolys));
+                    if (reportProgress != null)
+                    {
+                        reportProgress(1, "Creating Trace Data", out continueProcessing);
+                    }
                 }
             }
         }

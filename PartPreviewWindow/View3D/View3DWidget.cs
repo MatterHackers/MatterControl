@@ -33,13 +33,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using MatterHackers.MatterControl.CustomWidgets;
 using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -55,9 +57,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public partial class View3DWidget : PartPreview3DWidget
     {
         public WindowType windowType { get; set; }
-		public PrintItemWrapper PrintItemWrapper { 
-			get { return this.printItemWrapper; }
-		}
 
         EventHandler SelectionChanged;
 
@@ -68,6 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         FlowLayoutWidget materialOptionContainer;
 
         List<string> pendingPartsToLoad = new List<string>();
+        bool DoAddFileAfterCreatingEditData { get; set; }
 
         ProgressControl processingProgressControl;
         FlowLayoutWidget enterEditButtonsContainer;
@@ -307,6 +307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             buttonRightPanel = CreateRightButtonPanel(viewerVolume.y);
+			buttonRightPanel.Visible = false;
 
             CreateOptionsContent();
 
@@ -333,12 +334,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         UiThread.RunOnIdle((state) =>
                         {
+                            DoAddFileAfterCreatingEditData = true;
                             EnterEditAndCreateSelectionData();
-
-                            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
-
-                            FileDialog.OpenFileDialog(ref openParams);
-                            LoadAndAddPartsToPlate(openParams.FileNames);
                         });
                     };
 
@@ -461,6 +458,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonRightPanelDisabledCover = new Cover(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
             buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
             buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
+
+            viewControls3D.PartSelectVisible = false;
             LockEditControls();
 
             GuiWidget leftRightSpacer = new GuiWidget();
@@ -484,15 +483,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
             AddChild(viewControls3D);
-            viewControls3D.PartSelectVisible = false;
 
             AddHandlers();
 
             if (printItemWrapper != null)
             {
+                // Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
+                // not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
+                // parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
+                // when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
+                MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
+                if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+                {
+                    centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
+                }
+
                 // don't load the mesh until we get all the rest of the interface built
-                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
                 meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
+                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
             }
 
             UiThread.RunOnIdle(AutoSpin);
@@ -526,16 +534,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     EnterEditAndCreateSelectionData();
                 });
-
             }
-
         }
 
 		private void OpenExportWindow()
 		{
 			if (exportingWindowIsOpen == false)
 			{
-				exportingWindow = new ExportPrintItemWindow(this.PrintItemWrapper);//
+				exportingWindow = new ExportPrintItemWindow(this.printItemWrapper);
 				this.exportingWindowIsOpen = true;
 				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
 				exportingWindow.ShowAsSystemWindow();
@@ -663,27 +669,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (WidgetHasBeenClosed)
-            {
-                return;
-            }
-            UnlockEditControls();
-            saveButtons.Visible = true;
-
-            if (asynchMeshGroups.Count == MeshGroups.Count + 1)
-            {
-                // if we are only adding one part to the plate set the selection to it
-                SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
-            }
-
-            if (MeshGroups.Count > 0)
-            {
-                PullMeshGroupDataFromAsynchLists();
-            }
-        }
-
         private void PullMeshGroupDataFromAsynchLists()
         {
             if (MeshGroups.Count != asynchMeshGroups.Count)
@@ -716,14 +701,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             string[] filesToLoad = e.Argument as string[];
             if (filesToLoad != null && filesToLoad.Length > 0)
             {
-                int lastPercent = 0;
+                double ratioPerFile = 1.0 / filesToLoad.Length;
+                double currentRatioDone = 0;
+
                 for (int i = 0; i < filesToLoad.Length; i++)
                 {
-                    int nextPercent = i + 1 * 100 / filesToLoad.Length;
-                    int subLength = nextPercent - lastPercent;
-
                     string loadedFileName = filesToLoad[i];
-                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName));
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
+                    {
+                        continueProcessing = !this.WidgetHasBeenClosed;
+                        double ratioAvailable = (ratioPerFile * .5);
+                        double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
+                        backgroundWorker.ReportProgress((int)(currentRatio * 100));
+                    });
 
                     if (WidgetHasBeenClosed)
                     {
@@ -731,8 +721,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                     if (loadedMeshGroups != null)
                     {
-                        int halfNextPercent = (nextPercent - lastPercent) / 2;
-                        lastPercent = halfNextPercent;
+                        double ratioPerSubMesh = 1.0 / loadedMeshGroups.Count;
+                        double currentPlatingRatioDone = 0;
 
                         for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++)
                         {
@@ -743,15 +733,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             {
                                 return;
                             }
-                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, null);
+                            PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
+                            {
+                                continueProcessing = !this.WidgetHasBeenClosed;
+                                double ratioAvailable = (ratioPerFile * .5);
+                                double currentRatio = currentRatioDone + currentPlatingRatioDone + ratioAvailable + progress0To1 * ratioAvailable;
+                                backgroundWorker.ReportProgress((int)(currentRatio * 100));
+                            });
 
-                            backgroundWorker.ReportProgress(lastPercent + subMeshIndex + 1 * subLength / loadedMeshGroups.Count);
+                            currentPlatingRatioDone += ratioPerSubMesh;
                         }
-
-                        backgroundWorker.ReportProgress(nextPercent);
-                        lastPercent = nextPercent;
                     }
                 }
+
+                currentRatioDone += ratioPerFile;
+            }
+        }
+
+        void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (WidgetHasBeenClosed)
+            {
+                return;
+            }
+            UnlockEditControls();
+            saveButtons.Visible = true;
+
+            if (asynchMeshGroups.Count == MeshGroups.Count + 1)
+            {
+                // if we are only adding one part to the plate set the selection to it
+                SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
+            }
+
+            if (MeshGroups.Count > 0)
+            {
+                PullMeshGroupDataFromAsynchLists();
             }
         }
 
@@ -779,13 +795,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
 
         bool viewIsInEditModePreLock = false;
+        bool wasInSelectMode = false;
         void LockEditControls()
         {
             viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
             enterEditButtonsContainer.Visible = false;
             doEdittingButtonsContainer.Visible = false;
             buttonRightPanelDisabledCover.Visible = true;
-            viewControls3D.PartSelectVisible = false;
+            if (viewControls3D.PartSelectVisible == true)
+            {
+                viewControls3D.PartSelectVisible = false;
+                if (viewControls3D.partSelectButton.Checked)
+                {
+                    wasInSelectMode = true;
+                    viewControls3D.rotateButton.ClickButton(null);
+                    viewControls3D.scaleButton.Click += StopReturnToSelectionButton;
+                    viewControls3D.translateButton.Click += StopReturnToSelectionButton;
+                }
+            }
+        }
+
+        void StopReturnToSelectionButton(object sender, EventArgs e)
+        {
+            wasInSelectMode = false;
+            RadioButton button = sender as RadioButton;
+            button.Click -= StopReturnToSelectionButton;
         }
 
         void UnlockEditControls()
@@ -805,6 +839,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 enterEditButtonsContainer.Visible = true;
             }
+
+            if (wasInSelectMode)
+            {
+                viewControls3D.partSelectButton.ClickButton(null);
+                wasInSelectMode = false;
+            }
+
+            viewControls3D.scaleButton.Click -= StopReturnToSelectionButton;
+            viewControls3D.translateButton.Click -= StopReturnToSelectionButton;
 
             UpdateSizeInfo();
         }
@@ -1093,7 +1136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonPanel.AddChild(applyScaleButton);
 
             scaleControls.Add(applyScaleButton);
-            applyScaleButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            applyScaleButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 ApplyScaleFromEditField();
             };
@@ -1426,7 +1469,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             TextWidget centeredX = new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredX.Margin = new BorderDouble(3, 0, 0, 0); centeredX.AnchorCenter(); rotateXButton.AddChild(centeredX);
             rotateButtonContainer.AddChild(rotateXButton);
             rotateControls.Add(rotateXButton);
-            rotateXButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            rotateXButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
                 // rotate it
@@ -1443,7 +1486,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             TextWidget centeredY = new TextWidget("Y", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredY.Margin = new BorderDouble(3, 0, 0, 0); centeredY.AnchorCenter(); rotateYButton.AddChild(centeredY);
             rotateButtonContainer.AddChild(rotateYButton);
             rotateControls.Add(rotateYButton);
-            rotateYButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            rotateYButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
                 // rotate it
@@ -1459,7 +1502,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             TextWidget centeredZ = new TextWidget("Z", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor); centeredZ.Margin = new BorderDouble(3, 0, 0, 0); centeredZ.AnchorCenter(); rotateZButton.AddChild(centeredZ);
             rotateButtonContainer.AddChild(rotateZButton);
             rotateControls.Add(rotateZButton);
-            rotateZButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            rotateZButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
                 // rotate it
@@ -1478,7 +1521,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             layFlatButton.Cursor = Cursors.Hand;
             buttonPanel.AddChild(layFlatButton);
 
-            layFlatButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            layFlatButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 MakeLowestFaceFlat(SelectedMeshGroupIndex);
 
@@ -1503,7 +1546,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Button mirrorXButton = textImageButtonFactory.Generate("X", centerText: true);
             buttonContainer.AddChild(mirrorXButton);
             mirrorControls.Add(mirrorXButton);
-            mirrorXButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 SelectedMeshGroup.ReverseFaceEdges();
 
@@ -1520,7 +1563,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Button mirrorYButton = textImageButtonFactory.Generate("Y", centerText: true);
             buttonContainer.AddChild(mirrorYButton);
             mirrorControls.Add(mirrorYButton);
-            mirrorYButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 SelectedMeshGroup.ReverseFaceEdges();
 
@@ -1537,7 +1580,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Button mirrorZButton = textImageButtonFactory.Generate("Z", centerText: true);
             buttonContainer.AddChild(mirrorZButton);
             mirrorControls.Add(mirrorZButton);
-            mirrorZButton.Click += (object sender, MouseEventArgs mouseEvent) =>
+            mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
             {
                 SelectedMeshGroup.ReverseFaceEdges();
 
@@ -1577,7 +1620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     foreach (Mesh mesh in SelectedMeshGroup.Meshes)
                     {
                         MeshMaterialData material = MeshMaterialData.Get(mesh);
-                        if (material.MaterialIndex != extruderIndexLocal-1)
+                        if (material.MaterialIndex != extruderIndexLocal+1)
                         {
                             material.MaterialIndex = extruderIndexLocal+1;
                             saveButtons.Visible = true;
@@ -1587,14 +1630,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 this.SelectionChanged += (sender, e) =>
                 {
-                    Mesh mesh = SelectedMeshGroup.Meshes[0];
-                    MeshMaterialData material = MeshMaterialData.Get(mesh);
-
-                    for (int i = 0; i < extruderButtons.Count; i++)
+                    if (SelectedMeshGroup != null)
                     {
-                        if (material.MaterialIndex-1 == i)
+                        Mesh mesh = SelectedMeshGroup.Meshes[0];
+                        MeshMaterialData material = MeshMaterialData.Get(mesh);
+
+                        for (int i = 0; i < extruderButtons.Count; i++)
                         {
-                            ((RadioButton)extruderButtons[i]).Checked = true;
+                            if (material.MaterialIndex - 1 == i)
+                            {
+                                ((RadioButton)extruderButtons[i]).Checked = true;
+                            }
                         }
                     }
                 };
@@ -1609,12 +1655,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         drawEvent.graphics2D.Rectangle(widget.LocalBounds, RGBA_Bytes.Black);
                     }
                 };
-                colorSwatch.BackgroundColor = meshViewerWidget.GetMaterialColor(extruderIndex+1);
-                colorSelectionContainer.AddChild(colorSwatch);
+                colorSwatch.BackgroundColor = meshViewerWidget.GetMaterialColor(extruderIndexLocal+1);
+                Button swatchButton = new Button(0, 0, colorSwatch);
+                swatchButton.Click += (sender, e) =>
+                {
+                    nextColor++;
+                    RGBA_Bytes color = SelectionColors[nextColor % SelectionColors.Length];
+                    meshViewerWidget.SetMaterialColor(extruderIndexLocal+1, color);
+                    colorSwatch.BackgroundColor = color;
+                };
+                colorSelectionContainer.AddChild(swatchButton);
 
                 buttonPanel.AddChild(colorSelectionContainer);
             }
         }
+
+        int nextColor = 0;
+        RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 
         private void AddHandlers()
         {
@@ -1675,18 +1732,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     backgroundWorker.ReportProgress(nextPercent);
                 }
 
-                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
-                MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
-                printItemWrapper.OnFileHasChanged();
+                LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups);
             }
             catch (System.UnauthorizedAccessException)
             {
-                //Do something special when unauthorized?
-                StyledMessageBox.ShowMessageBox("Oops! Unable to save changes.", "Unable to save");
+                UiThread.RunOnIdle((state) =>
+                {
+                    //Do something special when unauthorized?
+                    StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                });
             }
             catch
             {
-                StyledMessageBox.ShowMessageBox("Oops! Unable to save changes.", "Unable to save");
+                UiThread.RunOnIdle((state) =>
+                {
+                    StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                });
             }
         }
 

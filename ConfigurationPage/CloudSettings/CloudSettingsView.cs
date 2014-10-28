@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         public delegate void EnableCloudMonitor(object state);
         public static EnableCloudMonitor enableCloudMonitorFunction = null;
-        void enableCloudMonitor_Click(object sender, MouseEventArgs mouseEvent)
+        void enableCloudMonitor_Click(object sender, EventArgs mouseEvent)
         {
             if (enableCloudMonitorFunction != null)
             {
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         public delegate void DisableCloudMonitor(object state);
         public static DisableCloudMonitor disableCloudMonitorFunction = null;
-        void disableCloudMonitor_Click(object sender, MouseEventArgs mouseEvent)
+        void disableCloudMonitor_Click(object sender, EventArgs mouseEvent)
         {
             PrinterSettings.Instance.set("CloudMonitorEnabled", "false");
             ApplicationController.Instance.ChangeCloudSyncStatus();
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         public delegate void OpenDashboardPage(object state);
         public static OpenDashboardPage openDashboardPageFunction = null;
-        void goCloudMonitoringWebPageButton_Click(object sender, MouseEventArgs mouseEvent)
+        void goCloudMonitoringWebPageButton_Click(object sender, EventArgs mouseEvent)
         {
             if (openDashboardPageFunction != null)
             {
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         public delegate void OpenInstructionsPage(object state);
         public static OpenInstructionsPage openInstructionsPageFunction = null;
-        void goCloudMonitoringInstructionsButton_Click(object sender, MouseEventArgs mouseEvent)
+        void goCloudMonitoringInstructionsButton_Click(object sender, EventArgs mouseEvent)
         {
             if (openDashboardPageFunction != null)
             {
@@ -145,21 +145,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             enableCloudMonitorButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
             enableCloudMonitorButton.Margin = new BorderDouble(left: 6);
             enableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
-            enableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(enableCloudMonitor_Click);
+            enableCloudMonitorButton.Click += new EventHandler(enableCloudMonitor_Click);
 
             disableCloudMonitorButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
             disableCloudMonitorButton.Margin = new BorderDouble(left: 6);
             disableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
-            disableCloudMonitorButton.Click += new ButtonBase.ButtonEventHandler(disableCloudMonitor_Click);
+            disableCloudMonitorButton.Click += new EventHandler(disableCloudMonitor_Click);
 
             cloudMonitorInstructionsLink = linkButtonFactory.Generate("More Info".Localize().ToUpper());
             cloudMonitorInstructionsLink.VAnchor = VAnchor.ParentCenter;
-            cloudMonitorInstructionsLink.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringInstructionsButton_Click);
+            cloudMonitorInstructionsLink.Click += new EventHandler(goCloudMonitoringInstructionsButton_Click);
             cloudMonitorInstructionsLink.Margin = new BorderDouble(left: 6);
 
             goCloudMonitoringWebPageButton = linkButtonFactory.Generate("View Status".Localize().ToUpper());
             goCloudMonitoringWebPageButton.VAnchor = VAnchor.ParentCenter;
-            goCloudMonitoringWebPageButton.Click += new ButtonBase.ButtonEventHandler(goCloudMonitoringWebPageButton_Click);
+            goCloudMonitoringWebPageButton.Click += new EventHandler(goCloudMonitoringWebPageButton_Click);
             goCloudMonitoringWebPageButton.Margin = new BorderDouble(left: 6);
 
             cloudMonitorStatusLabel = new TextWidget("");
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             configureNotificationSettingsButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
             configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
             configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
-            configureNotificationSettingsButton.Click += new ButtonBase.ButtonEventHandler(configureNotificationSettingsButton_Click);
+            configureNotificationSettingsButton.Click += new EventHandler(configureNotificationSettingsButton_Click);
 
 			notificationSettingsLabel = new TextWidget(LocalizedString.Get("Notification Settings"));
             notificationSettingsLabel.AutoExpandBoundsToText = true;
@@ -239,6 +239,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             }
         }
 
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
@@ -254,7 +263,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         public delegate void OpenNotificationFormWindow(object state);
         public static OpenNotificationFormWindow openPrintNotificationFunction = null;
-        void configureNotificationSettingsButton_Click(object sender, MouseEventArgs mouseEvent)
+        void configureNotificationSettingsButton_Click(object sender, EventArgs mouseEvent)
         {
             if (openPrintNotificationFunction != null)
             {

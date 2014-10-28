@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.ActionBar
                     && goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1))
                 {
                     string message = string.Format(waitingForeExtruderToHeatMessage, PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1), sliceSettingsNote);
-                    StyledMessageBox.ShowMessageBox(message, waitingForeExtruderToHeatTitle);
+                    StyledMessageBox.ShowMessageBox(null, message, waitingForeExtruderToHeatTitle);
                 }
                 else
                 {

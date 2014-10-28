@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             contentRow.AddChild(printerBaudRateContainer);
             {                
 				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
-                nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
+                nextButton.Click += new EventHandler(NextButton_Click);
 
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerBaudRateHelpLink = linkButtonFactory.Generate(LocalizedString.Get("What's this?"));
             printerBaudRateHelpLink.Margin = new BorderDouble(left: 5);
             printerBaudRateHelpLink.VAnchor = VAnchor.ParentBottom;
-            printerBaudRateHelpLink.Click += new ButtonBase.ButtonEventHandler(printerBaudRateHelp_Click);
+            printerBaudRateHelpLink.Click += new EventHandler(printerBaudRateHelp_Click);
 
 			printerBaudRateHelpMessage = new TextWidget(LocalizedString.Get("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000."), 0, 0, 10);
 			printerBaudRateHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return container;
         }
 
-        void printerBaudRateHelp_Click(object sender, MouseEventArgs mouseEvent)
+        void printerBaudRateHelp_Click(object sender, EventArgs mouseEvent)
         {
             printerBaudRateHelpMessage.Visible = !printerBaudRateHelpMessage.Visible;
         }
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             Parent.RemoveChild(this);
         }
 
-        void ReloadCurrentWidget(object sender, MouseEventArgs mouseEvent)
+        void ReloadCurrentWidget(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(RecreateCurrentWidget);
         }
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void NextButton_Click(object sender, MouseEventArgs mouseEvent)
+        void NextButton_Click(object sender, EventArgs mouseEvent)
         {
             bool canContinue = this.OnSave();
             if (canContinue)

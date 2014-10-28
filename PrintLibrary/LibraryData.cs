@@ -29,18 +29,16 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using System.IO;
-
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.PolygonMesh;
+using MatterHackers.Agg.UI;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -71,6 +69,27 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 }
                 return instance;
             }
+        }
+
+        static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups)
+        {
+            if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+            {
+                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
+                MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
+            }
+            else // save a copy to the library and update this to point at it
+            {
+                string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
+                printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
+                MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
+
+                printItemWrapper.PrintItem.Commit();
+            }
+
+            printItemWrapper.OnFileHasChanged();
         }
 
         string keywordFilter = "";
@@ -144,7 +163,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                     libraryCollection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
                 }
 
-
                 if (libraryCollection == null)
                 {
                     libraryCollection = new PrintItemCollection();
@@ -203,7 +221,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 foreach (PrintItem part in partFiles)
                 {
                     PrintItems.Add(new PrintItemWrapper(part));
-                    
                 }
             }
             OnDataReloaded(null);
@@ -236,5 +253,62 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 return PrintItems.Count;
             }
         }
-    }
+
+        ReportProgressRatio fileLoadReportProgress = null;
+        public void LoadFilesIntoLibrary(string[] files, ReportProgressRatio reportProgress = null)
+        {
+            this.fileLoadReportProgress = reportProgress;
+            if (files != null && files.Length > 0)
+            {
+                BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
+                mergeAndSavePartsBackgroundWorker.WorkerReportsProgress = true;
+
+                mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
+                mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
+
+                mergeAndSavePartsBackgroundWorker.RunWorkerAsync(files);
+            }
+        }
+
+        void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string[] fileList = e.Argument as string[];
+            foreach (string loadedFileName in fileList)
+            {
+                PrintItem printItem = new PrintItem();
+                printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
+                printItem.FileLocation = Path.GetFullPath(loadedFileName);
+                printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+                printItem.Commit();
+
+                List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
+
+                try
+                {
+                    PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+                    LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave);
+                    LibraryData.Instance.AddItem(printItemWrapper);
+                }
+                catch (System.UnauthorizedAccessException)
+                {
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        //Do something special when unauthorized?
+                        StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
+                    });
+                }
+                catch
+                {
+                    UiThread.RunOnIdle((state) =>
+                    {
+                        StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                    });
+                }
+            }
+        }
+
+        void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+        }
+   }
 }

@@ -39,14 +39,7 @@ namespace MatterHackers.MatterControl
 {    
     public class OutputScrollWindow : SystemWindow
     {
-        Button sendCommand;
-		CheckBox filterOutput;
-        CheckBox autoUppercase;
-        MHTextEditWidget manualCommandTextEdit;
-        OutputScroll outputScrollWidget;
-        RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-        RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
-        TextImageButtonFactory controlButtonFactory = new TextImageButtonFactory();
+        
 
         public static void HookupPrinterOutput()
         {
@@ -76,9 +69,30 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        // private as you can't make one
-        private OutputScrollWindow()
-            : base(400, 300)
+		//private since you can't make one
+		private OutputScrollWindow()
+			: base(400, 300)
+		{
+			this.AddChild(new OutputScrollWidget(true));
+			Title = LocalizedString.Get("MatterControl - Terminal");
+			this.ShowAsSystemWindow();
+			MinimumSize = new Vector2(Width, Height);
+		}
+	}
+
+	public class OutputScrollWidget : GuiWidget
+	{
+        
+		Button sendCommand;
+		CheckBox filterOutput;
+		CheckBox autoUppercase;
+		MHTextEditWidget manualCommandTextEdit;
+		OutputScroll outputScrollWidget;
+		RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+		RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
+		TextImageButtonFactory controlButtonFactory = new TextImageButtonFactory();
+
+		public OutputScrollWidget(bool showInWindow)
         {
             this.BackgroundColor = backgroundColor;
             this.Padding = new BorderDouble(5, 0);
@@ -173,7 +187,7 @@ namespace MatterHackers.MatterControl
                 };
 
                 sendCommand = controlButtonFactory.Generate(LocalizedString.Get("Send"));
-                sendCommand.Click += new ButtonBase.ButtonEventHandler(sendManualCommandToPrinter_Click);
+                sendCommand.Click += new EventHandler(sendManualCommandToPrinter_Click);
 
                 FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();
                 bottomRowContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -183,7 +197,11 @@ namespace MatterHackers.MatterControl
                 bottomRowContainer.AddChild(clearConsoleButton);
 				bottomRowContainer.AddChild (exportConsoleTextButton);
                 bottomRowContainer.AddChild(new HorizontalSpacer());
-                bottomRowContainer.AddChild(closeButton);
+
+				if (showInWindow)
+				{
+					bottomRowContainer.AddChild(closeButton);
+				}
 
                 manualEntryTopToBottomLayout.AddChild(bottomRowContainer);
                 manualEntryTopToBottomLayout.AnchorAll();
@@ -197,22 +215,18 @@ namespace MatterHackers.MatterControl
             SetCorrectFilterOutputBehavior(this, null);
             this.AnchorAll();
 
-			Title = LocalizedString.Get("MatterControl - Terminal");
-            this.ShowAsSystemWindow();
-            MinimumSize = new Vector2(Width, Height);
+
         }
 
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
             PrinterConnectionAndCommunication.Instance.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
-        }
-
-        
+        }        
 
         private void CloseWindow(object state)
         {
-            Close();
+			this.Parent.Close();
         }
 
         public override void OnClosed(EventArgs e)
@@ -272,7 +286,7 @@ namespace MatterHackers.MatterControl
             sendManualCommandToPrinter_Click(null, null);
         }
 
-        void sendManualCommandToPrinter_Click(object sender, MouseEventArgs mouseEvent)
+        void sendManualCommandToPrinter_Click(object sender, EventArgs mouseEvent)
         {
             string textToSend = manualCommandTextEdit.Text.Trim();
             if (autoUppercase.Checked)

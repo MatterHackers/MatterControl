@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
                 exportAsStlButton.HAnchor = HAnchor.ParentLeft;
                 exportAsStlButton.Cursor = Cursors.Hand;
-                exportAsStlButton.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
+                exportAsStlButton.Click += new EventHandler(exportSTL_Click);
                 middleRowContainer.AddChild(exportAsStlButton);
             }
 
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
                 Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
                 exportGCode.HAnchor = HAnchor.ParentLeft;
                 exportGCode.Cursor = Cursors.Hand;
-                exportGCode.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
+                exportGCode.Click += new EventHandler((object sender, EventArgs e) => 
                 { 
                     UiThread.RunOnIdle(ExportGCode_Click); 
                 } );
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl
                     Button exportToSdCard = textImageButtonFactory.Generate(exportSdCardText);
                     exportToSdCard.HAnchor = HAnchor.ParentLeft;
                     exportToSdCard.Cursor = Cursors.Hand;
-                    exportToSdCard.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) =>
+                    exportToSdCard.Click += new EventHandler((object sender, EventArgs e) =>
                     {
                         UiThread.RunOnIdle(ExportToSdCard_Click);
                     });
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
                     Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
                     exportAsX3G.HAnchor = HAnchor.ParentLeft;
                     exportAsX3G.Cursor = Cursors.Hand;
-                    exportAsX3G.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
+                    exportAsX3G.Click += new EventHandler((object sender, EventArgs e) => 
                         {
                             UiThread.RunOnIdle(ExportX3G_Click);
                         });
@@ -452,7 +452,7 @@ namespace MatterHackers.MatterControl
             CreateWindowContent();   
         }
 
-        void exportSTL_Click(object sender, MouseEventArgs mouseEvent)
+        void exportSTL_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(DoExportSTL_Click);
         }

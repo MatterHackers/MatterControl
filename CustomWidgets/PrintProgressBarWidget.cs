@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 
-		public void onProgressBarClick(object sender, MouseEventArgs e)
+        public void onProgressBarClick(object sender, EventArgs e)
 		{
 			ApplicationController.Instance.MainView.ToggleTopContainer();
 		}

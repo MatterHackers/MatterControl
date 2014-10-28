@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 Button refreshComPorts = linkButtonFactory.Generate(LocalizedString.Get("(refresh)"));
                 refreshComPorts.Margin = new BorderDouble(left: 5);
                 refreshComPorts.VAnchor = VAnchor.ParentBottom;
-                refreshComPorts.Click += new ButtonBase.ButtonEventHandler(RefreshComPorts);
+                refreshComPorts.Click += new EventHandler(RefreshComPorts);
 
                 TextWidget comPortLabel = new TextWidget(LocalizedString.Get("Serial Port"), 0, 0, 10);
                 comPortLabel.TextColor = this.defaultTextColor;
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
                 cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
                 //cancelButton.VAnchor = VAnchor.Bottom;
-                cancelButton.Click += new ButtonBase.ButtonEventHandler(CancelButton_Click);
+                cancelButton.Click += new EventHandler(CancelButton_Click);
 
                 //Add buttons to buttonContainer
                 buttonContainer.AddChild(saveButton);
@@ -408,7 +408,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void RefreshComPorts(object sender, MouseEventArgs mouseEvent)
+        void RefreshComPorts(object sender, EventArgs mouseEvent)
         {
             try
             {
@@ -423,7 +423,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.windowController.ChangedToEditPrinter(this.ActivePrinter, new StateBeforeRefresh(enableAutoconnect.Checked));
         }
 
-        void ReloadCurrentWidget(object sender, MouseEventArgs mouseEvent)
+        void ReloadCurrentWidget(object sender, EventArgs mouseEvent)
         {
             if (this.addNewPrinterFlag == true)
             {
@@ -440,16 +440,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             saveButton.UnbindClickEvents();
             saveButton.Text = "Save";
             saveButton.Enabled = true;
-            saveButton.Click += new ButtonBase.ButtonEventHandler(SaveButton_Click);
+            saveButton.Click += new EventHandler(SaveButton_Click);
         }
 
-        void CloseWindow(object o, MouseEventArgs e)
+        void CloseWindow(object o, EventArgs e)
         {
             PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
             this.containerWindowToClose.Close();
         }
 
-        void CancelButton_Click(object sender, MouseEventArgs mouseEvent)
+        void CancelButton_Click(object sender, EventArgs mouseEvent)
         {            
             if (GetPrinterRecordCount() > 0)
             {
@@ -461,7 +461,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void SaveButton_Click(object sender, MouseEventArgs mouseEvent)
+        void SaveButton_Click(object sender, EventArgs mouseEvent)
         {
             this.ActivePrinter.Name = printerNameInput.Text;
             try

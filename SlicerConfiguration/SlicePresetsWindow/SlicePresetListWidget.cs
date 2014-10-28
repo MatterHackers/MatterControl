@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void AddHandlers()
         {
-            importPresetButton.Click += new ButtonBase.ButtonEventHandler(importPreset_Click);
+            importPresetButton.Click += new EventHandler(importPreset_Click);
         }
 
         FlowLayoutWidget GetTopRow()
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         }
 
 
-        void importPreset_Click(object sender, MouseEventArgs mouseEvent)
+        void importPreset_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(importPresetDo);
         }

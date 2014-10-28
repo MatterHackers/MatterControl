@@ -67,11 +67,20 @@ namespace MatterHackers.MatterControl.PrintQueue
                     this.editMode = value;
                     if (this.editMode == false)
                     {
-                        //Clear selected items
+                        this.ClearSelectedItems();
                     }
-
                 }
             }
+        }
+
+        public void ClearSelectedItems()
+        {
+            foreach (var item in SelectedItems)
+            {
+                item.isSelectedItem = false;
+                item.selectionCheckBox.Checked = false;
+            }
+            this.SelectedItems.Clear();
         }
 
 		private void AddWatermark()
@@ -142,6 +151,9 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
+        public SelectedListItems<QueueRowItem> SelectedItems = new SelectedListItems<QueueRowItem>();
+
+
         public PrintItemWrapper SelectedPrintItem
         {
             get
@@ -201,8 +213,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
         //RGBA_Bytes selectedColor = new RGBA_Bytes(0, 95, 107, 255);
         RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
-
-        int selectedIndex = -1;
+        
         int hoverIndex = -1;
         int dragIndex = -1;
 
@@ -218,58 +229,11 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             get
             {
-                return selectedIndex;
+                return QueueData.Instance.SelectedIndex;
             }
             set
             {
-                if (value < -1 || value >= topToBottomItemList.Children.Count)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                
-                selectedIndex = value;
-                OnSelectedIndexChanged();
-
-                for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-                {
-                    GuiWidget child = topToBottomItemList.Children[index];
-                    if (index == selectedIndex)
-                    {
-                        ((QueueRowItem)child.Children[0]).isSelectedItem = true;
-                        if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-                        {
-                            ((QueueRowItem)child.Children[0]).isActivePrint = true;
-                            PrinterConnectionAndCommunication.Instance.ActivePrintItem = ((QueueRowItem)child.Children[0]).PrintItemWrapper;
-                        }
-                        else if (((QueueRowItem)child.Children[0]).PrintItemWrapper == PrinterConnectionAndCommunication.Instance.ActivePrintItem)
-                        {
-                            // the selection must be the active print item
-                            ((QueueRowItem)child.Children[0]).isActivePrint = true;
-                        }
-                    }
-                    else
-                    {
-                        if (((QueueRowItem)child.Children[0]).isSelectedItem)
-                        {
-                            ((QueueRowItem)child.Children[0]).isSelectedItem = false;
-                        }
-                        if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-                        {
-                            if (((QueueRowItem)child.Children[0]).isActivePrint)
-                            {
-                                ((QueueRowItem)child.Children[0]).isActivePrint = false;
-                            }
-                        }
-                    }
-                    child.Invalidate();
-
-                    Invalidate();
-                }
-
-                if (QueueData.Instance.Count == 0)
-                {
-                    PrinterConnectionAndCommunication.Instance.ActivePrintItem = null;
-                }
+                QueueData.Instance.SelectedIndex = value;
             }
         }
 
@@ -315,12 +279,12 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     hoverIndex = value;
                     OnHoverIndexChanged();
-                    
+
                     for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-                    {                        
+                    {
                         GuiWidget child = topToBottomItemList.Children[index];
                         if (index == HoverIndex)
-                        {                            
+                        {
                             ((QueueRowItem)child.Children[0]).IsHoverItem = true;
                         }
                         else if (((QueueRowItem)child.Children[0]).IsHoverItem == true)
@@ -356,7 +320,9 @@ namespace MatterHackers.MatterControl.PrintQueue
                 AddChild(queueItem);
             }
 
-            QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);
+            this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
+            QueueData.Instance.SelectedIndexChanged.RegisterEvent(SelectedIndexChanged, ref unregisterEvents);
+            QueueData.Instance.ItemAdded.RegisterEvent(ItemAddedToQueue, ref unregisterEvents);            
             QueueData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToQueue, ref unregisterEvents);
             QueueData.Instance.OrderChanged.RegisterEvent(QueueOrderChanged, ref unregisterEvents);
 
@@ -377,6 +343,70 @@ namespace MatterHackers.MatterControl.PrintQueue
         void PrintItemChange(object sender, EventArgs e)
         {
             SelectedPrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+        }
+
+        void SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Skip this processing while in EditMode
+            if (this.editMode) return;
+
+            OnSelectedIndexChanged();
+            for (int index = 0; index < topToBottomItemList.Children.Count; index++)
+            {
+                GuiWidget child = topToBottomItemList.Children[index];
+                var queueRowItem = (QueueRowItem) child.Children[0];
+
+                if (index == SelectedIndex)
+                {
+                    // When not in editmode, keep updating the SelectedItems list to contain the current object. This insures
+                    // that when toggle to editmode occurs, the active selection appears checked.
+                    this.SelectedItems.Clear();
+                    this.SelectedItems.Add(queueRowItem);
+
+                    queueRowItem.selectionCheckBox.Checked = true;
+                    queueRowItem.isSelectedItem = true;
+
+
+
+
+                    if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+                    {
+                        queueRowItem.isActivePrint = true;
+                        PrinterConnectionAndCommunication.Instance.ActivePrintItem = queueRowItem.PrintItemWrapper;
+                    }
+                    else if (queueRowItem.PrintItemWrapper == PrinterConnectionAndCommunication.Instance.ActivePrintItem)
+                    {
+                        // the selection must be the active print item
+                        queueRowItem.isActivePrint = true;
+                    }
+                }
+                else
+                {
+                    // Don't test for .Checked as the property already performs validation
+                    queueRowItem.selectionCheckBox.Checked = false;
+
+                    if (queueRowItem.isSelectedItem)
+                    {
+                        queueRowItem.isSelectedItem = false;
+                    }
+
+                    if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+                    {
+                        if (queueRowItem.isActivePrint)
+                        {
+                            queueRowItem.isActivePrint = false;
+                        }
+                    }
+                }
+                child.Invalidate();
+
+                Invalidate();
+            }
+
+            if (QueueData.Instance.Count == 0)
+            {
+                PrinterConnectionAndCommunication.Instance.ActivePrintItem = null;
+            }
         }
 
         void ItemAddedToQueue(object sender, EventArgs e)
@@ -423,6 +453,11 @@ namespace MatterHackers.MatterControl.PrintQueue
                 unregisterEvents(this, null);
             }
             base.OnClosed(e);
+        }
+
+        void control_MouseLeaveBounds(object sender, EventArgs e)
+        {
+            HoverIndex = -1;
         }
 
         public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
@@ -545,9 +580,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public void ClearSelected()
         {
-            if (selectedIndex != -1)
+            if (SelectedIndex != -1)
             {
-                selectedIndex = -1;
+                SelectedIndex = -1;
                 OnSelectedIndexChanged();
             }
         }        

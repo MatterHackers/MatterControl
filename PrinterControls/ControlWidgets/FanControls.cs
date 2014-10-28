@@ -76,7 +76,15 @@ namespace MatterHackers.MatterControl.PrinterControls
             
             this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             this.AddChild(fanControlsGroupBox);
+        }
 
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
         }
         
         private GuiWidget CreateFanControls()

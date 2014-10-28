@@ -1,4 +1,34 @@
-﻿using System.Collections.Generic;
+﻿/*
+Copyright (c) 2014, Kevin Pope
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -12,7 +42,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         
         List<GuiWidget> radioButtonsOfKnownPrinters = new List<GuiWidget>();
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
         Button closeButton;
+		Button enterEditModeButton;
+		Button leaveEditModeButton;
+
         bool editMode;
 
         public ChooseConnectionWidget(ConnectionWindow windowController, SystemWindow container, bool editMode = false)
@@ -26,6 +60,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 				textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
                 textImageButtonFactory.borderWidth = 0;
+
+				editButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+				editButtonFactory.hoverTextColor = RGBA_Bytes.White;
+				editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
+				editButtonFactory.pressedTextColor = RGBA_Bytes.White;
+				editButtonFactory.borderWidth = 0;
+				editButtonFactory.FixedWidth = 50;
                 
                 this.AnchorAll();
                 this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -36,10 +77,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 mainContainer.Padding = new BorderDouble(3, 0, 3, 5);
                 mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-                FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+				FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
                 headerRow.HAnchor = HAnchor.ParentLeftRight;
                 headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-                headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+                headerRow.Padding = new BorderDouble(0, 3, 0, 0);
                 
                 {
                     string chooseThreeDPrinterConfigLabel = LocalizedString.Get("Choose a 3D Printer Configuration");
@@ -48,25 +89,33 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					TextWidget elementHeader = new TextWidget(string.Format(chooseThreeDPrinterConfigFull), pointSize: 14);
                     elementHeader.TextColor = this.defaultTextColor;
                     elementHeader.HAnchor = HAnchor.ParentLeftRight;
-                    elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                    elementHeader.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
-                    ActionLink editModeLink;
-                    if (!this.editMode)
-                    {
-                        editModeLink = actionLinkFactory.Generate(LocalizedString.Get("Edit"), 12, EditModeOnLink_Click);
-                    }
-                    else
-                    {
-                        editModeLink = actionLinkFactory.Generate(LocalizedString.Get("Done"), 12, EditModeOffLink_Click);
-                    }
+					headerRow.AddChild(elementHeader);
 
-					//editModeLink.TextColor = new RGBA_Bytes(250, 250, 250);
-					editModeLink.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                    editModeLink.VAnchor = Agg.UI.VAnchor.ParentBottom;
-
-                    headerRow.AddChild(elementHeader);
-                    headerRow.AddChild(editModeLink);
                 }
+
+				FlowLayoutWidget editButtonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+				editButtonRow.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+				editButtonRow.HAnchor = HAnchor.ParentLeftRight;
+				editButtonRow.Margin = new BorderDouble(0, 3, 0, 0);
+				editButtonRow.Padding = new BorderDouble(0, 3, 0, 0);
+
+				 
+				Button enterLeaveEditModeButton;
+				if (!this.editMode)
+				{
+					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Edit"), clickEvent:EditModeOnLink_Click);
+
+
+				}
+				else
+				{
+					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Done"), clickEvent:EditModeOffLink_Click);
+
+				}
+
+				editButtonRow.AddChild(enterLeaveEditModeButton);
 
                 //To do - replace with scrollable widget
                 FlowLayoutWidget printerListContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -101,10 +150,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
 
                     Button addPrinterButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
-                    addPrinterButton.Click += new ButtonBase.ButtonEventHandler(AddConnectionLink_Click);
+                    addPrinterButton.Click += new EventHandler(AddConnectionLink_Click);
 
                     Button refreshListButton = textImageButtonFactory.Generate(LocalizedString.Get("Refresh"));
-                    refreshListButton.Click += new ButtonBase.ButtonEventHandler(EditModeOffLink_Click);
+                    refreshListButton.Click += new EventHandler(EditModeOffLink_Click);
 
                     GuiWidget spacer = new GuiWidget();
                     spacer.HAnchor = HAnchor.ParentLeftRight;
@@ -123,6 +172,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 }
 
                 mainContainer.AddChild(headerRow);
+				mainContainer.AddChild(editButtonRow);
                 mainContainer.AddChild(printerListContainer);
                 mainContainer.AddChild(buttonContainer);
 
@@ -135,31 +185,35 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         void BindCloseButtonClick()
         {
             closeButton.UnbindClickEvents();
-            closeButton.Click += new ButtonBase.ButtonEventHandler(CloseWindow);
+            closeButton.Click += new EventHandler(CloseWindow);
         }
 
-        void EditModeOnLink_Click(object sender, MouseEventArgs mouseEvent)
+
+        void EditModeOnLink_Click(object sender, EventArgs mouseEvent)
         {
-            this.windowController.ChangeToChoosePrinter(true);
-        }
 
-        void EditModeOffLink_Click(object sender, MouseEventArgs mouseEvent)
+			this.windowController.ChangeToChoosePrinter(true);
+
+		}
+
+        void EditModeOffLink_Click(object sender, EventArgs mouseEvent)
         {
-            this.windowController.ChangeToChoosePrinter(false);
+
+			this.windowController.ChangeToChoosePrinter(false);
         }
 
-        void AddConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+        void AddConnectionLink_Click(object sender, EventArgs mouseEvent)
         {
             this.windowController.ChangeToAddPrinter();
-        }        
+        }
 
-        void EditConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+        void EditConnectionLink_Click(object sender, EventArgs mouseEvent)
         {
             PrinterActionLink actionLink = (PrinterActionLink)sender;
             this.windowController.ChangedToEditPrinter(actionLink.LinkedPrinter);
         }
 
-        void CloseWindow(object o, MouseEventArgs e)
+        void CloseWindow(object o, EventArgs e)
         {
             //Stop listening for connection events (if set) and close window
             UiThread.RunOnIdle(CloseOnIdle);

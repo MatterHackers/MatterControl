@@ -286,9 +286,9 @@ namespace MatterHackers.MatterControl
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
-                    if (arg.Length > 4
-                        && arg.Contains(".")
-                        && MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(arg).ToUpper()))
+                    string argExtension = Path.GetExtension(arg).ToUpper();
+                    if (argExtension.Length > 1
+                        && MeshFileIo.ValidFileExtensions().Contains(argExtension))
                     {
                         QueueData.Instance.AddItem(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
                     }
@@ -373,24 +373,29 @@ namespace MatterHackers.MatterControl
 
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
-                StyledMessageBox.ShowMessageBox(unableToExitMessage, unableToExitTitle);
+                StyledMessageBox.ShowMessageBox(null, unableToExitMessage, unableToExitTitle);
                 CancelClose = true;
             }
             else if (PartsSheet.IsSaving())
             {
-                if (!StyledMessageBox.ShowMessageBox(savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO))
-                {
-                    CancelClose = true;
-                }
-                else
-                {
-                    base.OnClosing(out CancelClose);
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmExit, savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO);
+                CancelClose = true;
             }
             else
             {
                 base.OnClosing(out CancelClose);
             }
+        }
+
+        bool cancelClose;
+        void onConfirmExit(bool messageBoxResponse)
+        {
+            bool CancelClose;
+            if (messageBoxResponse)
+            {
+                base.OnClosing(out CancelClose);
+            }
+
         }
     }
 }

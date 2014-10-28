@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 //Construct buttons
 				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Continue"));
-                nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);                
+                nextButton.Click += new EventHandler(NextButton_Click);                
 
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Manually Configure Connection"));
             manualLink.Margin = new BorderDouble(0, 5);
-            manualLink.Click += new ButtonBase.ButtonEventHandler(ManualLink_Click);
+            manualLink.Click += new EventHandler(ManualLink_Click);
 
 			string printerMessageFourText = LocalizedString.Get("or");
 			TextWidget printerMessageFour = new TextWidget (printerMessageFourText, 0, 0, 10);
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button skipConnectionLink = linkButtonFactory.Generate(LocalizedString.Get("Skip Connection Setup"));
 			skipConnectionLink.Margin = new BorderDouble(0, 8);
-			skipConnectionLink.Click += new ButtonBase.ButtonEventHandler(SkipConnectionLink_Click);
+			skipConnectionLink.Click += new EventHandler(SkipConnectionLink_Click);
 
 
             container.AddChild(printerMessageOne);
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return container;            
         }
 
-        void ManualLink_Click(object sender, MouseEventArgs mouseEvent)
+        void ManualLink_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(MoveToManualConfiguration);
         }
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             Parent.RemoveChild(this);
         }
 
-        void NextButton_Click(object sender, MouseEventArgs mouseEvent)
+        void NextButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(MoveToNextWidget);
         }
@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             Parent.RemoveChild(this);
         }
 
-		void SkipConnectionLink_Click(object sender, MouseEventArgs mouseEvent)
+        void SkipConnectionLink_Click(object sender, EventArgs mouseEvent)
 		{
 			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
 			if (GetPrinterRecordCount () > 0)

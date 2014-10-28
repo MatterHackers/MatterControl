@@ -10,7 +10,6 @@ using MatterHackers.MatterControl;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-
     public class ViewControlsBase : FlowLayoutWidget
     {
         protected int buttonHeight;
@@ -32,7 +31,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public RadioButton translateButton;
         public RadioButton scaleButton;
         
-
         public ViewControls2D()
         {
             if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
@@ -81,7 +79,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             iconTextImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
 
 			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-
 
             iconTextImageButtonFactory.FixedHeight = buttonHeight;
             iconTextImageButtonFactory.FixedWidth = buttonHeight;

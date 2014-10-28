@@ -146,6 +146,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("bridgeSpeed", "bridge_speed"),
 
             new MapItem("bridgeFanSpeedPercent", "bridge_fan_speed"),
+
+            new MapItem("raftFanSpeedPercent", "raft_fan_speed_percent"),
+
+            new AsPercentOfReferenceOrDirect("raftPrintSpeed", "raft_print_speed", "infill_speed"),
             
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),

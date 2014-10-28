@@ -31,16 +31,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 //Construct buttons
 				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"));
-                nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
+                nextButton.Click += new EventHandler(NextButton_Click);
                 nextButton.Visible = false;
 
 				connectButton = textImageButtonFactory.Generate(LocalizedString.Get("Connect"));
-                connectButton.Click += new ButtonBase.ButtonEventHandler(ConnectButton_Click);
+                connectButton.Click += new EventHandler(ConnectButton_Click);
 
                 PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 				refreshButton = textImageButtonFactory.Generate(LocalizedString.Get("Refresh"));
-                refreshButton.Click += new ButtonBase.ButtonEventHandler(RefreshButton_Click);
+                refreshButton.Click += new EventHandler(RefreshButton_Click);
 
                 GuiWidget hSpacer = new GuiWidget();
                 hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerComPortHelpLink = linkButtonFactory.Generate(LocalizedString.Get("What's this?"));
             printerComPortHelpLink.Margin = new BorderDouble(left: 5);
             printerComPortHelpLink.VAnchor = VAnchor.ParentBottom;
-            printerComPortHelpLink.Click += new ButtonBase.ButtonEventHandler(printerComPortHelp_Click);
+            printerComPortHelpLink.Click += new EventHandler(printerComPortHelp_Click);
 
 			printerComPortHelpMessage = new TextWidget(LocalizedString.Get("The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter."), 0, 0, 10);
 			printerComPortHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             connectButton.Visible = false;
         }
 
-        void printerComPortHelp_Click(object sender, MouseEventArgs mouseEvent)
+        void printerComPortHelp_Click(object sender, EventArgs mouseEvent)
         {
             printerComPortHelpMessage.Visible = !printerComPortHelpMessage.Visible;
         }
@@ -239,12 +239,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             Parent.RemoveChild(this);
         }
 
-        void RefreshButton_Click(object sender, MouseEventArgs mouseEvent)
+        void RefreshButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(RecreateCurrentWidget);
         }
 
-        void ConnectButton_Click(object sender, MouseEventArgs mouseEvent)
+        void ConnectButton_Click(object sender, EventArgs mouseEvent)
         {
             string serialPort;
             try
@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         }
 
 
-        void NextButton_Click(object sender, MouseEventArgs mouseEvent)
+        void NextButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {

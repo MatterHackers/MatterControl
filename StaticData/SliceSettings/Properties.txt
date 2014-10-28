@@ -18,6 +18,8 @@ cooling|Enable Auto Cooling|CHECK_BOX||Turns on and off all cooling settings (al
 create_raft|Create Raft|CHECK_BOX||Turns on and off the creation of a raft which can help parts adhear to the bed.
 raft_extra_distance_around_part|Distance Around Object|POSITIVE_DOUBLE|mm|The extra distance the raft will extend around the part.
 raft_air_gap|Air Gap|POSITIVE_DOUBLE|mm|The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+raft_fan_speed_percent|Fan Speed|POSITIVE_DOUBLE|%|The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+raft_print_speed|Raft|DOUBLE_OR_PERCENT|mm/s or %|The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
 default_acceleration|Default|POSITIVE_DOUBLE|mm/s²|Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
 disable_fan_first_layers|Disable Fan For The First|INT|Layers|The number of layers for which the fan will be forced to remain off.
 end_gcode|End G-Code|MULTI_LINE_TEXT|| This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).

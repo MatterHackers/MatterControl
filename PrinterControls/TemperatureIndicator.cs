@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl
         {
             PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.ExtruderTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-            tempOffButton.Click += new ButtonBase.ButtonEventHandler(onOffButtonClicked);
+            tempOffButton.Click += new EventHandler(onOffButtonClicked);
         }
 
         public override void OnClosed(EventArgs e)
@@ -464,7 +464,7 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        void onOffButtonClicked(object sender, MouseEventArgs e)
+        void onOffButtonClicked(object sender, EventArgs e)
         {
             SetTargetTemperature(0);
         }
@@ -525,7 +525,7 @@ namespace MatterHackers.MatterControl
             {
                 string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
                 string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based), sliceSettingsNote);
-                StyledMessageBox.ShowMessageBox(message, "Waiting For Extruder To Heat");
+                StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat");
             }
             else
             {
@@ -555,7 +555,7 @@ namespace MatterHackers.MatterControl
         {
             PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.BedTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-            tempOffButton.Click += new ButtonBase.ButtonEventHandler(onOffButtonClicked);
+            tempOffButton.Click += new EventHandler(onOffButtonClicked);
         }
 
         public override void OnClosed(EventArgs e)
@@ -567,7 +567,7 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        void onOffButtonClicked(object sender, MouseEventArgs e)
+        void onOffButtonClicked(object sender, EventArgs e)
         {
             SetTargetTemperature(0);
         }
@@ -620,7 +620,7 @@ namespace MatterHackers.MatterControl
             {
                 string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
                 string message = string.Format("The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.TargetBedTemperature, sliceSettingsNote);
-                StyledMessageBox.ShowMessageBox(message, "Waiting For Bed To Heat");
+                StyledMessageBox.ShowMessageBox(null, message, "Waiting For Bed To Heat");
             }
             else
             {

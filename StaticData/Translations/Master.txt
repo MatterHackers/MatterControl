@@ -2753,3 +2753,39 @@ Translated:Extruder {0}
 English:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
 Translated:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
 
+English:Material 3
+Translated:Material 3
+
+English:Material 4
+Translated:Material 4
+
+English:Material 5
+Translated:Material 5
+
+English:Unknown Reason
+Translated:Unknown Reason
+
+English:Port already in use
+Translated:Port already in use
+
+English:Unsupported Baud Rate
+Translated:Unsupported Baud Rate
+
+English:Port not found
+Translated:Port not found
+
+English:Cancelled
+Translated:Cancelled
+
+English:You can only connect when not currently connected.
+Translated:You can only connect when not currently connected.
+
+English:Warning - No EEProm Mapping
+Translated:Warning - No EEProm Mapping
+
+English:The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+Translated:The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+
+English:The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
+Translated:The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
+

@@ -121,11 +121,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, asynchPlatingDatas, asynchMeshGroups, asynchMeshGroupTransforms);
 
                 // and create the trace info so we can select it
-                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, meshGroupIndex, (double progress0To1, string processingState) =>
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, meshGroupIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
+                    continueProcessing = true;
                     int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
                     backgroundWorker.ReportProgress(nextPercent);
-                    return true;
                 });
 
                 currentRatioDone += ratioPerMeshGroup;

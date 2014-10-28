@@ -390,8 +390,8 @@ namespace MatterHackers.MatterControl
             AddChild(RightBorderLine);
             AddChild(ColumnThree);
 
-            RightBorderLine.Click += new ClickWidget.ButtonEventHandler(onRightBorderClick);
-            LeftBorderLine.Click += new ClickWidget.ButtonEventHandler(onLeftBorderClick);
+            RightBorderLine.Click += new EventHandler(onRightBorderClick);
+            LeftBorderLine.Click += new EventHandler(onLeftBorderClick);
         }
 
         public void ReloadAdvancedControlsPanel(object state)

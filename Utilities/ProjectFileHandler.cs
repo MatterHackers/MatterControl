@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
                         string fileNameOnly = Path.GetFileName(item.FileLocation);
                         if (addedFileNames.Contains(fileNameOnly))
                         {
-                            StyledMessageBox.ShowMessageBox(string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", fileNameOnly, item.FileLocation), "Duplicate File");
+                            StyledMessageBox.ShowMessageBox(null, string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", fileNameOnly, item.FileLocation), "Duplicate File");
                             continue;
                         }
 

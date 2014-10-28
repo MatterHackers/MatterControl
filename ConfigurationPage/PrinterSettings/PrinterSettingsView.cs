@@ -117,12 +117,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             enablePrintLevelingButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
 			enablePrintLevelingButton.Margin = new BorderDouble(left:6);
 			enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-			enablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(enablePrintLeveling_Click);
+			enablePrintLevelingButton.Click += new EventHandler(enablePrintLeveling_Click);
 
             disablePrintLevelingButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
 			disablePrintLevelingButton.Margin = new BorderDouble(left:6);
 			disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-			disablePrintLevelingButton.Click += new ButtonBase.ButtonEventHandler(disablePrintLeveling_Click);
+			disablePrintLevelingButton.Click += new EventHandler(disablePrintLeveling_Click);
 
 			printLevelingStatusLabel = new TextWidget ("");
 			printLevelingStatusLabel.AutoExpandBoundsToText = true;
@@ -149,7 +149,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             return buttonRow;
         }
 
-		private FlowLayoutWidget GetGcodeTerminalControl()
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+        
+        private FlowLayoutWidget GetGcodeTerminalControl()
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
@@ -161,7 +170,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;
 
 			openGcodeTerminalButton = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
-			openGcodeTerminalButton.Click += new ButtonBase.ButtonEventHandler(openGcodeTerminalButton_Click);
+			openGcodeTerminalButton.Click += new EventHandler(openGcodeTerminalButton_Click);
 
 			buttonRow.AddChild(gcodeTerminalLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -175,7 +184,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         static EePromMarlinWidget openEePromMarlinWidget = null;
         static EePromRepetierWidget openEePromRepetierWidget = null;
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
-        string noEepromMappingTitle = "Warning no eeprom mapping".Localize();
+        string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
         string groupBoxTitle = "EEProm Settings".Localize();
         private FlowLayoutWidget GetEEPromControl()
         {
@@ -211,13 +220,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         private void AddHandlers()
         {
-            configureAutoLevelButton.Click += new ButtonBase.ButtonEventHandler(configureAutoLevelButton_Click);
-            configureEePromButton.Click += new ButtonBase.ButtonEventHandler(configureEePromButton_Click);
+            configureAutoLevelButton.Click += new EventHandler(configureAutoLevelButton_Click);
+            configureEePromButton.Click += new EventHandler(configureEePromButton_Click);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
 
-        void configureEePromButton_Click(object sender, MouseEventArgs mouseEvent)
+        void configureEePromButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -257,14 +266,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                             break;
 
                         default:
-                            StyledMessageBox.ShowMessageBox(noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
+                            StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
                             break;
                     }
 #endif
             });
         }
 
-        void configureAutoLevelButton_Click(object sender, MouseEventArgs mouseEvent)
+        void configureAutoLevelButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -272,7 +281,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             });
         }
 
-		void openGcodeTerminalButton_Click(object sender, MouseEventArgs mouseEvent)
+        void openGcodeTerminalButton_Click(object sender, EventArgs mouseEvent)
 		{
 
 			UiThread.RunOnIdle((state) =>
@@ -288,12 +297,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             this.Invalidate();
         }
 
-        void enablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+        void enablePrintLeveling_Click(object sender, EventArgs mouseEvent)
         {
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
         }
 
-        void disablePrintLeveling_Click(object sender, MouseEventArgs mouseEvent)
+        void disablePrintLeveling_Click(object sender, EventArgs mouseEvent)
         {
             ActivePrinterProfile.Instance.DoPrintLeveling = false;
         }
