@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl
 		public TopContainerWidget TopContainer;
 
 		public abstract void AddElements();
+		public abstract void HideTopContainer();
 		public abstract void ToggleTopContainer();
         
     }
@@ -64,14 +65,35 @@ namespace MatterHackers.MatterControl
         CompactTabView widescreenPanel;
         QueueDataView queueDataView;
 		GuiWidget menuSeparator;
+		PrintProgressBar progressBar; 
         public CompactApplicationView()
         {
             AddElements();
             Initialize();
         }
+
+		bool topIsHidden = false;
+		public override void HideTopContainer()
+		{
+			if (!topIsHidden)
+			{
+				progressBar.WidgetIsExtended = false;
+
+				//To do - Animate this (KP)
+				this.menuSeparator.Visible = true;
+				this.TopContainer.Visible = false;
+
+				topIsHidden = true;
+			}
+		}
         
 		public override void ToggleTopContainer()
 		{
+
+			topIsHidden = !topIsHidden;
+			progressBar.WidgetIsExtended = !progressBar.WidgetIsExtended;
+
+			//To do - Animate this (KP)
 			this.menuSeparator.Visible = this.TopContainer.Visible;
 			this.TopContainer.Visible = !this.TopContainer.Visible;
 		}
@@ -100,10 +122,17 @@ namespace MatterHackers.MatterControl
 			TopContainer.SetOriginalHeight();
 
 			container.AddChild(TopContainer);
-            container.AddChild(new PrintProgressBar());
+
+			progressBar = new PrintProgressBar();
+
+            container.AddChild(progressBar);
 			container.AddChild(menuSeparator);
             widescreenPanel = new CompactTabView(queueDataView);
-            container.AddChild(widescreenPanel);
+
+			BottomOverlay bottomOverlay = new BottomOverlay();
+			bottomOverlay.AddChild(widescreenPanel);
+
+			container.AddChild(bottomOverlay);
 
             this.AddChild(container);
         }
@@ -130,6 +159,22 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
+	class BottomOverlay : GuiWidget
+	{
+		public BottomOverlay()
+			:base()
+		{
+			this.AnchorAll();
+
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseDown(mouseEvent);
+			ApplicationController.Instance.MainView.HideTopContainer();
+		}
+	}
+
     public class ResponsiveApplicationView : ApplicationView
     {
         WidescreenPanel widescreenPanel;
@@ -140,6 +185,11 @@ namespace MatterHackers.MatterControl
         }
 
 		public override void ToggleTopContainer()
+		{
+
+		}
+
+		public override void HideTopContainer()
 		{
 
 		}
@@ -167,7 +217,6 @@ namespace MatterHackers.MatterControl
 
             this.AddChild(container);
         }
-
 
         void Initialize()
         {

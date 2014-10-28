@@ -1291,9 +1291,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             string renderTypeString = UserSettings.Instance.get("defaultRenderSetting");
             if (renderTypeString == null)
-            {
-                renderTypeString = "Outlines";
-                UserSettings.Instance.set("defaultRenderSetting", "Outlines");
+            {                
+				if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+				{
+					renderTypeString = "Shaded";
+				}
+				else
+				{
+					renderTypeString = "Outlines";
+				}
+				UserSettings.Instance.set("defaultRenderSetting", renderTypeString);
             }
             RenderOpenGl.RenderTypes renderType;
             bool canParse = Enum.TryParse<RenderOpenGl.RenderTypes>(renderTypeString, out renderType);
