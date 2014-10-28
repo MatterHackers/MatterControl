@@ -225,7 +225,13 @@ namespace MatterHackers.MatterControl.PrintQueue
             queueDataView.EditMode = true;
             addToQueueButton.Visible = false;
             createButton.Visible = false;
-            shopButton.Visible = false;
+
+            // Avoid setting properties on shopButton when the object is null due to app configuration
+            if (OemSettings.Instance.ShowShopButton)
+            {
+                shopButton.Visible = false;
+            }
+
             queueMenuContainer.Visible = false;
             SetVisibleButtons();
         }
@@ -237,7 +243,13 @@ namespace MatterHackers.MatterControl.PrintQueue
             queueDataView.EditMode = false;
             addToQueueButton.Visible = true;
             createButton.Visible = true;
-            shopButton.Visible = true && OemSettings.Instance.ShowShopButton;
+
+            // Avoid setting properties on shopButton when the object is null due to app configuration
+            if (OemSettings.Instance.ShowShopButton)
+            {
+                shopButton.Visible = true;
+            }
+
             queueMenuContainer.Visible = true;
             SetVisibleButtons();
         }
