@@ -19,6 +19,7 @@ namespace MatterHackers.MatterControl
         TextWidget printTimeRemaining;
         TextWidget printTimeElapsed;
 
+        public bool WidgetIsExtended { get; set; }
 
         public PrintProgressBar()
         {
