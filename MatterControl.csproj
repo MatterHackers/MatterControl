@@ -38,7 +38,6 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ReleaseVersion>1.1.4</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -272,6 +271,7 @@
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
+    <Compile Include="ControlElements\ToggleSwitchFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
@@ -409,13 +409,13 @@
       <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
       <Name>MatterControlPluginSystem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\agg\Agg.csproj">
-      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
-      <Name>Agg</Name>
-    </ProjectReference>
     <ProjectReference Include="..\agg-sharp\Localizations\Localizations.csproj">
       <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
       <Name>Localizations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\Agg\Agg.csproj">
+      <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
+      <Name>Agg</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
