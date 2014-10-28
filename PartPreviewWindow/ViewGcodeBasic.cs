@@ -259,9 +259,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.Visible = false;
 
 			viewControlsToggle = new ViewControlsToggle ();
+            viewControlsToggle.HAnchor = Agg.UI.HAnchor.ParentRight;
 			AddChild (viewControlsToggle);
+            viewControlsToggle.Visible = false;
 
-            
             //viewControls3D.translateButton.ClickButton(null);
             
             // move things into the right place and scale
@@ -807,6 +808,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 CreateOptionsContent();
 				buttonRightPanel.Visible = true;
+                viewControlsToggle.Visible = true;
 
                 CloseIfNotNull(setLayerWidget);
                 setLayerWidget = new SetLayerWidget(gcodeViewWidget);
