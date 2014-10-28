@@ -637,12 +637,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         enum TraceInfoOpperation { DONT_COPY, DO_COPY };
         private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation)
         {
-            if (MeshGroups.Count != MeshGroupTransforms.Count
-                || MeshGroups.Count != MeshGroupExtraData.Count)
-            {
-                throw new Exception("These all need to remain in sync.");
-            }
-
             asynchMeshGroups.Clear();
             asynchMeshGroupTransforms.Clear();
             for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)

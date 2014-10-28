@@ -103,23 +103,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         asynchMeshGroupTransforms[meshGroupToMoveIndex] = translated;
                         saveButtons.Visible = true;
                     }
-
-                    // move all the meshes into the new aligned mesh group
-                    //for(int moveIndex = 0; moveIndex < meshGroupToMove.Meshes.Count; moveIndex++)
-                    {
-                        //Mesh mesh = meshGroupToMove.Meshes[moveIndex];
-                        //asynchMeshGroups[SelectedMeshGroupIndex].Meshes.Add(mesh);
-                    }
                 }
             }
 
-#if false
+#if true
+            MeshGroup meshGroupWeAreKeeping = asynchMeshGroups[SelectedMeshGroupIndex];
             for (int meshGroupToMoveIndex = asynchMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
             {
                 MeshGroup meshGroupToMove = asynchMeshGroups[meshGroupToMoveIndex];
-                if (meshGroupToMove != asynchMeshGroups[SelectedMeshGroupIndex])
+                if (meshGroupToMove != meshGroupWeAreKeeping)
                 {
+                    // move all the meshes into the new aligned mesh group
+                    for(int moveIndex = 0; moveIndex < meshGroupToMove.Meshes.Count; moveIndex++)
+                    {
+                        Mesh mesh = meshGroupToMove.Meshes[moveIndex];
+                        meshGroupWeAreKeeping.Meshes.Add(mesh);
+                    }
+
                     asynchMeshGroups.RemoveAt(meshGroupToMoveIndex);
+                    asynchMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
                 }
             }
 
