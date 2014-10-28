@@ -86,7 +86,6 @@ namespace MatterHackers.MatterControl.PrintQueue
         SlideWidget actionButtonContainer;
 		GuiWidget selectionCheckBoxContainer;
 		public CheckBox selectionCheckBox;
-		ClickWidget primaryClickContainer;
 
         public bool IsHoverItem
         {
@@ -187,18 +186,12 @@ namespace MatterHackers.MatterControl.PrintQueue
                 editControls.Visible = false;
             }
 
-			primaryClickContainer = new ClickWidget();
-			primaryClickContainer.HAnchor = HAnchor.ParentLeftRight;
-            primaryClickContainer.VAnchor = VAnchor.ParentBottomTop;
-            primaryClickContainer.Click += onLibraryItemClick;
-
             topToBottomLayout.AddChild(topContentsFlowLayout);
             this.AddChild(topToBottomLayout);
 
             actionButtonContainer = getItemActionButtons();
             actionButtonContainer.Visible = false;
 
-            this.AddChild(primaryClickContainer);
             this.AddChild(actionButtonContainer);
 
             AddHandlers();
