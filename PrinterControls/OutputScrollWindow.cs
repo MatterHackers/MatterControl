@@ -157,10 +157,13 @@ namespace MatterHackers.MatterControl
                 };
 
 				//Output Console text to screen
-				Button saveToTextButton = controlButtonFactory.Generate (LocalizedString.Get ("Save as text"));
-				saveToTextButton.Click += (sender, mouseEvent) => 
+				Button exportConsoleTextButton = controlButtonFactory.Generate (LocalizedString.Get ("Export..."));
+				exportConsoleTextButton.Click += (sender, mouseEvent) => 
 				{
-					outputScrollWidget.WriteToFile("C:\\Users\\Grifffin\\Desktop\\TestConsoleOutput.txt");
+					string logFilePath = String.Format("{0}\\logs\\{1}ConsoleOutput.txt",
+													   System.IO.Directory.GetCurrentDirectory(),
+													   System.Diagnostics.Stopwatch.GetTimestamp());
+					outputScrollWidget.WriteToFile(logFilePath);
 				};
 
                 Button closeButton = controlButtonFactory.Generate(LocalizedString.Get("Close"));
@@ -178,7 +181,7 @@ namespace MatterHackers.MatterControl
 
                 bottomRowContainer.AddChild(sendCommand);
                 bottomRowContainer.AddChild(clearConsoleButton);
-				bottomRowContainer.AddChild (saveToTextButton);
+				bottomRowContainer.AddChild (exportConsoleTextButton);
                 bottomRowContainer.AddChild(new HorizontalSpacer());
                 bottomRowContainer.AddChild(closeButton);
 

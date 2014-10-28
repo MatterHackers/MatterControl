@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
         protected virtual void AddChildElements(){}
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		protected ToggleSwitchFactory toggleSwitchFactory = new ToggleSwitchFactory ();
 
         readonly double TallButtonHeight = 25 * TextWidget.GlobalPointSizeScaleRatio;
 

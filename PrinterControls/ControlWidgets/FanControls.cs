@@ -49,11 +49,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
     public class FanControls : ControlWidgetBase
     {
-        event EventHandler unregisterEvents;
-        EditableNumberDisplay fanSpeedDisplay;
-		Button disableFanButton;
-		Button enableFanButton;
-        
+
+		TextWidget fanToggleSwitchText;
+		ToggleSwitch toggleSwitch;
+
         protected override void AddChildElements()
         {
             AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan Controls".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
@@ -82,66 +81,44 @@ namespace MatterHackers.MatterControl.PrinterControls
         
         private GuiWidget CreateFanControls()
         {
-            PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
+        //    PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
 
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Padding = new BorderDouble(3, 0, 0, 5) * TextWidget.GlobalPointSizeScaleRatio;
 
-            TextWidget fanSpeedDescription = new TextWidget(LocalizedString.Get("Fan Speed:"), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-            fanSpeedDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            leftToRight.AddChild(fanSpeedDescription);
+            
 
-            fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, PrinterConnectionAndCommunication.Instance.FanSpeed0To255.ToString(), "100");
-            fanSpeedDisplay.EditComplete += (sender, e) =>
-            {
-                PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
-            };
+			//Matt's test editing to add a on/off toggle switch
+			bool fanActive = PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0;
 
-            leftToRight.AddChild(fanSpeedDisplay);
+			fanToggleSwitchText = new TextWidget (fanActive?"On":"Off", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			fanToggleSwitchText.VAnchor = Agg.UI.VAnchor.ParentCenter;		
 
-            TextWidget fanSpeedPercent = new TextWidget("%", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-            fanSpeedPercent.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            leftToRight.AddChild(fanSpeedPercent);
 
-			//Matt's test editing to add a on/off button
-			//Creates a button with the text On centered in button.
-			disableFanButton = textImageButtonFactory.Generate ("Disable Fan", centerText: true);
-			disableFanButton.Click += new ButtonBase.ButtonEventHandler (DisableFan_Click);
+			toggleSwitch = toggleSwitchFactory.GenerateGivenTextWidget (fanToggleSwitchText,"On","Off", fanActive);		
+			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;		
+			toggleSwitch.valueChanged += new EventHandler (ToggleSwitch_Click);
 
-			enableFanButton = textImageButtonFactory.Generate ("Enable Fan", centerText: true);
-			enableFanButton.Click += new ButtonBase.ButtonEventHandler (EnableFan_Click);
+			leftToRight.AddChild (fanToggleSwitchText);
+			leftToRight.AddChild(new HorizontalSpacer());
+			leftToRight.AddChild(toggleSwitch);
 
-			leftToRight.AddChild (disableFanButton);
-			leftToRight.AddChild (enableFanButton);
-
-			setFanButtonVisiblity ();
+			leftToRight.Width = 200;
 
             return leftToRight;
         }
-
-        void FanSpeedChanged_Event(object sender, EventArgs e)
-        {
-            int printerFanSpeed = PrinterConnectionAndCommunication.Instance.FanSpeed0To255;
-
-            fanSpeedDisplay.SetDisplayString(((int)(printerFanSpeed * 100.5 / 255)).ToString());
-			setFanButtonVisiblity ();
-        }
-
-		void DisableFan_Click(object sender, MouseEventArgs mouseEvent)
+						
+		void ToggleSwitch_Click(object sender, EventArgs e)
 		{
-			PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 0;
-		}
-
-		void EnableFan_Click(object sender, MouseEventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 255;
-		}
-
-		void setFanButtonVisiblity()
-		{
-			bool disableVisible = (PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0);
-			disableFanButton.Visible = disableVisible;
-			enableFanButton.Visible = !disableVisible;
+			ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
+			if (toggleSwitch.getValue ()) 
+			{
+				PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 255;
+			}
+			else
+			{
+				PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 0;
+			}
 		}
     }
 }
