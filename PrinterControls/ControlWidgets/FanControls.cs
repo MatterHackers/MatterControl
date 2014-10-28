@@ -78,14 +78,7 @@ namespace MatterHackers.MatterControl.PrinterControls
             this.AddChild(fanControlsGroupBox);
         }
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
+
         
         private GuiWidget CreateFanControls()
         {
