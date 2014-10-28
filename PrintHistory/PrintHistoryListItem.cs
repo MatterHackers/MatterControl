@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
    
 
-    public class PrintHistoryListItem : FlowLayoutWidget
+    public class PrintHistoryListItem : GuiWidget
     {        
         public PrintTask printTask;
         public RGBA_Bytes WidgetTextColor;
@@ -66,12 +66,13 @@ namespace MatterHackers.MatterControl.PrintHistory
         bool showTimestamp;
         TextWidget partLabel;        
         public CheckBox selectionCheckBox;
-        FlowLayoutWidget buttonContainer;
-        SlideWidget actionButtonContainer;
+        
+        SlideWidget rightButtonOverlay;
+
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
         public PrintHistoryListItem(PrintTask printTask, bool showTimestamp)
-        {            
+        {
             this.printTask = printTask;
             this.showTimestamp = showTimestamp;
             SetDisplayAttributes();
@@ -81,6 +82,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         void AddChildElements()
         {
+            GuiWidget mainContainer = new GuiWidget();
+            mainContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+            mainContainer.VAnchor = VAnchor.ParentBottomTop;
+
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             {
                 GuiWidget indicator = new GuiWidget();
@@ -115,7 +120,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                 RGBA_Bytes timeTextColor = new RGBA_Bytes(34, 34, 34);
 
-                buttonContainer = new FlowLayoutWidget();
+                FlowLayoutWidget buttonContainer = new FlowLayoutWidget();
                 buttonContainer.Margin = new BorderDouble(0);
                 buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 {
@@ -148,20 +153,31 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                     buttonContainer.AddChild(timeLabel);
                     buttonContainer.AddChild(timeIndicator);
-                    buttonContainer.AddChild(new HorizontalSpacer());                    
+                    buttonContainer.AddChild(new HorizontalSpacer());
                     middleColumn.AddChild(buttonContainer);
                 }
 
-                this.AddChild(indicator);
-                this.AddChild(middleColumn);
+                GuiWidget primaryContainer = new GuiWidget();
+                primaryContainer.HAnchor = HAnchor.ParentLeftRight;
+                primaryContainer.VAnchor = VAnchor.ParentBottomTop;
 
-
-                actionButtonContainer = new SlideWidget();
-                actionButtonContainer.VAnchor = VAnchor.ParentBottomTop;
-                actionButtonContainer.Width = 200;
-                actionButtonContainer.Visible = false;
                 
-                FlowLayoutWidget rightMiddleColumnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
+                FlowLayoutWidget primaryFlow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+                primaryFlow.HAnchor = HAnchor.ParentLeftRight;
+                primaryFlow.VAnchor = VAnchor.ParentBottomTop;
+
+                primaryFlow.AddChild(indicator);
+                primaryFlow.AddChild(middleColumn);
+
+                primaryContainer.AddChild(primaryFlow);
+
+                rightButtonOverlay = new SlideWidget();
+                rightButtonOverlay.VAnchor = VAnchor.ParentBottomTop;
+                rightButtonOverlay.HAnchor = Agg.UI.HAnchor.ParentRight;
+                rightButtonOverlay.Width = 200;
+                rightButtonOverlay.Visible = false;
+                
+                FlowLayoutWidget rightMiddleColumnContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
                 rightMiddleColumnContainer.VAnchor = VAnchor.ParentBottomTop;
                 {
                     ClickWidget viewButton = new ClickWidget();
@@ -172,7 +188,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                     TextWidget viewLabel = new TextWidget("View".Localize());
                     viewLabel.TextColor = RGBA_Bytes.White;
                     viewLabel.VAnchor = VAnchor.ParentCenter;
-                    viewLabel.HAnchor = HAnchor.ParentCenter;                    
+                    viewLabel.HAnchor = HAnchor.ParentCenter;
 
                     viewButton.AddChild(viewLabel);
                     viewButton.Click += ViewButton_Click;
@@ -198,10 +214,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 
                 }
-                actionButtonContainer.AddChild(rightMiddleColumnContainer);
-
+                rightButtonOverlay.AddChild(rightMiddleColumnContainer);
                 
-
                 if (showTimestamp)
                 {
                     FlowLayoutWidget timestampColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -259,10 +273,14 @@ namespace MatterHackers.MatterControl.PrintHistory
                     timestampColumn.AddChild(startTimeContainer);
 
                     timestampColumn.Width = 220;
-                    this.AddChild(timestampColumn);                    
+
+                    primaryFlow.AddChild(timestampColumn);
                 }
 
-                this.AddChild(actionButtonContainer);
+                mainContainer.AddChild(primaryContainer);
+                mainContainer.AddChild(rightButtonOverlay);
+
+                this.AddChild(mainContainer);
             }
         }
 
@@ -270,7 +288,7 @@ namespace MatterHackers.MatterControl.PrintHistory
         {
             linkButtonFactory.fontSize = 10;            
             this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            this.Height = 70;
+            this.Height = 50;
             this.BackgroundColor = this.WidgetBackgroundColor;
             this.Padding = new BorderDouble(0);
             this.Margin = new BorderDouble(6, 0, 6, 6);
@@ -366,12 +384,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         void HistoryItem_MouseLeaveBounds(object sender, EventArgs e)
         {            
-            actionButtonContainer.SlideOut();
+            rightButtonOverlay.SlideOut();
         }
 
         void HistoryItem_MouseEnterBounds(object sender, EventArgs e)
         {
-            actionButtonContainer.SlideIn();
+            rightButtonOverlay.SlideIn();
         }
 
 
