@@ -189,6 +189,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
             }
 
+            AddDefaultIfNotPresent(postStartGCode, "T0", postStartGCodeLines, "set the active extruder to 0");
             AddDefaultIfNotPresent(postStartGCode, "G90", postStartGCodeLines, "use absolute coordinates");
             postStartGCode.Add(string.Format("{0} ; {1}", "G92 E0", "reset the expected extruder position"));
             AddDefaultIfNotPresent(postStartGCode, "M82", postStartGCodeLines, "use absolute distance for extrusion");
