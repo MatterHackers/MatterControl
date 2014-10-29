@@ -522,6 +522,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
         {
+            // Hard-coded processing rule to avoid changing the SelectedIndex when clicks occur
+            // with the thumbnail region - aka the first 55 pixels
+            if (mouseEvent.X < 56) return;
+
             GuiWidget widgetClicked = ((GuiWidget)sender);
             for (int index = 0; index < topToBottomItemList.Children.Count; index++)
             {
