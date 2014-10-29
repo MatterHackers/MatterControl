@@ -114,7 +114,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void Clear3DGCode(object sender, EventArgs e)
         {
-            if (gcodeViewWidget != null)
+            if (gcodeViewWidget != null
+                && gcodeViewWidget.gCodeRenderer != null)
             {
                 gcodeViewWidget.gCodeRenderer.Clear3DGCode();
                 gcodeViewWidget.Invalidate();
