@@ -139,9 +139,6 @@ Advanced
       Outlines
         repair_outlines_extensive_stitching
         repair_outlines_keep_open
-      Overlaps
-        repair_overlaps_reverse_orientation
-        repair_overlaps_union_all_together
     Notes
       Notes
         notes
