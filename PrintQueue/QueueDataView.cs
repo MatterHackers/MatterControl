@@ -358,17 +358,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 if (index == SelectedIndex)
                 {
-                    // When not in editmode, keep updating the SelectedItems list to contain the current object. This insures
-                    // that when toggle to editmode occurs, the active selection appears checked.
-                    this.SelectedItems.Clear();
-                    this.SelectedItems.Add(queueRowItem);
-
-                    queueRowItem.selectionCheckBox.Checked = true;
-                    queueRowItem.isSelectedItem = true;
-
-
-
-
                     if (!PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
                     {
                         queueRowItem.isActivePrint = true;
@@ -522,6 +511,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
         {
+            // Hard-coded processing rule to avoid changing the SelectedIndex when clicks occur
+            // with the thumbnail region - aka the first 55 pixels
+            if (mouseEvent.X < 56) return;
+
             GuiWidget widgetClicked = ((GuiWidget)sender);
             for (int index = 0; index < topToBottomItemList.Children.Count; index++)
             {
