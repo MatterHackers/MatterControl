@@ -86,6 +86,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         SlideWidget actionButtonContainer;
 		GuiWidget selectionCheckBoxContainer;
 		public CheckBox selectionCheckBox;
+        ConditionalClickWidget conditionalClickContainer;
 
         public bool IsHoverItem
         {
@@ -186,11 +187,18 @@ namespace MatterHackers.MatterControl.PrintQueue
                 editControls.Visible = false;
             }
 
+            // The ConditionalClickWidget supplies a user driven Enabled property based on a delegate of your choosing
+            conditionalClickContainer = new ConditionalClickWidget(() => queueDataView.EditMode);
+            conditionalClickContainer.HAnchor = HAnchor.ParentLeftRight;
+            conditionalClickContainer.VAnchor = VAnchor.ParentBottomTop;
+            conditionalClickContainer.Click += onLibraryItemClick;
+
             topToBottomLayout.AddChild(topContentsFlowLayout);
             this.AddChild(topToBottomLayout);
 
             actionButtonContainer = getItemActionButtons();
             actionButtonContainer.Visible = false;
+            this.AddChild(conditionalClickContainer);
 
             this.AddChild(actionButtonContainer);
 
