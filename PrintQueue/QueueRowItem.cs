@@ -590,6 +590,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
                 this.partLabel.TextColor = RGBA_Bytes.White;
+                this.partStatus.TextColor = RGBA_Bytes.White;
                 this.selectionCheckBox.TextColor = RGBA_Bytes.White;
             }
             else if (this.IsHoverItem)
@@ -600,6 +601,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                 this.BackgroundColor = RGBA_Bytes.White;
                 this.partLabel.TextColor = RGBA_Bytes.Black;
                 this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+                this.partStatus.TextColor = RGBA_Bytes.Black;
+
 
                 graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
             }
@@ -608,7 +611,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                 this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
                 SetTextColors(RGBA_Bytes.Black);
                 this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
-			}
+                this.partStatus.TextColor = RGBA_Bytes.Black;
+            }
         }
     }
 }
