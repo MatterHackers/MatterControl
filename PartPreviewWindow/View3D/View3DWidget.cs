@@ -940,43 +940,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     AddMaterialControls(materialOptionContainer);
                 }
 
-#if false // this is not finished yet so it is in here for reference in case we do finish it. LBB 2014/04/04
-                // put in the part info display
-                if(false)
-                {
-					CheckBox expandPartInfoOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Part Info"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-                    expandPartInfoOptions.Margin = new BorderDouble(bottom: 2);
-                    buttonRightPanel.AddChild(expandPartInfoOptions);
-
-                    FlowLayoutWidget PartInfoOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                    PartInfoOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-                    PartInfoOptionContainer.Visible = false;
-                    buttonRightPanel.AddChild(PartInfoOptionContainer);
-
-                    expandPartInfoOptions.CheckedStateChanged += (object sender, EventArgs e) =>
-                    {
-                        PartInfoOptionContainer.Visible = expandPartInfoOptions.Checked;
-                    };
-
-                    PartInfoOptionContainer.Margin = new BorderDouble(8, 3);
-					string sizeInfoLabel = LocalizedString.Get("Size");
-					string sizeInfoLabelFull = "{0}:".FormatWith(sizeInfoLabel);
-					TextWidget sizeInfo = new TextWidget(sizeInfoLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
-                    PartInfoOptionContainer.AddChild(sizeInfo);
-                    TextWidget xSizeInfo = new TextWidget("  x 10.1", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-                    xSizeInfo.AutoExpandBoundsToText = true;
-                    PartInfoOptionContainer.AddChild(xSizeInfo);
-
-                    TextWidget ySizeInfo = new TextWidget("  y 10.1", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-                    ySizeInfo.AutoExpandBoundsToText = true;
-                    PartInfoOptionContainer.AddChild(ySizeInfo);
-
-                    TextWidget zSizeInfo = new TextWidget("  z 100.1", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-                    zSizeInfo.AutoExpandBoundsToText = true;
-                    PartInfoOptionContainer.AddChild(zSizeInfo);
-                }
-#endif
-
                 // put in the view options
                 {
                     expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Display"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
@@ -1668,13 +1631,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         drawEvent.graphics2D.Rectangle(widget.LocalBounds, RGBA_Bytes.Black);
                     }
                 };
-                colorSwatch.BackgroundColor = meshViewerWidget.GetMaterialColor(extruderIndexLocal+1);
+                colorSwatch.BackgroundColor = MeshViewerWidget.GetMaterialColor(extruderIndexLocal+1);
                 Button swatchButton = new Button(0, 0, colorSwatch);
                 swatchButton.Click += (sender, e) =>
                 {
                     nextColor++;
                     RGBA_Bytes color = SelectionColors[nextColor % SelectionColors.Length];
-                    meshViewerWidget.SetMaterialColor(extruderIndexLocal+1, color);
+                    MeshViewerWidget.SetMaterialColor(extruderIndexLocal+1, color);
                     colorSwatch.BackgroundColor = color;
                 };
                 colorSelectionContainer.AddChild(swatchButton);
