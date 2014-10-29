@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //this.AddChild(GetSliceEngineContainer());
 
             int numberOfHeatedExtruders = 1;
-            if (ActiveSliceSettings.Instance.GetActiveValue("extruders_share_temperature") == "0")
+            if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
             {
                 numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
             }
