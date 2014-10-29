@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
 				editButtonFactory.pressedTextColor = RGBA_Bytes.White;
 				editButtonFactory.borderWidth = 0;
-				editButtonFactory.FixedWidth = 50;
+				editButtonFactory.FixedWidth = 60;
                 
                 this.AnchorAll();
                 this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -105,13 +105,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Button enterLeaveEditModeButton;
 				if (!this.editMode)
 				{
-					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Edit"), clickEvent:EditModeOnLink_Click);
-
+					enterLeaveEditModeButton = editButtonFactory.Generate (LocalizedString.Get ("Edit"));
+					enterLeaveEditModeButton.Click += EditModeOnLink_Click;
 
 				}
 				else
 				{
-					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Done"), clickEvent:EditModeOffLink_Click);
+					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Done"));
+					enterLeaveEditModeButton.Click += EditModeOffLink_Click;
 
 				}
 

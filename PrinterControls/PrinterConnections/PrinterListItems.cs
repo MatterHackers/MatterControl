@@ -42,14 +42,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {            
             this.Margin = new BorderDouble(1);
             this.BackgroundColor = this.defaultBackgroundColor;
-            this.Padding = new BorderDouble(5);            
-            
+            this.Padding = new BorderDouble(0); 
+		
             string[] comportNames = FrostedSerialPort.GetPortNames();
             bool portIsAvailable = comportNames.Contains(printerRecord.ComPort);
 
             printerName = new TextWidget(this.printerRecord.Name);
             printerName.TextColor = this.defaultTextColor;
             printerName.HAnchor = HAnchor.ParentLeftRight;
+			printerName.Margin = new BorderDouble (5, 10, 5, 10);
 
 			string availableText = LocalizedString.Get("Unavailable");
             RGBA_Bytes availableColor = new RGBA_Bytes(158, 18, 0);
@@ -72,8 +73,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             TextWidget availableIndicator = new TextWidget(availableText, pointSize: 10);
             availableIndicator.TextColor = availableColor;
             availableIndicator.Padding = new BorderDouble(3, 0, 0, 3);
+			availableIndicator.Margin = new BorderDouble (right: 5);
             availableIndicator.VAnchor = Agg.UI.VAnchor.ParentCenter;
-
 
             this.AddChild(printerName);
             this.AddChild(availableIndicator);
@@ -128,8 +129,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
     {
         TextWidget printerName;
 
-        LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-        
         RGBA_Bytes defaultBackgroundColor = new RGBA_Bytes(250,250,250);
         RGBA_Bytes hoverBackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
@@ -140,25 +139,24 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public PrinterListItemEdit(Printer printerRecord, ConnectionWindow windowController)
             :base(printerRecord, windowController)
         {            
-            linkButtonFactory.fontSize = 10;
-            linkButtonFactory.padding = 0;
-            linkButtonFactory.margin = new BorderDouble(3, 0);
-            
+
             this.printerRecord = printerRecord;
             this.Margin = new BorderDouble(1);
             this.BackgroundColor = this.defaultBackgroundColor;
-            this.Padding = new BorderDouble(5);
+            this.Padding = new BorderDouble(0); 
             this.HAnchor = HAnchor.ParentLeftRight;
 
             printerName = new TextWidget(this.printerRecord.Name);
             printerName.TextColor = this.defaultTextColor;
+			printerName.Margin = new BorderDouble (5, 10, 5, 10);
             printerName.HAnchor = HAnchor.ParentLeftRight;
-
 
             this.AddChild(printerName);
 
 			this.rightButtonOverlay = getItemActionButtons();
+			this.rightButtonOverlay.Padding = new BorderDouble(0);
 			this.rightButtonOverlay.Visible = true;
+
 
 			this.AddChild(rightButtonOverlay);
             
@@ -177,8 +175,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			ClickWidget removeButton = new ClickWidget();
 			removeButton.VAnchor = VAnchor.ParentBottomTop;
 			removeButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-			removeButton.Width = 60;
-
+			removeButton.Width = 80;
+	
 			TextWidget printLabel = new TextWidget("Remove".Localize());
 			printLabel.TextColor = RGBA_Bytes.White;
 			printLabel.VAnchor = VAnchor.ParentCenter;
@@ -190,7 +188,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			ClickWidget editButton = new ClickWidget();
 			editButton.VAnchor = VAnchor.ParentBottomTop;
 			editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-			editButton.Width = 60;
+			editButton.Width = 80;
 
 
 			TextWidget editLabel = new TextWidget("Edit".Localize());
@@ -201,12 +199,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			editButton.AddChild(editLabel);
 			editButton.Click += EditConnectionLink_Click;
 
-
 			buttonFlowContainer.AddChild(editButton);
 			buttonFlowContainer.AddChild(removeButton);
 
 			buttonContainer.AddChild(buttonFlowContainer);
-			buttonContainer.Width = 120;
+			buttonContainer.Width = 160;
 
 			return buttonContainer;
 		}
