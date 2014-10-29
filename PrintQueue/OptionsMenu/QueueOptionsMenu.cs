@@ -89,7 +89,6 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             menuItems = new TupleList<string, Func<bool>>();
 			menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Design"), null));
-            menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Import from Zip"), importQueueFromZipMenu_Click));
             menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click));
             menuItems.Add(new Tuple<string,Func<bool>>("GCode", null));
             menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click));
@@ -264,12 +263,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             project.SaveAs();
         }
 
-        bool importQueueFromZipMenu_Click()
-        {
-            UiThread.RunOnIdle(ImportQueueFromZipMenuOnIdle);
-            return true;
-        }
-
         bool loadFilesFromSDButton_Click()
         {
             QueueData.Instance.LoadFilesFromSD();
@@ -282,22 +275,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             QueueData.Instance.RemoveAllSdCardFiles();
             PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M22"); // (Release SD card)
             return true;
-        }
-
-        void ImportQueueFromZipMenuOnIdle(object state)
-        {
-            ProjectFileHandler project = new ProjectFileHandler(null);
-            throw new NotImplementedException();
-#if false
-            List<PrintItem> partFiles = project.OpenFromDialog();
-            if (partFiles != null)
-            {                
-                foreach (PrintItem part in partFiles)
-                {
-                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
-                }
-            }
-#endif
         }
 
 		bool removeAllFromQueueButton_Click()
