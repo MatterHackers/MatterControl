@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrinterControls
             RGBA_Bytes separatorLineColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
 
             int numberOfHeatedExtruders = 1;
-            if (ActiveSliceSettings.Instance.GetActiveValue("extruders_share_temperature") == "0")
+            if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
             {
                 numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
             }

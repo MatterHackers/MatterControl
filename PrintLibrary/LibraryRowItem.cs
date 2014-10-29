@@ -161,7 +161,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
                 primaryContainer.AddChild(primaryFlow);
 
-                primaryClickContainer = new ClickWidget();
+                // The ConditionalClickWidget supplies a user driven Enabled property based on a delegate of your choosing
+                primaryClickContainer = new ConditionalClickWidget(() => libraryDataView.EditMode);
                 primaryClickContainer.HAnchor = HAnchor.ParentLeftRight;
                 primaryClickContainer.VAnchor = VAnchor.ParentBottomTop;
 
@@ -178,7 +179,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             AddHandlers();
         }
 
-        ClickWidget primaryClickContainer;
+        ConditionalClickWidget primaryClickContainer;
 
         SlideWidget getItemActionButtons()
         {

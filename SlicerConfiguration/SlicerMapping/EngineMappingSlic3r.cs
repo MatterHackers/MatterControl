@@ -71,8 +71,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     hideItems.Add("raft_air_gap");
                     hideItems.Add("repair_outlines_extensive_stitching");
                     hideItems.Add("repair_outlines_keep_open");
-                    hideItems.Add("repair_overlaps_reverse_orientation");
-                    hideItems.Add("repair_overlaps_union_all_together");
                     hideItems.Add("complete_objects");
                     hideItems.Add("output_filename_format");
                     hideItems.Add("post_process");

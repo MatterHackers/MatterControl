@@ -99,8 +99,6 @@ retract_restart_extra|Extra Length On Restart|POSITIVE_DOUBLE|mm|The amount of e
 retract_speed|Speed|POSITIVE_DOUBLE|mm/s|The speed that the filament will be retracted (and re-extruded).
 repair_outlines_extensive_stitching|Connect Bad Edges|CHECK_BOX||Try to connect mesh edges when the actual mesh data is not all the way connected.
 repair_outlines_keep_open|Close Polygons|CHECK_BOX||Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
-repair_overlaps_reverse_orientation|Reverse Orientation|CHECK_BOX||Reverse the orientation of overlaps. This can make some unintended holes go away.
-repair_overlaps_union_all_together|Merge All|CHECK_BOX||Make all overlap areas into one big area. This can make some unintended holes go away..
 resolution|Resolution|POSITIVE_DOUBLE|mm|The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
 skirt_distance|Distance from Object|POSITIVE_DOUBLE|mm|The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
 skirt_height|Skirt Height|INT|layers|The number of layers to draw the skirt.

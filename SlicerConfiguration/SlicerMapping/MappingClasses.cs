@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 
             int numberOfHeatedExtruders = 1;
-            if (ActiveSliceSettings.Instance.GetActiveValue("extruders_share_temperature") == "0")
+            if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
             {
                 numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
             }
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             postStartGCode.Add("; automatic settings after start_gcode");
 
             int numberOfHeatedExtruders = 1;
-            if (ActiveSliceSettings.Instance.GetActiveValue("extruders_share_temperature") == "0")
+            if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
             {
                 numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
             }
