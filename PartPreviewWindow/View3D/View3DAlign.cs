@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
             }
 
-#if true
+            // now put all the meshes into just one group
             MeshGroup meshGroupWeAreKeeping = asynchMeshGroups[SelectedMeshGroupIndex];
             for (int meshGroupToMoveIndex = asynchMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
             {
@@ -145,7 +145,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 currentRatioDone += ratioPerMeshGroup;
             }
-#endif
         }
 
         void alignSelectedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
