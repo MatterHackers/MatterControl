@@ -443,7 +443,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                                 meshSelectInfo.downOnPart = false;
 
                                 ScaleRotateTranslate translated = SelectedMeshGroupTransform;
-                                translated.translation *= transformOnMouseDown;
+                                translated.translation = transformOnMouseDown;
                                 SelectedMeshGroupTransform = translated;
 
                                 Invalidate();
