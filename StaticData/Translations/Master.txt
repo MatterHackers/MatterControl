@@ -2795,3 +2795,6 @@ Translated:Preparing Meshes
 English:Grouping Meshes
 Translated:Grouping Meshes
 
+English:No COM ports available
+Translated:No COM ports available
+
