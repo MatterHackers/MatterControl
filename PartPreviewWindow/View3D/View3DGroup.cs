@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public partial class View3DWidget
     {
-        void GroupSelectedMeshGroup()
+        void GroupSelectedMeshs()
         {
             if (MeshGroups.Count > 0)
             {
@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 createDiscreteMeshesBackgroundWorker.WorkerReportsProgress = true;
 
                 createDiscreteMeshesBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
-                createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ungroupSelectedBackgroundWorker_RunWorkerCompleted);
-                createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(ungroupSelectedBackgroundWorker_DoWork);
+                createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(groupSelectedBackgroundWorker_RunWorkerCompleted);
+                createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(groupSelectedBackgroundWorker_DoWork);
 
                 createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
             }
@@ -70,6 +70,62 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
             PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
+
+            for (int i = 0; i < asynchMeshGroups.Count; i++)
+            {
+                asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
+
+                int nextPercent = (i + 1) * 40 / asynchMeshGroups.Count;
+                backgroundWorker.ReportProgress(nextPercent);
+            }
+
+            DoGroup(backgroundWorker);
+        }
+
+
+        private void DoGroup(BackgroundWorker backgroundWorker)
+        {
+            MeshGroup meshGroupWeAreKeeping = asynchMeshGroups[SelectedMeshGroupIndex];
+            for (int meshGroupToMoveIndex = asynchMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
+            {
+                MeshGroup meshGroupToMove = asynchMeshGroups[meshGroupToMoveIndex];
+                if (meshGroupToMove != meshGroupWeAreKeeping)
+                {
+                    for (int moveIndex = 0; moveIndex < meshGroupToMove.Meshes.Count; moveIndex++)
+                    {
+                        Mesh mesh = meshGroupToMove.Meshes[moveIndex];
+                        meshGroupWeAreKeeping.Meshes.Add(mesh);
+                    }
+
+                    asynchMeshGroups.RemoveAt(meshGroupToMoveIndex);
+                    asynchMeshGroupTransforms.RemoveAt(meshGroupToMoveIndex);
+                }
+                else
+                {
+                    asynchMeshGroupTransforms[meshGroupToMoveIndex] = ScaleRotateTranslate.Identity();
+                }
+            }
+
+            asynchPlatingDatas.Clear();
+            double ratioPerMeshGroup = 1.0 / asynchMeshGroups.Count;
+            double currentRatioDone = 0;
+            for (int i = 0; i < asynchMeshGroups.Count; i++)
+            {
+                PlatingMeshGroupData newInfo = new PlatingMeshGroupData();
+                asynchPlatingDatas.Add(newInfo);
+
+                MeshGroup meshGroup = asynchMeshGroups[i];
+
+                // create the selection info
+                PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
+                {
+                    continueProcessing = true;
+                    int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
+                    backgroundWorker.ReportProgress(nextPercent);
+                });
+
+                currentRatioDone += ratioPerMeshGroup;
+            }
         }
 
         void groupSelectedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

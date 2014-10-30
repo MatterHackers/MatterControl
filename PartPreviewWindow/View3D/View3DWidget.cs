@@ -386,6 +386,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         UngroupSelectedMeshGroup();
                     };
 
+                    Button groupButton = textImageButtonFactory.Generate(LocalizedString.Get("Group"));
+                    doEdittingButtonsContainer.AddChild(groupButton);
+                    groupButton.Click += (sender, e) =>
+                    {
+                        GroupSelectedMeshs();
+                    };
+
                     Button alignButton = textImageButtonFactory.Generate(LocalizedString.Get("Align"));
                     doEdittingButtonsContainer.AddChild(alignButton);
                     alignButton.Click += (sender, e) =>

@@ -425,6 +425,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void NextButton_Click(object sender, EventArgs mouseEvent)
         {
+			if(printerNameInput.Text == "Default Printer ({0})".FormatWith(ExistingPrinterCount() + 1))
+			{
+				printerNameInput.Text = String.Format ("{0} {1} ({2})", this.ActivePrinter.Make, this.ActivePrinter.Model, ExistingPrinterCount () + 1); 
+			}
             bool canContinue = this.OnSave();
             if (canContinue)
             {
@@ -432,6 +436,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 UiThread.RunOnIdle(MoveToNextWidget);
             }
         }
+
+		public int ExistingPrinterCount()
+		{
+			string query = string.Format("SELECT COUNT(*) FROM Printer;");
+			string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
+			return Convert.ToInt32(result);
+		}
 			
         void LoadSlicePresets()
         {

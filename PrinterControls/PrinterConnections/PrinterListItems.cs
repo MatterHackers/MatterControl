@@ -166,6 +166,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		SlideWidget getItemActionButtons()
 		{
+			int buttonWidth;
+			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			{
+				buttonWidth = 120;
+			}
+			else
+			{
+				buttonWidth = 80;
+			}
+
 			SlideWidget buttonContainer = new SlideWidget();
 			buttonContainer.VAnchor = VAnchor.ParentBottomTop;
 
@@ -175,7 +185,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			ClickWidget removeButton = new ClickWidget();
 			removeButton.VAnchor = VAnchor.ParentBottomTop;
 			removeButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-			removeButton.Width = 80;
+			removeButton.Width = buttonWidth;
 	
 			TextWidget printLabel = new TextWidget("Remove".Localize());
 			printLabel.TextColor = RGBA_Bytes.White;
@@ -188,8 +198,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			ClickWidget editButton = new ClickWidget();
 			editButton.VAnchor = VAnchor.ParentBottomTop;
 			editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-			editButton.Width = 80;
-
+			editButton.Width = buttonWidth;
 
 			TextWidget editLabel = new TextWidget("Edit".Localize());
 			editLabel.TextColor = RGBA_Bytes.White;
@@ -203,7 +212,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			buttonFlowContainer.AddChild(removeButton);
 
 			buttonContainer.AddChild(buttonFlowContainer);
-			buttonContainer.Width = 160;
+			buttonContainer.Width = buttonWidth*2;
 
 			return buttonContainer;
 		}
