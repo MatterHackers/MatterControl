@@ -196,5 +196,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.SwitchToPage(layerView);
 			viewGcodeBasic.Focus();
 		}
+
+		event EventHandler unregisterEvents;
+		private void AddHandlers()
+		{
+			partPreviewView.Closed += (sender, e) => { Close(); };
+			viewGcodeBasic.Closed += (sender, e) => { Close(); };
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
 	}
 }
