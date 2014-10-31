@@ -36,6 +36,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Agg;
@@ -344,8 +345,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" 
-                    || extension == ".AMF"
+                if (MeshFileIo.ValidFileExtensions().Contains(extension)
                     || extension == ".GCODE")
                 {
                     fileDropEventArgs.AcceptDrop = true;
@@ -359,8 +359,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" 
-                    || extension == ".AMF"
+                if (MeshFileIo.ValidFileExtensions().Contains(extension)
                     || extension == ".GCODE")
                 {
                     fileDropEventArgs.AcceptDrop = true;
@@ -374,8 +373,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (extension == ".STL" 
-                    || extension == ".AMF"
+                if (MeshFileIo.ValidFileExtensions().Contains(extension)
                     || extension == ".GCODE")
                 {
                     PrintItem printItem = new PrintItem();

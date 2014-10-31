@@ -39,6 +39,7 @@ using System.Collections.Generic;
 
 using ICSharpCode.SharpZipLib.Zip;
 
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -301,9 +302,10 @@ namespace MatterHackers.MatterControl
                         continue;           // Ignore directories
                     }
 
+                    string sourceExtension = Path.GetExtension(zipEntry.Name).ToUpper();
                     if (zipEntry.Name == "manifest.json"
-                        || Path.GetExtension(zipEntry.Name).ToUpper() == ".STL"
-                        || Path.GetExtension(zipEntry.Name).ToUpper() == ".GCODE")
+                        || MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+                        || sourceExtension == ".GCODE")
                     {
                         string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
 

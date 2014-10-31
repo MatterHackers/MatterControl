@@ -34,6 +34,7 @@ using System.Linq;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
@@ -503,8 +504,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" 
-                    || extension == ".AMF"
+                if (MeshFileIo.ValidFileExtensions().Contains(extension)
                     || extension == ".GCODE" 
                     || extension == ".ZIP")
                 {
@@ -519,8 +519,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string file in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(file).ToUpper();
-                if (extension == ".STL" 
-                    || extension == ".AMF"
+                if (MeshFileIo.ValidFileExtensions().Contains(extension)
                     || extension == ".GCODE" 
                     || extension == ".ZIP")
                 {
@@ -535,8 +534,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
             {
                 string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (extension == ".STL" 
-                    || extension == ".AMF"
+                if (MeshFileIo.ValidFileExtensions().Contains(extension)
                     || extension == ".GCODE")
                 {
                     QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));

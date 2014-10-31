@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Text;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -11,10 +10,10 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 
@@ -360,7 +359,8 @@ namespace MatterHackers.MatterControl
 					x3gPathAndFilenameToSave += ".x3g";
 				}
 
-				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
+                string saveExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+                if (MeshFileIo.ValidFileExtensions().Contains(saveExtension))
 				{
 					Close();
 					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
