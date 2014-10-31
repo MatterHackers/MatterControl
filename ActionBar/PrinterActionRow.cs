@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl.ActionBar
             }
             connectPrinterButton.VAnchor = VAnchor.ParentTop;
             connectPrinterButton.Cursor = Cursors.Hand;
+            connectPrinterButton.Visible = !PrinterConnectionAndCommunication.Instance.PrinterIsConnected;
 
             string disconnectString = "Disconnect".Localize().ToUpper();
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
@@ -84,7 +85,7 @@ namespace MatterHackers.MatterControl.ActionBar
                 disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
             }
             disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
-            disconnectPrinterButton.Visible = false;
+            disconnectPrinterButton.Visible = PrinterConnectionAndCommunication.Instance.PrinterIsConnected;
             disconnectPrinterButton.Cursor = Cursors.Hand;
 
             selectActivePrinterButton = new PrinterSelectButton();
