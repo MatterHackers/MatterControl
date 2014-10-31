@@ -1650,31 +1650,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
 
                 lineToWrite = lineToWrite.Split(';')[0].Trim();
-                if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd)
+                if (lineToWrite.Trim().Length > 0)
                 {
-                    // insert the command into the printing queue at the head
-                    if (printerCommandQueueIndex >= 0
-                        && printerCommandQueueIndex < loadedGCode.Count - 1)
+                    if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd)
                     {
-                        if (!loadedGCode.Instruction(printerCommandQueueIndex + 1).Line.Contains(lineToWrite))
+                        // insert the command into the printing queue at the head
+                        if (printerCommandQueueIndex >= 0
+                            && printerCommandQueueIndex < loadedGCode.Count - 1)
                         {
-                            loadedGCode.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.Instruction(printerCommandQueueIndex)));
+                            if (!loadedGCode.Instruction(printerCommandQueueIndex + 1).Line.Contains(lineToWrite))
+                            {
+                                loadedGCode.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.Instruction(printerCommandQueueIndex)));
+                            }
                         }
-                    }
-                }
-                else
-                {
-                    // sometimes we need to send code without buffering (like when we are closing the program).
-                    if (ForceImmediateWrites)
-                    {
-                        WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
                     }
                     else
                     {
-                        // try not to write the exact same command twice (like M105)
-                        if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
+                        // sometimes we need to send code without buffering (like when we are closing the program).
+                        if (ForceImmediateWrites)
                         {
-                            LinesToWriteQueue.Add(lineToWrite);
+                            WriteToPrinter(lineToWrite + "\r\n", lineToWrite);
+                        }
+                        else
+                        {
+                            // try not to write the exact same command twice (like M105)
+                            if (LinesToWriteQueue.Count == 0 || LinesToWriteQueue[LinesToWriteQueue.Count - 1] != lineToWrite)
+                            {
+                                LinesToWriteQueue.Add(lineToWrite);
+                            }
                         }
                     }
                 }

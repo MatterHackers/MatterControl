@@ -119,6 +119,7 @@
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
+    <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DCreateSelecitonData.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DAutoArange.cs" />

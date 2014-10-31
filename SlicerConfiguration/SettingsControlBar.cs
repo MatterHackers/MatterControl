@@ -63,6 +63,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 this.AddChild(new SliceEngineSelector("Slice Engine".Localize(), RGBA_Bytes.YellowGreen));
                 this.AddChild(new GuiWidget(8, 0));
             }
+            else
+            {
+                // Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
+                if (ActivePrinterProfile.Instance.ActiveSliceEngineType != ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
+                {
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+                }
+            }
+
             this.AddChild(new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality"));
             this.AddChild(new GuiWidget(8, 0));
 

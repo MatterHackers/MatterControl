@@ -33,7 +33,6 @@ namespace MatterHackers.MatterControl
         {
             StyledMessageBox messageBox = new StyledMessageBox(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, no);            
             messageBox.ShowAsSystemWindow();
-            
         }
 
         public StyledMessageBox(MessageBoxDelegate callback, String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string no)
@@ -198,7 +197,6 @@ namespace MatterHackers.MatterControl
             {
                 responseCallback(true);
             }
-            
         }
 
         void CloseOnIdle(object state)
