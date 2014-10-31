@@ -26,7 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
-
+#define NEW_TWO_COLUMN_MODE
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl
 {
     public class WidescreenPanel : FlowLayoutWidget
     {
+        static readonly int ColumnOneFixedWidth = 500;
+        static readonly int ColumnTheeFixedWidth = 590;
         static bool leftBorderLineHiden;
         static bool rightBorderLineHiden;
         static int lastNumberOfVisiblePanels;
@@ -183,7 +185,7 @@ namespace MatterHackers.MatterControl
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
             ColumnOne.AddChild(new PrintProgressBar());
             ColumnOne.AddChild(new FirstPanelTabView(queueDataView));
-            ColumnOne.Width = 500; //Ordering here matters - must go after children are added                      
+            ColumnOne.Width = ColumnOneFixedWidth; //Ordering here matters - must go after children are added
         }
 
         void LoadColumnTwo(object state = null)
@@ -191,6 +193,13 @@ namespace MatterHackers.MatterControl
             ColumnTwo.CloseAndRemoveAllChildren();
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+
+#if NEW_TWO_COLUMN_MODE
+            PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, true, View3DWidget.AutoRotate.Enabled, false);
+            partViewContent.AnchorAll();
+            
+            ColumnTwo.AddChild(partViewContent);
+#else
             part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 
                 new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), 
                 ActiveSliceSettings.Instance.BedCenter,
@@ -209,6 +218,8 @@ namespace MatterHackers.MatterControl
 
             ColumnTwo.AddChild(part3DView);
             ColumnTwo.AddChild(partGcodeView);
+#endif
+
             ColumnTwo.AnchorAll();
         }
 
@@ -219,7 +230,7 @@ namespace MatterHackers.MatterControl
             ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView();
             thirdPanelTabView.Name = "For - WideScreenPanel {0}".FormatWith(ColumnThreeCount++);
             ColumnThree.AddChild(thirdPanelTabView);
-            ColumnThree.Width = 590; //Ordering here matters - must go after children are added  
+            ColumnThree.Width = ColumnTheeFixedWidth; //Ordering here matters - must go after children are added  
         }
 
         int NumberOfVisiblePanels()
@@ -234,14 +245,6 @@ namespace MatterHackers.MatterControl
             }
             else
             {
-                if(LeftBorderLine != null
-                    && (LeftBorderLine.Hidden || RightBorderLine.Hidden))
-                {
-                    // If we are only showing 1 or 2 pannels (but are in wide mode),
-                    // return 2 so we don't resize as often.
-                    return 2;
-                }
-
                 return 3;
             }
         }
@@ -266,14 +269,21 @@ namespace MatterHackers.MatterControl
             switch (numberOfPanels)
             {
                 case 1:
-                    {
-                        ApplicationController.Instance.WidescreenMode = false;
-
-                        LoadCompactView();
-                    }
+                    ApplicationController.Instance.WidescreenMode = false;
+                    LoadCompactView();
                     break;
 
+#if NEW_TWO_COLUMN_MODE
                 case 2:
+                    ApplicationController.Instance.WidescreenMode = false;
+                    LoadCompactView();
+                    LoadColumnTwo();
+                    LoadColumnThree();
+                    break;
+#else
+                case 2:
+#endif
+
                 case 3:
                     ApplicationController.Instance.WidescreenMode = true;
 
@@ -286,7 +296,7 @@ namespace MatterHackers.MatterControl
 
             LeftBorderLine.Hidden = leftBorderLineHiden;
             RightBorderLine.Hidden = rightBorderLineHiden;
-            SetColumnVisibility(state);
+            SetColumnVisibility();
             RightBorderLine.SetDisplayState();
             LeftBorderLine.SetDisplayState();
 
@@ -314,9 +324,16 @@ namespace MatterHackers.MatterControl
 
                 case 2:
                     Padding = new BorderDouble(4);
-                    RightBorderLine.Visible = true;                    
                     ColumnOne.Visible = true;
-
+#if NEW_TWO_COLUMN_MODE
+                    LeftBorderLine.Visible = true;
+                    RightBorderLine.Visible = false;
+                    ColumnTwo.Visible = true;
+                    ColumnThree.Visible = false;
+                    ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                    ColumnOne.Width = ColumnTheeFixedWidth; // it can hold the slice settings so it needs to be bigger.
+#else
+                    RightBorderLine.Visible = true;                    
                     if (RightBorderLine.Hidden)
                     {
                         LeftBorderLine.Visible = true;
@@ -341,7 +358,9 @@ namespace MatterHackers.MatterControl
                         ColumnTwo.Visible = false;
                         ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;   
                     }
+#endif
                     break;
+
                 case 3:                    
                     //All three columns shown
                     Padding = new BorderDouble(4);                    
@@ -354,7 +373,7 @@ namespace MatterHackers.MatterControl
                     else
                     {
                         ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                        ColumnOne.Width = 500;
+                        ColumnOne.Width = ColumnOneFixedWidth;
                     }
 
                     ColumnOne.Visible = true;
