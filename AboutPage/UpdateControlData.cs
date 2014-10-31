@@ -117,10 +117,14 @@ namespace MatterHackers.MatterControl
         {
             get
             {
-                if (OsInformation.OperatingSystem == OSType.Mac)
-                {
-                    return "pkg";
-                }
+				if (OsInformation.OperatingSystem == OSType.Mac)
+				{
+					return "pkg";
+				}
+				else if (OsInformation.OperatingSystem == OSType.Android)
+				{
+					return "apk";
+				}
                 else
                 {
                     return "exe";
