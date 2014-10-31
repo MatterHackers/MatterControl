@@ -1339,15 +1339,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     return true;
                 }
             }
-            else if (CommunicationState == CommunicationStates.FailedToConnect)
-            {
-                connectThread.Join(JoinThreadTimeoutMs);
-                return false;
-            }
             else
             {
-                connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
-                OnConnectionSucceeded(null);
+                // If we're no longer in the .AttemptingToConnect state, shutdown the connection thread and fire the
+                // OnConnectonSuccess event if we're connected
+                connectThread.Join(JoinThreadTimeoutMs);
+
+                if(PrinterIsConnected)
+                {
+                    OnConnectionSucceeded(null);
+                }
+
                 return false;
             }
         }
