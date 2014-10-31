@@ -32,6 +32,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Agg.UI;
@@ -102,7 +103,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                 foreach (PrintItem part in allFilesToExport)
                 {
                     PrintItemWrapper printItemWrapper = new PrintItemWrapper(part);
-                    if (Path.GetExtension(part.FileLocation).ToUpper() == ".STL")
+                    string extension = Path.GetExtension(part.FileLocation).ToUpper();
+                    if (MeshFileIo.ValidFileExtensions().Contains(extension))
                     {
                         SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
                         printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
