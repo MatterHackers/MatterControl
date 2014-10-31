@@ -29,6 +29,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         Button nextButton;
 
+		bool usingDefaultName;
+
         public SetupStepMakeModelName(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinter = null)
             : base(windowController, containerWindowToClose, setupPrinter)
         {
@@ -54,6 +56,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             footerRow.AddChild(hSpacer);
             footerRow.AddChild(cancelButton);
 
+			usingDefaultName = true;
+
             SetElementState();
         }
 
@@ -78,6 +82,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             printerNameInput = new MHTextEditWidget(this.ActivePrinter.Name);
             printerNameInput.HAnchor = HAnchor.ParentLeftRight;
+			printerNameInput.KeyPressed += new KeyPressEventHandler(PrinterNameInput_KeyPressed);
 
 			printerNameError = new TextWidget(LocalizedString.Get("Give your printer a name."), 0, 0, 10);
 			printerNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -177,7 +182,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);            
             printerModelError.Visible = false;
             SetElementState();
+			if(usingDefaultName)
+			{
+				printerNameInput.Text = String.Format ("{0} {1} ({2})", this.ActivePrinter.Make, this.ActivePrinter.Model, ExistingPrinterCount () + 1); 
+			}
         }
+
+		private void PrinterNameInput_KeyPressed(object sender, KeyPressEventArgs e)
+		{
+			this.usingDefaultName = false;
+		}
 
         string defaultMaterialPreset;
         string defaultQualityPreset;
@@ -425,10 +439,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void NextButton_Click(object sender, EventArgs mouseEvent)
         {
-			if(printerNameInput.Text == "Default Printer ({0})".FormatWith(ExistingPrinterCount() + 1))
-			{
-				printerNameInput.Text = String.Format ("{0} {1} ({2})", this.ActivePrinter.Make, this.ActivePrinter.Model, ExistingPrinterCount () + 1); 
-			}
+
             bool canContinue = this.OnSave();
             if (canContinue)
             {
