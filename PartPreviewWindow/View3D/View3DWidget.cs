@@ -544,6 +544,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     EnterEditAndCreateSelectionData();
                 });
             }
+
+            // make sure the colors are set correctl
+            ThemeChanged(this, null);
         }
 
 		private void OpenExportWindow()
@@ -572,6 +575,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public void ThemeChanged(object sender, EventArgs e)
         {
             processingProgressControl.fillColor = ActiveTheme.Instance.PrimaryAccentColor;
+
+            MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
         }
 
         void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
@@ -1630,6 +1635,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                 };
 
+#if false // no color swatch for this build
                 GuiWidget colorSwatch = new GuiWidget(15,15);
                 colorSwatch.Draw += (sender, e) =>
                 {
@@ -1650,6 +1656,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     colorSwatch.BackgroundColor = color;
                 };
                 colorSelectionContainer.AddChild(swatchButton);
+#endif
 
                 buttonPanel.AddChild(colorSelectionContainer);
             }

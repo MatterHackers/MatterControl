@@ -160,6 +160,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public static string[] GetStlFileLocations(string fileToSlice)
         {
+            int extruderCount = ActiveSliceSettings.Instance.ExtruderCount;
             switch (Path.GetExtension(fileToSlice).ToUpper())
             {
                 case ".STL":
@@ -168,63 +169,54 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                 case ".AMF":
                     List<MeshGroup> meshGroups = MeshFileIo.Load(fileToSlice);
-                    List<MeshGroup> extruder1Group = new List<MeshGroup>();
-                    extruder1Group.Add(new MeshGroup());
-                    List<MeshGroup> extruder2Group = new List<MeshGroup>();
-                    extruder2Group.Add(new MeshGroup());
+                    List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
+                    for(int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+                    {
+                        extruderMeshGroups.Add(new MeshGroup());
+                    }
+                    int maxExtruderIndex = 0;
                     foreach (MeshGroup meshGroup in meshGroups)
                     {
                         foreach (Mesh mesh in meshGroup.Meshes)
                         {
-                            if (ActiveSliceSettings.Instance.ExtruderCount > 1)
+                            MeshMaterialData material = MeshMaterialData.Get(mesh);
+                            int extruderIndex = Math.Max(0, material.MaterialIndex-1);
+                            maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
+                            if(extruderIndex >= extruderCount)
                             {
-                                MeshMaterialData material = MeshMaterialData.Get(mesh);
-                                switch (material.MaterialIndex)
-                                {
-                                    case 1:
-                                        extruder1Group[0].Meshes.Add(mesh);
-                                        break;
-
-                                    case 2:
-                                        extruder2Group[0].Meshes.Add(mesh);
-                                        break;
-
-                                    default:
-                                        extruder1Group[0].Meshes.Add(mesh);
-                                        break;
-                                }
+                                extruderMeshGroups[0].Meshes.Add(mesh);
                             }
                             else
                             {
-                                extruder1Group[0].Meshes.Add(mesh);
+                                extruderMeshGroups[extruderIndex].Meshes.Add(mesh);
                             }
                         }
                     }
 
-                    string extruder1StlFileToSlice;
-                    if (ActiveSliceSettings.Instance.ExtruderCount > 1)
+                    List<string> extruderFilesToSlice = new List<string>();
+                    for (int i = 0; i < extruderMeshGroups.Count; i++ )
                     {
-                        extruder1StlFileToSlice = SaveAndGetFilenameForExtruder(extruder1Group, 1);
+                        MeshGroup meshGroup = extruderMeshGroups[i];
+                        List<int> materialsToInclude = new List<int>();
+                        materialsToInclude.Add(i+1);
+                        if (i == 0)
+                        {
+                            for (int j = extruderCount+1; j < maxExtruderIndex + 2; j++)
+                            {
+                                materialsToInclude.Add(j);
+                            }
+                        }
+
+                        extruderFilesToSlice.Add(SaveAndGetFilenameForMaterial(meshGroup, materialsToInclude));
                     }
-                    else
-                    {
-                        extruder1StlFileToSlice = SaveAndGetFilenameForExtruder(extruder1Group, -1);
-                    }
-                    if (extruder2Group.Count > 0
-                        && extruder2Group[0].Meshes != null
-                        && extruder2Group[0].Meshes.Count > 0)
-                    {
-                        string extruder2StlFileToSlice = SaveAndGetFilenameForExtruder(extruder2Group, 2);
-                        return new string[] { extruder1StlFileToSlice, extruder2StlFileToSlice };
-                    }
-                    return new string[] { extruder1StlFileToSlice };
+                    return extruderFilesToSlice.ToArray();
 
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private static string SaveAndGetFilenameForExtruder(List<MeshGroup> extruder1Group, int extruderIndex)
+        private static string SaveAndGetFilenameForMaterial(MeshGroup extruderMeshGroup, List<int> materialIndexsToSaveInThisSTL)
         {
             string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".stl");
             string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
@@ -234,9 +226,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 Directory.CreateDirectory(folderToSaveStlsTo);
             }
             MeshOutputSettings settings = new MeshOutputSettings();
-            settings.OnlySaveMaterialIndex = extruderIndex;
+            settings.MaterialIndexsToSave = materialIndexsToSaveInThisSTL;
             string extruder1StlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
-            MeshFileIo.Save(extruder1Group, extruder1StlFileToSlice, settings);
+            MeshFileIo.Save(extruderMeshGroup, extruder1StlFileToSlice, settings);
             return extruder1StlFileToSlice;
         }
 
