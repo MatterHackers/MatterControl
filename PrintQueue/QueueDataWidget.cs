@@ -411,21 +411,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
 
 			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath);
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-				string partFileName = saveParams.FileName;
+            FileDialog.SaveFileDialog(
+                new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath),
+                (saveParams) =>
+                {
+                    string partFileName = saveParams.FileName;
 
-				if ( !partFileName.StartsWith ("" + Path.DirectorySeparatorChar) )
-				{
-					partFileName = Path.DirectorySeparatorChar + partFileName;
-				}
+                    if (!partFileName.StartsWith("" + Path.DirectorySeparatorChar))
+                    {
+                        partFileName = Path.DirectorySeparatorChar + partFileName;
+                    }
 
-				PartsSheet currentPartsInQueue = new PartsSheet(parts, partFileName);
-                currentPartsInQueue.SaveSheets();
-            }
+                    PartsSheet currentPartsInQueue = new PartsSheet(parts, partFileName);
+                    currentPartsInQueue.SaveSheets();
+                });
+
 			#endif
         }
 
@@ -570,33 +571,41 @@ namespace MatterHackers.MatterControl.PrintQueue
         void AddItemsToQueue(object state)
         {
             string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true, initialDirectory: documentsPath);
-			openParams.ActionButtonLabel = "Add to Queue";
-			openParams.Title = "MatterControl: Select A File";
 
-            FileDialog.OpenFileDialog(ref openParams);
-            if (openParams.FileNames != null)
-            {
-                foreach (string fileNameToLoad in openParams.FileNames)
+            FileDialog.OpenFileDialog(
+                new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams)
                 {
-                    if (Path.GetExtension(fileNameToLoad).ToUpper() == ".ZIP")
+                    MultiSelect = true,
+                    InitialDirectory = documentsPath,
+                    ActionButtonLabel = "Add to Queue",
+                    Title = "MatterControl: Select A File"
+                },
+                (openParams) =>
+                {
+                    if (openParams.FileNames != null)
                     {
-                        ProjectFileHandler project = new ProjectFileHandler(null);
-                        List<PrintItem> partFiles = project.ImportFromProjectArchive(fileNameToLoad);
-                        if (partFiles != null)
+                        foreach (string fileNameToLoad in openParams.FileNames)
                         {
-                            foreach (PrintItem part in partFiles)
+                            if (Path.GetExtension(fileNameToLoad).ToUpper() == ".ZIP")
                             {
-                                QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+                                ProjectFileHandler project = new ProjectFileHandler(null);
+                                List<PrintItem> partFiles = project.ImportFromProjectArchive(fileNameToLoad);
+                                if (partFiles != null)
+                                {
+                                    foreach (PrintItem part in partFiles)
+                                    {
+                                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileNameToLoad), Path.GetFullPath(fileNameToLoad))));
                             }
                         }
                     }
-                    else
-                    {
-                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileNameToLoad), Path.GetFullPath(fileNameToLoad))));
-                    }
-                }
-            }
+                });
+
         }
     }
 }

@@ -149,31 +149,30 @@ namespace MatterHackers.MatterControl.PrintQueue
             if (parts.Count > 0)
             {
 				string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath);
 
-				saveParams.ActionButtonLabel = LocalizedString.Get("Save Parts Sheet");
-				string saveParamsTitleLabel = "MatterControl".Localize();
-				string saveParamsTitleLabelFull = LocalizedString.Get ("Save");
-				saveParams.Title = string.Format("{0}: {1}",saveParamsTitleLabel,saveParamsTitleLabelFull);
+                FileDialog.SaveFileDialog(
+                    new SaveFileDialogParams("Save Parts Sheet|*.pdf")
+                    {
+                        InitialDirectory = documentsPath,
+                        ActionButtonLabel = "Save Parts Sheet".Localize(),
+                        Title = string.Format("{0}: {1}", "MatterControl".Localize(), "Save".Localize())
+                    },
+                    (saveParams) =>
+                    {
+                        if (saveParams.FileName != null)
+                        {
+                            PartsSheet currentPartsInQueue = new PartsSheet(parts, saveParams.FileName);
 
-                System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-				if (streamToSaveTo != null) 
-				{
-					streamToSaveTo.Close ();
-				}
+                            currentPartsInQueue.SaveSheets();
 
-				if (saveParams.FileName != null)
-                {
-                    PartsSheet currentPartsInQueue = new PartsSheet(parts, saveParams.FileName);
+                            SavePartsSheetFeedbackWindow feedbackWindow = new SavePartsSheetFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
+                            currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;
+                            currentPartsInQueue.DoneSaving += feedbackWindow.DoneSaving;
 
-                    currentPartsInQueue.SaveSheets();
+                            feedbackWindow.ShowAsSystemWindow();
+                        }
+                    });
 
-                    SavePartsSheetFeedbackWindow feedbackWindow = new SavePartsSheetFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-                    currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;
-                    currentPartsInQueue.DoneSaving += feedbackWindow.DoneSaving;
-
-                    feedbackWindow.ShowAsSystemWindow();
-                }
             }
 			#endif
         }
@@ -224,7 +223,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			selectParams.ActionButtonLabel = LocalizedString.Get("Export");
             selectParams.Title = "MatterControl: Select A Folder";
 
-            string path = FileDialog.SelectFolderDialog(ref selectParams);
+            FileDialog.SelectFolderDialog(selectParams, onSelectFolderDialog);
+        }
+
+        private void onSelectFolderDialog(SelectFolderDialogParams openParams)
+        {
+            string path = openParams.FolderPath;
             if (path != null && path != "")
             {
                 List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();

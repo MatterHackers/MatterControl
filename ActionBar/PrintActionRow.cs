@@ -175,15 +175,18 @@ namespace MatterHackers.MatterControl.ActionBar
         void AddButtonOnIdle(object state)
         {
             string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true, initialDirectory: documentsPath);
-            FileDialog.OpenFileDialog(ref openParams);
-            if (openParams.FileNames != null)
-            {
-                foreach (string loadedFileName in openParams.FileNames)
+            FileDialog.OpenFileDialog(
+                new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true, initialDirectory: documentsPath),
+                (openParams) =>
                 {
-                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
-                }
-            }
+                    if (openParams.FileNames != null)
+                    {
+                        foreach (string loadedFileName in openParams.FileNames)
+                        {
+                            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
+                        }
+                    }
+                });
         }
 
         void partToPrint_SliceDone(object sender, EventArgs e)

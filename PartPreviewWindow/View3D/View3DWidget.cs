@@ -372,10 +372,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     {
                         UiThread.RunOnIdle((state) =>
                         {
-                            OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true);
-
-                            FileDialog.OpenFileDialog(ref openParams);
-                            LoadAndAddPartsToPlate(openParams.FileNames);
+                            FileDialog.OpenFileDialog(
+                                new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+                                (openParams) =>
+                                {
+                                    LoadAndAddPartsToPlate(openParams.FileNames);
+                                });
                         });
                     };
 
