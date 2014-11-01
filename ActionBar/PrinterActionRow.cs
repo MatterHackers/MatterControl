@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.ActionBar
             }
             connectPrinterButton.VAnchor = VAnchor.ParentTop;
             connectPrinterButton.Cursor = Cursors.Hand;
-            connectPrinterButton.Visible = !PrinterConnectionAndCommunication.Instance.PrinterIsConnected;
 
             string disconnectString = "Disconnect".Localize().ToUpper();
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
@@ -85,8 +84,10 @@ namespace MatterHackers.MatterControl.ActionBar
                 disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
             }
             disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
-            disconnectPrinterButton.Visible = PrinterConnectionAndCommunication.Instance.PrinterIsConnected;
             disconnectPrinterButton.Cursor = Cursors.Hand;
+
+            // Bind connect button states to active printer state
+            this.SetConnectionButtonVisibleState(null);
 
             selectActivePrinterButton = new PrinterSelectButton();
             selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
@@ -243,6 +244,12 @@ namespace MatterHackers.MatterControl.ActionBar
                 disconnectPrinterButton.Visible = false;
                 connectPrinterButton.Visible = true;
             }
+
+            var communicationState = PrinterConnectionAndCommunication.Instance.CommunicationState;
+
+            // Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
+            connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
+            disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
         }
 
         void onPrinterStatusChanged(object sender, EventArgs e)
