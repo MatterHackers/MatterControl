@@ -147,18 +147,25 @@ namespace MatterHackers.MatterControl
         {
             UiThread.RunOnIdle((state) =>
             {
-                OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
-                openParams.ActionButtonLabel = "Add to Queue";
-                openParams.Title = "MatterControl: Select A File";
-
-                FileDialog.OpenFileDialog(ref openParams);
-                if (openParams.FileNames != null)
-                {
-                    foreach (string loadedFileName in openParams.FileNames)
+                FileDialog.OpenFileDialog(
+                    new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams)
                     {
-                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
-                    }
-                }
+                        MultiSelect = true,
+                        ActionButtonLabel = "Add to Queue",
+                        Title = "MatterControl: Select A File"
+                    },
+                    (openParams) =>
+                    {
+                        if (openParams.FileNames != null)
+                        {
+                            foreach (string loadedFileName in openParams.FileNames)
+                            {
+                                QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
+                            }
+                        }
+
+                    });
+
             });
             return true;
         }
