@@ -253,22 +253,33 @@ namespace MatterHackers.MatterControl
             Invalidate();
         }
 
+        public static void CleanUpCacheData()
+        {
+            //string pngFileName = GetFilenameForSize(stlHashCode, ref size);
+        }
+
         private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)
         {
             ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
-            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-            string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
-            string tgaFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.tga".FormatWith(stlHashCode, size.x, size.y));
+            string pngFileName = GetFilenameForSize(stlHashCode, ref size);
 
-            if (File.Exists(tgaFileName))
+            if (File.Exists(pngFileName))
             {
-                if (ImageTgaIO.LoadImageData(tgaFileName, tempImage))
+                if (ImageIO.LoadImageData(pngFileName, tempImage))
                 {
                     return tempImage;
                 }
             }
 
             return null;
+        }
+
+        private static string GetFilenameForSize(string stlHashCode, ref Point2D size)
+        {
+            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+            string folderToSaveThumbnailsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
+            string pngFileName = Path.Combine(folderToSaveThumbnailsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
+            return pngFileName;
         }
 
         private static ImageBuffer BuildImageFromMeshGroups(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
@@ -316,13 +327,13 @@ namespace MatterHackers.MatterControl
                 // and save it to disk
                 string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
                 string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
-                string tgaFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.tga".FormatWith(stlHashCode, size.x, size.y));
+                string pngFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
 
                 if (!Directory.Exists(folderToSavePrintsTo))
                 {
                     Directory.CreateDirectory(folderToSavePrintsTo);
                 }
-                ImageTgaIO.SaveImageData(tgaFileName, tempImage);
+                ImageIO.SaveImageData(pngFileName, tempImage);
 
                 // and give it back
                 return tempImage;
