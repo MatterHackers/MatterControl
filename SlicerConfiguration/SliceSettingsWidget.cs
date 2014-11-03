@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -764,10 +765,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             };
 
                             leftToRightLayout.AddChild(xEditWidget);
-                            TextWidget xText = new TextWidget("x");
-                            xText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                            xText.Margin = new BorderDouble(5, 0);
-                            leftToRightLayout.AddChild(xText);
+                            leftToRightLayout.AddChild(new HorizontalSpacer());
 
                             yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
                                 {
@@ -775,11 +773,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     CallEventsOnSettingsChange(settingData);
                                 };
                             leftToRightLayout.AddChild(yEditWidget);
-                            TextWidget yText = new TextWidget("y");
-                            yText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                            yText.Margin = new BorderDouble(5, 0);
-                            leftToRightLayout.AddChild(yText);
-
                         }
                         break;
 
@@ -796,10 +789,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     CallEventsOnSettingsChange(settingData);
                                 };
                                 leftToRightLayout.AddChild(xEditWidget);
-                                TextWidget xText = new TextWidget("x");
-                                xText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                                xText.Margin = new BorderDouble(5, 0);
-                                leftToRightLayout.AddChild(xText);
+                                leftToRightLayout.AddChild(new HorizontalSpacer());
                             }
                             {
                                 yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
@@ -809,10 +799,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     CallEventsOnSettingsChange(settingData);
                                 };
                                 leftToRightLayout.AddChild(yEditWidget);
-                                TextWidget yText = new TextWidget("y");
-                                yText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                                yText.Margin = new BorderDouble(5, 0);
-                                leftToRightLayout.AddChild(yText);
                             }
                         }
                         break;
