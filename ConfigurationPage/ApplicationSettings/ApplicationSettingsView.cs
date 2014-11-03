@@ -182,13 +182,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             optionsContainer.AddChild(releaseOptionsDropList);
             optionsContainer.Width = 200;
 
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Release"), "release");
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Stable"), "release");
             releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
 
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Pre-Release"), "pre-release");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Beta"), "pre-release");
             preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
 
-			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Development"), "development");
+			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Alpha"), "development");
             developmentDropDownItem.Selected += new EventHandler(FixTabDot);
             
             List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
@@ -245,9 +245,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.AddChild(new HorizontalSpacer());
 			buttonRow.AddChild(languageRestartButton);
             buttonRow.AddChild(optionsContainer);
-            
-
-
             return buttonRow;
         }
 
