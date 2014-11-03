@@ -231,7 +231,7 @@
     <Compile Include="PrinterControls\PrinterConnections\SetupStepInstallDriver.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ConnectionWindow.cs" />
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\AddConnectionWidget.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\EditConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterListItems.cs" />
