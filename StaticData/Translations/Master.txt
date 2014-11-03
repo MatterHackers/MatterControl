@@ -2798,3 +2798,12 @@ Translated:Grouping Meshes
 English:No COM ports available
 Translated:No COM ports available
 
+English:Stable
+Translated:Stable
+
+English:Beta
+Translated:Beta
+
+English:Alpha
+Translated:Alpha
+

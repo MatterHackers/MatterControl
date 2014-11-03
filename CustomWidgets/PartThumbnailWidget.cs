@@ -256,6 +256,7 @@ namespace MatterHackers.MatterControl
         public static void CleanUpCacheData()
         {
             //string pngFileName = GetFilenameForSize(stlHashCode, ref size);
+            // delete everything that is a tga (we now save pngs).
         }
 
         private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)
@@ -276,10 +277,16 @@ namespace MatterHackers.MatterControl
 
         private static string GetFilenameForSize(string stlHashCode, ref Point2D size)
         {
-            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-            string folderToSaveThumbnailsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
+            string folderToSaveThumbnailsTo = ThumbnailPath();
             string pngFileName = Path.Combine(folderToSaveThumbnailsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
             return pngFileName;
+        }
+
+        private static string ThumbnailPath()
+        {
+            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+            string folderToSaveThumbnailsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
+            return folderToSaveThumbnailsTo;
         }
 
         private static ImageBuffer BuildImageFromMeshGroups(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
