@@ -236,6 +236,12 @@ namespace MatterHackers.MatterControl
             }
         }
 
+		public void ReloadThemeSettings()
+		{
+			//Reload the current theme
+			OnThemeChanged(null);
+		}
+
         public void LoadThemeSettings(int index)
         {
             //Validate new theme selection and change theme

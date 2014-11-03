@@ -89,7 +89,6 @@ namespace MatterHackers.MatterControl
         
 		public override void ToggleTopContainer()
 		{
-
 			topIsHidden = !topIsHidden;
 			progressBar.WidgetIsExtended = !progressBar.WidgetIsExtended;
 
@@ -100,7 +99,8 @@ namespace MatterHackers.MatterControl
 
         public override void AddElements()
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			topIsHidden = false;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
             container.AnchorAll();
@@ -171,8 +171,7 @@ namespace MatterHackers.MatterControl
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseDown(mouseEvent);
-			//Turn this off for now (KP)
-			//ApplicationController.Instance.MainView.HideTopContainer();
+			ApplicationController.Instance.MainView.HideTopContainer();
 		}
 	}
 
