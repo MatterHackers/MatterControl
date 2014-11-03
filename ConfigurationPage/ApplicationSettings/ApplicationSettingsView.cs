@@ -29,8 +29,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             mainContainer.AddChild(GetLanguageControl());
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-            mainContainer.AddChild(GetDisplayControl());
-            mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+            
+			//Disabled for now (KP)
+			//mainContainer.AddChild(GetDisplayControl());
+            //mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+
+			#if __ANDROID__
+			mainContainer.AddChild(GetModeControl());
+			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			#endif
+
             mainContainer.AddChild(GetThemeControl()); 
             
             AddChild(mainContainer);
@@ -158,6 +166,46 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             return buttonRow;
         }
 
+		private FlowLayoutWidget GetModeControl()
+		{
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Margin = new BorderDouble(top: 4);
+
+			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Change Mode"));
+			settingsLabel.AutoExpandBoundsToText = true;
+			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.VAnchor = VAnchor.ParentTop;
+
+			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			optionsContainer.Margin = new BorderDouble(bottom: 6);
+
+			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Standard", maxHeight: 200);
+			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+
+			optionsContainer.AddChild(releaseOptionsDropList);
+			optionsContainer.Width = 200;
+
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Standard"), "true");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Advanced"), "false");
+
+			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "true", "false" };
+			string currentUpdateFeedType = UserSettings.Instance.get("IsSimpleMode");
+
+			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
+			{
+				UserSettings.Instance.set("IsSimpleMode", "true");
+			}
+
+			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("IsSimpleMode");
+			releaseOptionsDropList.SelectionChanged += new EventHandler(ModeOptionsDropList_SelectionChanged);
+
+			buttonRow.AddChild(settingsLabel);
+			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(optionsContainer);
+			return buttonRow;
+		}
+
         private FlowLayoutWidget GetUpdateControl()
         {
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -273,6 +321,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         {
             UpdateControlData.Instance.CheckForUpdateUserRequested();
         }
+
+		private void ModeOptionsDropList_SelectionChanged(object sender, EventArgs e)
+		{
+			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+			if (releaseCode != UserSettings.Instance.get("IsSimpleMode"))
+			{
+				UserSettings.Instance.set("IsSimpleMode", releaseCode);
+				ActiveTheme.Instance.ReloadThemeSettings();
+			}
+		}
 
         private void DisplayOptionsDropList_SelectionChanged(object sender, EventArgs e)
         {
