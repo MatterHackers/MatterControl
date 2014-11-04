@@ -478,6 +478,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
             this.ActivePrinter.Commit();
 
+            // If the printer we're updating is also the currently active printer, then we need to
+            // reset the instance variable to match the new data - the old instance is bound to sql
+            // data that is no longer valid
+            if(ActivePrinterProfile.Instance.ActivePrinter.Id == this.ActivePrinter.Id)
+            {
+                ActivePrinterProfile.Instance.ActivePrinter = this.ActivePrinter;
+            }
+
             this.windowController.ChangeToChoosePrinter();
         }
         
