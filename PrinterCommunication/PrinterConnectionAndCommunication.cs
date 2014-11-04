@@ -1425,7 +1425,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             else
             {
                 Debug.WriteLine("Connection failed: {0}".FormatWith(this.ActivePrinter.ComPort));
-                connectionFailureMessage = LocalizedString.Get("Unavailable");
+
+                connectionFailureMessage = string.Format(
+                                    "{0} is not available".Localize(),
+                                    this.ActivePrinter.ComPort);
+
                 OnConnectionFailed(null);
             }
         }
