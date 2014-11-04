@@ -2389,6 +2389,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             return true;
         }
 
+        const int MAX_INVALID_CONNECTION_CHARS = 3;
         string lineBeingRead = "";
         string lastLineRead = "";
         public void ReadFromPrinter()
@@ -2430,9 +2431,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                                         }
                                     }
 
+                                    // If we've encountered a newline character and we're still in .AttemptingToConnect
                                     if (CommunicationState == CommunicationStates.AttemptingToConnect)
                                     {
-                                        CommunicationState = CommunicationStates.Connected;
+                                        // TODO: This is an initial proof of concept for validating the printer response after DTR. More work is 
+                                        // needed to test this technique across existing hardware and/or edge cases where this simple approach
+                                        // (initial line having more than 3 non-ascii characters) may not be adequate or appropriate. 
+                                        // TODO: Revise the INVALID char count to an agreed upon threshold
+                                        string[] segments = lastLineRead.Split('?');
+                                        if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
+                                        {
+                                            CommunicationState = CommunicationStates.Connected;
+                                        }
+                                        else
+                                        {
+                                            CommunicationState = CommunicationStates.Disconnecting;
+                                            connectionFailureMessage = "Invalid response recevied".Localize();
+
+                                            // Force port shutdown and cleanup
+                                            Disable();
+                                        }
                                     }
                                 }
                                 else
