@@ -295,7 +295,9 @@ namespace MatterHackers.MatterControl
 #if false // this is to do some timing on creating tracking info
                     Stopwatch stopWatch = new Stopwatch();
                     stopWatch.Start();
+#endif
                     perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(BoundingVolumeHierarchy.CreateNewHierachy(allPolys));
+#if false
                     stopWatch.Stop();
                     using (StreamWriter outputStream = File.AppendText("output.txt"))
                     {
