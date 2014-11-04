@@ -895,7 +895,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Stopwatch timeSinceReported = new Stopwatch();
         void BackgroundWorker_ProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
         {
-            if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100)
+            if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
+                || processingState != processingProgressControl.ProgressMessage)
             {
                 UiThread.RunOnIdle((state) =>
                 {
