@@ -50,9 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
                 createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
-                createDiscreteMeshesBackgroundWorker.WorkerReportsProgress = true;
 
-                createDiscreteMeshesBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
                 createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(groupSelectedBackgroundWorker_RunWorkerCompleted);
                 createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(groupSelectedBackgroundWorker_DoWork);
 
@@ -62,9 +60,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void groupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string makingCopyLabel = LocalizedString.Get("Grouping Meshes");
+            string makingCopyLabel = LocalizedString.Get("Grouping");
             string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-            processingProgressControl.textWidget.Text = makingCopyLabelFull;
+            processingProgressControl.ProcessType = makingCopyLabelFull;
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
@@ -75,8 +73,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
 
-                int nextPercent = (i + 1) * 40 / asynchMeshGroups.Count;
-                backgroundWorker.ReportProgress(nextPercent);
+                bool continueProcessing;
+                BackgroundWorker_ProgressChanged((i+1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
             }
 
             DoGroup(backgroundWorker);
@@ -119,9 +117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // create the selection info
                 PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
-                    continueProcessing = true;
-                    int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
-                    backgroundWorker.ReportProgress(nextPercent);
+                    BackgroundWorker_ProgressChanged(progress0To1, processingState, out continueProcessing);
                 });
 
                 currentRatioDone += ratioPerMeshGroup;

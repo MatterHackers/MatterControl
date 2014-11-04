@@ -629,7 +629,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 string loadingPartLabel = LocalizedString.Get("Loading Parts");
                 string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
-                processingProgressControl.textWidget.Text = loadingPartLabelFull;
+                processingProgressControl.ProcessType = loadingPartLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
@@ -638,10 +638,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 BackgroundWorker loadAndAddPartsToPlateBackgroundWorker = null;
                 loadAndAddPartsToPlateBackgroundWorker = new BackgroundWorker();
-                loadAndAddPartsToPlateBackgroundWorker.WorkerReportsProgress = true;
 
                 loadAndAddPartsToPlateBackgroundWorker.DoWork += new DoWorkEventHandler(loadAndAddPartsToPlateBackgroundWorker_DoWork);
-                loadAndAddPartsToPlateBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
                 loadAndAddPartsToPlateBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted);
 
                 loadAndAddPartsToPlateBackgroundWorker.RunWorkerAsync(filesToLoad);
@@ -649,8 +647,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         }
 
         enum TraceInfoOpperation { DONT_COPY, DO_COPY };
-        private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation)
+        private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation, ReportProgressRatio reportProgress = null)
         {
+            UiThread.RunOnIdle((state) =>
+            {
+                processingProgressControl.ProgressMessage = "Async Copy";
+            });
             asynchMeshGroups.Clear();
             asynchMeshGroupTransforms.Clear();
             for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
@@ -681,6 +683,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 }
                 asynchPlatingDatas.Add(meshData);
             }
+            UiThread.RunOnIdle((state) =>
+            {
+                processingProgressControl.ProgressMessage = "";
+            });
         }
 
         private void PullMeshGroupDataFromAsynchLists()
@@ -732,7 +738,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         continueProcessing = !this.WidgetHasBeenClosed;
                         double ratioAvailable = (ratioPerFile * .5);
                         double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
-                        backgroundWorker.ReportProgress((int)(currentRatio * 100));
+                        BackgroundWorker_ProgressChanged(currentRatio, processingState, out continueProcessing);
                     });
 
                     if (WidgetHasBeenClosed)
@@ -758,7 +764,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                                 continueProcessing = !this.WidgetHasBeenClosed;
                                 double ratioAvailable = (ratioPerFile * .5);
                                 double currentRatio = currentRatioDone + currentPlatingRatioDone + ratioAvailable + progress0To1 * ratioAvailable;
-                                backgroundWorker.ReportProgress((int)(currentRatio * 100));
+                                BackgroundWorker_ProgressChanged(currentRatio, processingState, out continueProcessing);
                             });
 
                             currentPlatingRatioDone += ratioPerSubMesh;
@@ -886,9 +892,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        Stopwatch timeSinceReported = new Stopwatch();
+        void BackgroundWorker_ProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
         {
-            processingProgressControl.PercentComplete = e.ProgressPercentage;
+            if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100)
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    processingProgressControl.PercentComplete = (int)(progress0To1 * 100 + .5);
+                    processingProgressControl.ProgressMessage = processingState;
+                });
+                timeSinceReported.Restart();
+            }
+            continueProcessing = true;
         }
 
         private void CreateOptionsContent()
@@ -1690,16 +1706,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 string progressSavingPartsLabel = LocalizedString.Get("Saving");
                 string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
-                processingProgressControl.textWidget.Text = progressSavingPartsLabelFull;
+                processingProgressControl.ProcessType = progressSavingPartsLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
 
                 BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
-                mergeAndSavePartsBackgroundWorker.WorkerReportsProgress = true;
 
                 mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
-                mergeAndSavePartsBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
                 mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
 
                 mergeAndSavePartsBackgroundWorker.RunWorkerAsync();
@@ -1720,8 +1734,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
 
-                    int nextPercent = (i + 1) * 40 / asynchMeshGroups.Count;
-                    backgroundWorker.ReportProgress(nextPercent);
+                    bool continueProcessing;
+                    BackgroundWorker_ProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
                 }
 
                 LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups);

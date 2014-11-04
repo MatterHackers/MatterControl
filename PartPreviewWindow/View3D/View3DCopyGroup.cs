@@ -43,17 +43,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 string makingCopyLabel = LocalizedString.Get("Making Copy");
                 string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-                processingProgressControl.textWidget.Text = makingCopyLabelFull;
+                processingProgressControl.ProcessType = makingCopyLabelFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
 
                 BackgroundWorker copyGroupBackgroundWorker = null;
                 copyGroupBackgroundWorker = new BackgroundWorker();
-                copyGroupBackgroundWorker.WorkerReportsProgress = true;
 
                 copyGroupBackgroundWorker.DoWork += new DoWorkEventHandler(copyGroupBackgroundWorker_DoWork);
-                copyGroupBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
                 copyGroupBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(copyGroupBackgroundWorker_RunWorkerCompleted);
 
                 copyGroupBackgroundWorker.RunWorkerAsync();
@@ -75,16 +73,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 Mesh mesh = asynchMeshGroups[SelectedMeshGroupIndex].Meshes[i];
                 copyMeshGroup.Meshes.Add(Mesh.Copy(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
-                    continueProcessing = true;
-                    int nextPercent = (int)(100 * (progress0To1 * .8 * i / meshCount));
-                    backgroundWorker.ReportProgress(nextPercent);
+                    BackgroundWorker_ProgressChanged(progress0To1, processingState, out continueProcessing);
                 }));
             }
 
             PlatingHelper.FindPositionForGroupAndAddToPlate(copyMeshGroup, SelectedMeshGroupTransform, asynchPlatingDatas, asynchMeshGroups, asynchMeshGroupTransforms);
             PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, null);
 
-            backgroundWorker.ReportProgress(95);
+            bool continueProcessing2;
+            BackgroundWorker_ProgressChanged(.95, "", out continueProcessing2);
         }
 
         void copyGroupBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

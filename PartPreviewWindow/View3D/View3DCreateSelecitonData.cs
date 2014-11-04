@@ -58,9 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 BackgroundWorker createSelectionDataBackgroundWorker = null;
                 createSelectionDataBackgroundWorker = new BackgroundWorker();
-                createSelectionDataBackgroundWorker.WorkerReportsProgress = true;
 
-                createSelectionDataBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
                 createSelectionDataBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createSelectionDataBackgroundWorker_RunWorkerCompleted);
                 createSelectionDataBackgroundWorker.DoWork += new DoWorkEventHandler(createSelectionDataBackgroundWorker_DoWork);
 
@@ -72,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             string makingCopyLabel = LocalizedString.Get("Preparing Meshes");
             string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-            processingProgressControl.textWidget.Text = makingCopyLabelFull;
+            processingProgressControl.ProcessType = makingCopyLabelFull;
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
@@ -92,13 +90,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // create the selection info
                 PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
-                    continueProcessing = true;
-                    int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
-                    backgroundWorker.ReportProgress(nextPercent);
+                    BackgroundWorker_ProgressChanged(progress0To1, processingState, out continueProcessing);
                 });
 
                 currentRatioDone += ratioPerMeshGroup;
             }
+
+            bool continueProcessing2;
+            BackgroundWorker_ProgressChanged(1, "Creating GL Data", out continueProcessing2);
+            meshViewerWidget.CreateGlDataForMeshes(asynchMeshGroups);
         }
 
         void createSelectionDataBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

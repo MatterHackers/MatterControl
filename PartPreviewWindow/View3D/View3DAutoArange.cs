@@ -46,16 +46,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 string progressArrangeParts = LocalizedString.Get("Arranging Parts");
                 string progressArrangePartsFull = string.Format("{0}:", progressArrangeParts);
-                processingProgressControl.textWidget.Text = progressArrangePartsFull;
+                processingProgressControl.ProcessType = progressArrangePartsFull;
                 processingProgressControl.Visible = true;
                 processingProgressControl.PercentComplete = 0;
                 LockEditControls();
 
                 BackgroundWorker arrangeMeshGroupsBackgroundWorker = new BackgroundWorker();
-                arrangeMeshGroupsBackgroundWorker.WorkerReportsProgress = true;
 
                 arrangeMeshGroupsBackgroundWorker.DoWork += new DoWorkEventHandler(arrangeMeshGroupsBackgroundWorker_DoWork);
-                arrangeMeshGroupsBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
                 arrangeMeshGroupsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(arrangeMeshGroupsBackgroundWorker_RunWorkerCompleted);
 
                 arrangeMeshGroupsBackgroundWorker.RunWorkerAsync();
@@ -123,9 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and create the trace info so we can select it
                 PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, meshGroupIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
-                    continueProcessing = true;
-                    int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
-                    backgroundWorker.ReportProgress(nextPercent);
+                    BackgroundWorker_ProgressChanged(progress0To1, processingState, out continueProcessing);
                 });
 
                 currentRatioDone += ratioPerMeshGroup;

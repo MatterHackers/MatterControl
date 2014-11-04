@@ -50,9 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
                 createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
-                createDiscreteMeshesBackgroundWorker.WorkerReportsProgress = true;
 
-                createDiscreteMeshesBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
                 createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ungroupSelectedBackgroundWorker_RunWorkerCompleted);
                 createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(ungroupSelectedBackgroundWorker_DoWork);
 
@@ -62,9 +60,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void ungroupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string makingCopyLabel = LocalizedString.Get("Finding Meshes");
+            string makingCopyLabel = LocalizedString.Get("Ungrouping");
             string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-            processingProgressControl.textWidget.Text = makingCopyLabelFull;
+            processingProgressControl.ProcessType = makingCopyLabelFull;
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
@@ -75,9 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             asynchMeshGroups[indexBeingReplaced].Transform(asynchMeshGroupTransforms[indexBeingReplaced].TotalTransform);
             List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroups[indexBeingReplaced], (double progress0To1, string processingState, out bool continueProcessing) =>
             {
-                continueProcessing = true;
-                int nextPercent = (int)(progress0To1 * 50);
-                backgroundWorker.ReportProgress(nextPercent);
+                BackgroundWorker_ProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
             });
 
             asynchMeshGroups.RemoveAt(indexBeingReplaced);
@@ -102,9 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and create selection info
                 PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, addedMeshIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
-                    continueProcessing = true;
-                    int nextPercent = (int)((currentRatioDone + ratioPerDiscreetMesh * progress0To1) * 50) + 50;
-                    backgroundWorker.ReportProgress(nextPercent);
+                    BackgroundWorker_ProgressChanged(progress0To1 * .5 + .5, processingState, out continueProcessing);
                 });
                 currentRatioDone += ratioPerDiscreetMesh;
             }
