@@ -1342,10 +1342,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             else
             {
                 // If we're no longer in the .AttemptingToConnect state, shutdown the connection thread and fire the
-                // OnConnectonSuccess event if we're connected
+                // OnConnectonSuccess event if we're connected and not Disconnecting
                 connectThread.Join(JoinThreadTimeoutMs);
 
-                if(PrinterIsConnected)
+                if(PrinterIsConnected && CommunicationState != CommunicationStates.Disconnecting)
                 {
                     OnConnectionSucceeded(null);
                 }
