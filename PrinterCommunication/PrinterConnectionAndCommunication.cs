@@ -1908,6 +1908,49 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
+        /// <summary>
+        /// Abort an ongoing attempt to establish communcation with a printer due to the specified problem. This is a specialized
+        /// version of the functionality that's previously been in .Disable but focused specifically on the task of aborting an 
+        /// ongoing connection. Ideally we should unify all abort invocations to use this implementation rather than the mix
+        /// of occasional OnConnectionFailed calls, .Disable and .stopTryingToConnect
+        /// </summary>
+        /// <param name="abortReason">The concise message which will be used to describe the connection failure</param>
+        /// <param name="shutdownReadLoop">Shutdown/join the readFromPrinterThread</param>
+        public void AbortConnectionAttempt(string abortReason, bool shutdownReadLoop = true)
+        {
+            CommunicationState = CommunicationStates.Disconnecting;
+
+            // Shudown the connectionAttempt thread
+            if (connectThread != null)
+            {
+                connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
+            }
+
+            // Shutdown the readFromPrinter thread
+            if (shutdownReadLoop && readFromPrinterThread != null)
+            {
+                readFromPrinterThread.Join(JoinThreadTimeoutMs);
+            }
+
+            // Shudown the serial port
+            if (serialPort != null)
+            {
+                // Close and dispose the serial port
+                serialPort.Close();
+                serialPort.Dispose();
+                serialPort = null;
+            }
+
+            // Set the final communication state
+            CommunicationState = CommunicationStates.Disconnected;
+
+            // Set the connection failure message and call OnConnectionFailed
+            connectionFailureMessage = abortReason;
+
+            // Notify
+            OnConnectionFailed(null);
+        }
+
         public void Disable()
         {
             if (PrinterIsConnected)
@@ -2445,11 +2488,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                                         }
                                         else
                                         {
-                                            CommunicationState = CommunicationStates.Disconnecting;
-                                            connectionFailureMessage = "Invalid response recevied".Localize();
-
                                             // Force port shutdown and cleanup
-                                            Disable();
+                                            AbortConnectionAttempt("Invalid printer response".Localize(), false);
                                         }
                                     }
                                 }
