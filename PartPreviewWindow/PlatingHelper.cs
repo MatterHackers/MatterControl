@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -252,6 +254,7 @@ namespace MatterHackers.MatterControl
                     totalActionCount += mesh.Faces.Count;
                 }
                 int currentAction = 0;
+                bool needUpdateTitle = true;
                 for(int i=0; i<meshGroup.Meshes.Count; i++)
                 {
                     Mesh mesh = meshGroup.Meshes[i];
@@ -277,19 +280,30 @@ namespace MatterHackers.MatterControl
 
                         if (reportProgress != null)
                         {
-                            if((currentAction % 256) == 0)
+                            if((currentAction % 256) == 0 || needUpdateTitle)
                             {
-                                reportProgress(currentAction / (double)totalActionCount * .5, "Creating Trace Data", out continueProcessing);
+                                reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", out continueProcessing);
+                                needUpdateTitle = false;
                             }
                             currentAction++;
                         }
                     }
 
+                    needUpdateTitle = true;
+                    reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
+
+#if false // this is to do some timing on creating tracking info
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
+#endif
                     perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(BoundingVolumeHierarchy.CreateNewHierachy(allPolys));
-                    if (reportProgress != null)
+#if false
+                    stopWatch.Stop();
+                    using (StreamWriter outputStream = File.AppendText("output.txt"))
                     {
-                        reportProgress(1, "Creating Trace Data", out continueProcessing);
+                        outputStream.WriteLine("Plating Helper BoundingVolumeHierarchy.CreateNewHierachy {0:0.00} seconds".FormatWith(stopWatch.Elapsed.TotalSeconds));
                     }
+#endif
                 }
             }
         }
