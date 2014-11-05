@@ -1339,15 +1339,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     return true;
                 }
             }
-            else if (CommunicationState == CommunicationStates.FailedToConnect)
-            {
-                connectThread.Join(JoinThreadTimeoutMs);
-                return false;
-            }
             else
             {
-                connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
-                OnConnectionSucceeded(null);
+                // If we're no longer in the .AttemptingToConnect state, shutdown the connection thread and fire the
+                // OnConnectonSuccess event if we're connected and not Disconnecting
+                connectThread.Join(JoinThreadTimeoutMs);
+
+                if(PrinterIsConnected && CommunicationState != CommunicationStates.Disconnecting)
+                {
+                    OnConnectionSucceeded(null);
+                }
+
                 return false;
             }
         }
@@ -1423,7 +1425,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             else
             {
                 Debug.WriteLine("Connection failed: {0}".FormatWith(this.ActivePrinter.ComPort));
-                connectionFailureMessage = LocalizedString.Get("Unavailable");
+
+                connectionFailureMessage = string.Format(
+                                    "{0} is not available".Localize(),
+                                    this.ActivePrinter.ComPort);
+
                 OnConnectionFailed(null);
             }
         }
@@ -1556,7 +1562,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 // If the serial port isn't avaiable (i.e. the specified port name wasn't found in GetPortNames()) or the serial
                 // port is already opened in another instance or process, then report the connection problem back to the user
                 connectionFailureMessage = (serialPortIsAlreadyOpen ? 
-                    LocalizedString.Get("Port already in use") : 
+                    string.Format("{0} in use", PrinterConnectionAndCommunication.Instance.ActivePrinter.ComPort) :
                     LocalizedString.Get("Port not found"));
 
                 OnConnectionFailed(null);
@@ -1900,6 +1906,49 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 serialPort.RtsEnable = true;
                 serialPort.Close();
             }
+        }
+
+        /// <summary>
+        /// Abort an ongoing attempt to establish communcation with a printer due to the specified problem. This is a specialized
+        /// version of the functionality that's previously been in .Disable but focused specifically on the task of aborting an 
+        /// ongoing connection. Ideally we should unify all abort invocations to use this implementation rather than the mix
+        /// of occasional OnConnectionFailed calls, .Disable and .stopTryingToConnect
+        /// </summary>
+        /// <param name="abortReason">The concise message which will be used to describe the connection failure</param>
+        /// <param name="shutdownReadLoop">Shutdown/join the readFromPrinterThread</param>
+        public void AbortConnectionAttempt(string abortReason, bool shutdownReadLoop = true)
+        {
+            CommunicationState = CommunicationStates.Disconnecting;
+
+            // Shudown the connectionAttempt thread
+            if (connectThread != null)
+            {
+                connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
+            }
+
+            // Shutdown the readFromPrinter thread
+            if (shutdownReadLoop && readFromPrinterThread != null)
+            {
+                readFromPrinterThread.Join(JoinThreadTimeoutMs);
+            }
+
+            // Shudown the serial port
+            if (serialPort != null)
+            {
+                // Close and dispose the serial port
+                serialPort.Close();
+                serialPort.Dispose();
+                serialPort = null;
+            }
+
+            // Set the final communication state
+            CommunicationState = CommunicationStates.Disconnected;
+
+            // Set the connection failure message and call OnConnectionFailed
+            connectionFailureMessage = abortReason;
+
+            // Notify
+            OnConnectionFailed(null);
         }
 
         public void Disable()
@@ -2383,6 +2432,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             return true;
         }
 
+        const int MAX_INVALID_CONNECTION_CHARS = 3;
         string lineBeingRead = "";
         string lastLineRead = "";
         public void ReadFromPrinter()
@@ -2424,9 +2474,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                                         }
                                     }
 
+                                    // If we've encountered a newline character and we're still in .AttemptingToConnect
                                     if (CommunicationState == CommunicationStates.AttemptingToConnect)
                                     {
-                                        CommunicationState = CommunicationStates.Connected;
+                                        // TODO: This is an initial proof of concept for validating the printer response after DTR. More work is 
+                                        // needed to test this technique across existing hardware and/or edge cases where this simple approach
+                                        // (initial line having more than 3 non-ascii characters) may not be adequate or appropriate. 
+                                        // TODO: Revise the INVALID char count to an agreed upon threshold
+                                        string[] segments = lastLineRead.Split('?');
+                                        if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
+                                        {
+                                            CommunicationState = CommunicationStates.Connected;
+                                        }
+                                        else
+                                        {
+                                            // Force port shutdown and cleanup
+                                            AbortConnectionAttempt("Invalid printer response".Localize(), false);
+                                        }
                                     }
                                 }
                                 else
