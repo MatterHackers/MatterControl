@@ -99,8 +99,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             //Turns this into a standard 'click' event
             if (this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
             {
+                // Changing ordering around so that CloseOnIdle is called after ActivePrinter is set
+                 ActivePrinterProfile.Instance.ActivePrinter = this.printerRecord;
+
                 UiThread.RunOnIdle(CloseOnIdle);
-                ActivePrinterProfile.Instance.ActivePrinter = this.printerRecord;                
             }
         }
 
