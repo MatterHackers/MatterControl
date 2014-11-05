@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
             {
                 case MessageType.YES_NO:
                     {
-                        Title = "MatterControl - " + "Input Required".Localize();
+                        Title = "MatterControl - " + "Please Confirm".Localize();
                         Button yesButton = textImageButtonFactory.Generate(yesOk, centerText: true);
                         if (yesOk == "")
                         {
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
                         yesButton.Cursor = Cursors.Hand;
                         buttonRow.AddChild(yesButton);
 
-                        buttonRow.AddChild(new HorizontalSpacer());
+                        //buttonRow.AddChild(new HorizontalSpacer());
 
                         Button noButton = textImageButtonFactory.Generate(no, centerText: true);
                         if (no == "")
