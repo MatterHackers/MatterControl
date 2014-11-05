@@ -204,6 +204,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             {
                 QueueData.Instance.AddItem(this.printItemWrapper,0);
                 QueueData.Instance.SelectedIndex = 0;
+                PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
                 this.Invalidate();
 
             };;

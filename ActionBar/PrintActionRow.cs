@@ -189,124 +189,19 @@ namespace MatterHackers.MatterControl.ActionBar
                 });
         }
 
-        void partToPrint_SliceDone(object sender, EventArgs e)
-        {
-            PrintItemWrapper partToPrint = sender as PrintItemWrapper;
-            if (partToPrint != null)
-            {
-                partToPrint.SlicingDone.UnregisterEvent(partToPrint_SliceDone, ref unregisterEvents);
-                string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
-                if (gcodePathAndFileName != "")
-                {
-                    bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
-                    if (File.Exists(gcodePathAndFileName)
-                        && (originalIsGCode || File.ReadAllText(gcodePathAndFileName).Contains("filament used")))
-                    {
-                        string gcodeFileContents = "";
-                        using (FileStream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                        {
-                            using (StreamReader gcodeStreamReader = new StreamReader(fileStream))
-                            {
-                                gcodeFileContents = gcodeStreamReader.ReadToEnd();
-                            }
-                        }
 
-                        timeSincePrintStarted.Restart();
-                        PrinterConnectionAndCommunication.Instance.StartPrint(gcodeFileContents);
-                    }
-                    else
-                    {
-                        PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
-                    }
-                }
-            }
-        }
 
-        string doNotShowAgainMessage = "Do not show this again".Localize();
-        string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?".Localize();
-        string removeFromQueueMessage = "Cannot find\n'{0}'.\nWould you like to remove it from the queue?".Localize();
-        string itemNotFoundMessage = "Item not found".Localize();
-        public void PrintActivePart()
-        {
-            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            if (levelingData.needsPrintLeveling
-                && levelingData.sampledPosition0.z == 0
-                && levelingData.sampledPosition1.z == 0
-                && levelingData.sampledPosition2.z == 0)
-            {
-                LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
-                return;
-            }
 
-            string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
-            if (ActiveSliceSettings.Instance.HasSdCardReader() 
-                && pathAndFile == QueueData.SdCardFileName)
-            {
-                PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
-            }
-            else if (ActiveSliceSettings.Instance.IsValid())
-            {
-                if (File.Exists(pathAndFile))
-                {
-                    string hideGCodeWarning = ApplicationSettings.Instance.get("HideGCodeWarning");
+        
 
-                    if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
-                    {
-                        CheckBox hideGCodeWaringCheckBox = new CheckBox(doNotShowAgainMessage);
-                        hideGCodeWaringCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                        hideGCodeWaringCheckBox.Margin = new BorderDouble(top: 6);
-                        hideGCodeWaringCheckBox.HAnchor = Agg.UI.HAnchor.ParentCenter;
-                        hideGCodeWaringCheckBox.Click += (sender, e) =>
-                        {
-                            if (hideGCodeWaringCheckBox.Checked)
-                            {
-                                ApplicationSettings.Instance.set("HideGCodeWarning", "true");
-                            }
-                            else
-                            {
-                                ApplicationSettings.Instance.set("HideGCodeWarning", null);
-                            }
-                        };
-                        StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { hideGCodeWaringCheckBox }, StyledMessageBox.MessageType.YES_NO);
-                    }
 
-                    PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-                    PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-                    SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-                    partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
-                }
-                else
-                {
-                    string message = String.Format(removeFromQueueMessage, pathAndFile);
-                    StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO);
-                }
-            }
-        }
 
-        void onConfirmPrint(bool messageBoxResponse)
-        {
-            if (!messageBoxResponse)
-            {
-                PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-                PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-                SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-                partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
-            }
-        }
-
-        void onRemoveMessageConfirm(bool messageBoxResponse)
-        {
-            if (messageBoxResponse)
-            {
-                QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
-            }
-        }
 
         void onStartButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
-                PrintActivePart();
+                PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
             });
         }
 
@@ -385,7 +280,7 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             UiThread.RunOnIdle((state) =>
             {
-                PrintActivePart();
+                PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
             });
         }
 

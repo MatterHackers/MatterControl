@@ -207,8 +207,9 @@ namespace MatterHackers.MatterControl.PrintHistory
                     printButton.AddChild(printLabel);
                     printButton.Click += (sender, e) =>
                     {
-                        QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId),0);
+                        QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId),0);                        
                         QueueData.Instance.SelectedIndex = 0;
+                        PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
                     };
                     rightMiddleColumnContainer.AddChild(printButton);
 
