@@ -290,7 +290,10 @@ namespace MatterHackers.MatterControl
                     }
 
                     needUpdateTitle = true;
-                    reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
+                    if (reportProgress != null)
+                    {
+                        reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
+                    }
 
 #if false // this is to do some timing on creating tracking info
                     Stopwatch stopWatch = new Stopwatch();
