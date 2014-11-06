@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl
             terminalControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             terminalControlsContainer.Height = 80;
 
-            OutputScrollWindow.HookupPrinterOutput();
+            TerminalWindow.HookupPrinterOutput();
 
             {
                 FlowLayoutWidget buttonBar = new FlowLayoutWidget();
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl
                 showTerminal.Margin = new BorderDouble(0);
                 showTerminal.Click += (sender, e) =>
                 {
-                    OutputScrollWindow.Show();
+                    TerminalWindow.Show();
                 };
 
                 //buttonBar.AddChild(terminalIcon);

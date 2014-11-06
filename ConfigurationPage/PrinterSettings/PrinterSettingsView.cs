@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			UiThread.RunOnIdle((state) =>
 				{
-					OutputScrollWindow.Show();
+					TerminalWindow.Show();
 				});
 			
 		}

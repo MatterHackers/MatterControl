@@ -145,6 +145,8 @@
     <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="PrintHistory\PrintHistoryData.cs" />
     <Compile Include="PrintLibrary\LibraryData.cs" />
     <Compile Include="PrintLibrary\SelectedListItems.cs" />
@@ -220,7 +222,7 @@
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
     <Compile Include="PrinterCommunication\PrinterConnectionAndCommunication.cs" />
     <Compile Include="PrinterControls\PrintLevelingPlane.cs" />
-    <Compile Include="PrinterControls\OutputScrollWindow.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TerminalWindow.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ChooseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepConfigureConnection.cs" />

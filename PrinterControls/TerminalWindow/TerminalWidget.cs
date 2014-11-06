@@ -26,73 +26,31 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
-{    
-    public class OutputScrollWindow : SystemWindow
+{
+    public class TerminalWidget : GuiWidget
     {
-        
+        Button sendCommand;
+        CheckBox filterOutput;
+        CheckBox autoUppercase;
+        MHTextEditWidget manualCommandTextEdit;
+        TextScrollWidget outputScrollWidget;
+        RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+        RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
+        TextImageButtonFactory controlButtonFactory = new TextImageButtonFactory();
 
-        public static void HookupPrinterOutput()
-        {
-            //throw new NotImplementedException();
-        }
-
-        static OutputScrollWindow connectionWindow = null;
-        static bool terminalWindowIsOpen = false;
-        public static void Show()
-        {
-            if (terminalWindowIsOpen == false)
-            {
-                connectionWindow = new OutputScrollWindow();
-                terminalWindowIsOpen = true;
-                connectionWindow.Closed += (parentSender, e) =>
-                {
-                    terminalWindowIsOpen = false;
-                    connectionWindow = null;
-                };
-            }
-            else
-            {
-                if (connectionWindow != null)
-                {
-                    connectionWindow.BringToFront();
-                }
-            }
-        }
-
-		//private since you can't make one
-		private OutputScrollWindow()
-			: base(400, 300)
-		{
-			this.AddChild(new OutputScrollWidget(true));
-			Title = LocalizedString.Get("MatterControl - Terminal");
-			this.ShowAsSystemWindow();
-			MinimumSize = new Vector2(Width, Height);
-		}
-	}
-
-	public class OutputScrollWidget : GuiWidget
-	{
-        
-		Button sendCommand;
-		CheckBox filterOutput;
-		CheckBox autoUppercase;
-		MHTextEditWidget manualCommandTextEdit;
-		OutputScroll outputScrollWidget;
-		RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
-		TextImageButtonFactory controlButtonFactory = new TextImageButtonFactory();
-
-		public OutputScrollWidget(bool showInWindow)
+        public TerminalWidget(bool showInWindow)
         {
             this.BackgroundColor = backgroundColor;
             this.Padding = new BorderDouble(5, 0);
@@ -102,15 +60,15 @@ namespace MatterHackers.MatterControl
             {
                 FlowLayoutWidget manualEntryTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 manualEntryTopToBottomLayout.VAnchor |= Agg.UI.VAnchor.ParentTop;
-                manualEntryTopToBottomLayout.Padding = new BorderDouble(top:8);
+                manualEntryTopToBottomLayout.Padding = new BorderDouble(top: 8);
 
                 {
                     FlowLayoutWidget topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
                     topBarControls.HAnchor |= HAnchor.ParentLeft;
 
-					string filterOutputChkTxt = LocalizedString.Get("Filter Output");
+                    string filterOutputChkTxt = LocalizedString.Get("Filter Output");
 
-					filterOutput = new CheckBox(filterOutputChkTxt);
+                    filterOutput = new CheckBox(filterOutputChkTxt);
                     filterOutput.Margin = new BorderDouble(5, 5, 5, 2);
                     filterOutput.Checked = false;
                     filterOutput.TextColor = this.textColor;
@@ -118,9 +76,9 @@ namespace MatterHackers.MatterControl
                     filterOutput.VAnchor = Agg.UI.VAnchor.ParentBottom;
                     topBarControls.AddChild(filterOutput);
 
-					string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
+                    string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
 
-					autoUppercase = new CheckBox(autoUpperCaseChkTxt);
+                    autoUppercase = new CheckBox(autoUpperCaseChkTxt);
                     autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
                     autoUppercase.Checked = true;
                     autoUppercase.TextColor = this.textColor;
@@ -131,13 +89,13 @@ namespace MatterHackers.MatterControl
                 }
 
                 {
-                    outputScrollWidget = new OutputScroll();
+                    outputScrollWidget = new TextScrollWidget();
                     //outputScrollWidget.Height = 100;
                     outputScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
                     outputScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     outputScrollWidget.HAnchor = HAnchor.ParentLeftRight;
                     outputScrollWidget.VAnchor = VAnchor.ParentBottomTop;
-                    outputScrollWidget.Margin = new BorderDouble(0,5);
+                    outputScrollWidget.Margin = new BorderDouble(0, 5);
                     outputScrollWidget.Padding = new BorderDouble(3, 0);
 
 
@@ -155,11 +113,8 @@ namespace MatterHackers.MatterControl
                     manualCommandTextEdit.VAnchor = VAnchor.ParentBottom;
                     manualCommandTextEdit.ActualTextEditWidget.EnterPressed += new KeyEventHandler(manualCommandTextEdit_EnterPressed);
                     manualCommandTextEdit.ActualTextEditWidget.KeyDown += new KeyEventHandler(manualCommandTextEdit_KeyDown);
-                    manualEntryLayout.AddChild(manualCommandTextEdit);					
+                    manualEntryLayout.AddChild(manualCommandTextEdit);
                 }
-
-
-
 
                 manualEntryTopToBottomLayout.AddChild(manualEntryLayout);
 
@@ -170,15 +125,15 @@ namespace MatterHackers.MatterControl
                     outputScrollWidget.Clear();
                 };
 
-				//Output Console text to screen
-				Button exportConsoleTextButton = controlButtonFactory.Generate (LocalizedString.Get ("Export..."));
-				exportConsoleTextButton.Click += (sender, mouseEvent) => 
-				{
-					string logFilePath = String.Format("{0}\\logs\\{1}ConsoleOutput.txt",
-													   System.IO.Directory.GetCurrentDirectory(),
-													   System.Diagnostics.Stopwatch.GetTimestamp());
-					outputScrollWidget.WriteToFile(logFilePath);
-				};
+                //Output Console text to screen
+                Button exportConsoleTextButton = controlButtonFactory.Generate(LocalizedString.Get("Export..."));
+                exportConsoleTextButton.Click += (sender, mouseEvent) =>
+                {
+                    string logFilePath = String.Format("{0}\\logs\\{1}ConsoleOutput.txt",
+                                                       System.IO.Directory.GetCurrentDirectory(),
+                                                       System.Diagnostics.Stopwatch.GetTimestamp());
+                    outputScrollWidget.WriteToFile(logFilePath);
+                };
 
                 Button closeButton = controlButtonFactory.Generate(LocalizedString.Get("Close"));
                 closeButton.Click += (sender, e) =>
@@ -195,13 +150,13 @@ namespace MatterHackers.MatterControl
 
                 bottomRowContainer.AddChild(sendCommand);
                 bottomRowContainer.AddChild(clearConsoleButton);
-				bottomRowContainer.AddChild (exportConsoleTextButton);
+                bottomRowContainer.AddChild(exportConsoleTextButton);
                 bottomRowContainer.AddChild(new HorizontalSpacer());
 
-				if (showInWindow)
-				{
-					bottomRowContainer.AddChild(closeButton);
-				}
+                if (showInWindow)
+                {
+                    bottomRowContainer.AddChild(closeButton);
+                }
 
                 manualEntryTopToBottomLayout.AddChild(bottomRowContainer);
                 manualEntryTopToBottomLayout.AnchorAll();
@@ -214,19 +169,17 @@ namespace MatterHackers.MatterControl
             AddChild(topLeftToRightLayout);
             SetCorrectFilterOutputBehavior(this, null);
             this.AnchorAll();
-
-
         }
 
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
             PrinterConnectionAndCommunication.Instance.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
-        }        
+        }
 
         private void CloseWindow(object state)
         {
-			this.Parent.Close();
+            this.Parent.Close();
         }
 
         public override void OnClosed(EventArgs e)
@@ -334,6 +287,92 @@ namespace MatterHackers.MatterControl
         void Instance_ConnectionFailed(object sender, EventArgs e)
         {
             outputScrollWidget.WriteLine(sender, new StringEventArgs("Lost connection to printer."));
+        }
+    }
+    
+    public class OutputScroll : GuiWidget
+    {
+        const int TOTOL_POW2 = 64;
+        int lineCount = 0;
+        string[] lines = new string[TOTOL_POW2];
+
+        public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
+
+        public OutputScroll()
+        {
+        }
+
+        public void WriteLine(Object sender, EventArgs e)
+        {
+            StringEventArgs lineString = e as StringEventArgs;
+            Write(lineString.Data + "\n");
+        }
+
+        TypeFacePrinter printer = new TypeFacePrinter();
+        public void Write(string lineString)
+        {
+            string[] splitOnNL = lineString.Split('\n');
+            foreach (string line in splitOnNL)
+            {
+                if (line.Length > 0)
+                {
+                    printer.Text = line;
+                    Vector2 stringSize = printer.GetSize();
+
+                    int arrayIndex = (lineCount % TOTOL_POW2);
+                    lines[arrayIndex] = line;
+
+                    lineCount++;
+                }
+            }
+
+            Invalidate();
+        }
+
+        public void WriteToFile(string filePath)
+        {
+            System.IO.File.WriteAllLines(@filePath, lines);
+        }
+
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            TypeFacePrinter printer = new TypeFacePrinter();
+            printer.DrawFromHintedCache = true;
+
+            RectangleDouble Bounds = LocalBounds;
+
+            double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * (TOTOL_POW2 - 1) + 5;
+            for (int index = lineCount; index < lineCount + TOTOL_POW2; index++)
+            {
+                if (y > LocalBounds.Top)
+                {
+                    y -= printer.TypeFaceStyle.EmSizeInPixels;
+                    continue;
+                }
+                int arrayIndex = (index % TOTOL_POW2);
+                if (lines[arrayIndex] != null)
+                {
+                    printer.Text = lines[arrayIndex];
+                    printer.Origin = new Vector2(Bounds.Left + 2, y);
+                    printer.Render(graphics2D, TextColor);
+                }
+                y -= printer.TypeFaceStyle.EmSizeInPixels;
+                if (y < -printer.TypeFaceStyle.EmSizeInPixels)
+                {
+                    break;
+                }
+            }
+
+            base.OnDraw(graphics2D);
+        }
+
+        public void Clear()
+        {
+            for (int index = 0; index < TOTOL_POW2; index++)
+            {
+                lines[index] = "";
+            }
+            lineCount = 0;
         }
     }
 }
