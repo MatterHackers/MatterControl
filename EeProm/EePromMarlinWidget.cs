@@ -74,8 +74,6 @@ namespace MatterHackers.MatterControl.EeProm
         MHNumberEdit maxZJerk;
         
         Button buttonAbort;
-        Button buttonReLoadSettings;
-        Button buttonSetActive;
         Button buttonSetToFactorySettings;
         Button buttonSave;
 
@@ -113,12 +111,9 @@ namespace MatterHackers.MatterControl.EeProm
                 topButtonBar.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 topButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-                CreateMainButton(ref buttonReLoadSettings, topButtonBar, "Re-Load Default Settings");
-                buttonReLoadSettings.Click += buttonReLoadSettings_Click;
-
 				topButtonBar.Margin = new BorderDouble (0, 3);
                 
-                CreateMainButton(ref buttonSetToFactorySettings, topButtonBar, "Set Default To Factory Settings");
+                CreateMainButton(ref buttonSetToFactorySettings, topButtonBar, "Reset to Factory Defaults");
                 buttonSetToFactorySettings.Click += SetToFactorySettings;
 
 				mainContainer.AddChild(topButtonBar);
@@ -174,10 +169,7 @@ namespace MatterHackers.MatterControl.EeProm
                 bottomButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				bottomButtonBar.Margin = new BorderDouble (0, 3);
 
-                CreateMainButton(ref buttonSetActive, bottomButtonBar, "Make Settings Active");
-                buttonSetActive.Click += buttonSetActive_Click;
-
-                CreateMainButton(ref buttonSave, bottomButtonBar, "Make Settings Active\nAnd Save To Default");
+                CreateMainButton(ref buttonSave, bottomButtonBar, "Save to EEProm");
                 buttonSave.Click += buttonSave_Click;
 
                 CreateSpacer(bottomButtonBar);
@@ -319,11 +311,6 @@ namespace MatterHackers.MatterControl.EeProm
             buttonBar.AddChild(button);
         }
 
-        private void buttonReLoadSettings_Click(object sender, EventArgs e)
-        {
-            currentEePromSettings.Update();
-        }
-
         private void SetToFactorySettings(object sender, EventArgs e)
         {
             currentEePromSettings.SetPrinterToFactorySettings();
@@ -388,17 +375,6 @@ namespace MatterHackers.MatterControl.EeProm
         {
             SaveSettingsToActive();
             currentEePromSettings.SaveToEeProm();
-            Close();
-        }
-
-        void buttonSetActive_Click(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle(DoButtonSetActive_Click);
-        }
-
-        void DoButtonSetActive_Click(object state)
-        {
-            SaveSettingsToActive();
             Close();
         }
 
