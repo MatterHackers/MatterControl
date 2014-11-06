@@ -182,8 +182,6 @@ namespace MatterHackers.MatterControl.EeProm
 
             PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
-            currentEePromSettings.eventAdded += SetUiToPrinterSettings;
-
 			AddChild(mainContainer);
 
             ShowAsSystemWindow();

@@ -2837,3 +2837,9 @@ Translated:If greater than 0, this is the distance away from parts to create a p
 English:Please Confirm
 Translated:Please Confirm
 
+English:Reset to Factory Defaults
+Translated:Reset to Factory Defaults
+
+English:Save to EEProm
+Translated:Save to EEProm
+
