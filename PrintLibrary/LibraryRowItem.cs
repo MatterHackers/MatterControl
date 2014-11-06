@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             printButton.Click += (sender, e) =>
             {
                 QueueData.Instance.AddItem(this.printItemWrapper,0);
-                if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+                if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
                 {
                     QueueData.Instance.SelectedIndex = 0;
                     PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();

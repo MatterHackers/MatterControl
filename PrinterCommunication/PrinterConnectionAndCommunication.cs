@@ -481,6 +481,35 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             set;
         }
 
+        public bool PrintIsActive
+        {
+            get
+            {
+                switch (CommunicationState)
+                {
+                    case CommunicationStates.Disconnected:
+                    case CommunicationStates.Disconnecting:
+                    case CommunicationStates.AttemptingToConnect:
+                    case CommunicationStates.ConnectionLost:
+                    case CommunicationStates.FailedToConnect:
+                    case CommunicationStates.Connected:                    
+                    case CommunicationStates.FinishedPrint:
+                        return false;
+
+                    case CommunicationStates.Printing:
+                    case CommunicationStates.PrintingToSd:
+                    case CommunicationStates.PrintingFromSd:
+                    case CommunicationStates.PreparingToPrint:
+                    case CommunicationStates.PreparingToPrintToSd:
+                    case CommunicationStates.Paused:
+                        return true;
+
+                    default:
+                        throw new NotImplementedException("Make sure every status returns the correct connected state.");
+                }
+            }
+        }
+
         public bool PrinterIsPrinting
         {
             get
@@ -505,7 +534,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         return true;
 
                     default:
-                        throw new NotImplementedException("Make sure very satus returns the correct connected state.");
+                        throw new NotImplementedException("Make sure every status returns the correct connected state.");
                 }
             }
         }
