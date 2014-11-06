@@ -2834,3 +2834,6 @@ Translated:The default temperature to set the extruder to. Can sometimes be over
 English:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
 Translated:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
 
+English:Please Confirm
+Translated:Please Confirm
+
