@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 FlowLayoutWidget editToolBar = new FlowLayoutWidget();
 
-                string progressFindPartsLabel = LocalizedString.Get("Entering Editor");
+                string progressFindPartsLabel = "Entering Editor".Localize();
                 string progressFindPartsLabelFull = "{0}:".FormatWith(progressFindPartsLabel);
 
                 processingProgressControl = new ProgressControl(progressFindPartsLabelFull, ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor);
@@ -327,7 +327,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // If the window is embeded (in the center pannel) and there is no item loaded then don't show the add button
                 enterEditButtonsContainer = new FlowLayoutWidget();
                 {
-                    Button addButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+                    Button addButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
                     addButton.Margin = new BorderDouble(right: 10);
                     enterEditButtonsContainer.AddChild(addButton);
                     addButton.Click += (sender, e) =>
@@ -339,14 +339,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
-                    Button enterEdittingButton = textImageButtonFactory.Generate(LocalizedString.Get("Edit"));
+                    Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize());
                     enterEdittingButton.Margin = new BorderDouble(right: 10);
                     enterEdittingButton.Click += (sender, e) =>
                     {
                         EnterEditAndCreateSelectionData();
                     };
 
-					Button exportButton = textImageButtonFactory.Generate(LocalizedString.Get("Export..."));
+					Button exportButton = textImageButtonFactory.Generate("Export...".Localize());
 					exportButton.Margin = new BorderDouble(right: 10);
 					exportButton.Click += (sender, e) => 
 					{
@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 doEdittingButtonsContainer.Visible = false;
 
                 {
-                    Button addButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+                    Button addButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
                     addButton.Margin = new BorderDouble(right: 10);
                     doEdittingButtonsContainer.AddChild(addButton);
                     addButton.Click += (sender, e) =>
@@ -381,35 +381,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
-                    Button ungroupButton = textImageButtonFactory.Generate(LocalizedString.Get("Ungroup"));
+                    Button ungroupButton = textImageButtonFactory.Generate("Ungroup".Localize());
                     doEdittingButtonsContainer.AddChild(ungroupButton);
                     ungroupButton.Click += (sender, e) =>
                     {
                         UngroupSelectedMeshGroup();
                     };
 
-                    Button groupButton = textImageButtonFactory.Generate(LocalizedString.Get("Group"));
+                    Button groupButton = textImageButtonFactory.Generate("Group".Localize());
                     doEdittingButtonsContainer.AddChild(groupButton);
                     groupButton.Click += (sender, e) =>
                     {
                         GroupSelectedMeshs();
                     };
 
-                    Button alignButton = textImageButtonFactory.Generate(LocalizedString.Get("Align"));
+                    Button alignButton = textImageButtonFactory.Generate("Align".Localize());
                     doEdittingButtonsContainer.AddChild(alignButton);
                     alignButton.Click += (sender, e) =>
                     {
                         AlignToSelectedMeshGroup();
                     };
 
-                    Button copyButton = textImageButtonFactory.Generate(LocalizedString.Get("Copy"));
+                    Button copyButton = textImageButtonFactory.Generate("Copy".Localize());
                     doEdittingButtonsContainer.AddChild(copyButton);
                     copyButton.Click += (sender, e) =>
                     {
                         MakeCopyOfGroup();
                     };
 
-                    Button deleteButton = textImageButtonFactory.Generate(LocalizedString.Get("Delete"));
+                    Button deleteButton = textImageButtonFactory.Generate("Delete".Localize());
                     deleteButton.Margin = new BorderDouble(left: 20, right: 10);
                     doEdittingButtonsContainer.AddChild(deleteButton);
                     deleteButton.Click += (sender, e) =>
@@ -417,7 +417,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         DeleteSelectedMesh();
                     };
 
-                    Button exportButton = textImageButtonFactory.Generate(LocalizedString.Get("Export..."));
+                    Button exportButton = textImageButtonFactory.Generate("Export...".Localize());
                     exportButton.Margin = new BorderDouble(right: 10);
                     exportButton.Click += (sender, e) =>
                     {
@@ -477,7 +477,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (windowType == WindowType.StandAlone)
             {
-                Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
+                Button closeButton = textImageButtonFactory.Generate("Close".Localize());
                 buttonBottomPanel.AddChild(closeButton);
                 closeButton.Click += (sender, e) =>
                 {
@@ -627,7 +627,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (MeshGroups.Count > 0 && filesToLoad != null && filesToLoad.Length > 0)
             {
-                string loadingPartLabel = LocalizedString.Get("Loading Parts");
+                string loadingPartLabel = "Loading Parts".Localize();
                 string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
                 processingProgressControl.ProcessType = loadingPartLabelFull;
                 processingProgressControl.Visible = true;
@@ -1034,18 +1034,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private FlowLayoutWidget CreateSaveButtons()
         {
-            TextImageButtonFactory saveButtonFactory = new TextImageButtonFactory();
-            saveButtonFactory.FixedWidth = 56;
-            saveButtonFactory.FixedHeight = 40;
-            saveButtonFactory.normalFillColor = RGBA_Bytes.White;
-            saveButtonFactory.normalTextColor = RGBA_Bytes.Black;
-            saveButtonFactory.hoverTextColor = RGBA_Bytes.Black;
-            saveButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
-
             FlowLayoutWidget saveButtons = new FlowLayoutWidget();
 
             //Create Save Button
-            Button saveButton = saveButtonFactory.Generate(LocalizedString.Get("Save"), centerText: true);
+            double oldWidth = whiteButtonFactory.FixedWidth;
+            whiteButtonFactory.FixedWidth = 56;
+            Button saveButton = whiteButtonFactory.Generate("Save".Localize(), centerText: true);
             saveButton.Cursor = Cursors.Hand;
             saveButtons.AddChild(saveButton);
             saveButton.Click += (sender, e) =>
@@ -1054,8 +1048,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
 
             //Create Save As Button 	
-            saveButtonFactory.FixedWidth = SideBarButtonWidth - saveButtonFactory.FixedWidth - 2;
-            Button saveAsButton = saveButtonFactory.Generate("Save As".Localize(), centerText: true);
+            whiteButtonFactory.FixedWidth = SideBarButtonWidth - whiteButtonFactory.FixedWidth - 2;
+            Button saveAsButton = whiteButtonFactory.Generate("Save As".Localize(), centerText: true);
+            whiteButtonFactory.FixedWidth = oldWidth;
             saveAsButton.Cursor = Cursors.Hand;
             saveButtons.AddChild(saveAsButton);
             saveAsButton.Click += (sender, e) =>
@@ -1096,7 +1091,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
                 scaleRatioContainer.Padding = new BorderDouble(5);
 
-                string scaleRatioLabelText = LocalizedString.Get("Ratio");
+                string scaleRatioLabelText = "Ratio".Localize();
                 string scaleRatioLabelTextFull = "{0}:".FormatWith(scaleRatioLabelText);
                 TextWidget scaleRatioLabel = new TextWidget(scaleRatioLabelTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
                 scaleRatioLabel.Margin = new BorderDouble(0, 0, 3, 0);
@@ -1130,7 +1125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 scaleControls.Add(scaleRatioControl);
             }
 
-            applyScaleButton = whiteButtonFactory.Generate(LocalizedString.Get("Apply Scale"), centerText: true);
+            applyScaleButton = whiteButtonFactory.Generate("Apply Scale".Localize(), centerText: true);
             applyScaleButton.Visible = false;
             applyScaleButton.Cursor = Cursors.Hand;
             buttonPanel.AddChild(applyScaleButton);
@@ -1147,7 +1142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 buttonPanel.AddChild(createAxisScalingControl("y", 1));
                 buttonPanel.AddChild(createAxisScalingControl("z", 2));
 
-                uniformScale = new CheckBox(LocalizedString.Get("Lock Ratio"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
                 uniformScale.Checked = true;
 
                 FlowLayoutWidget leftToRight = new FlowLayoutWidget();
@@ -1254,7 +1249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             presetScaleMenu.AddItem("in to mm (25.4)");
             presetScaleMenu.AddItem("mm to cm (.1)");
             presetScaleMenu.AddItem("cm to mm (10)");
-            string resetLable = LocalizedString.Get("reset");
+            string resetLable = "reset".Localize();
             string resetLableFull = "{0} (1)".FormatWith(resetLable);
             presetScaleMenu.AddItem(resetLableFull);
 
@@ -1448,7 +1443,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void AddRotateControls(FlowLayoutWidget buttonPanel)
         {
             List<GuiWidget> rotateControls = new List<GuiWidget>();
-            transformControls.Add(LocalizedString.Get("Rotate"), rotateControls);
+            transformControls.Add("Rotate".Localize(), rotateControls);
 
             textImageButtonFactory.FixedWidth = 44;
 
@@ -1456,7 +1451,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             degreesContainer.HAnchor = HAnchor.ParentLeftRight;
             degreesContainer.Padding = new BorderDouble(5);
 
-            string degreesLabelText = LocalizedString.Get("Degrees");
+            string degreesLabelText = "Degrees".Localize();
             string degreesLabelTextFull = "{0}:".FormatWith(degreesLabelText);
             TextWidget degreesLabel = new TextWidget(degreesLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
             degreesContainer.AddChild(degreesLabel);
@@ -1524,7 +1519,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             buttonPanel.AddChild(rotateButtonContainer);
 
-            Button layFlatButton = whiteButtonFactory.Generate(LocalizedString.Get("Align to Bed"), centerText: true);
+            Button layFlatButton = whiteButtonFactory.Generate("Align to Bed".Localize(), centerText: true);
             layFlatButton.Cursor = Cursors.Hand;
             buttonPanel.AddChild(layFlatButton);
 
@@ -1705,7 +1700,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (MeshGroups.Count > 0)
             {
-                string progressSavingPartsLabel = LocalizedString.Get("Saving");
+                string progressSavingPartsLabel = "Saving".Localize();
                 string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
                 processingProgressControl.ProcessType = progressSavingPartsLabelFull;
                 processingProgressControl.Visible = true;

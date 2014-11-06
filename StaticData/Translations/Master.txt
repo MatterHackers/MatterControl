@@ -2813,3 +2813,33 @@ Translated:Ungrouping
 English:Grouping
 Translated:Grouping
 
+English:WARNING: Disconnecting will cancel the print.
+Translated:WARNING: Disconnecting will cancel the print.
+
+English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
+Translated:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
+
+English:This is the diameter of your extruder nozzle.
+Translated:This is the diameter of your extruder nozzle.
+
+English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
+Translated:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
+
+English:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
+Translated:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
+
+English:The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
+Translated:The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
+
+English:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
+Translated:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
+
+English:Please Confirm
+Translated:Please Confirm
+
+English:Reset to Factory Defaults
+Translated:Reset to Factory Defaults
+
+English:Save to EEProm
+Translated:Save to EEProm
+

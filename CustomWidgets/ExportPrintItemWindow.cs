@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl
 		string documentsPath;
 
         public ExportPrintItemWindow(PrintItemWrapper printItemWrapper)
-            : base(400, 250)
+            : base(400, 300)
         {
             this.printItemWrapper = printItemWrapper;
 			documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
@@ -97,6 +97,18 @@ namespace MatterHackers.MatterControl
                 exportAsStlButton.Cursor = Cursors.Hand;
                 exportAsStlButton.Click += new EventHandler(exportSTL_Click);
                 middleRowContainer.AddChild(exportAsStlButton);
+            }
+
+            if (!partIsGCode)
+            {
+                string exportAmfText = LocalizedString.Get("Export as");
+                string exportAmfTextFull = string.Format("{0} AMF", exportAmfText);
+
+                Button exportAsAmfButton = textImageButtonFactory.Generate(exportAmfTextFull);
+                exportAsAmfButton.HAnchor = HAnchor.ParentLeft;
+                exportAsAmfButton.Cursor = Cursors.Hand;
+                exportAsAmfButton.Click += new EventHandler(exportAMF_Click);
+                middleRowContainer.AddChild(exportAsAmfButton);
             }
 
             bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
@@ -467,7 +479,22 @@ namespace MatterHackers.MatterControl
             FileDialog.SaveFileDialog(saveParams, onExportStlFileSelected);
         }
 
-		void onExportStlFileSelected(SaveFileDialogParams saveParams)
+        void exportAMF_Click(object sender, EventArgs mouseEvent)
+        {
+            UiThread.RunOnIdle(DoExportAMF_Click);
+        }
+
+        void DoExportAMF_Click(object state)
+        {
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath);
+            saveParams.Title = "MatterControl: Export File";
+            saveParams.ActionButtonLabel = "Export";
+            saveParams.FileName = printItemWrapper.Name;
+
+            FileDialog.SaveFileDialog(saveParams, onExportAmfFileSelected);
+        }
+
+        void onExportStlFileSelected(SaveFileDialogParams saveParams)
 		{
 			Close();
 			if (saveParams.FileName != null)
@@ -494,6 +521,34 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
+
+        void onExportAmfFileSelected(SaveFileDialogParams saveParams)
+        {
+            Close();
+            if (saveParams.FileName != null)
+            {
+                string filePathToSave = saveParams.FileName;
+                if (filePathToSave != null && filePathToSave != "")
+                {
+                    string extension = Path.GetExtension(filePathToSave);
+                    if (extension == "")
+                    {
+                        File.Delete(filePathToSave);
+                        filePathToSave += ".amf";
+                    }
+                    if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+                    {
+                        File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+                    }
+                    else
+                    {
+                        List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
+                        MeshFileIo.Save(meshGroups, filePathToSave);
+                    }
+                    ShowFileIfRequested(filePathToSave);
+                }
+            }
+        }
 
         void sliceItem_Done(object sender, EventArgs e)
         {
