@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			addButton.tooltipText = LocalizedString.Get("Add a file to be printed");
             addButton.Margin = new BorderDouble(0, 6, 6, 3);
 
-			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Start"), "icon_play_32x32.png");
+			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Print"), "icon_play_32x32.png");
 			startButton.tooltipText = LocalizedString.Get("Begin printing the selected item.");
             startButton.Margin = new BorderDouble(0, 6, 6, 3);
 
