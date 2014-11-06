@@ -207,13 +207,14 @@ namespace MatterHackers.MatterControl.PrintHistory
                     printButton.AddChild(printLabel);
                     printButton.Click += (sender, e) =>
                     {
-                        QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId),0);                        
-                        QueueData.Instance.SelectedIndex = 0;
-                        PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+                        QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId), 0);    
+                        if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrinterIsPrinting && !PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+                        {
+                            QueueData.Instance.SelectedIndex = 0;
+                            PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+                        }
                     };
                     rightMiddleColumnContainer.AddChild(printButton);
-
-
                 }
                 rightButtonOverlay.AddChild(rightMiddleColumnContainer);
                 
