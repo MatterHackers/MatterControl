@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
         {
             int thumbHeight = 2;
             graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Black);
-            double bottom = textScrollWidget.Position0To1 * (Height - thumbHeight - 1);// the 2 is the border
+            double bottom = textScrollWidget.Position0To1 * (Height - thumbHeight - 2);// the 2 is the border
             RectangleDouble thumb = new RectangleDouble(0, bottom + 1, Width, bottom + 1 + thumbHeight);// the 1 is the border
             graphics2D.FillRectangle(thumb, RGBA_Bytes.Black);
             base.OnDraw(graphics2D);
