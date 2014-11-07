@@ -34,31 +34,20 @@ namespace MatterHackers.MatterControl
 {    
     public class TerminalWindow : SystemWindow
     {
-        public static void HookupPrinterOutput()
-        {
-            //throw new NotImplementedException();
-        }
-
         static TerminalWindow connectionWindow = null;
-        static bool terminalWindowIsOpen = false;
         public static void Show()
         {
-            if (terminalWindowIsOpen == false)
+            if (connectionWindow == null)
             {
                 connectionWindow = new TerminalWindow();
-                terminalWindowIsOpen = true;
                 connectionWindow.Closed += (parentSender, e) =>
                 {
-                    terminalWindowIsOpen = false;
                     connectionWindow = null;
                 };
             }
             else
             {
-                if (connectionWindow != null)
-                {
-                    connectionWindow.BringToFront();
-                }
+                connectionWindow.BringToFront();
             }
         }
 
@@ -71,5 +60,5 @@ namespace MatterHackers.MatterControl
 			this.ShowAsSystemWindow();
 			MinimumSize = new Vector2(Width, Height);
 		}
-	}
+    }
 }

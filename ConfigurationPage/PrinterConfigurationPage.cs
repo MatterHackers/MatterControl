@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl
             terminalControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             terminalControlsContainer.Height = 80;
 
-            TerminalWindow.HookupPrinterOutput();
+            PrinterOutputCache.Instance.HookupPrinterOutput();
 
             {
                 FlowLayoutWidget buttonBar = new FlowLayoutWidget();

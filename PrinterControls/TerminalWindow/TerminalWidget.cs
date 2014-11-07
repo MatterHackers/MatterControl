@@ -42,7 +42,6 @@ namespace MatterHackers.MatterControl
     public class TerminalWidget : GuiWidget
     {
         Button sendCommand;
-        CheckBox filterOutput;
         CheckBox autoUppercase;
         MHTextEditWidget manualCommandTextEdit;
         TextScrollWidget outputScrollWidget;
@@ -66,16 +65,6 @@ namespace MatterHackers.MatterControl
                     FlowLayoutWidget topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
                     topBarControls.HAnchor |= HAnchor.ParentLeft;
 
-                    string filterOutputChkTxt = LocalizedString.Get("Filter Output");
-
-                    filterOutput = new CheckBox(filterOutputChkTxt);
-                    filterOutput.Margin = new BorderDouble(5, 5, 5, 2);
-                    filterOutput.Checked = false;
-                    filterOutput.TextColor = this.textColor;
-                    filterOutput.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(SetCorrectFilterOutputBehavior);
-                    filterOutput.VAnchor = Agg.UI.VAnchor.ParentBottom;
-                    topBarControls.AddChild(filterOutput);
-
                     string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
 
                     autoUppercase = new CheckBox(autoUpperCaseChkTxt);
@@ -89,7 +78,10 @@ namespace MatterHackers.MatterControl
                 }
 
                 {
-                    outputScrollWidget = new TextScrollWidget();
+                    FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+                    leftToRight.AnchorAll();
+
+                    outputScrollWidget = new TextScrollWidget(PrinterOutputCache.Instance.PrinterLines);
                     //outputScrollWidget.Height = 100;
                     outputScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
                     outputScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -99,7 +91,14 @@ namespace MatterHackers.MatterControl
                     outputScrollWidget.Padding = new BorderDouble(3, 0);
 
 
-                    manualEntryTopToBottomLayout.AddChild(outputScrollWidget);
+                    leftToRight.AddChild(outputScrollWidget);
+
+                    GuiWidget fakeScrollBar = new GuiWidget(10, 10);
+                    fakeScrollBar.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+                    fakeScrollBar.BackgroundColor = RGBA_Bytes.Blue;
+                    leftToRight.AddChild(fakeScrollBar);
+
+                    manualEntryTopToBottomLayout.AddChild(leftToRight);
                 }
 
                 FlowLayoutWidget manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
@@ -122,17 +121,14 @@ namespace MatterHackers.MatterControl
                 clearConsoleButton.Margin = new BorderDouble(0);
                 clearConsoleButton.Click += (sender, e) =>
                 {
-                    outputScrollWidget.Clear();
+                    PrinterOutputCache.Instance.Clear();
                 };
 
                 //Output Console text to screen
                 Button exportConsoleTextButton = controlButtonFactory.Generate(LocalizedString.Get("Export..."));
                 exportConsoleTextButton.Click += (sender, mouseEvent) =>
                 {
-                    string logFilePath = String.Format("{0}\\logs\\{1}ConsoleOutput.txt",
-                                                       System.IO.Directory.GetCurrentDirectory(),
-                                                       System.Diagnostics.Stopwatch.GetTimestamp());
-                    outputScrollWidget.WriteToFile(logFilePath);
+                    UiThread.RunOnIdle(DoExportExportLog_Click);
                 };
 
                 Button closeButton = controlButtonFactory.Generate(LocalizedString.Get("Close"));
@@ -164,37 +160,36 @@ namespace MatterHackers.MatterControl
                 topLeftToRightLayout.AddChild(manualEntryTopToBottomLayout);
             }
 
-            AddHandlers();
-
             AddChild(topLeftToRightLayout);
-            SetCorrectFilterOutputBehavior(this, null);
             this.AnchorAll();
         }
 
-        event EventHandler unregisterEvents;
-        void AddHandlers()
+        void DoExportExportLog_Click(object state)
         {
-            PrinterConnectionAndCommunication.Instance.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
+            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as Text|*.txt", initialDirectory: documentsPath);  
+			saveParams.Title = "MatterControl: Terminal Log";
+			saveParams.ActionButtonLabel = "Export";
+            saveParams.FileName = "print_log.txt";
+
+            FileDialog.SaveFileDialog(saveParams, onExportLogFileSelected);
         }
+
+        void onExportLogFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null)
+			{
+				string filePathToSave = saveParams.FileName;
+				if (filePathToSave != null && filePathToSave != "")
+				{
+                    outputScrollWidget.WriteToFile(filePathToSave);
+                }
+			}
+		}
 
         private void CloseWindow(object state)
         {
             this.Parent.Close();
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            // make sure we are not holding onto this window (keeping a pointer that can't be garbage collected).
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-
-        void monitorPrinterTemperature_CheckedStateChanged(object sender, EventArgs e)
-        {
-            PrinterConnectionAndCommunication.Instance.MonitorPrinterTemperature = ((CheckBox)sender).Checked;
         }
 
         List<string> commandHistory = new List<string>();
@@ -249,130 +244,7 @@ namespace MatterHackers.MatterControl
             commandHistory.Add(textToSend);
             commandHistoryIndex = commandHistory.Count;
             PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(textToSend);
-            if (!filterOutput.Checked)
-            {
-                outputScrollWidget.WriteLine(this, new StringEventArgs(textToSend));
-            }
             manualCommandTextEdit.Text = "";
-        }
-
-        void SetCorrectFilterOutputBehavior(object sender, EventArgs e)
-        {
-            if (filterOutput.Checked)
-            {
-                PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.UnregisterEvent(FromPrinter, ref unregisterEvents);
-                PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.UnregisterEvent(ToPrinter, ref unregisterEvents);
-                PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
-            }
-            else
-            {
-                PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
-                PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
-                PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(outputScrollWidget.WriteLine, ref unregisterEvents);
-            }
-        }
-
-        void FromPrinter(Object sender, EventArgs e)
-        {
-            StringEventArgs lineString = e as StringEventArgs;
-            outputScrollWidget.WriteLine(sender, new StringEventArgs("<-" + lineString.Data));
-        }
-
-        void ToPrinter(Object sender, EventArgs e)
-        {
-            StringEventArgs lineString = e as StringEventArgs;
-            outputScrollWidget.WriteLine(sender, new StringEventArgs("->" + lineString.Data));
-        }
-
-        void Instance_ConnectionFailed(object sender, EventArgs e)
-        {
-            outputScrollWidget.WriteLine(sender, new StringEventArgs("Lost connection to printer."));
-        }
-    }
-    
-    public class OutputScroll : GuiWidget
-    {
-        const int TOTOL_POW2 = 64;
-        int lineCount = 0;
-        string[] lines = new string[TOTOL_POW2];
-
-        public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
-
-        public OutputScroll()
-        {
-        }
-
-        public void WriteLine(Object sender, EventArgs e)
-        {
-            StringEventArgs lineString = e as StringEventArgs;
-            Write(lineString.Data + "\n");
-        }
-
-        TypeFacePrinter printer = new TypeFacePrinter();
-        public void Write(string lineString)
-        {
-            string[] splitOnNL = lineString.Split('\n');
-            foreach (string line in splitOnNL)
-            {
-                if (line.Length > 0)
-                {
-                    printer.Text = line;
-                    Vector2 stringSize = printer.GetSize();
-
-                    int arrayIndex = (lineCount % TOTOL_POW2);
-                    lines[arrayIndex] = line;
-
-                    lineCount++;
-                }
-            }
-
-            Invalidate();
-        }
-
-        public void WriteToFile(string filePath)
-        {
-            System.IO.File.WriteAllLines(@filePath, lines);
-        }
-
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            TypeFacePrinter printer = new TypeFacePrinter();
-            printer.DrawFromHintedCache = true;
-
-            RectangleDouble Bounds = LocalBounds;
-
-            double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * (TOTOL_POW2 - 1) + 5;
-            for (int index = lineCount; index < lineCount + TOTOL_POW2; index++)
-            {
-                if (y > LocalBounds.Top)
-                {
-                    y -= printer.TypeFaceStyle.EmSizeInPixels;
-                    continue;
-                }
-                int arrayIndex = (index % TOTOL_POW2);
-                if (lines[arrayIndex] != null)
-                {
-                    printer.Text = lines[arrayIndex];
-                    printer.Origin = new Vector2(Bounds.Left + 2, y);
-                    printer.Render(graphics2D, TextColor);
-                }
-                y -= printer.TypeFaceStyle.EmSizeInPixels;
-                if (y < -printer.TypeFaceStyle.EmSizeInPixels)
-                {
-                    break;
-                }
-            }
-
-            base.OnDraw(graphics2D);
-        }
-
-        public void Clear()
-        {
-            for (int index = 0; index < TOTOL_POW2; index++)
-            {
-                lines[index] = "";
-            }
-            lineCount = 0;
         }
     }
 }

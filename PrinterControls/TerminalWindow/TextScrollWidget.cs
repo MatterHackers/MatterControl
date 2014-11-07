@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
@@ -37,46 +38,29 @@ namespace MatterHackers.MatterControl
 {
     public class TextScrollWidget : GuiWidget
     {
-        const int TOTOL_POW2 = 64;
-        int lineCount = 0;
-        string[] lines = new string[TOTOL_POW2];
+        event EventHandler unregisterEvents;
+        List<string> sourceLines;
 
         public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
 
-        public TextScrollWidget()
+        public TextScrollWidget(List<string> sourceLines)
         {
-        }
-
-        public void WriteLine(Object sender, EventArgs e)
-        {
-            StringEventArgs lineString = e as StringEventArgs;
-            Write(lineString.Data + "\n");
-        }
-
-        TypeFacePrinter printer = new TypeFacePrinter();
-        public void Write(string lineString)
-        {
-            string[] splitOnNL = lineString.Split('\n');
-            foreach (string line in splitOnNL)
-            {
-                if (line.Length > 0)
-                {
-                    printer.Text = line;
-                    Vector2 stringSize = printer.GetSize();
-
-                    int arrayIndex = (lineCount % TOTOL_POW2);
-                    lines[arrayIndex] = line;
-
-                    lineCount++;
-                }
-            }
-
-            Invalidate();
+            this.sourceLines = sourceLines;
+            PrinterOutputCache.Instance.HasChanged.RegisterEvent((sender, e) => { Invalidate(); }, ref unregisterEvents);
         }
 
         public void WriteToFile(string filePath)
         {
-            System.IO.File.WriteAllLines(@filePath, lines);
+            System.IO.File.WriteAllLines(@filePath, sourceLines);
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
         }
 
         public override void OnDraw(Graphics2D graphics2D)
@@ -86,20 +70,21 @@ namespace MatterHackers.MatterControl
 
             RectangleDouble Bounds = LocalBounds;
 
-            double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * (TOTOL_POW2 - 1) + 5;
-            for (int index = lineCount; index < lineCount + TOTOL_POW2; index++)
+            int numLinesToDraw = (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels);
+
+            double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
+            int startLineIndex = sourceLines.Count - numLinesToDraw;
+            int endLineIndex = sourceLines.Count;
+            for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
             {
-                if (y > LocalBounds.Top)
+                if (lineIndex >= 0)
                 {
-                    y -= printer.TypeFaceStyle.EmSizeInPixels;
-                    continue;
-                }
-                int arrayIndex = (index % TOTOL_POW2);
-                if (lines[arrayIndex] != null)
-                {
-                    printer.Text = lines[arrayIndex];
-                    printer.Origin = new Vector2(Bounds.Left + 2, y);
-                    printer.Render(graphics2D, TextColor);
+                    if (sourceLines[lineIndex] != null)
+                    {
+                        printer.Text = sourceLines[lineIndex];
+                        printer.Origin = new Vector2(Bounds.Left + 2, y);
+                        printer.Render(graphics2D, TextColor);
+                    }
                 }
                 y -= printer.TypeFaceStyle.EmSizeInPixels;
                 if (y < -printer.TypeFaceStyle.EmSizeInPixels)
@@ -109,15 +94,6 @@ namespace MatterHackers.MatterControl
             }
 
             base.OnDraw(graphics2D);
-        }
-
-        public void Clear()
-        {
-            for (int index = 0; index < TOTOL_POW2; index++)
-            {
-                lines[index] = "";
-            }
-            lineCount = 0;
         }
     }
 }
