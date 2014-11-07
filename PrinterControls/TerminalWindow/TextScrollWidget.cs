@@ -41,10 +41,47 @@ namespace MatterHackers.MatterControl
         event EventHandler unregisterEvents;
         List<string> sourceLines;
 
+        TypeFacePrinter printer = new TypeFacePrinter();
         public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
+        int forceStartLine = -1;
+        public double Position0To1
+        {
+            get
+            {
+                if (forceStartLine == -1)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return ((sourceLines.Count - (double)forceStartLine) / sourceLines.Count);
+                }
+            }
+
+            set
+            {
+                forceStartLine = (int)(sourceLines.Count * (1 - value)) - 1;
+                forceStartLine = Math.Max(0, forceStartLine);
+                forceStartLine = Math.Min(sourceLines.Count - 1, forceStartLine);
+
+                // If the start would be less than one screen worth of content, allow
+                // the whole screen to have content and scroll with new material.
+                if(forceStartLine > sourceLines.Count - NumVisibleLines)
+                {
+                    forceStartLine = -1;
+                }
+                Invalidate();
+            }
+        }
+
+        public int NumVisibleLines
+        {
+            get { return (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); }
+        }
 
         public TextScrollWidget(List<string> sourceLines)
         {
+            printer.DrawFromHintedCache = true;
             this.sourceLines = sourceLines;
             PrinterOutputCache.Instance.HasChanged.RegisterEvent((sender, e) => { Invalidate(); }, ref unregisterEvents);
         }
@@ -65,15 +102,26 @@ namespace MatterHackers.MatterControl
 
         public override void OnDraw(Graphics2D graphics2D)
         {
-            TypeFacePrinter printer = new TypeFacePrinter();
-            printer.DrawFromHintedCache = true;
-
             RectangleDouble Bounds = LocalBounds;
 
-            int numLinesToDraw = (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels);
+            int numLinesToDraw = NumVisibleLines;
 
             double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
             int startLineIndex = sourceLines.Count - numLinesToDraw;
+            if (forceStartLine != -1)
+            {
+                y = LocalBounds.Top;
+
+                if (forceStartLine > sourceLines.Count - numLinesToDraw)
+                {
+                    forceStartLine = -1;
+                }
+                else
+                {
+                    // make sure we show all the lines we can
+                    startLineIndex = Math.Min(forceStartLine, startLineIndex);
+                }
+            }
             int endLineIndex = sourceLines.Count;
             for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
             {

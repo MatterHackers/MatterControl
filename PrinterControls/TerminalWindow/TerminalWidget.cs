@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
         Button sendCommand;
         CheckBox autoUppercase;
         MHTextEditWidget manualCommandTextEdit;
-        TextScrollWidget outputScrollWidget;
+        TextScrollWidget textScrollWidget;
         RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
         RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
         TextImageButtonFactory controlButtonFactory = new TextImageButtonFactory();
@@ -81,22 +81,19 @@ namespace MatterHackers.MatterControl
                     FlowLayoutWidget leftToRight = new FlowLayoutWidget();
                     leftToRight.AnchorAll();
 
-                    outputScrollWidget = new TextScrollWidget(PrinterOutputCache.Instance.PrinterLines);
+                    textScrollWidget = new TextScrollWidget(PrinterOutputCache.Instance.PrinterLines);
                     //outputScrollWidget.Height = 100;
-                    outputScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-                    outputScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                    outputScrollWidget.HAnchor = HAnchor.ParentLeftRight;
-                    outputScrollWidget.VAnchor = VAnchor.ParentBottomTop;
-                    outputScrollWidget.Margin = new BorderDouble(0, 5);
-                    outputScrollWidget.Padding = new BorderDouble(3, 0);
+                    textScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+                    textScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                    textScrollWidget.HAnchor = HAnchor.ParentLeftRight;
+                    textScrollWidget.VAnchor = VAnchor.ParentBottomTop;
+                    textScrollWidget.Margin = new BorderDouble(0, 5);
+                    textScrollWidget.Padding = new BorderDouble(3, 0);
 
+                    leftToRight.AddChild(textScrollWidget);
 
-                    leftToRight.AddChild(outputScrollWidget);
-
-                    GuiWidget fakeScrollBar = new GuiWidget(10, 10);
-                    fakeScrollBar.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-                    fakeScrollBar.BackgroundColor = RGBA_Bytes.Blue;
-                    leftToRight.AddChild(fakeScrollBar);
+                    TextScrollBar textScrollBar = new TextScrollBar(textScrollWidget, 15);
+                    leftToRight.AddChild(textScrollBar);
 
                     manualEntryTopToBottomLayout.AddChild(leftToRight);
                 }
@@ -182,7 +179,7 @@ namespace MatterHackers.MatterControl
 				string filePathToSave = saveParams.FileName;
 				if (filePathToSave != null && filePathToSave != "")
 				{
-                    outputScrollWidget.WriteToFile(filePathToSave);
+                    textScrollWidget.WriteToFile(filePathToSave);
                 }
 			}
 		}

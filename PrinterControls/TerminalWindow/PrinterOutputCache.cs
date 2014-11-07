@@ -97,12 +97,6 @@ namespace MatterHackers.MatterControl
             OnHasChanged(eventArgs);
         }
 
-        public void HookupPrinterOutput()
-        {
-            throw new System.NotImplementedException();
-        }
-
-
         public void Clear()
         {
             PrinterLines.Clear();

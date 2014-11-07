@@ -877,7 +877,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
                 return;
             }
-
             
             string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
             if (ActiveSliceSettings.Instance.HasSdCardReader()
@@ -889,6 +888,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             {
                 if (File.Exists(pathAndFile))
                 {
+                    // clear the output cache prior to starting a print
+                    PrinterOutputCache.Instance.Clear();
+
                     string hideGCodeWarning = ApplicationSettings.Instance.get("HideGCodeWarning");
 
                     if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
@@ -1432,6 +1434,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         private void ConnectToPrinter(Printer printerRecord)
         {
+            PrinterOutputCache.Instance.Clear();
             LinesToWriteQueue.Clear();
             //Attempt connecting to a specific printer
             CommunicationState = CommunicationStates.AttemptingToConnect;

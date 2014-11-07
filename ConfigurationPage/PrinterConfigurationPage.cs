@@ -83,27 +83,6 @@ namespace MatterHackers.MatterControl
             mainLayoutContainer.VAnchor = Agg.UI.VAnchor.FitToChildren;
             mainLayoutContainer.Padding = new BorderDouble(top: 10);
 
-            //// setup the terminal controls
-            //FlowLayoutWidget terminalControls = new FlowLayoutWidget();
-            //terminalControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            //terminalControls.Padding = new BorderDouble(0);
-            //terminalControls.Margin = new BorderDouble(right: 2);
-            //AddTerminalControls(terminalControls);            
-
-            //// add other elements on the same line as terminal controls
-            //AddEePromControls(terminalControls);
-            //AddReleaseOptions(terminalControls);
-
-            //mainLayoutContainer.AddChild(terminalControls);
-
-            //// put in print leveling controls
-            //AddPrintLevelingControls(mainLayoutContainer);
-
-            // put in cloud monitor control
-            //AddCloudMonitorControls(mainLayoutContainer);            
-
-            
-
             HardwareSettingsWidget hardwareGroupbox = new HardwareSettingsWidget();
             mainLayoutContainer.AddChild(hardwareGroupbox);
 
@@ -112,13 +91,6 @@ namespace MatterHackers.MatterControl
 
             ApplicationSettingsWidget applicationGroupbox = new ApplicationSettingsWidget();
             mainLayoutContainer.AddChild(applicationGroupbox);
-
-            // put in the theme and language controls
-            //FlowLayoutWidget uiSettingsControls = new FlowLayoutWidget();
-            //uiSettingsControls.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            //AddThemeControls(uiSettingsControls);
-            //AddLanguageControls(uiSettingsControls);
-            //mainLayoutContainer.AddChild(uiSettingsControls);
 
             AddChild(mainLayoutContainer);
 
@@ -164,50 +136,6 @@ namespace MatterHackers.MatterControl
         }
 
         Button restartButton;
-
-        private void AddLanguageControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {
-            DisableableWidget container = new DisableableWidget();
-            
-            AltGroupBox languageControlsGroupBox = new AltGroupBox(LocalizedString.Get("Language Settings"));
-            languageControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            languageControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            languageControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            languageControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-            languageControlsGroupBox.Height = 78;
-
-            FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
-            controlsContainer.HAnchor = HAnchor.ParentLeftRight;
-
-            LanguageSelector languageSelector = new LanguageSelector();
-
-            languageSelector.Margin = new BorderDouble(0);
-            languageSelector.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
-
-            TextWidget experimentalWidget = new TextWidget("Experimental", pointSize:10);
-            experimentalWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            experimentalWidget.Margin = new BorderDouble(left: 4);
-            experimentalWidget.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
-
-            restartButton = textImageButtonFactory.Generate("Restart");
-            restartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            restartButton.Visible = false;
-            restartButton.Click += (sender, e) =>
-            {
-                RestartApplication();
-            };
-
-            controlsContainer.AddChild(languageSelector);
-            controlsContainer.AddChild(experimentalWidget);
-            controlsContainer.AddChild(new HorizontalSpacer());
-            controlsContainer.AddChild(restartButton);
-
-            languageControlsGroupBox.AddChild(controlsContainer);
-
-            container.AddChild(languageControlsGroupBox);
-
-            controlsTopToBottomLayout.AddChild(container);
-        }
 
         private void RestartApplication()
         {
@@ -294,52 +222,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-        private void AddTerminalControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {
-            AltGroupBox terminalControlsContainer;
-            terminalControlsContainer = new AltGroupBox(LocalizedString.Get("Communications"));
-
-            terminalControlsContainer.Margin = new BorderDouble(0);
-            terminalControlsContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            terminalControlsContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            terminalControlsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            terminalControlsContainer.Height = 80;
-
-            PrinterOutputCache.Instance.HookupPrinterOutput();
-
-            {
-                FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-                buttonBar.HAnchor |= HAnchor.ParentCenter;
-                buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                buttonBar.Margin = new BorderDouble(3, 0, 3, 6);
-                buttonBar.Padding = new BorderDouble(0);
-
-                this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-
-                Agg.Image.ImageBuffer terminalImage = new Agg.Image.ImageBuffer();
-                ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "terminal-24x24.png"), terminalImage);
-                ImageWidget terminalIcon = new ImageWidget(terminalImage);
-                terminalIcon.Margin = new BorderDouble(right: 6);
-
-                Button showTerminal = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
-                showTerminal.Margin = new BorderDouble(0);
-                showTerminal.Click += (sender, e) =>
-                {
-                    TerminalWindow.Show();
-                };
-
-                //buttonBar.AddChild(terminalIcon);
-                buttonBar.AddChild(showTerminal);
-
-                terminalControlsContainer.AddChild(buttonBar);
-            }
-
-            terminalCommunicationsContainer = new DisableableWidget();
-            terminalCommunicationsContainer.AddChild(terminalControlsContainer);
-
-            controlsTopToBottomLayout.AddChild(terminalCommunicationsContainer);
-        }       
-
         private static GuiWidget CreateSeparatorLine()
         {
             GuiWidget topLine = new GuiWidget(10, 1);
@@ -358,87 +240,6 @@ namespace MatterHackers.MatterControl
 
             base.OnClosed(e);
         }
-
-        
-        //private void AddCloudMonitorControls(FlowLayoutWidget controlsTopToBottomLayout)
-        //{
-        //    cloudMonitorContainer = new DisableableWidget();
-        //    cloudMonitorContainer.AddChild(CreateCloudMonitorControls());
-        //    controlsTopToBottomLayout.AddChild(cloudMonitorContainer);
-        //}
-        
-        //private GuiWidget CreateCloudMonitorControls()
-        //{
-        //    AltGroupBox cloudMonitorContainer = new AltGroupBox(LocalizedString.Get("Cloud Services"));
-            
-        //    cloudMonitorContainer.Margin = new BorderDouble(0);
-        //    cloudMonitorContainer.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-        //    cloudMonitorContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-        //    cloudMonitorContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-        //    cloudMonitorContainer.Height = 68;
-
-        //    {
-        //        FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-        //        buttonBar.HAnchor |= HAnchor.ParentLeftRight;
-        //        buttonBar.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-        //        buttonBar.Margin = new BorderDouble(0, 0, 0, 0);
-        //        buttonBar.Padding = new BorderDouble(0);
-
-        //        this.textImageButtonFactory.FixedHeight = TallButtonHeight;               
-
-        //        Agg.Image.ImageBuffer cloudMonitorImage = new Agg.Image.ImageBuffer();
-        //        ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "cloud-24x24.png"), cloudMonitorImage);
-        //        if (!ActiveTheme.Instance.IsDarkTheme)
-        //        {
-        //            InvertLightness.DoInvertLightness(cloudMonitorImage);
-        //        }
-
-        //        ImageWidget cloudMonitoringIcon = new ImageWidget(cloudMonitorImage);
-        //        cloudMonitoringIcon.Margin = new BorderDouble(right: 6);
-
-        //        enableCloudMonitorButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
-        //        enableCloudMonitorButton.Margin = new BorderDouble(left: 6);
-        //        enableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
-        //        enableCloudMonitorButton.Click += new EventHandler(enableCloudMonitor_Click);
-
-        //        disableCloudMonitorButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
-        //        disableCloudMonitorButton.Margin = new BorderDouble(left: 6);
-        //        disableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
-        //        disableCloudMonitorButton.Click += new EventHandler(disableCloudMonitor_Click);
-
-        //        cloudMonitorInstructionsLink = linkButtonFactory.Generate("More Info".Localize().ToUpper());
-        //        cloudMonitorInstructionsLink.VAnchor = VAnchor.ParentCenter;
-        //        cloudMonitorInstructionsLink.Click += new EventHandler(goCloudMonitoringInstructionsButton_Click);
-        //        cloudMonitorInstructionsLink.Margin = new BorderDouble (left: 6);
-
-        //        goCloudMonitoringWebPageButton = linkButtonFactory.Generate("View Status".Localize().ToUpper());
-        //        goCloudMonitoringWebPageButton.VAnchor = VAnchor.ParentCenter;
-        //        goCloudMonitoringWebPageButton.Click += new EventHandler(goCloudMonitoringWebPageButton_Click);
-        //        goCloudMonitoringWebPageButton.Margin = new BorderDouble(left: 6);
-
-        //        cloudMonitorStatusLabel = new TextWidget("");
-        //        cloudMonitorStatusLabel.AutoExpandBoundsToText = true;
-        //        cloudMonitorStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-        //        cloudMonitorStatusLabel.VAnchor = VAnchor.ParentCenter;
-
-        //        GuiWidget hSpacer = new GuiWidget();
-        //        hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-        //        buttonBar.AddChild(cloudMonitoringIcon);
-        //        buttonBar.AddChild(cloudMonitorStatusLabel);
-        //        buttonBar.AddChild (cloudMonitorInstructionsLink);
-        //        buttonBar.AddChild(goCloudMonitoringWebPageButton);
-        //        buttonBar.AddChild(hSpacer);                
-        //        buttonBar.AddChild(enableCloudMonitorButton);
-        //        buttonBar.AddChild(disableCloudMonitorButton);
-
-        //        cloudMonitorContainer.AddChild(buttonBar);
-        //    }
-        //    SetCloudButtonVisiblity();
-        //    return cloudMonitorContainer;
-        //}
-			
-		
 
         static EePromMarlinWidget openEePromMarlinWidget = null;
         static EePromRepetierWidget openEePromRepetierWidget = null;
@@ -735,21 +536,6 @@ namespace MatterHackers.MatterControl
             this.Invalidate();
         }
 
-
-
-        //public delegate void OpenNotificationFormWindow(object state);
-        //public static OpenNotificationFormWindow openPrintNotificationFunction = null;
-        //void configureNotificationSettingsButton_Click(object sender, EventArgs mouseEvent)
-        //{
-        //    if(openPrintNotificationFunction != null)
-        //    {
-        //        UiThread.RunOnIdle ((state) => 
-        //        {
-        //                openPrintNotificationFunction(null);
-        //        });
-        //    }
-        //}
-
         void enablePrintLeveling_Click(object sender, EventArgs mouseEvent)
         {
             ActivePrinterProfile.Instance.DoPrintLeveling = true;
@@ -759,24 +545,6 @@ namespace MatterHackers.MatterControl
         {
             ActivePrinterProfile.Instance.DoPrintLeveling = false;
         }
-
-        //void SetCloudButtonVisiblity()
-        //{
-        //    bool cloudMontitorEnabled = (PrinterSettings.Instance.get("CloudMonitorEnabled") == "true");
-        //    enableCloudMonitorButton.Visible = !cloudMontitorEnabled;
-        //    disableCloudMonitorButton.Visible = cloudMontitorEnabled;
-        //    goCloudMonitoringWebPageButton.Visible = cloudMontitorEnabled;
-
-
-        //    if (cloudMontitorEnabled)
-        //    {
-        //        cloudMonitorStatusLabel.Text = LocalizedString.Get("Cloud Monitoring (enabled)");
-        //    }
-        //    else
-        //    {
-        //        cloudMonitorStatusLabel.Text = LocalizedString.Get("Cloud Monitoring (disabled)");
-        //    }
-        //}
 
 		void SetPrintLevelButtonVisiblity()
 		{

@@ -146,6 +146,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PrinterControls\TerminalWindow\PrinterOutputCache.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TextScrolBar.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="PrintHistory\PrintHistoryData.cs" />
