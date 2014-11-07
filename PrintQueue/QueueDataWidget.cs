@@ -304,18 +304,17 @@ namespace MatterHackers.MatterControl.PrintQueue
             int thisIndexInQueue = QueueData.Instance.GetIndex(printItem);
             if (thisIndexInQueue != -1 && File.Exists(printItem.FileLocation))
             {
-                string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-                string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "stl");
-                if (!Directory.Exists(stagingFolder))
+                string libraryDataPath = ApplicationDataStorage.Instance.ApplicationLibraryDataPath;
+                if (!Directory.Exists(libraryDataPath))
                 {
-                    Directory.CreateDirectory(stagingFolder);
+                    Directory.CreateDirectory(libraryDataPath);
                 }
 
                 string newCopyFilename;
                 int infiniteBlocker = 0;
                 do
                 {
-                    newCopyFilename = Path.Combine(stagingFolder, Path.ChangeExtension(Path.GetRandomFileName(), "stl"));
+                    newCopyFilename = Path.Combine(libraryDataPath, Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItem.FileLocation)));
                     newCopyFilename = Path.GetFullPath(newCopyFilename);
                     infiniteBlocker++;
                 } while (File.Exists(newCopyFilename) && infiniteBlocker < 100);

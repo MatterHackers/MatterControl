@@ -89,10 +89,18 @@ namespace MatterHackers.MatterControl
 
         public ImageSizes Size { get; set; }
 
+        static string partExtension = ".png";
+
         event EventHandler unregisterEvents;
         public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, ImageSizes size)
         {
             this.PrintItem = item;
+
+            if (OsInformation.OperatingSystem == OSType.Mac
+                || OsInformation.OperatingSystem == OSType.Android)
+            {
+                partExtension = ".tga";
+            }
 
             // Set Display Attributes
             this.Margin = new BorderDouble(0);
@@ -170,13 +178,13 @@ namespace MatterHackers.MatterControl
                     {
                         case ImageSizes.Size115x115:
                             {
-                                ImageIO.LoadImageData(this.GetImageLocation("icon_sd_card_115x115.png"), thumbnailWidget.thumbnailImage);
+                                ImageIO.LoadImageData(this.GetImageLocation(Path.ChangeExtension("icon_sd_card_115x115", partExtension)), thumbnailWidget.thumbnailImage);
                             }
                             break;
 
                         case ImageSizes.Size50x50:
                             {
-                                ImageIO.LoadImageData(this.GetImageLocation("icon_sd_card_50x50.png"), thumbnailWidget.thumbnailImage);
+                                ImageIO.LoadImageData(this.GetImageLocation(Path.ChangeExtension("icon_sd_card_50x50", partExtension)), thumbnailWidget.thumbnailImage);
                             }
                             break;
 
@@ -262,13 +270,23 @@ namespace MatterHackers.MatterControl
         private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)
         {
             ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
-            string pngFileName = GetFilenameForSize(stlHashCode, ref size);
+            string imageFileName = GetFilenameForSize(stlHashCode, ref size);
 
-            if (File.Exists(pngFileName))
+            if (File.Exists(imageFileName))
             {
-                if (ImageIO.LoadImageData(pngFileName, tempImage))
+                if (partExtension == ".png")
                 {
-                    return tempImage;
+                    if (ImageIO.LoadImageData(imageFileName, tempImage))
+                    {
+                        return tempImage;
+                    }
+                }
+                else
+                {
+                    if (ImageTgaIO.LoadImageData(imageFileName, tempImage))
+                    {
+                        return tempImage;
+                    }
                 }
             }
 
@@ -278,8 +296,8 @@ namespace MatterHackers.MatterControl
         private static string GetFilenameForSize(string stlHashCode, ref Point2D size)
         {
             string folderToSaveThumbnailsTo = ThumbnailPath();
-            string pngFileName = Path.Combine(folderToSaveThumbnailsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
-            return pngFileName;
+            string imageFileName = Path.Combine(folderToSaveThumbnailsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, size.x, size.y), partExtension));
+            return imageFileName;
         }
 
         private static string ThumbnailPath()
@@ -334,13 +352,20 @@ namespace MatterHackers.MatterControl
                 // and save it to disk
                 string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
                 string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
-                string pngFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.png".FormatWith(stlHashCode, size.x, size.y));
+                string imageFileName = Path.Combine(folderToSavePrintsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, size.x, size.y),partExtension));
 
                 if (!Directory.Exists(folderToSavePrintsTo))
                 {
                     Directory.CreateDirectory(folderToSavePrintsTo);
                 }
-                ImageIO.SaveImageData(pngFileName, tempImage);
+                if (partExtension == ".png")
+                {
+                    ImageIO.SaveImageData(imageFileName, tempImage);
+                }
+                else
+                {
+                    ImageTgaIO.SaveImageData(imageFileName, tempImage);
+                }
 
                 // and give it back
                 return tempImage;

@@ -57,7 +57,6 @@ namespace MatterHackers.MatterControl.DataStorage
         {
             get
             {
-                
                 string libraryPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "Library");
                 
                 //Create library path if it doesn't exist
