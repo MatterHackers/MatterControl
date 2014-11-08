@@ -2843,3 +2843,6 @@ Translated:Reset to Factory Defaults
 English:Save to EEProm
 Translated:Save to EEProm
 
+English:{0} is not available
+Translated:{0} is not available
+
