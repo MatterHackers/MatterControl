@@ -105,13 +105,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Button enterLeaveEditModeButton;
 				if (!this.editMode)
 				{
-					enterLeaveEditModeButton = editButtonFactory.Generate (LocalizedString.Get ("Edit"));
+					enterLeaveEditModeButton = editButtonFactory.Generate (LocalizedString.Get ("Edit"), centerText: true);
 					enterLeaveEditModeButton.Click += EditModeOnLink_Click;
 
 				}
 				else
 				{
-					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Done"));
+					enterLeaveEditModeButton = editButtonFactory.Generate(LocalizedString.Get("Done"),centerText: true);
 					enterLeaveEditModeButton.Click += EditModeOffLink_Click;
 
 				}
