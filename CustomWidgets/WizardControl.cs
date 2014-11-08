@@ -94,10 +94,10 @@ namespace MatterHackers.MatterControl
 
                 textImageButtonFactory.FixedWidth = 60;
                 backButton = textImageButtonFactory.Generate(LocalizedString.Get("Back"), centerText: true);
-                backButton.Click += new ButtonBase.ButtonEventHandler(back_Click);
+                backButton.Click += new EventHandler(back_Click);
 
                 nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Next"), centerText: true);
-                nextButton.Click += new ButtonBase.ButtonEventHandler(next_Click);
+                nextButton.Click += new EventHandler(next_Click);
 
                 doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"), centerText: true);
                 doneButton.Click += done_Click;
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
             AddChild(topToBottom);
         }
 
-        void done_Click(object sender, MouseEventArgs mouseEvent)
+        void done_Click(object sender, EventArgs mouseEvent)
         {
             GuiWidget windowToClose = this;
             while (windowToClose != null && windowToClose as SystemWindow == null)
@@ -134,13 +134,13 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        void next_Click(object sender, MouseEventArgs mouseEvent)
+        void next_Click(object sender, EventArgs mouseEvent)
         {
             pageIndex = Math.Min(pages.Count - 1, pageIndex + 1);
             SetPageVisibility();
         }
 
-        void back_Click(object sender, MouseEventArgs mouseEvent)
+        void back_Click(object sender, EventArgs mouseEvent)
         {
             pageIndex = Math.Max(0, pageIndex - 1);
             SetPageVisibility();

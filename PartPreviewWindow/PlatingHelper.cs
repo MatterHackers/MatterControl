@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,7 +40,6 @@ using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using MatterHackers.MeshVisualizer;
@@ -48,57 +49,15 @@ namespace MatterHackers.MatterControl
     using Polygon = List<IntPoint>;
     using Polygons = List<List<IntPoint>>;
 
-    public class PlatingMeshData
+    public class PlatingMeshGroupData
     {
         public Vector3 currentScale = new Vector3(1,1,1);
         public double xSpacing;
-        public IRayTraceable traceableData;
+        public List<IRayTraceable> meshTraceableData = new List<IRayTraceable>();
     }
 
     public static class PlatingHelper
     {
-        public static Mesh DoMerge(List<Mesh> meshesToMerge, BackgroundWorker backgroundWorker, int startPercent, int endPercent, bool doCSGMerge = false)
-        {
-            int lengthPercent = endPercent - startPercent;
-
-            Mesh allPolygons = new Mesh();
-            if (doCSGMerge)
-            {
-                for (int i = 0; i < meshesToMerge.Count; i++)
-                {
-                    Mesh mesh = meshesToMerge[i];
-                    allPolygons = CsgOperations.PerformOperation(allPolygons, mesh, CsgNode.Union);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < meshesToMerge.Count; i++)
-                {
-                    Mesh mesh = meshesToMerge[i];
-                    foreach (Face face in mesh.Faces)
-                    {
-                        List<Vertex> faceVertices = new List<Vertex>();
-                        foreach (FaceEdge faceEdgeToAdd in face.FaceEdges())
-                        {
-                            // we allow duplicates (the true) to make sure we are not changing the loaded models acuracy.
-                            Vertex newVertex = allPolygons.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
-                            faceVertices.Add(newVertex);
-                        }
-
-                        // we allow duplicates (the true) to make sure we are not changing the loaded models acuracy.
-                        allPolygons.CreateFace(faceVertices.ToArray(), true);
-                    }
-
-                    int nextPercent = startPercent + (i + 1) * lengthPercent / meshesToMerge.Count;
-                    backgroundWorker.ReportProgress(nextPercent);
-                }
-
-                allPolygons.CleanAndMergMesh();
-            }
-
-            return allPolygons;
-        }
-
         public static PathStorage PolygonToPathStorage(Polygon polygon)
         {
             PathStorage output = new PathStorage();
@@ -151,9 +110,9 @@ namespace MatterHackers.MatterControl
             return output;
         }
 
-        public static void PlaceMeshOnBed(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms, int index, bool alsoCenterXY = true)
+        public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index, bool alsoCenterXY = true)
         {
-            AxisAlignedBoundingBox bounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
+            AxisAlignedBoundingBox bounds = meshesGroupList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
             Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
             if (alsoCenterXY)
             {
@@ -171,10 +130,13 @@ namespace MatterHackers.MatterControl
 
         public static void PlaceAllMeshesOnBed(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
         {
+                throw new NotImplementedException();
+#if false
             for (int i = 0; i < meshesList.Count; i++)
             {
-                PlaceMeshOnBed(meshesList, meshTransforms, i);
+                PlaceMeshGroupOnBed(meshesList, meshTransforms, i);
             }
+#endif
         }
 
         public static void CenterMeshesXY(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
@@ -206,30 +168,31 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public static void FindPositionForPartAndAddToPlate(Mesh meshToAdd, ScaleRotateTranslate meshTransform, List<PlatingMeshData> perMeshInfo, List<Mesh> meshesToAvoid, List<ScaleRotateTranslate> meshTransforms)
+        public static void FindPositionForGroupAndAddToPlate(MeshGroup meshGroupToAdd, ScaleRotateTranslate meshTransform, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> meshesGroupsToAvoid, List<ScaleRotateTranslate> meshTransforms)
         {
-            if (meshToAdd == null || meshToAdd.Vertices.Count < 3)
+            if (meshGroupToAdd == null || meshGroupToAdd.Meshes.Count < 1)
             {
                 return;
             }
 
-            meshesToAvoid.Add(meshToAdd);
+            meshesGroupsToAvoid.Add(meshGroupToAdd);
 
-            PlatingMeshData newMeshInfo = new PlatingMeshData();
+            PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
             perMeshInfo.Add(newMeshInfo);
+            meshTransform.SetCenteringForMeshGroup(meshGroupToAdd);
             meshTransforms.Add(meshTransform);
 
-            int index = meshesToAvoid.Count-1;
-            MoveMeshToOpenPosition(index, perMeshInfo, meshesToAvoid, meshTransforms);
+            int meshGroupIndex = meshesGroupsToAvoid.Count-1;
+            MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
 
-            PlaceMeshOnBed(meshesToAvoid, meshTransforms, index, false);
+            PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex, false);
         }
 
-        public static void MoveMeshToOpenPosition(int meshToMoveIndex, List<PlatingMeshData> perMeshInfo, List<Mesh> allMeshes, List<ScaleRotateTranslate> meshTransforms)
+        public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms)
         {
-            Mesh meshToMove = allMeshes[meshToMoveIndex];
+            MeshGroup meshGroupToMove = allMeshGroups[meshGroupToMoveIndex];
             // find a place to put it that doesn't hit anything
-            AxisAlignedBoundingBox meshToMoveBounds = meshToMove.GetAxisAlignedBoundingBox(meshTransforms[meshToMoveIndex].TotalTransform);
+            AxisAlignedBoundingBox meshToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(meshTransforms[meshGroupToMoveIndex].TotalTransform);
             // add in a few mm so that it will not be touching
             meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
             meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
@@ -246,10 +209,10 @@ namespace MatterHackers.MatterControl
                 transform = Matrix4X4.CreateTranslation(newPosition);
                 AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
                 bool foundHit = false;
-                for(int i=0; i<allMeshes.Count; i++)
+                for(int i=0; i<allMeshGroups.Count; i++)
                 {
-                    Mesh meshToTest = allMeshes[i];
-                    if (meshToTest != meshToMove)
+                    MeshGroup meshToTest = allMeshGroups[i];
+                    if (meshToTest != meshGroupToMove)
                     {
                         AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform);
                         AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
@@ -274,36 +237,77 @@ namespace MatterHackers.MatterControl
                 }
             }
 
-            ScaleRotateTranslate moved = meshTransforms[meshToMoveIndex];
+            ScaleRotateTranslate moved = meshTransforms[meshGroupToMoveIndex];
             moved.translation *= transform;
-            meshTransforms[meshToMoveIndex] = moved;
+            meshTransforms[meshGroupToMoveIndex] = moved;
         }
 
-        public static void CreateITraceableForMesh(List<PlatingMeshData> perMeshInfo, List<Mesh> meshes, int i)
+        public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio reportProgress)
         {
-            if (meshes[i] != null)
+            if (meshGroups != null)
             {
-                List<IRayTraceable> allPolys = new List<IRayTraceable>();
-                List<Vector3> positions = new List<Vector3>();
-                foreach (Face face in meshes[i].Faces)
+                MeshGroup meshGroup = meshGroups[meshGroupIndex];
+                perMeshGroupInfo[meshGroupIndex].meshTraceableData.Clear();
+                int totalActionCount = 0;
+                foreach(Mesh mesh in meshGroup.Meshes)
                 {
-                    positions.Clear();
-                    foreach (Vertex vertex in face.Vertices())
-                    {
-                        positions.Add(vertex.Position);
-                    }
-
-                    // We should use the teselator for this if it is greater than 3.
-                    Vector3 next = positions[1];
-                    for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
-                    {
-                        TriangleShape triangel = new TriangleShape(positions[0], next, positions[positionIndex], null);
-                        allPolys.Add(triangel);
-                        next = positions[positionIndex];
-                    }
+                    totalActionCount += mesh.Faces.Count;
                 }
+                int currentAction = 0;
+                bool needUpdateTitle = true;
+                for(int i=0; i<meshGroup.Meshes.Count; i++)
+                {
+                    Mesh mesh = meshGroup.Meshes[i];
+                    List<IRayTraceable> allPolys = new List<IRayTraceable>();
+                    List<Vector3> positions = new List<Vector3>();
+                    bool continueProcessing;
+                    foreach (Face face in mesh.Faces)
+                    {
+                        positions.Clear();
+                        foreach (Vertex vertex in face.Vertices())
+                        {
+                            positions.Add(vertex.Position);
+                        }
 
-                perMeshInfo[i].traceableData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys);
+                        // We should use the teselator for this if it is greater than 3.
+                        Vector3 next = positions[1];
+                        for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
+                        {
+                            TriangleShape triangel = new TriangleShape(positions[0], next, positions[positionIndex], null);
+                            allPolys.Add(triangel);
+                            next = positions[positionIndex];
+                        }
+
+                        if (reportProgress != null)
+                        {
+                            if((currentAction % 256) == 0 || needUpdateTitle)
+                            {
+                                reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", out continueProcessing);
+                                needUpdateTitle = false;
+                            }
+                            currentAction++;
+                        }
+                    }
+
+                    needUpdateTitle = true;
+                    if (reportProgress != null)
+                    {
+                        reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
+                    }
+
+#if false // this is to do some timing on creating tracking info
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
+#endif
+                    perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(BoundingVolumeHierarchy.CreateNewHierachy(allPolys));
+#if false
+                    stopWatch.Stop();
+                    using (StreamWriter outputStream = File.AppendText("output.txt"))
+                    {
+                        outputStream.WriteLine("Plating Helper BoundingVolumeHierarchy.CreateNewHierachy {0:0.00} seconds".FormatWith(stopWatch.Elapsed.TotalSeconds));
+                    }
+#endif
+                }
             }
         }
     }

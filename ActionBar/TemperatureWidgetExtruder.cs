@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.ActionBar
 {
     class TemperatureWidgetExtruder : TemperatureWidgetBase
     {
+        int extruderNumber = 1;
+
         public TemperatureWidgetExtruder()
             : base("150.3°")
         {
@@ -82,18 +84,18 @@ namespace MatterHackers.MatterControl.ActionBar
         void setToCurrentTemperature()
         {
             string tempDirectionIndicator = "";
-            if (PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature > 0)
+            if (PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber-1) > 0)
             {
-                if ((int)(PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature + 0.5) < (int)(PrinterConnectionAndCommunication.Instance.ActualExtruderTemperature + 0.5))
+                if ((int)(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1) + 0.5) < (int)(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1) + 0.5))
                 {
                     tempDirectionIndicator = "↓";
                 }
-                else if ((int)(PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature + 0.5) > (int)(PrinterConnectionAndCommunication.Instance.ActualExtruderTemperature + 0.5))
+                else if ((int)(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1) + 0.5) > (int)(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1) + 0.5))
                 {
                     tempDirectionIndicator = "↑";
                 }
             }
-            this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnectionAndCommunication.Instance.ActualExtruderTemperature, tempDirectionIndicator);
+            this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1), tempDirectionIndicator);
         }
 
         void onTemperatureRead(Object sender, EventArgs e)
@@ -112,14 +114,14 @@ namespace MatterHackers.MatterControl.ActionBar
                 double goalTemp = (int)(targetTemp + .5);
                 if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
                     && PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder
-                    && goalTemp != PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature)
+                    && goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1))
                 {
-                    string message = string.Format(waitingForeExtruderToHeatMessage, PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature, sliceSettingsNote);
-                    StyledMessageBox.ShowMessageBox(message, waitingForeExtruderToHeatTitle);
+                    string message = string.Format(waitingForeExtruderToHeatMessage, PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1), sliceSettingsNote);
+                    StyledMessageBox.ShowMessageBox(null, message, waitingForeExtruderToHeatTitle);
                 }
                 else
                 {
-                    PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature = (int)(targetTemp + .5);
+                    PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderNumber - 1, (int)(targetTemp + .5));
                 }
             }
         }

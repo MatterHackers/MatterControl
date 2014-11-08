@@ -39,6 +39,9 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -149,10 +152,86 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
             else
             {
-                throw new Exception("Slice engine is unavailable");
+                //throw new Exception("Slice engine is unavailable");
+				return null;
             }
 
         }
+
+        public static string[] GetStlFileLocations(string fileToSlice)
+        {
+            int extruderCount = ActiveSliceSettings.Instance.ExtruderCount;
+            switch (Path.GetExtension(fileToSlice).ToUpper())
+            {
+                case ".STL":
+                case ".GCODE":
+                    return new string[] { fileToSlice };
+
+                case ".AMF":
+                    List<MeshGroup> meshGroups = MeshFileIo.Load(fileToSlice);
+                    List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
+                    for(int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+                    {
+                        extruderMeshGroups.Add(new MeshGroup());
+                    }
+                    int maxExtruderIndex = 0;
+                    foreach (MeshGroup meshGroup in meshGroups)
+                    {
+                        foreach (Mesh mesh in meshGroup.Meshes)
+                        {
+                            MeshMaterialData material = MeshMaterialData.Get(mesh);
+                            int extruderIndex = Math.Max(0, material.MaterialIndex-1);
+                            maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
+                            if(extruderIndex >= extruderCount)
+                            {
+                                extruderMeshGroups[0].Meshes.Add(mesh);
+                            }
+                            else
+                            {
+                                extruderMeshGroups[extruderIndex].Meshes.Add(mesh);
+                            }
+                        }
+                    }
+
+                    List<string> extruderFilesToSlice = new List<string>();
+                    for (int i = 0; i < extruderMeshGroups.Count; i++ )
+                    {
+                        MeshGroup meshGroup = extruderMeshGroups[i];
+                        List<int> materialsToInclude = new List<int>();
+                        materialsToInclude.Add(i+1);
+                        if (i == 0)
+                        {
+                            for (int j = extruderCount+1; j < maxExtruderIndex + 2; j++)
+                            {
+                                materialsToInclude.Add(j);
+                            }
+                        }
+
+                        extruderFilesToSlice.Add(SaveAndGetFilenameForMaterial(meshGroup, materialsToInclude));
+                    }
+                    return extruderFilesToSlice.ToArray();
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static string SaveAndGetFilenameForMaterial(MeshGroup extruderMeshGroup, List<int> materialIndexsToSaveInThisSTL)
+        {
+            string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".stl");
+            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+            string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
+            if (!Directory.Exists(folderToSaveStlsTo))
+            {
+                Directory.CreateDirectory(folderToSaveStlsTo);
+            }
+            MeshOutputSettings settings = new MeshOutputSettings();
+            settings.MaterialIndexsToSave = materialIndexsToSaveInThisSTL;
+            string extruder1StlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
+            MeshFileIo.Save(extruderMeshGroup, extruder1StlFileToSlice, settings);
+            return extruder1StlFileToSlice;
+        }
+
         public static bool runInProcess = false;
         static Process slicerProcess = null;
         static void CreateSlicedPartsThread()
@@ -164,8 +243,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null && listOfSlicingItems.Count > 0)
                 {
                     PrintItemWrapper itemToSlice = listOfSlicingItems[0];
+                    string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation);
+                    string fileToSlice = stlFileLocations[0];
                     // check that the STL file is currently on disk
-                    if (File.Exists(itemToSlice.FileLocation))
+                    if (File.Exists(fileToSlice))
                     {
                         itemToSlice.CurrentlySlicing = true;
 
@@ -182,24 +263,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             switch (ActivePrinterProfile.Instance.ActiveSliceEngineType)
                             {
                                 case ActivePrinterProfile.SlicingEngineTypes.Slic3r:
-                                    commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    commandArgs = "--load \"" + currentConfigurationFileAndPath + "\" --output \"" + gcodePathAndFileName + "\" \"" + fileToSlice + "\"";
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.CuraEngine:
-                                    commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                    commandArgs = "-v -o \"" + gcodePathAndFileName + "\" " + EngineMappingCura.GetCuraCommandLineSettings() + " \"" + fileToSlice + "\"";
                                     break;
 
                                 case ActivePrinterProfile.SlicingEngineTypes.MatterSlice:
                                     {
                                         EngineMappingsMatterSlice.WriteMatterSliceSettingsFile(currentConfigurationFileAndPath);
-                                        commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\" \"" + itemToSlice.PartToSlicePathAndFileName + "\"";
+                                        commandArgs = "-v -o \"" + gcodePathAndFileName + "\" -c \"" + currentConfigurationFileAndPath + "\"";
+                                        foreach (string filename in stlFileLocations)
+                                        {
+                                            commandArgs = commandArgs + " \"" + filename + "\"";
+                                        }
                                     }
                                     break;
                             }
 
                             
-                            if ((OsInformation.OperatingSystem == OSType.Android || OsInformation.OperatingSystem == OSType.Mac || runInProcess)
-                                && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
+							if (OsInformation.OperatingSystem == OSType.Android ||
+								((OsInformation.OperatingSystem == OSType.Mac || runInProcess)
+									&& ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.MatterSlice))
                             {
                                 itemCurrentlySlicing = itemToSlice;
                                 MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;
@@ -249,6 +335,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     slicerProcess = null;
                                 }
                             }
+                        }
+
+                        try
+                        {
+                            if (File.Exists(gcodePathAndFileName)
+                                && File.Exists(currentConfigurationFileAndPath))
+                            {
+                                using (StreamWriter gcodeWirter = File.AppendText(gcodePathAndFileName))
+                                {
+                                    string oemName = "MatterControl";
+                                    if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
+                                    {
+                                        oemName = oemName + " - {0}".FormatWith(OemSettings.Instance.WindowTitleExtra);
+                                    }
+
+                                    gcodeWirter.WriteLine("; {0} Version {1} Build {2} : GCode settings used".FormatWith(oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion));
+                                    gcodeWirter.WriteLine("; Date {0} Time {1}:{2:00}".FormatWith(DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute));
+
+                                    foreach (string line in File.ReadLines(currentConfigurationFileAndPath))
+                                    {
+                                        gcodeWirter.WriteLine("; {0}".FormatWith(line));
+                                    }
+                                }
+                            }
+                        }
+                        catch(Exception)
+                        {
                         }
                     }
 

@@ -43,54 +43,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class PartPreviewMainWindow : SystemWindow
     {
-        View3DTransformPart view3DTransformPart;
-        ViewGcodeBasic viewGcodeBasic;
+        event EventHandler unregisterEvents;
+        PartPreviewContent partPreviewWidget;
+        bool OpenInEditMode;
 
-        public PartPreviewMainWindow(PrintItemWrapper printItem, View3DTransformPart.AutoRotate autoRotate3DView)
+        public PartPreviewMainWindow(PrintItemWrapper printItem, View3DWidget.AutoRotate autoRotate3DView, bool openInEditMode = false)
             : base(690, 340)
         {
+            UseOpenGL = true;
+            this.OpenInEditMode = openInEditMode;
             string partPreviewTitle = LocalizedString.Get("MatterControl");
             Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
-            BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-            TabControl tabControl = new TabControl();
-            tabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
-            tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-            double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-
-            // put in the 3D view
+			partPreviewWidget = new PartPreviewContent(printItem, false, autoRotate3DView, openInEditMode);
+            partPreviewWidget.Closed += (sender, e) => 
             {
-                string part3DViewLabelFull = string.Format("{0} {1} ", "3D", "View".Localize());
+                Close(); 
+            };
 
-                view3DTransformPart = new View3DTransformPart(printItem,
-                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                    ActiveSliceSettings.Instance.BedCenter,
-                    ActiveSliceSettings.Instance.BedShape,
-                    View3DTransformPart.WindowType.StandAlone,
-                    autoRotate3DView);
-
-                TabPage partPreview3DView = new TabPage(view3DTransformPart, part3DViewLabelFull);
-                tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView, "3D View Tab", 16,
-                            ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
-            }
-
-            // put in the 2d gcode view
-            TabPage layerView;
-            {
-                viewGcodeBasic = new ViewGcodeBasic(printItem,
-                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                    ActiveSliceSettings.Instance.BedCenter,
-                    ActiveSliceSettings.Instance.BedShape,
-                    true);
-                layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View"));
-                tabControl.AddTab(new SimpleTextTabWidget(layerView, "Layer View Tab", 16,
-                            ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
-            }
-
-            this.AddChild(tabControl);
-            this.AnchorAll();
+			this.AddChild(partPreviewWidget);
 
             AddHandlers();
 
@@ -104,17 +75,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // it exists and can give the focus to its child the gcode window.
             if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
             {
-                tabControl.TabBar.SwitchToPage(layerView);
-                viewGcodeBasic.Focus();
+				partPreviewWidget.SwitchToGcodeView();
             }
         }
 
-        event EventHandler unregisterEvents;
         private void AddHandlers()
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-            view3DTransformPart.Closed += (sender, e) => { Close(); };
-            viewGcodeBasic.Closed += (sender, e) => { Close(); };
         }
 
         public void ThemeChanged(object sender, EventArgs e)

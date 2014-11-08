@@ -39,8 +39,10 @@ using System.Collections.Generic;
 
 using ICSharpCode.SharpZipLib.Zip;
 
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -129,7 +131,7 @@ namespace MatterHackers.MatterControl
                         string fileNameOnly = Path.GetFileName(item.FileLocation);
                         if (addedFileNames.Contains(fileNameOnly))
                         {
-                            StyledMessageBox.ShowMessageBox(string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", fileNameOnly, item.FileLocation), "Duplicate File");
+                            StyledMessageBox.ShowMessageBox(null, string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", fileNameOnly, item.FileLocation), "Duplicate File");
                             continue;
                         }
 
@@ -154,13 +156,16 @@ namespace MatterHackers.MatterControl
 			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.zip", initialDirectory: documentsPath);
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                ExportToProjectArchive(saveParams.FileName);
-            }
+			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
         }
+
+		void onSaveFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null)
+			{
+				ExportToProjectArchive(saveParams.FileName);
+			}
+		}
 
         static string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
         static string defaultManifestPathAndFileName = Path.Combine(applicationDataPath, "data", "temp", "project-assembly", "manifest.json");
@@ -239,21 +244,28 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public List<PrintItem> OpenFromDialog()
+		public void OpenFromDialog()
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Zip file|*.zip");
-
-            FileDialog.OpenFileDialog(ref openParams);
-			if (openParams.FileNames != null)
-            {
-                string loadedFileName = openParams.FileName;
-                return ImportFromProjectArchive(loadedFileName);
-            }
-            else
-            {
-                return null;
-            }
+			FileDialog.OpenFileDialog(openParams, onProjectArchiveLoad);
         }
+
+		void onProjectArchiveLoad(OpenFileDialogParams openParams)
+		{
+			List<PrintItem> partFiles;
+			if (openParams.FileNames != null)
+			{
+				string loadedFileName = openParams.FileName;
+				partFiles =  ImportFromProjectArchive(loadedFileName);
+				if (partFiles != null)
+				{                
+					foreach (PrintItem part in partFiles)
+					{
+						QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+					}
+				}
+			}
+		}
 
         public List<PrintItem> ImportFromProjectArchive(string loadedFileName = null)
         {
@@ -290,9 +302,10 @@ namespace MatterHackers.MatterControl
                         continue;           // Ignore directories
                     }
 
+                    string sourceExtension = Path.GetExtension(zipEntry.Name).ToUpper();
                     if (zipEntry.Name == "manifest.json"
-                        || Path.GetExtension(zipEntry.Name).ToUpper() == ".STL"
-                        || Path.GetExtension(zipEntry.Name).ToUpper() == ".GCODE")
+                        || MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+                        || sourceExtension == ".GCODE")
                     {
                         string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
 

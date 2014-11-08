@@ -29,6 +29,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         Button nextButton;
 
+		bool usingDefaultName;
+
         public SetupStepMakeModelName(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinter = null)
             : base(windowController, containerWindowToClose, setupPrinter)
         {
@@ -44,7 +46,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             //Construct buttons
 			nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Save & Continue"));
-            nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
+            nextButton.Click += new EventHandler(NextButton_Click);
 
             GuiWidget hSpacer = new GuiWidget();
             hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -53,6 +55,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             footerRow.AddChild(nextButton);
             footerRow.AddChild(hSpacer);
             footerRow.AddChild(cancelButton);
+
+			usingDefaultName = true;
 
             SetElementState();
         }
@@ -78,6 +82,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             printerNameInput = new MHTextEditWidget(this.ActivePrinter.Name);
             printerNameInput.HAnchor = HAnchor.ParentLeftRight;
+			printerNameInput.KeyPressed += new KeyPressEventHandler(PrinterNameInput_KeyPressed);
 
 			printerNameError = new TextWidget(LocalizedString.Get("Give your printer a name."), 0, 0, 10);
 			printerNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -177,7 +182,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);            
             printerModelError.Visible = false;
             SetElementState();
+			if(usingDefaultName)
+			{
+				printerNameInput.Text = String.Format ("{0} {1} ({2})", this.ActivePrinter.Make, this.ActivePrinter.Model, ExistingPrinterCount () + 1); 
+			}
         }
+
+		private void PrinterNameInput_KeyPressed(object sender, KeyPressEventArgs e)
+		{
+			this.usingDefaultName = false;
+		}
 
         string defaultMaterialPreset;
         string defaultQualityPreset;
@@ -294,7 +308,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return settingsDict;
         }
 
-        private SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
+        public SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
         {
             SliceSettingsCollection collection = null;
             Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(GetDefaultPrinterSlicePath(make, model));
@@ -312,7 +326,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return collection;
         }
 
-        private void LoadSlicePresets(string make, string model, string tag)
+        public void LoadSlicePresets(string make, string model, string tag)
         {
             string[] slicePresetPaths = GetSlicePresets(make, model, tag);
 
@@ -423,8 +437,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void NextButton_Click(object sender, MouseEventArgs mouseEvent)
+        void NextButton_Click(object sender, EventArgs mouseEvent)
         {
+
             bool canContinue = this.OnSave();
             if (canContinue)
             {
@@ -432,6 +447,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 UiThread.RunOnIdle(MoveToNextWidget);
             }
         }
+
+		public int ExistingPrinterCount()
+		{
+			string query = string.Format("SELECT COUNT(*) FROM Printer;");
+			string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
+			return Convert.ToInt32(result);
+		}
 			
         void LoadSlicePresets()
         {

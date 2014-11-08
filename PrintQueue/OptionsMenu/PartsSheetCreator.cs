@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        List<FileNameAndPresentationName> stlFilesToPrint;
+        List<FileNameAndPresentationName> queuPartFilesToAdd;
         List<PartImage> partImagesToPrint = new List<PartImage>();
         const double inchesPerMm = 0.0393701;
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
         {
             get
             {
-                return stlFilesToPrint.Count;
+                return queuPartFilesToAdd.Count;
             }
         }
 
@@ -155,10 +155,10 @@ namespace MatterHackers.MatterControl
             SheetDpi = 300;
             SheetSizeInches = new Vector2(8.5, 11);
             // make sure we have our own list so it can't get stepped on while we output it.
-            stlFilesToPrint = new List<FileNameAndPresentationName>();
-            foreach(PrintItem stlToCopy in dataSource)
+            queuPartFilesToAdd = new List<FileNameAndPresentationName>();
+            foreach(PrintItem queueToCopy in dataSource)
             {
-                stlFilesToPrint.Add(new FileNameAndPresentationName(stlToCopy.FileLocation, stlToCopy.Name));
+                queuPartFilesToAdd.Add(new FileNameAndPresentationName(queueToCopy.FileLocation, queueToCopy.Name));
             }
         }
 
@@ -188,18 +188,31 @@ namespace MatterHackers.MatterControl
             currentlySaving = true;
             countThatHaveBeenSaved = 0;
             // first create images for all the parts
-            foreach (FileNameAndPresentationName stlFileNames in stlFilesToPrint)
+            foreach (FileNameAndPresentationName queuePartFileName in queuPartFilesToAdd)
             {
-                Mesh loadedMesh = StlProcessing.Load(stlFileNames.fileName);
-                if (loadedMesh != null)
+                List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(queuePartFileName.fileName);
+                if (loadedMeshGroups != null)
                 {
-                    AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
+                    bool firstMeshGroup = true;
+                    AxisAlignedBoundingBox aabb = null;
+                    foreach(MeshGroup meshGroup in loadedMeshGroups)
+                    {
+                        if(firstMeshGroup)
+                        {
+                            aabb = meshGroup.GetAxisAlignedBoundingBox();
+                            firstMeshGroup = false;
+                        }
+                        else
+                        {
+                            aabb = AxisAlignedBoundingBox.Union(aabb, meshGroup.GetAxisAlignedBoundingBox());
+                        }
+                    }
                     RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
                     double widthInMM = bounds2D.Width + PartMarginMM * 2;
                     double textSpaceMM = 5;
                     double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
 
-                    TypeFacePrinter typeFacePrinter = new TypeFacePrinter(stlFileNames.presentationName, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
+                    TypeFacePrinter typeFacePrinter = new TypeFacePrinter(queuePartFileName.presentationName, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
                     double sizeOfNameX = typeFacePrinter.GetSize().x + PartMarginPixels * 2;
                     Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
 
@@ -216,15 +229,23 @@ namespace MatterHackers.MatterControl
                     Stroke rectOutline = new Stroke(rect, strokeWidth);
                     partGraphics2D.Render(rectOutline, RGBA_Bytes.DarkGray);
 
-                    PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
+                    foreach (MeshGroup meshGroup in loadedMeshGroups)
+                    {
+                        foreach (Mesh loadedMesh in meshGroup.Meshes)
+                        {
+                            PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
+                        }
+                    }
                     partGraphics2D.Render(typeFacePrinter, RGBA_Bytes.Black);
 
                     partImagesToPrint.Add(new PartImage(imageOfPart));
+
+                    countThatHaveBeenSaved++;
                 }
-                countThatHaveBeenSaved++;
+
                 if (UpdateRemainingItems != null)
                 {
-                    UpdateRemainingItems(this, new StringEventArgs(Path.GetFileName(stlFileNames.presentationName)));
+                    UpdateRemainingItems(this, new StringEventArgs(Path.GetFileName(queuePartFileName.presentationName)));
                 }
             }
 

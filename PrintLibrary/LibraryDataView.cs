@@ -43,42 +43,38 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-    public class SelectedPrintItems<T> : List<T>
-    {
-        public event EventHandler OnAdd;
-        public event EventHandler OnRemove;
+   
 
-        new public void Add(T item)
-        {
-            base.Add(item);
-            if (null != OnAdd)
-            {
-                OnAdd(this, null);
-            }
-        }
-
-        new public void Remove(T item)
-        {
-            base.Remove(item);
-            if (null != OnRemove)
-            {
-                OnRemove(this, null);
-            }
-        }
-    }
-    
     public class LibraryDataView : ScrollableWidget
     {
         event EventHandler unregisterEvents;
-        
+
         private void SetDisplayAttributes()
-		{
-			this.MinimumSize = new Vector2(0, 200);
-			this.AnchorAll();
+        {
+            this.MinimumSize = new Vector2(0, 200);
+            this.AnchorAll();
             this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			this.AutoScroll = true;
-			this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
-		}
+            this.AutoScroll = true;
+            this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
+        }
+
+        bool editMode = false;
+        public bool EditMode
+        {
+            get { return editMode; }
+            set
+            {
+                if (this.editMode != value)
+                {
+                    this.editMode = value;
+                    if (this.editMode == false)
+                    {
+                        this.ClearSelectedItems();
+                    }
+
+                }
+            }
+        }
 
         public void RemoveSelectedIndex()
         {
@@ -105,17 +101,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         public void ClearSelectedItems()
         {
-            List<LibraryRowItem> itemsToClear = new List<LibraryRowItem>();
-            
-            foreach(LibraryRowItem item in SelectedItems)
-            {
-                itemsToClear.Add(item);                
-            }            
-            foreach (LibraryRowItem item in itemsToClear)
+            foreach (LibraryRowItem item in SelectedItems)
             {
                 item.isSelectedItem = false;
                 item.selectionCheckBox.Checked = false;
             }
+            this.SelectedItems.Clear();
         }
 
         public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
@@ -129,7 +120,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
         RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
 
-        public SelectedPrintItems<LibraryRowItem> SelectedItems = new SelectedPrintItems<LibraryRowItem>();
+        public SelectedListItems<LibraryRowItem> SelectedItems = new SelectedListItems<LibraryRowItem>();
         int selectedIndex = -1;
         int hoverIndex = -1;
         int dragIndex = -1;
@@ -153,9 +144,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 if (value < -1 || value >= topToBottomItemList.Children.Count)
                 {
                     throw new ArgumentOutOfRangeException();
-                }                
-                selectedIndex = value;                
-                OnSelectedIndexChanged();                
+                }
+                selectedIndex = value;
+                OnSelectedIndexChanged();
             }
         }
 
@@ -176,17 +167,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 {
                     hoverIndex = value;
                     OnHoverIndexChanged();
-                    
+
                     for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-                    {                        
+                    {
                         GuiWidget child = topToBottomItemList.Children[index];
                         if (index == HoverIndex)
                         {
-                            ((LibraryRowItem)child.Children[0]).isHoverItem = true;
+                            ((LibraryRowItem)child.Children[0]).IsHoverItem = true;
                         }
-                        else if (((LibraryRowItem)child.Children[0]).isHoverItem == true)
+                        else if (((LibraryRowItem)child.Children[0]).IsHoverItem == true)
                         {
-                            ((LibraryRowItem)child.Children[0]).isHoverItem = false;
+                            ((LibraryRowItem)child.Children[0]).IsHoverItem = false;
                         }
                         child.Invalidate();
                     }
@@ -367,20 +358,20 @@ namespace MatterHackers.MatterControl.PrintLibrary
         void itemToAdd_MouseLeaveBounds(object sender, EventArgs e)
         {
             GuiWidget widgetLeft = ((GuiWidget)sender);
-            
+
             if (SelectedIndex >= 0)
             {
                 if (widgetLeft != topToBottomItemList.Children[SelectedIndex])
                 {
                     widgetLeft.BackgroundColor = new RGBA_Bytes();
-                    widgetLeft.Invalidate();                    
+                    widgetLeft.Invalidate();
                     Invalidate();
                 }
             }
         }
 
         void itemToAdd_MouseEnterBounds(object sender, EventArgs e)
-        {
+        {            
             GuiWidget widgetEntered = ((GuiWidget)sender);
             for (int index = 0; index < topToBottomItemList.Children.Count; index++)
             {
@@ -439,7 +430,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 selectedIndex = -1;
                 OnSelectedIndexChanged();
             }
-        }        
+        }
 
         public GuiWidget SelectedItem
         {

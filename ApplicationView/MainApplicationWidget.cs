@@ -50,35 +50,154 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
-    public class ApplicationWidget : GuiWidget
+    public abstract class ApplicationView : GuiWidget
     {
-        static ApplicationWidget globalInstance;
-        public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
-        public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+		public TopContainerWidget TopContainer;
 
-		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
-		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
+		public abstract void AddElements();
+		public abstract void HideTopContainer();
+		public abstract void ToggleTopContainer();
+        
+    }
 
-        event EventHandler unregisterEvents;
-
-        public bool WidescreenMode { get; set; }
-
-        public ApplicationWidget()
+    public class CompactApplicationView : ApplicationView
+    {
+        CompactTabView widescreenPanel;
+        QueueDataView queueDataView;
+		GuiWidget menuSeparator;
+		PrintProgressBar progressBar; 
+        public CompactApplicationView()
         {
-            Name = "MainSlidePanel";
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+            AddElements();
+            Initialize();
         }
 
-        public void ThemeChanged(object sender, EventArgs e)
+		bool topIsHidden = false;
+		public override void HideTopContainer()
+		{
+			if (!topIsHidden)
+			{
+				progressBar.WidgetIsExtended = false;
+
+				//To do - Animate this (KP)
+				this.menuSeparator.Visible = true;
+				this.TopContainer.Visible = false;
+
+				topIsHidden = true;
+			}
+		}
+        
+		public override void ToggleTopContainer()
+		{
+			topIsHidden = !topIsHidden;
+			progressBar.WidgetIsExtended = !progressBar.WidgetIsExtended;
+
+			//To do - Animate this (KP)
+			this.menuSeparator.Visible = this.TopContainer.Visible;
+			this.TopContainer.Visible = !this.TopContainer.Visible;
+		}
+
+        public override void AddElements()
         {
-            ReloadAll(null, null);
+			topIsHidden = false;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+            FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            container.AnchorAll();
+
+			TopContainer = new TopContainerWidget(); 
+			TopContainer.HAnchor = HAnchor.ParentLeftRight;
+
+            ApplicationMenuRow menuRow = new ApplicationMenuRow();
+			TopContainer.AddChild(menuRow);
+
+            menuSeparator = new GuiWidget();
+            menuSeparator.Height = 12;
+            menuSeparator.HAnchor = HAnchor.ParentLeftRight;
+			menuSeparator.MinimumSize = new Vector2(0, 12);
+			menuSeparator.Visible = false;            
+
+            queueDataView = new QueueDataView();
+			TopContainer.AddChild(new ActionBarPlus(queueDataView));
+			TopContainer.SetOriginalHeight();
+
+			container.AddChild(TopContainer);
+
+			progressBar = new PrintProgressBar();
+
+            container.AddChild(progressBar);
+			container.AddChild(menuSeparator);
+            widescreenPanel = new CompactTabView(queueDataView);
+
+			BottomOverlay bottomOverlay = new BottomOverlay();
+			bottomOverlay.AddChild(widescreenPanel);
+
+			container.AddChild(bottomOverlay);
+
+            this.AddChild(container);
         }
 
+        void Initialize()
+        {
+            this.AnchorAll();
+        }
+    }
+
+	public class TopContainerWidget : FlowLayoutWidget
+	{
+		double originalHeight;
+		public TopContainerWidget()
+			: base(FlowDirection.TopToBottom)
+		{
+
+		}
+
+
+		public void SetOriginalHeight()
+		{
+			originalHeight = this.Height;
+		}
+	}
+
+	class BottomOverlay : GuiWidget
+	{
+		public BottomOverlay()
+			:base()
+		{
+			this.AnchorAll();
+
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseDown(mouseEvent);
+			ApplicationController.Instance.MainView.HideTopContainer();
+		}
+	}
+
+    public class ResponsiveApplicationView : ApplicationView
+    {
         WidescreenPanel widescreenPanel;
-        void AddElements()
+        public ResponsiveApplicationView()
+        {
+            AddElements();
+            Initialize();
+        }
+
+		public override void ToggleTopContainer()
+		{
+
+		}
+
+		public override void HideTopContainer()
+		{
+
+		}
+        
+        public override void AddElements()
         {
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            
+
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
             container.AnchorAll();
 
@@ -89,7 +208,7 @@ namespace MatterHackers.MatterControl
             menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
             menuSeparator.Height = 2;
             menuSeparator.HAnchor = HAnchor.ParentLeftRight;
-            menuSeparator.Margin = new BorderDouble(3, 6,3,3);
+            menuSeparator.Margin = new BorderDouble(3, 6, 3, 3);
 
             container.AddChild(menuSeparator);
 
@@ -99,31 +218,66 @@ namespace MatterHackers.MatterControl
             this.AddChild(container);
         }
 
+        void Initialize()
+        {
+            this.AnchorAll();
+        }
+    }
+    
+    
+    public class ApplicationController 
+    {
+        static ApplicationController globalInstance;
+        public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
+        public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+
+		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
+		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
+        public ApplicationView MainView;
+
+        event EventHandler unregisterEvents;
+
+        public bool WidescreenMode { get; set; }
+
+        public ApplicationController()
+        {
+            //Name = "MainSlidePanel";
+            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+        }
+
+        public void ThemeChanged(object sender, EventArgs e)
+        {
+            ReloadAll(null, null);
+        }      
+        
+
         public void ReloadAll(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
                 // give the widget a chance to hear about the close before they are actually colsed. 
-                WidescreenPanel.PreChangePannels.CallEvents(this, null);
-                this.CloseAndRemoveAllChildren();
-                AddElements();
+                WidescreenPanel.PreChangePanels.CallEvents(this, null);
+                MainView.CloseAndRemoveAllChildren();
+                MainView.AddElements();
             });
         }
 
-        void Initialize()
-        {
-            this.AnchorAll();
-        }
 
-        public static ApplicationWidget Instance
+        public static ApplicationController Instance
         {
             get
             {
                 if (globalInstance == null)
                 {
-                    globalInstance = new ApplicationWidget();                    
-                    globalInstance.AddElements();
-                    globalInstance.Initialize();
+                    globalInstance = new ApplicationController();
+                    if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+                    {
+                        globalInstance.MainView = new CompactApplicationView();
+                    }
+                    else
+                    {
+                        globalInstance.MainView = new ResponsiveApplicationView();
+                    }
                 }
                 return globalInstance;
             }

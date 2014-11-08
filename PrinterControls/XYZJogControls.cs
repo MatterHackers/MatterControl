@@ -39,6 +39,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrinterControls;
 
 namespace MatterHackers.MatterControl
 {
@@ -55,16 +57,12 @@ namespace MatterHackers.MatterControl
         MoveButton zPlusControl;
         MoveButton zMinusControl;
 
-        MoveButton ePlusControl;
-        MoveButton eMinusControl;
 
         MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
 
         public JogControls(XYZColors colors)
         {
             moveButtonFactory.normalTextColor = RGBA_Bytes.Black;
-
-            
 
 			double distanceBetweenControls = 12; 
             double buttonSeparationDistance = 10;
@@ -99,12 +97,13 @@ namespace MatterHackers.MatterControl
                         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
                         buttonFactory.FixedHeight = 20;
                         buttonFactory.FixedWidth = 30;
-                        buttonFactory.fontSize = 10;
+                        buttonFactory.fontSize = 8;
                         buttonFactory.Margin = new BorderDouble(0);
+                        buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
 
                         FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
                         
-                        RadioButton pointOneButton = buttonFactory.GenerateRadioButton(".1");
+                        RadioButton pointOneButton = buttonFactory.GenerateRadioButton("0.1");
                         pointOneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
                         pointOneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.1); };
                         moveRadioButtons.AddChild(pointOneButton);
@@ -129,7 +128,7 @@ namespace MatterHackers.MatterControl
                         setMoveDistanceControl.AddChild(moveRadioButtons);
                     }
 
-					TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
+					TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:8);
                     mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
                     setMoveDistanceControl.AddChild(mmLabel);
                     setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -164,8 +163,15 @@ namespace MatterHackers.MatterControl
 
         private void SetEMoveAmount(int moveAmount)
         {
-            ePlusControl.MoveAmount = moveAmount;
-            eMinusControl.MoveAmount = -moveAmount;
+            foreach (ExtrudeButton extrudeButton in eMinusButtons)
+            {
+                extrudeButton.MoveAmount = -moveAmount;
+            }
+
+            foreach (ExtrudeButton extrudeButton in ePlusButtons)
+            {
+                extrudeButton.MoveAmount = moveAmount;
+            }
         }
 
         private void SetXYZMoveAmount(double moveAmount)
@@ -180,14 +186,35 @@ namespace MatterHackers.MatterControl
             zMinusControl.MoveAmount = -moveAmount;
         }
 
+        List<ExtrudeButton> eMinusButtons = new List<ExtrudeButton>();
+        List<ExtrudeButton> ePlusButtons = new List<ExtrudeButton>();
         private FlowLayoutWidget CreateEButtons(double buttonSeparationDistance)
         {
+            int extruderCount = ActiveSliceSettings.Instance.ExtruderCount;          
+
             FlowLayoutWidget eButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
                 FlowLayoutWidget eMinusButtonAndText = new FlowLayoutWidget();
-                eMinusControl = moveButtonFactory.Generate("E-", PrinterConnectionAndCommunication.Axis.E, ManualPrinterControls.EFeedRate(0));
-                eMinusControl.Margin = new BorderDouble(0, 0, 5, 0);
-                eMinusButtonAndText.AddChild(eMinusControl);
+                BorderDouble extrusionMargin = new BorderDouble(4, 0, 4, 0);
+
+                if (extruderCount == 1)
+                {
+                    ExtrudeButton eMinusControl = moveButtonFactory.Generate("E-", MovementControls.EFeedRate(0),0);
+                    eMinusControl.Margin = extrusionMargin;
+                    eMinusButtonAndText.AddChild(eMinusControl);
+                    eMinusButtons.Add(eMinusControl);
+                }
+                else
+                {
+                    for (int i = 0; i < extruderCount; i++)
+                    {
+                        ExtrudeButton eMinusControl = moveButtonFactory.Generate(string.Format("E{0}-", i + 1), MovementControls.EFeedRate(0), i);
+                        eMinusControl.Margin = extrusionMargin;
+                        eMinusButtonAndText.AddChild(eMinusControl);
+                        eMinusButtons.Add(eMinusControl);
+                    }
+                }
+
 				TextWidget eMinusControlLabel = new TextWidget(LocalizedString.Get("Retract"), pointSize: 11);
                 eMinusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 eMinusControlLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -198,16 +225,42 @@ namespace MatterHackers.MatterControl
                 eMinusButtonAndText.HAnchor = HAnchor.FitToChildren;
                 eMinusButtonAndText.VAnchor = VAnchor.FitToChildren;
 
-                GuiWidget eSpacer = new GuiWidget(2, buttonSeparationDistance);
-                eSpacer.HAnchor = Agg.UI.HAnchor.ParentLeft;
-                eSpacer.Margin = new BorderDouble(eMinusControl.Width / 2, 0, 0, 0);
-                eSpacer.BackgroundColor = XYZColors.eColor;
-                eButtons.AddChild(eSpacer);
+
+                FlowLayoutWidget buttonSpacerContainer = new FlowLayoutWidget();
+                for (int i = 0; i < extruderCount; i++)
+                {
+                    GuiWidget eSpacer = new GuiWidget(2, buttonSeparationDistance);
+                    double buttonWidth = eMinusButtons[i].Width + 6;
+
+                    eSpacer.Margin = new BorderDouble((buttonWidth / 2), 0, ((buttonWidth) / 2), 0);
+                    eSpacer.BackgroundColor = XYZColors.eColor;
+                    buttonSpacerContainer.AddChild(eSpacer);
+                }
+                buttonSpacerContainer.HAnchor = Agg.UI.HAnchor.ParentLeft;
+                eButtons.AddChild(buttonSpacerContainer);
+
+                buttonSpacerContainer.HAnchor = HAnchor.FitToChildren;
+                buttonSpacerContainer.VAnchor = VAnchor.FitToChildren;
 
                 FlowLayoutWidget ePlusButtonAndText = new FlowLayoutWidget();
-                ePlusControl = moveButtonFactory.Generate("E+", PrinterConnectionAndCommunication.Axis.E, ManualPrinterControls.EFeedRate(0));
-                ePlusControl.Margin = new BorderDouble(0, 0, 5, 0);
-                ePlusButtonAndText.AddChild(ePlusControl);
+                if (extruderCount == 1)
+                {
+                    ExtrudeButton ePlusControl = moveButtonFactory.Generate("E+", MovementControls.EFeedRate(0), 0);
+                    ePlusControl.Margin = extrusionMargin;
+                    ePlusButtonAndText.AddChild(ePlusControl);
+                    ePlusButtons.Add(ePlusControl);
+                }
+                else
+                {
+                    for (int i = 0; i < extruderCount; i++)
+                    {
+                        ExtrudeButton ePlusControl = moveButtonFactory.Generate(string.Format("E{0}+", i + 1), MovementControls.EFeedRate(0), i);
+                        ePlusControl.Margin = extrusionMargin;
+                        ePlusButtonAndText.AddChild(ePlusControl);
+                        ePlusButtons.Add(ePlusControl);
+                    }
+                }
+
 				TextWidget ePlusControlLabel = new TextWidget(LocalizedString.Get("Extrude"), pointSize: 11);
                 ePlusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 ePlusControlLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -230,8 +283,9 @@ namespace MatterHackers.MatterControl
                 TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
                 buttonFactory.FixedHeight = 20;
                 buttonFactory.FixedWidth = 30;
-                buttonFactory.fontSize = 10;
+                buttonFactory.fontSize = 8;
                 buttonFactory.Margin = new BorderDouble(0);
+                buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
 
                 FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
                 RadioButton oneButton = buttonFactory.GenerateRadioButton("1");
@@ -251,7 +305,7 @@ namespace MatterHackers.MatterControl
                 setMoveDistanceControl.AddChild(moveRadioButtons);
             }
 
-			TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:10);
+			TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:8);
             mmLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
             setMoveDistanceControl.AddChild(mmLabel);
             setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.ParentLeft;
@@ -270,7 +324,7 @@ namespace MatterHackers.MatterControl
             {
                 MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
                 moveButtonFactory.normalFillColor = color;
-                zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, ManualPrinterControls.ZSpeed);
+                zPlusControl = moveButtonFactory.Generate("Z+", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
                 zButtons.AddChild(zPlusControl);
 
                 GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
@@ -278,7 +332,7 @@ namespace MatterHackers.MatterControl
                 spacer.BackgroundColor = XYZColors.zColor;
                 zButtons.AddChild(spacer);
 
-                zMinusControl = moveButtonFactory.Generate("Z-", PrinterConnectionAndCommunication.Axis.Z, ManualPrinterControls.ZSpeed);
+                zMinusControl = moveButtonFactory.Generate("Z-", PrinterConnectionAndCommunication.Axis.Z, MovementControls.ZSpeed);
                 zButtons.AddChild(zMinusControl);
             }
             zButtons.Margin = new BorderDouble(0, 5);
@@ -294,7 +348,7 @@ namespace MatterHackers.MatterControl
                     moveButtonFactory.normalFillColor = XYZColors.xColor;
                     xButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
                     xButtons.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                    xMinusControl = moveButtonFactory.Generate("X-", PrinterConnectionAndCommunication.Axis.X, ManualPrinterControls.XSpeed);
+                    xMinusControl = moveButtonFactory.Generate("X-", PrinterConnectionAndCommunication.Axis.X, MovementControls.XSpeed);
                     xButtons.AddChild(xMinusControl);
 
                     GuiWidget spacer = new GuiWidget(xMinusControl.Width + buttonSeparationDistance * 2, 2);
@@ -302,7 +356,7 @@ namespace MatterHackers.MatterControl
                     spacer.BackgroundColor = XYZColors.xColor;
                     xButtons.AddChild(spacer);
 
-                    xPlusControl = moveButtonFactory.Generate("X+", PrinterConnectionAndCommunication.Axis.X, ManualPrinterControls.XSpeed);
+                    xPlusControl = moveButtonFactory.Generate("X+", PrinterConnectionAndCommunication.Axis.X, MovementControls.XSpeed);
                     xButtons.AddChild(xPlusControl);
                 }
                 xyGrid.AddChild(xButtons);
@@ -312,7 +366,7 @@ namespace MatterHackers.MatterControl
                     moveButtonFactory.normalFillColor = XYZColors.yColor;
                     yButtons.HAnchor |= Agg.UI.HAnchor.ParentCenter;
                     yButtons.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-                    yPlusControl = moveButtonFactory.Generate("Y+", PrinterConnectionAndCommunication.Axis.Y, ManualPrinterControls.YSpeed);
+                    yPlusControl = moveButtonFactory.Generate("Y+", PrinterConnectionAndCommunication.Axis.Y, MovementControls.YSpeed);
                     yButtons.AddChild(yPlusControl);
 
                     GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
@@ -320,7 +374,7 @@ namespace MatterHackers.MatterControl
                     spacer.BackgroundColor = XYZColors.yColor;
                     yButtons.AddChild(spacer);
 
-                    yMinusControl = moveButtonFactory.Generate("Y-", PrinterConnectionAndCommunication.Axis.Y, ManualPrinterControls.YSpeed);
+                    yMinusControl = moveButtonFactory.Generate("Y-", PrinterConnectionAndCommunication.Axis.Y, MovementControls.YSpeed);
                     yButtons.AddChild(yMinusControl);
                 }
                 xyGrid.AddChild(yButtons);
@@ -346,15 +400,41 @@ namespace MatterHackers.MatterControl
                 this.moveAxis = axis;
                 this.movementFeedRate = movementFeedRate;
 
-                this.Click += new ButtonBase.ButtonEventHandler(moveAxis_Click);
+                this.Click += new EventHandler(moveAxis_Click);
             }
 
-            void moveAxis_Click(object sender, MouseEventArgs mouseEvent)
+            void moveAxis_Click(object sender, EventArgs mouseEvent)
             {
                 MoveButton moveButton = (MoveButton)sender;
 
                 //Add more fancy movement here
                 PrinterConnectionAndCommunication.Instance.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
+            }
+        }
+
+        public class ExtrudeButton : Button
+        {            
+
+            //Amounts in millimeters
+            public double MoveAmount = 10;
+            private double movementFeedRate;
+            public int ExtruderNumber;
+
+            public ExtrudeButton(double x, double y, GuiWidget buttonView, double movementFeedRate, int extruderNumber)
+                : base(x, y, buttonView)
+            {
+                this.ExtruderNumber = extruderNumber;
+                this.movementFeedRate = movementFeedRate;
+
+                this.Click += new EventHandler(moveAxis_Click);
+            }
+
+            void moveAxis_Click(object sender, EventArgs mouseEvent)
+            {
+                ExtrudeButton moveButton = (ExtrudeButton)sender;
+
+                //Add more fancy movement here
+                PrinterConnectionAndCommunication.Instance.MoveExtruderRelative(MoveAmount, movementFeedRate, ExtruderNumber);
             }
         }
 
@@ -384,6 +464,14 @@ namespace MatterHackers.MatterControl
                 this.Height = 40;
                 this.Width = 40;
             }
+
+            public override void OnDraw(Graphics2D graphics2D)
+            {
+                base.OnDraw(graphics2D);
+                RectangleDouble boarderRectangle = LocalBounds;
+                RoundedRect rectBorder = new RoundedRect(boarderRectangle, 0);
+                graphics2D.Render(new Stroke(rectBorder, 1), new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor,200));
+            }
         }
 
         public class MoveButtonFactory
@@ -408,6 +496,16 @@ namespace MatterHackers.MatterControl
                 //Create button based on view container widget
                 ButtonViewStates buttonViewWidget = getButtonView(label);
                 MoveButton textImageButton = new MoveButton(0, 0, buttonViewWidget, axis, movementFeedRate);
+                textImageButton.Margin = new BorderDouble(0);
+                textImageButton.Padding = new BorderDouble(0);
+                return textImageButton;
+            }
+
+            public ExtrudeButton Generate(string label, double movementFeedRate, int extruderNumber = 0)
+            {
+                //Create button based on view container widget
+                ButtonViewStates buttonViewWidget = getButtonView(label);
+                ExtrudeButton textImageButton = new ExtrudeButton(0, 0, buttonViewWidget, movementFeedRate, extruderNumber);
                 textImageButton.Margin = new BorderDouble(0);
                 textImageButton.Padding = new BorderDouble(0);
                 return textImageButton;

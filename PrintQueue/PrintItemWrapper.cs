@@ -70,7 +70,14 @@ namespace MatterHackers.MatterControl.PrintQueue
         public PrintItemWrapper(int printItemId)
         {
             this.PrintItem = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItem>().Where(v => v.Id == printItemId).Take(1).FirstOrDefault();
-            this.fileType = Path.GetExtension(this.PrintItem.FileLocation).ToUpper();
+            try
+            {
+                this.fileType = Path.GetExtension(this.PrintItem.FileLocation).ToUpper();
+            }
+            catch
+            {
+                //file not found
+            }
         }
 
         bool doneSlicing;
@@ -142,6 +149,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         public string FileLocation
         {
             get { return this.PrintItem.FileLocation; }
+            set { this.PrintItem.FileLocation = value; }
         }
 
         public int StlFileHashCode
@@ -187,8 +195,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                 return this.stlFileHashCode;
             }
         }
-
-        public string PartToSlicePathAndFileName { get { return PrintItem.FileLocation; } }
 
         public bool IsGCodeFileComplete(string gcodePathAndFileName)
         {

@@ -50,11 +50,52 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {                     
             this.HAnchor = HAnchor.ParentLeftRight;
             //this.AddChild(GetSliceEngineContainer());
-            this.AddChild(new SliceEngineSelector("Slice Engine".Localize(), RGBA_Bytes.YellowGreen));
-            this.AddChild(new GuiWidget(8, 0));
+
+            int numberOfHeatedExtruders = 1;
+            if (!ActiveSliceSettings.Instance.ExtrudersShareTemperature)
+            {
+                numberOfHeatedExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+            }
+
+
+            if (numberOfHeatedExtruders == 1)
+            {
+                this.AddChild(new SliceEngineSelector("Slice Engine".Localize(), RGBA_Bytes.YellowGreen));
+                this.AddChild(new GuiWidget(8, 0));
+            }
+            else
+            {
+                // Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
+                if (ActivePrinterProfile.Instance.ActiveSliceEngineType != ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
+                {
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+                }
+            }
+
             this.AddChild(new SliceSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, "quality"));
             this.AddChild(new GuiWidget(8, 0));
-            this.AddChild(new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material"));
+
+            if (numberOfHeatedExtruders > 1)
+            {
+                List<RGBA_Bytes> colorList = new List<RGBA_Bytes>() { RGBA_Bytes.Orange, RGBA_Bytes.Violet, RGBA_Bytes.YellowGreen };
+                
+                for (int i = 0; i < numberOfHeatedExtruders; i++)
+                {
+                    if (i > 0)
+                    {
+                        this.AddChild(new GuiWidget(8, 0));
+                    }
+                    int colorIndex = i % colorList.Count;
+                    RGBA_Bytes color = colorList[colorIndex];
+                    this.AddChild(new SliceSelectorWidget(string.Format("{0} {1}", "Material".Localize(), i + 1), color, "material", i+1));
+                    
+                }
+            }
+            else
+            {
+                this.AddChild(new SliceSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, "material"));
+            }
+
             //this.AddChild(new GuiWidget(6, 0));
             //this.AddChild(new SliceSelectorWidget("Item", RGBA_Bytes.Violet)); 
             this.Height = 70;
@@ -139,16 +180,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
 
 			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
-            saveButton.VAnchor = VAnchor.ParentTop;
+            saveButton.VAnchor = VAnchor.ParentCenter;
             saveButton.Visible = false;
             saveButton.Margin = new BorderDouble(0, 0, 0, 10);
-			saveButton.Click += new ButtonBase.ButtonEventHandler(saveButton_Click);
+			saveButton.Click += new EventHandler(saveButton_Click);
 
 			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert"));
-            revertbutton.VAnchor = VAnchor.ParentTop;
+            revertbutton.VAnchor = VAnchor.ParentCenter;
             revertbutton.Visible = false;
             revertbutton.Margin = new BorderDouble(0,0,0,10);
-            revertbutton.Click += new ButtonBase.ButtonEventHandler(revertbutton_Click);		
+            revertbutton.Click += new EventHandler(revertbutton_Click);		
             
             bottomRow.AddChild(settingsStatusLabelContainer);
 
@@ -174,6 +215,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
                 sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
                 sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
+                sliceOptionsMenuDropList.BorderWidth = 1;
+                sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
+                sliceOptionsMenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
                 sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
 
                 SetMenuItems();
@@ -229,16 +273,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 unsavedChangesIndicator.Visible = false;
             }         
         }
-			
-        void saveButton_Click(object sender, MouseEventArgs mouseEvent)
+
+        void saveButton_Click(object sender, EventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.CommitChanges();
         }
 
-        void revertbutton_Click(object sender, MouseEventArgs mouseEvent)
+        void revertbutton_Click(object sender, EventArgs mouseEvent)
         {
             ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();
         }
 
         void MenuDropList_SelectionChanged(object sender, EventArgs e)
@@ -279,13 +323,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             UiThread.RunOnIdle((state) =>
             {
-                bool goodLoad = ActiveSliceSettings.Instance.LoadSettingsFromIni();
-                if (goodLoad)
-                {
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
-                }
+                ActiveSliceSettings.Instance.LoadSettingsFromIni(state);
             });
-
             return true;
         }
 

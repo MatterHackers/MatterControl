@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl
 {
@@ -87,6 +88,12 @@ namespace MatterHackers.MatterControl
                         DoCGCollectEveryDraw = true;
                         break;
                 }
+
+                if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
+                {
+                    // If we are the only instance running then do nothing.
+                    // Else send these to the running instance so it can load them.
+                }
             }
 
             //WriteTestGCodeFile();
@@ -110,9 +117,13 @@ namespace MatterHackers.MatterControl
 
             GuiWidget.DefaultEnforceIntegerBounds = true;
 
-            //TextWidget.GlobalPointSizeScaleRatio = 1.63;
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                TextWidget.GlobalPointSizeScaleRatio = 1.3;
+            }
 
-            this.AddChild(ApplicationWidget.Instance);
+            this.AddChild(ApplicationController.Instance.MainView);
+            this.MinimumSize = new Vector2(400, 400);
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
 #if false // this is to test freeing gcodefile memory
@@ -138,8 +149,6 @@ namespace MatterHackers.MatterControl
             }
 
             UiThread.RunOnIdle(CheckOnPrinter);
-
-            MinimumSize = new Vector2(590, 630);
 
             string desktopPosition = ApplicationSettings.Instance.get("DesktopPosition");
             if (desktopPosition != null && desktopPosition != "")
@@ -277,7 +286,9 @@ namespace MatterHackers.MatterControl
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
                 {
-                    if (Path.GetExtension(arg).ToUpper() == ".STL")
+                    string argExtension = Path.GetExtension(arg).ToUpper();
+                    if (argExtension.Length > 1
+                        && MeshFileIo.ValidFileExtensions().Contains(argExtension))
                     {
                         QueueData.Instance.AddItem(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
                     }
@@ -320,7 +331,7 @@ namespace MatterHackers.MatterControl
                 width = Math.Max(int.Parse(sizes[0]), 600);
                 height = Math.Max(int.Parse(sizes[1]), 600);
             }
-            
+
             new MatterControlApplication(width, height);
         }
 
@@ -362,24 +373,29 @@ namespace MatterHackers.MatterControl
 
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
-                StyledMessageBox.ShowMessageBox(unableToExitMessage, unableToExitTitle);
+                StyledMessageBox.ShowMessageBox(null, unableToExitMessage, unableToExitTitle);
                 CancelClose = true;
             }
             else if (PartsSheet.IsSaving())
             {
-                if (!StyledMessageBox.ShowMessageBox(savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO))
-                {
-                    CancelClose = true;
-                }
-                else
-                {
-                    base.OnClosing(out CancelClose);
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmExit, savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO);
+                CancelClose = true;
             }
             else
             {
                 base.OnClosing(out CancelClose);
             }
+        }
+
+        bool cancelClose;
+        void onConfirmExit(bool messageBoxResponse)
+        {
+            bool CancelClose;
+            if (messageBoxResponse)
+            {
+                base.OnClosing(out CancelClose);
+            }
+
         }
     }
 }

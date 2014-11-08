@@ -88,10 +88,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
             new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
             
+            new NotPassedItem("", "extruder_count"),
+            new NotPassedItem("", "extruders_share_temperature"),
+
             //endCode=M104 S0
             new MapEndGCode("endCode", "end_gcode"),
 
+            new MapItem("zOffset", "z_offset"),
+
             //extruderOffsets=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+            new ExtruderOffsets("extruderOffsets", "extruder_offset"),
 
             //extrusionWidth=0.4 # The width of the line to extrude.
             new MapItem("extrusionWidth", "nozzle_diameter"),
@@ -140,6 +146,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("bridgeSpeed", "bridge_speed"),
 
             new MapItem("bridgeFanSpeedPercent", "bridge_fan_speed"),
+
+            new MapItem("raftFanSpeedPercent", "raft_fan_speed_percent"),
+
+            new AsPercentOfReferenceOrDirect("raftPrintSpeed", "raft_print_speed", "infill_speed"),
             
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),
@@ -201,10 +211,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new NotPassedItem("", "z_can_be_negative"),
 #endif
 
-            //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
-            new MapRepairOverlaps("repairOverlaps", "repair_overlaps_reverse_orientation"),
-            new NotPassedItem("", "repair_overlaps_union_all_together"),
-
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
             
@@ -231,7 +237,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
 
             //supportLineSpacing=2
-            new MapItem("supportLineSpacing", "support_material_spacing"),            
+            new MapItem("supportLineSpacing", "support_material_spacing"),
+
+            new SupportExtrusionWidth("supportExtrusionPercent","support_material_extrusion_width"),
 
             //supportMaterialSpeed=50 # mm/s.
             new MapItem("supportMaterialSpeed", "support_material_speed"),
@@ -256,9 +264,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             
             //wipeShieldDistanceFromObject=0 # If greater than 0 this creates an outline around shapes so the extrude will be wiped when entering.
             new MapItem("wipeShieldDistanceFromObject", "wipe_shield_distance"),
-            
+
             // TODO: We don't need this yet as it is only for dual extrusion
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
+            new MapItem("wipeTowerSize", "wipe_tower_size"),
 
             new NotPassedItem("", "pause_gcode"),
             new NotPassedItem("", "resume_gcode"),
@@ -320,6 +329,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public class ExtruderOffsets : MapItem
+        {
+            public override string MappedValue
+            {
+                get
+                {
+                    // map from 0x0,0x0,0x0
+                    // to [[0,0],[0,0]]
+                    StringBuilder final = new StringBuilder("[");
+                    string[] offsets = base.MappedValue.Split(',');
+                    bool first = true;
+                    int count = 0;
+                    foreach (string offset in offsets)
+                    {
+                        if(!first)
+                        {
+                            final.Append(",");
+                        }
+                        string[] xy = offset.Split('x');
+                        final.Append("[{0},{1}]".FormatWith(double.Parse(xy[0]), double.Parse(xy[1])));
+                        first = false;
+                        count++;
+                    }
+                    while (count < 16)
+                    {
+                        final.Append(",[0,0]");
+                        count++;
+                    }
+                    final.Append("]");
+
+                    return final.ToString();
+                }
+            }
+
+            public ExtruderOffsets(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
+            {
+            }
+        }
+
         //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
         public class MapRepairOutlines : MapItem
         {
@@ -353,39 +402,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        //repairOverlaps=NONE # Available Values: NONE, REVERSE_ORIENTATION, UNION_ALL_TOGETHER # You can or them together using '|'.
-        public class MapRepairOverlaps : MapItem
-        {
-            public override string MappedValue
-            {
-                get
-                {
-                    if(ActiveSliceSettings.Instance.GetActiveValue("repair_overlaps_reverse_orientation") == "1")
-                    {
-                        if (ActiveSliceSettings.Instance.GetActiveValue("repair_overlaps_union_all_together") == "1")
-                        {
-                            return "REVERSE_ORIENTATION|UNION_ALL_TOGETHER";
-                        }
-                        else
-                        {
-                            return "REVERSE_ORIENTATION";
-                        }
-                    }
-                    else if(ActiveSliceSettings.Instance.GetActiveValue("repair_overlaps_union_all_together") == "1")
-                    {
-                        return "UNION_ALL_TOGETHER";
-                    }
-
-                    return "NONE";
-                }
-            }
-
-            public MapRepairOverlaps(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
-        }
-
         public class FanTranslator : MapItem
         {
             public override string MappedValue
@@ -401,6 +417,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             public FanTranslator(string mappedKey, string originalKey)
                 : base(mappedKey, originalKey)
             {
+            }
+        }
+
+        public class SupportExtrusionWidth : MapItem
+        {
+            public SupportExtrusionWidth(string mappedKey, string originalKey)
+                : base(mappedKey, originalKey)
+            {
+            }
+
+            public override string MappedValue
+            {
+                get
+                {
+                    double nozzleDiameter = ActiveSliceSettings.Instance.NozzleDiameter;
+                    if (OriginalValue == "0")
+                    {
+                        return "100";
+                    }
+
+                    if (OriginalValue.Contains("%"))
+                    {
+                        string withoutPercent = OriginalValue.Replace("%", "");
+                        return withoutPercent;
+                    }
+
+                    double originalValue;
+                    if (!double.TryParse(OriginalValue, out originalValue))
+                    {
+                        originalValue = nozzleDiameter;
+                    }
+
+                    return (originalValue / nozzleDiameter * 100).ToString();
+                }
             }
         }
 
@@ -495,7 +545,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 get
                 {
-                    return base.MappedValue.Replace("\n", "\\n");
+                    string endGCode = base.MappedValue.Replace("\n", "\\n");
+                    return endGCode;
                 }
             }
 

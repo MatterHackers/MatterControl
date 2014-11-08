@@ -50,9 +50,98 @@ namespace MatterHackers.MatterControl
 
     public static class CreateDiscreteMeshes
     {
-        public static Mesh[] SplitIntoMeshes(Mesh meshToSplit, Vector3 buildVolume, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
+        public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, ReportProgressRatio reportProgress)
         {
-            int lengthPercent = endPercent-startPercent;
+            List<Mesh> discreteMeshes = new List<Mesh>();
+            double ratioPerDiscreetMesh = 1.0 / meshGroupToSplit.Meshes.Count;
+            double currentRatioDone = 0;
+            foreach (Mesh mesh in meshGroupToSplit.Meshes)
+            {
+                List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
+                {
+                    if (reportProgress != null)
+                    {
+                        double progress = (currentRatioDone + ratioPerDiscreetMesh * progress0To1);
+                        reportProgress(progress, "Split Into Meshes", out continueProcessing);
+                    }
+                    else
+                    {
+                        continueProcessing = true;
+                    }
+                });
+                discreteMeshes.AddRange(discreteVolumes);
+
+                currentRatioDone += ratioPerDiscreetMesh;
+            }
+
+            return discreteMeshes;
+        }
+
+        public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, ReportProgressRatio reportProgress)
+        {
+            List<Mesh> discreetVolumes = new List<Mesh>();
+            HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
+            Mesh meshFromCurrentVolume = null;
+            Stack<Face> attachedFaces = new Stack<Face>();
+            for (int faceIndex = 0; faceIndex < meshToSplit.Faces.Count; faceIndex++)
+            {
+                Face currentFace = meshToSplit.Faces[faceIndex];
+                // If this face as not been added to any volume, create a new volume and add all of the attached faces.
+                if (!facesThatHaveBeenAdded.Contains(currentFace))
+                {
+                    attachedFaces.Push(currentFace);
+                    meshFromCurrentVolume = new Mesh();
+
+                    MeshMaterialData materialDataToCopy = MeshMaterialData.Get(meshToSplit);
+                    MeshMaterialData newMaterialData = MeshMaterialData.Get(meshFromCurrentVolume);
+                    newMaterialData.MaterialIndex = materialDataToCopy.MaterialIndex;
+
+                    while (attachedFaces.Count > 0)
+                    {
+                        Face faceToAdd = attachedFaces.Pop();
+                        foreach (Vertex attachedVertex in faceToAdd.Vertices())
+                        {
+                            foreach (Face faceAttachedToVertex in attachedVertex.ConnectedFaces())
+                            {
+                                if (!facesThatHaveBeenAdded.Contains(faceAttachedToVertex))
+                                {
+                                    // marke that this face has been taken care of
+                                    facesThatHaveBeenAdded.Add(faceAttachedToVertex);
+                                    // add it to the list of faces we need to walk
+                                    attachedFaces.Push(faceAttachedToVertex);
+
+                                    // Add a new face to the new mesh we are creating.
+                                    List<Vertex> faceVertices = new List<Vertex>();
+                                    foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
+                                    {
+                                        Vertex newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
+                                        faceVertices.Add(newVertex);
+                                    }
+
+                                    meshFromCurrentVolume.CreateFace(faceVertices.ToArray(), true);
+                                }
+                            }
+                        }
+                    }
+
+                    meshFromCurrentVolume.CleanAndMergMesh();
+                    discreetVolumes.Add(meshFromCurrentVolume);
+                    meshFromCurrentVolume = null;
+                }
+                if (reportProgress != null)
+                {
+                    double progress = faceIndex / (double)meshToSplit.Faces.Count;
+                    bool continueProcessing;
+                    reportProgress(progress, "Split Into Meshes", out continueProcessing);
+                }
+            }
+
+            return discreetVolumes;
+        }
+
+        public static Mesh[] SplitIntoMeshesOnOrthographicZ(Mesh meshToSplit, Vector3 buildVolume, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
+        {
+            int lengthPercent = endPercent - startPercent;
             // check if the part is bigger than the build plate (if it is we need to use that as our size)
             AxisAlignedBoundingBox partBounds = meshToSplit.GetAxisAlignedBoundingBox();
 
@@ -66,6 +155,7 @@ namespace MatterHackers.MatterControl
             double scaleFactor = 5;
             ImageBuffer partPlate = new ImageBuffer((int)(buildVolume.x * scaleFactor), (int)(buildVolume.y * scaleFactor), 32, new BlenderBGRA());
             Vector2 renderOffset = new Vector2(buildVolume.x / 2, buildVolume.y / 2) - new Vector2(partBounds.Center.x, partBounds.Center.y);
+
             PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);
 
             if (backgroundWorker != null)

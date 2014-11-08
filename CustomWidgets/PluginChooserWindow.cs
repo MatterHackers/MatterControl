@@ -151,10 +151,6 @@ namespace MatterHackers.MatterControl.CreatorPlugins
                 pluginRow.Height = 38;
                 pluginRow.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-                GuiWidget overlay = new GuiWidget();
-                overlay.AnchorAll();
-                overlay.Cursor = Cursors.Hand;
-                
                 FlowLayoutWidget macroRow = new FlowLayoutWidget();
                 macroRow.AnchorAll();
                 macroRow.BackgroundColor = RGBA_Bytes.White;
@@ -207,8 +203,9 @@ namespace MatterHackers.MatterControl.CreatorPlugins
                     UiThread.RunOnIdle(CloseOnIdle);
                 };
 
+                pluginRow.Cursor = Cursors.Hand;
+                macroRow.Selectable = false;
                 pluginRow.AddChild(macroRow);
-                pluginRow.AddChild(overlay);
 
                 pluginListingContainer.AddChild(pluginRow);
 

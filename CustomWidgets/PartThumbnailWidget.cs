@@ -89,10 +89,18 @@ namespace MatterHackers.MatterControl
 
         public ImageSizes Size { get; set; }
 
+        static string partExtension = ".png";
+
         event EventHandler unregisterEvents;
         public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, ImageSizes size)
         {
             this.PrintItem = item;
+
+            if (OsInformation.OperatingSystem == OSType.Mac
+                || OsInformation.OperatingSystem == OSType.Android)
+            {
+                partExtension = ".tga";
+            }
 
             // Set Display Attributes
             this.Margin = new BorderDouble(0);
@@ -127,7 +135,7 @@ namespace MatterHackers.MatterControl
             this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
 
             // Add Handlers
-            this.Click += new ButtonEventHandler(OnMouseClick);
+            this.Click += new EventHandler(OnMouseClick);
             this.MouseEnterBounds += new EventHandler(onEnter);
             this.MouseLeaveBounds += new EventHandler(onExit);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
@@ -170,13 +178,13 @@ namespace MatterHackers.MatterControl
                     {
                         case ImageSizes.Size115x115:
                             {
-                                ImageIO.LoadImageData(this.GetImageLocation("icon_sd_card_115x115.png"), thumbnailWidget.thumbnailImage);
+                                ImageIO.LoadImageData(this.GetImageLocation(Path.ChangeExtension("icon_sd_card_115x115", partExtension)), thumbnailWidget.thumbnailImage);
                             }
                             break;
 
                         case ImageSizes.Size50x50:
                             {
-                                ImageIO.LoadImageData(this.GetImageLocation("icon_sd_card_50x50.png"), thumbnailWidget.thumbnailImage);
+                                ImageIO.LoadImageData(this.GetImageLocation(Path.ChangeExtension("icon_sd_card_50x50", partExtension)), thumbnailWidget.thumbnailImage);
                             }
                             break;
 
@@ -198,11 +206,11 @@ namespace MatterHackers.MatterControl
                 ImageBuffer bigRender = LoadImageFromDisk(thumbnailWidget, stlHashCode, bigRenderSize);
                 if (bigRender == null)
                 {
-                    Mesh loadedMesh = StlProcessing.Load(thumbnailWidget.PrintItem.FileLocation);
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(thumbnailWidget.PrintItem.FileLocation);
 
                     thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
                     thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-                    bigRender = BuildImageFromSTL(loadedMesh, stlHashCode, bigRenderSize);
+                    bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, bigRenderSize);
                     if (bigRender == null)
                     {
                         bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
@@ -253,60 +261,111 @@ namespace MatterHackers.MatterControl
             Invalidate();
         }
 
+        public static void CleanUpCacheData()
+        {
+            //string pngFileName = GetFilenameForSize(stlHashCode, ref size);
+            // delete everything that is a tga (we now save pngs).
+        }
+
         private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)
         {
             ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
-            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-            string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
-            string tgaFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.tga".FormatWith(stlHashCode, size.x, size.y));
+            string imageFileName = GetFilenameForSize(stlHashCode, ref size);
 
-            if (File.Exists(tgaFileName))
+            if (File.Exists(imageFileName))
             {
-                if (ImageTgaIO.LoadImageData(tgaFileName, tempImage))
+                if (partExtension == ".png")
                 {
-                    return tempImage;
+                    if (ImageIO.LoadImageData(imageFileName, tempImage))
+                    {
+                        return tempImage;
+                    }
+                }
+                else
+                {
+                    if (ImageTgaIO.LoadImageData(imageFileName, tempImage))
+                    {
+                        return tempImage;
+                    }
                 }
             }
 
             return null;
         }
 
-        private static ImageBuffer BuildImageFromSTL(Mesh loadedMesh, string stlHashCode, Point2D size)
+        private static string GetFilenameForSize(string stlHashCode, ref Point2D size)
         {
-            if(loadedMesh != null)
+            string folderToSaveThumbnailsTo = ThumbnailPath();
+            string imageFileName = Path.Combine(folderToSaveThumbnailsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, size.x, size.y), partExtension));
+            return imageFileName;
+        }
+
+        private static string ThumbnailPath()
+        {
+            string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+            string folderToSaveThumbnailsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
+            return folderToSaveThumbnailsTo;
+        }
+
+        private static ImageBuffer BuildImageFromMeshGroups(List<MeshGroup> loadedMeshGroups, string stlHashCode, Point2D size)
+        {
+            if (loadedMeshGroups != null 
+                && loadedMeshGroups.Count > 0 
+                && loadedMeshGroups[0].Meshes != null
+                && loadedMeshGroups[0].Meshes[0] != null)
             {
                 ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
                 Graphics2D partGraphics2D = tempImage.NewGraphics2D();
                 partGraphics2D.Clear(new RGBA_Bytes());
 
-                AxisAlignedBoundingBox aabb = loadedMesh.GetAxisAlignedBoundingBox();
+                AxisAlignedBoundingBox aabb = loadedMeshGroups[0].GetAxisAlignedBoundingBox();
+                for (int meshGroupIndex = 1; meshGroupIndex < loadedMeshGroups.Count; meshGroupIndex++)
+                {
+                    aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[meshGroupIndex].GetAxisAlignedBoundingBox());
+                }
                 double maxSize = Math.Max(aabb.XSize, aabb.YSize);
                 double scale = size.x / (maxSize * 1.2);
                 RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
-                PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
-                    new Vector2((size.x / scale - bounds2D.Width) / 2 - bounds2D.Left,
-                        (size.y / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
-                    scale, RGBA_Bytes.White);
-
-                List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
-                if (nonManifoldEdges.Count > 0)
+                foreach (MeshGroup meshGroup in loadedMeshGroups)
                 {
-                    if (File.Exists("RunUnitTests.txt"))
+                    foreach (Mesh loadedMesh in meshGroup.Meshes)
                     {
-                        partGraphics2D.Circle(size.x / 4, size.x / 4, size.x / 8, RGBA_Bytes.Red);
+                        PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh,
+                            new Vector2((size.x / scale - bounds2D.Width) / 2 - bounds2D.Left,
+                                (size.y / scale - bounds2D.Height) / 2 - bounds2D.Bottom),
+                            scale, RGBA_Bytes.White);
+                    }
+                }
+
+                if (File.Exists("RunUnitTests.txt"))
+                {
+                    foreach (Mesh loadedMesh in loadedMeshGroups[0].Meshes)
+                    {
+                        List<MeshEdge> nonManifoldEdges = loadedMesh.GetNonManifoldEdges();
+                        if (nonManifoldEdges.Count > 0)
+                        {
+                            partGraphics2D.Circle(size.x / 4, size.x / 4, size.x / 8, RGBA_Bytes.Red);
+                        }
                     }
                 }
 
                 // and save it to disk
                 string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
                 string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
-                string tgaFileName = Path.Combine(folderToSavePrintsTo, "{0}_{1}x{2}.tga".FormatWith(stlHashCode, size.x, size.y));
+                string imageFileName = Path.Combine(folderToSavePrintsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, size.x, size.y),partExtension));
 
                 if (!Directory.Exists(folderToSavePrintsTo))
                 {
                     Directory.CreateDirectory(folderToSavePrintsTo);
                 }
-                ImageTgaIO.SaveImageData(tgaFileName, tempImage);
+                if (partExtension == ".png")
+                {
+                    ImageIO.SaveImageData(imageFileName, tempImage);
+                }
+                else
+                {
+                    ImageTgaIO.SaveImageData(imageFileName, tempImage);
+                }
 
                 // and give it back
                 return tempImage;
@@ -333,7 +392,7 @@ namespace MatterHackers.MatterControl
             this.Invalidate();
         }
 
-        private void OnMouseClick(object sender, MouseEventArgs e)
+        private void OnMouseClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle(DoOnMouseClick);
         }
@@ -348,11 +407,11 @@ namespace MatterHackers.MatterControl
                     bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
                     if (shiftKeyDown)
                     {
-                        OpenPartPreviewWindow (View3DTransformPart.AutoRotate.Disabled);
+                        OpenPartPreviewWindow (View3DWidget.AutoRotate.Disabled);
                     }
                     else
                     {
-                        OpenPartPreviewWindow (View3DTransformPart.AutoRotate.Enabled);
+                        OpenPartPreviewWindow (View3DWidget.AutoRotate.Enabled);
                     }
                 }
                 else
@@ -367,7 +426,7 @@ namespace MatterHackers.MatterControl
             this.partPreviewWindow = null;
 		}
 
-		private void OpenPartPreviewWindow(View3DTransformPart.AutoRotate autoRotate)
+		private void OpenPartPreviewWindow(View3DWidget.AutoRotate autoRotate)
 		{
             if (partPreviewWindow == null)
 			{

@@ -12,6 +12,9 @@ namespace MatterHackers.MatterControl
 {
     public class ApplicationSettings
     {
+        public static string OpenPrintableFileParams { get { return "STL, AMF, ZIP, GCODE|*.stl;*.amf;*.zip;*.gcode"; } }
+        public static string OpenDesignFileParams { get { return "STL, AMF, ZIP|*.stl;*.amf;*.zip"; } }
+
         static ApplicationSettings globalInstance = null;
         public Dictionary<string, DataStorage.SystemSetting> settingsDictionary;
 

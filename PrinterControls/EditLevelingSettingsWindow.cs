@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl
 			MinimumSize = new Vector2(Width, Height);
 
             Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
-            savePresetsButton.Click += new ButtonBase.ButtonEventHandler(save_Click);
+            savePresetsButton.Click += new EventHandler(save_Click);
 
             Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
             cancelPresetsButton.Click += (sender, e) =>
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl
             AddChild(topToBottom);
         }
 
-        void save_Click(object sender, MouseEventArgs mouseEvent)
+        void save_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(DoSave_Click);
         }

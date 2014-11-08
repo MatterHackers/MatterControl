@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.ContactForm
         {
             GuiWidget labelContainer = new GuiWidget();
             labelContainer.HAnchor = HAnchor.ParentLeftRight;
-            labelContainer.Height = height;
+			labelContainer.Height = height * TextWidget.GlobalPointSizeScaleRatio;
 
             TextWidget formLabel = new TextWidget(labelText, pointSize: fontSize);
             formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -249,10 +249,10 @@ namespace MatterHackers.MatterControl.ContactForm
                     Close();
                 });
             };
-            submitButton.Click += new ButtonBase.ButtonEventHandler(SubmitContactForm);
+            submitButton.Click += new EventHandler(SubmitContactForm);
         }
 
-        void SubmitContactForm(object sender, MouseEventArgs mouseEvent)
+        void SubmitContactForm(object sender, EventArgs mouseEvent)
         {
             if (ValidateContactForm())
             {

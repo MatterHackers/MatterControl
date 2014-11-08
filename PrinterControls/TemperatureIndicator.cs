@@ -36,6 +36,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -50,15 +51,15 @@ namespace MatterHackers.MatterControl
         
         protected string label;
         protected string editWindowLabel;
-              
+        protected int extruderIndex0Based = 0;
 
-        protected TemperatureControlBase(string label, string editWindowLabel)
+        protected TemperatureControlBase(int extruderIndex0Based, string label, string editWindowLabel)
             : base(FlowDirection.TopToBottom)
         {
+            this.extruderIndex0Based = extruderIndex0Based;
             this.label = label;
             this.editWindowLabel = editWindowLabel;
-            SetDisplayAttributes();
-            AddChildElements();
+            SetDisplayAttributes();            
         }
 
         protected abstract double GetActualTemperature();
@@ -72,15 +73,18 @@ namespace MatterHackers.MatterControl
 
         void SetDisplayAttributes()
         {
-            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
+            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
 
-            this.textImageButtonFactory.FixedWidth = 38;
-            this.textImageButtonFactory.FixedHeight = 20;
+            this.textImageButtonFactory.FixedWidth = 38* TextWidget.GlobalPointSizeScaleRatio;
+            this.textImageButtonFactory.FixedHeight = 20* TextWidget.GlobalPointSizeScaleRatio;
             this.textImageButtonFactory.fontSize = 10;
+            this.textImageButtonFactory.borderWidth = 1;
+            this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+            this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
             
             this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
             this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+            this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             this.HAnchor = HAnchor.ParentLeftRight;
@@ -99,10 +103,10 @@ namespace MatterHackers.MatterControl
         }
         protected FlowLayoutWidget tempSliderContainer;
         EditTemperaturePresetsWindow editSettingsWindow;
-        void AddChildElements()
+        protected void AddChildElements()
         {
             Button editButton;
-            GroupBox groupBox = new GroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(label, out editButton));
+            AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(label, out editButton));
             editButton.Click += (sender, e) =>
             {
                 if (editSettingsWindow == null)
@@ -123,7 +127,7 @@ namespace MatterHackers.MatterControl
             groupBox.ClientArea.VAnchor = Agg.UI.VAnchor.FitToChildren;            
 
             FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-            controlRow.Margin = new BorderDouble(top: 5);
+            controlRow.Margin = new BorderDouble(top: 2)* TextWidget.GlobalPointSizeScaleRatio;
             controlRow.HAnchor |= HAnchor.ParentLeftRight;
             {
                 // put in the temperature slider and preset buttons
@@ -145,14 +149,14 @@ namespace MatterHackers.MatterControl
                 {
                     FlowLayoutWidget temperatureIndicator = new FlowLayoutWidget();
                     temperatureIndicator.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                    temperatureIndicator.Margin = new BorderDouble(bottom: 6);
-                    temperatureIndicator.Padding = new BorderDouble(0, 3);
+                    temperatureIndicator.Margin = new BorderDouble(bottom: 0)* TextWidget.GlobalPointSizeScaleRatio;
+                    temperatureIndicator.Padding = new BorderDouble(0, 3)* TextWidget.GlobalPointSizeScaleRatio;
 
                     // put in the actual temperature controls
                     {
                         FlowLayoutWidget extruderActualIndicator = new FlowLayoutWidget(Agg.UI.FlowDirection.LeftToRight);
                         
-                        extruderActualIndicator.Margin = new BorderDouble(3, 0);
+                        extruderActualIndicator.Margin = new BorderDouble(3, 0)* TextWidget.GlobalPointSizeScaleRatio;
 						string extruderActualLabelTxt = LocalizedString.Get ("Actual");
 						string extruderActualLabelTxtFull = string.Format ("{0}: ", extruderActualLabelTxt);
 						TextWidget extruderActualLabel = new TextWidget(extruderActualLabelTxtFull, pointSize: 10);
@@ -171,7 +175,7 @@ namespace MatterHackers.MatterControl
 						string extruderAboutLabelTxtFull = string.Format ("{0}: ", extruderAboutLabelTxt);
 
 						TextWidget extruderTargetLabel = new TextWidget(extruderAboutLabelTxtFull, pointSize: 10);
-                        extruderTargetLabel.Margin = new BorderDouble(left: 10);
+                        extruderTargetLabel.Margin = new BorderDouble(left: 10)* TextWidget.GlobalPointSizeScaleRatio;
                         extruderTargetLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         extruderTargetLabel.VAnchor = VAnchor.ParentCenter;
 
@@ -203,10 +207,13 @@ namespace MatterHackers.MatterControl
                     //temperatureIndicator.AddChild(helpTextLink);
 
                     this.presetButtonsContainer = GetPresetsContainer();
+                    temperatureIndicator.AddChild(new HorizontalSpacer());
+                    temperatureIndicator.AddChild(presetButtonsContainer);
+
 
                     controlRow.AddChild(temperatureIndicator);
                     //controlRow.AddChild(helperTextWidget);
-                    controlRow.AddChild(this.presetButtonsContainer);                    
+                    //controlRow.AddChild(this.presetButtonsContainer);                    
                     //controlRow.AddChild(tempSliderContainer);
                 }
             }
@@ -219,24 +226,24 @@ namespace MatterHackers.MatterControl
         private FlowLayoutWidget GetPresetsContainer()
         {
             FlowLayoutWidget presetsContainer = new FlowLayoutWidget();
-            presetsContainer.Margin = new BorderDouble(3, 0);
+            presetsContainer.Margin = new BorderDouble(3, 0)* TextWidget.GlobalPointSizeScaleRatio;
 
             string presetsLabelTxt = LocalizedString.Get("Presets");
             string presetsLabelTxtFull = string.Format("{0}: ", presetsLabelTxt);
 
             TextWidget presetsLabel = new TextWidget(presetsLabelTxtFull, pointSize: 10);
-            presetsLabel.Margin = new BorderDouble(right: 5);
+            presetsLabel.Margin = new BorderDouble(right: 5)* TextWidget.GlobalPointSizeScaleRatio;
             presetsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             presetsLabel.VAnchor = VAnchor.ParentCenter;
             //presetsContainer.AddChild(presetsLabel);
 
-            SortedDictionary<double, string> labels = GetTemperaturePresetLabels();
+            SortedDictionary<double, string> labels = GetTemperaturePresetLabels();            
 
             foreach (KeyValuePair<double, string> keyValue in labels)
             {
 
                 Button tempButton = textImageButtonFactory.Generate(keyValue.Value);
-                tempButton.Margin = new BorderDouble(right: 5);
+                tempButton.Margin = new BorderDouble(right: 5)* TextWidget.GlobalPointSizeScaleRatio;
                 presetsContainer.AddChild(tempButton);
 
                 // We push the value into a temp double so that the function will not point to a shared keyValue instance.
@@ -248,10 +255,10 @@ namespace MatterHackers.MatterControl
                 };
             }
 
-            this.textImageButtonFactory.FixedWidth = 76;
+            this.textImageButtonFactory.FixedWidth = 76 * TextWidget.GlobalPointSizeScaleRatio;
             {
-                Button tempButton = textImageButtonFactory.Generate("PREHEAT");
-                tempButton.Margin = new BorderDouble(right: 5);
+                Button tempButton = textImageButtonFactory.Generate("Preheat".Localize().ToUpper());
+                tempButton.Margin = new BorderDouble(right: 5) * TextWidget.GlobalPointSizeScaleRatio;
                 presetsContainer.AddChild(tempButton);
 
                 // We push the value into a temp double so that the function will not point to a shared keyValue instance.
@@ -262,7 +269,7 @@ namespace MatterHackers.MatterControl
                     tempSliderContainer.Visible = false;
                 };
             }
-            this.textImageButtonFactory.FixedWidth = 38;
+            this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
 
             return presetsContainer;
         }
@@ -287,9 +294,9 @@ namespace MatterHackers.MatterControl
         private FlowLayoutWidget GetHelpTextWidget()
         {
             FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            double textRegionWidth = 260;
-            allText.Margin = new BorderDouble(3);
-            allText.Padding = new BorderDouble(3);
+            double textRegionWidth = 260* TextWidget.GlobalPointSizeScaleRatio;
+            allText.Margin = new BorderDouble(3)* TextWidget.GlobalPointSizeScaleRatio;
+            allText.Padding = new BorderDouble(3)* TextWidget.GlobalPointSizeScaleRatio;
             allText.HAnchor = HAnchor.ParentLeftRight;
             allText.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 
@@ -335,12 +342,12 @@ namespace MatterHackers.MatterControl
         {   
             GuiWidget sliderLabels = new GuiWidget();
             sliderLabels.HAnchor = HAnchor.ParentLeftRight;
-            sliderLabels.Height = 20;
+            sliderLabels.Height = 20* TextWidget.GlobalPointSizeScaleRatio;
             {
-                int buttonOffset = -10;
+                double buttonOffset = -10* TextWidget.GlobalPointSizeScaleRatio;
                 var offPosition = buttonOffset;
 
-                tempOffButton = textImageButtonFactory.Generate("Off");
+				tempOffButton = textImageButtonFactory.Generate("Off");
                 tempOffButton.OriginRelativeParent = new Vector2(offPosition, 0);
 
                 //sliderLabels.AddChild(tempOffButton);
@@ -402,7 +409,7 @@ namespace MatterHackers.MatterControl
         protected void onTemperatureRead(Object sender, EventArgs e)
         {
             TemperatureEventArgs tempArgs = e as TemperatureEventArgs;
-            if (tempArgs != null)
+            if (tempArgs != null && tempArgs.Index0Based == extruderIndex0Based)
             {
                 actualTempIndicator.Text = string.Format("{0:0.0}°C", tempArgs.Temperature);
             }
@@ -411,7 +418,7 @@ namespace MatterHackers.MatterControl
         protected void onTemperatureSet(Object sender, EventArgs e)
         {
             TemperatureEventArgs tempArgs = e as TemperatureEventArgs;
-            if (tempArgs != null)
+            if (tempArgs != null && tempArgs.Index0Based == extruderIndex0Based)
             {
                 SetTargetTemperature(tempArgs.Temperature);
             }
@@ -421,8 +428,16 @@ namespace MatterHackers.MatterControl
     public class ExtruderTemperatureControlWidget : TemperatureControlBase
     {
         public ExtruderTemperatureControlWidget()
-			: base("Extruder Temperature Override", "Extruder Temperature Settings")
-        {   
+			: base(0, LocalizedString.Get("Extruder Temperature"), LocalizedString.Get("Extruder Temperature Settings"))
+        {
+            AddChildElements();
+            AddHandlers();
+        }
+
+        public ExtruderTemperatureControlWidget(int extruderIndex0Based)
+            : base(extruderIndex0Based, string.Format("{0} {1}", "Extruder Temperature".Localize(), extruderIndex0Based + 1), LocalizedString.Get("Extruder Temperature Settings"))
+        {
+            AddChildElements();
             AddHandlers();
         }
 
@@ -436,7 +451,7 @@ namespace MatterHackers.MatterControl
         {
             PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.ExtruderTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-            tempOffButton.Click += new ButtonBase.ButtonEventHandler(onOffButtonClicked);
+            tempOffButton.Click += new EventHandler(onOffButtonClicked);
         }
 
         public override void OnClosed(EventArgs e)
@@ -449,7 +464,7 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        void onOffButtonClicked(object sender, MouseEventArgs e)
+        void onOffButtonClicked(object sender, EventArgs e)
         {
             SetTargetTemperature(0);
         }
@@ -457,14 +472,14 @@ namespace MatterHackers.MatterControl
         protected override string GetTemperaturePresets()
         {
             string default_presets = ",0,,0,,0,250";
-            string presets;
 
-            if (UserSettings.Instance.get("Extruder1PresetTemps") == null)
+            string presets;
+            string presetKey = string.Format("Extruder{0}PresetTemps", extruderIndex0Based+1);
+            if (UserSettings.Instance.get(presetKey) == null)
             {
-                UserSettings.Instance.set("Extruder1PresetTemps", default_presets);
-                
+                UserSettings.Instance.set(presetKey, default_presets);                
             }
-            presets = UserSettings.Instance.get("Extruder1PresetTemps");
+            presets = UserSettings.Instance.get(presetKey);
             return presets;
         }
 
@@ -473,24 +488,32 @@ namespace MatterHackers.MatterControl
             StringEventArgs stringEvent = e as StringEventArgs;
             if (stringEvent != null && stringEvent.Data != null)
             {
-                UserSettings.Instance.set("Extruder1PresetTemps", stringEvent.Data);
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                UserSettings.Instance.set(string.Format("Extruder{0}PresetTemps", extruderIndex0Based + 1), stringEvent.Data);
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 
         protected override double GetPreheatTemperature()
         {
-            return Convert.ToDouble(ActiveSliceSettings.Instance.GetActiveValue("first_layer_temperature"));
+            string tempValue = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex0Based+1);
+            if (tempValue == "Unknown")
+            {
+                return 0.0;
+            }
+            else
+            {
+                return Convert.ToDouble(tempValue);
+            }
         } 
 
         protected override double GetTargetTemperature()
         {
-            return PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature;
+            return PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based);
         }
 
         protected override double GetActualTemperature()
         {
-            return PrinterConnectionAndCommunication.Instance.ActualExtruderTemperature;
+            return PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex0Based);
         }
 
         protected override void SetTargetTemperature(double targetTemp)
@@ -498,16 +521,16 @@ namespace MatterHackers.MatterControl
             double goalTemp = (int)(targetTemp + .5);
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
                 && PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder
-                && goalTemp != PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature)
+                && goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based))
             {
                 string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
-                string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature, sliceSettingsNote);
-                StyledMessageBox.ShowMessageBox(message, "Waiting For Extruder To Heat");
+                string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based), sliceSettingsNote);
+                StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat");
             }
             else
             {
-                PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature = (int)(targetTemp + .5);
-                string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.TargetExtruderTemperature);
+                PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderIndex0Based, (int)(targetTemp + .5));
+                string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based));
                 targetTemperatureDisplay.SetDisplayString(displayString);                
             }
         }
@@ -516,8 +539,9 @@ namespace MatterHackers.MatterControl
     public class BedTemperatureControlWidget : TemperatureControlBase
     {
         public BedTemperatureControlWidget()
-            : base("Bed Temperature Override", "Bed Temperature Settings")
-        {   
+			: base(0, LocalizedString.Get("Bed Temperature"), LocalizedString.Get("Bed Temperature Settings"))
+        {
+            AddChildElements();
             AddHandlers();
         }
 
@@ -531,7 +555,7 @@ namespace MatterHackers.MatterControl
         {
             PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.BedTemperatureSet.RegisterEvent(onTemperatureSet, ref unregisterEvents);
-            tempOffButton.Click += new ButtonBase.ButtonEventHandler(onOffButtonClicked);
+            tempOffButton.Click += new EventHandler(onOffButtonClicked);
         }
 
         public override void OnClosed(EventArgs e)
@@ -543,7 +567,7 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        void onOffButtonClicked(object sender, MouseEventArgs e)
+        void onOffButtonClicked(object sender, EventArgs e)
         {
             SetTargetTemperature(0);
         }
@@ -568,7 +592,7 @@ namespace MatterHackers.MatterControl
             if (stringEvent != null && stringEvent.Data != null)
             {
                 UserSettings.Instance.set("BedPresetTemps", stringEvent.Data);
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             }
         }
 
@@ -596,7 +620,7 @@ namespace MatterHackers.MatterControl
             {
                 string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
                 string message = string.Format("The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.TargetBedTemperature, sliceSettingsNote);
-                StyledMessageBox.ShowMessageBox(message, "Waiting For Bed To Heat");
+                StyledMessageBox.ShowMessageBox(null, message, "Waiting For Bed To Heat");
             }
             else
             {

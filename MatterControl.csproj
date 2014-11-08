@@ -95,20 +95,38 @@
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
+    <Compile Include="ApplicationView\CompactTabView.cs" />
     <Compile Include="ApplicationView\ThirdPanelTabView.cs" />
     <Compile Include="ApplicationView\FirstPanelTabView.cs" />
+    <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
+    <Compile Include="ConfigurationPage\CloudSettings\CloudSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
+    <Compile Include="ConfigurationPage\PrinterSettings\PrinterSettingsView.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard2Point.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3Point.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardBase.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingData.cs" />
+    <Compile Include="ConfigurationPage\SettingsViewBase.cs" />
+    <Compile Include="ControlElements\ConditionalClickWidget.cs" />
     <Compile Include="CrashTracker.cs" />
+    <Compile Include="CustomWidgets\AltGroupBox.cs" />
+    <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
+    <Compile Include="CustomWidgets\SlideWidget.cs" />
+    <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
+    <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DCreateSelecitonData.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DAutoArange.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DCopyGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DUngroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
     <Compile Include="PartPreviewWindow\ViewControls2D.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
@@ -120,8 +138,20 @@
     <Compile Include="PrinterCommunication\Io\PrinterIoBase.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterIoGCodeFile.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterIoInjectionFifo.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrinterControls\TerminalWindow\PrinterOutputCache.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TextScrolBar.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="PrintHistory\PrintHistoryData.cs" />
     <Compile Include="PrintLibrary\LibraryData.cs" />
+    <Compile Include="PrintLibrary\SelectedListItems.cs" />
     <Compile Include="PrintQueue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
@@ -146,11 +176,10 @@
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreviewWidget.cs" />
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
-    <Compile Include="PartPreviewWindow\View3DTransfromPart.cs" />
     <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PrinterControls\MacroControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
     <Compile Include="PrinterControls\EditMacrosWindow.cs" />
     <Compile Include="CustomWidgets\PluginChooserWindow.cs" />
@@ -195,7 +224,7 @@
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
     <Compile Include="PrinterCommunication\PrinterConnectionAndCommunication.cs" />
     <Compile Include="PrinterControls\PrintLevelingPlane.cs" />
-    <Compile Include="PrinterControls\OutputScrollWindow.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TerminalWindow.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ChooseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepConfigureConnection.cs" />
@@ -206,7 +235,7 @@
     <Compile Include="PrinterControls\PrinterConnections\SetupStepInstallDriver.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ConnectionWindow.cs" />
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\AddConnectionWidget.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\EditConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterListItems.cs" />
@@ -226,7 +255,7 @@
     <Compile Include="Utilities\ProjectFileHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\WebUtilities\RequestManager.cs" />
-    <Compile Include="PrintQueue\QueueBottomToolbar.cs" />
+    <Compile Include="PrintQueue\QueueDataWidget.cs" />
     <Compile Include="SettingsManagement\ApplicationSettings.cs" />
     <Compile Include="SettingsManagement\UserSettings.cs" />
     <Compile Include="SlicerConfiguration\ActiveSliceSettings.cs" />
@@ -249,6 +278,7 @@
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
+    <Compile Include="ControlElements\ToggleSwitchFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
@@ -386,13 +416,13 @@
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
-    <ProjectReference Include="Localizations\Localizations.csproj">
-      <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
-      <Name>Localizations</Name>
-    </ProjectReference>
     <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj">
       <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
       <Name>MatterControlPluginSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\agg-sharp\Localizations\Localizations.csproj">
+      <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
+      <Name>Localizations</Name>
     </ProjectReference>
     <ProjectReference Include="..\agg-sharp\Agg\Agg.csproj">
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>

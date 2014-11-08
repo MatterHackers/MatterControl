@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Text;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -11,10 +10,12 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl
 {
@@ -28,12 +29,12 @@ namespace MatterHackers.MatterControl
         bool partIsGCode = false;
 		string documentsPath;
 
-        public ExportPrintItemWindow(PrintItemWrapper printItemWraper)
-            : base(400, 250)
+        public ExportPrintItemWindow(PrintItemWrapper printItemWrapper)
+            : base(400, 300)
         {
-            this.printItemWrapper = printItemWraper;
+            this.printItemWrapper = printItemWrapper;
 			documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-            if (Path.GetExtension(printItemWraper.FileLocation).ToUpper() == ".GCODE")
+            if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
             {
                 partIsGCode = true;
             }
@@ -94,8 +95,20 @@ namespace MatterHackers.MatterControl
 				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
                 exportAsStlButton.HAnchor = HAnchor.ParentLeft;
                 exportAsStlButton.Cursor = Cursors.Hand;
-                exportAsStlButton.Click += new ButtonBase.ButtonEventHandler(exportSTL_Click);
+                exportAsStlButton.Click += new EventHandler(exportSTL_Click);
                 middleRowContainer.AddChild(exportAsStlButton);
+            }
+
+            if (!partIsGCode)
+            {
+                string exportAmfText = LocalizedString.Get("Export as");
+                string exportAmfTextFull = string.Format("{0} AMF", exportAmfText);
+
+                Button exportAsAmfButton = textImageButtonFactory.Generate(exportAmfTextFull);
+                exportAsAmfButton.HAnchor = HAnchor.ParentLeft;
+                exportAsAmfButton.Cursor = Cursors.Hand;
+                exportAsAmfButton.Click += new EventHandler(exportAMF_Click);
+                middleRowContainer.AddChild(exportAsAmfButton);
             }
 
             bool showExportGCodeButton = ActivePrinterProfile.Instance.ActivePrinter != null || partIsGCode;
@@ -107,7 +120,7 @@ namespace MatterHackers.MatterControl
                 Button exportGCode = textImageButtonFactory.Generate(exportGCodeTextFull);
                 exportGCode.HAnchor = HAnchor.ParentLeft;
                 exportGCode.Cursor = Cursors.Hand;
-                exportGCode.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
+                exportGCode.Click += new EventHandler((object sender, EventArgs e) => 
                 { 
                     UiThread.RunOnIdle(ExportGCode_Click); 
                 } );
@@ -119,7 +132,7 @@ namespace MatterHackers.MatterControl
                     Button exportToSdCard = textImageButtonFactory.Generate(exportSdCardText);
                     exportToSdCard.HAnchor = HAnchor.ParentLeft;
                     exportToSdCard.Cursor = Cursors.Hand;
-                    exportToSdCard.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) =>
+                    exportToSdCard.Click += new EventHandler((object sender, EventArgs e) =>
                     {
                         UiThread.RunOnIdle(ExportToSdCard_Click);
                     });
@@ -133,7 +146,7 @@ namespace MatterHackers.MatterControl
                     Button exportAsX3G = textImageButtonFactory.Generate(exportAsX3GText);
                     exportAsX3G.HAnchor = HAnchor.ParentLeft;
                     exportAsX3G.Cursor = Cursors.Hand;
-                    exportAsX3G.Click += new ButtonBase.ButtonEventHandler((object sender, MouseEventArgs e) => 
+                    exportAsX3G.Click += new EventHandler((object sender, EventArgs e) => 
                         {
                             UiThread.RunOnIdle(ExportX3G_Click);
                         });
@@ -303,33 +316,38 @@ namespace MatterHackers.MatterControl
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", initialDirectory: documentsPath, title: "Export GCode");
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
+            saveParams.FileName = Path.GetFileNameWithoutExtension(printItemWrapper.Name);
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-			if (streamToSaveTo != null) 
+			FileDialog.SaveFileDialog(saveParams, onExportGcodeFileSelected);
+
+        }
+
+		void onExportGcodeFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null) 
 			{
-				streamToSaveTo.Close ();
-
-                gcodePathAndFilenameToSave = saveParams.FileName;
-                string extension = Path.GetExtension(gcodePathAndFilenameToSave);
+				gcodePathAndFilenameToSave = saveParams.FileName;
+				string extension = Path.GetExtension(gcodePathAndFilenameToSave);
 				if(extension == "")
 				{
-                    File.Delete(gcodePathAndFilenameToSave);
-                    gcodePathAndFilenameToSave += ".gcode";
+					File.Delete(gcodePathAndFilenameToSave);
+					gcodePathAndFilenameToSave += ".gcode";
 				}
 
-                if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
-                {
-                    Close();
-                    SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                    printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
-                }
-                else if (partIsGCode)
-                {
-                    Close();
-                    SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
-                }
-            }
-        }
+                string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+                if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
+				{
+					Close();
+					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+					printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+				}
+				else if (partIsGCode)
+				{
+					Close();
+					SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
+				}
+			}
+		}
 
 
 		void ExportX3G_Click(object state)
@@ -338,11 +356,13 @@ namespace MatterHackers.MatterControl
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
 
-			System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-			if (streamToSaveTo != null) 
-			{
-				streamToSaveTo.Close ();
+			FileDialog.SaveFileDialog(saveParams, onExportX3gFileSelected);
+		}
 
+		void onExportX3gFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null) 
+			{
 				x3gPathAndFilenameToSave = saveParams.FileName;
 				string extension = Path.GetExtension(x3gPathAndFilenameToSave);
 				if(extension == "")
@@ -351,7 +371,8 @@ namespace MatterHackers.MatterControl
 					x3gPathAndFilenameToSave += ".x3g";
 				}
 
-				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
+                string saveExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+                if (MeshFileIo.ValidFileExtensions().Contains(saveExtension))
 				{
 					Close();
 					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
@@ -443,7 +464,7 @@ namespace MatterHackers.MatterControl
             CreateWindowContent();   
         }
 
-        void exportSTL_Click(object sender, MouseEventArgs mouseEvent)
+        void exportSTL_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(DoExportSTL_Click);
         }
@@ -455,25 +476,77 @@ namespace MatterHackers.MatterControl
 			saveParams.ActionButtonLabel = "Export";
             saveParams.FileName = printItemWrapper.Name;
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
+            FileDialog.SaveFileDialog(saveParams, onExportStlFileSelected);
+        }
 
-			if (streamToSaveTo != null) 
+        void exportAMF_Click(object sender, EventArgs mouseEvent)
+        {
+            UiThread.RunOnIdle(DoExportAMF_Click);
+        }
+
+        void DoExportAMF_Click(object state)
+        {
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath);
+            saveParams.Title = "MatterControl: Export File";
+            saveParams.ActionButtonLabel = "Export";
+            saveParams.FileName = printItemWrapper.Name;
+
+            FileDialog.SaveFileDialog(saveParams, onExportAmfFileSelected);
+        }
+
+        void onExportStlFileSelected(SaveFileDialogParams saveParams)
+		{
+			Close();
+			if (saveParams.FileName != null)
 			{
-				streamToSaveTo.Close ();
-				Close();
+				string filePathToSave = saveParams.FileName;
+				if (filePathToSave != null && filePathToSave != "")
+				{
+					string extension = Path.GetExtension(filePathToSave);
+					if (extension == "")
+					{
+						File.Delete(filePathToSave);
+						filePathToSave += ".stl";
+					}
+                    if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+                    {
+                        File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+                    }
+                    else
+                    {
+                        List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
+                        MeshFileIo.Save(meshGroups, filePathToSave);
+                    }
+					ShowFileIfRequested(filePathToSave);
+				}
 			}
-			
-			string filePathToSave = saveParams.FileName;
-            if (filePathToSave != null && filePathToSave != "")
+		}
+
+        void onExportAmfFileSelected(SaveFileDialogParams saveParams)
+        {
+            Close();
+            if (saveParams.FileName != null)
             {
-                string extension = Path.GetExtension(filePathToSave);
-                if (extension == "")
+                string filePathToSave = saveParams.FileName;
+                if (filePathToSave != null && filePathToSave != "")
                 {
-                    File.Delete(filePathToSave);
-                    filePathToSave += ".stl";
+                    string extension = Path.GetExtension(filePathToSave);
+                    if (extension == "")
+                    {
+                        File.Delete(filePathToSave);
+                        filePathToSave += ".amf";
+                    }
+                    if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+                    {
+                        File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+                    }
+                    else
+                    {
+                        List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
+                        MeshFileIo.Save(meshGroups, filePathToSave);
+                    }
+                    ShowFileIfRequested(filePathToSave);
                 }
-                File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-                ShowFileIfRequested(filePathToSave);
             }
         }
 

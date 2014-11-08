@@ -2560,3 +2560,45 @@ Translated:Dilimleme Motoru
 English:Clear
 Translated:Clear
 
+English:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+Translated:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+
+English:Z Can Be Negative
+Translated:Z Can Be Negative
+
+English:Export as X3G
+Translated:Export as X3G
+
+English:Select an Image
+Translated:Select an Image
+
+English:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+Translated:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+
+English:Extruder Change
+Translated:Extruder Change
+
+English:Wipe Tower Size
+Translated:Wipe Tower Size
+
+English:Sorry, we were unable to install the driver.
+Translated:Sorry, we were unable to install the driver.
+
+English:Tuning Adjustment
+Translated:Tuning Adjustment
+
+English:Release
+Translated:Release
+
+English:No printer is currently selected. Select a printer to edit slice settings.
+Translated:No printer is currently selected. Select a printer to edit slice settings.
+
+English:Part Preview
+Translated:Part Preview
+
+English:Layer Preview
+Translated:Layer Preview
+
+English:Enable Cloud Monitoring (disabled)
+Translated:Enable Cloud Monitoring (disabled)
+

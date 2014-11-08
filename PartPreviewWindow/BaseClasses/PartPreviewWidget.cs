@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class PartPreviewWidget : GuiWidget
     {
         protected readonly int ShortButtonHeight = 25;
-        protected readonly int SideBarButtonWidth = 138;
+        protected int SideBarButtonWidth;
 
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         protected TextImageButtonFactory checkboxButtonFactory = new TextImageButtonFactory();
@@ -62,6 +62,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public PartPreviewWidget()
         {
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                SideBarButtonWidth = 180;
+                ShortButtonHeight = 40;
+            }
+            else
+            {
+                SideBarButtonWidth = 138;
+                ShortButtonHeight = 30;
+            }
+            
             textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
             textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -73,6 +84,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
             whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
             whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
+            whiteButtonFactory.borderWidth = 1;
+            whiteButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+            whiteButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
             expandMenuOptionFactory.FixedWidth = SideBarButtonWidth;
             expandMenuOptionFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;

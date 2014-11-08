@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             
 			cancelButton = textImageButtonFactory.Generate (LocalizedString.Get ("Cancel"));
-            cancelButton.Click += new ButtonBase.ButtonEventHandler(CancelButton_Click);
+            cancelButton.Click += new EventHandler(CancelButton_Click);
 
             //Create the main container
             GuiWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -183,13 +183,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
         }
 
-        void CloseWindow(object o, MouseEventArgs e)
+        void CloseWindow(object o, EventArgs e)
         {
             PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
             this.containerWindowToClose.Close();
         }
 
-        void CancelButton_Click(object sender, MouseEventArgs mouseEvent)
+        void CancelButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
             if (GetPrinterRecordCount() > 0)

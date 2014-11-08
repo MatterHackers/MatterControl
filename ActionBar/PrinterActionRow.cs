@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
             string connectString = "Connect".Localize().ToUpper();
             connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
-            if (ApplicationWidget.Instance.WidescreenMode)
+            if (ApplicationController.Instance.WidescreenMode)
             {
                 connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
             }
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
             string disconnectString = "Disconnect".Localize().ToUpper();
             disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
-            if (ApplicationWidget.Instance.WidescreenMode)
+            if (ApplicationController.Instance.WidescreenMode)
             {
                 disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
             }
@@ -84,13 +84,15 @@ namespace MatterHackers.MatterControl.ActionBar
                 disconnectPrinterButton.Margin = new BorderDouble(6, 0, 3, 3);
             }
             disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
-            disconnectPrinterButton.Visible = false;
             disconnectPrinterButton.Cursor = Cursors.Hand;
+
+            // Bind connect button states to active printer state
+            this.SetConnectionButtonVisibleState(null);
 
             selectActivePrinterButton = new PrinterSelectButton();
             selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
             selectActivePrinterButton.Cursor = Cursors.Hand;
-            if (ApplicationWidget.Instance.WidescreenMode)
+            if (ApplicationController.Instance.WidescreenMode)
             {
                 selectActivePrinterButton.Margin = new BorderDouble(0, 6,0,3);
             }
@@ -116,9 +118,9 @@ namespace MatterHackers.MatterControl.ActionBar
             PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
-            selectActivePrinterButton.Click += new ButtonBase.ButtonEventHandler(onSelectActivePrinterButton_Click);
-            connectPrinterButton.Click += new ButtonBase.ButtonEventHandler(onConnectButton_Click);
-            disconnectPrinterButton.Click += new ButtonBase.ButtonEventHandler(onDisconnectButtonClick);
+            selectActivePrinterButton.Click += new EventHandler(onSelectActivePrinterButton_Click);
+            connectPrinterButton.Click += new EventHandler(onConnectButton_Click);
+            disconnectPrinterButton.Click += new EventHandler(onDisconnectButtonClick);
 
             base.AddHandlers();
         }
@@ -132,7 +134,7 @@ namespace MatterHackers.MatterControl.ActionBar
             base.OnClosed(e);
         }
 
-        void onConnectButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onConnectButton_Click(object sender, EventArgs mouseEvent)
         {
             Button buttonClicked = ((Button)sender);  
             if (buttonClicked.Enabled)
@@ -154,7 +156,7 @@ namespace MatterHackers.MatterControl.ActionBar
             PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
         }
 
-        void onSelectActivePrinterButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onSelectActivePrinterButton_Click(object sender, EventArgs mouseEvent)
         {
             OpenConnectionWindow();
         }
@@ -199,31 +201,32 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        void onDisconnectButtonClick(object sender, MouseEventArgs e)
+        void onDisconnectButtonClick(object sender, EventArgs e)
         {
             UiThread.RunOnIdle(OnIdleDisconnect);
         }
 
         string disconnectAndCancelMessage = "Disconnect and cancel the current print?".Localize();
-        string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?".Localize();
+        string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print.".Localize();
         void OnIdleDisconnect(object state)
-        {
-            bool doCancel = true;
+        {            
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
-                if (StyledMessageBox.ShowMessageBox(disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO))
-                {
-                    PrinterConnectionAndCommunication.Instance.Stop();
-                }
-                else
-                {
-                    doCancel = false;
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmStopPrint, disconnectAndCancelMessage, disconnectAndCancelTitle, StyledMessageBox.MessageType.YES_NO);                
             }
-
-            if (doCancel)
+            else
             {
                 PrinterConnectionAndCommunication.Instance.Disable();                
+                selectActivePrinterButton.Invalidate();
+            }
+        }
+
+        void onConfirmStopPrint(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                PrinterConnectionAndCommunication.Instance.Stop();
+                PrinterConnectionAndCommunication.Instance.Disable();
                 selectActivePrinterButton.Invalidate();
             }
         }
@@ -241,6 +244,12 @@ namespace MatterHackers.MatterControl.ActionBar
                 disconnectPrinterButton.Visible = false;
                 connectPrinterButton.Visible = true;
             }
+
+            var communicationState = PrinterConnectionAndCommunication.Instance.CommunicationState;
+
+            // Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
+            connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
+            disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
         }
 
         void onPrinterStatusChanged(object sender, EventArgs e)

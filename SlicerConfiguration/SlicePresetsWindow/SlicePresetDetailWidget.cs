@@ -84,10 +84,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void AddHandlers()
         {
-            savePresetButton.Click += new ButtonBase.ButtonEventHandler(savePresets_Click);
-            duplicatePresetButton.Click += new ButtonBase.ButtonEventHandler(duplicatePresets_Click);
-            importPresetButton.Click += new ButtonBase.ButtonEventHandler(importPresets_Click);
-            exportPresetButton.Click += new ButtonBase.ButtonEventHandler(exportPresets_Click);
+            savePresetButton.Click += new EventHandler(savePresets_Click);
+            duplicatePresetButton.Click += new EventHandler(duplicatePresets_Click);
+            importPresetButton.Click += new EventHandler(importPresets_Click);
+            exportPresetButton.Click += new EventHandler(exportPresets_Click);
         }
 
 
@@ -846,7 +846,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return Convert.ToInt32(result);
         }
 
-        void savePresets_Click(object sender, MouseEventArgs mouseEvent)
+        void savePresets_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
@@ -856,13 +856,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     windowController.functionToCallOnSave(this, null);
                     windowController.ChangeToSlicePresetList();
                     ActiveSliceSettings.Instance.LoadAllSettings();
-                    ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                    ApplicationController.Instance.ReloadAdvancedControlsPanel();
                 }
             });
         }
 
 
-        void duplicatePresets_Click(object sender, MouseEventArgs mouseEvent)
+        void duplicatePresets_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {                 
@@ -886,53 +886,55 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 
         string configFileExtension = "slice";
-        void importPresets_Click(object sender, MouseEventArgs mouseEvent)
+        void importPresets_Click(object sender, EventArgs mouseEvent)
         {   
             OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
             openParams.ActionButtonLabel = "Load Slice Preset";
             openParams.Title = "MatterControl: Select A File";
 
-            FileDialog.OpenFileDialog(ref openParams);
-            if (openParams.FileNames != null)
-            {
-                Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
-                try
-                {
-                    if (File.Exists(openParams.FileName))
-                    {
-                        string[] lines = System.IO.File.ReadAllLines(openParams.FileName);
-                        foreach (string line in lines)
-                        {
-                            //Ignore commented lines
-                            if (!line.StartsWith("#"))
-                            {
-                                string[] settingLine = line.Split('=');
-                                string keyName = settingLine[0].Trim();
-                                string settingDefaultValue = settingLine[1].Trim();
-
-                                DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
-                                sliceSetting.Name = keyName;
-                                sliceSetting.Value = settingDefaultValue;
-                                sliceSetting.SettingsCollectionId = windowController.ActivePresetLayer.settingsCollectionData.Id;
-
-                                settingsDictionary.Add(keyName, sliceSetting);
-                            }
-                        }
-                        windowController.ActivePresetLayer.settingsDictionary = settingsDictionary;
-                        LoadSettingsRows();
-                    }
-                }
-                catch (Exception e)
-                {
-                    // Error loading configuration
-                }
-            }
+			FileDialog.OpenFileDialog(openParams, onLoadPreset);
+            
         }
 
+		void onLoadPreset(OpenFileDialogParams openParams)
+		{
+			if (openParams.FileNames != null)
+			{
+				Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
+				try
+				{
+					if (File.Exists(openParams.FileName))
+					{
+						string[] lines = System.IO.File.ReadAllLines(openParams.FileName);
+						foreach (string line in lines)
+						{
+							//Ignore commented lines
+							if (!line.StartsWith("#"))
+							{
+								string[] settingLine = line.Split('=');
+								string keyName = settingLine[0].Trim();
+								string settingDefaultValue = settingLine[1].Trim();
 
+								DataStorage.SliceSetting sliceSetting = new DataStorage.SliceSetting();
+								sliceSetting.Name = keyName;
+								sliceSetting.Value = settingDefaultValue;
+								sliceSetting.SettingsCollectionId = windowController.ActivePresetLayer.settingsCollectionData.Id;
 
+								settingsDictionary.Add(keyName, sliceSetting);
+							}
+						}
+						windowController.ActivePresetLayer.settingsDictionary = settingsDictionary;
+						LoadSettingsRows();
+					}
+				}
+				catch (Exception e)
+				{
+					// Error loading configuration
+				}
+			}
+		}
 
-        void exportPresets_Click(object sender, MouseEventArgs mouseEvent)
+        void exportPresets_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(SaveAs);
         }
@@ -943,13 +945,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension, documentsPath);
             saveParams.FileName = presetNameInput.Text;
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                GenerateConfigFile(saveParams.FileName);
-            }
+			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
+            
         }
+
+		void onSaveFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null)
+			{
+				GenerateConfigFile(saveParams.FileName);
+			}
+		}
 
         public void GenerateConfigFile(string fileName)
         {

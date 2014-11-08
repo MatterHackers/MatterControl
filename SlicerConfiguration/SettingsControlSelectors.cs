@@ -56,10 +56,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         string filterLabel;
         public AnchoredDropDownList DropDownList;
         private TupleList<string, Func<bool>> DropDownMenuItems = new TupleList<string, Func<bool>>();
+        int presetIndex; //For multiple materials
         
-        public SliceSelectorWidget(string label, RGBA_Bytes accentColor, string tag=null)
+        public SliceSelectorWidget(string label, RGBA_Bytes accentColor, string tag=null, int presetIndex=1)
             : base(FlowDirection.TopToBottom)
         {
+            this.presetIndex = presetIndex;
             this.filterLabel = label;
             if (tag == null)
             {
@@ -105,27 +107,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
 				if (filterTag == "material")
 				{
-					if (ApplicationWidget.Instance.EditMaterialPresetsWindow == null)
+					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
                 	{
-						ApplicationWidget.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
-						ApplicationWidget.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditMaterialPresetsWindow = null; };
+						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
+						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditMaterialPresetsWindow = null; };
 					}
                 	else
                 	{
-							ApplicationWidget.Instance.EditMaterialPresetsWindow.BringToFront();
+							ApplicationController.Instance.EditMaterialPresetsWindow.BringToFront();
                 	}
 				}
 
 				if (filterTag == "quality")
 				{
-					if(ApplicationWidget.Instance.EditQualityPresetsWindow == null)
+					if(ApplicationController.Instance.EditQualityPresetsWindow == null)
 					{
-						ApplicationWidget.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
-						ApplicationWidget.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => {ApplicationWidget.Instance.EditQualityPresetsWindow = null; };
+						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag);
+						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => {ApplicationController.Instance.EditQualityPresetsWindow = null; };
 					}
 					else
 					{
-						ApplicationWidget.Instance.EditQualityPresetsWindow.BringToFront();
+						ApplicationController.Instance.EditQualityPresetsWindow.BringToFront();
 					}
 				}
             };
@@ -138,7 +140,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         protected void ReloadOptions(object sender, EventArgs e)
         {
-            ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();
         }
 
         IEnumerable<DataStorage.SliceSettingsCollection> GetCollections()
@@ -160,9 +162,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             MenuItem item = (MenuItem)sender;
             if (filterTag == "material")
             {
-                if (ActivePrinterProfile.Instance.GetMaterialSetting(1) != Int32.Parse(item.Value))
+                if (ActivePrinterProfile.Instance.GetMaterialSetting(presetIndex) != Int32.Parse(item.Value))
                 {
-                    ActivePrinterProfile.Instance.SetMaterialSetting(1, Int32.Parse(item.Value));
+                    ActivePrinterProfile.Instance.SetMaterialSetting(presetIndex, Int32.Parse(item.Value));
                 }
             }
             else if (filterTag == "quality")
@@ -175,7 +177,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             UiThread.RunOnIdle((state) =>
             {
                 ActiveSliceSettings.Instance.LoadAllSettings();
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
             });
         }
 
@@ -184,31 +186,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             UiThread.RunOnIdle((state) =>
             {
                 ActiveSliceSettings.Instance.LoadAllSettings();
-                ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
 				if (filterTag == "material") 
 				{
-					if(ApplicationWidget.Instance.EditMaterialPresetsWindow == null)
+					if(ApplicationController.Instance.EditMaterialPresetsWindow == null)
                 	{
-						ApplicationWidget.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
-						ApplicationWidget.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationWidget.Instance.EditMaterialPresetsWindow = null; };
+						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
+						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (popupWindowSender, popupWindowSenderE) => { ApplicationController.Instance.EditMaterialPresetsWindow = null; };
                 	}
                		 else
                 	{
-						ApplicationWidget.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(0);
-						ApplicationWidget.Instance.EditMaterialPresetsWindow.BringToFront();
+						ApplicationController.Instance.EditMaterialPresetsWindow.ChangeToSlicePresetFromID(0);
+						ApplicationController.Instance.EditMaterialPresetsWindow.BringToFront();
                 	}       
 				}
 				if(filterTag == "quality")
 				{
-					if(ApplicationWidget.Instance.EditQualityPresetsWindow == null)
+					if(ApplicationController.Instance.EditQualityPresetsWindow == null)
 					{
-						ApplicationWidget.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
-						ApplicationWidget.Instance.EditQualityPresetsWindow.Closed +=(popupWindowSender, popupWindowSenderE) => {ApplicationWidget.Instance.EditQualityPresetsWindow = null; };
+						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(ReloadOptions, filterLabel, filterTag, false, 0);
+						ApplicationController.Instance.EditQualityPresetsWindow.Closed +=(popupWindowSender, popupWindowSenderE) => {ApplicationController.Instance.EditQualityPresetsWindow = null; };
 					}
 					else
 					{
-						ApplicationWidget.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(0);
-						ApplicationWidget.Instance.EditQualityPresetsWindow.BringToFront();
+						ApplicationController.Instance.EditQualityPresetsWindow.ChangeToSlicePresetFromID(0);
+						ApplicationController.Instance.EditQualityPresetsWindow.BringToFront();
 					}
 				}
             });
@@ -237,7 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 try
                 {
-                    dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(1).ToString();
+                    dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(presetIndex).ToString();
                 }
                 catch
                 {
@@ -297,7 +299,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     item.Selected += (sender, e) =>
                     {
                         ActivePrinterProfile.Instance.ActiveSliceEngineType = itemEngineType;
-                        ApplicationWidget.Instance.ReloadAdvancedControlsPanel();
+                        ApplicationController.Instance.ReloadAdvancedControlsPanel();
                     };
 
                     //Set item as selected if it matches the active slice engine

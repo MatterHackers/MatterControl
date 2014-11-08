@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
 			saveAsButton.Cursor = Cursors.Hand;
             buttonRow.AddChild(saveAsButton);
 
-            saveAsButton.Click += new ButtonBase.ButtonEventHandler(saveAsButton_Click);
+            saveAsButton.Click += new EventHandler(saveAsButton_Click);
             textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 			//Adds SaveAs and Close Button to button container
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
             SubmitForm();
         }
 
-        void saveAsButton_Click(object sender, MouseEventArgs mouseEvent)
+        void saveAsButton_Click(object sender, EventArgs mouseEvent)
         {
             SubmitForm();
         }
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
             string newName = textToAddWidget.ActualTextEditWidget.Text;
             if (newName != "")
             {
-                string fileName = "{0}.stl".FormatWith(Path.GetRandomFileName());
+                string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
                 string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
                 PrintItem printItem = new PrintItem();

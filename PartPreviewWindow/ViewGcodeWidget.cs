@@ -38,6 +38,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.RasterizerScanline;
@@ -54,7 +55,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool RenderGrid 
 		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderGrid") == "True"); }
+			get 
+            {
+                string value = UserSettings.Instance.get("GcodeViewerRenderGrid");
+                if (value == null)
+                {
+                    RenderGrid = true;
+                    return true;
+                }
+                return (value == "True"); 
+            }
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerRenderGrid", value.ToString());
@@ -97,6 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 Invalidate();
             }
         }
+
         public bool SimulateExtrusion
         {
             get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }
@@ -107,7 +118,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-		BackgroundWorker backgroundWorker = null;
+        public bool HideExtruderOffsets
+        {
+            get 
+            {
+                string value = UserSettings.Instance.get("GcodeViewerHideExtruderOffsets");
+                if (value == null)
+                {
+                    return true;
+                }
+                return (value == "True");
+            }
+            set
+            {
+                UserSettings.Instance.set("GcodeViewerHideExtruderOffsets", value.ToString());
+                Invalidate();
+            }
+        }
+
+        BackgroundWorker backgroundWorker = null;
 		Vector2 lastMousePosition = new Vector2(0, 0);
 		Vector2 mouseDownPosition = new Vector2(0, 0);
 
@@ -329,9 +358,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     renderType |= RenderType.SimulateExtrusion;
                 }
+                if (HideExtruderOffsets)
+                {
+                    renderType |= RenderType.HideExtruderOffsets;
+                }
 
-				gCodeRenderer.Render(graphics2D, activeLayerIndex, transform, layerScale, renderType, 
-					FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1);
+                GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, renderType,
+                    FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1, 
+                    new Vector2[] { ActiveSliceSettings.Instance.GetOffset(0), ActiveSliceSettings.Instance.GetOffset(1) });
+                gCodeRenderer.Render(graphics2D, renderInfo);
 			}
 
 			base.OnDraw(graphics2D);

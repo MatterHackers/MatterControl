@@ -96,12 +96,21 @@ namespace MatterHackers.MatterControl
             UpdateStatusChanged(null, null);
         }
 
-        public void CheckForUpdate(object sender, MouseEventArgs e)
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+
+        public void CheckForUpdate(object sender, EventArgs e)
         {
             UpdateControlData.Instance.CheckForUpdateUserRequested();
         }
 
-        public void InstallUpdate(object sender, MouseEventArgs e)
+        public void InstallUpdate(object sender, EventArgs e)
         {
             try
             {
@@ -119,7 +128,7 @@ namespace MatterHackers.MatterControl
         }
 
 
-        public void DownloadUpdate(object sender, MouseEventArgs e)
+        public void DownloadUpdate(object sender, EventArgs e)
         {
             downloadUpdateLink.Visible = false;
             updateStatusText.Text = string.Format("Retrieving download info...".Localize());

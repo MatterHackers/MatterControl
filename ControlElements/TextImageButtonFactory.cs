@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
     {
         ImageBuffer image;
         protected RGBA_Bytes fillColor = new RGBA_Bytes(0, 0, 0, 0);
-        protected RGBA_Bytes borderColor = new RGBA_Bytes(0, 0, 0, 0);
+        protected RGBA_Bytes borderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
         protected double borderWidth = 1;
         protected double borderRadius = 0;
 
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
             if (borderColor.Alpha0To255 > 0)
             {
                 RectangleDouble boarderRectangle = LocalBounds;
-                boarderRectangle.Inflate(-borderWidth / 2);
+                //boarderRectangle.Inflate(-borderWidth / 2);
                 RoundedRect rectBorder = new RoundedRect(boarderRectangle, this.borderRadius);
 
                 graphics2D.Render(new Stroke(rectBorder, borderWidth), borderColor);
@@ -140,6 +140,7 @@ namespace MatterHackers.MatterControl
         public RGBA_Bytes hoverBorderColor = new RGBA_Bytes(0, 0, 0, 0);
         public RGBA_Bytes pressedBorderColor = new RGBA_Bytes(0, 0, 0, 0);
         public RGBA_Bytes disabledBorderColor = new RGBA_Bytes(0, 0, 0, 0);
+        public RGBA_Bytes checkedBorderColor = new RGBA_Bytes(255, 255, 255, 0);
 
         public RGBA_Bytes normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
         public RGBA_Bytes hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -192,15 +193,39 @@ namespace MatterHackers.MatterControl
             return buffer;
         }
 
+        public Button GenerateEditButton()
+        {
+            Button editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
+            editButton.Margin = new BorderDouble(2, 2, 2, 0);
+            editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
+            return editButton;
+        }
+
+
+        public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
+        {
+            FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
+
+			editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
+            editButton.Margin = new BorderDouble(2, 2, 2, 0);
+            editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
+            textWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+            groupLableAndEditControl.AddChild(textWidget);
+            groupLableAndEditControl.AddChild(editButton);
+
+            return groupLableAndEditControl;
+            
+        }
+
         public GuiWidget GenerateGroupBoxLabelWithEdit(string label, out Button editButton)
         {
             FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 
 			editButton = new Button(0, 0, new ButtonViewThreeImage(LoadUpButtonImage("icon_edit_white.png"), LoadUpButtonImage("icon_edit_gray.png"), LoadUpButtonImage("icon_edit_black.png")));
-            editButton.Margin = new BorderDouble(2, -2, 2, 0);
-            editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
-            TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
-            textLabel.VAnchor = Agg.UI.VAnchor.ParentTop;
+            editButton.Margin = new BorderDouble(2, 2, 2, 0);
+            editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
+            TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize:12);
+            textLabel.VAnchor = Agg.UI.VAnchor.ParentBottom;
             groupLableAndEditControl.AddChild(textLabel);
             groupLableAndEditControl.AddChild(editButton);
 
@@ -235,11 +260,12 @@ namespace MatterHackers.MatterControl
             return textImageCheckBoxButton;
         }
 
-        public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
+		public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
         {
             //Create button based on view container widget
             ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName, centerText);
             Button textImageButton = new Button(0, 0, buttonViewWidget);
+
             textImageButton.Margin = new BorderDouble(0);
             textImageButton.Padding = new BorderDouble(0);
 
@@ -441,8 +467,8 @@ namespace MatterHackers.MatterControl
             BorderDouble internalMargin = new BorderDouble(0);
             TextImageWidget nomalState = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
             TextImageWidget hoverState = new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
-            TextImageWidget checkingState = new TextImageWidget(label, hoverFillColor, RGBA_Bytes.White, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
-            TextImageWidget checkedState = new TextImageWidget(label, pressedFillColor, RGBA_Bytes.White, pressedTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
+            TextImageWidget checkingState = new TextImageWidget(label, hoverFillColor, checkedBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
+            TextImageWidget checkedState = new TextImageWidget(label, pressedFillColor, checkedBorderColor, pressedTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
             TextImageWidget disabledState = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
             RadioButtonViewStates checkBoxButtonViewWidget = new RadioButtonViewStates(nomalState, hoverState, checkingState, checkedState, disabledState);
             RadioButton radioButton = new RadioButton(checkBoxButtonViewWidget);

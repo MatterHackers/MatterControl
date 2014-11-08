@@ -160,6 +160,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public string GetMaterialValue(string sliceSetting, int extruderIndex)
+        {
+            int numberOfActiveLayers = activeSettingsLayers.Count;
+            string settingValue = null;
+            if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex) != 0)
+            {
+                int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex);
+                DataStorage.SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
+                SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
+                if (printerSettingsLayer.settingsDictionary.ContainsKey(sliceSetting))
+                {
+                    settingValue = printerSettingsLayer.settingsDictionary[sliceSetting].Value;
+                }
+            }
+
+            if (settingValue == null)
+            {
+                //Go through settings layers one-by-one, starting with quality (index = 2), in reverse order, until we find a layer that contains the value
+                int startingLayer = Math.Min(numberOfActiveLayers - 1, 2);
+                for (int i = startingLayer; i >= 0; i--)
+                {
+                    if (activeSettingsLayers[i].settingsDictionary.ContainsKey(sliceSetting))
+                    {
+                        settingValue = activeSettingsLayers[i].settingsDictionary[sliceSetting].Value;
+                        return settingValue;
+                    }
+                }
+            }
+
+            if (settingValue == null)
+            {
+                settingValue = "Unknown";
+            }
+
+            return settingValue;
+        }
+
         public void LoadSettingsForQuality()
         {
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
@@ -368,6 +405,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+        public int ExtruderCount
+        {
+            get
+            {
+                return int.Parse(ActiveSliceSettings.Instance.GetActiveValue("extruder_count"));
+            }
+        }
+
+        public bool ExtrudersShareTemperature 
+        { 
+            get
+            {
+                return (int.Parse(ActiveSliceSettings.Instance.GetActiveValue("extruders_share_temperature")) == 1);
+            }
+        }
+
+        public Vector2 GetOffset(int extruderIndex)
+        {
+            string currentOffsets = ActiveSliceSettings.Instance.GetActiveValue("extruder_offset");
+            string[] offsets = currentOffsets.Split(',');
+            int count = 0;
+            foreach (string offset in offsets)
+            {
+                if (count == extruderIndex)
+                {
+                    string[] xy = offset.Split('x');
+                    return new Vector2(double.Parse(xy[0]), double.Parse(xy[1]));
+                }
+                count++;
+            }
+
+            return Vector2.Zero;
+        }
+
         public double NozzleDiameter
         {
             get { return ParseDouble(GetActiveValue("nozzle_diameter")); }
@@ -483,21 +554,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             this.activeSettingsLayers.Add(defaultSettingsLayer);
         }
 
-        public bool LoadSettingsFromIni()
+		public void LoadSettingsFromIni(object state)
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Configuration|*.slice;*.ini");
 			openParams.ActionButtonLabel = "Load Configuration";
 			openParams.Title = "MatterControl: Select A File";
 
-            FileDialog.OpenFileDialog(ref openParams);
-			if (openParams.FileNames != null)
-            {
-                LoadConfigurationSettingsFromFileAsUnsaved(openParams.FileName);
-                return true;
-            }
+			FileDialog.OpenFileDialog(openParams, onSettingsFileSelected);
 
-            return false;
         }
+
+		void onSettingsFileSelected(OpenFileDialogParams openParams)
+		{
+			if (openParams.FileNames != null)
+			{
+				LoadConfigurationSettingsFromFileAsUnsaved(openParams.FileName);
+				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+			}
+		}
 
         public SettingsLayer LoadConfigurationSettingsFromFile(string pathAndFileName, DataStorage.SliceSettingsCollection collection)
         {
@@ -546,7 +620,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     foreach (string line in lines)
                     {
                         //Ignore commented lines
-                        if (!line.StartsWith("#"))
+                        if (line.Trim() != "" && !line.StartsWith("#"))
                         {
                             string[] settingLine = line.Split('=');
                             string keyName = settingLine[0].Trim();
@@ -614,14 +688,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
 			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration|*." + configFileExtension,documentsPath);
-
-			System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog (ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                GenerateConfigFile(saveParams.FileName);
-            }
+			saveParams.FileName = "default_settings.ini";
+			FileDialog.SaveFileDialog(saveParams, onExportFileSelected);
         }
+
+		void onExportFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null)
+			{
+				GenerateConfigFile(saveParams.FileName);
+			}
+
+		}
 
         public override int GetHashCode()
         {
@@ -652,6 +730,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
             string configFileAsString = string.Join("\n", configFileAsList.ToArray());
 
+			//To do - add file extension if it doesn't exist
+
             FileStream fs = new FileStream(fileName, FileMode.Create);
             StreamWriter sw = new System.IO.StreamWriter(fs);
             sw.Write(configFileAsString);
@@ -667,7 +747,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = LocalizedString.Get("'Layer Height' must be less than or equal to the 'Nozzle Diameter'.");
                     string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}", LayerHeight, NozzleDiameter);
                     string location = LocalizedString.Get("Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'");
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
                 else if (FirstLayerHeight > NozzleDiameter)
@@ -675,7 +755,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = LocalizedString.Get("First Layer Height' must be less than or equal to the 'Nozzle Diameter'.");
                     string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}", FirstLayerHeight, NozzleDiameter);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
 
@@ -684,7 +764,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = LocalizedString.Get("First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.");
                     string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}", GetActiveValue("first_layer_extrusion_width"), NozzleDiameter);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
 
@@ -693,7 +773,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = "The Min Fan Speed can only go as high as 100%.";
                     string details = string.Format("It is currently set to {0}.", MinFanSpeed);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (show all settings)";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
 
@@ -702,7 +782,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = "The Max Fan Speed can only go as high as 100%.";
                     string details = string.Format("It is currently set to {0}.", MaxFanSpeed);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (show all settings)";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
                 if (FillDensity < 0 || FillDensity > 1)
@@ -710,7 +790,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string error = "The Fill Density must be between 0 and 1 inclusive.";
                     string details = string.Format("It is currently set to {0}.", FillDensity);
                     string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'";
-                    StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                     return false;
                 }
 
@@ -760,7 +840,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 string error = string.Format("The '{0}' must be greater than 0.", SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting).PresentationName);
                 string details = string.Format("It is currently set to {0}.", actualSpeedValueString);
                 string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'";
-                StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
                 return false;
             }
 

@@ -182,8 +182,7 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect && PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage != "")
 			{
-                string statusString = LocalizedString.Get("Status: {0} - {1}");
-                printerStatusText.Text = string.Format(statusString, PrinterConnectionAndCommunication.Instance.PrinterConnectionStatusVerbose, PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage);
+                printerStatusText.Text = "Status: " + PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage;
 			}
 			else
 			{

@@ -116,13 +116,17 @@ namespace MatterHackers.MatterControl
 			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.mcp", initialDirectory: documentsPath);
 
-            System.IO.Stream streamToSaveTo = FileDialog.SaveFileDialog(ref saveParams);
-            if (streamToSaveTo != null)
-            {
-                streamToSaveTo.Close();
-                ExportToJson(saveParams.FileName);
-            }
+			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
+            
         }
+
+		void onSaveFileSelected(SaveFileDialogParams saveParams)
+		{
+			if (saveParams.FileName != null)
+			{
+				ExportToJson(saveParams.FileName);
+			}
+		}
 
         static string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
         static string defaultPathAndFileName = applicationDataPath + "/data/default.mcp";
@@ -143,21 +147,20 @@ namespace MatterHackers.MatterControl
             sw.Close();
         }
 
-        public List<PrintItem> OpenFromDialog()
+        public void OpenFromDialog()
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Select a Project file|*.mcp");
-
-            System.IO.Stream streamToLoadFrom = FileDialog.OpenFileDialog(ref openParams);
-            if (streamToLoadFrom != null)
-            {
-                string loadedFileName = openParams.FileName;
-                return ImportFromJson(loadedFileName);
-            }
-            else
-            {
-                return null;
-            }
+			FileDialog.OpenFileDialog(openParams, onManifestFileLoad);
         }
+
+		void onManifestFileLoad(OpenFileDialogParams openParams)
+		{
+			if (openParams.FileName != null)
+			{
+				string loadedFileName = openParams.FileName;
+				List<PrintItem> printItems = ImportFromJson(loadedFileName);
+			}
+		}
 
         public List<PrintItem> ImportFromJson(string loadedFileName = null)
         {

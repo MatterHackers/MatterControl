@@ -18,6 +18,8 @@ cooling|Enable Auto Cooling|CHECK_BOX||Turns on and off all cooling settings (al
 create_raft|Create Raft|CHECK_BOX||Turns on and off the creation of a raft which can help parts adhear to the bed.
 raft_extra_distance_around_part|Distance Around Object|POSITIVE_DOUBLE|mm|The extra distance the raft will extend around the part.
 raft_air_gap|Air Gap|POSITIVE_DOUBLE|mm|The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.
+raft_fan_speed_percent|Fan Speed|POSITIVE_DOUBLE|%|The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+raft_print_speed|Raft|DOUBLE_OR_PERCENT|mm/s or %|The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
 default_acceleration|Default|POSITIVE_DOUBLE|mm/s²|Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
 disable_fan_first_layers|Disable Fan For The First|INT|Layers|The number of layers for which the fan will be forced to remain off.
 end_gcode|End G-Code|MULTI_LINE_TEXT|| This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
@@ -26,9 +28,11 @@ external_perimeters_first|External Perimeters First|CHECK_BOX||Normally external
 extra_perimeters|Generate Extra Perimeters\n When Needed:|CHECK_BOX||Allow slicer to generate extra perimeters when needed for sloping walls.
 extruder_clearance_height|Extruder Clearance Height|POSITIVE_DOUBLE|mm|This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
 extruder_clearance_radius|Extruder Clearance Radius|POSITIVE_DOUBLE|mm|This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
+extruder_count|Extruder Count|INT||The number of extruders this machine has.
 extruder_offset|Extruder Offset|OFFSET2|mm|This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
+extruders_share_temperature|Share Temperature|CHECK_BOX||Set this if the extruders run off the same heater, if there is only one heater.
 extrusion_axis|Extrusion Axis|STRING||This is the identifier used in the gcode to specify the extruder.
-extrusion_multiplier|Extrusion Multiplier|POSITIVE_DOUBLE||All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good min value) will decrease the amount being extruded.
+extrusion_multiplier|Extrusion Multiplier|POSITIVE_DOUBLE||All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
 extrusion_width|Default Extrusion Width|DOUBLE_OR_PERCENT|mm or %\nleave 0 for auto|Leave this as 0 to allow automatic calculation of extrusion width.
 fan_always_on|Keep Fan Always On|CHECK_BOX||This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.
 fan_below_layer_time|Enable Fan If Layer\nPrint Time Is Below|INT|Seconds|If a layer is estimated to take less than this to print, the fan will be turned on.
@@ -57,18 +61,18 @@ infill_extruder|Infill Extruder|INT||The index of the extruder to use for infill
 infill_extrusion_width|Infill|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.
 infill_first|Do Infill Before Perimeters|CHECK_BOX||Sets infill to happen before perimeters are created.
 infill_only_where_needed|Only Infill Where Needed|CHECK_BOX||Creates infill only where it will be used as internal support.
-infill_overlap_perimeter|Infill Overlap|POSITIVE_DOUBLE|mm|The amount the infill edge will push into the preimiter. Helps ensure the infill is connected to the edge.
+infill_overlap_perimeter|Infill Overlap|POSITIVE_DOUBLE|mm|The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
 infill_speed|Infill|POSITIVE_DOUBLE|mm/s|The speed to print infill. 
 infill_type|Infill Type|LIST|CONCENTRIC,GRID,LINES,TRIANGLES|The type of support to create inside of parts.
 layer_gcode|Layer Change G-Code|MULTI_LINE_TEXT||This gcode will be inserted right after the change in z height for the next layer.
 layer_height|Layer Height|POSITIVE_DOUBLE|mm|Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.
 max_fan_speed|Max Fan Speed|INT|%|This is the maximum speed that your fan can run at.
-min_extrusion_before_retract|Min Extrusion|POSITIVE_DOUBLE|mm|This is the minimum amount of filament that must be extruded before a retraction can occur.
-min_fan_speed|Min Fan Speed|INT|%|This is the minimum fan speed that your fan can run at.
-min_print_speed|Min Print Speed|POSITIVE_DOUBLE|mm/s|This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the min layer time.
+min_extrusion_before_retract|Minimum Extrusion\nRequiring Retraction|POSITIVE_DOUBLE|mm|This is the minimum amount of filament that must be extruded before a retraction can occur.
+min_fan_speed|Minimum Fan Speed|INT|%|This is the minimum fan speed that your fan can run at.
+min_print_speed|Minimum Print Speed|POSITIVE_DOUBLE|mm/s|This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
 min_skirt_length|Minimum Extrusion Length|POSITIVE_DOUBLE|mm|Sets the minimum amount of filament to use drawing the skirt loops. This will cause at least enough skirt loops to be drawn to use this amount of filament.
 notes|notes|MULTI_LINE_TEXT||These notes will be added as comments in the header of the output gcode.
-nozzle_diameter|Nozzle Diameter|POSITIVE_DOUBLE|mm|This is the diameter of your extruder nozle.
+nozzle_diameter|Nozzle Diameter|POSITIVE_DOUBLE|mm|This is the diameter of your extruder nozzle.
 only_retract_when_crossing_perimeters|Only Retract When\n Crossing Perimeters|CHECK_BOX||Prevents retraction while within a printing perimeter.
 ooze_prevention|Enable|CHECK_BOX||This will lower the temperature of the non-printing extruder to help prevent oozing.
 overhangs|Optimize Overhangs|CHECK_BOX||Experimental feature that attempts to improve overhangs using the fan and bridge settings.
@@ -86,17 +90,15 @@ randomize_start|Randomize Starting Points|CHECK_BOX||Start each new layer from a
 resume_gcode|Resume G-Code|MULTI_LINE_TEXT||This gcode will be inserted when the printer is resumed.
 retract_before_travel|Minimum Travel\nRequiring Retraction|POSITIVE_DOUBLE|mm|The minimum distance of a non-printing move that will result in a retraction.
 retract_layer_change|Retract on Layer Change|CHECK_BOX||If set, a retraction will occur prior to changing the layer height.
-retract_length|Length|POSITIVE_DOUBLE|mm|The amount that the filament will be reversed after each qualifying non-printing move.
-retract_length_tool_change|Change Tool|POSITIVE_DOUBLE|mm|The amount that the filament will be reversed before changing to a new tool.
+retract_length|Length on Move|POSITIVE_DOUBLE|mm|The amount that the filament will be reversed after each qualifying non-printing move.
+retract_length_tool_change|Length on Tool Change|POSITIVE_DOUBLE|mm|The amount that the filament will be reversed before changing to a new tool.
 retract_lift|Z Lift|POSITIVE_DOUBLE|mm|The amount the extruder head will be lifted after each retraction.
 retract_restart_extra_toolchange|Length|POSITIVE_DOUBLE|mm\nzero to disable|The amount the filament will be retracted when changing to a different extruder.
 retract_restart_extra|Extra Length On Restart|DOUBLE|mm|Additional amount of filament that will be extruded after a retraction.
 retract_restart_extra|Extra Length On Restart|POSITIVE_DOUBLE|mm|The amount of extra extrusion that will occur when an extruder is selected.
 retract_speed|Speed|POSITIVE_DOUBLE|mm/s|The speed that the filament will be retracted (and re-extruded).
 repair_outlines_extensive_stitching|Connect Bad Edges|CHECK_BOX||Try to connect mesh edges when the actual mesh data is not all the way connected.
-repair_outlines_keep_open|Close Polygons|CHECK_BOX||Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
-repair_overlaps_reverse_orientation|Reverse Orientation|CHECK_BOX||Reverse the orientation of overlaps. This can make some unintended holes go away.
-repair_overlaps_union_all_together|Merge All|CHECK_BOX||Make all overlap areas into one big area. This can make some unintended holes go away..
+repair_outlines_keep_open|Close Polygons|CHECK_BOX||Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
 resolution|Resolution|POSITIVE_DOUBLE|mm|The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
 skirt_distance|Distance from Object|POSITIVE_DOUBLE|mm|The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
 skirt_height|Skirt Height|INT|layers|The number of layers to draw the skirt.
@@ -118,7 +120,7 @@ support_material_infill_angle|Infill Angle|POSITIVE_DOUBLE|degrees|The angle the
 support_material_create_internal_support|Support Everywhere|CHECK_BOX||If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
 support_material_enforce_layers|Enforce Support For First|INT|layers|Generate support material everywhere not touching the bed for n layers, regardless of angle.
 support_material_extruder|Support Material Extruder|INT||The index of the extruder to use for support material.
-support_material_extrusion_width|Support Material|DOUBLE_OR_PERCENT|mm or %\nleave 0 for default|Leave this as 0 to allow automatic calculation of extrusion width.
+support_material_extrusion_width|Support Material|DOUBLE_OR_PERCENT|mm or %|You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
 support_material_interface_extruder|Support Interface Extruder|INT||The index of the extruder to use for support material interface layers.
 support_material_interface_layers|Interface Layers|INT|layers|The number of layers to print between the supports and the part.
 support_material_interface_spacing|Interface Pattern Spacing|POSITIVE_DOUBLE|mm|The space between lines of the interface layers (0 is solid).
@@ -131,7 +133,7 @@ support_material_z_distance|Z Distance|POSITIVE_DOUBLE|mm|The distance the suppo
 support_material_z_gap_layers|Z Gap|INT||The number of layers to skip in z. The gap between the support and the model.
 support_material|Generate Support Material|CHECK_BOX||This turns on and off the generation of support material.
 support_type|Support Type|LIST|GRID,LINES|The type of support to create for surfaces that need it.
-temperature|Extruder Temperature|POSITIVE_DOUBLE|degrees|The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
+temperature|Extruder Temperature|POSITIVE_DOUBLE|degrees|The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
 thin_walls|Thin Walls|CHECK_BOX||Detect when walls are too close together and need to be extruded as just one wall.
 threads|Threads|INT||The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 toolchange_gcode|Tool Change G-Code|MULTI_LINE_TEXT||This gcode will be inserted after every tool change.
@@ -143,6 +145,7 @@ use_firmware_retraction|Use Firmware Retraction|CHECK_BOX||Request the firmware 
 use_relative_e_distances|Use Relative E Distances|CHECK_BOX||Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 vibration_limit|Vibration Limit|INT|Hz|This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 wipe|Wipe Before Retract|CHECK_BOX||This will cause the extruder to move while retracting to minimize blobs.
-wipe_shield_distance|Wipe Shield Distance|POSITIVE_DOUBLE|mm|If greater than 0, this is the distance away from parts to create a parimeter to wipe when entering.
+wipe_shield_distance|Wipe Shield Distance|POSITIVE_DOUBLE|mm|If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
+wipe_tower_size|Wipe Tower Size|POSITIVE_DOUBLE|mm|If greater than 0, this is the X by Y size of a tower to use to when changing extruders
 z_can_be_negative|Z Can Be Negative|CHECK_BOX||Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
 z_offset|Z Offset|OFFSET|mm|This value will be added to all of the z positions of the created gcode.

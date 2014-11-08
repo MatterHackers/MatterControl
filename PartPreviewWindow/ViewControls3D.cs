@@ -21,6 +21,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public RadioButton rotateButton;
         public RadioButton scaleButton;
         public RadioButton partSelectButton;
+        int buttonHeight;
 
         public bool PartSelectVisible
         {
@@ -34,6 +35,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 
         public ViewControls3D(MeshViewerWidget meshViewerWidget)
         {
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+            {
+                buttonHeight = 40;
+            }
+            else
+            {
+                buttonHeight = 20;
+            }
+            
             this.meshViewerWidget = meshViewerWidget;
             TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -43,9 +53,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-            textImageButtonFactory.FixedHeight = 20;
-            textImageButtonFactory.FixedWidth = 20;
+            textImageButtonFactory.FixedHeight = buttonHeight;
+            textImageButtonFactory.FixedWidth = buttonHeight;
             textImageButtonFactory.AllowThemeToAdjustImage = false;
+            textImageButtonFactory.checkedBorderColor = RGBA_Bytes.White;
 
             string rotateIconPath = Path.Combine("ViewTransformControls", "rotate.png");
             rotateButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
@@ -66,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
 
             string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
-            RadioButton scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
+            scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
             scaleButton.Margin = new BorderDouble(3);
             AddChild(scaleButton);
             scaleButton.Click += (sender, e) =>
@@ -119,8 +130,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             meshViewerWidget.TrackballTumbleWidget.RotationHelperCircleColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            meshViewerWidget.PartColor = RGBA_Bytes.White;
-            meshViewerWidget.SelectedPartColor = ActiveTheme.Instance.PrimaryAccentColor;
+            //meshViewerWidget.MaterialColor = RGBA_Bytes.White;
+            //meshViewerWidget.SelectedMaterialColor = ActiveTheme.Instance.PrimaryAccentColor;
             meshViewerWidget.BuildVolumeColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryAccentColor.Red0To255, ActiveTheme.Instance.PrimaryAccentColor.Green0To255, ActiveTheme.Instance.PrimaryAccentColor.Blue0To255, 50);
         }
     }

@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         bool editMode = false;
 
         public ConnectionWindow()
-            : base(350, 500)
+            : base(350* TextWidget.GlobalPointSizeScaleRatio, 500* TextWidget.GlobalPointSizeScaleRatio)
         {
             string connectToPrinterTitle = LocalizedString.Get("MatterControl");
             string connectToPrinterTitleEnd = LocalizedString.Get("Connect to Printer");
@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             this.ShowAsSystemWindow();
-            MinimumSize = new Vector2(350, 400);
+            MinimumSize = new Vector2(350* TextWidget.GlobalPointSizeScaleRatio, 400* TextWidget.GlobalPointSizeScaleRatio);
         }
 
         static ConnectionWindow connectionWindow = null;
@@ -107,7 +107,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public void ChangeToChoosePrinter(bool editMode = false)
         {
             this.editMode = editMode;
-			UiThread.RunOnIdle(DoChangeToChoosePrinter);
+			//DoChangeToChoosePrinter(null);
+			UiThread.RunOnIdle(DoChangeToChoosePrinter, null);
         }
 
 		public void DoChangeToChoosePrinter(object state)
@@ -115,7 +116,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             GuiWidget chooseConnectionWidget = new ChooseConnectionWidget(this, this, this.editMode);
             this.RemoveAllChildren();
             this.AddChild(chooseConnectionWidget);
-
             this.Invalidate();
 
         }

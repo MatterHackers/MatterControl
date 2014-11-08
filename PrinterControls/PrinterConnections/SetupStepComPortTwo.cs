@@ -27,11 +27,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 //Construct buttons
 				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"));
-                nextButton.Click += new ButtonBase.ButtonEventHandler(NextButton_Click);
+                nextButton.Click += new EventHandler(NextButton_Click);
                 nextButton.Visible = false;
 
 				connectButton = textImageButtonFactory.Generate(LocalizedString.Get("Connect"));
-                connectButton.Click += new ButtonBase.ButtonEventHandler(ConnectButton_Click);
+                connectButton.Click += new EventHandler(ConnectButton_Click);
 
                 PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate(LocalizedString.Get("Manual Configuration"));
             manualLink.Margin = new BorderDouble(0, 5);
-            manualLink.Click += new ButtonBase.ButtonEventHandler(ManualLink_Click);
+            manualLink.Click += new EventHandler(ManualLink_Click);
 
             printerErrorMessage = new TextWidget("", 0, 0, 10);
             printerErrorMessage.AutoExpandBoundsToText = true;
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return container;
         }
 
-        void ManualLink_Click(object sender, MouseEventArgs mouseEvent)
+        void ManualLink_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(MoveToManualConfiguration);
         }
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             Parent.RemoveChild(this);
         }
 
-        void ConnectButton_Click(object sender, MouseEventArgs mouseEvent)
+        void ConnectButton_Click(object sender, EventArgs mouseEvent)
         {
             string candidatePort = null;
             currentPortNames = FrostedSerialPort.GetPortNames();
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             connectButton.Visible = false;
         }
 
-        void NextButton_Click(object sender, MouseEventArgs mouseEvent)
+        void NextButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(DoNextButton_Click);
         }

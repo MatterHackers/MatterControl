@@ -58,13 +58,13 @@ namespace MatterHackers.MatterControl
 
         Button advancedControlsLinkButton;
         SliceSettingsWidget sliceSettingsWidget;
-        ButtonBase.ButtonEventHandler AdvancedControlsButton_Click;
+        EventHandler AdvancedControlsButton_Click;
         EventHandler onMouseEnterBoundsPrintQueueLink;
         EventHandler onMouseLeaveBoundsPrintQueueLink;
 
         TabControl advancedControls2;
 
-        public ThirdPanelTabView(ButtonBase.ButtonEventHandler AdvancedControlsButton_Click = null,
+        public ThirdPanelTabView(EventHandler AdvancedControlsButton_Click = null,
             EventHandler onMouseEnterBoundsPrintQueueLink = null,
             EventHandler onMouseLeaveBoundsPrintQueueLink = null)
         {
@@ -76,8 +76,8 @@ namespace MatterHackers.MatterControl
 
             AddChild(advancedControls2);
 
-            WidescreenPanel.PreChangePannels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
-			ApplicationWidget.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
+            WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
 
             AnchorAll();
         }
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        private TabControl CreateNewAdvancedControls(ButtonBase.ButtonEventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
+        private TabControl CreateNewAdvancedControls(EventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
         {
             TabControl advancedControls = new TabControl();
 
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
                 advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
                 advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
                 advancedControlsLinkButton.Cursor = Cursors.Hand;
-                advancedControlsLinkButton.Click += new ButtonBase.ButtonEventHandler(AdvancedControlsButton_Click);
+                advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
                 advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsPrintQueueLink);
                 advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsPrintQueueLink);
 
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
-            ScrollableWidget configurationControls = new PrinterConfigurationPage();
+            ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", textSize,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl
         {
             lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
 
-            WidescreenPanel.PreChangePannels.CallEvents(null, null);
+            WidescreenPanel.PreChangePanels.CallEvents(null, null);
 
             // remove the advance control and replace it with new ones built for the selected printer
             int advancedControlsIndex = GetChildIndex(advancedControls2);
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 
             if (advancedControlsLinkButton != null)
             {
-                advancedControlsLinkButton.Click -= new ButtonBase.ButtonEventHandler(AdvancedControlsButton_Click);
+                advancedControlsLinkButton.Click -= new EventHandler(AdvancedControlsButton_Click);
                 advancedControlsLinkButton.MouseEnterBounds -= new EventHandler(onMouseEnterBoundsPrintQueueLink);
                 advancedControlsLinkButton.MouseLeaveBounds -= new EventHandler(onMouseLeaveBoundsPrintQueueLink);
             }

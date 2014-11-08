@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl
             SetMenuItems();
 
             AddChild(MenuDropList);
-            this.Width = 44;
-            this.Height = 22;
+            this.Width = 44 * TextWidget.GlobalPointSizeScaleRatio;;
+            this.Height = 22 * TextWidget.GlobalPointSizeScaleRatio;;
             this.Margin = new BorderDouble(0);
             this.Padding = new BorderDouble(0);
             this.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
             //Add the menu items to the menu itself
             foreach (Tuple<string, Func<bool>> item in menuItems)
             {
-                MenuDropList.MenuItemsPadding = new BorderDouble(8,4,8,4);
+                MenuDropList.MenuItemsPadding = new BorderDouble(8,4,8,4) * TextWidget.GlobalPointSizeScaleRatio;
                 MenuDropList.AddItem(item.Item1,pointSize:10);
             }            
             MenuDropList.Padding = padding;
@@ -146,19 +146,26 @@ namespace MatterHackers.MatterControl
         bool importFile_Click()
         {
             UiThread.RunOnIdle((state) =>
-            {  
-                OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode", multiSelect: true);
-                openParams.ActionButtonLabel = "Add to Queue";
-                openParams.Title = "MatterControl: Select A File";
-
-                FileDialog.OpenFileDialog(ref openParams);
-                if (openParams.FileNames != null)
-                {
-                    foreach (string loadedFileName in openParams.FileNames)
+            {
+                FileDialog.OpenFileDialog(
+                    new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams)
                     {
-                        QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
-                    }
-                }
+                        MultiSelect = true,
+                        ActionButtonLabel = "Add to Queue",
+                        Title = "MatterControl: Select A File"
+                    },
+                    (openParams) =>
+                    {
+                        if (openParams.FileNames != null)
+                        {
+                            foreach (string loadedFileName in openParams.FileNames)
+                            {
+                                QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
+                            }
+                        }
+
+                    });
+
             });
             return true;
         }
@@ -177,7 +184,7 @@ namespace MatterHackers.MatterControl
 
 				if(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 				{
-						StyledMessageBox.ShowMessageBox(cannotExitWhileActiveMessage, cannotExitWhileActiveTitle);
+						StyledMessageBox.ShowMessageBox(null, cannotExitWhileActiveMessage, cannotExitWhileActiveTitle);
 				}
 				else
 				{
@@ -208,8 +215,8 @@ namespace MatterHackers.MatterControl
             SetMenuItems();
 
             AddChild(MenuDropList);
-            this.Width = 48;
-            this.Height = 22;
+            this.Width = 48 * TextWidget.GlobalPointSizeScaleRatio;
+            this.Height = 22 * TextWidget.GlobalPointSizeScaleRatio;
             this.Margin = new BorderDouble(0);
             this.Padding = new BorderDouble(0);
             this.VAnchor = Agg.UI.VAnchor.ParentCenter;
@@ -247,7 +254,7 @@ namespace MatterHackers.MatterControl
             //Add the menu items to the menu itself
             foreach (Tuple<string, Func<bool>> item in menuItems)
             {
-                MenuDropList.MenuItemsPadding = new BorderDouble(8, 4, 8, 4);
+                MenuDropList.MenuItemsPadding = new BorderDouble(8, 4, 8, 4) * TextWidget.GlobalPointSizeScaleRatio;
                 MenuDropList.AddItem(item.Item1, pointSize: 10);
             }
             MenuDropList.Padding = padding;

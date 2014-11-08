@@ -117,10 +117,14 @@ namespace MatterHackers.MatterControl
         {
             get
             {
-                if (OsInformation.OperatingSystem == OSType.Mac)
-                {
-                    return "pkg";
-                }
+				if (OsInformation.OperatingSystem == OSType.Mac)
+				{
+					return "pkg";
+				}
+				else if (OsInformation.OperatingSystem == OSType.Android)
+				{
+					return "apk";
+				}
                 else
                 {
                     return "exe";
@@ -186,19 +190,25 @@ namespace MatterHackers.MatterControl
                 {
                     UiThread.RunOnIdle((state) =>
                     {
+                        StyledMessageBox.ShowMessageBox(ProcessDialogResponse, updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater);
                         // show a dialog to tell the user there is an update
-                        if (StyledMessageBox.ShowMessageBox(updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater))
-                        {
-                            InitiateUpdateDownload();
-                            // Switch to the about page so we can see the download progress.
-                            GuiWidget aboutTabWidget = FindNamedWidgetRecursive(ApplicationWidget.Instance, "About Tab");
-                            Tab aboutTab = aboutTabWidget as Tab;
-                            if (aboutTab != null)
-                            {
-                                aboutTab.TabBarContaningTab.SelectTab(aboutTab);
-                            }
-                        }
+                        
                     });
+                }
+            }
+        }
+
+        void ProcessDialogResponse(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                InitiateUpdateDownload();
+                // Switch to the about page so we can see the download progress.
+                GuiWidget aboutTabWidget = FindNamedWidgetRecursive(ApplicationController.Instance.MainView, "About Tab");
+                Tab aboutTab = aboutTabWidget as Tab;
+                if (aboutTab != null)
+                {
+                    aboutTab.TabBarContaningTab.SelectTab(aboutTab);
                 }
             }
         }

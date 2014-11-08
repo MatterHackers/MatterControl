@@ -37,7 +37,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
             else
             {
-				return System.IO.File.Exists(this.GetEnginePath());
+				if (this.GetEnginePath() == null)
+				{
+					return false;
+				}
+				else
+				{
+					return System.IO.File.Exists(this.GetEnginePath());
+				}
             }
         }
 

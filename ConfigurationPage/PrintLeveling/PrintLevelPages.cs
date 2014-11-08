@@ -260,21 +260,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             // set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
             zPlusControl.MoveAmount = 0;
             zMinusControl.MoveAmount = 0;
-            zPlusControl.Click += new ButtonBase.ButtonEventHandler(zPlusControl_Click);
-            zMinusControl.Click += new ButtonBase.ButtonEventHandler(zMinusControl_Click);
+            zPlusControl.Click += new EventHandler(zPlusControl_Click);
+            zMinusControl.Click += new EventHandler(zMinusControl_Click);
             return zButtons;
         }
 
         static string zIsTooLowMessage = "You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.".Localize();
-        static string zTooLowTitle = "Waring Moving Too Low".Localize();
-        void zMinusControl_Click(object sender, MouseEventArgs mouseEvent)
+        static string zTooLowTitle = "Warning - Moving Too Low".Localize();
+        void zMinusControl_Click(object sender, EventArgs mouseEvent)
         {
             if (!allowLessThan0
                 && PrinterConnectionAndCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
             {
                 UiThread.RunOnIdle( (state) => 
                 {
-                    StyledMessageBox.ShowMessageBox(zIsTooLowMessage, zTooLowTitle, StyledMessageBox.MessageType.OK);
+                    StyledMessageBox.ShowMessageBox(null, zIsTooLowMessage, zTooLowTitle, StyledMessageBox.MessageType.OK);
                 });
                 // don't move the bed lower it will not work when we print.
                 return;
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
             PrinterConnectionAndCommunication.Instance.ReadPosition();
         }
 
-        void zPlusControl_Click(object sender, MouseEventArgs mouseEvent)
+        void zPlusControl_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.MoveRelative(PrinterConnectionAndCommunication.Axis.Z, moveAmount, InstructionsPage.ManualControlsFeedRate().z);
             PrinterConnectionAndCommunication.Instance.ReadPosition();
@@ -321,11 +321,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
             container.nextButton.Enabled = false;
 
-            zPlusControl.Click += new ButtonBase.ButtonEventHandler(zControl_Click);
-            zMinusControl.Click += new ButtonBase.ButtonEventHandler(zControl_Click);
+            zPlusControl.Click += new EventHandler(zControl_Click);
+            zMinusControl.Click += new EventHandler(zControl_Click);
         }
 
-        protected void zControl_Click(object sender, MouseEventArgs mouseEvent)
+        protected void zControl_Click(object sender, EventArgs mouseEvent)
         {
             container.nextButton.Enabled = true;
         }
@@ -361,8 +361,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
             container.nextButton.Enabled = false;
 
-            zPlusControl.Click += new ButtonBase.ButtonEventHandler(zControl_Click);
-            zMinusControl.Click += new ButtonBase.ButtonEventHandler(zControl_Click);
+            zPlusControl.Click += new EventHandler(zControl_Click);
+            zMinusControl.Click += new EventHandler(zControl_Click);
         }
 
         void FinishedProbe(object sender, EventArgs e)

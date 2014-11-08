@@ -52,7 +52,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
     public class QueueRowItem : GuiWidget
     {
+        private class PartToAddToQueue
+        {
+            internal string Name;
+            internal string FileLocation;
+            internal int insertAfterIndex;
+
+            internal PartToAddToQueue(string name, string fileLocation, int insertAfterIndex)
+            {
+                this.Name = name;
+                this.FileLocation = fileLocation;
+                this.insertAfterIndex = insertAfterIndex;
+            }
+        }
+
         public PrintItemWrapper PrintItemWrapper { get; set; }
+		//public PrintItemWrapper printItemWrapper;
         public RGBA_Bytes WidgetTextColor;
         public RGBA_Bytes WidgetBackgroundColor;
         public bool isActivePrint = false;
@@ -60,17 +75,42 @@ namespace MatterHackers.MatterControl.PrintQueue
         public bool isHoverItem = false;
         TextWidget partLabel;
         TextWidget partStatus;
+		Button addToLibraryLink;
         FlowLayoutWidget editControls;
         LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		ExportPrintItemWindow exportingWindow;
 		PartPreviewMainWindow viewingWindow;
 		bool exportingWindowIsOpen = false;
 		bool viewWindowIsOpen = false;
-        QueueDataView queueDataViewThisIsIn;
+        QueueDataView queueDataView;
+        SlideWidget actionButtonContainer;
+		GuiWidget selectionCheckBoxContainer;
+		public CheckBox selectionCheckBox;
+        ConditionalClickWidget conditionalClickContainer;
 
-        public QueueRowItem(PrintItemWrapper printItemWrapper, QueueDataView queueDataViewThisIsIn)
+        public bool IsHoverItem
         {
-            this.queueDataViewThisIsIn = queueDataViewThisIsIn;
+            get { return isHoverItem; }
+            set
+            {
+                if (this.isHoverItem != value)
+                {
+                    this.isHoverItem = value;
+                    if (value == true && !this.queueDataView.EditMode)
+                    {
+                        this.actionButtonContainer.SlideIn();
+                    }
+                    else
+                    {
+                        this.actionButtonContainer.SlideOut();
+                    }
+                }
+            }
+        }
+
+        public QueueRowItem(PrintItemWrapper printItemWrapper, QueueDataView queueDataView)
+        {
+            this.queueDataView = queueDataView;
             this.PrintItemWrapper = printItemWrapper;
             ConstructPrintQueueItem();
         }
@@ -93,11 +133,24 @@ namespace MatterHackers.MatterControl.PrintQueue
             FlowLayoutWidget topContentsFlowLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
             topContentsFlowLayout.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             {
-                FlowLayoutWidget leftColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				FlowLayoutWidget leftColumn = new FlowLayoutWidget(FlowDirection.LeftToRight);
                 leftColumn.VAnchor = VAnchor.ParentTop | Agg.UI.VAnchor.FitToChildren;
                 {
+				
+					selectionCheckBoxContainer = new GuiWidget();
+					selectionCheckBoxContainer.VAnchor = VAnchor.ParentBottomTop;
+					selectionCheckBoxContainer.Width = 40;
+					selectionCheckBoxContainer.Visible = false;
+					selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
+					selectionCheckBox = new CheckBox("");
+					selectionCheckBox.VAnchor = VAnchor.ParentCenter;
+					selectionCheckBox.HAnchor = HAnchor.ParentCenter;
+					selectionCheckBoxContainer.AddChild(selectionCheckBox);
+
                     PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(PrintItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-                    leftColumn.AddChild(thumbnailWidget);
+					leftColumn.AddChild(selectionCheckBoxContainer);
+
+					leftColumn.AddChild(thumbnailWidget);
                 }
 
                 FlowLayoutWidget middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -129,56 +182,127 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 topContentsFlowLayout.AddChild(leftColumn);
                 topContentsFlowLayout.AddChild(middleColumn);
-                topContentsFlowLayout.AddChild(editControls);
+                //topContentsFlowLayout.AddChild(editControls);
 
                 editControls.Visible = false;
             }
 
+            // The ConditionalClickWidget supplies a user driven Enabled property based on a delegate of your choosing
+            conditionalClickContainer = new ConditionalClickWidget(() => queueDataView.EditMode);
+            conditionalClickContainer.HAnchor = HAnchor.ParentLeftRight;
+            conditionalClickContainer.VAnchor = VAnchor.ParentBottomTop;
+            conditionalClickContainer.Click += onLibraryItemClick;
+
             topToBottomLayout.AddChild(topContentsFlowLayout);
             this.AddChild(topToBottomLayout);
+
+            actionButtonContainer = getItemActionButtons();
+            actionButtonContainer.Visible = false;
+            this.AddChild(conditionalClickContainer);
+
+            this.AddChild(actionButtonContainer);
 
             AddHandlers();
         }
 
-		private void OpenExportWindow()
-		{
-			if(exportingWindowIsOpen == false)
-			{
-				exportingWindow = new ExportPrintItemWindow (this.PrintItemWrapper);
-				this.exportingWindowIsOpen = true;
-				exportingWindow.Closed += new EventHandler (ExportQueueItemWindow_Closed);
-				exportingWindow.ShowAsSystemWindow();
-			} 
-			else 
-			{
-				if (exportingWindow != null)
-				{
-					exportingWindow.BringToFront ();
-				}
-			}
-		}
+        SlideWidget getItemActionButtons()
+        {
+            SlideWidget buttonContainer = new SlideWidget();
+            buttonContainer.VAnchor = VAnchor.ParentBottomTop;
+            buttonContainer.HAnchor = HAnchor.ParentRight;
+
+            FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+            buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
+
+            ClickWidget printButton = new ClickWidget();
+            printButton.VAnchor = VAnchor.ParentBottomTop;
+            printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            printButton.Width = 100;
+
+            TextWidget printLabel = new TextWidget("Remove".Localize());
+            printLabel.TextColor = RGBA_Bytes.White;
+            printLabel.VAnchor = VAnchor.ParentCenter;
+            printLabel.HAnchor = HAnchor.ParentCenter;
+
+            printButton.AddChild(printLabel);
+            printButton.Click += (sender, e) =>
+            {
+                UiThread.RunOnIdle(DeletePartFromQueue);
+            }; ;
+
+            ClickWidget viewButton = new ClickWidget();
+            viewButton.VAnchor = VAnchor.ParentBottomTop;
+            viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+            viewButton.Width = 100;
+
+            TextWidget editLabel = new TextWidget("View".Localize());
+            editLabel.TextColor = RGBA_Bytes.White;
+            editLabel.VAnchor = VAnchor.ParentCenter;
+            editLabel.HAnchor = HAnchor.ParentCenter;
+
+            viewButton.AddChild(editLabel);
+            viewButton.Click += onViewPartClick;
+
+            //buttonFlowContainer.AddChild(viewButton);
+            buttonFlowContainer.AddChild(printButton);
+
+            buttonContainer.AddChild(buttonFlowContainer);
+            //buttonContainer.Width = 200;
+            buttonContainer.Width = 100;
+
+            return buttonContainer;
+        }
+
+        private void onViewPartClick(object sender, EventArgs e)
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                OpenPartViewWindow(false);
+            });
+        }
+
+
+        
+
+        private void OpenExportWindow()
+        {
+            if (exportingWindowIsOpen == false)
+            {
+                exportingWindow = new ExportPrintItemWindow(this.PrintItemWrapper);
+                this.exportingWindowIsOpen = true;
+                exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
+                exportingWindow.ShowAsSystemWindow();
+            }
+            else
+            {
+                if (exportingWindow != null)
+                {
+                    exportingWindow.BringToFront();
+                }
+            }
+        }
 
 		void ExportQueueItemWindow_Closed(object sender, EventArgs e)
 		{
 			this.exportingWindowIsOpen = false;
 		}
 
-		private void OpenViewWindow()
-		{
-			if (viewWindowIsOpen == false)
-			{
-				viewingWindow = new PartPreviewMainWindow(PrintItemWrapper, View3DTransformPart.AutoRotate.Enabled);
-				this.viewWindowIsOpen = true;
-				viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
-			}
-			else
-			{
-				if(viewingWindow != null) 
-				{
-					viewingWindow.BringToFront();
-				}
-			}
-		}
+        public void OpenPartViewWindow(bool openInEditMode = false)
+        {
+            if (viewWindowIsOpen == false)
+            {
+                viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DWidget.AutoRotate.Enabled, openInEditMode);
+                this.viewWindowIsOpen = true;
+                viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
+            }
+            else
+            {
+                if (viewingWindow != null)
+                {
+                    viewingWindow.BringToFront();
+                }
+            }
+        }
 
 		void PartPreviewWindow_Closed(object sender, EventArgs e)
 		{
@@ -207,7 +331,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                             string pathAndFile = PrintItemWrapper.FileLocation;
                             if (File.Exists(pathAndFile))
                             {
-                                OpenViewWindow();
+                                OpenPartViewWindow();
                             }
                             else
                             {
@@ -215,16 +339,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                             }
                         };
                         layoutLeftToRight.AddChild(viewLink);
-                    }
-
-                    // copy button
-                    {
-                        Button copyLink = linkButtonFactory.Generate(LocalizedString.Get("Copy"));
-                        copyLink.Click += (sender, e) =>
-                        {
-                            CreateCopyInQueue();
-                        };
-                        layoutLeftToRight.AddChild(copyLink);
                     }
 
                     // add to library button
@@ -251,6 +365,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 {
                     layoutLeftToRight.AddChild(new GuiWidget(10, 10));
                 }
+					
 
                 // delete button
                 {
@@ -261,13 +376,22 @@ namespace MatterHackers.MatterControl.PrintQueue
                     };
                     layoutLeftToRight.AddChild(deleteLink);
                 }
-
+					
                 // push off to the right the rest spacer
                 {
                     GuiWidget spaceFiller = new GuiWidget(10, 10);
                     //layoutLeftToRight.AddChild(spaceFiller);
                 }
 
+				{
+					addToLibraryLink = linkButtonFactory.Generate(LocalizedString.Get("Add to Library"));
+					addToLibraryLink.Click += (sender, e) =>
+						{
+							LibraryData.Instance.AddItem(new PrintItemWrapper(new PrintItem(this.PrintItemWrapper.Name, this.PrintItemWrapper.FileLocation)));
+						};
+					//layoutLeftToRight.AddChild(addToLibraryLink);
+				}
+					
                 // up and down buttons
                 {
                     FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -317,11 +441,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         void AddHandlers()
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-
             PrintItemWrapper.SlicingOutputMessage.RegisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
-
-            MouseEnterBounds += new EventHandler(PrintQueueItem_MouseEnterBounds);
-            MouseLeaveBounds += new EventHandler(PrintQueueItem_MouseLeaveBounds);
         }
 
         void PrintItem_SlicingOutputMessage(object sender, EventArgs e)
@@ -340,29 +460,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             this.Margin = new BorderDouble(6,0,6,6);
         }
 
-        void PrintQueueItem_MouseLeaveBounds(object sender, EventArgs e)
-        {
-            editControls.Visible = false;
-        }
-
-        void PrintQueueItem_MouseEnterBounds(object sender, EventArgs e)
-        {
-            editControls.Visible = true;
-        }
-
-        class PartToAddToQueue
-        {
-            internal string Name;
-            internal string FileLocation;
-            internal int insertAfterIndex;
-
-            internal PartToAddToQueue(string name, string fileLocation, int insertAfterIndex)
-            {
-                this.Name = name;
-                this.FileLocation = fileLocation;
-                this.insertAfterIndex = insertAfterIndex;
-            }
-        }
+        
 
         void AddPartToQueue(object state)
         {
@@ -370,82 +468,51 @@ namespace MatterHackers.MatterControl.PrintQueue
             QueueData.Instance.AddItem(new PrintItemWrapper( new PrintItem(partToAddToQueue.Name, partToAddToQueue.FileLocation)), partToAddToQueue.insertAfterIndex);
         }
 
-        public void CreateCopyInQueue()
-        {
-            int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
-            if (thisIndexInQueue != -1 && File.Exists(PrintItemWrapper.FileLocation))
-            {
-                string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-                string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "stl");
-                if (!Directory.Exists(stagingFolder))
-                {
-                    Directory.CreateDirectory(stagingFolder);
-                }
-
-                string newCopyFilename;
-                int infiniteBlocker = 0;
-                do
-                {
-                    newCopyFilename = Path.Combine(stagingFolder, Path.ChangeExtension(Path.GetRandomFileName(), "stl"));
-                    newCopyFilename = Path.GetFullPath(newCopyFilename);
-                    infiniteBlocker++;
-                } while (File.Exists(newCopyFilename) && infiniteBlocker < 100);
-
-                File.Copy(PrintItemWrapper.FileLocation, newCopyFilename);
-
-                string newName = PrintItemWrapper.Name;
-
-                if (!newName.Contains(" - copy"))
-                {
-                    newName += " - copy";
-                }
-                else
-                {
-                    int index = newName.LastIndexOf(" - copy");
-                    newName = newName.Substring(0, index) + " - copy";
-                }
-
-                int copyNumber = 2;
-                string testName = newName;
-                string[] itemNames = QueueData.Instance.GetItemNames();
-                // figure out if we have a copy already and increment the number if we do
-                while (true)
-                {
-                    if (itemNames.Contains(testName))
-                    {
-                        testName = "{0} {1}".FormatWith(newName, copyNumber);
-                        copyNumber++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                newName = testName;
-
-                UiThread.RunOnIdle(AddPartToQueue, new PartToAddToQueue(newName, newCopyFilename, thisIndexInQueue + 1));
-            }
-        }
-
         string alsoRemoveFromSdCardMessage = "Would you also like to remove this file from the Printer's SD Card?".Localize();
         string alsoRemoveFromSdCardTitle = "Remove From Printer's SD Card?";
-        void DeletePartFromQueue(object state)
+        internal void DeletePartFromQueue(object state)
         {
             if (PrintItemWrapper.PrintItem.FileLocation == QueueData.SdCardFileName)
             {
-                if (StyledMessageBox.ShowMessageBox(alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO))
-                {
-                    // The firmware only understands the names when lowercase.
-                    PrinterConnectionAndCommunication.Instance.DeleteFileFromSdCard(PrintItemWrapper.PrintItem.Name);
-                }
+                StyledMessageBox.ShowMessageBox(onDeleteFileConfirm, alsoRemoveFromSdCardMessage, alsoRemoveFromSdCardTitle, StyledMessageBox.MessageType.YES_NO);
             }
 
             int thisIndexInQueue = QueueData.Instance.GetIndex(PrintItemWrapper);
-            QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);
+            QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);   
+            
+        }
+
+        private void onLibraryItemClick(object sender, EventArgs e)
+        {
+            if (queueDataView.EditMode)
+            {
+                if (this.isSelectedItem)
+                {
+                    this.isSelectedItem = false;
+                    this.selectionCheckBox.Checked = false;
+                    queueDataView.SelectedItems.Remove(this);
+                }
+                else
+                {
+                    this.isSelectedItem = true;
+                    this.selectionCheckBox.Checked = true;
+                    queueDataView.SelectedItems.Add(this);
+                }
+            }
+        }
+
+        void onDeleteFileConfirm(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                // The firmware only understands the names when lowercase.
+                PrinterConnectionAndCommunication.Instance.DeleteFileFromSdCard(PrintItemWrapper.PrintItem.Name);
+            }
         }
 
         public static void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
         {
+            itemToRemove = printItemWrapper;
             UiThread.RunOnIdle((state) =>
             {
                 string maxLengthName = printItemWrapper.FileLocation;
@@ -461,11 +528,18 @@ namespace MatterHackers.MatterControl.PrintQueue
 				string notFoundMessageEnd = LocalizedString.Get("Would you like to remove it from the queue");
 				string message = "{0}:\n'{1}'\n\n{2}?".FormatWith(notFoundMessage, maxLengthName,notFoundMessageEnd);
 				string titleLabel = LocalizedString.Get("Item not Found");
-					if (StyledMessageBox.ShowMessageBox(message, titleLabel, StyledMessageBox.MessageType.YES_NO))
-                {
-                    QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(printItemWrapper));
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.YES_NO);
+                
             });
+        }
+
+        static PrintItemWrapper itemToRemove;
+        static void onConfirmRemove(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+            {
+                QueueData.Instance.RemoveIndexOnIdle(QueueData.Instance.GetIndex(itemToRemove));
+            }
         }
 
         public void ThemeChanged(object sender, EventArgs e)
@@ -490,9 +564,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public override void OnDraw(Graphics2D graphics2D)
         {
+            if (this.queueDataView.EditMode)
+            {
+                selectionCheckBoxContainer.Visible = true;
+                actionButtonContainer.Visible = false;
+            }
+            else
+            {
+                selectionCheckBoxContainer.Visible = false;
+            }
+
             base.OnDraw(graphics2D);
             
-            if (this.isActivePrint)
+            if (this.isActivePrint && !this.queueDataView.EditMode)
             {
                 //RectangleDouble Bounds = LocalBounds;
                 //RoundedRect rectBorder = new RoundedRect(Bounds, 0);
@@ -501,22 +585,34 @@ namespace MatterHackers.MatterControl.PrintQueue
                 SetTextColors(RGBA_Bytes.White);
 
                 //graphics2D.Render(new Stroke(rectBorder, 4), ActiveTheme.Instance.SecondaryAccentColor);
-            }            
-            else if (this.isHoverItem)
+            }   
+            else if (this.isSelectedItem)
+            {
+                this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+                this.partLabel.TextColor = RGBA_Bytes.White;
+                this.partStatus.TextColor = RGBA_Bytes.White;
+                this.selectionCheckBox.TextColor = RGBA_Bytes.White;
+            }
+            else if (this.IsHoverItem)
             {
                 RectangleDouble Bounds = LocalBounds;
                 RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
                 this.BackgroundColor = RGBA_Bytes.White;
-                SetTextColors(RGBA_Bytes.Black);
+                this.partLabel.TextColor = RGBA_Bytes.Black;
+                this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+                this.partStatus.TextColor = RGBA_Bytes.Black;
+
 
                 graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
             }
 			else
 			{	
-				this.BackgroundColor = RGBA_Bytes.White;
-                SetTextColors(RGBA_Bytes.Black);                
-			}
+                this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
+                SetTextColors(RGBA_Bytes.Black);
+                this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+                this.partStatus.TextColor = RGBA_Bytes.Black;
+            }
         }
     }
 }

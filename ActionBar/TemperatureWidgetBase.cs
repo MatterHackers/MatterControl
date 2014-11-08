@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -63,10 +64,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
         event EventHandler unregisterEvents;
         public TemperatureWidgetBase(string textValue)
-            : base(52, 52)
+            : base(52* TextWidget.GlobalPointSizeScaleRatio, 52* TextWidget.GlobalPointSizeScaleRatio)
         {
 
-            whiteButtonFactory.FixedHeight = 18;
+            whiteButtonFactory.FixedHeight = 18* TextWidget.GlobalPointSizeScaleRatio;
             whiteButtonFactory.fontSize = 7;
             whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
             whiteButtonFactory.normalTextColor = RGBA_Bytes.DarkGray;
@@ -75,11 +76,11 @@ namespace MatterHackers.MatterControl.ActionBar
             container.AnchorAll();
 
             this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
-            this.Margin = new BorderDouble(0, 2);
+            this.Margin = new BorderDouble(0, 2)* TextWidget.GlobalPointSizeScaleRatio;
 
             GuiWidget labelContainer = new GuiWidget();
             labelContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            labelContainer.Height = 18;
+            labelContainer.Height = 18* TextWidget.GlobalPointSizeScaleRatio;
 
             labelTextWidget = new TextWidget("", pointSize:8);
             labelTextWidget.AutoExpandBoundsToText = true;
@@ -103,9 +104,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
             GuiWidget buttonContainer = new GuiWidget();
             buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            buttonContainer.Height = 18;
+            buttonContainer.Height = 18* TextWidget.GlobalPointSizeScaleRatio;
 
-            preheatButton = whiteButtonFactory.Generate("PREHEAT");
+            preheatButton = whiteButtonFactory.Generate("Preheat".Localize().ToUpper());
             preheatButton.Cursor = Cursors.Hand;
             preheatButton.Visible = false;
 

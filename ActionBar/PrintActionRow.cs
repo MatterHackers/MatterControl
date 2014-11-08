@@ -53,7 +53,9 @@ namespace MatterHackers.MatterControl.ActionBar
             textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
             textImageButtonFactory.AllowThemeToAdjustImage = false;
 
-            textImageButtonFactory.borderWidth = -1;
+            textImageButtonFactory.borderWidth = 1;
+            textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255,255,255, 100);
+            textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255,255,255, 100);
             textImageButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryAccentColor;
         }
 
@@ -63,7 +65,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			addButton.tooltipText = LocalizedString.Get("Add a file to be printed");
             addButton.Margin = new BorderDouble(0, 6, 6, 3);
 
-			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Start"), "icon_play_32x32.png");
+			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Print"), "icon_play_32x32.png");
 			startButton.tooltipText = LocalizedString.Get("Begin printing the selected item.");
             startButton.Margin = new BorderDouble(0, 6, 6, 3);
 
@@ -137,17 +139,17 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-            addButton.Click += new ButtonBase.ButtonEventHandler(onAddButton_Click);
-            startButton.Click += new ButtonBase.ButtonEventHandler(onStartButton_Click);
-            skipButton.Click += new ButtonBase.ButtonEventHandler(onSkipButton_Click);
-            removeButton.Click += new ButtonBase.ButtonEventHandler(onRemoveButton_Click);
-            resumeButton.Click += new ButtonBase.ButtonEventHandler(onResumeButton_Click);
-            pauseButton.Click += new ButtonBase.ButtonEventHandler(onPauseButton_Click);
+            addButton.Click += new EventHandler(onAddButton_Click);
+            startButton.Click += new EventHandler(onStartButton_Click);
+            skipButton.Click += new EventHandler(onSkipButton_Click);
+            removeButton.Click += new EventHandler(onRemoveButton_Click);
+            resumeButton.Click += new EventHandler(onResumeButton_Click);
+            pauseButton.Click += new EventHandler(onPauseButton_Click);
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
             cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
-            reprintButton.Click += new ButtonBase.ButtonEventHandler(onReprintButton_Click);
-            doneWithCurrentPartButton.Click += new ButtonBase.ButtonEventHandler(onDoneWithCurrentPartButton_Click);
+            reprintButton.Click += new EventHandler(onReprintButton_Click);
+            doneWithCurrentPartButton.Click += new EventHandler(onDoneWithCurrentPartButton_Click);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
         }
 			
@@ -165,7 +167,7 @@ namespace MatterHackers.MatterControl.ActionBar
             this.Invalidate();
         }
 
-        void onAddButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onAddButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle(AddButtonOnIdle);
         }
@@ -173,127 +175,37 @@ namespace MatterHackers.MatterControl.ActionBar
         void AddButtonOnIdle(object state)
         {
             string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            OpenFileDialogParams openParams = new OpenFileDialogParams("Select an STL file, Select a GCODE file|*.stl;*.gcode;*.zip", multiSelect: true, initialDirectory: documentsPath);
-            FileDialog.OpenFileDialog(ref openParams);
-            if (openParams.FileNames != null)
-            {
-                foreach (string loadedFileName in openParams.FileNames)
+            FileDialog.OpenFileDialog(
+                new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true, initialDirectory: documentsPath),
+                (openParams) =>
                 {
-                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
-                }
-            }
-        }
-
-        void partToPrint_SliceDone(object sender, EventArgs e)
-        {
-            PrintItemWrapper partToPrint = sender as PrintItemWrapper;
-            if (partToPrint != null)
-            {
-                partToPrint.SlicingDone.UnregisterEvent(partToPrint_SliceDone, ref unregisterEvents);
-                string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
-                if (gcodePathAndFileName != "")
-                {
-                    bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
-                    if (File.Exists(gcodePathAndFileName)
-                        && (originalIsGCode || File.ReadAllText(gcodePathAndFileName).Contains("filament used")))
+                    if (openParams.FileNames != null)
                     {
-                        string gcodeFileContents = "";
-                        using (FileStream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        foreach (string loadedFileName in openParams.FileNames)
                         {
-                            using (StreamReader gcodeStreamReader = new StreamReader(fileStream))
-                            {
-                                gcodeFileContents = gcodeStreamReader.ReadToEnd();
-                            }
-                        }
-
-                        timeSincePrintStarted.Restart();
-                        PrinterConnectionAndCommunication.Instance.StartPrint(gcodeFileContents);
-                    }
-                    else
-                    {
-                        PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
-                    }
-                }
-            }
-        }
-
-        string doNotShowAgainMessage = "Do not show this again".Localize();
-        string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and my not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?".Localize();
-        string removeFromQueueMessage = "Cannot find\n'{0}'.\nWould you like to remove it from the queue?".Localize();
-        string itemNotFoundMessage = "Item not found".Localize();
-        public void PrintActivePart()
-        {
-            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-            if (levelingData.needsPrintLeveling
-                && levelingData.sampledPosition0.z == 0
-                && levelingData.sampledPosition1.z == 0
-                && levelingData.sampledPosition2.z == 0)
-            {
-                LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
-                return;
-            }
-
-            string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
-            if (ActiveSliceSettings.Instance.HasSdCardReader() 
-                && pathAndFile == QueueData.SdCardFileName)
-            {
-                PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
-            }
-            else if (ActiveSliceSettings.Instance.IsValid())
-            {
-                if (File.Exists(pathAndFile))
-                {
-                    string hideGCodeWarning = ApplicationSettings.Instance.get("HideGCodeWarning");
-
-                    if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
-                    {
-                        CheckBox hideGCodeWaringCheckBox = new CheckBox(doNotShowAgainMessage);
-                        hideGCodeWaringCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                        hideGCodeWaringCheckBox.Margin = new BorderDouble(top: 6);
-                        hideGCodeWaringCheckBox.HAnchor = Agg.UI.HAnchor.ParentCenter;
-                        hideGCodeWaringCheckBox.Click += (sender, e) =>
-                        {
-                            if (hideGCodeWaringCheckBox.Checked)
-                            {
-                                ApplicationSettings.Instance.set("HideGCodeWarning", "true");
-                            }
-                            else
-                            {
-                                ApplicationSettings.Instance.set("HideGCodeWarning", null);
-                            }
-                        };
-                        if (!StyledMessageBox.ShowMessageBox(gcodeWarningMessage, "Warning GCode file".Localize(), new GuiWidget[] { hideGCodeWaringCheckBox }, StyledMessageBox.MessageType.YES_NO))
-                        {
-                            // the user selected 'no' they don't want to print the file
-                            return;
+                            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
                         }
                     }
-
-                    PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-                    PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-                    SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-                    partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
-                }
-                else
-                {
-                    string message = String.Format(removeFromQueueMessage, pathAndFile);
-                    if (StyledMessageBox.ShowMessageBox(message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO))
-                    {
-                        QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
-                    }
-                }
-            }
+                });
         }
 
-        void onStartButton_Click(object sender, MouseEventArgs mouseEvent)
+
+
+
+        
+
+
+
+
+        void onStartButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
-                PrintActivePart();
+                PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
             });
         }
 
-        void onSkipButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onSkipButton_Click(object sender, EventArgs mouseEvent)
         {
             if (QueueData.Instance.Count > 1)
             {
@@ -301,7 +213,7 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        void onResumeButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onResumeButton_Click(object sender, EventArgs mouseEvent)
         {
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
             {
@@ -309,12 +221,12 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        void onRemoveButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onRemoveButton_Click(object sender, EventArgs mouseEvent)
         {
             QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
         }
 
-        void onPauseButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onPauseButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.RequestPause();
         }
@@ -325,13 +237,18 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
             {
-                if (StyledMessageBox.ShowMessageBox(cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO))
-				{	
-                    CancelPrinting();
-                }
+                StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO);                
             }
             else
             {
+                CancelPrinting();
+            }
+        }
+
+        void onConfirmCancelPrint(bool messageBoxResponse)
+        {
+            if (messageBoxResponse)
+			{	
                 CancelPrinting();
             }
         }
@@ -351,7 +268,7 @@ namespace MatterHackers.MatterControl.ActionBar
             timeSincePrintStarted.Reset();
         }
 
-        void onDoneWithCurrentPartButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.ResetToReadyState();
             QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
@@ -359,11 +276,11 @@ namespace MatterHackers.MatterControl.ActionBar
             // we were on.
         }
 
-        void onReprintButton_Click(object sender, MouseEventArgs mouseEvent)
+        void onReprintButton_Click(object sender, EventArgs mouseEvent)
         {
             UiThread.RunOnIdle((state) =>
             {
-                PrintActivePart();
+                PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
             });
         }
 
