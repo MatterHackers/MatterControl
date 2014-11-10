@@ -4,6 +4,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             GuiWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             mainContainer.AnchorAll();
-            mainContainer.Padding = new BorderDouble(3, 0, 3, 5);
+            mainContainer.Padding = new BorderDouble(3, 3, 3, 5);
             mainContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             string headerTitle;
@@ -225,11 +226,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
             buttonContainer.HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight;
             //buttonContainer.VAnchor = VAnchor.BottomTop;
-            buttonContainer.Margin = new BorderDouble(0, 3);
+            buttonContainer.Margin = new BorderDouble(0, 5,0,3);
             {
                 //Construct buttons
                 saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
                 //saveButton.VAnchor = VAnchor.Bottom;
+
+
 
                 cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
                 //cancelButton.VAnchor = VAnchor.Bottom;
@@ -237,6 +240,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
                 //Add buttons to buttonContainer
                 buttonContainer.AddChild(saveButton);
+                buttonContainer.AddChild(new HorizontalSpacer());
                 buttonContainer.AddChild(cancelButton);
             }
 

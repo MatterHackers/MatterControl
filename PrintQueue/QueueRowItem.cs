@@ -205,6 +205,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             AddHandlers();
         }
 
+        FatFlatClickWidget viewButton;
+        TextWidget viewButtonLabel;
         SlideWidget getItemActionButtons()
         {
             SlideWidget buttonContainer = new SlideWidget();
@@ -214,50 +216,55 @@ namespace MatterHackers.MatterControl.PrintQueue
             FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
             buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
 
-            ClickWidget printButton = new ClickWidget();
-            printButton.VAnchor = VAnchor.ParentBottomTop;
-            printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            printButton.Width = 100;
+            TextWidget removeLabel = new TextWidget("Remove".Localize());
+            removeLabel.TextColor = RGBA_Bytes.White;
+            removeLabel.VAnchor = VAnchor.ParentCenter;
+            removeLabel.HAnchor = HAnchor.ParentCenter;
 
-            TextWidget printLabel = new TextWidget("Remove".Localize());
-            printLabel.TextColor = RGBA_Bytes.White;
-            printLabel.VAnchor = VAnchor.ParentCenter;
-            printLabel.HAnchor = HAnchor.ParentCenter;
+            FatFlatClickWidget removeButton = new FatFlatClickWidget(removeLabel);
+            removeButton.VAnchor = VAnchor.ParentBottomTop;
+            removeButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+            removeButton.Width = 100;
+            
+            removeButton.Click += onRemovePartClick;
 
-            printButton.AddChild(printLabel);
-            printButton.Click += (sender, e) =>
-            {
-                UiThread.RunOnIdle(DeletePartFromQueue);
-            }; ;
+            viewButtonLabel = new TextWidget("View".Localize());
+            viewButtonLabel.TextColor = RGBA_Bytes.White;
+            viewButtonLabel.VAnchor = VAnchor.ParentCenter;
+            viewButtonLabel.HAnchor = HAnchor.ParentCenter;
 
-            ClickWidget viewButton = new ClickWidget();
+            viewButton = new FatFlatClickWidget(viewButtonLabel);
             viewButton.VAnchor = VAnchor.ParentBottomTop;
             viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
             viewButton.Width = 100;
 
-            TextWidget editLabel = new TextWidget("View".Localize());
-            editLabel.TextColor = RGBA_Bytes.White;
-            editLabel.VAnchor = VAnchor.ParentCenter;
-            editLabel.HAnchor = HAnchor.ParentCenter;
-
-            viewButton.AddChild(editLabel);
             viewButton.Click += onViewPartClick;
 
-            //buttonFlowContainer.AddChild(viewButton);
-            buttonFlowContainer.AddChild(printButton);
+            buttonFlowContainer.AddChild(viewButton);
+            buttonFlowContainer.AddChild(removeButton);
 
             buttonContainer.AddChild(buttonFlowContainer);
-            //buttonContainer.Width = 200;
-            buttonContainer.Width = 100;
+            buttonContainer.Width = 200;
+            //buttonContainer.Width = 100;
 
             return buttonContainer;
         }
 
         private void onViewPartClick(object sender, EventArgs e)
         {
+            this.actionButtonContainer.SlideOut();
             UiThread.RunOnIdle((state) =>
-            {
-                OpenPartViewWindow(false);
+            {                
+                OpenPartViewWindow(false);                
+            });
+        }
+
+        private void onRemovePartClick(object sender, EventArgs e)
+        {
+            this.actionButtonContainer.SlideOut();
+            UiThread.RunOnIdle((state) =>
+            {                
+                DeletePartFromQueue(state);                
             });
         }
 
@@ -575,16 +582,20 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
 
             base.OnDraw(graphics2D);
+
+            RectangleDouble Bounds = LocalBounds;
+            RoundedRect rectBorder = new RoundedRect(Bounds, 0);
             
             if (this.isActivePrint && !this.queueDataView.EditMode)
             {
-                //RectangleDouble Bounds = LocalBounds;
-                //RoundedRect rectBorder = new RoundedRect(Bounds, 0);
-
                 this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
                 SetTextColors(RGBA_Bytes.White);
+                this.viewButton.BackgroundColor = RGBA_Bytes.White;
+                this.viewButtonLabel.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
 
-                //graphics2D.Render(new Stroke(rectBorder, 4), ActiveTheme.Instance.SecondaryAccentColor);
+                //Draw interior border
+                graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
+                
             }   
             else if (this.isSelectedItem)
             {
@@ -592,18 +603,19 @@ namespace MatterHackers.MatterControl.PrintQueue
                 this.partLabel.TextColor = RGBA_Bytes.White;
                 this.partStatus.TextColor = RGBA_Bytes.White;
                 this.selectionCheckBox.TextColor = RGBA_Bytes.White;
+                this.viewButton.BackgroundColor = RGBA_Bytes.White;
+                this.viewButtonLabel.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
             }
             else if (this.IsHoverItem)
             {
-                RectangleDouble Bounds = LocalBounds;
-                RoundedRect rectBorder = new RoundedRect(Bounds, 0);
-
                 this.BackgroundColor = RGBA_Bytes.White;
                 this.partLabel.TextColor = RGBA_Bytes.Black;
                 this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
                 this.partStatus.TextColor = RGBA_Bytes.Black;
+                this.viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+                this.viewButtonLabel.TextColor = RGBA_Bytes.White;
 
-
+                //Draw interior border
                 graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
             }
 			else
@@ -612,6 +624,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                 SetTextColors(RGBA_Bytes.Black);
                 this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
                 this.partStatus.TextColor = RGBA_Bytes.Black;
+                this.viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+                this.viewButtonLabel.TextColor = RGBA_Bytes.White;
             }
         }
     }

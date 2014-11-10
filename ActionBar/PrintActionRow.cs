@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.ActionBar
             if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint)
             {
                 SlicingQueue.Instance.CancelCurrentSlicing();
-            }
+            }            
             PrinterConnectionAndCommunication.Instance.Stop();
             timeSincePrintStarted.Reset();
         }
