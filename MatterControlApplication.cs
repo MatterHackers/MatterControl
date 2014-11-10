@@ -173,16 +173,16 @@ namespace MatterHackers.MatterControl
             StringBuilder gcodeStringBuilder = new StringBuilder();
 
             int loops = 15;
-            int steps = 20;
-            double radius = 90;
-            Vector2 center = new Vector2(0, 0);
+            int steps = 200;
+            double radius = 50;
+            Vector2 center = new Vector2(150, 100);
 
             gcodeStringBuilder.AppendLine("G28 ; home all axes");
             gcodeStringBuilder.AppendLine("G90 ; use absolute coordinates");
             gcodeStringBuilder.AppendLine("G21 ; set units to millimeters");
             gcodeStringBuilder.AppendLine("G92 E0");
             gcodeStringBuilder.AppendLine("G1 F7800.000");
-            //gcodeStringBuilder.AppendLine("G1 Z" + (30).ToString());
+            gcodeStringBuilder.AppendLine("G1 Z" + (5).ToString());
             WriteMove(gcodeStringBuilder, center);
 
             for (int loop = 0; loop < loops; loop++)

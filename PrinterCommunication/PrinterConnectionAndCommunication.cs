@@ -808,9 +808,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
+        int okCount = 0;
         public void PrintingCanContinue(object sender, EventArgs e)
         {
-            timeHaveBeenWaitingForOK.Stop();
+            //if ((okCount++ % 100) != 0)
+            {
+                timeHaveBeenWaitingForOK.Stop();
+            }
+            //else
+            {
+                //int a = 0;
+            }
         }
 
         Stopwatch timeWaitingForTemperature = new Stopwatch();
@@ -2032,37 +2040,37 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             timeSinceLastWrite.Restart();
             if (PrinterIsConnected)
             {
-                //bool forceResendInCaseOfOKError = false;
+                bool forceResendInCaseOfOKError = false;
                 // wait until the printer responds from the last command with an ok OR we waited to long
-                while (PrinterIsPrinting && timeHaveBeenWaitingForOK.IsRunning)// && !forceResendInCaseOfOKError)
+                while (PrinterIsPrinting 
+                    && timeHaveBeenWaitingForOK.IsRunning
+                    && !forceResendInCaseOfOKError
+                    )
                 {
-#if false 
-                    // this is a bunch of code to try and make sure the printer does not stop on transmission errors.
-                    // It is not working and is currently disabled. It would be great to debug this and get it working. Lars.
-                    // It has been more than 5 seconds since the printer responded anything 
-                    // and it was not ok, and it's been more than 10 second since we sent the command
-                    if (timeSinceLastReadAnything.Elapsed.Seconds > 5 && timeSinceLastWrite.Elapsed.Seconds > 10)
+#if true
+                    // we are still sending commands
+                    if (printerCommandQueueIndex > 0 && printerCommandQueueIndex < loadedGCode.Count - 1)
                     {
-                        // we are still sending commands
-                        if (printerCommandQueueIndex > 0 && printerCommandQueueIndex < loadedGCode.GCodeCommandQueue.Count)
+                        // the last instruction was a move
+                        PrinterMachineInstruction lastInstruction = loadedGCode.Instruction(printerCommandQueueIndex - 1);
+                        bool wasMoveAndNoOK = (lastInstruction.Line.Contains("G0 ") || lastInstruction.Line.Contains("G1 ")) && timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > 5;
                         {
-                            // the last instruction was a move
-                            PrinterMachineInstruction lastInstruction = loadedGCode.Instruction(printerCommandQueueIndex - 1);
-                            if (firstLineToResendIndex == allCheckSumLinesSent.Count)
+                            // This code is to try and make sure the printer does not stop on transmission errors.
+                            // If it has been more than 5 seconds since the printer responded anything 
+                            // and it was not ok, and it's been more than 10 second since we sent the command.
+                            if ((timeSinceLastReadAnything.Elapsed.TotalSeconds > 3 && timeSinceLastWrite.Elapsed.TotalSeconds > 5)
+                                || wasMoveAndNoOK)
                             {
-                                // Basically we got some response but it did not contain an OK.
-                                // The theory is that we may have recieved a transmission error (like 'OP' rather than 'OK')
-                                // and in that event we don't want the print to just stop and wait forever.
-                                forceResendInCaseOfOKError = true;
-                                firstLineToResendIndex--; // we are going to resend the last command
+                                if (firstLineToResendIndex == allCheckSumLinesSent.Count)
+                                {
+                                    // Basically we got some response but it did not contain an OK.
+                                    // The theory is that we may have recieved a transmission error (like 'OP' rather than 'OK')
+                                    // and in that event we don't want the print to just stop and wait forever.
+                                    forceResendInCaseOfOKError = true;
+                                    firstLineToResendIndex--; // we are going to resend the last command
+                                }
                             }
                         }
-                    }
-
-                    bool printerWantsResend = firstLineToResendIndex < allCheckSumLinesSent.Count;
-                    if (printerWantsResend)
-                    {
-                        forceResendInCaseOfOKError = true;
                     }
 #endif
 
