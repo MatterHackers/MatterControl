@@ -2047,7 +2047,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     && !forceResendInCaseOfOKError
                     )
                 {
-#if true
+#if false
                     // we are still sending commands
                     if (printerCommandQueueIndex > 0 && printerCommandQueueIndex < loadedGCode.Count - 1)
                     {
