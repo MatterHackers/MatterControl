@@ -218,6 +218,7 @@ namespace MatterHackers.MatterControl.PrintHistory
                         {
                             QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId));
                         }
+                        rightButtonOverlay.SlideOut();
                     };
                     rightMiddleColumnContainer.AddChild(printButton);
                 }
@@ -311,7 +312,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         void ViewButton_Click(object sender, EventArgs e)
         {
-            
+
+            this.rightButtonOverlay.SlideOut();
             PrintItem printItem = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItem>().Where(v => v.Id == this.printTask.PrintItemId).Take(1).FirstOrDefault();
             
             if (printItem != null)

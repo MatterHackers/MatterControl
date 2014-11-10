@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 {
                     QueueData.Instance.AddItem(this.printItemWrapper);
                 }
-                
+                buttonContainer.SlideOut();
                 this.Invalidate();
 
             };;
@@ -355,6 +355,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             UiThread.RunOnIdle((state) =>
             {
+                this.rightButtonOverlay.SlideOut();
                 openPartView(state, false);
             });
         }
