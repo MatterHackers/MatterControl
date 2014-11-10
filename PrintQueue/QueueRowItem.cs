@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             AddHandlers();
         }
 
-        ClickWidget viewButton;
+        FatFlatClickWidget viewButton;
         TextWidget viewButtonLabel;
         SlideWidget getItemActionButtons()
         {
@@ -216,30 +216,28 @@ namespace MatterHackers.MatterControl.PrintQueue
             FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
             buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
 
-            ClickWidget removeButton = new ClickWidget();
+            TextWidget removeLabel = new TextWidget("Remove".Localize());
+            removeLabel.TextColor = RGBA_Bytes.White;
+            removeLabel.VAnchor = VAnchor.ParentCenter;
+            removeLabel.HAnchor = HAnchor.ParentCenter;
+
+            FatFlatClickWidget removeButton = new FatFlatClickWidget(removeLabel);
             removeButton.VAnchor = VAnchor.ParentBottomTop;
             removeButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
             removeButton.Width = 100;
-
-            TextWidget printLabel = new TextWidget("Remove".Localize());
-            printLabel.TextColor = RGBA_Bytes.White;
-            printLabel.VAnchor = VAnchor.ParentCenter;
-            printLabel.HAnchor = HAnchor.ParentCenter;
-
-            removeButton.AddChild(printLabel);
+            
             removeButton.Click += onRemovePartClick;
-
-            viewButton = new ClickWidget();
-            viewButton.VAnchor = VAnchor.ParentBottomTop;
-            viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-            viewButton.Width = 100;
 
             viewButtonLabel = new TextWidget("View".Localize());
             viewButtonLabel.TextColor = RGBA_Bytes.White;
             viewButtonLabel.VAnchor = VAnchor.ParentCenter;
             viewButtonLabel.HAnchor = HAnchor.ParentCenter;
 
-            viewButton.AddChild(viewButtonLabel);
+            viewButton = new FatFlatClickWidget(viewButtonLabel);
+            viewButton.VAnchor = VAnchor.ParentBottomTop;
+            viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+            viewButton.Width = 100;
+
             viewButton.Click += onViewPartClick;
 
             buttonFlowContainer.AddChild(viewButton);

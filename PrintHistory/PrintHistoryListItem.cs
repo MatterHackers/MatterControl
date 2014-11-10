@@ -180,31 +180,27 @@ namespace MatterHackers.MatterControl.PrintHistory
                 FlowLayoutWidget rightMiddleColumnContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
                 rightMiddleColumnContainer.VAnchor = VAnchor.ParentBottomTop;
                 {
-                    ClickWidget viewButton = new ClickWidget();
-                    viewButton.VAnchor = VAnchor.ParentBottomTop;
-                    viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-                    viewButton.Width = 100;
-
                     TextWidget viewLabel = new TextWidget("View".Localize());
                     viewLabel.TextColor = RGBA_Bytes.White;
                     viewLabel.VAnchor = VAnchor.ParentCenter;
                     viewLabel.HAnchor = HAnchor.ParentCenter;
 
-                    viewButton.AddChild(viewLabel);
+                    FatFlatClickWidget viewButton = new FatFlatClickWidget(viewLabel);
+                    viewButton.VAnchor = VAnchor.ParentBottomTop;
+                    viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+                    viewButton.Width = 100;                    
                     viewButton.Click += ViewButton_Click;
                     rightMiddleColumnContainer.AddChild(viewButton);
-
-                    ClickWidget printButton = new ClickWidget();
-                    printButton.VAnchor = VAnchor.ParentBottomTop;
-                    printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-                    printButton.Width = 100;
 
                     TextWidget printLabel = new TextWidget("Print".Localize());
                     printLabel.TextColor = RGBA_Bytes.White;
                     printLabel.VAnchor = VAnchor.ParentCenter;
                     printLabel.HAnchor = HAnchor.ParentCenter;
 
-                    printButton.AddChild(printLabel);
+                    FatFlatClickWidget printButton = new FatFlatClickWidget(printLabel);
+                    printButton.VAnchor = VAnchor.ParentBottomTop;
+                    printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+                    printButton.Width = 100;
                     printButton.Click += (sender, e) =>
                     {
 
