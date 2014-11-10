@@ -202,11 +202,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
             printButton.AddChild(printLabel);
             printButton.Click += (sender, e) =>
             {
-                QueueData.Instance.AddItem(this.printItemWrapper,0);
+
                 if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
                 {
+                    QueueData.Instance.AddItem(this.printItemWrapper, 0);
                     QueueData.Instance.SelectedIndex = 0;
                     PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+                }
+                else
+                {
+                    QueueData.Instance.AddItem(this.printItemWrapper);
                 }
                 
                 this.Invalidate();
