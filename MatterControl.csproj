@@ -112,6 +112,7 @@
     <Compile Include="CrashTracker.cs" />
     <Compile Include="CustomWidgets\AltGroupBox.cs" />
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
+    <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
