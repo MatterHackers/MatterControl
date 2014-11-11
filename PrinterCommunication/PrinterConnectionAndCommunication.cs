@@ -269,8 +269,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         int lastRemainingSecondsReported = 0;
         int printerCommandQueueIndex = -1;
 
-        Thread sendGCodeToPrinterThread;
-
         public bool DtrEnableOnConnect
         {
             get
@@ -808,16 +806,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
-        int okCount = 0;
+        // this is to make it misbehave
+        //int okCount = 1;
         public void PrintingCanContinue(object sender, EventArgs e)
         {
-            //if ((okCount++ % 100) != 0)
+            //if ((okCount++ % 67) != 0)
             {
                 timeHaveBeenWaitingForOK.Stop();
-            }
-            //else
-            {
-                //int a = 0;
             }
         }
 
@@ -1857,6 +1852,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
+        // this is to make it misbehave
+        //int checkSumCount = 1;
         private void WriteChecksumLineToPrinter(string lineToWrite)
         {
             SetDetailedPrintingState(lineToWrite);
@@ -1867,9 +1864,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             lineToWrite = RunPrintLevelingTranslations(lineToWrite);
 
             string lineWithCount = "N" + (allCheckSumLinesSent.Count + 1).ToString() + " " + lineToWrite;
-            string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount);
-            WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
+            string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
             allCheckSumLinesSent.Add(lineWithChecksum);
+            //if ((checkSumCount++ % 71) == 0)
+            {
+                //lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
+                //WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
+            }
+            //else
+            {
+                WriteToPrinter(lineWithChecksum + "\r\n", lineToWrite);
+            }
         }
 
         void WriteToPrinter(string lineToWrite, string lineWithoutChecksum)
@@ -1902,6 +1907,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         timeSinceLastReadAnything.Restart();
                         timeHaveBeenWaitingForOK.Restart();
                         serialPort.Write(lineToWrite);
+                        //Debug.Write("w: " + lineToWrite);
                     }
                     catch (IOException)
                     {
@@ -2025,29 +2031,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             OnEnabledChanged(null);
         }
 
-        void SendCurrentGCodeFileToPrinter()
-        {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            while (PrinterIsPrinting && PrinterIsConnected)
-            {
-                WriteNextLineFromGCodeFile();
-            }
-        }
-
         Stopwatch timeSinceLastWrite = new Stopwatch();
-        void WriteNextLineFromGCodeFile()
+        void TryWriteNextLineFromGCodeFile()
         {
             timeSinceLastWrite.Restart();
-            if (PrinterIsConnected)
+#if true
+            bool forceContinueInCaseOfNoResponse = false;
+            // wait until the printer responds from the last command with an ok OR we waited too long
+            if(timeHaveBeenWaitingForOK.IsRunning
+                && !forceContinueInCaseOfNoResponse)
             {
-                bool forceResendInCaseOfOKError = false;
-                // wait until the printer responds from the last command with an ok OR we waited to long
-                while (PrinterIsPrinting 
-                    && timeHaveBeenWaitingForOK.IsRunning
-                    && !forceResendInCaseOfOKError
-                    )
+                using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile1"))
                 {
-#if false
                     // we are still sending commands
                     if (printerCommandQueueIndex > 0 && printerCommandQueueIndex < loadedGCode.Count - 1)
                     {
@@ -2061,88 +2056,90 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                             if ((timeSinceLastReadAnything.Elapsed.TotalSeconds > 3 && timeSinceLastWrite.Elapsed.TotalSeconds > 5)
                                 || wasMoveAndNoOK)
                             {
-                                if (firstLineToResendIndex == allCheckSumLinesSent.Count)
+                                //if (firstLineToResendIndex == allCheckSumLinesSent.Count)
                                 {
                                     // Basically we got some response but it did not contain an OK.
                                     // The theory is that we may have recieved a transmission error (like 'OP' rather than 'OK')
                                     // and in that event we don't want the print to just stop and wait forever.
-                                    forceResendInCaseOfOKError = true;
+                                    forceContinueInCaseOfNoResponse = true;
                                     firstLineToResendIndex--; // we are going to resend the last command
                                 }
                             }
+                            else
+                            {
+                                // we are wating for the ok so let's wait
+                                return;
+                            }
                         }
                     }
+                }
+            }
 #endif
 
-                    // we are waiting for ok so wait some time
-                    System.Threading.Thread.Sleep(1);
-                }
-
-                bool pauseRequested = false;
-                using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile"))
+            bool pauseRequested = false;
+            using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile2"))
+            {
+                if (printerCommandQueueIndex < loadedGCode.Count)
                 {
-                    if (PrinterIsPrinting && printerCommandQueueIndex < loadedGCode.Count)
+                    if (firstLineToResendIndex < allCheckSumLinesSent.Count)
                     {
-                        if (firstLineToResendIndex < allCheckSumLinesSent.Count)
-                        {
-                            WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++], "resend");
-                        }
-                        else
-                        {
-                            string lineToWrite = loadedGCode.Instruction(printerCommandQueueIndex).Line;
-                            string[] splitOnSemicolon = lineToWrite.Split(';');
-                            string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
-                            if (trimedLine.Length > 0)
-                            {
-                                if (lineToWrite == "MH_PAUSE")
-                                {
-                                    pauseRequested = true;
-                                }
-                                else if(lineToWrite == "M226" || lineToWrite == "@pause")
-                                {
-                                    RequestPause(printerCommandQueueIndex+1);
-                                }
-                                else
-                                {
-                                    WriteChecksumLineToPrinter(lineToWrite);
-                                }
-
-                                firstLineToResendIndex++;
-                            }
-                            printerCommandQueueIndex++;
-                        }
-                    }
-                    else if (printWasCanceled)
-                    {
-                        CommunicationState = CommunicationStates.Connected;
-                        // never leave the extruder and the bed hot
-                        ReleaseMotors();
-                        TurnOffBedAndExtruders();
-                        printWasCanceled = false;
+                        WriteToPrinter(allCheckSumLinesSent[firstLineToResendIndex++] + "\n", "resend");
                     }
                     else
                     {
-                        if (printerCommandQueueIndex == loadedGCode.Count)
+                        string lineToWrite = loadedGCode.Instruction(printerCommandQueueIndex).Line;
+                        string[] splitOnSemicolon = lineToWrite.Split(';');
+                        string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
+                        if (trimedLine.Length > 0)
                         {
-                            CommunicationState = CommunicationStates.FinishedPrint;
+                            if (lineToWrite == "MH_PAUSE")
+                            {
+                                pauseRequested = true;
+                            }
+                            else if (lineToWrite == "M226" || lineToWrite == "@pause")
+                            {
+                                RequestPause(printerCommandQueueIndex + 1);
+                            }
+                            else
+                            {
+                                WriteChecksumLineToPrinter(lineToWrite);
+                            }
 
-                            printJobDisplayName = null;
-                            
-                            // never leave the extruder and the bed hot
-                            ReleaseMotors();
-                            TurnOffBedAndExtruders();
+                            firstLineToResendIndex++;
                         }
-                        else if (!PrinterIsPaused)
-                        {
-                            CommunicationState = CommunicationStates.Connected;
-                        }
+                        printerCommandQueueIndex++;
                     }
                 }
-
-                if (pauseRequested)
+                else if (printWasCanceled)
                 {
-                    DoPause();
+                    CommunicationState = CommunicationStates.Connected;
+                    // never leave the extruder and the bed hot
+                    ReleaseMotors();
+                    TurnOffBedAndExtruders();
+                    printWasCanceled = false;
                 }
+                else
+                {
+                    if (printerCommandQueueIndex == loadedGCode.Count)
+                    {
+                        CommunicationState = CommunicationStates.FinishedPrint;
+
+                        printJobDisplayName = null;
+
+                        // never leave the extruder and the bed hot
+                        ReleaseMotors();
+                        TurnOffBedAndExtruders();
+                    }
+                    else if (!PrinterIsPaused)
+                    {
+                        CommunicationState = CommunicationStates.Connected;
+                    }
+                }
+            }
+
+            if (pauseRequested)
+            {
+                DoPause();
             }
         }
 
@@ -2193,11 +2190,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             if (PrinterIsPrinting)
             {
                 CommunicationState = CommunicationStates.Paused;
-                if (sendGCodeToPrinterThread != null)
-                {
-                    sendGCodeToPrinterThread.Join(JoinThreadTimeoutMs);
-                }
-                sendGCodeToPrinterThread = null;
             }
         }
 
@@ -2241,11 +2233,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 else
                 {
                     CommunicationState = CommunicationStates.Printing;
-
-                    sendGCodeToPrinterThread = new Thread(SendCurrentGCodeFileToPrinter);
-                    sendGCodeToPrinterThread.Name = "sendGCodeToPrinterThread - Resume";
-                    sendGCodeToPrinterThread.IsBackground = true;
-                    sendGCodeToPrinterThread.Start();
                 }
             }
         }
@@ -2327,11 +2314,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 case CommunicationStates.Paused:
                     {
                         CommunicationState = CommunicationStates.Connected;
-                        if (sendGCodeToPrinterThread != null)
-                        {
-                            sendGCodeToPrinterThread.Join(JoinThreadTimeoutMs);
-                            sendGCodeToPrinterThread = null;
-                        }
                         if (activePrintTask != null)
                         {
                             TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
@@ -2428,7 +2410,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
 
-            switch(communicationState)
+            ClearQueuedGCode();
+            loadedGCode = GCodeFile.ParseGCodeString(string.Join("\n", printableGCode.ToArray()));
+
+            switch (communicationState)
             {
                 case CommunicationStates.PreparingToPrintToSd:
                     activePrintTask = null;
@@ -2456,24 +2441,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     throw new NotFiniteNumberException();
             }
 
-            ClearQueuedGCode();
-            loadedGCode = GCodeFile.ParseGCodeString(string.Join("\n", printableGCode.ToArray()));
-
             if (printableGCode.Count == 0)
             {
                 return true;
             }
 
-            sendGCodeToPrinterThread = new Thread(SendCurrentGCodeFileToPrinter);
-            sendGCodeToPrinterThread.Name = "sendGCodeToPrinterThread - StartPrint";
-            sendGCodeToPrinterThread.IsBackground = true;
-            sendGCodeToPrinterThread.Start();
-
             return true;
         }
 
         const int MAX_INVALID_CONNECTION_CHARS = 3;
-        string lineBeingRead = "";
+        string dataLastRead = "";
         string lastLineRead = "";
         public void ReadFromPrinter()
         {
@@ -2483,21 +2460,35 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             while (CommunicationState == CommunicationStates.AttemptingToConnect
                 || (PrinterIsConnected && serialPort.IsOpen && !Disconnecting))
             {
+                if(PrinterIsPrinting && PrinterIsConnected)
+                {
+                    TryWriteNextLineFromGCodeFile();
+                }
+
                 try
                 {
-                    while (serialPort != null 
+                    while (serialPort != null
                         && serialPort.BytesToRead > 0)
                     {
-                        int readCharAsInt = serialPort.ReadChar();
-                        if (readCharAsInt != -1)
+                        using (TimedLock.Lock(this, "ReadFromPrinter"))
                         {
-                            char nextChar = (char)readCharAsInt;
-                            using (TimedLock.Lock(this, "ReadFromPrinter"))
+                            string allDataRead = serialPort.ReadExisting();
+                            //Debug.Write("r: " + allDataRead);
+                            //Console.Write(indata);
+                            dataLastRead += allDataRead.Replace('\r', '\n');
+                            do
                             {
-                                if (nextChar == '\r' || nextChar == '\n')
+                                int returnPosition = dataLastRead.IndexOf('\n');
+                                if (returnPosition < 0)
                                 {
-                                    lastLineRead = lineBeingRead;
-                                    lineBeingRead = "";
+                                    // there is no return keep getting characters
+                                    break;
+                                }
+
+                                if (dataLastRead.Length > 0)
+                                {
+                                    lastLineRead = dataLastRead.Substring(0, returnPosition);
+                                    dataLastRead = dataLastRead.Substring(returnPosition+1);
 
                                     // process this command
                                     {
@@ -2533,13 +2524,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                                         }
                                     }
                                 }
-                                else
-                                {
-                                    lineBeingRead += nextChar;
-                                }
-                                timeSinceLastReadAnything.Restart();
-                            }
+                            } while (true);
                         }
+                        timeSinceLastReadAnything.Restart();
                     }
 
                     Thread.Sleep(1);
