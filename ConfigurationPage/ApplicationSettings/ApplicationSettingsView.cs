@@ -31,7 +31,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             mainContainer.AddChild(GetLanguageControl());
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             GuiWidget sliceEngineControl = GetSliceEngineControl();
-            if (sliceEngineControl != null)
+            if (sliceEngineControl != null
+                &&  ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 mainContainer.AddChild(sliceEngineControl);
                 mainContainer.AddChild(new HorizontalLine(separatorLineColor));
