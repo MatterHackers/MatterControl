@@ -971,8 +971,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                             }
                         }
 
-                        //Need to reimpliment in action row
-                        //timeSincePrintStarted.Restart();
                         PrinterConnectionAndCommunication.Instance.StartPrint(gcodeFileContents);
                     }
                     else
@@ -1904,7 +1902,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                     try
                     {
-                        timeSinceLastReadAnything.Restart();
+                        timeSinceLastWrite.Restart();
                         timeHaveBeenWaitingForOK.Restart();
                         serialPort.Write(lineToWrite);
                         //Debug.Write("w: " + lineToWrite);
@@ -2034,8 +2032,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         Stopwatch timeSinceLastWrite = new Stopwatch();
         void TryWriteNextLineFromGCodeFile()
         {
-            timeSinceLastWrite.Restart();
-#if true
             bool forceContinueInCaseOfNoResponse = false;
             // wait until the printer responds from the last command with an ok OR we waited too long
             if(timeHaveBeenWaitingForOK.IsRunning
@@ -2074,7 +2070,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     }
                 }
             }
-#endif
 
             bool pauseRequested = false;
             using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile2"))

@@ -88,10 +88,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Button applyScaleButton;
 
 		PrintItemWrapper printItemWrapper;
-		bool saveAsWindowIsOpen = false;
-		SaveAsWindow saveAsWindow;
-		ExportPrintItemWindow exportingWindow;
-		bool exportingWindowIsOpen = false;
+		
+		SaveAsWindow saveAsWindow = null;
+        ExportPrintItemWindow exportingWindow = null;
 
         List<MeshGroup> asynchMeshGroups = new List<MeshGroup>();
         List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
@@ -551,25 +550,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenExportWindow()
 		{
-			if (exportingWindowIsOpen == false)
+            if (exportingWindow == null)
 			{
 				exportingWindow = new ExportPrintItemWindow(this.printItemWrapper);
-				this.exportingWindowIsOpen = true;
-				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
+                exportingWindow.Closed += (sender, e) =>
+                {
+                    exportingWindow = null;
+                };
 				exportingWindow.ShowAsSystemWindow();
 			}
 			else
 			{
-				if (exportingWindow != null)
-				{
-					exportingWindow.BringToFront();
-				}
+                exportingWindow.BringToFront();
 			}
-		}
-
-		void ExportQueueItemWindow_Closed(object sender, EventArgs e)
-		{
-			this.exportingWindowIsOpen = false;
 		}
 
         public void ThemeChanged(object sender, EventArgs e)
@@ -1044,7 +1037,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             saveButtons.AddChild(saveButton);
             saveButton.Click += (sender, e) =>
             {
-                MergeAndSavePartsToMeshFile();
+                MergeAndSavePartsToCurrentMeshFile();
             };
 
             //Create Save As Button 	
@@ -1055,29 +1048,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             saveButtons.AddChild(saveAsButton);
             saveAsButton.Click += (sender, e) =>
             {
-                if (saveAsWindowIsOpen == false)
+                if (saveAsWindow == null)
                 {
-                    saveAsWindow = new SaveAsWindow(MergeAndSavePartsToMeshFile);
-                    this.saveAsWindowIsOpen = true;
-                    saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
+                    saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+                    saveAsWindow.Closed += (sender2, e2) =>
+                    {
+                        saveAsWindow = null;
+                    };
                 }
                 else
                 {
-                    if (saveAsWindowIsOpen != null)
-                    {
-                        saveAsWindow.BringToFront();
-                    }
+                    saveAsWindow.BringToFront();
                 }
             };
 
             saveButtons.Visible = false;
 
             return saveButtons;
-        }
-
-        void SaveAsWindow_Closed(object sender, EventArgs e)
-        {
-            this.saveAsWindowIsOpen = false;
         }
 
         private void AddScaleControls(FlowLayoutWidget buttonPanel)
@@ -1691,13 +1678,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             SelectionChanged += SetApplyScaleVisability;
         }
 
-        private void MergeAndSavePartsToMeshFile(PrintItemWrapper printItemWarpperToSwitchTo = null)
+        private void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
         {
-            if (printItemWarpperToSwitchTo != null)
-            {
-                printItemWrapper = printItemWarpperToSwitchTo;
-            }
-
             if (MeshGroups.Count > 0)
             {
                 string progressSavingPartsLabel = "Saving".Localize();
@@ -1712,12 +1694,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
                 mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
 
-                mergeAndSavePartsBackgroundWorker.RunWorkerAsync();
+                mergeAndSavePartsBackgroundWorker.RunWorkerAsync(returnInfo);
+            }
+        }
+
+        private void MergeAndSavePartsToCurrentMeshFile()
+        {
+            if (MeshGroups.Count > 0)
+            {
+                string progressSavingPartsLabel = "Saving".Localize();
+                string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
+                processingProgressControl.ProcessType = progressSavingPartsLabelFull;
+                processingProgressControl.Visible = true;
+                processingProgressControl.PercentComplete = 0;
+                LockEditControls();
+
+                BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
+
+                mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
+                mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
+
+                mergeAndSavePartsBackgroundWorker.RunWorkerAsync(printItemWrapper);
             }
         }
 
         void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            SaveAsWindow.SaveAsReturnInfo returnInfo = e.Argument as SaveAsWindow.SaveAsReturnInfo;
+
+            if (returnInfo != null)
+            {
+                printItemWrapper = returnInfo.printItemWrapper;
+            }
+
             // we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
             PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
@@ -1751,10 +1760,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
                 });
             }
+
+            e.Result = e.Argument;
         }
 
         void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            SaveAsWindow.SaveAsReturnInfo returnInfo = e.Result as SaveAsWindow.SaveAsReturnInfo;
+
+            if (returnInfo != null)
+            {
+                QueueData.Instance.AddItem(printItemWrapper);
+
+                if (returnInfo.placeInLibrary)
+                {
+                    LibraryData.Instance.AddItem(printItemWrapper);
+                }
+            }
+
             if (WidgetHasBeenClosed)
             {
                 return;
