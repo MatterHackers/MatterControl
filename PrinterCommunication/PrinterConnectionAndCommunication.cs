@@ -2051,9 +2051,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         bool wasMoveAndNoOK = (lastInstruction.Line.Contains("G0 ") || lastInstruction.Line.Contains("G1 ")) && timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > 5;
                         {
                             // This code is to try and make sure the printer does not stop on transmission errors.
-                            // If it has been more than 5 seconds since the printer responded anything 
-                            // and it was not ok, and it's been more than 10 second since we sent the command.
-                            if ((timeSinceLastReadAnything.Elapsed.TotalSeconds > 3 && timeSinceLastWrite.Elapsed.TotalSeconds > 5)
+                            // If it has been more than 10 seconds since the printer responded anything 
+                            // and it was not ok, and it's been more than 30 second since we sent the command.
+                            if ((timeSinceLastReadAnything.Elapsed.TotalSeconds > 10 && timeSinceLastWrite.Elapsed.TotalSeconds > 30)
                                 || wasMoveAndNoOK)
                             {
                                 //if (firstLineToResendIndex == allCheckSumLinesSent.Count)
