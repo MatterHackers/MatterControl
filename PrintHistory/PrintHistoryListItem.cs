@@ -203,18 +203,20 @@ namespace MatterHackers.MatterControl.PrintHistory
                     printButton.Width = 100;
                     printButton.Click += (sender, e) =>
                     {
-
-                        if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
+                        UiThread.RunOnIdle((state) =>
                         {
-                            QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId), 0);
-                            QueueData.Instance.SelectedIndex = 0;
-                            PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-                        }
-                        else
-                        {
-                            QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId));
-                        }
-                        rightButtonOverlay.SlideOut();
+                            if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
+                            {
+                                QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId), 0);
+                                QueueData.Instance.SelectedIndex = 0;
+                                PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+                            }
+                            else
+                            {
+                                QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId));
+                            }
+                            rightButtonOverlay.SlideOut();
+                        });
                     };
                     rightMiddleColumnContainer.AddChild(printButton);
                 }
