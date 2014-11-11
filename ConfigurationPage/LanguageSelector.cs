@@ -60,7 +60,6 @@ namespace MatterHackers.MatterControl
             languageDict["Deutsch"] = "DE";
 			languageDict["Polski"] = "PL";
 			languageDict["Türkçe"] = "TR";
-
         }
     }
 }

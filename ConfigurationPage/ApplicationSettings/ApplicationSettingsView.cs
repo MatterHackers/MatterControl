@@ -12,6 +12,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -29,6 +30,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             mainContainer.AddChild(GetLanguageControl());
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+            GuiWidget sliceEngineControl = GetSliceEngineControl();
+            if (sliceEngineControl != null)
+            {
+                mainContainer.AddChild(sliceEngineControl);
+                mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+            }
             
 			//Disabled for now (KP)
 			//mainContainer.AddChild(GetDisplayControl());
@@ -292,6 +299,44 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.AddChild(settingsLabel);
             buttonRow.AddChild(new HorizontalSpacer());
 			buttonRow.AddChild(languageRestartButton);
+            buttonRow.AddChild(optionsContainer);
+            return buttonRow;
+        }
+
+        private FlowLayoutWidget GetSliceEngineControl()
+        {
+            FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+            buttonRow.HAnchor = HAnchor.ParentLeftRight;
+            buttonRow.Margin = new BorderDouble(top: 4);
+
+            TextWidget settingsLabel = new TextWidget("Slice Engine".Localize());
+            settingsLabel.AutoExpandBoundsToText = true;
+            settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            settingsLabel.VAnchor = VAnchor.ParentTop;
+
+            FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
+            controlsContainer.HAnchor = HAnchor.ParentLeftRight;
+
+            FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            optionsContainer.Margin = new BorderDouble(bottom: 6);
+
+            if (ActiveSliceSettings.Instance.ExtruderCount > 1)
+            {
+                // Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
+                if (ActivePrinterProfile.Instance.ActiveSliceEngineType != ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
+                {
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+                }
+
+                // don't let the silce engine change if dual extrusion
+                return null;
+            }
+
+            optionsContainer.AddChild(new SliceEngineSelector("Slice Engine".Localize()));
+            optionsContainer.Width = 200;
+
+            buttonRow.AddChild(settingsLabel);
+            buttonRow.AddChild(new HorizontalSpacer());
             buttonRow.AddChild(optionsContainer);
             return buttonRow;
         }
