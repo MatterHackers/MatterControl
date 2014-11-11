@@ -1771,6 +1771,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (returnInfo != null)
             {
                 QueueData.Instance.AddItem(printItemWrapper);
+                if (!PrinterConnectionAndCommunication.Instance.PrintIsActive)
+                {
+                    QueueData.Instance.SelectedIndex = QueueData.Instance.Count-1;
+                }
 
                 if (returnInfo.placeInLibrary)
                 {
