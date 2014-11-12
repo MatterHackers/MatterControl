@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         MeshSelectInfo meshSelectInfo;
         public override void OnMouseDown(MouseEventArgs mouseEvent)
         {
-            autoRotateEnabled = false;
+            autoRotating = false;
             base.OnMouseDown(mouseEvent);
             if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
             {
@@ -273,7 +273,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate, bool openInEditMode = false)
         {
             this.windowType = windowType;
-            autoRotateEnabled = (autoRotate == AutoRotate.Enabled);
+            allowAutoRotate = (autoRotate == AutoRotate.Enabled);
+            autoRotating = allowAutoRotate;
             MeshGroupExtraData = new List<PlatingMeshGroupData>();
             MeshGroupExtraData.Add(new PlatingMeshGroupData());
 
@@ -594,7 +595,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Stopwatch timeSinceLastSpin = new Stopwatch();
         void AutoSpin(object state)
         {
-            if (!WidgetHasBeenClosed && autoRotateEnabled)
+            if (!WidgetHasBeenClosed && autoRotating)
             {
                 // add it back in to keep it running.
                 UiThread.RunOnIdle(AutoSpin);

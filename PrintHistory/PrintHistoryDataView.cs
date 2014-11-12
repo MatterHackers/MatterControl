@@ -127,10 +127,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         void ReloadData(object sender, EventArgs e)
         {
-            using (TimedLock.Lock(this, "ReloadData PrintHistory"))
+            UiThread.RunOnIdle((state) =>
             {
                 LoadHistoryItems(Count);
-            }
+            });
         }
 
         event EventHandler unregisterEvents;

@@ -52,7 +52,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     {
         protected static readonly int DefaultScrollBarWidth = 120;
 
-        protected bool autoRotateEnabled = false;
+        protected bool autoRotating = false;
+        protected bool allowAutoRotate = false;
         public MeshViewerWidget meshViewerWidget;
         event EventHandler unregisterEvents;
 
@@ -90,7 +91,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             // this is to add an image to the bed
             string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "bedimage.png");
-            if (autoRotateEnabled && File.Exists(imagePathAndFile))
+            if (allowAutoRotate && File.Exists(imagePathAndFile))
             {
                 ImageBuffer wattermarkImage = new ImageBuffer();
                 ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);

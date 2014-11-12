@@ -2846,3 +2846,6 @@ Translated:Save to EEProm
 English:{0} is not available
 Translated:{0} is not available
 
+English:Invalid printer response
+Translated:Invalid printer response
+
