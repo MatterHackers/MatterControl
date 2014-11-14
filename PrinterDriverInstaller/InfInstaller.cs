@@ -22,7 +22,7 @@ namespace MatterHackers.InfInstaller
 
         public InfInstallerApp()
         {
-            Debugger.Launch();
+            //Debugger.Launch();
         }
 
         public void InstallInfDriverFile(string pathAndDriverToInstall)
