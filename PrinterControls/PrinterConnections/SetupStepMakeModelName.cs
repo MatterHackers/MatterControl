@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             //Determine what if any drivers are needed
             if (settingsDict.TryGetValue("windows_driver", out driverFile))
             {
-                string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", driverFile);
+                string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", Path.GetFileNameWithoutExtension(driverFile), driverFile);
                 switch (OsInformation.OperatingSystem)
                 {
                     case OSType.Windows:
