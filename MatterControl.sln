@@ -95,6 +95,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudServices", "..\CloudSe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agg-sharp", "agg-sharp", "{2AB9B589-5C98-4C05-BBEA-F97DAE168EAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfInstaller", "PrinterDriverInstaller\InfInstaller.csproj", "{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -627,6 +629,26 @@ Global
 		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release64|Any CPU.Build.0 = Release|Any CPU
 		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release64|x64.ActiveCfg = Release|Any CPU
 		{6782BF37-8139-4DC6-885E-98D22D1FB258}.Release64|x86.ActiveCfg = Release|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug|x64.ActiveCfg = Debug|x64
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug|x64.Build.0 = Debug|x64
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug64|Any CPU.ActiveCfg = Debug64|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug64|Any CPU.Build.0 = Debug64|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug64|x64.ActiveCfg = Debug64|x64
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug64|x64.Build.0 = Debug64|x64
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Debug64|x86.ActiveCfg = Debug64|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release|x64.ActiveCfg = Release|x64
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release|x64.Build.0 = Release|x64
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release|x86.ActiveCfg = Release|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release64|Any CPU.ActiveCfg = Release64|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release64|Any CPU.Build.0 = Release64|Any CPU
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release64|x64.ActiveCfg = Release64|x64
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release64|x64.Build.0 = Release64|x64
+		{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}.Release64|x86.ActiveCfg = Release64|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

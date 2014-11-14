@@ -116,53 +116,23 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     {
                         if (Path.GetExtension(fileName).ToUpper() == ".INF")
                         {
-                            var driverInstallerProcess = new Process();
+                            Process driverInstallerProcess = new Process();
                             // Prepare the process to run
                             // Enter in the command line arguments, everything you would enter after the executable name itself
-                            driverInstallerProcess.StartInfo.Arguments = "/a {0}".FormatWith(Path.GetFullPath(fileName));
+
+                            driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
+                            // Enter the executable to run, including the complete path
+                            string printerDriverInstallerExePathAndFileName = Path.Combine(".", "InfInstaller.exe");
 
                             driverInstallerProcess.StartInfo.CreateNoWindow = true;
                             driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-                            string pnpUtilFileName = "PnPUtil.exe";
-                            string pnPUtilPathAndFileName = "";
-                            string[] locationsToTry = 
-                            { 
-                                "C:/Windows/System32",
-                                "C:/WIndows/winsxs/amd64_microsoft-windows-pnputil_31bf3856ad364e35_6.1.7600.16385_none_5958b438d6388d15",
-                            };
-                            // find the location of pnputil.exe
-                            for(int i=0; i<locationsToTry.Length; i++)
-                            {
-                                if(File.Exists(Path.Combine(locationsToTry[i], pnpUtilFileName)))
-                                {
-                                    pnPUtilPathAndFileName = Path.Combine(locationsToTry[i], pnpUtilFileName);
-                                    break;
-                                }
-                            }
+                            driverInstallerProcess.StartInfo.FileName = Path.GetFullPath(printerDriverInstallerExePathAndFileName);
+                            driverInstallerProcess.StartInfo.Verb = "runas";
+                            driverInstallerProcess.StartInfo.UseShellExecute = true;
 
-                            if(pnPUtilPathAndFileName == "")
-                            {
-                                // search for it
-                                List<string> files = new List<string>(Directory.GetFiles("C:/Windows/winsxs", pnpUtilFileName, SearchOption.AllDirectories));
-                                if(files.Count > 0)
-                                {
-                                    pnPUtilPathAndFileName = files[0];
-                                }
-                            }
-                            if (pnPUtilPathAndFileName != "")
-                            {
-                                driverInstallerProcess.StartInfo.FileName = pnPUtilPathAndFileName;
-                                driverInstallerProcess.StartInfo.Verb = "runas";
-                                driverInstallerProcess.StartInfo.UseShellExecute = true;
-
-                                driverInstallerProcess.Start();
-
-                                driverInstallerProcess.WaitForExit();
-
-                                // Retrieve the app's exit code
-                                var exitCode = driverInstallerProcess.ExitCode;
-                            }
+                            driverInstallerProcess.Start();
+                            driverInstallerProcess.WaitForExit();
                         }
                         else
                         {

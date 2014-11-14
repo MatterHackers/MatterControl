@@ -2849,3 +2849,6 @@ Translated:{0} is not available
 English:Invalid printer response
 Translated:Invalid printer response
 
+English:Could not find a selected button.
+Translated:Could not find a selected button.
+
