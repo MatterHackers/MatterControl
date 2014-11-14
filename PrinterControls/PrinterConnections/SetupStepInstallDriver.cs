@@ -32,7 +32,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 //Construct buttons
 				installButton = textImageButtonFactory.Generate(LocalizedString.Get("Install Driver"));
-                installButton.Click += new EventHandler(installButton_Click);
+                installButton.Click += (sender, e) => 
+                {
+                    UiThread.RunOnIdle(installButton_Click);
+                };
 
 				skipButton = textImageButtonFactory.Generate(LocalizedString.Get("Skip"));
                 skipButton.Click += new EventHandler(skipButton_Click);
@@ -49,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void installButton_Click(object sender, EventArgs mouseEvent)
+        void installButton_Click(object state)
         {
             bool canContinue = this.OnSave();
             if (canContinue)
