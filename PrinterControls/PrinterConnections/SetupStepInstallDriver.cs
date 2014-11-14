@@ -122,13 +122,34 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                             driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
                             string pnpUtilFileName = "PnPUtil.exe";
+                            string pnPUtilPathAndFileName = "";
+                            string[] locationsToTry = 
+                            { 
+                                "C:/Windows/System32",
+                                "C:/WIndows/winsxs/amd64_microsoft-windows-pnputil_31bf3856ad364e35_6.1.7600.16385_none_5958b438d6388d15",
+                            };
                             // find the location of pnputil.exe
-                            List<string> files = new List<string>(Directory.GetFiles("C:/Windows/winsxs", pnpUtilFileName, SearchOption.AllDirectories));
-
-                            if(files.Count > 0)
+                            for(int i=0; i<locationsToTry.Length; i++)
                             {
-                                string pathToPnPUtil = files[0];
-                                driverInstallerProcess.StartInfo.FileName = Path.Combine(pathToPnPUtil);
+                                if(File.Exists(Path.Combine(locationsToTry[i], pnpUtilFileName)))
+                                {
+                                    pnPUtilPathAndFileName = Path.Combine(locationsToTry[i], pnpUtilFileName);
+                                    break;
+                                }
+                            }
+
+                            if(pnPUtilPathAndFileName == "")
+                            {
+                                // search for it
+                                List<string> files = new List<string>(Directory.GetFiles("C:/Windows/winsxs", pnpUtilFileName, SearchOption.AllDirectories));
+                                if(files.Count > 0)
+                                {
+                                    pnPUtilPathAndFileName = files[0];
+                                }
+                            }
+                            if (pnPUtilPathAndFileName != "")
+                            {
+                                driverInstallerProcess.StartInfo.FileName = pnPUtilPathAndFileName;
                                 driverInstallerProcess.StartInfo.Verb = "runas";
                                 driverInstallerProcess.StartInfo.UseShellExecute = true;
 

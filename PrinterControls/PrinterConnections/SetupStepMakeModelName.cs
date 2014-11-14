@@ -397,13 +397,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     foreach (string line in lines)
                     {
                         //Ignore commented lines
-                        if (!line.StartsWith("#"))
+                        if (!line.StartsWith("#") && line.Length > 0)
                         {
                             string[] settingLine = line.Split('=');
-                            string keyName = settingLine[0].Trim();
-                            string settingDefaultValue = settingLine[1].Trim();
+                            if (settingLine.Length == 2)
+                            {
+                                string keyName = settingLine[0].Trim();
+                                string settingDefaultValue = settingLine[1].Trim();
 
-                            settingsDict.Add(keyName, settingDefaultValue);
+                                settingsDict.Add(keyName, settingDefaultValue);
+                            }
                         }
                     }
                 }
