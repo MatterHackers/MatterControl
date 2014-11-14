@@ -397,10 +397,6 @@
       <Project>{3DF4CB3D-9A03-4256-9A81-70523AAD828B}</Project>
       <Name>Launcher</Name>
     </ProjectReference>
-    <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
-      <Project>{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}</Project>
-      <Name>InfInstaller</Name>
-    </ProjectReference>
     <ProjectReference Include="..\agg-sharp\OpenGlGui\OpenGlGui.csproj">
       <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
       <Name>OpenGlGui</Name>

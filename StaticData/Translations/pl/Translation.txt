@@ -452,7 +452,7 @@ English:This is the identifier used in the gcode to specify the extruder.
 Translated:Ten identyfikator jest wykorzystywany w gcode do wskazania ekstrudera.
 
 English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good min value) will decrease the amount being extruded.
-Translated:Wszystkie profile są mnożone przez tę wartość. Zwiększenie jej powyżej 1 (max 1.1) zwiększy ilość materiału ekstrudowanego; zmniejszenie zaś (min 0.9) - zmniejszy ilość materiału ekstrudowanego.
+Translated:Wszystkie ekstrudowania są mnożone przez tę wartość. Zwiększenie jej powyżej 1 (max 1.1) zwiększy ilość materiału ekstrudowanego; zmniejszenie zaś (min 0.9) - zmniejszy ilość materiału ekstrudowanego.
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Ustaw wartość 0, aby umożliwić automatyczne obliczanie szerokości ekstrudowania.
@@ -1073,7 +1073,7 @@ English:Disable Fan For The First
 Translated:Wyłączenie wentylatora dla 1-szej warstwy
 
 English:Fan Speed
-Translated:Predkośc wentylatora
+Translated:Predkość wentylatora
 
 English:Slow Down If Layer Print\nTime Is Below
 Translated:Zwolnij, jesli dla 1-szej warstwy\nczas jest poniżej
@@ -2291,10 +2291,10 @@ English:Title Stuff
 Translated:Nazwa materiału
 
 English:Oops! You cannot exit while a print is active.
-Translated:Ups! Nie możesz wyjśc w czasie drukowania.
+Translated:Ups! Nie możesz wyjść w czasie drukowania.
 
 English:Unable to Exit
-Translated:Wyjście niemozliwe
+Translated:Wyjście niemożliwe
 
 English:You are currently saving a parts sheet, are you sure you want to exit?
 Translated:Aktualnie jest zapisywany arkusz elementów, czy na pewno chcesz wyjść ?
@@ -2351,7 +2351,7 @@ English:Sample the bed at two points
 Translated:Próbkuj stolik w dwóch punktach
 
 English:You should be done in about 2 minutes.
-Translated:POwinienes móc to zrobić w około 2 minuty.
+Translated:Powinieneś móc to zrobić w około 2 minuty.
 
 English:Alert
 Translated:Alarm
@@ -2486,19 +2486,19 @@ English:Release Notes
 Translated:Informacje o wydaniu
 
 English:More Info
-Translated:More Info
+Translated:Więcej info
 
 English:Go To Status
-Translated:Go To Status
+Translated:Określ status
 
 English:View Status
-Translated:View Status
+Translated:Pokaż status
 
 English:Description
-Translated:Description
+Translated:Opis
 
 English:Value
-Translated:Value
+Translated:Wartość
 
 English:Save To EEPROM
 Translated:Zapisz do EEPROM
@@ -2570,79 +2570,79 @@ English:Select an Image
 Translated:Wybierz obraz
 
 English:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
-Translated:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+Translated:Jeżeli większe niż 0, to jest od wielkości X Y wieży wymagana podczas zmiany ekstrudera
 
 English:Extruder Change
-Translated:Extruder Change
+Translated:Zmiana ekstrudera
 
 English:Wipe Tower Size
-Translated:Wipe Tower Size
+Translated:Rozmiar wieży otarcia
 
 English:Sorry, we were unable to install the driver.
-Translated:Sorry, we were unable to install the driver.
+Translated:Niestety, nie udało się zainstalować sterownika.
 
 English:Tuning Adjustment
-Translated:Tuning Adjustment
+Translated:Regulacja dostrajania
 
 English:Release
 Translated:Release
 
 English:No printer is currently selected. Select a printer to edit slice settings.
-Translated:No printer is currently selected. Select a printer to edit slice settings.
+Translated:Drukarka nie jest aktualnie wybrana. Wybierz, aby edytować ustawienia Slice.
 
 English:Part Preview
-Translated:Part Preview
+Translated:Podgląd elementu
 
 English:Layer Preview
-Translated:Layer Preview
+Translated:Podgląd warstwy
 
 English:Enable Cloud Monitoring (disabled)
-Translated:Enable Cloud Monitoring (disabled)
+Translated:Uruchamia Cloud Monitoring (wyłączony)
 
 English:Warning - Moving Too Low
-Translated:Warning - Moving Too Low
+Translated:Ostrzeżenie - ruch zbyt nisko
 
 English:Oops! Could not find this file:
-Translated:Oops! Could not find this file:
+Translated:Ups! Nie znaleziono pliku:
 
 English:The number of extruders this machine has.
-Translated:The number of extruders this machine has.
+Translated:Ilość ekstruderów dostepnych w tej drukarce.
 
 English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
-Translated:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
+Translated:Wszystkie ekstrudowania są mnożone przez tę wartość. Zwiększenie jej powyżej 1 (max 1.1) zwiększy ilość materiału ekstrudowanego; zmniejszenie zaś (min 0.9) - zmniejszy ilość materiału ekstrudowanego.
 
 English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
-Translated:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
+Translated:To jest minimalna prędkość do jakiej drukarka zwolni, by wydruk warstwy trwał wystarczająco długo spełniając wymóg ustawienia minimalnego czasu drukowania warstwy..
 
 English:Minimum Print Speed
-Translated:Minimum Print Speed
+Translated:Minimalna prędkośc druku
 
 English:Skirt and Raft
-Translated:Skirt and Raft
+Translated:Elementy 'Skirt' i 'Raft'
 
 English:Length on Move
-Translated:Length on Move
+Translated:Długość na ruch
 
 English:Length on Tool Change
-Translated:Length on Tool Change
+Translated:Długość na zmianę narzędzia
 
 English:Minimum Extrusion\nRequiring Retraction
-Translated:Minimum Extrusion\nRequiring Retraction
+Translated:Minimalne ekstrudowanie\nwymagające retrakcji
 
 English:Minimum Fan Speed
-Translated:Minimum Fan Speed
+Translated:Minimalna prędkośc wentylatora
 
 English:Extruder Count
-Translated:Extruder Count
+Translated:Numer ekstrudera
 
 English:Hardware
 Translated:Hardware
 
 English:Search Library
-Translated:Search Library
+Translated:Przeszukaj bibliotekę
 
 English:My Library
-Translated:My Library
+Translated:Moja Biblioteka
 
 English:Jakość
 Translated:Jakość
@@ -2651,5 +2651,5 @@ English:Materiał
 Translated:Materiał
 
 English:Extruder Temperature Override
-Translated:Extruder Temperature Override
+Translated:Przekroczona temperatura ekstrudera
 
