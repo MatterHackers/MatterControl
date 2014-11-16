@@ -425,5 +425,9 @@
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
     </ProjectReference>
+    <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
+      <Project>{990a9ad3-b6a4-407b-9dfc-9c722af7c9b9}</Project>
+      <Name>InfInstaller</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

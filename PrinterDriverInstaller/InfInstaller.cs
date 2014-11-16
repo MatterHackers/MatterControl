@@ -15,20 +15,47 @@ namespace MatterHackers.InfInstaller
 {
     public class InfInstallerApp
     {
-        [DllImport("Setupapi.dll", EntryPoint = "InstallHinfSection", CallingConvention = CallingConvention.StdCall)]
-        public static extern void InstallHinfSection(
-            [In] IntPtr hwnd,
-            [In] IntPtr ModuleHandle,
-            [In, MarshalAs(UnmanagedType.LPWStr)] string CmdLineBuffer,
-            int nCmdShow);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool Wow64RevertWow64FsRedirection(IntPtr ptr);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool Wow64DisableWow64FsRedirection(ref IntPtr ptr);
 
         public InfInstallerApp()
         {
+            //Debugger.Launch();
         }
 
         public void InstallInfDriverFile(string pathAndDriverToInstall)
         {
-            InstallHinfSection(IntPtr.Zero, IntPtr.Zero, pathAndDriverToInstall, 0);
+            Process driverInstallerProcess = new Process();
+
+            driverInstallerProcess.StartInfo.Arguments = "/a {0}".FormatWith(Path.GetFullPath(pathAndDriverToInstall));
+
+            driverInstallerProcess.StartInfo.CreateNoWindow = true;
+            driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            string pnpUtilFileName = "PnPUtil.exe";
+            
+            string pnPUtilPathAndFileName = Path.Combine("C:/WIndows/winsxs/amd64_microsoft-windows-pnputil_31bf3856ad364e35_6.1.7600.16385_none_5958b438d6388d15", pnpUtilFileName);
+
+            // Disable redirection  
+            IntPtr ptr = new IntPtr();
+            bool isWow64FsRedirectionDisabled = Wow64DisableWow64FsRedirection(ref ptr);
+            if (isWow64FsRedirectionDisabled)
+            {
+                pnPUtilPathAndFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), pnpUtilFileName);
+            }
+
+            driverInstallerProcess.StartInfo.FileName = pnPUtilPathAndFileName;
+            driverInstallerProcess.StartInfo.Verb = "runas";
+            driverInstallerProcess.StartInfo.UseShellExecute = true;
+
+            driverInstallerProcess.Start();
+
+            driverInstallerProcess.WaitForExit();
+
+            // Restore redirection
+            Wow64RevertWow64FsRedirection(ptr);
         }
 
         [STAThread]

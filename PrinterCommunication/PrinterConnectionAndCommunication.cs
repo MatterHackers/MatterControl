@@ -2174,7 +2174,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
                         lastIndexAdded = InjectGCode(resumeGCode, lastIndexAdded);
 
-                        lastIndexAdded = InjectGCode("G1 F{0}".FormatWith(currentFeedRate), lastIndexAdded);
+                        lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), lastIndexAdded);
                     }
                 }
             }

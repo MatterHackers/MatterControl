@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl
             this.AnchorAll();
 
             UseOpenGL = true;
-            string version = "1.1";
+            string version = "1.2";
 
             Title = "MatterControl {0}".FormatWith(version);
             if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
