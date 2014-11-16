@@ -300,6 +300,7 @@ namespace MatterHackers.MatterControl
                     stopWatch.Start();
 #endif
                     perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(BoundingVolumeHierarchy.CreateNewHierachy(allPolys));
+                    //perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(new UnboundCollection(allPolys));
 #if false
                     stopWatch.Stop();
                     using (StreamWriter outputStream = File.AppendText("output.txt"))

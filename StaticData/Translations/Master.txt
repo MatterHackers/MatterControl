@@ -2852,3 +2852,6 @@ Translated:Invalid printer response
 English:Could not find a selected button.
 Translated:Could not find a selected button.
 
+English:Aligning
+Translated:Aligning
+
