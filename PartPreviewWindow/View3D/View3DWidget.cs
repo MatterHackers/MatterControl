@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         CheckBox expandMaterialOptions;
 
         Button autoArrangeButton;
-        FlowLayoutWidget saveButtons;
+		SplitButton saveButtons;
         Button applyScaleButton;
 
 		PrintItemWrapper printItemWrapper;
@@ -1014,8 +1014,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
                 buttonRightPanel.AddChild(verticalSpacer);
 
-                saveButtons = CreateSaveButtons();
+				//Save as dropdown
+				TupleList<string,Func<bool>> buttonList = new TupleList<string, Func<bool>> ();
+				buttonList.Add ("Save", () => {
+					MergeAndSavePartsToCurrentMeshFile();
+					return true;
+				});
+				buttonList.Add ("Save As", () => {
+					if (saveAsWindow == null)
+					{
+						saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+						saveAsWindow.Closed += (sender2, e2) =>
+						{
+							saveAsWindow = null;
+						};
+					}
+					else
+					{
+						saveAsWindow.BringToFront();
+					}
+					return true;
+				});
+				SplitButtonFactory splitButtonFactory = new SplitButtonFactory ();
+				saveButtons = splitButtonFactory.Generate (buttonList);
+
+//				saveButtons = new SplitButton ("Save");
+//				saveButtons.addItem ("Save As", () =>
+//					{
+//						if (saveAsWindowIsOpen == false)
+//						{
+//							saveAsWindow = new SaveAsWindow(MergeAndSavePartsToMeshFile);
+//							this.saveAsWindowIsOpen = true;
+//							saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
+//						}
+//						else
+//						{
+//							if (saveAsWindowIsOpen != null)
+//							{
+//								saveAsWindow.BringToFront();
+//							}
+//						}
+//						return true;
+//					});
+  //              saveButtons = CreateSaveButtons();
+
+
                 buttonRightPanel.AddChild(saveButtons);
+
             }
 
             buttonRightPanel.Padding = new BorderDouble(6, 6);
@@ -1025,6 +1070,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             return buttonRightPanel;
         }
+
+
 
         private FlowLayoutWidget CreateSaveButtons()
         {
