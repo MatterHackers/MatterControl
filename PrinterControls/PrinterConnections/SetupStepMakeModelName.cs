@@ -25,8 +25,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         TextWidget printerModelError;
         TextWidget printerMakeError;
         
-        string driverFile;
-
         Button nextButton;
 
 		bool usingDefaultName;
@@ -258,21 +256,25 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
 
             //Determine what if any drivers are needed
-            if (settingsDict.TryGetValue("windows_driver", out driverFile))
+            string infFileNames;
+            if (settingsDict.TryGetValue("windows_driver", out infFileNames))
             {
-                string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", Path.GetFileNameWithoutExtension(driverFile), driverFile);
-                switch (OsInformation.OperatingSystem)
+                string[] fileNames = infFileNames.Split(',');
+                foreach (string fileName in fileNames)
                 {
-                    case OSType.Windows:
-                        if (File.Exists(infPathAndFileToInstall))
-                        {
-                            PrinterSetupStatus.DriverNeedsToBeInstalled = true;
-                            PrinterSetupStatus.DriverFilePath = infPathAndFileToInstall;
-                        }
-                        break;
+                    string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", Path.GetFileNameWithoutExtension(fileName), fileName);
+                    switch (OsInformation.OperatingSystem)
+                    {
+                        case OSType.Windows:
+                            if (File.Exists(infPathAndFileToInstall))
+                            {
+                                PrinterSetupStatus.DriversToInstall.Add(infPathAndFileToInstall);
+                            }
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -428,7 +430,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
-            else if (this.PrinterSetupStatus.DriverNeedsToBeInstalled)
+            else if (this.PrinterSetupStatus.DriversToInstall.Count > 0)
             {
                 Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
                 Parent.RemoveChild(this);

@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
     {
         FlowLayoutWidget printerDriverContainer;
         TextWidget printerDriverMessage;
-        string printerDriverFilePath;
+        List<string> driversToInstall;
 
         //bool driverInstallFinished;
 
@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public SetupStepInstallDriver(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinterStatus)
             : base(windowController, containerWindowToClose, setupPrinterStatus)
         {
-            this.printerDriverFilePath = this.PrinterSetupStatus.DriverFilePath;
+            this.driversToInstall = this.PrinterSetupStatus.DriversToInstall;
 
 			headerLabel.Text = string.Format(LocalizedString.Get("Install Communication Driver"));
             printerDriverContainer = createPrinterDriverContainer();
@@ -195,7 +195,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				string printerDriverMessageLabel = LocalizedString.Get("Installing");
 				string printerDriverMessageLabelFull = string.Format("{0}...", printerDriverMessageLabel);
 				printerDriverMessage.Text = printerDriverMessageLabelFull;
-                InstallDriver(this.printerDriverFilePath);
+                foreach (string driverPath in this.driversToInstall)
+                {
+                    InstallDriver(driverPath);
+                }
                 return true;
             }
             catch(Exception)
