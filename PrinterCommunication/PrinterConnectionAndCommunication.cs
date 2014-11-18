@@ -1221,22 +1221,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         OnExtruderTemperatureRead(new TemperatureEventArgs(0, GetActualExtruderTemperature(0)));
                     }
                 }
-                else if (GCodeFile.GetFirstNumberAfter("T0:", temperatureString, ref readExtruderTemp))
-                {
-                    if (actualExtruderTemperature[0] != readExtruderTemp)
-                    {
-                        actualExtruderTemperature[0] = readExtruderTemp;
-                        OnExtruderTemperatureRead(new TemperatureEventArgs(0, GetActualExtruderTemperature(0)));
-                    }
 
-                    double readExtruder2Temp = 0;
-                    if (GCodeFile.GetFirstNumberAfter("T1:", temperatureString, ref readExtruder2Temp))
+                for (int extruderIndex = 0; extruderIndex < MAX_EXTRUDERS; extruderIndex++)
+                {
+                    string multiExtruderCheck = "T{0}:".FormatWith(extruderIndex);
+                    if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, ref readExtruderTemp))
                     {
-                        if (actualExtruderTemperature[1] != readExtruder2Temp)
+                        if (actualExtruderTemperature[extruderIndex] != readExtruderTemp)
                         {
-                            actualExtruderTemperature[1] = readExtruder2Temp;
-                            OnExtruderTemperatureRead(new TemperatureEventArgs(1, GetActualExtruderTemperature(1)));
+                            actualExtruderTemperature[extruderIndex] = readExtruderTemp;
+                            OnExtruderTemperatureRead(new TemperatureEventArgs(extruderIndex, GetActualExtruderTemperature(extruderIndex)));
                         }
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }
