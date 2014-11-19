@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
                             driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
                             // Enter the executable to run, including the complete path
-                            string printerDriverInstallerExePathAndFileName = Path.Combine(".", "InfInstaller.exe");
+                            string printerDriverInstallerExePathAndFileName = Path.GetFullPath(Path.Combine(".", "InfInstaller.exe"));
 
                             driverInstallerProcess.StartInfo.CreateNoWindow = true;
                             driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

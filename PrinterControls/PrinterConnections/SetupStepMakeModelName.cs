@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 string[] fileNames = infFileNames.Split(',');
                 foreach (string fileName in fileNames)
                 {
-                    string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", Path.GetFileNameWithoutExtension(fileName), fileName);
+                    string infPathAndFileToInstall = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", Path.GetFileNameWithoutExtension(fileName), fileName));
                     switch (OsInformation.OperatingSystem)
                     {
                         case OSType.Windows:
