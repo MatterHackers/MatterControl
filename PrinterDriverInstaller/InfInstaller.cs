@@ -31,7 +31,7 @@ namespace MatterHackers.InfInstaller
         {
             Process driverInstallerProcess = new Process();
 
-            driverInstallerProcess.StartInfo.Arguments = "/a {0}".FormatWith(Path.GetFullPath(pathAndDriverToInstall));
+            driverInstallerProcess.StartInfo.Arguments = "-a {0}".FormatWith(Path.GetFullPath(pathAndDriverToInstall));
 
             driverInstallerProcess.StartInfo.CreateNoWindow = true;
             driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
