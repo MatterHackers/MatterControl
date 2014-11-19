@@ -262,13 +262,26 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 string[] fileNames = infFileNames.Split(',');
                 foreach (string fileName in fileNames)
                 {
-                    string infPathAndFileToInstall = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", Path.GetFileNameWithoutExtension(fileName), fileName));
+                    string pathForInf = Path.GetFileNameWithoutExtension(fileName);
+                    string infPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", pathForInf));
+                    string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
                     switch (OsInformation.OperatingSystem)
                     {
                         case OSType.Windows:
                             if (File.Exists(infPathAndFileToInstall))
                             {
-                                PrinterSetupStatus.DriversToInstall.Add(infPathAndFileToInstall);
+                                string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
+                                if (!Directory.Exists(destTempPath))
+                                {
+                                    Directory.CreateDirectory(destTempPath);
+                                }
+                                string destTempInf = Path.GetFullPath(Path.Combine(destTempPath, fileName));
+                                foreach (string file in Directory.EnumerateFiles(infPath))
+                                {
+                                    string copyPath = Path.Combine(destTempPath, Path.GetFileName(file));
+                                    File.Copy(file, copyPath, true);
+                                }
+                                PrinterSetupStatus.DriversToInstall.Add(destTempInf);
                             }
                             break;
 
