@@ -284,7 +284,8 @@
     "PresentationName": "Fill Density",
     "HelpText": "The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "Ratio (0 to 1)"
+    "ExtraSettings": "Ratio (0 to 1)",
+    "QuickMenuSettings": [{"MenuName" : "Sparse", "Value": "10%"},{"MenuName" : "Standard", "Value": "30%"},{"MenuName" : "Solid", "Value": "90%"}]
   },
   {
     "SlicerConfigName": "fill_pattern",
@@ -473,7 +474,8 @@
     "PresentationName": "Layer Height",
     "HelpText": "Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "mm"
+    "ExtraSettings": "mm",
+    "QuickMenuSettings": [{"MenuName" : "Coarse", "Value": ".3"},{"MenuName" : "Standard", "Value": ".2"},{"MenuName" : "Fine", "Value": ".1"}]
   },
   {
     "SlicerConfigName": "max_fan_speed",

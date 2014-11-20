@@ -36,6 +36,12 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+    public class QuickMenuNameValue
+    {
+        public string MenuName;
+        public string Value;
+    }
+
     public class OrganizerSettingsData
     {
         [JsonConverter(typeof(StringEnumConverter))]
@@ -50,6 +56,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public DataEditTypes DataEditType { get; set; }
 
         public string ExtraSettings { get; set; }
+
+        public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
 
         static public OrganizerSettingsData NewOrganizerSettingData(string slicerConfigName, string presentationName, OrganizerSettingsData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
         {

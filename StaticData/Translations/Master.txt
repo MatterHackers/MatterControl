@@ -2855,3 +2855,6 @@ Translated:Could not find a selected button.
 English:Aligning
 Translated:Aligning
 
+English:Single
+Translated:Single
+

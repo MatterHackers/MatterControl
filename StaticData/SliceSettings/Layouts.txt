@@ -1,3 +1,12 @@
+Minimal
+  Single
+    Single
+      Infill
+        fill_density
+        layer_height
+        create_raft
+        support_material
+
 Beginner
   Print
     Layers/Perimeters
