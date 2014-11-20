@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using MatterHackers.MatterControl.DataStorage;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {
@@ -21,7 +22,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
                     //return instance;
                     string pathToOemSettings = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "Settings.json");
                     string oemSettings = File.ReadAllText(pathToOemSettings);
-                    instance = (OemSettings)Newtonsoft.Json.JsonConvert.DeserializeObject<OemSettings>(oemSettings);
+                    instance = (OemSettings)JsonConvert.DeserializeObject<OemSettings>(oemSettings);
                 }
 
                 return instance;
@@ -51,9 +52,9 @@ namespace MatterHackers.MatterControl.SettingsManagement
             printerWhiteList.Add("two");
             PreloadedLibraryFiles.Add("uno");
             PreloadedLibraryFiles.Add("dos");
-            affiliateCode = "testcode";
+            AffiliateCode = "testcode";
             string pathToOemSettings = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "Settings.json");
-            File.WriteAllText(pathToOemSettings, Newtonsoft.Json.JsonConvert.SerializeObject(this));
+            File.WriteAllText(pathToOemSettings, JsonConvert.SerializeObject(this));
 #endif
         }
     }
