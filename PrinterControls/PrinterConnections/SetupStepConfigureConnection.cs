@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 Parent.RemoveChild(this);               
                 
             }
-            else if (this.PrinterSetupStatus.DriverNeedsToBeInstalled)
+            else if (this.PrinterSetupStatus.DriversToInstall.Count > 0)
             {
                 Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
                 Parent.RemoveChild(this);

@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             // you can call this like this
             //             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));
 
-            if (this.PrinterSetupStatus.DriverNeedsToBeInstalled)
+            if (this.PrinterSetupStatus.DriversToInstall.Count > 0)
             {
                 Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
                 Parent.RemoveChild(this);
