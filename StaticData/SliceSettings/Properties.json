@@ -285,7 +285,7 @@
     "HelpText": "The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "Ratio (0 to 1)",
-    "QuickMenuSettings": [{"MenuName" : "Sparse", "Value": "10%"},{"MenuName" : "Standard", "Value": "30%"},{"MenuName" : "Solid", "Value": "90%"}]
+    "QuickMenuSettings": [{"MenuName" : "Light", "Value": "10%"},{"MenuName" : "Standard", "Value": "30%"},{"MenuName" : "Heavy", "Value": "90%"}]
   },
   {
     "SlicerConfigName": "fill_pattern",

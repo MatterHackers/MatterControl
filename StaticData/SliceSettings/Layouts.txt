@@ -1,12 +1,12 @@
 Minimal
   Single
     Single
-      Infill
-        fill_density
+      Print
         layer_height
-        create_raft
+        fill_density
+      Support Material
         support_material
-
+        create_raft
 Beginner
   Print
     Layers/Perimeters
