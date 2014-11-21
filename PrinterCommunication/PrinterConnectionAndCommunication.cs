@@ -2154,16 +2154,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
 
                 // Add the pause_gcode to the loadedGCode.GCodeCommandQueue
+                double currentFeedRate = loadedGCode.Instruction(injectionStartIndex).FeedRate;
                 string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
                 if (pauseGCode.Trim() == "")
                 {
+                    int lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), injectionStartIndex);
                     DoPause();
                 }
                 else
                 {
                     using (TimedLock.Lock(this, "RequestPause"))
                     {
-                        double currentFeedRate = loadedGCode.Instruction(injectionStartIndex).FeedRate;
                         int lastIndexAdded = InjectGCode(pauseGCode, injectionStartIndex);
 
                         // inject a marker to tell when we are done with the inserted pause code

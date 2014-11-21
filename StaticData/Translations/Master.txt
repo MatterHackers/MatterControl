@@ -2858,3 +2858,6 @@ Translated:Aligning
 English:Single
 Translated:Single
 
+English:Warning - GCode file
+Translated:Warning - GCode file
+
