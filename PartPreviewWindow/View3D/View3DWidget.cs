@@ -112,10 +112,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             get { return meshViewerWidget.SelectedMeshGroup; }
         }
 
+        public bool HaveSelection
+        {
+            get { return MeshGroups.Count > 0 && SelectedMeshGroupIndex > -1; }
+        }
+
         public int SelectedMeshGroupIndex
         {
-            get { return meshViewerWidget.SelectedMeshGroupIndex; }
-            set { meshViewerWidget.SelectedMeshGroupIndex = value; }
+            get 
+            {
+                return meshViewerWidget.SelectedMeshGroupIndex; 
+            }
+            set 
+            {
+                if (value != SelectedMeshGroupIndex)
+                {
+                    meshViewerWidget.SelectedMeshGroupIndex = value;
+                    Invalidate();
+                }
+            }
         }
 
         public List<MeshGroup> MeshGroups
@@ -209,6 +224,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         {
                             SelectionChanged(this, null);
                         }
+                    }
+                    else
+                    {
+                        SelectedMeshGroupIndex = -1;
                     }
                 }
             }
@@ -1269,16 +1288,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void SetApplyScaleVisability(Object sender, EventArgs e)
         {
-            double scale = scaleRatioControl.ActuallNumberEdit.Value;
-            if (scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[0]
-                || scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[1]
-                || scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[2])
+            if (HaveSelection)
             {
-                applyScaleButton.Visible = true;
-            }
-            else
-            {
-                applyScaleButton.Visible = false;
+                double scale = scaleRatioControl.ActuallNumberEdit.Value;
+                if (scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[0]
+                    || scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[1]
+                    || scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[2])
+                {
+                    applyScaleButton.Visible = true;
+                }
+                else
+                {
+                    applyScaleButton.Visible = false;
+                }
             }
 
             UpdateSizeInfo();
