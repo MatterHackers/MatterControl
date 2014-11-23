@@ -2861,3 +2861,9 @@ Translated:Single
 English:Warning - GCode file
 Translated:Warning - GCode file
 
+English:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+Translated:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+
+English:Raft Extruder
+Translated:Raft Extruder
+
