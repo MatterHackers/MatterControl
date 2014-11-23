@@ -37,12 +37,15 @@ using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Agg.Transform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -151,7 +154,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             IRayTraceable allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
 
-            Ray ray = meshViewerWidget.TrackballTumbleWidget.LastScreenRay;
+            Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
+            Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
             IntersectInfo info = allObjects.GetClosestIntersection(ray);
             if (info != null)
             {
@@ -214,13 +218,72 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             hasDrawn = true;
             base.OnDraw(graphics2D);
+            DrawStuffForSelectedPart(graphics2D);
+        }
+
+        Mesh upArrow;
+        void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+        {
+            if (SelectedMeshGroup != null)
+            {
+                if (upArrow == null)
+                {
+                    string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
+                    upArrow = loadedMeshGroups[0].Meshes[0];
+                }
+
+                AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
+                Vector3 boundsCenter = selectedBounds.Center;
+                Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+
+                Vector2 centerTopScreenPosition = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(centerTop);
+                centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
+
+                double scalling = meshViewerWidget.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
+
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.PushMatrix();
+                GL.Translate(new Vector3(centerTop.x, centerTop.y, centerTop.z + 5*scalling));
+                GL.Scale(scalling, scalling, scalling);
+
+                RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
+
+                GL.PopMatrix();
+            }
+        }
+
+        private void DrawStuffForSelectedPart(Graphics2D graphics2D)
+        {
+            if (SelectedMeshGroup != null)
+            {
+                AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
+                Vector3 boundsCenter = selectedBounds.Center;
+                Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+
+                Vector2 centerTopScreenPosition = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(centerTop);
+                centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
+                //graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
+
+                PathStorage zArrow = new PathStorage();
+                zArrow.MoveTo(-6, -2);
+                zArrow.curve3(0, -4);
+                zArrow.LineTo(6, -2);
+                zArrow.LineTo(0, 12);
+                zArrow.LineTo(-6, -2);
+
+                VertexSourceApplyTransform translate = new VertexSourceApplyTransform(zArrow, Affine.NewTranslation(centerTopScreenPosition));
+
+                //graphics2D.Render(translate, RGBA_Bytes.Black);
+            }
         }
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)
         {
             if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
             {
-                Ray ray = meshViewerWidget.TrackballTumbleWidget.LastScreenRay;
+                Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
+                Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
                 IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
                 if (info != null)
                 {
@@ -491,6 +554,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AnchorAll();
 
             meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+            meshViewerWidget.TrackballTumbleWidget.DrawGlContent +=TrackballTumbleWidget_DrawGlContent;
             AddChild(viewControls3D);
 
             AddHandlers();
