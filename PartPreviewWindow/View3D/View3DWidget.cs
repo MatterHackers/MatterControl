@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.PushMatrix();
-                GL.Translate(new Vector3(centerTop.x, centerTop.y, centerTop.z + 5*scalling));
+                GL.Translate(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20*scalling));
                 GL.Scale(scalling, scalling, scalling);
 
                 RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);

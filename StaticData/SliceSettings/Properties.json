@@ -856,6 +856,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "raft_extruder",
+    "PresentationName": "Raft Extruder",
+    "HelpText": "The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "support_material_extrusion_width",
     "PresentationName": "Support Material",
     "HelpText": "You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.",

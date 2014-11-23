@@ -122,6 +122,7 @@ Advanced
         raft_air_gap
         raft_layers
         raft_fan_speed_percent
+        raft_extruder
       Brim
         brim_width
     Support Material
