@@ -71,23 +71,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             upArrow = loadedMeshGroups[0].Meshes[0];
         }
 
+        public void SetPosition()
+        {
+            Matrix4X4 transform = meshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
+            AxisAlignedBoundingBox selectedBounds = meshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox();
+            Vector3 boundsCenter = selectedBounds.Center;
+            Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+
+            Vector2 centerTopScreenPosition = meshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
+            //centerTopScreenPosition = meshViewerToDrawWith.TransformToParentSpace(this, centerTopScreenPosition);
+
+            double distBetweenPixelsWorldSpace = meshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
+
+            transform = Matrix4X4.CreateTranslation(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * distBetweenPixelsWorldSpace)) * transform;
+            transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * transform;
+
+            TotalTransform = transform;
+        }
+
         public override void DrawGlContent(EventArgs e)
         {
             if (meshViewerToDrawWith.SelectedMeshGroup != null)
             {
-                AxisAlignedBoundingBox selectedBounds = meshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox(meshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform);
-                Vector3 boundsCenter = selectedBounds.Center;
-                Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
-
-                Vector2 centerTopScreenPosition = meshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
-                //centerTopScreenPosition = meshViewerToDrawWith.TransformToParentSpace(this, centerTopScreenPosition);
-
-                double scalling = meshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
 
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.PushMatrix();
-                GL.Translate(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * scalling));
-                GL.Scale(scalling, scalling, scalling);
+                GL.MultMatrix(TotalTransform.GetAsDoubleArray());
 
                 RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
 
@@ -103,6 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public WindowType windowType { get; set; }
 
         EventHandler SelectionChanged;
+        UpArrow3D upArrow;
 
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
@@ -276,6 +286,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnDraw(Graphics2D graphics2D)
         {
+            if (HaveSelection)
+            {
+                upArrow.SetPosition();
+            }
+
             hasDrawn = true;
             base.OnDraw(graphics2D);
             DrawStuffForSelectedPart(graphics2D);
@@ -636,13 +651,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 });
             }
 
-            meshViewerWidget.InteractionVolumes.Add(new UpArrow3D(meshViewerWidget));
+            upArrow = new UpArrow3D(meshViewerWidget);
+            meshViewerWidget.interactionVolumes.Add(upArrow);
 
             // make sure the colors are set correctl
             ThemeChanged(this, null);
         }
 
-		private void OpenExportWindow()
+        private void OpenExportWindow()
 		{
             if (exportingWindow == null)
 			{
