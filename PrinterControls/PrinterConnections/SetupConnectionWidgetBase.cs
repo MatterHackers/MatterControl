@@ -15,8 +15,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
     public class PrinterSetupStatus
     {
         public Printer ActivePrinter;
-        public string DriverFilePath;
-        public bool DriverNeedsToBeInstalled = false;
+        public List<string> DriversToInstall = new List<string>();
         public Type PreviousSetupWidget;
         public Type NextSetupWidget;
 

@@ -37,12 +37,15 @@ using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Agg.Transform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -54,6 +57,47 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+    public class UpArrow3D : InteractionVolume
+    {
+        Mesh upArrow;
+        MeshViewerWidget meshViewerToDrawWith;
+
+        public UpArrow3D(MeshViewerWidget meshViewerToDrawWith)
+            : base(new CylinderShape(3, 12, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)))
+        {
+            this.meshViewerToDrawWith = meshViewerToDrawWith;
+            string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
+            List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
+            upArrow = loadedMeshGroups[0].Meshes[0];
+        }
+
+        public override void DrawGlContent(EventArgs e)
+        {
+            if (meshViewerToDrawWith.SelectedMeshGroup != null)
+            {
+                AxisAlignedBoundingBox selectedBounds = meshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox(meshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform);
+                Vector3 boundsCenter = selectedBounds.Center;
+                Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+
+                Vector2 centerTopScreenPosition = meshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
+                //centerTopScreenPosition = meshViewerToDrawWith.TransformToParentSpace(this, centerTopScreenPosition);
+
+                double scalling = meshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
+
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.PushMatrix();
+                GL.Translate(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * scalling));
+                GL.Scale(scalling, scalling, scalling);
+
+                RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
+
+                GL.PopMatrix();
+            }
+
+            base.DrawGlContent(e);
+        }
+    }
+
     public partial class View3DWidget : PartPreview3DWidget
     {
         public WindowType windowType { get; set; }
@@ -109,10 +153,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             get { return meshViewerWidget.SelectedMeshGroup; }
         }
 
+        public bool HaveSelection
+        {
+            get { return MeshGroups.Count > 0 && SelectedMeshGroupIndex > -1; }
+        }
+
         public int SelectedMeshGroupIndex
         {
-            get { return meshViewerWidget.SelectedMeshGroupIndex; }
-            set { meshViewerWidget.SelectedMeshGroupIndex = value; }
+            get 
+            {
+                return meshViewerWidget.SelectedMeshGroupIndex; 
+            }
+            set 
+            {
+                if (value != SelectedMeshGroupIndex)
+                {
+                    meshViewerWidget.SelectedMeshGroupIndex = value;
+                    Invalidate();
+                }
+            }
         }
 
         public List<MeshGroup> MeshGroups
@@ -151,7 +210,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             IRayTraceable allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
 
-            Ray ray = meshViewerWidget.TrackballTumbleWidget.LastScreenRay;
+            Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
+            Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
             IntersectInfo info = allObjects.GetClosestIntersection(ray);
             if (info != null)
             {
@@ -206,6 +266,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             SelectionChanged(this, null);
                         }
                     }
+                    else
+                    {
+                        SelectedMeshGroupIndex = -1;
+                    }
                 }
             }
         }
@@ -214,13 +278,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             hasDrawn = true;
             base.OnDraw(graphics2D);
+            DrawStuffForSelectedPart(graphics2D);
+        }
+
+        private void DrawStuffForSelectedPart(Graphics2D graphics2D)
+        {
+            if (SelectedMeshGroup != null)
+            {
+                AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
+                Vector3 boundsCenter = selectedBounds.Center;
+                Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+
+                Vector2 centerTopScreenPosition = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(centerTop);
+                centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
+                //graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
+
+                PathStorage zArrow = new PathStorage();
+                zArrow.MoveTo(-6, -2);
+                zArrow.curve3(0, -4);
+                zArrow.LineTo(6, -2);
+                zArrow.LineTo(0, 12);
+                zArrow.LineTo(-6, -2);
+
+                VertexSourceApplyTransform translate = new VertexSourceApplyTransform(zArrow, Affine.NewTranslation(centerTopScreenPosition));
+
+                //graphics2D.Render(translate, RGBA_Bytes.Black);
+            }
         }
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)
         {
             if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
             {
-                Ray ray = meshViewerWidget.TrackballTumbleWidget.LastScreenRay;
+                Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
+                Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
                 IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
                 if (info != null)
                 {
@@ -544,6 +635,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     EnterEditAndCreateSelectionData();
                 });
             }
+
+            meshViewerWidget.InteractionVolumes.Add(new UpArrow3D(meshViewerWidget));
 
             // make sure the colors are set correctl
             ThemeChanged(this, null);
@@ -1252,16 +1345,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void SetApplyScaleVisability(Object sender, EventArgs e)
         {
-            double scale = scaleRatioControl.ActuallNumberEdit.Value;
-            if (scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[0]
-                || scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[1]
-                || scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[2])
+            if (HaveSelection)
             {
-                applyScaleButton.Visible = true;
-            }
-            else
-            {
-                applyScaleButton.Visible = false;
+                double scale = scaleRatioControl.ActuallNumberEdit.Value;
+                if (scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[0]
+                    || scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[1]
+                    || scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[2])
+                {
+                    applyScaleButton.Visible = true;
+                }
+                else
+                {
+                    applyScaleButton.Visible = false;
+                }
             }
 
             UpdateSizeInfo();

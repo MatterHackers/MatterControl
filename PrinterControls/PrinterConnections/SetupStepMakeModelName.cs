@@ -25,8 +25,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         TextWidget printerModelError;
         TextWidget printerMakeError;
         
-        string driverFile;
-
         Button nextButton;
 
 		bool usingDefaultName;
@@ -258,21 +256,38 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
 
             //Determine what if any drivers are needed
-            if (settingsDict.TryGetValue("windows_driver", out driverFile))
+            string infFileNames;
+            if (settingsDict.TryGetValue("windows_driver", out infFileNames))
             {
-                string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", Path.GetFileNameWithoutExtension(driverFile), driverFile);
-                switch (OsInformation.OperatingSystem)
+                string[] fileNames = infFileNames.Split(',');
+                foreach (string fileName in fileNames)
                 {
-                    case OSType.Windows:
-                        if (File.Exists(infPathAndFileToInstall))
-                        {
-                            PrinterSetupStatus.DriverNeedsToBeInstalled = true;
-                            PrinterSetupStatus.DriverFilePath = infPathAndFileToInstall;
-                        }
-                        break;
+                    string pathForInf = Path.GetFileNameWithoutExtension(fileName);
+                    string infPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", pathForInf));
+                    string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
+                    switch (OsInformation.OperatingSystem)
+                    {
+                        case OSType.Windows:
+                            if (File.Exists(infPathAndFileToInstall))
+                            {
+                                string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
+                                if (!Directory.Exists(destTempPath))
+                                {
+                                    Directory.CreateDirectory(destTempPath);
+                                }
+                                string destTempInf = Path.GetFullPath(Path.Combine(destTempPath, fileName));
+                                foreach (string file in Directory.EnumerateFiles(infPath))
+                                {
+                                    string copyPath = Path.Combine(destTempPath, Path.GetFileName(file));
+                                    File.Copy(file, copyPath, true);
+                                }
+                                PrinterSetupStatus.DriversToInstall.Add(destTempInf);
+                            }
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -428,7 +443,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
-            else if (this.PrinterSetupStatus.DriverNeedsToBeInstalled)
+            else if (this.PrinterSetupStatus.DriversToInstall.Count > 0)
             {
                 Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
                 Parent.RemoveChild(this);

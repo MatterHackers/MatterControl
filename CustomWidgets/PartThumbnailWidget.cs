@@ -97,7 +97,8 @@ namespace MatterHackers.MatterControl
             this.PrintItem = item;
 
             if (OsInformation.OperatingSystem == OSType.Mac
-                || OsInformation.OperatingSystem == OSType.Android)
+                || OsInformation.OperatingSystem == OSType.Android 
+                || OsInformation.OperatingSystem == OSType.X11)
             {
                 partExtension = ".tga";
             }

@@ -36,6 +36,12 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+    public class QuickMenuNameValue
+    {
+        public string MenuName;
+        public string Value;
+    }
+
     public class OrganizerSettingsData
     {
         [JsonConverter(typeof(StringEnumConverter))]
@@ -50,6 +56,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public DataEditTypes DataEditType { get; set; }
 
         public string ExtraSettings { get; set; }
+
+        public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
 
         static public OrganizerSettingsData NewOrganizerSettingData(string slicerConfigName, string presentationName, OrganizerSettingsData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
         {
@@ -215,10 +223,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		   
         SliceSettingsOrganizer()
         {
-			string layouts = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Layouts.txt");
-            string properties = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Properties.txt");
+			string layoutsPathAndFilename = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Layouts.txt");
+            string propertiesPathAndFilename = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Properties.json");
 
-            LoadAndParseSettingsFiles(properties, layouts);
+            LoadAndParseSettingsFiles(propertiesPathAndFilename, layoutsPathAndFilename);
 #if false
             Categories.Add(CreatePrintSettings());
 
@@ -279,11 +287,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             sw.Close();
         }
 
-		void LoadAndParseSettingsFiles(string properties, string layout)
+		void LoadAndParseSettingsFiles(string propertiesPathAndFilename, string layoutPathAndFilename)
         {
             {
                 string propertiesFileContents = "";
-                using (FileStream fileStream = new FileStream(properties, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (FileStream fileStream = new FileStream(propertiesPathAndFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     using (StreamReader propertiesReader = new StreamReader(fileStream))
                     {
@@ -291,19 +299,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     }
                 }
 
-                string[] lines = propertiesFileContents.Split('\n');
-                foreach (string line in lines)
-                {
-                    if (line.Trim().Length > 0)
-                    {
-                        settingsData.Add(OrganizerSettingsData.NewOrganizerSettingData(line));
-                    }
-                }
+                settingsData = (List<OrganizerSettingsData>)JsonConvert.DeserializeObject<List<OrganizerSettingsData>>(propertiesFileContents);
             }
 
             {
 				string layoutFileContents = "";
-				using (FileStream fileStream = new FileStream(layout, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+				using (FileStream fileStream = new FileStream(layoutPathAndFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     using (StreamReader layoutReader = new StreamReader(fileStream))
                     {

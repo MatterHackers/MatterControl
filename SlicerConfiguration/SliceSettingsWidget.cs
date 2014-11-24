@@ -199,6 +199,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     return "Advanced";
                 }
 
+                return "Minimal";
                 return "Beginner";
             }
         }
@@ -588,16 +589,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     case OrganizerSettingsData.DataEditTypes.POSITIVE_DOUBLE:
                         {
+                            FlowLayoutWidget content = new FlowLayoutWidget();
+
                             double currentValue = 0;
                             double.TryParse(sliceSettingValue, out currentValue);
                             MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
                             doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
-                                {
-                                    SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
-                                    CallEventsOnSettingsChange(settingData);
-                                };
-                            leftToRightLayout.AddChild(doubleEditWidget);
-                            leftToRightLayout.AddChild(getSettingInfoData(settingData));
+                            {
+                                SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+                                CallEventsOnSettingsChange(settingData);
+                            };
+
+                            content.AddChild(doubleEditWidget);
+                            content.AddChild(getSettingInfoData(settingData));
+
+                            if (settingData.QuickMenuSettings.Count > 0)
+                            {
+                                leftToRightLayout.AddChild(CreateQuickMenu(settingData, content));
+                            }
+                            else
+                            {
+                                leftToRightLayout.AddChild(content);
+                            }
                         }
                         break;
 
@@ -618,7 +631,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     case OrganizerSettingsData.DataEditTypes.DOUBLE_OR_PERCENT:
                         {
-                            MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth-2, tabIndex: tabIndexForItem++);
+                            FlowLayoutWidget content = new FlowLayoutWidget();
+                            
+                            MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
                             stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
                             {
                                 TextEditWidget textEditWidget = (TextEditWidget)sender;
@@ -641,8 +656,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 CallEventsOnSettingsChange(settingData);
                             };
 
-                            leftToRightLayout.AddChild(stringEdit);
-                            leftToRightLayout.AddChild(getSettingInfoData(settingData));
+                            content.AddChild(stringEdit);
+                            content.AddChild(getSettingInfoData(settingData));
+
+                            if (settingData.QuickMenuSettings.Count > 0)
+                            {
+                                leftToRightLayout.AddChild(CreateQuickMenu(settingData, content));
+                            }
+                            else
+                            {
+                                leftToRightLayout.AddChild(content);
+                            }
                         }
                         break;
 
@@ -904,6 +928,47 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 
             return container;
+        }
+
+        private GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, GuiWidget content)
+        {
+            string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName); 
+            FlowLayoutWidget totalContent = new FlowLayoutWidget();
+
+            StyledDropDownList selectableOptions = new StyledDropDownList("Custom", maxHeight: 200);
+            selectableOptions.Margin = new BorderDouble(0, 0, 10, 0);
+
+            foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
+            {
+                string valueLocal = nameValue.Value;
+
+                MenuItem newItem = selectableOptions.AddItem(nameValue.MenuName);
+                if (sliceSettingValue == valueLocal)
+                {
+                    selectableOptions.SelectedLabel = nameValue.MenuName;
+                    content.Visible = false;
+                }
+
+                newItem.Selected += (sender, e) =>
+                {
+                    SaveSetting(settingData.SlicerConfigName, valueLocal);
+                    CallEventsOnSettingsChange(settingData);
+                    content.Visible = false;
+                };
+            }
+
+            // put in the custom menu to allow direct editing
+            MenuItem customMenueItem = selectableOptions.AddItem("Custom");
+            customMenueItem.Selected += (sender, e) =>
+            {
+                content.Visible = true;
+            };
+
+            totalContent.AddChild(selectableOptions);
+            content.VAnchor = VAnchor.ParentCenter;
+            totalContent.AddChild(content);
+
+            return totalContent;
         }
 
         private void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, string slicerConfigName, string newSingleValue)

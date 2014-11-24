@@ -1221,22 +1221,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         OnExtruderTemperatureRead(new TemperatureEventArgs(0, GetActualExtruderTemperature(0)));
                     }
                 }
-                else if (GCodeFile.GetFirstNumberAfter("T0:", temperatureString, ref readExtruderTemp))
-                {
-                    if (actualExtruderTemperature[0] != readExtruderTemp)
-                    {
-                        actualExtruderTemperature[0] = readExtruderTemp;
-                        OnExtruderTemperatureRead(new TemperatureEventArgs(0, GetActualExtruderTemperature(0)));
-                    }
 
-                    double readExtruder2Temp = 0;
-                    if (GCodeFile.GetFirstNumberAfter("T1:", temperatureString, ref readExtruder2Temp))
+                for (int extruderIndex = 0; extruderIndex < MAX_EXTRUDERS; extruderIndex++)
+                {
+                    string multiExtruderCheck = "T{0}:".FormatWith(extruderIndex);
+                    if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, ref readExtruderTemp))
                     {
-                        if (actualExtruderTemperature[1] != readExtruder2Temp)
+                        if (actualExtruderTemperature[extruderIndex] != readExtruderTemp)
                         {
-                            actualExtruderTemperature[1] = readExtruder2Temp;
-                            OnExtruderTemperatureRead(new TemperatureEventArgs(1, GetActualExtruderTemperature(1)));
+                            actualExtruderTemperature[extruderIndex] = readExtruderTemp;
+                            OnExtruderTemperatureRead(new TemperatureEventArgs(extruderIndex, GetActualExtruderTemperature(extruderIndex)));
                         }
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }
@@ -2155,16 +2154,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
 
                 // Add the pause_gcode to the loadedGCode.GCodeCommandQueue
+                double currentFeedRate = loadedGCode.Instruction(injectionStartIndex).FeedRate;
                 string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
                 if (pauseGCode.Trim() == "")
                 {
+                    int lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), injectionStartIndex);
                     DoPause();
                 }
                 else
                 {
                     using (TimedLock.Lock(this, "RequestPause"))
                     {
-                        double currentFeedRate = loadedGCode.Instruction(injectionStartIndex).FeedRate;
                         int lastIndexAdded = InjectGCode(pauseGCode, injectionStartIndex);
 
                         // inject a marker to tell when we are done with the inserted pause code
