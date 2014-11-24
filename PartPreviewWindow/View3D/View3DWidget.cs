@@ -60,28 +60,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class UpArrow3D : InteractionVolume
     {
         Mesh upArrow;
-        MeshViewerWidget meshViewerToDrawWith;
 
         public UpArrow3D(MeshViewerWidget meshViewerToDrawWith)
-            : base(new CylinderShape(3, 12, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)))
+            : base(new CylinderShape(6, 15, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)), meshViewerToDrawWith)
         {
-            this.meshViewerToDrawWith = meshViewerToDrawWith;
             string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
             List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
             upArrow = loadedMeshGroups[0].Meshes[0];
+            //CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
         }
 
         public void SetPosition()
         {
-            Matrix4X4 transform = meshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
-            AxisAlignedBoundingBox selectedBounds = meshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox();
+            Matrix4X4 transform = MeshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
+            AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox();
             Vector3 boundsCenter = selectedBounds.Center;
             Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
-            Vector2 centerTopScreenPosition = meshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
+            Vector2 centerTopScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
             //centerTopScreenPosition = meshViewerToDrawWith.TransformToParentSpace(this, centerTopScreenPosition);
 
-            double distBetweenPixelsWorldSpace = meshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
+            double distBetweenPixelsWorldSpace = MeshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
 
             transform = Matrix4X4.CreateTranslation(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * distBetweenPixelsWorldSpace)) * transform;
             transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * transform;
@@ -91,14 +90,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void DrawGlContent(EventArgs e)
         {
-            if (meshViewerToDrawWith.SelectedMeshGroup != null)
+            if (MeshViewerToDrawWith.SelectedMeshGroup != null)
             {
 
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.PushMatrix();
                 GL.MultMatrix(TotalTransform.GetAsDoubleArray());
 
-                RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
+                if (MouseOver)
+                {
+                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, RenderTypes.Shaded);
+                }
+                else
+                {
+                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
+                }
 
                 GL.PopMatrix();
             }
@@ -260,25 +266,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     && ModifierKeys != Keys.Control
                     && ModifierKeys != Keys.Alt)
                 {
-                    int meshGroupHitIndex;
-                    if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
+                    if (!meshViewerWidget.MouseDownOnInteractionVolume)
                     {
-                        meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
-                        SelectedMeshGroupIndex = meshGroupHitIndex;
-
-                        transformOnMouseDown = SelectedMeshGroupTransform.translation;
-
-                        Invalidate();
-                        meshSelectInfo.downOnPart = true;
-
-                        if (SelectionChanged != null)
+                        int meshGroupHitIndex;
+                        if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
                         {
-                            SelectionChanged(this, null);
+                            meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
+                            SelectedMeshGroupIndex = meshGroupHitIndex;
+
+                            transformOnMouseDown = SelectedMeshGroupTransform.translation;
+
+                            Invalidate();
+                            meshSelectInfo.downOnPart = true;
+
+                            if (SelectionChanged != null)
+                            {
+                                SelectionChanged(this, null);
+                            }
                         }
-                    }
-                    else
-                    {
-                        SelectedMeshGroupIndex = -1;
+                        else
+                        {
+                            SelectedMeshGroupIndex = -1;
+                        }
                     }
                 }
             }
