@@ -57,6 +57,47 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+    public class UpArrow3D : InteractionVolume
+    {
+        Mesh upArrow;
+        MeshViewerWidget meshViewerToDrawWith;
+
+        public UpArrow3D(MeshViewerWidget meshViewerToDrawWith)
+            : base(new CylinderShape(3, 12, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)))
+        {
+            this.meshViewerToDrawWith = meshViewerToDrawWith;
+            string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
+            List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
+            upArrow = loadedMeshGroups[0].Meshes[0];
+        }
+
+        public override void DrawGlContent(EventArgs e)
+        {
+            if (meshViewerToDrawWith.SelectedMeshGroup != null)
+            {
+                AxisAlignedBoundingBox selectedBounds = meshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox(meshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform);
+                Vector3 boundsCenter = selectedBounds.Center;
+                Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+
+                Vector2 centerTopScreenPosition = meshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
+                //centerTopScreenPosition = meshViewerToDrawWith.TransformToParentSpace(this, centerTopScreenPosition);
+
+                double scalling = meshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
+
+                GL.MatrixMode(MatrixMode.Modelview);
+                GL.PushMatrix();
+                GL.Translate(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * scalling));
+                GL.Scale(scalling, scalling, scalling);
+
+                RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
+
+                GL.PopMatrix();
+            }
+
+            base.DrawGlContent(e);
+        }
+    }
+
     public partial class View3DWidget : PartPreview3DWidget
     {
         public WindowType windowType { get; set; }
@@ -238,38 +279,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             hasDrawn = true;
             base.OnDraw(graphics2D);
             DrawStuffForSelectedPart(graphics2D);
-        }
-
-        Mesh upArrow;
-        void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
-        {
-            if (SelectedMeshGroup != null)
-            {
-                if (upArrow == null)
-                {
-                    string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
-                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
-                    upArrow = loadedMeshGroups[0].Meshes[0];
-                }
-
-                AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
-                Vector3 boundsCenter = selectedBounds.Center;
-                Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
-
-                Vector2 centerTopScreenPosition = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(centerTop);
-                centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
-
-                double scalling = meshViewerWidget.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
-
-                GL.MatrixMode(MatrixMode.Modelview);
-                GL.PushMatrix();
-                GL.Translate(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20*scalling));
-                GL.Scale(scalling, scalling, scalling);
-
-                RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
-
-                GL.PopMatrix();
-            }
         }
 
         private void DrawStuffForSelectedPart(Graphics2D graphics2D)
@@ -573,7 +582,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AnchorAll();
 
             meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-            meshViewerWidget.TrackballTumbleWidget.DrawGlContent +=TrackballTumbleWidget_DrawGlContent;
             AddChild(viewControls3D);
 
             AddHandlers();
@@ -627,6 +635,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     EnterEditAndCreateSelectionData();
                 });
             }
+
+            meshViewerWidget.InteractionVolumes.Add(new UpArrow3D(meshViewerWidget));
 
             // make sure the colors are set correctl
             ThemeChanged(this, null);
