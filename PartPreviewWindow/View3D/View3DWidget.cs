@@ -65,9 +65,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             : base(new CylinderShape(6, 15, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)), meshViewerToDrawWith)
         {
             string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
-            List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
-            upArrow = loadedMeshGroups[0].Meshes[0];
-            //CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
+            if (File.Exists(arrowFile))
+            {
+                List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
+                upArrow = loadedMeshGroups[0].Meshes[0];
+                //CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
+            }
         }
 
         public void SetPosition()
@@ -660,8 +663,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 });
             }
 
-            upArrow = new UpArrow3D(meshViewerWidget);
-            meshViewerWidget.interactionVolumes.Add(upArrow);
+            //upArrow = new UpArrow3D(meshViewerWidget);
+            //meshViewerWidget.interactionVolumes.Add(upArrow);
 
             // make sure the colors are set correctl
             ThemeChanged(this, null);
