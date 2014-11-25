@@ -4,11 +4,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using MatterHackers.MatterControl.DataStorage;
-<<<<<<< HEAD
 using Newtonsoft.Json;
-=======
 using MatterHackers.Agg.PlatformAbstract;
->>>>>>> Initial StaticData platform abstraction
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {

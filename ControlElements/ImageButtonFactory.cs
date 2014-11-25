@@ -24,15 +24,10 @@ namespace MatterHackers.MatterControl
                 disabledImageName = normalImageName;
             }
 
-            Agg.Image.ImageBuffer normalImage = new Agg.Image.ImageBuffer();
-            Agg.Image.ImageBuffer pressedImage = new Agg.Image.ImageBuffer();
-            Agg.Image.ImageBuffer hoverImage = new Agg.Image.ImageBuffer();
-            Agg.Image.ImageBuffer disabledImage = new Agg.Image.ImageBuffer();
-
-            StaticData.Instance.LoadImage(Path.Combine("Icons", normalImageName), normalImage);
-            StaticData.Instance.LoadImage(Path.Combine("Icons", pressedImageName), pressedImage);
-            StaticData.Instance.LoadImage(Path.Combine("Icons", hoverImageName), hoverImage);
-            StaticData.Instance.LoadImage(Path.Combine("Icons", disabledImageName), disabledImage);
+            Agg.Image.ImageBuffer normalImage = StaticData.Instance.LoadIcon(normalImageName);
+            Agg.Image.ImageBuffer pressedImage = StaticData.Instance.LoadIconpressedImageName);
+            Agg.Image.ImageBuffer hoverImage = StaticData.Instance.LoadIcon(hoverImageName);
+            Agg.Image.ImageBuffer disabledImage = StaticData.Instance.LoadIcon(disabledImageName);
 
             if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
             {
@@ -41,9 +36,6 @@ namespace MatterHackers.MatterControl
                 InvertLightness.DoInvertLightness(hoverImage);
                 InvertLightness.DoInvertLightness(disabledImage);
             }
-
-            //normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
-            //pressedImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
 
             ButtonViewStates buttonViewWidget = new ButtonViewStates(
                 new ImageWidget(normalImage),

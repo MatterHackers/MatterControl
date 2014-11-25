@@ -259,8 +259,7 @@ namespace MatterHackers.MatterControl
 				eePromControlsLayout.Margin = new BorderDouble(3, 0, 3, 6);
 				eePromControlsLayout.Padding = new BorderDouble(0);
                 {
-					Agg.Image.ImageBuffer eePromImage = new Agg.Image.ImageBuffer();
-					StaticData.Instance.LoadImage(Path.Combine("Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
+					Agg.Image.ImageBuffer eePromImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "leveling-24x24.png"));
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
@@ -384,8 +383,7 @@ namespace MatterHackers.MatterControl
                     });
                 };
 
-                Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
-				StaticData.Instance.LoadImage(Path.Combine("Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
+                Agg.Image.ImageBuffer levelingImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "leveling-24x24.png"));
                 if (!ActiveTheme.Instance.IsDarkTheme)
                 {
                     InvertLightness.DoInvertLightness(levelingImage);

@@ -118,8 +118,7 @@ namespace MatterHackers.MatterControl.PrinterControls
             textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
             textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-            ImageBuffer helpIconImage = new ImageBuffer();
-            StaticData.Instance.LoadImage(Path.Combine("Icons", "icon_home_white_24x24.png"), helpIconImage);
+            ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png");
             ImageWidget homeIconImageWidget = new ImageWidget(helpIconImage);
             homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
             homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * TextWidget.GlobalPointSizeScaleRatio;

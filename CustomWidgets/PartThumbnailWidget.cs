@@ -130,8 +130,8 @@ namespace MatterHackers.MatterControl
             // set background images
             if (noThumbnailImage.Width == 0)
             {
-                StaticData.Instance.LoadImage(Path.Combine("Icons", noThumbnailFileName), noThumbnailImage);
-                StaticData.Instance.LoadImage(Path.Combine("Icons", buildingThumbnailFileName), buildingThumbnailImage);
+                StaticData.Instance.LoadIcon(noThumbnailFileName, noThumbnailImage);
+                StaticData.Instance.LoadIcon(buildingThumbnailFileName, buildingThumbnailImage);
             }
             this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
 
@@ -179,13 +179,13 @@ namespace MatterHackers.MatterControl
                     {
                         case ImageSizes.Size115x115:
                             {
-                                StaticData.Instance.LoadImage(Path.Combine("Icons", Path.ChangeExtension("icon_sd_card_115x115", partExtension)), thumbnailWidget.thumbnailImage);
+                                StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_115x115", partExtension), thumbnailWidget.thumbnailImage);
                             }
                             break;
 
                         case ImageSizes.Size50x50:
                             {
-                                StaticData.Instance.LoadImage(Path.Combine("Icons", Path.ChangeExtension("icon_sd_card_50x50", partExtension)), thumbnailWidget.thumbnailImage);
+                                StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_50x50", partExtension), thumbnailWidget.thumbnailImage);
                             }
                             break;
 
