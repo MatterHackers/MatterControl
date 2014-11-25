@@ -446,73 +446,8 @@ namespace MatterHackers.MatterControl
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			this.linkButtonFactory.fontSize = 11;
-        }
+        } 
 
-        private void SetVisibleControls()
-        {
-            return;
-            if (ActivePrinterProfile.Instance.ActivePrinter == null)
-            {
-                // no printer selected                         
-                eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-            }
-            else // we at least have a printer selected
-            {
-				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-                {
-                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
-                    case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-                    case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-                    case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:                        
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        break;
-
-                    case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        break;
-
-                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        break;
-
-                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrintToSd:
-                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-                        switch (PrinterConnectionAndCommunication.Instance.PrintingState)
-                        {
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
-                                eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                                printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                                break;
-
-                            default:
-                                throw new NotImplementedException();
-                        }
-                        break;
-
-                    case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-        }
-			
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
@@ -522,7 +457,6 @@ namespace MatterHackers.MatterControl
 
         private void onPrinterStatusChanged(object sender, EventArgs e)
         {
-            SetVisibleControls();
             this.Invalidate();
         }
 
