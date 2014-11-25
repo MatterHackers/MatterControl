@@ -291,6 +291,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         {
                             SelectedMeshGroupIndex = -1;
                         }
+
+                        UpdateSizeInfo();
                     }
                 }
             }
@@ -1597,15 +1599,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateControls.Add(rotateXButton);
             rotateXButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                // rotate it
-                ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-                rotated.rotation *= Matrix4X4.CreateRotationX(radians);
-                SelectedMeshGroupTransform = rotated;
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
+                    // rotate it
+                    ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
+                    rotated.rotation *= Matrix4X4.CreateRotationX(radians);
+                    SelectedMeshGroupTransform = rotated;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
-                saveButtons.Visible = true;
-                Invalidate();
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             Button rotateYButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
@@ -1614,14 +1619,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateControls.Add(rotateYButton);
             rotateYButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                // rotate it
-                ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-                rotated.rotation *= Matrix4X4.CreateRotationY(radians);
-                SelectedMeshGroupTransform = rotated;
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
-                saveButtons.Visible = true;
-                Invalidate();
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
+                    // rotate it
+                    ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
+                    rotated.rotation *= Matrix4X4.CreateRotationY(radians);
+                    SelectedMeshGroupTransform = rotated;
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             Button rotateZButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
@@ -1630,15 +1638,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateControls.Add(rotateZButton);
             rotateZButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                // rotate it
-                ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-                rotated.rotation *= Matrix4X4.CreateRotationZ(radians);
-                SelectedMeshGroupTransform = rotated;
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
+                    // rotate it
+                    ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
+                    rotated.rotation *= Matrix4X4.CreateRotationZ(radians);
+                    SelectedMeshGroupTransform = rotated;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
-                saveButtons.Visible = true;
-                Invalidate();
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             buttonPanel.AddChild(rotateButtonContainer);
@@ -1649,10 +1660,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             layFlatButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                MakeLowestFaceFlat(SelectedMeshGroupIndex);
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    MakeLowestFaceFlat(SelectedMeshGroupIndex);
 
-                saveButtons.Visible = true;
-                Invalidate();
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             buttonPanel.AddChild(generateHorizontalRule());
@@ -1674,16 +1688,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mirrorControls.Add(mirrorXButton);
             mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                SelectedMeshGroup.ReverseFaceEdges();
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    SelectedMeshGroup.ReverseFaceEdges();
 
-                ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-                scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
-                SelectedMeshGroupTransform = scale;
+                    ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+                    scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
+                    SelectedMeshGroupTransform = scale;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
 
-                saveButtons.Visible = true;
-                Invalidate();
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             Button mirrorYButton = textImageButtonFactory.Generate("Y", centerText: true);
@@ -1691,16 +1708,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mirrorControls.Add(mirrorYButton);
             mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                SelectedMeshGroup.ReverseFaceEdges();
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    SelectedMeshGroup.ReverseFaceEdges();
 
-                ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-                scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
-                SelectedMeshGroupTransform = scale;
+                    ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+                    scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
+                    SelectedMeshGroupTransform = scale;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
 
-                saveButtons.Visible = true;
-                Invalidate();
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             Button mirrorZButton = textImageButtonFactory.Generate("Z", centerText: true);
@@ -1708,16 +1728,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mirrorControls.Add(mirrorZButton);
             mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                SelectedMeshGroup.ReverseFaceEdges();
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    SelectedMeshGroup.ReverseFaceEdges();
 
-                ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-                scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
-                SelectedMeshGroupTransform = scale;
+                    ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+                    scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
+                    SelectedMeshGroupTransform = scale;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
 
-                saveButtons.Visible = true;
-                Invalidate();
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
             buttonPanel.AddChild(buttonContainer);
             buttonPanel.AddChild(generateHorizontalRule());
