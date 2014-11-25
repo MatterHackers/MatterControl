@@ -387,7 +387,6 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        bool cancelClose;
         void onConfirmExit(bool messageBoxResponse)
         {
             bool CancelClose;

@@ -35,7 +35,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh;
-using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {

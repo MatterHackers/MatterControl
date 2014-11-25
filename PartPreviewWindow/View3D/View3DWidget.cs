@@ -1831,7 +1831,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        int nextColor = 0;
         RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 
         private void AddHandlers()

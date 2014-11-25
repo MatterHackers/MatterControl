@@ -123,7 +123,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
         public SelectedListItems<LibraryRowItem> SelectedItems = new SelectedListItems<LibraryRowItem>();
         int selectedIndex = -1;
         int hoverIndex = -1;
-        int dragIndex = -1;
 
         int Count
         {

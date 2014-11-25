@@ -64,7 +64,6 @@ namespace MatterHackers.MatterControl
 		Button disablePrintLevelingButton;
 
         DisableableWidget eePromControlsContainer;
-        DisableableWidget terminalCommunicationsContainer;        
         DisableableWidget printLevelingContainer;
 		
 
@@ -135,8 +134,6 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(container);
         }
 
-        Button restartButton;
-
         private void RestartApplication()
         {
             UiThread.RunOnIdle((state) =>
@@ -159,7 +156,6 @@ namespace MatterHackers.MatterControl
             if (languageCode != UserSettings.Instance.get("Language"))
             {
                 UserSettings.Instance.set("Language", languageCode);
-                restartButton.Visible = true;
             }
         }
 			
@@ -459,7 +455,6 @@ namespace MatterHackers.MatterControl
             {
                 // no printer selected                         
                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                 printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
             }
@@ -475,20 +470,17 @@ namespace MatterHackers.MatterControl
                     case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:                        
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
                     case PrinterConnectionAndCommunication.CommunicationStates.Connected:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
@@ -503,7 +495,6 @@ namespace MatterHackers.MatterControl
                             case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
                                 eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                                 printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                                terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                                 break;
 
                             default:
@@ -514,7 +505,6 @@ namespace MatterHackers.MatterControl
                     case PrinterConnectionAndCommunication.CommunicationStates.Paused:
                         eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
                         break;
 
                     default:

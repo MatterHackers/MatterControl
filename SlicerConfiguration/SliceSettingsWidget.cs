@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
 
                 return "Minimal";
-                return "Beginner";
+                //return "Beginner";
             }
         }
 

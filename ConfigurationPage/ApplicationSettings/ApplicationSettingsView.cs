@@ -20,7 +20,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
     {
 		Button languageRestartButton;
         Button configureUpdateFeedButton;
-        Button configureLanguageButton;
 		Button displayControlRestartButton;
         
         public ApplicationSettingsWidget()

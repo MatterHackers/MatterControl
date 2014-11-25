@@ -51,7 +51,6 @@ namespace MatterHackers.MatterControl.PrintHistory
     public class PrintHistoryWidget : GuiWidget
     {
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        Button deleteFromLibraryButton;
         CheckBox showOnlyCompletedCheckbox;
         CheckBox showTimestampCheckbox;
         PrintHistoryDataView historyView;

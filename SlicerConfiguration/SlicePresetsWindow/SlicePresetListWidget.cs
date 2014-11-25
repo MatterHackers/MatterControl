@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						windowController.ChangeToSlicePresetList();
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{                    
 					// Error loading configuration
 				}
