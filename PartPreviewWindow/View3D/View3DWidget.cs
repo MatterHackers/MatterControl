@@ -73,6 +73,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
+        public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
+        {
+            base.OnMouseDown(mouseEvent3D);
+        }
+
+        public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
+        {
+            base.OnMouseMove(mouseEvent3D);
+        }
+
         public void SetPosition()
         {
             Matrix4X4 transform = MeshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
