@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             };
 
             Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
-			ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
+			StaticData.Instance.LoadImage(Path.Combine("Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
             if (!ActiveTheme.Instance.IsDarkTheme)
             {
                 InvertLightness.DoInvertLightness(levelingImage);
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             
 
             Agg.Image.ImageBuffer eePromImage = new Agg.Image.ImageBuffer();
-            ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
+            StaticData.Instance.LoadImage(Path.Combine("Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
             if (!ActiveTheme.Instance.IsDarkTheme)
             {
                 InvertLightness.DoInvertLightness(eePromImage);

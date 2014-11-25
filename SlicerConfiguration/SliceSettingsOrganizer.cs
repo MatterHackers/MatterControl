@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -223,10 +224,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		   
         SliceSettingsOrganizer()
         {
-			string layoutsPathAndFilename = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Layouts.txt");
-            string propertiesPathAndFilename = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Properties.json");
+            LoadAndParseSettingsFiles(Path.Combine("SliceSettings", "Properties.txt"), Path.Combine("SliceSettings", "Layouts.txt"));
 
-            LoadAndParseSettingsFiles(propertiesPathAndFilename, layoutsPathAndFilename);
 #if false
             Categories.Add(CreatePrintSettings());
 
@@ -277,6 +276,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             if (savedFileName == null)
             {
+                // TODO: Save setting to something other than *Static*Data
                 savedFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "ConfigSettingsMapping.json");
             }
             string jsonString = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
@@ -290,33 +290,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		void LoadAndParseSettingsFiles(string propertiesPathAndFilename, string layoutPathAndFilename)
         {
             {
-                string propertiesFileContents = "";
-                using (FileStream fileStream = new FileStream(propertiesPathAndFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                var lines = StaticData.Instance.ReadAllLines(properties);
+                foreach (string line in lines)
                 {
-                    using (StreamReader propertiesReader = new StreamReader(fileStream))
+                    if (line.Trim().Length > 0)
                     {
-                        propertiesFileContents = propertiesReader.ReadToEnd();
+                        settingsData.Add(OrganizerSettingsData.NewOrganizerSettingData(line));
                     }
                 }
-
-                settingsData = (List<OrganizerSettingsData>)JsonConvert.DeserializeObject<List<OrganizerSettingsData>>(propertiesFileContents);
             }
 
             {
-				string layoutFileContents = "";
-				using (FileStream fileStream = new FileStream(layoutPathAndFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    using (StreamReader layoutReader = new StreamReader(fileStream))
-                    {
-                        layoutFileContents = layoutReader.ReadToEnd();
-                    }
-				}
-
                 OrganizerUserLevel userLevelToAddTo = null;
                 OrganizerCategory categoryToAddTo = null;
                 OrganizerGroup groupToAddTo = null;
                 OrganizerSubGroup subGroupToAddTo = null;
-                string[] lines = layoutFileContents.Split('\n');
+                var lines = StaticData.Instance.ReadAllLines(layout);
                 foreach (string line in lines)
                 {
                     if (line.Length > 0)

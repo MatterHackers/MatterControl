@@ -7,6 +7,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Agg.PlatformAbstract;
 
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
@@ -50,6 +51,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 List<string> calibrationPrints = LoadCalibrationPrintsFromFile(this.ActivePrinter.Make, this.ActivePrinter.Model);
                 foreach (string partFile in calibrationPrints)
                 {
+                    // TODO: Figure out a better way to accomplish this with Assets model
                     string partFullPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "SampleParts", partFile);
                     QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(partFullPath), partFullPath)));
                 }
@@ -59,12 +61,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         private List<string> LoadCalibrationPrintsFromFile(string make, string model)
         {
             List<string> calibrationFiles = new List<string>();
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "calibration.ini");
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            string setupSettingsPathAndFile = Path.Combine("PrinterSettings", make, model, "calibration.ini");
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
+                    var lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
                     foreach (string line in lines)
                     {
                         //Ignore commented lines

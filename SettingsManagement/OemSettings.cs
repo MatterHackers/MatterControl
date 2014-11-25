@@ -4,7 +4,11 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using MatterHackers.MatterControl.DataStorage;
+<<<<<<< HEAD
 using Newtonsoft.Json;
+=======
+using MatterHackers.Agg.PlatformAbstract;
+>>>>>>> Initial StaticData platform abstraction
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {
@@ -20,9 +24,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
                 {
                     //instance = new OemSettings();
                     //return instance;
-                    string pathToOemSettings = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "Settings.json");
-                    string oemSettings = File.ReadAllText(pathToOemSettings);
-                    instance = (OemSettings)JsonConvert.DeserializeObject<OemSettings>(oemSettings);
+                    string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
+                    instance = (OemSettings)Newtonsoft.Json.JsonConvert.DeserializeObject<OemSettings>(oemSettings);
                 }
 
                 return instance;

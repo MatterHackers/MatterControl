@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
@@ -58,12 +59,12 @@ namespace MatterHackers.MatterControl.PrintHistory
         private List<string> GetLibraryParts()
         {
             List<string> libraryFilesToPreload = new List<string>();
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "PreloadedLibraryFiles.txt");
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            string setupSettingsPathAndFile = Path.Combine("OEMSettings", "PreloadedLibraryFiles.txt");
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
+                    var lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
                     foreach (string line in lines)
                     {
                         //Ignore commented lines

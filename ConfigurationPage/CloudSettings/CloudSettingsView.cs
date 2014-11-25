@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
             Agg.Image.ImageBuffer cloudMonitorImage = new Agg.Image.ImageBuffer();
-            ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "cloud-24x24.png"), cloudMonitorImage);
+            StaticData.Instance.LoadImage(Path.Combine("Icons", "PrintStatusControls", "cloud-24x24.png"), cloudMonitorImage);
             if (!ActiveTheme.Instance.IsDarkTheme)
             {
                 InvertLightness.DoInvertLightness(cloudMonitorImage);
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
             Agg.Image.ImageBuffer notificationSettingsImage = new Agg.Image.ImageBuffer();
-            ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "PrintStatusControls", "notify-24x24.png"), notificationSettingsImage);
+            StaticData.Instance.LoadImage(Path.Combine("Icons", "PrintStatusControls", "notify-24x24.png"), notificationSettingsImage);
             if (!ActiveTheme.Instance.IsDarkTheme)
             {
                 InvertLightness.DoInvertLightness(notificationSettingsImage);

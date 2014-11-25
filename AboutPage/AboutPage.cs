@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.HtmlParsing;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl
 {
@@ -131,8 +132,8 @@ namespace MatterHackers.MatterControl
 
             if (htmlContent == null)
             {
-                string aboutHtmlFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "AboutPage.html");
-                htmlContent = File.ReadAllText(aboutHtmlFile);
+                string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
+                htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
             }
             
             htmlWidget = new FlowLayoutWidget(FlowDirection.TopToBottom);

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -263,6 +265,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 foreach (string fileName in fileNames)
                 {
                     string pathForInf = Path.GetFileNameWithoutExtension(fileName);
+
+                    // TODO: It's really unexpected that the driver gets copied to the temp folder everytime a printer is setup. I'd think this only needs
+                    // to happen when the infinstaller is run
+                    // TODO: Prevent execution of this code on non-Windows platforms				
+                    // TODO: Needs runtime eval to track down behavior
                     string infPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", pathForInf));
                     string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
                     switch (OsInformation.OperatingSystem)
@@ -294,14 +301,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         private Dictionary<string, string> LoadPrinterSetupFromFile(string make, string model)
         {
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "setup.ini");
+            string setupSettingsPathAndFile = Path.Combine("PrinterSettings", make, model, "setup.ini");
             Dictionary<string, string> settingsDict = new Dictionary<string, string>();
 
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
+                    var lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
                     foreach (string line in lines)
                     {
                         //Ignore commented lines
@@ -343,9 +350,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         public void LoadSlicePresets(string make, string model, string tag)
         {
-            string[] slicePresetPaths = GetSlicePresets(make, model, tag);
-
-            foreach (string filePath in slicePresetPaths)
+            foreach (string filePath in GetSlicePresets(make, model, tag))
             {
                 SliceSettingsCollection collection = null;
                 Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(filePath);
@@ -388,10 +393,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         private string[] GetSlicePresets(string make, string model, string tag)
         {
             string[] presetPaths = new string[]{};
-            string folderPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, tag);
-            if (Directory.Exists(folderPath))
+            string folderPath = Path.Combine("PrinterSettings", make, model, tag);
+            if (StaticData.Instance.DirectoryExists(folderPath))
             {
-                presetPaths = Directory.GetFiles(folderPath);
+                presetPaths = StaticData.Instance.GetFiles(folderPath).ToArray();
             }
             return presetPaths;
         }
@@ -404,11 +409,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         private Dictionary<string, string> LoadSliceSettingsFromFile(string setupSettingsPathAndFile)
         {            
             Dictionary<string, string> settingsDict = new Dictionary<string, string>();
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
+                    // TODO: Requires runtime eval - what's the deal with setupSettingsPathAndFile
+                    var lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
                     foreach (string line in lines)
                     {
                         //Ignore commented lines

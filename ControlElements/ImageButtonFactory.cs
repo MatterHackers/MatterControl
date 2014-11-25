@@ -29,10 +29,10 @@ namespace MatterHackers.MatterControl
             Agg.Image.ImageBuffer hoverImage = new Agg.Image.ImageBuffer();
             Agg.Image.ImageBuffer disabledImage = new Agg.Image.ImageBuffer();
 
-            ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
-            ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
-            ImageIO.LoadImageData(this.GetImageLocation(hoverImageName), hoverImage);
-            ImageIO.LoadImageData(this.GetImageLocation(disabledImageName), disabledImage);
+            StaticData.Instance.LoadImage(Path.Combine("Icons", normalImageName), normalImage);
+            StaticData.Instance.LoadImage(Path.Combine("Icons", pressedImageName), pressedImage);
+            StaticData.Instance.LoadImage(Path.Combine("Icons", hoverImageName), hoverImage);
+            StaticData.Instance.LoadImage(Path.Combine("Icons", disabledImageName), disabledImage);
 
             if (!ActiveTheme.Instance.IsDarkTheme && invertImageColor)
             {
@@ -57,11 +57,6 @@ namespace MatterHackers.MatterControl
             imageButton.Margin = new BorderDouble(0);
             imageButton.Padding = new BorderDouble(0);
             return imageButton;
-        }
-
-        private string GetImageLocation(string imageName)
-        {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
         }
     }
 

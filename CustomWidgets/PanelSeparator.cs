@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
             hoverBackgroundColor = new RGBA_Bytes(100, 100, 100);
             
             Agg.Image.ImageBuffer arrowImage = new Agg.Image.ImageBuffer();
-            ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "icon_arrow_left_16x16.png"), arrowImage);
+            StaticData.Instance.LoadImage(Path.Combine("Icons", "icon_arrow_left_16x16.png"), arrowImage);
             arrowIndicator = new ImageWidget(arrowImage);
             arrowIndicator.HAnchor = Agg.UI.HAnchor.ParentCenter;
             arrowIndicator.VAnchor = Agg.UI.VAnchor.ParentCenter;

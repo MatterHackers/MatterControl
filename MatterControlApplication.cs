@@ -47,6 +47,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.CreatorPlugins;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl
 {
@@ -115,6 +116,8 @@ namespace MatterHackers.MatterControl
                 // you can turn this on to debug some bounds issues
                 //GuiWidget.DebugBoundsUnderMouse = true;
             }
+
+            StaticData.Instance = new MatterHackers.Agg.Image.SimpleStaticData();
 
             GuiWidget.DefaultEnforceIntegerBounds = true;
 
@@ -239,6 +242,7 @@ namespace MatterHackers.MatterControl
 #else
             PluginFinder<MatterControlPlugin> pulginFinder = new PluginFinder<MatterControlPlugin>();
 #endif
+
             string oemName = ApplicationSettings.Instance.GetOEMName();
             foreach (MatterControlPlugin plugin in pulginFinder.Plugins)
             {
