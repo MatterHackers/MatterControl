@@ -663,8 +663,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 });
             }
 
-            //upArrow = new UpArrow3D(meshViewerWidget);
-            //meshViewerWidget.interactionVolumes.Add(upArrow);
+            upArrow = new UpArrow3D(meshViewerWidget);
+            meshViewerWidget.interactionVolumes.Add(upArrow);
 
             // make sure the colors are set correctl
             ThemeChanged(this, null);
@@ -1290,25 +1290,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void SetNewModelSize(double sizeInMm, int axis)
         {
-            // because we remove any current scale before we change to a new one we only get the size of the base mesh data
-            AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
+            if (HaveSelection)
+            {
+                // because we remove any current scale before we change to a new one we only get the size of the base mesh data
+                AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
 
-            double currentSize = originalMeshBounds.Size[axis];
-            double desiredSize = sizeDisplay[axis].GetValue();
-            double scaleFactor = 1;
-            if (currentSize != 0)
-            {
-                scaleFactor = desiredSize / currentSize;
-            }
+                double currentSize = originalMeshBounds.Size[axis];
+                double desiredSize = sizeDisplay[axis].GetValue();
+                double scaleFactor = 1;
+                if (currentSize != 0)
+                {
+                    scaleFactor = desiredSize / currentSize;
+                }
 
-            if (uniformScale.Checked)
-            {
-                scaleRatioControl.ActuallNumberEdit.Value = scaleFactor;
-                ApplyScaleFromEditField();
-            }
-            else
-            {
-                ScaleAxis(scaleFactor, axis);
+                if (uniformScale.Checked)
+                {
+                    scaleRatioControl.ActuallNumberEdit.Value = scaleFactor;
+                    ApplyScaleFromEditField();
+                }
+                else
+                {
+                    ScaleAxis(scaleFactor, axis);
+                }
             }
         }
 
@@ -1321,6 +1324,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
                 sizeDisplay[1].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[1]));
                 sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));
+            }
+            else
+            {
+                sizeDisplay[0].SetDisplayString("---");
+                sizeDisplay[1].SetDisplayString("---");
+                sizeDisplay[2].SetDisplayString("---");
             }
         }
 
@@ -1464,12 +1473,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void ApplyScaleFromEditField()
         {
-            double scale = scaleRatioControl.ActuallNumberEdit.Value;
-            if (scale > 0)
+            if (HaveSelection)
             {
-                ScaleAxis(scale, 0);
-                ScaleAxis(scale, 1);
-                ScaleAxis(scale, 2);
+                double scale = scaleRatioControl.ActuallNumberEdit.Value;
+                if (scale > 0)
+                {
+                    ScaleAxis(scale, 0);
+                    ScaleAxis(scale, 1);
+                    ScaleAxis(scale, 2);
+                }
             }
         }
 
