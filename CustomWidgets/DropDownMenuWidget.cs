@@ -95,6 +95,31 @@ namespace MatterHackers.Agg.UI
             HoverArrowColor = TextColor;
         }
 
+		public DropDownMenu(string topMenuText, GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
+			: base(buttonView, direction)
+		{
+			MenuAsWideAsItems = true;
+			SetDisplayAttributes();
+
+			MenuItems.CollectionChanged += new NotifyCollectionChangedEventHandler(MenuItems_CollectionChanged);
+
+			mainControlText = new TextWidget(topMenuText, pointSize: pointSize);
+			mainControlText.TextColor = this.TextColor;
+			mainControlText.AutoExpandBoundsToText = true;
+			mainControlText.VAnchor = UI.VAnchor.ParentCenter;
+			mainControlText.HAnchor = UI.HAnchor.ParentLeft;
+			AddChild(mainControlText);
+			HAnchor = HAnchor.FitToChildren;
+			VAnchor = VAnchor.FitToChildren;
+
+			MouseEnter += new EventHandler(DropDownList_MouseEnter);
+			MouseLeave += new EventHandler(DropDownList_MouseLeave);
+
+			//IE Don't show arrow unless color is set explicitly
+			NormalArrowColor = new RGBA_Bytes(255, 255, 255, 0);
+			HoverArrowColor = TextColor;
+		}
+
         void DropDownList_MouseLeave(object sender, EventArgs e)
         {
             if (!this.IsOpen)
@@ -182,7 +207,7 @@ namespace MatterHackers.Agg.UI
             this.DrawDirectionalArrow(graphics2D);
         }
 
-        private void DrawDirectionalArrow(Graphics2D graphics2D)
+		protected virtual void DrawDirectionalArrow(Graphics2D graphics2D)
         {
             PathStorage littleArrow = new PathStorage();
             if (this.MenuDirection == Direction.Down)
@@ -225,8 +250,10 @@ namespace MatterHackers.Agg.UI
             {
                 value = name;
             }
-
-            mainControlText.Margin = MenuItemsPadding;
+			if(mainControlText.Text != "")
+			{
+				mainControlText.Margin = MenuItemsPadding;
+			}            
 
             GuiWidget normalTextWithMargin = new GuiWidget();
             normalTextWithMargin.HAnchor = HAnchor.FitToChildren;
