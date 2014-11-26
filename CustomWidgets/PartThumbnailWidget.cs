@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
         ImageBuffer thumbnailImage = new Agg.Image.ImageBuffer();
 
         // all the color stuff
-        public double BorderWidth = 0; //Don't delete this - required for OnDraw
+        new public double BorderWidth = 0; //Don't delete this - required for OnDraw
         protected double borderRadius = 0;
         protected RGBA_Bytes HoverBorderColor = new RGBA_Bytes();
 

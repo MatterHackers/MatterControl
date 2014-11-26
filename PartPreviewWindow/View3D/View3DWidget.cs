@@ -60,36 +60,64 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class UpArrow3D : InteractionVolume
     {
         Mesh upArrow;
-        MeshViewerWidget meshViewerToDrawWith;
 
         public UpArrow3D(MeshViewerWidget meshViewerToDrawWith)
-            : base(new CylinderShape(3, 12, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)))
+            : base(new CylinderShape(6, 15, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)), meshViewerToDrawWith)
         {
-            this.meshViewerToDrawWith = meshViewerToDrawWith;
             string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
-            List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
-            upArrow = loadedMeshGroups[0].Meshes[0];
+            if (File.Exists(arrowFile))
+            {
+                List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
+                upArrow = loadedMeshGroups[0].Meshes[0];
+                //CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
+            }
+        }
+
+        public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
+        {
+            base.OnMouseDown(mouseEvent3D);
+        }
+
+        public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
+        {
+            base.OnMouseMove(mouseEvent3D);
+        }
+
+        public void SetPosition()
+        {
+            Matrix4X4 transform = MeshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
+            AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox();
+            Vector3 boundsCenter = selectedBounds.Center;
+            Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+
+            Vector2 centerTopScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
+            //centerTopScreenPosition = meshViewerToDrawWith.TransformToParentSpace(this, centerTopScreenPosition);
+
+            double distBetweenPixelsWorldSpace = MeshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
+
+            transform = Matrix4X4.CreateTranslation(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * distBetweenPixelsWorldSpace)) * transform;
+            transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * transform;
+
+            TotalTransform = transform;
         }
 
         public override void DrawGlContent(EventArgs e)
         {
-            if (meshViewerToDrawWith.SelectedMeshGroup != null)
+            if (MeshViewerToDrawWith.SelectedMeshGroup != null)
             {
-                AxisAlignedBoundingBox selectedBounds = meshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox(meshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform);
-                Vector3 boundsCenter = selectedBounds.Center;
-                Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
-
-                Vector2 centerTopScreenPosition = meshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
-                //centerTopScreenPosition = meshViewerToDrawWith.TransformToParentSpace(this, centerTopScreenPosition);
-
-                double scalling = meshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
 
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.PushMatrix();
-                GL.Translate(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * scalling));
-                GL.Scale(scalling, scalling, scalling);
+                GL.MultMatrix(TotalTransform.GetAsDoubleArray());
 
-                RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
+                if (MouseOver)
+                {
+                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, RenderTypes.Shaded);
+                }
+                else
+                {
+                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
+                }
 
                 GL.PopMatrix();
             }
@@ -103,6 +131,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public WindowType windowType { get; set; }
 
         EventHandler SelectionChanged;
+        UpArrow3D upArrow;
 
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
@@ -250,25 +279,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     && ModifierKeys != Keys.Control
                     && ModifierKeys != Keys.Alt)
                 {
-                    int meshGroupHitIndex;
-                    if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
+                    if (!meshViewerWidget.MouseDownOnInteractionVolume)
                     {
-                        meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
-                        SelectedMeshGroupIndex = meshGroupHitIndex;
-
-                        transformOnMouseDown = SelectedMeshGroupTransform.translation;
-
-                        Invalidate();
-                        meshSelectInfo.downOnPart = true;
-
-                        if (SelectionChanged != null)
+                        int meshGroupHitIndex;
+                        if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
                         {
-                            SelectionChanged(this, null);
+                            meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
+                            SelectedMeshGroupIndex = meshGroupHitIndex;
+
+                            transformOnMouseDown = SelectedMeshGroupTransform.translation;
+
+                            Invalidate();
+                            meshSelectInfo.downOnPart = true;
+
+                            if (SelectionChanged != null)
+                            {
+                                SelectionChanged(this, null);
+                            }
                         }
-                    }
-                    else
-                    {
-                        SelectedMeshGroupIndex = -1;
+                        else
+                        {
+                            SelectedMeshGroupIndex = -1;
+                        }
+
+                        UpdateSizeInfo();
                     }
                 }
             }
@@ -276,6 +310,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnDraw(Graphics2D graphics2D)
         {
+            if (HaveSelection)
+            {
+                upArrow.SetPosition();
+            }
+
             hasDrawn = true;
             base.OnDraw(graphics2D);
             DrawStuffForSelectedPart(graphics2D);
@@ -636,13 +675,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 });
             }
 
-            meshViewerWidget.InteractionVolumes.Add(new UpArrow3D(meshViewerWidget));
+            upArrow = new UpArrow3D(meshViewerWidget);
+            meshViewerWidget.interactionVolumes.Add(upArrow);
 
             // make sure the colors are set correctl
             ThemeChanged(this, null);
         }
 
-		private void OpenExportWindow()
+        private void OpenExportWindow()
 		{
             if (exportingWindow == null)
 			{
@@ -1289,25 +1329,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void SetNewModelSize(double sizeInMm, int axis)
         {
-            // because we remove any current scale before we change to a new one we only get the size of the base mesh data
-            AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
+            if (HaveSelection)
+            {
+                // because we remove any current scale before we change to a new one we only get the size of the base mesh data
+                AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
 
-            double currentSize = originalMeshBounds.Size[axis];
-            double desiredSize = sizeDisplay[axis].GetValue();
-            double scaleFactor = 1;
-            if (currentSize != 0)
-            {
-                scaleFactor = desiredSize / currentSize;
-            }
+                double currentSize = originalMeshBounds.Size[axis];
+                double desiredSize = sizeDisplay[axis].GetValue();
+                double scaleFactor = 1;
+                if (currentSize != 0)
+                {
+                    scaleFactor = desiredSize / currentSize;
+                }
 
-            if (uniformScale.Checked)
-            {
-                scaleRatioControl.ActuallNumberEdit.Value = scaleFactor;
-                ApplyScaleFromEditField();
-            }
-            else
-            {
-                ScaleAxis(scaleFactor, axis);
+                if (uniformScale.Checked)
+                {
+                    scaleRatioControl.ActuallNumberEdit.Value = scaleFactor;
+                    ApplyScaleFromEditField();
+                }
+                else
+                {
+                    ScaleAxis(scaleFactor, axis);
+                }
             }
         }
 
@@ -1320,6 +1363,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
                 sizeDisplay[1].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[1]));
                 sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));
+            }
+            else
+            {
+                sizeDisplay[0].SetDisplayString("---");
+                sizeDisplay[1].SetDisplayString("---");
+                sizeDisplay[2].SetDisplayString("---");
             }
         }
 
@@ -1463,12 +1512,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void ApplyScaleFromEditField()
         {
-            double scale = scaleRatioControl.ActuallNumberEdit.Value;
-            if (scale > 0)
+            if (HaveSelection)
             {
-                ScaleAxis(scale, 0);
-                ScaleAxis(scale, 1);
-                ScaleAxis(scale, 2);
+                double scale = scaleRatioControl.ActuallNumberEdit.Value;
+                if (scale > 0)
+                {
+                    ScaleAxis(scale, 0);
+                    ScaleAxis(scale, 1);
+                    ScaleAxis(scale, 2);
+                }
             }
         }
 
@@ -1584,15 +1636,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateControls.Add(rotateXButton);
             rotateXButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                // rotate it
-                ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-                rotated.rotation *= Matrix4X4.CreateRotationX(radians);
-                SelectedMeshGroupTransform = rotated;
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
+                    // rotate it
+                    ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
+                    rotated.rotation *= Matrix4X4.CreateRotationX(radians);
+                    SelectedMeshGroupTransform = rotated;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
-                saveButtons.Visible = true;
-                Invalidate();
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             Button rotateYButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
@@ -1601,14 +1656,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateControls.Add(rotateYButton);
             rotateYButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                // rotate it
-                ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-                rotated.rotation *= Matrix4X4.CreateRotationY(radians);
-                SelectedMeshGroupTransform = rotated;
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
-                saveButtons.Visible = true;
-                Invalidate();
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
+                    // rotate it
+                    ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
+                    rotated.rotation *= Matrix4X4.CreateRotationY(radians);
+                    SelectedMeshGroupTransform = rotated;
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             Button rotateZButton = textImageButtonFactory.Generate("", "icon_rotate_32x32.png");
@@ -1617,15 +1675,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             rotateControls.Add(rotateZButton);
             rotateZButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
-                // rotate it
-                ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-                rotated.rotation *= Matrix4X4.CreateRotationZ(radians);
-                SelectedMeshGroupTransform = rotated;
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    double radians = MathHelper.DegreesToRadians(degreesControl.ActuallNumberEdit.Value);
+                    // rotate it
+                    ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
+                    rotated.rotation *= Matrix4X4.CreateRotationZ(radians);
+                    SelectedMeshGroupTransform = rotated;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
-                saveButtons.Visible = true;
-                Invalidate();
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             buttonPanel.AddChild(rotateButtonContainer);
@@ -1636,10 +1697,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             layFlatButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                MakeLowestFaceFlat(SelectedMeshGroupIndex);
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    MakeLowestFaceFlat(SelectedMeshGroupIndex);
 
-                saveButtons.Visible = true;
-                Invalidate();
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             buttonPanel.AddChild(generateHorizontalRule());
@@ -1661,16 +1725,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mirrorControls.Add(mirrorXButton);
             mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                SelectedMeshGroup.ReverseFaceEdges();
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    SelectedMeshGroup.ReverseFaceEdges();
 
-                ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-                scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
-                SelectedMeshGroupTransform = scale;
+                    ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+                    scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
+                    SelectedMeshGroupTransform = scale;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
 
-                saveButtons.Visible = true;
-                Invalidate();
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             Button mirrorYButton = textImageButtonFactory.Generate("Y", centerText: true);
@@ -1678,16 +1745,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mirrorControls.Add(mirrorYButton);
             mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                SelectedMeshGroup.ReverseFaceEdges();
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    SelectedMeshGroup.ReverseFaceEdges();
 
-                ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-                scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
-                SelectedMeshGroupTransform = scale;
+                    ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+                    scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
+                    SelectedMeshGroupTransform = scale;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
 
-                saveButtons.Visible = true;
-                Invalidate();
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
 
             Button mirrorZButton = textImageButtonFactory.Generate("Z", centerText: true);
@@ -1695,16 +1765,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             mirrorControls.Add(mirrorZButton);
             mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
             {
-                SelectedMeshGroup.ReverseFaceEdges();
+                if (SelectedMeshGroupIndex != -1)
+                {
+                    SelectedMeshGroup.ReverseFaceEdges();
 
-                ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-                scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
-                SelectedMeshGroupTransform = scale;
+                    ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+                    scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
+                    SelectedMeshGroupTransform = scale;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
 
-                saveButtons.Visible = true;
-                Invalidate();
+                    saveButtons.Visible = true;
+                    Invalidate();
+                }
             };
             buttonPanel.AddChild(buttonContainer);
             buttonPanel.AddChild(generateHorizontalRule());
@@ -1785,7 +1858,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        int nextColor = 0;
         RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 
         private void AddHandlers()

@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public SliceSettingsWidget(SliceSettingsWidgetUiState uiState)
         {
-            int minSettingNameWidth = 220;
+            int minSettingNameWidth = 190;
             buttonFactory.FixedHeight = 20;
             buttonFactory.fontSize = 10;
             buttonFactory.normalFillColor = RGBA_Bytes.White;
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
 
                 return "Minimal";
-                return "Beginner";
+                //return "Beginner";
             }
         }
 
@@ -524,6 +524,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 int intEditWidth = 60;
                 int doubleEditWidth = 60;
+                if (settingData.QuickMenuSettings.Count > 0)
+                {
+                    doubleEditWidth = 35;
+                }
                 int vectorXYEditWidth = 60;
                 int multiLineEditHeight = 60;
 
@@ -605,7 +609,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                             if (settingData.QuickMenuSettings.Count > 0)
                             {
-                                leftToRightLayout.AddChild(CreateQuickMenu(settingData, content));
+                                leftToRightLayout.AddChild(CreateQuickMenu(settingData, content, doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget));
                             }
                             else
                             {
@@ -661,7 +665,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                             if (settingData.QuickMenuSettings.Count > 0)
                             {
-                                leftToRightLayout.AddChild(CreateQuickMenu(settingData, content));
+                                leftToRightLayout.AddChild(CreateQuickMenu(settingData, content, stringEdit.ActualTextEditWidget.InternalTextEditWidget));
                             }
                             else
                             {
@@ -930,7 +934,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return container;
         }
 
-        private GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, GuiWidget content)
+        private GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, GuiWidget content, InternalTextEditWidget internalTextWidget)
         {
             string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName); 
             FlowLayoutWidget totalContent = new FlowLayoutWidget();
@@ -946,27 +950,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 if (sliceSettingValue == valueLocal)
                 {
                     selectableOptions.SelectedLabel = nameValue.MenuName;
-                    content.Visible = false;
                 }
 
                 newItem.Selected += (sender, e) =>
                 {
                     SaveSetting(settingData.SlicerConfigName, valueLocal);
                     CallEventsOnSettingsChange(settingData);
-                    content.Visible = false;
+                    internalTextWidget.Text = valueLocal;
                 };
             }
 
             // put in the custom menu to allow direct editing
             MenuItem customMenueItem = selectableOptions.AddItem("Custom");
-            customMenueItem.Selected += (sender, e) =>
-            {
-                content.Visible = true;
-            };
 
             totalContent.AddChild(selectableOptions);
             content.VAnchor = VAnchor.ParentCenter;
             totalContent.AddChild(content);
+
+            internalTextWidget.EditComplete += (sender, e) =>
+            {
+                bool foundSetting = false;
+                foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
+                {
+                    string localName = nameValue.MenuName;
+                    string newSliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
+                    if (newSliceSettingValue == nameValue.Value)
+                    {
+                        selectableOptions.SelectedLabel = localName;
+                        foundSetting = true;
+                        break;
+                    }
+                }
+
+                if (!foundSetting)
+                {
+                    selectableOptions.SelectedLabel = "Custom";
+                }
+            };
 
             return totalContent;
         }

@@ -429,7 +429,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         this.windowController.ActivePresetLayer.settingsDictionary[addRowSettingData.SlicerConfigName] = sliceSetting;
 
                         OnSettingsChanged();
-                        HasUncommittedChanges = true;
                     }
                     addRowSettingData = null;
                     PopulateAddSettingRow(-1, -1, "-1");
@@ -475,7 +474,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             });
         }
 
-        bool HasUncommittedChanges;
         public RootedObjectEventHandler CommitStatusChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler SettingsChanged = new RootedObjectEventHandler();
 
@@ -487,7 +485,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 this.windowController.ActivePresetLayer.settingsDictionary[keyName].Value = keyValue;
 
                 OnSettingsChanged();
-                HasUncommittedChanges = true;
             }
             else
             {
@@ -499,7 +496,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 this.windowController.ActivePresetLayer.settingsDictionary[keyName] = sliceSetting;
 
                 OnSettingsChanged();
-                HasUncommittedChanges = true;
             }
         }
 
@@ -927,7 +923,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						LoadSettingsRows();
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// Error loading configuration
 				}

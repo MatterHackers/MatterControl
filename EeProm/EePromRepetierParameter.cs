@@ -50,12 +50,18 @@ namespace MatterHackers.MatterControl.EeProm
 
         public void update(string line)
         {
-            string[] lines = line.Substring(4).Split(' ');
-            int.TryParse(lines[0], out type);
-            int.TryParse(lines[1], out position);
-            val = lines[2];
-            description = line.Substring(7 + lines[0].Length + lines[1].Length + lines[2].Length);
-            changed = false;
+            if (line.Length > 4)
+            {
+                string[] lines = line.Substring(4).Split(' ');
+                if (lines.Length > 2)
+                {
+                    int.TryParse(lines[0], out type);
+                    int.TryParse(lines[1], out position);
+                    val = lines[2];
+                    description = line.Substring(7 + lines[0].Length + lines[1].Length + lines[2].Length);
+                    changed = false;
+                }
+            }
         }
         
         public void save()

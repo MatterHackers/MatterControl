@@ -258,40 +258,12 @@ namespace MatterHackers.MatterControl
                 for(int i=0; i<meshGroup.Meshes.Count; i++)
                 {
                     Mesh mesh = meshGroup.Meshes[i];
-                    List<IRayTraceable> allPolys = new List<IRayTraceable>();
-                    List<Vector3> positions = new List<Vector3>();
-                    bool continueProcessing;
-                    foreach (Face face in mesh.Faces)
-                    {
-                        positions.Clear();
-                        foreach (Vertex vertex in face.Vertices())
-                        {
-                            positions.Add(vertex.Position);
-                        }
-
-                        // We should use the teselator for this if it is greater than 3.
-                        Vector3 next = positions[1];
-                        for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
-                        {
-                            TriangleShape triangel = new TriangleShape(positions[0], next, positions[positionIndex], null);
-                            allPolys.Add(triangel);
-                            next = positions[positionIndex];
-                        }
-
-                        if (reportProgress != null)
-                        {
-                            if((currentAction % 256) == 0 || needUpdateTitle)
-                            {
-                                reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", out continueProcessing);
-                                needUpdateTitle = false;
-                            }
-                            currentAction++;
-                        }
-                    }
+                    List<IRayTraceable> allPolys = AddTraceDataForMesh(mesh, totalActionCount, ref currentAction, ref needUpdateTitle, reportProgress);
 
                     needUpdateTitle = true;
                     if (reportProgress != null)
                     {
+                        bool continueProcessing;
                         reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
                     }
 
@@ -310,6 +282,52 @@ namespace MatterHackers.MatterControl
 #endif
                 }
             }
+        }
+
+        public static IRayTraceable CreateTraceDataForMesh(Mesh mesh)
+        {
+            int unusedInt = 0;
+            bool unusedBool = false;
+            List<IRayTraceable>  allPolys = AddTraceDataForMesh(mesh, 0, ref unusedInt, ref unusedBool, null);
+            return BoundingVolumeHierarchy.CreateNewHierachy(allPolys);
+        }
+
+        private static List<IRayTraceable> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, ReportProgressRatio reportProgress)
+        {
+            bool continueProcessing;
+
+            List<IRayTraceable>  allPolys = new List<IRayTraceable>();
+            List<Vector3> positions = new List<Vector3>();
+
+            foreach (Face face in mesh.Faces)
+            {
+                positions.Clear();
+                foreach (Vertex vertex in face.Vertices())
+                {
+                    positions.Add(vertex.Position);
+                }
+
+                // We should use the teselator for this if it is greater than 3.
+                Vector3 next = positions[1];
+                for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
+                {
+                    TriangleShape triangel = new TriangleShape(positions[0], next, positions[positionIndex], null);
+                    allPolys.Add(triangel);
+                    next = positions[positionIndex];
+                }
+
+                if (reportProgress != null)
+                {
+                    if ((currentAction % 256) == 0 || needToUpdateProgressReport)
+                    {
+                        reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", out continueProcessing);
+                        needToUpdateProgressReport = false;
+                    }
+                    currentAction++;
+                }
+            }
+
+            return allPolys;
         }
     }
 }

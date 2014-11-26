@@ -2405,6 +2405,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
 
+            LinesToWriteQueue.Clear();
             ClearQueuedGCode();
             loadedGCode = GCodeFile.ParseGCodeString(string.Join("\n", printableGCode.ToArray()));
 

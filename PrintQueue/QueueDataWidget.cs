@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.PrintQueue
         Button removeItemButton;
         Button enterEditModeButton;
         Button leaveEditModeButton;
-		QueueRowItem queueRowItem;
 
         Button addToQueueButton;
         Button createButton;
