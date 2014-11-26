@@ -97,8 +97,6 @@ namespace MatterHackers.MatterControl
 
 		public int fontSize = 12;
 		public double borderWidth = 1;
-		public bool invertImageLocation = false;
-		public bool AllowThemeToAdjustImage = true;
 		FlowDirection flowDirection;
 
 		public double FixedWidth = 10;

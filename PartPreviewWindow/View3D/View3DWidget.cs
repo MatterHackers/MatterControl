@@ -1130,27 +1130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 				SplitButtonFactory splitButtonFactory = new SplitButtonFactory ();
 				saveButtons = splitButtonFactory.Generate (buttonList);
-
-//				saveButtons = new SplitButton ("Save");
-//				saveButtons.addItem ("Save As", () =>
-//					{
-//						if (saveAsWindowIsOpen == false)
-//						{
-//							saveAsWindow = new SaveAsWindow(MergeAndSavePartsToMeshFile);
-//							this.saveAsWindowIsOpen = true;
-//							saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
-//						}
-//						else
-//						{
-//							if (saveAsWindowIsOpen != null)
-//							{
-//								saveAsWindow.BringToFront();
-//							}
-//						}
-//						return true;
-//					});
-  //              saveButtons = CreateSaveButtons();
-
+				saveButtons.Visible = false;
 
                 buttonRightPanel.AddChild(saveButtons);
 

@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 			for(int index =1; index < buttonList.Count; index++)
 			{
-				menu.addItem (buttonList [index].Item1,buttonList[index].Item2);
+				menu.addItem (buttonList[index].Item1,buttonList[index].Item2);
 			}
 
 			SplitButton splitButton = new SplitButton (button, menu);
