@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl
             }
 
             Agg.Image.ImageBuffer normalImage = StaticData.Instance.LoadIcon(normalImageName);
-            Agg.Image.ImageBuffer pressedImage = StaticData.Instance.LoadIconpressedImageName);
+            Agg.Image.ImageBuffer pressedImage = StaticData.Instance.LoadIcon(pressedImageName);
             Agg.Image.ImageBuffer hoverImage = StaticData.Instance.LoadIcon(hoverImageName);
             Agg.Image.ImageBuffer disabledImage = StaticData.Instance.LoadIcon(disabledImageName);
 

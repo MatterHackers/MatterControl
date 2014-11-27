@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		   
         SliceSettingsOrganizer()
         {
-            LoadAndParseSettingsFiles(Path.Combine("SliceSettings", "Properties.txt"), Path.Combine("SliceSettings", "Layouts.txt"));
+            LoadAndParseSettingsFiles(Path.Combine("SliceSettings", "Properties.json"), Path.Combine("SliceSettings", "Layouts.txt"));
 
 #if false
             Categories.Add(CreatePrintSettings());
@@ -289,60 +289,51 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		void LoadAndParseSettingsFiles(string propertiesPathAndFilename, string layoutPathAndFilename)
         {
+			string propertiesFileContents = StaticData.Instance.ReadAllText(propertiesPathAndFilename);
+			settingsData = JsonConvert.DeserializeObject<List<OrganizerSettingsData>> (propertiesFileContents) as List<OrganizerSettingsData>;
+
+            OrganizerUserLevel userLevelToAddTo = null;
+            OrganizerCategory categoryToAddTo = null;
+            OrganizerGroup groupToAddTo = null;
+            OrganizerSubGroup subGroupToAddTo = null;
+
+			IEnumerable<string> lines = StaticData.Instance.ReadAllLines(layoutPathAndFilename);
+            foreach (string line in lines)
             {
-                var lines = StaticData.Instance.ReadAllLines(properties);
-                foreach (string line in lines)
+                if (line.Length > 0)
                 {
-                    if (line.Trim().Length > 0)
+                    switch (CountLeadingSpaces(line))
                     {
-                        settingsData.Add(OrganizerSettingsData.NewOrganizerSettingData(line));
+                        case 0:
+                            string userLevelText = line.Replace('"', ' ').Trim();
+                            userLevelToAddTo = new OrganizerUserLevel(userLevelText);
+                            UserLevels.Add(userLevelText, userLevelToAddTo);
+                            break;
+
+                        case 2:
+                            categoryToAddTo = new OrganizerCategory(line.Replace('"', ' ').Trim());
+                            userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
+                            break;
+
+                        case 4:
+                            groupToAddTo = new OrganizerGroup(line.Replace('"', ' ').Trim());
+                            categoryToAddTo.GroupsList.Add(groupToAddTo);
+                            break;
+
+                        case 6:
+                            subGroupToAddTo = new OrganizerSubGroup(line.Replace('"', ' ').Trim());
+                            groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
+                            break;
+
+                        case 8:
+                            subGroupToAddTo.SettingDataList.Add(GetSettingsData(line.Replace('"', ' ').Trim()));
+                            break;
+
+                        default:
+                            throw new Exception("Bad file, too many spaces (must be 0, 2, 4 or 6).");
                     }
                 }
-            }
-
-            {
-                OrganizerUserLevel userLevelToAddTo = null;
-                OrganizerCategory categoryToAddTo = null;
-                OrganizerGroup groupToAddTo = null;
-                OrganizerSubGroup subGroupToAddTo = null;
-                var lines = StaticData.Instance.ReadAllLines(layout);
-                foreach (string line in lines)
-                {
-                    if (line.Length > 0)
-                    {
-                        switch (CountLeadingSpaces(line))
-                        {
-                            case 0:
-                                string userLevelText = line.Replace('"', ' ').Trim();
-                                userLevelToAddTo = new OrganizerUserLevel(userLevelText);
-                                UserLevels.Add(userLevelText, userLevelToAddTo);
-                                break;
-
-                            case 2:
-                                categoryToAddTo = new OrganizerCategory(line.Replace('"', ' ').Trim());
-                                userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
-                                break;
-
-                            case 4:
-                                groupToAddTo = new OrganizerGroup(line.Replace('"', ' ').Trim());
-                                categoryToAddTo.GroupsList.Add(groupToAddTo);
-                                break;
-
-                            case 6:
-                                subGroupToAddTo = new OrganizerSubGroup(line.Replace('"', ' ').Trim());
-                                groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
-                                break;
-
-                            case 8:
-                                subGroupToAddTo.SettingDataList.Add(GetSettingsData(line.Replace('"', ' ').Trim()));
-                                break;
-
-                            default:
-                                throw new Exception("Bad file, too many spaces (must be 0, 2, 4 or 6).");
-                        }
-                    }
-                }
-            }
+			}
         }
 
         private static int CountLeadingSpaces(string line)

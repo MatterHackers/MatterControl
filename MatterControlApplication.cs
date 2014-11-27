@@ -117,7 +117,8 @@ namespace MatterHackers.MatterControl
                 //GuiWidget.DebugBoundsUnderMouse = true;
             }
 
-            StaticData.Instance = new MatterHackers.Agg.Image.SimpleStaticData();
+            // Initialize a standard filesystem backed StaticData manager
+            StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
 
             GuiWidget.DefaultEnforceIntegerBounds = true;
 
