@@ -88,11 +88,10 @@ namespace MatterHackers.MatterControl
             string defaultModelDropDownLabelFull = string.Format("- {0} -", defaultModelDropDownLabel);
             ModelDropList = new StyledDropDownList(defaultModelDropDownLabelFull);
 
-            // TODO: Figure out how to replicate with Assets model
-            string pathToModels = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", manufacturer);
-            if (Directory.Exists(pathToModels))
+            string pathToModels = Path.Combine("PrinterSettings", manufacturer);
+			if (StaticData.Instance.DirectoryExists((pathToModels)))
             {
-                foreach (string manufacturerDirectory in Directory.EnumerateDirectories(pathToModels))
+				foreach (string manufacturerDirectory in StaticData.Instance.GetDirectories(pathToModels))
                 {
                     string model = Path.GetFileName(manufacturerDirectory);
                     ModelDropList.AddItem(model);

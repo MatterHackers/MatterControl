@@ -267,9 +267,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     string pathForInf = Path.GetFileNameWithoutExtension(fileName);
 
                     // TODO: It's really unexpected that the driver gets copied to the temp folder everytime a printer is setup. I'd think this only needs
-                    // to happen when the infinstaller is run
+                    // to happen when the infinstaller is run (More specifically - move this to *after* the user clicks Install Driver)
                     // TODO: Prevent execution of this code on non-Windows platforms				
-                    // TODO: Needs runtime eval to track down behavior
                     string infPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", pathForInf));
                     string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
                     switch (OsInformation.OperatingSystem)
@@ -333,7 +332,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
         {
             SliceSettingsCollection collection = null;
-            Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(GetDefaultPrinterSlicePath(make, model));
+			Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(Path.Combine("PrinterSettings", make, model, "config.ini"));
             
             if (settingsDict.Count > 0)
             {
@@ -401,11 +400,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             return presetPaths;
         }
 
-        private string GetDefaultPrinterSlicePath(string make, string model)
-        {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "config.ini");
-        }
-
         private Dictionary<string, string> LoadSliceSettingsFromFile(string setupSettingsPathAndFile)
         {            
             Dictionary<string, string> settingsDict = new Dictionary<string, string>();
@@ -413,8 +407,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 try
                 {
-                    // TODO: Requires runtime eval - what's the deal with setupSettingsPathAndFile
-                    var lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
+					IEnumerable<string> lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
                     foreach (string line in lines)
                     {
                         //Ignore commented lines
