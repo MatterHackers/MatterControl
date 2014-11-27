@@ -19,16 +19,6 @@ namespace MatterHackers.MatterControl
         public LanguageSelector()
             : base("Default")
         {            
-            //string pathToModels = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", manufacturer);
-            //if (Directory.Exists(pathToModels))
-            //{
-            //    foreach (string manufacturerDirectory in Directory.EnumerateDirectories(pathToModels))
-            //    {
-            //        string model = Path.GetFileName(manufacturerDirectory);
-            //        ModelDropList.AddItem(model);
-            //    }
-            //}
-
             this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
 
             CreateLanguageDict();
