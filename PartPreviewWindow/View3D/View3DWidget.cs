@@ -60,6 +60,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class UpArrow3D : InteractionVolume
     {
         Mesh upArrow;
+        double zHitHeight;
+        Vector3 lastMoveDelta;
+        PlaneShape hitPlane;
 
         public UpArrow3D(MeshViewerWidget meshViewerToDrawWith)
             : base(new CylinderShape(6, 15, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)), meshViewerToDrawWith)
@@ -75,15 +78,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
         {
+            zHitHeight = mouseEvent3D.info.hitPosition.z;
+            lastMoveDelta= new Vector3();
+            hitPlane = new PlaneShape(mouseEvent3D.MouseRay.direction, mouseEvent3D.info.distanceToHit, null);
+
+            IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+            zHitHeight = info.hitPosition.z;
+            
             base.OnMouseDown(mouseEvent3D);
         }
 
         public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
         {
+            IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+
+            if (info != null && MeshViewerToDrawWith.SelectedMeshGroupIndex != -1)
+            {
+                Vector3 delta = new Vector3(0, 0, info.hitPosition.z - zHitHeight);
+
+                Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
+                totalTransfrom *= Matrix4X4.CreateTranslation(new Vector3(delta));
+                lastMoveDelta = delta;
+
+                ScaleRotateTranslate translated = MeshViewerToDrawWith.SelectedMeshGroupTransform;
+                translated.translation *= totalTransfrom;
+                MeshViewerToDrawWith.SelectedMeshGroupTransform = translated;
+
+                Invalidate();
+            }
+
             base.OnMouseMove(mouseEvent3D);
         }
 
-        public void SetPosition()
+        public void  SetPosition()
         {
             Matrix4X4 transform = MeshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
             AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox();
