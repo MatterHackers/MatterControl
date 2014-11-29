@@ -88,10 +88,16 @@ ServiceBinary=%12%\%DRIVERFILENAME%.sys
 [DeviceList]
 %DESCRIPTION6666%=DriverInstall, USB\VID_03EB&PID_204B&REV_6666
 %DESCRIPTION8888%=DriverInstall, USB\VID_03EB&PID_204B&REV_8888
+%Brainwave%=DriverInstall, USB\VID_16D0&PID_076B&MI_00
+%BrainWaveBootLoader%=DriverInstall, USB\VID_239A&PID_0001
+
+
 
 [DeviceList.NTamd64]
 %DESCRIPTION6666%=DriverInstall, USB\VID_03EB&PID_204B&REV_6666
 %DESCRIPTION8888%=DriverInstall, USB\VID_03EB&PID_204B&REV_8888
+%Brainwave%=DriverInstall, USB\VID_16D0&PID_076B&MI_00
+%BrainWaveBootLoader%=DriverInstall, USB\VID_239A&PID_0001
 
 
 ;------------------------------------------------------------------------------
@@ -107,3 +113,5 @@ INSTDISK="TAURINO - ATmega2560 Driver Installer"
 DESCRIPTION6666="TAURINO - ATmega2560 compatible"
 DESCRIPTION8888="TAURINO - ATmega2560 compatible2"
 SERVICE="USB RS-232 Emulation Driver"
+Brainwave="Brainwave"
+BrainWaveBootLoader="Brainwave Boot Loader"
