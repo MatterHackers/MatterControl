@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         CheckBox expandMaterialOptions;
 
         Button autoArrangeButton;
-        FlowLayoutWidget saveButtons;
+		SplitButton saveButtons;
         Button applyScaleButton;
 
 		PrintItemWrapper printItemWrapper;
@@ -1174,8 +1174,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
                 buttonRightPanel.AddChild(verticalSpacer);
 
-                saveButtons = CreateSaveButtons();
+				//Save as dropdown
+				TupleList<string,Func<bool>> buttonList = new TupleList<string, Func<bool>> ();
+				buttonList.Add ("Save", () => {
+					MergeAndSavePartsToCurrentMeshFile();
+					return true;
+				});
+				buttonList.Add ("Save As", () => {
+					if (saveAsWindow == null)
+					{
+						saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+						saveAsWindow.Closed += (sender2, e2) =>
+						{
+							saveAsWindow = null;
+						};
+					}
+					else
+					{
+						saveAsWindow.BringToFront();
+					}
+					return true;
+				});
+				SplitButtonFactory splitButtonFactory = new SplitButtonFactory ();
+				saveButtons = splitButtonFactory.Generate (buttonList);
+				saveButtons.Visible = false;
+
                 buttonRightPanel.AddChild(saveButtons);
+
             }
 
             buttonRightPanel.Padding = new BorderDouble(6, 6);
@@ -1185,6 +1210,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             return buttonRightPanel;
         }
+
+
 
         private FlowLayoutWidget CreateSaveButtons()
         {
