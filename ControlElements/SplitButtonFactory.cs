@@ -30,7 +30,6 @@ namespace MatterHackers.MatterControl
 		public double borderWidth = 1;
 		public bool invertImageLocation = false;
 		public bool AllowThemeToAdjustImage = true;
-		FlowDirection flowDirection;
 
 		public double FixedHeight = 30;
 

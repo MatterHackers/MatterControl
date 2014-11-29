@@ -97,7 +97,6 @@ namespace MatterHackers.MatterControl
 
 		public int fontSize = 12;
 		public double borderWidth = 1;
-		FlowDirection flowDirection;
 
 		public double FixedWidth = 10;
 		public double FixedHeight = 30;
@@ -137,10 +136,10 @@ namespace MatterHackers.MatterControl
 		{
 			//Create the multi-state button view
 			ButtonViewStates buttonViewWidget = new ButtonViewStates(
-				new DropDownButtonBase(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin,  fontSize, flowDirection ,  FixedHeight),
-				new DropDownButtonBase(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin,  fontSize, flowDirection ,  FixedHeight),
-				new DropDownButtonBase(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin,  fontSize, flowDirection ,  FixedHeight),
-				new DropDownButtonBase(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin,  fontSize, flowDirection ,  FixedHeight)
+				new DropDownButtonBase(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin,  fontSize, FlowDirection.LeftToRight,  FixedHeight),
+                new DropDownButtonBase(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, fontSize, FlowDirection.LeftToRight, FixedHeight),
+                new DropDownButtonBase(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, fontSize, FlowDirection.LeftToRight, FixedHeight),
+                new DropDownButtonBase(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, fontSize, FlowDirection.LeftToRight, FixedHeight)
 			);
 
 			buttonViewWidget.Padding = new BorderDouble (0, 0);
