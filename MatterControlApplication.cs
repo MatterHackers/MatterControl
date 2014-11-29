@@ -46,6 +46,7 @@ using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.MatterControl.CreatorPlugins;
 
 namespace MatterHackers.MatterControl
 {
@@ -293,6 +294,16 @@ namespace MatterHackers.MatterControl
                         QueueData.Instance.AddItem(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
                     }
                 }
+
+#if false
+                foreach (CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
+                {
+                    if (creatorInfo.description.Contains("Image"))
+                    {
+                        creatorInfo.functionToLaunchCreator(null, null);
+                    }
+                }
+#endif
             }
 
             //msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
