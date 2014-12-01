@@ -66,6 +66,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void alignSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (SelectedMeshGroupIndex == -1)
+            {
+                SelectedMeshGroupIndex = 0;
+            }
             // make sure our thread traslates numbmers correctly (always do this in a thread)
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
