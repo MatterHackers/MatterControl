@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		   
         SliceSettingsOrganizer()
         {
-            LoadAndParseSettingsFiles(Path.Combine("SliceSettings", "Properties.json"), Path.Combine("SliceSettings", "Layouts.txt"));
+            LoadAndParseSettingsFiles();
 
 #if false
             Categories.Add(CreatePrintSettings());
@@ -272,24 +272,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
         }
 
-        public void ExportToJson(string savedFileName = null)
+		void LoadAndParseSettingsFiles()
         {
-            if (savedFileName == null)
-            {
-                // TODO: Save setting to something other than *Static*Data
-                savedFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "ConfigSettingsMapping.json");
-            }
-            string jsonString = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-
-            FileStream fs = new FileStream(savedFileName, FileMode.Create);
-            StreamWriter sw = new System.IO.StreamWriter(fs);
-            sw.Write(jsonString);
-            sw.Close();
-        }
-
-		void LoadAndParseSettingsFiles(string propertiesPathAndFilename, string layoutPathAndFilename)
-        {
-			string propertiesFileContents = StaticData.Instance.ReadAllText(propertiesPathAndFilename);
+			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
 			settingsData = JsonConvert.DeserializeObject<List<OrganizerSettingsData>> (propertiesFileContents) as List<OrganizerSettingsData>;
 
             OrganizerUserLevel userLevelToAddTo = null;
@@ -297,7 +282,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             OrganizerGroup groupToAddTo = null;
             OrganizerSubGroup subGroupToAddTo = null;
 
-			IEnumerable<string> lines = StaticData.Instance.ReadAllLines(layoutPathAndFilename);
+            IEnumerable<string> lines = StaticData.Instance.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt"));
             foreach (string line in lines)
             {
                 if (line.Length > 0)

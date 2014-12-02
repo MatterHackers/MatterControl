@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 using(Stream arrowStream = StaticData.Instance.OpenSteam(arrowFile))
                 { 
-                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowStream);
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
                     upArrow = loadedMeshGroups[0].Meshes[0];
 
                     //CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);

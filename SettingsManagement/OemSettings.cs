@@ -19,10 +19,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
             {
                 if (instance == null)
                 {
-                    //instance = new OemSettings();
-                    //return instance;
                     string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
-                    instance = (OemSettings)Newtonsoft.Json.JsonConvert.DeserializeObject<OemSettings>(oemSettings);
+                    instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
                 }
 
                 return instance;
@@ -41,7 +39,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
         
         List<string> printerWhiteList = new List<string>();
         public List<string> PrinterWhiteList { get { return printerWhiteList; } }
-        
+
+        // TODO: Is this ever initialized and if so, how, given there's no obvious references and only one use of the property
         List<string> preloadedLibraryFiles = new List<string>();
         public List<string> PreloadedLibraryFiles { get { return preloadedLibraryFiles; } }
 

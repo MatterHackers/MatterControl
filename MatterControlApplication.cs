@@ -59,6 +59,15 @@ namespace MatterHackers.MatterControl
         bool DoCGCollectEveryDraw = false;
         public bool RestartOnClose = false;
 
+        static MatterControlApplication()
+        {
+            // Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field 
+            // initializers run before the class constructor, we need to init the platform specific provider in the static constructor (or write a custom initializer method)
+            //
+            // Initialize a standard file system backed StaticData provider
+            StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
+        }
+
         public MatterControlApplication(double width, double height)
             : base(width, height)
         {
@@ -116,9 +125,6 @@ namespace MatterHackers.MatterControl
                 // you can turn this on to debug some bounds issues
                 //GuiWidget.DebugBoundsUnderMouse = true;
             }
-
-            // Initialize a standard filesystem backed StaticData manager
-            StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
 
             GuiWidget.DefaultEnforceIntegerBounds = true;
 

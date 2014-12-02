@@ -82,65 +82,6 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		}
 
-        public string ApplicationStaticDataPath
-        {
-            get
-            {
-                switch (OsInformation.OperatingSystem)
-                {
-                    case OSType.Windows:
-                        if (Directory.Exists("StaticData"))
-                        {
-                            return "StaticData";
-                        }
-                        else
-                        {
-                            return Path.Combine("..", "..", "StaticData");
-                        }
-
-                    case OSType.Mac:
-                        if (Directory.Exists("StaticData"))
-                        {
-                            return "StaticData";
-                        }
-                        else if (Directory.Exists(Path.Combine(ApplicationPath, "StaticData")))
-                        {
-                            return Path.Combine(ApplicationPath, "StaticData");
-                        }
-                        else
-                        {
-                            return Path.Combine("..", "..", "StaticData");
-                        }
-                    case OSType.X11:
-                        if (Directory.Exists("StaticData"))
-                        {
-                            return "StaticData";
-                        }
-                        else
-                        {
-                            return Path.Combine("..", "..", "StaticData");
-                        }
-
-                    case OSType.Android:
-                        if (Directory.Exists("StaticData"))
-                        {
-                            return "StaticData";
-                        }
-                        else if (Directory.Exists(Path.Combine(ApplicationPath, "StaticData")))
-                        {
-                            return Path.Combine(ApplicationPath, "StaticData");
-                        }
-                        else
-                        {
-                            return Path.Combine("");
-                        }
-                 
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-        }
-
         /// <summary>
         /// Returns the gcode output folder
         /// </summary>

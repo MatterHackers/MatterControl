@@ -264,29 +264,39 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 string[] fileNames = infFileNames.Split(',');
                 foreach (string fileName in fileNames)
                 {
-                    string pathForInf = Path.GetFileNameWithoutExtension(fileName);
-
-                    // TODO: It's really unexpected that the driver gets copied to the temp folder everytime a printer is setup. I'd think this only needs
-                    // to happen when the infinstaller is run (More specifically - move this to *after* the user clicks Install Driver)
-                    // TODO: Prevent execution of this code on non-Windows platforms				
-                    string infPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", pathForInf));
-                    string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
                     switch (OsInformation.OperatingSystem)
                     {
                         case OSType.Windows:
-                            if (File.Exists(infPathAndFileToInstall))
+
+                            string pathForInf = Path.GetFileNameWithoutExtension(fileName);
+
+                            // TODO: It's really unexpected that the driver gets copied to the temp folder everytime a printer is setup. I'd think this only needs
+                            // to happen when the infinstaller is run (More specifically - move this to *after* the user clicks Install Driver)
+
+                            string infPath = Path.Combine("Drivers", pathForInf);
+                            string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
+
+                            if (StaticData.Instance.FileExists(infPathAndFileToInstall))
                             {
+                                // Ensure the output directory exists
                                 string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
                                 if (!Directory.Exists(destTempPath))
                                 {
                                     Directory.CreateDirectory(destTempPath);
                                 }
+
                                 string destTempInf = Path.GetFullPath(Path.Combine(destTempPath, fileName));
-                                foreach (string file in Directory.EnumerateFiles(infPath))
+
+                                // Sync each file from StaticData to the location on disk for serial drivers
+                                foreach (string file in StaticData.Instance.GetFiles(infPath))
                                 {
-                                    string copyPath = Path.Combine(destTempPath, Path.GetFileName(file));
-                                    File.Copy(file, copyPath, true);
+                                    using(Stream outstream = File.OpenWrite(Path.Combine(destTempPath, Path.GetFileName(file))))
+                                    using (Stream instream = StaticData.Instance.OpenSteam(file))
+                                    {
+                                        instream.CopyTo(outstream);
+                                    }
                                 }
+
                                 PrinterSetupStatus.DriversToInstall.Add(destTempInf);
                             }
                             break;
