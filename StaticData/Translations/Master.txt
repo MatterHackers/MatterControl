@@ -2876,3 +2876,6 @@ Translated:Rectangle
 English:Outline
 Translated:Outline
 
+English:Circle
+Translated:Circle
+
