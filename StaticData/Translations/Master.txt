@@ -2867,3 +2867,15 @@ Translated:The index of the extruder to use for the raft. Setting this to 0 will
 English:Raft Extruder
 Translated:Raft Extruder
 
+English:None
+Translated:None
+
+English:Rectangle
+Translated:Rectangle
+
+English:Outline
+Translated:Outline
+
+English:Circle
+Translated:Circle
+

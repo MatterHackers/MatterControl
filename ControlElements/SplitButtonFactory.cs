@@ -6,9 +6,6 @@ namespace MatterHackers.MatterControl
 {
 	public class SplitButtonFactory
 	{
-
-
-
 		public BorderDouble Margin = new BorderDouble(0, 0);
 		public RGBA_Bytes normalFillColor = new RGBA_Bytes(0, 0, 0, 0);
 		public RGBA_Bytes hoverFillColor = new RGBA_Bytes(0, 0, 0, 50);
@@ -35,9 +32,6 @@ namespace MatterHackers.MatterControl
 
 		public SplitButtonFactory ()
 		{
-
-
-
 		}
 
 		public SplitButton Generate (TupleList<string, Func<bool>> buttonList, Direction direction = Direction.Down )
@@ -72,7 +66,8 @@ namespace MatterHackers.MatterControl
 
 			Button button =  buttonFactory.Generate (buttonInfo.Item1, centerText: true);
 
-			button.Click += (object sender, EventArgs e) => {
+			button.Click += (object sender, EventArgs e) => 
+            {
 				buttonInfo.Item2();
 			};
 

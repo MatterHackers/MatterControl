@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         PlaneShape hitPlane;
 
         public UpArrow3D(MeshViewerWidget meshViewerToDrawWith)
-            : base(new CylinderShape(6, 15, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4)), meshViewerToDrawWith)
+            : base(null, meshViewerToDrawWith)
         {
             string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
             if (File.Exists(arrowFile))
@@ -73,6 +73,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
                 upArrow = loadedMeshGroups[0].Meshes[0];
                 //CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
+                AxisAlignedBoundingBox arrowBounds = upArrow.GetAxisAlignedBoundingBox();
+                CollisionVolume = new CylinderShape(arrowBounds.XSize / 2, arrowBounds.ZSize, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
+                //CollisionVolume = new CylinderShape(arrowBounds.XSize / 2 * 4, arrowBounds.ZSize * 4, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
             }
         }
 
@@ -112,8 +115,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public void  SetPosition()
         {
-            Matrix4X4 transform = MeshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
-            AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox();
+            Matrix4X4 selectedMeshTransform = MeshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
+            AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox(selectedMeshTransform);
             Vector3 boundsCenter = selectedBounds.Center;
             Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
@@ -122,10 +125,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             double distBetweenPixelsWorldSpace = MeshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
 
-            transform = Matrix4X4.CreateTranslation(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * distBetweenPixelsWorldSpace)) * transform;
-            transform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * transform;
+            Matrix4X4 arrowTransform = Matrix4X4.CreateTranslation(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * distBetweenPixelsWorldSpace));
+            arrowTransform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * arrowTransform;
 
-            TotalTransform = transform;
+            TotalTransform = arrowTransform;
         }
 
         public override void DrawGlContent(EventArgs e)
