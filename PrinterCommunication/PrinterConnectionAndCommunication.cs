@@ -854,9 +854,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
-        string doNotShowAgainMessage = "Do not show this again".Localize();
-        string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and may not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?".Localize();
-        string removeFromQueueMessage = "Cannot find\n'{0}'.\nWould you like to remove it from the queue?".Localize();
+        string doNotShowAgainMessage = "Do not show this message again".Localize();
+        string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize();
+        string removeFromQueueMessage = "Cannot find this file\nWould you like to remove it from the queue?".Localize();
         string itemNotFoundMessage = "Item not found".Localize();
 
         event EventHandler unregisterEvents;
@@ -900,8 +900,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     {
                         CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotShowAgainMessage);
                         hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                        hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6);
-                        hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.ParentCenter;
+						hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6, left: 6);
+						hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.ParentLeft;
                         hideGCodeWarningCheckBox.Click += (sender, e) =>
                         {
                             if (hideGCodeWarningCheckBox.Checked)
