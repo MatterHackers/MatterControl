@@ -207,6 +207,10 @@ namespace MatterHackers.MatterControl
                 ImageBuffer bigRender = LoadImageFromDisk(thumbnailWidget, stlHashCode, bigRenderSize);
                 if (bigRender == null)
                 {
+                    if (!File.Exists(thumbnailWidget.PrintItem.FileLocation))
+                    {
+                        return;
+                    }
                     List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(thumbnailWidget.PrintItem.FileLocation);
 
                     thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
