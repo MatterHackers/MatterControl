@@ -913,11 +913,11 @@
   },
   {
     "SlicerConfigName": "support_material_threshold",
-    "PresentationName": "Supported Angles",
+    "PresentationName": "Amount",
     "HelpText": "The last angle at which support material will be generated. Larger numbers will result in more support.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "degrees",
-    "QuickMenuSettings": [{"MenuName" : "Few", "Value": "20"},{"MenuName" : "Standard", "Value": "45"},{"MenuName" : "All", "Value": "90"}]
+    "QuickMenuSettings": [{"MenuName" : "Minimum", "Value": "20"},{"MenuName" : "Standard", "Value": "45"},{"MenuName" : "All", "Value": "90"}]
   },
   {
     "SlicerConfigName": "support_material_xy_distance",

@@ -2894,3 +2894,6 @@ Translated:Cannot find this file\nWould you like to remove it from the queue?
 English:Supported Angles
 Translated:Supported Angles
 
+English:Amount
+Translated:Amount
+
