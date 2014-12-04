@@ -31,7 +31,7 @@
     "SlicerConfigName": "bottom_clip_amount",
     "PresentationName": "Bottom Clip",
     "HelpText": "The amount to remove from the bottom of the model",
-    "DataEditType": "POSITIVE_DOUBLE",
+    "DataEditType": "DOUBLE",
     "ExtraSettings": "mm"
   },
   {
@@ -913,10 +913,11 @@
   },
   {
     "SlicerConfigName": "support_material_threshold",
-    "PresentationName": "Overhang Threshold",
+    "PresentationName": "Supported Angles",
     "HelpText": "The last angle at which support material will be generated. Larger numbers will result in more support.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "degrees"
+    "ExtraSettings": "degrees",
+    "QuickMenuSettings": [{"MenuName" : "Few", "Value": "20"},{"MenuName" : "Standard", "Value": "45"},{"MenuName" : "All", "Value": "90"}]
   },
   {
     "SlicerConfigName": "support_material_xy_distance",
