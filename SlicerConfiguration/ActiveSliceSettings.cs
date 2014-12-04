@@ -581,8 +581,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 if (StaticData.Instance.FileExists(pathAndFileName))
                 {
-                    var lines = StaticData.Instance.ReadAllLines(pathAndFileName);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(pathAndFileName))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#"))

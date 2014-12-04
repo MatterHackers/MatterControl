@@ -317,8 +317,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 try
                 {
-                    var lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#"))
@@ -417,8 +416,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 try
                 {
-					IEnumerable<string> lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#") && line.Length > 0)

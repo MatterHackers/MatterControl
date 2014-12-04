@@ -272,18 +272,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
         }
 
-		void LoadAndParseSettingsFiles()
+        void LoadAndParseSettingsFiles()
         {
-			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			settingsData = JsonConvert.DeserializeObject<List<OrganizerSettingsData>> (propertiesFileContents) as List<OrganizerSettingsData>;
+            string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+            settingsData = JsonConvert.DeserializeObject<List<OrganizerSettingsData>>(propertiesFileContents) as List<OrganizerSettingsData>;
 
             OrganizerUserLevel userLevelToAddTo = null;
             OrganizerCategory categoryToAddTo = null;
             OrganizerGroup groupToAddTo = null;
             OrganizerSubGroup subGroupToAddTo = null;
 
-            IEnumerable<string> lines = StaticData.Instance.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt"));
-            foreach (string line in lines)
+            foreach (string line in StaticData.Instance.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
             {
                 if (line.Length > 0)
                 {
@@ -318,7 +317,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             throw new Exception("Bad file, too many spaces (must be 0, 2, 4 or 6).");
                     }
                 }
-			}
+            }
         }
 
         private static int CountLeadingSpaces(string line)

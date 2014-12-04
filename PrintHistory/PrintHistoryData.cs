@@ -64,8 +64,7 @@ namespace MatterHackers.MatterControl.PrintHistory
             {
                 try
                 {
-                    var lines = StaticData.Instance.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#"))
