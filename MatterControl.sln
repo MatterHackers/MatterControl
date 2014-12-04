@@ -1,8 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
-MinimumVisualStudioVersion = 10.0.40219.1
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterControl.csproj", "{0B8D6F56-BD7F-4426-B858-D9292B084656}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F67AE800-B0C7-42A8-836F-597B4E74591C} = {F67AE800-B0C7-42A8-836F-597B4E74591C}
