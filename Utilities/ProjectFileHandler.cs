@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl
 			{
 				CopyFileToTempFolder(item.Key, item.Value.FileName);
 			}
-			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName);
+			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName,CompressionLevel.Optimal,true);
 		
         }
 
