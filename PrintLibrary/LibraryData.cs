@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -39,6 +41,7 @@ using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.PolygonMesh;
 using MatterHackers.Agg.UI;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -157,40 +160,58 @@ namespace MatterHackers.MatterControl.PrintLibrary
         {
             get 
             {
-                //Retrieve a list of saved printers from the Datastore            
+                // Attempt to initialize the library from the Datastore if null
                 if (libraryCollection == null)
                 {
                     libraryCollection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
                 }
 
+                // If the _library collection is still missing, create and populate it with default content
                 if (libraryCollection == null)
                 {
                     libraryCollection = new PrintItemCollection();
                     libraryCollection.Name = "_library";
                     libraryCollection.Commit();
-                    PreloadLibrary();
+
+                    // Preload library with Oem supplied list of default parts
+                    string[] itemsToAdd = LibraryData.SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
+                    if (itemsToAdd.Length > 0)
+                    {
+                        // Import any files sync'd to disk into the library, then add them to the queue
+                        LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd);
+                    }
                 }
                 return libraryCollection;
             }
         }
 
-        void PreloadLibrary()
+        internal static string[] SyncCalibrationFilesToDisk(List<string> calibrationPrintFileNames)
         {
-            foreach (string partFile in OemSettings.Instance.PreloadedLibraryFiles)
+            // Ensure the CalibrationParts directory exists to store/import the files from disk
+            string tempPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "calibration-parts");
+            Directory.CreateDirectory(tempPath);
+
+            // Build a list of temporary files that should be imported into the library
+            return calibrationPrintFileNames.Where(fileName =>
             {
-                string partFullPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "SampleParts", partFile);
-                if (System.IO.File.Exists(partFullPath))
+                // Filter out items that already exist in the library
+                return LibraryData.Instance.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
+            }).Select(fileName =>
+            {
+                // Copy calibration prints from StaticData to the filesystem before importing into the library
+                string tempFile = Path.Combine(tempPath, Path.GetFileName(fileName));
+                using (FileStream outstream = File.OpenWrite(tempFile))
+                using (Stream instream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "SampleParts", fileName)))
                 {
-                    PrintItem printItem = new PrintItem();
-                    printItem.Name = Path.GetFileNameWithoutExtension(partFullPath);
-                    printItem.FileLocation = Path.GetFullPath(partFullPath);
-                    printItem.PrintItemCollectionID = LibraryCollection.Id;
-                    printItem.Commit();
+                    instream.CopyTo(outstream);
                 }
-            }
+
+                // Project the new filename to the output
+                return tempFile;
+            }).ToArray();
         }
 
-        IEnumerable<DataStorage.PrintItem> GetLibraryItems(string keyphrase = null)
+        internal IEnumerable<DataStorage.PrintItem> GetLibraryItems(string keyphrase = null)
         {   
             if (LibraryCollection == null)
             {
@@ -255,7 +276,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         }
 
         ReportProgressRatio fileLoadReportProgress = null;
-        public void LoadFilesIntoLibrary(string[] files, ReportProgressRatio reportProgress = null)
+        public void LoadFilesIntoLibrary(string[] files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
         {
             this.fileLoadReportProgress = reportProgress;
             if (files != null && files.Length > 0)
@@ -265,6 +286,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
                 mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
                 mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
+
+                if (callback != null)
+                {
+                    mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += callback;
+                }
 
                 mergeAndSavePartsBackgroundWorker.RunWorkerAsync(files);
             }

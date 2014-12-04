@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -223,10 +224,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		   
         SliceSettingsOrganizer()
         {
-			string layoutsPathAndFilename = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Layouts.txt");
-            string propertiesPathAndFilename = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "SliceSettings", "Properties.json");
+            LoadAndParseSettingsFiles();
 
-            LoadAndParseSettingsFiles(propertiesPathAndFilename, layoutsPathAndFilename);
 #if false
             Categories.Add(CreatePrintSettings());
 
@@ -273,84 +272,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
         }
 
-        public void ExportToJson(string savedFileName = null)
+        void LoadAndParseSettingsFiles()
         {
-            if (savedFileName == null)
+            string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+            settingsData = JsonConvert.DeserializeObject<List<OrganizerSettingsData>>(propertiesFileContents) as List<OrganizerSettingsData>;
+
+            OrganizerUserLevel userLevelToAddTo = null;
+            OrganizerCategory categoryToAddTo = null;
+            OrganizerGroup groupToAddTo = null;
+            OrganizerSubGroup subGroupToAddTo = null;
+
+            foreach (string line in StaticData.Instance.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
             {
-                savedFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "ConfigSettingsMapping.json");
-            }
-            string jsonString = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-
-            FileStream fs = new FileStream(savedFileName, FileMode.Create);
-            StreamWriter sw = new System.IO.StreamWriter(fs);
-            sw.Write(jsonString);
-            sw.Close();
-        }
-
-		void LoadAndParseSettingsFiles(string propertiesPathAndFilename, string layoutPathAndFilename)
-        {
-            {
-                string propertiesFileContents = "";
-                using (FileStream fileStream = new FileStream(propertiesPathAndFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                if (line.Length > 0)
                 {
-                    using (StreamReader propertiesReader = new StreamReader(fileStream))
+                    switch (CountLeadingSpaces(line))
                     {
-                        propertiesFileContents = propertiesReader.ReadToEnd();
-                    }
-                }
+                        case 0:
+                            string userLevelText = line.Replace('"', ' ').Trim();
+                            userLevelToAddTo = new OrganizerUserLevel(userLevelText);
+                            UserLevels.Add(userLevelText, userLevelToAddTo);
+                            break;
 
-                settingsData = (List<OrganizerSettingsData>)JsonConvert.DeserializeObject<List<OrganizerSettingsData>>(propertiesFileContents);
-            }
+                        case 2:
+                            categoryToAddTo = new OrganizerCategory(line.Replace('"', ' ').Trim());
+                            userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
+                            break;
 
-            {
-				string layoutFileContents = "";
-				using (FileStream fileStream = new FileStream(layoutPathAndFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    using (StreamReader layoutReader = new StreamReader(fileStream))
-                    {
-                        layoutFileContents = layoutReader.ReadToEnd();
-                    }
-				}
+                        case 4:
+                            groupToAddTo = new OrganizerGroup(line.Replace('"', ' ').Trim());
+                            categoryToAddTo.GroupsList.Add(groupToAddTo);
+                            break;
 
-                OrganizerUserLevel userLevelToAddTo = null;
-                OrganizerCategory categoryToAddTo = null;
-                OrganizerGroup groupToAddTo = null;
-                OrganizerSubGroup subGroupToAddTo = null;
-                string[] lines = layoutFileContents.Split('\n');
-                foreach (string line in lines)
-                {
-                    if (line.Length > 0)
-                    {
-                        switch (CountLeadingSpaces(line))
-                        {
-                            case 0:
-                                string userLevelText = line.Replace('"', ' ').Trim();
-                                userLevelToAddTo = new OrganizerUserLevel(userLevelText);
-                                UserLevels.Add(userLevelText, userLevelToAddTo);
-                                break;
+                        case 6:
+                            subGroupToAddTo = new OrganizerSubGroup(line.Replace('"', ' ').Trim());
+                            groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
+                            break;
 
-                            case 2:
-                                categoryToAddTo = new OrganizerCategory(line.Replace('"', ' ').Trim());
-                                userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
-                                break;
+                        case 8:
+                            subGroupToAddTo.SettingDataList.Add(GetSettingsData(line.Replace('"', ' ').Trim()));
+                            break;
 
-                            case 4:
-                                groupToAddTo = new OrganizerGroup(line.Replace('"', ' ').Trim());
-                                categoryToAddTo.GroupsList.Add(groupToAddTo);
-                                break;
-
-                            case 6:
-                                subGroupToAddTo = new OrganizerSubGroup(line.Replace('"', ' ').Trim());
-                                groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
-                                break;
-
-                            case 8:
-                                subGroupToAddTo.SettingDataList.Add(GetSettingsData(line.Replace('"', ' ').Trim()));
-                                break;
-
-                            default:
-                                throw new Exception("Bad file, too many spaces (must be 0, 2, 4 or 6).");
-                        }
+                        default:
+                            throw new Exception("Bad file, too many spaces (must be 0, 2, 4 or 6).");
                     }
                 }
             }

@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using MatterHackers.MatterControl.DataStorage;
 using Newtonsoft.Json;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {
@@ -18,11 +19,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
             {
                 if (instance == null)
                 {
-                    //instance = new OemSettings();
-                    //return instance;
-                    string pathToOemSettings = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "Settings.json");
-                    string oemSettings = File.ReadAllText(pathToOemSettings);
-                    instance = (OemSettings)JsonConvert.DeserializeObject<OemSettings>(oemSettings);
+                    string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
+                    instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
                 }
 
                 return instance;
@@ -41,7 +39,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
         
         List<string> printerWhiteList = new List<string>();
         public List<string> PrinterWhiteList { get { return printerWhiteList; } }
-        
+
+        // TODO: Is this ever initialized and if so, how, given there's no obvious references and only one use of the property
         List<string> preloadedLibraryFiles = new List<string>();
         public List<string> PreloadedLibraryFiles { get { return preloadedLibraryFiles; } }
 

@@ -54,6 +54,7 @@ using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -67,15 +68,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public UpArrow3D(MeshViewerWidget meshViewerToDrawWith)
             : base(null, meshViewerToDrawWith)
         {
-            string arrowFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", "3D Icons", "up_pointer.stl");
-            if (File.Exists(arrowFile))
+            string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
+            if (StaticData.Instance.FileExists(arrowFile))
             {
-                List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowFile);
-                upArrow = loadedMeshGroups[0].Meshes[0];
-                //CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
-                AxisAlignedBoundingBox arrowBounds = upArrow.GetAxisAlignedBoundingBox();
-                CollisionVolume = new CylinderShape(arrowBounds.XSize / 2, arrowBounds.ZSize, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
-                //CollisionVolume = new CylinderShape(arrowBounds.XSize / 2 * 4, arrowBounds.ZSize * 4, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
+                using(Stream arrowStream = StaticData.Instance.OpenSteam(arrowFile))
+                { 
+                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
+                    upArrow = loadedMeshGroups[0].Meshes[0];
+
+                    //CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
+                    AxisAlignedBoundingBox arrowBounds = upArrow.GetAxisAlignedBoundingBox();
+                    CollisionVolume = new CylinderShape(arrowBounds.XSize / 2, arrowBounds.ZSize, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
+                    //CollisionVolume = new CylinderShape(arrowBounds.XSize / 2 * 4, arrowBounds.ZSize * 4, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
+                }
             }
         }
 

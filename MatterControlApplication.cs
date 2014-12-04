@@ -47,6 +47,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.CreatorPlugins;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl
 {
@@ -57,6 +58,15 @@ namespace MatterHackers.MatterControl
         bool ShowMemoryUsed = false;
         bool DoCGCollectEveryDraw = false;
         public bool RestartOnClose = false;
+
+        static MatterControlApplication()
+        {
+            // Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field 
+            // initializers run before the class constructor, we need to init the platform specific provider in the static constructor (or write a custom initializer method)
+            //
+            // Initialize a standard file system backed StaticData provider
+            StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
+        }
 
         public MatterControlApplication(double width, double height)
             : base(width, height)
@@ -239,6 +249,7 @@ namespace MatterHackers.MatterControl
 #else
             PluginFinder<MatterControlPlugin> pulginFinder = new PluginFinder<MatterControlPlugin>();
 #endif
+
             string oemName = ApplicationSettings.Instance.GetOEMName();
             foreach (MatterControlPlugin plugin in pulginFinder.Plugins)
             {

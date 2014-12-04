@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -262,25 +264,39 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 string[] fileNames = infFileNames.Split(',');
                 foreach (string fileName in fileNames)
                 {
-                    string pathForInf = Path.GetFileNameWithoutExtension(fileName);
-                    string infPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", pathForInf));
-                    string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
                     switch (OsInformation.OperatingSystem)
                     {
                         case OSType.Windows:
-                            if (File.Exists(infPathAndFileToInstall))
+
+                            string pathForInf = Path.GetFileNameWithoutExtension(fileName);
+
+                            // TODO: It's really unexpected that the driver gets copied to the temp folder everytime a printer is setup. I'd think this only needs
+                            // to happen when the infinstaller is run (More specifically - move this to *after* the user clicks Install Driver)
+
+                            string infPath = Path.Combine("Drivers", pathForInf);
+                            string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
+
+                            if (StaticData.Instance.FileExists(infPathAndFileToInstall))
                             {
+                                // Ensure the output directory exists
                                 string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
                                 if (!Directory.Exists(destTempPath))
                                 {
                                     Directory.CreateDirectory(destTempPath);
                                 }
+
                                 string destTempInf = Path.GetFullPath(Path.Combine(destTempPath, fileName));
-                                foreach (string file in Directory.EnumerateFiles(infPath))
+
+                                // Sync each file from StaticData to the location on disk for serial drivers
+                                foreach (string file in StaticData.Instance.GetFiles(infPath))
                                 {
-                                    string copyPath = Path.Combine(destTempPath, Path.GetFileName(file));
-                                    File.Copy(file, copyPath, true);
+                                    using(Stream outstream = File.OpenWrite(Path.Combine(destTempPath, Path.GetFileName(file))))
+                                    using (Stream instream = StaticData.Instance.OpenSteam(file))
+                                    {
+                                        instream.CopyTo(outstream);
+                                    }
                                 }
+
                                 PrinterSetupStatus.DriversToInstall.Add(destTempInf);
                             }
                             break;
@@ -294,15 +310,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         private Dictionary<string, string> LoadPrinterSetupFromFile(string make, string model)
         {
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "setup.ini");
+            string setupSettingsPathAndFile = Path.Combine("PrinterSettings", make, model, "setup.ini");
             Dictionary<string, string> settingsDict = new Dictionary<string, string>();
 
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#"))
@@ -326,7 +341,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
         {
             SliceSettingsCollection collection = null;
-            Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(GetDefaultPrinterSlicePath(make, model));
+			Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(Path.Combine("PrinterSettings", make, model, "config.ini"));
             
             if (settingsDict.Count > 0)
             {
@@ -343,9 +358,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         public void LoadSlicePresets(string make, string model, string tag)
         {
-            string[] slicePresetPaths = GetSlicePresets(make, model, tag);
-
-            foreach (string filePath in slicePresetPaths)
+            foreach (string filePath in GetSlicePresets(make, model, tag))
             {
                 SliceSettingsCollection collection = null;
                 Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(filePath);
@@ -388,28 +401,22 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         private string[] GetSlicePresets(string make, string model, string tag)
         {
             string[] presetPaths = new string[]{};
-            string folderPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, tag);
-            if (Directory.Exists(folderPath))
+            string folderPath = Path.Combine("PrinterSettings", make, model, tag);
+            if (StaticData.Instance.DirectoryExists(folderPath))
             {
-                presetPaths = Directory.GetFiles(folderPath);
+                presetPaths = StaticData.Instance.GetFiles(folderPath).ToArray();
             }
             return presetPaths;
-        }
-
-        private string GetDefaultPrinterSlicePath(string make, string model)
-        {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "config.ini");
         }
 
         private Dictionary<string, string> LoadSliceSettingsFromFile(string setupSettingsPathAndFile)
         {            
             Dictionary<string, string> settingsDict = new Dictionary<string, string>();
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#") && line.Length > 0)

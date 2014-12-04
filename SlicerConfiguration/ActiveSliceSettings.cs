@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -547,10 +548,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         private void LoadDefaultConfigrationSettings()
         {
-            string slic3rDefaultConfigurationPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", "config.ini");
             DataStorage.SliceSettingsCollection defaultCollection = new DataStorage.SliceSettingsCollection();
             defaultCollection.Name = "__default__";
-            SettingsLayer defaultSettingsLayer = LoadConfigurationSettingsFromFile(slic3rDefaultConfigurationPathAndFile, defaultCollection);
+            SettingsLayer defaultSettingsLayer = LoadConfigurationSettingsFromFile(Path.Combine("PrinterSettings", "config.ini"), defaultCollection);
             this.activeSettingsLayers.Add(defaultSettingsLayer);
         }
 
@@ -579,10 +579,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             SettingsLayer activeCollection; 
             try
             {
-                if (File.Exists(pathAndFileName))
+                if (StaticData.Instance.FileExists(pathAndFileName))
                 {
-                    string[] lines = System.IO.File.ReadAllLines(pathAndFileName);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(pathAndFileName))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#"))
