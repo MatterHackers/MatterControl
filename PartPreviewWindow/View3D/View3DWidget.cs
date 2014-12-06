@@ -1631,7 +1631,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             scale.scale *= totalScale;
             SelectedMeshGroupTransform = scale;
 
-            PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+            PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
             saveButtons.Visible = true;
             Invalidate();
             MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
@@ -1679,7 +1679,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     rotated.rotation *= Matrix4X4.CreateRotationX(radians);
                     SelectedMeshGroupTransform = rotated;
 
-                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
                     saveButtons.Visible = true;
                     Invalidate();
                 }
@@ -1698,7 +1698,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
                     rotated.rotation *= Matrix4X4.CreateRotationY(radians);
                     SelectedMeshGroupTransform = rotated;
-                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
                     saveButtons.Visible = true;
                     Invalidate();
                 }
@@ -1718,7 +1718,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     rotated.rotation *= Matrix4X4.CreateRotationZ(radians);
                     SelectedMeshGroupTransform = rotated;
 
-                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
                     saveButtons.Visible = true;
                     Invalidate();
                 }
@@ -1768,7 +1768,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
                     SelectedMeshGroupTransform = scale;
 
-                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
                     saveButtons.Visible = true;
                     Invalidate();
@@ -1788,7 +1788,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
                     SelectedMeshGroupTransform = scale;
 
-                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
                     saveButtons.Visible = true;
                     Invalidate();
@@ -1808,7 +1808,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
                     SelectedMeshGroupTransform = scale;
 
-                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                    PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
                     saveButtons.Visible = true;
                     Invalidate();
@@ -2176,7 +2176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 rotated.rotation *= partLevelMatrix;
                 SelectedMeshGroupTransform = rotated;
 
-                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex, false);
+                PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
                 saveButtons.Visible = true;
                 Invalidate();

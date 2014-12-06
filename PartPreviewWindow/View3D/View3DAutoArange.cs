@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 currentRatioDone += ratioPerMeshGroup;
 
                 // and put it on the bed
-                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, meshGroupIndex, false);
+                PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, meshGroupIndex);
             }
 
             // and finally center whatever we have as a group

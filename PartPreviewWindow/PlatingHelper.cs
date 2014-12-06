@@ -110,33 +110,14 @@ namespace MatterHackers.MatterControl
             return output;
         }
 
-        public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index, bool alsoCenterXY = true)
+        public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
         {
             AxisAlignedBoundingBox bounds = meshesGroupList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
             Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-            if (alsoCenterXY)
-            {
-                ScaleRotateTranslate moved = meshTransforms[index];
-                moved.translation *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
-                meshTransforms[index] = moved;
-            }
-            else
-            {
-                ScaleRotateTranslate moved = meshTransforms[index];
-                moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
-                meshTransforms[index] = moved;
-            }
-        }
 
-        public static void PlaceAllMeshesOnBed(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
-        {
-                throw new NotImplementedException();
-#if false
-            for (int i = 0; i < meshesList.Count; i++)
-            {
-                PlaceMeshGroupOnBed(meshesList, meshTransforms, i);
-            }
-#endif
+            ScaleRotateTranslate moved = meshTransforms[index];
+            moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
+            meshTransforms[index] = moved;
         }
 
         public static void CenterMeshesXY(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
@@ -185,7 +166,7 @@ namespace MatterHackers.MatterControl
             int meshGroupIndex = meshesGroupsToAvoid.Count-1;
             MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
 
-            PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex, false);
+            PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
         }
 
         public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms)
