@@ -883,7 +883,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         string configFileExtension = "slice";
         void importPresets_Click(object sender, EventArgs mouseEvent)
-        {   
+        {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
             openParams.ActionButtonLabel = "Load Slice Preset";
             openParams.Title = "MatterControl: Select A File";
@@ -937,12 +937,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void SaveAs(object state)
         {
-            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension, documentsPath);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension);
             saveParams.FileName = presetNameInput.Text;
 
 			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
-            
         }
 
 		void onSaveFileSelected(SaveFileDialogParams saveParams)

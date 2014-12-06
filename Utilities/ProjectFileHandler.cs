@@ -152,8 +152,7 @@ namespace MatterHackers.MatterControl
         //Opens Save file dialog and outputs current queue as a project
         public void SaveAs()
         {
-			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.zip", initialDirectory: documentsPath);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.zip");
 
 			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
         }

@@ -438,10 +438,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			#if !__ANDROID__          
 			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
 
-			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-
             FileDialog.SaveFileDialog(
-                new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath),
+                new SaveFileDialogParams("Save Parts Sheet|*.pdf"),
                 (saveParams) =>
                 {
                     string partFileName = saveParams.FileName;
@@ -600,13 +598,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void AddItemsToQueue(object state)
         {
-            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-
             FileDialog.OpenFileDialog(
                 new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams)
                 {
                     MultiSelect = true,
-                    InitialDirectory = documentsPath,
                     ActionButtonLabel = "Add to Queue",
                     Title = "MatterControl: Select A File"
                 },

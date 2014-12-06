@@ -174,9 +174,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void AddButtonOnIdle(object state)
         {
-            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             FileDialog.OpenFileDialog(
-                new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true, initialDirectory: documentsPath),
+                new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
                 (openParams) =>
                 {
                     if (openParams.FileNames != null)
@@ -188,14 +187,6 @@ namespace MatterHackers.MatterControl.ActionBar
                     }
                 });
         }
-
-
-
-
-        
-
-
-
 
         void onStartButton_Click(object sender, EventArgs mouseEvent)
         {

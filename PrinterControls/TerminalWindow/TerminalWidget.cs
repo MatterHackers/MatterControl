@@ -189,8 +189,7 @@ namespace MatterHackers.MatterControl
 
         void DoExportExportLog_Click(object state)
         {
-            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as Text|*.txt", initialDirectory: documentsPath);  
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as Text|*.txt");  
 			saveParams.Title = "MatterControl: Terminal Log";
 			saveParams.ActionButtonLabel = "Export";
             saveParams.FileName = "print_log.txt";

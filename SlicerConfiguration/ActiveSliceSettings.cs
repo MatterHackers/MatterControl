@@ -685,8 +685,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public void SaveAs()
         {
-			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration|*." + configFileExtension,documentsPath);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration|*." + configFileExtension);
 			saveParams.FileName = "default_settings.ini";
 			FileDialog.SaveFileDialog(saveParams, onExportFileSelected);
         }
