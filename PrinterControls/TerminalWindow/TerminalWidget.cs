@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl
     public class TerminalWidget : GuiWidget
     {
         Button sendCommand;
+        CheckBox filterOutput;
         CheckBox autoUppercase;
         MHTextEditWidget manualCommandTextEdit;
         TextScrollWidget textScrollWidget;
@@ -65,15 +66,40 @@ namespace MatterHackers.MatterControl
                     FlowLayoutWidget topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
                     topBarControls.HAnchor |= HAnchor.ParentLeft;
 
-                    string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
+                    {
+                        string filterOutputChkTxt = LocalizedString.Get("Filter Output");
 
-                    autoUppercase = new CheckBox(autoUpperCaseChkTxt);
-                    autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
-                    autoUppercase.Checked = true;
-                    autoUppercase.TextColor = this.textColor;
-                    autoUppercase.VAnchor = Agg.UI.VAnchor.ParentBottom;
-                    topBarControls.AddChild(autoUppercase);
-                    manualEntryTopToBottomLayout.AddChild(topBarControls);
+                        filterOutput = new CheckBox(filterOutputChkTxt);
+                        filterOutput.Margin = new BorderDouble(5, 5, 5, 2);
+                        filterOutput.Checked = false;
+                        filterOutput.TextColor = this.textColor;
+                        filterOutput.CheckedStateChanged += (object sender, EventArgs e) =>
+                        {
+                            if (filterOutput.Checked)
+                            {
+                                textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "->M105" });
+                            }
+                            else
+                            {
+                                textScrollWidget.SetLineStartFilter(null);
+                            }
+                        };
+
+                        filterOutput.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                        topBarControls.AddChild(filterOutput);
+                    }
+
+                    {
+                        string autoUpperCaseChkTxt = LocalizedString.Get("Auto Uppercase");
+
+                        autoUppercase = new CheckBox(autoUpperCaseChkTxt);
+                        autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
+                        autoUppercase.Checked = true;
+                        autoUppercase.TextColor = this.textColor;
+                        autoUppercase.VAnchor = Agg.UI.VAnchor.ParentBottom;
+                        topBarControls.AddChild(autoUppercase);
+                        manualEntryTopToBottomLayout.AddChild(topBarControls);
+                    }
 
                 }
 
