@@ -285,26 +285,30 @@ namespace MatterHackers.MatterControl
                         || MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
                         || sourceExtension == ".GCODE")
                     {
-                        string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
-
-                        string neededPathForZip = Path.GetDirectoryName(extractedFileName);
-                        if (!Directory.Exists(neededPathForZip))
+                        if (zipEntry.Name != null
+                            && zipEntry.Name != "")
                         {
-                            Directory.CreateDirectory(neededPathForZip);
-                        }
+                            string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
 
-						Stream zipStream = zipEntry.Open();
+                            string neededPathForZip = Path.GetDirectoryName(extractedFileName);
+                            if (!Directory.Exists(neededPathForZip))
+                            {
+                                Directory.CreateDirectory(neededPathForZip);
+                            }
 
-                        using (FileStream streamWriter = File.Create(extractedFileName))
-                        {
-                            CopyStream(zipStream, streamWriter);
-                        }
+                            Stream zipStream = zipEntry.Open();
 
-                        if (zipEntry.Name == "manifest.json")
-                        {
-                            StreamReader sr = new System.IO.StreamReader(extractedFileName);
-                            projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
-                            sr.Close();
+                            using (FileStream streamWriter = File.Create(extractedFileName))
+                            {
+                                CopyStream(zipStream, streamWriter);
+                            }
+
+                            if (zipEntry.Name == "manifest.json")
+                            {
+                                StreamReader sr = new System.IO.StreamReader(extractedFileName);
+                                projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
+                                sr.Close();
+                            }
                         }
                     }
                 }
