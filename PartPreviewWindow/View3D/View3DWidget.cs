@@ -140,21 +140,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (MeshViewerToDrawWith.SelectedMeshGroup != null)
             {
-
-                GL.MatrixMode(MatrixMode.Modelview);
-                GL.PushMatrix();
-                GL.MultMatrix(TotalTransform.GetAsDoubleArray());
-
                 if (MouseOver)
                 {
-                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, RenderTypes.Shaded);
+                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
                 }
                 else
                 {
-                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, RenderTypes.Shaded);
+                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
                 }
-
-                GL.PopMatrix();
             }
 
             base.DrawGlContent(e);

@@ -60,6 +60,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void ungroupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (SelectedMeshGroupIndex == -1)
+            {
+                SelectedMeshGroupIndex = 0;
+            }
             string makingCopyLabel = LocalizedString.Get("Ungrouping");
             string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
             processingProgressControl.ProcessType = makingCopyLabelFull;
