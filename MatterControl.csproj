@@ -122,6 +122,7 @@
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\PanelSeparator.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
+    <Compile Include="CustomWidgets\SolidProgressControl.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
