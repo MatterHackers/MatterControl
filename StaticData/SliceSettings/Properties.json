@@ -127,7 +127,7 @@
   },
   {
     "SlicerConfigName": "raft_extra_distance_around_part",
-    "PresentationName": "Distance Around Object",
+    "PresentationName": "Expand Distance",
     "HelpText": "The extra distance the raft will extend around the part.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm"
@@ -720,7 +720,8 @@
     "PresentationName": "Distance from Object",
     "HelpText": "The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "mm"
+    "ExtraSettings": "mm",
+    "QuickMenuSettings": [{"MenuName" : "Touching", "Value": "0"},{"MenuName" : "Standard", "Value": "3"},{"MenuName" : "Far", "Value": "10"}]
   },
   {
     "SlicerConfigName": "skirt_height",
