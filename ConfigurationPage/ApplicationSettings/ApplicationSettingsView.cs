@@ -152,8 +152,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             optionsContainer.AddChild(releaseOptionsDropList);
             optionsContainer.Width = 200;
 
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
+			MenuItem responsizeOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
+            MenuItem touchscreenOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
 
             List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
             string currentUpdateFeedType = UserSettings.Instance.get("ApplicationDisplayMode");

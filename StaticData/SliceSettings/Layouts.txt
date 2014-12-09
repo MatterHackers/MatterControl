@@ -1,4 +1,4 @@
-Minimal
+Simple
   Single
     Single
       Print
@@ -7,7 +7,7 @@ Minimal
       Support Material
         support_material
         create_raft
-Beginner
+Intermediate
   Print
     Layers/Perimeters
       Layer Height
