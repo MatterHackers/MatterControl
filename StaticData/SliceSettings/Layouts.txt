@@ -1,5 +1,5 @@
 Simple
-  Single
+  Settings
     Single
       Print
         layer_height

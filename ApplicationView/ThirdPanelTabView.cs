@@ -149,14 +149,14 @@ namespace MatterHackers.MatterControl
             RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
             //Add the tab contents for 'Advanced Controls'
-            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", textSize,
-            ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-            string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
+            string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", textSize,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+
+            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", textSize,
+            ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();

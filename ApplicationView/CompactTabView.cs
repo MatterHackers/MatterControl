@@ -130,14 +130,14 @@ namespace MatterHackers.MatterControl
                         ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             //Add the tab contents for 'Advanced Controls'
+            string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
+            sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+            sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
+
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
 			manualControlsPage = new TabPage(manualPrinterControls, printerControlsLabel);
             this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
             ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-			string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
-			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-			sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
 
 			this.AddTab(new SimpleTextTabWidget(sliceTabPage, "Slice Settings Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));

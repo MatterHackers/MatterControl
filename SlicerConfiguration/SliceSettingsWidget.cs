@@ -161,6 +161,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.y);
             }
 
+            if (sideTabBarsListForLayout.Count == 1)
+            {
+                sideTabBarsListForLayout[0].MinimumSize = new Vector2(0, 0);
+                sideTabBarsListForLayout[0].Width = 0;
+            }
+
             // add in the ability to turn on and off help text
             {
                 showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;

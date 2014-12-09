@@ -21,11 +21,20 @@ namespace MatterHackers.MatterControl.SettingsManagement
                 {
                     string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
                     instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
+#if false
+                    string output = JsonConvert.SerializeObject(instance, Formatting.Indented);
+                    using (StreamWriter outfile = new StreamWriter("Settings.json"))
+                    {
+                        outfile.Write(output);
+                    }
+#endif
                 }
 
                 return instance;
             }
         }
+
+        public bool UseLiteInterface = false;
 
         public string ThemeColor = "";
 
@@ -52,8 +61,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
             PreloadedLibraryFiles.Add("uno");
             PreloadedLibraryFiles.Add("dos");
             AffiliateCode = "testcode";
-            string pathToOemSettings = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "Settings.json");
-            File.WriteAllText(pathToOemSettings, JsonConvert.SerializeObject(this));
+            string pathToOemSettings = Path.Combine(".", "OEMSettings", "Settings.json");
+            File.WriteAllText(pathToOemSettings, JsonConvert.SerializeObject(this, Formatting.Indented));
 #endif
         }
     }

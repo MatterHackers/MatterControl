@@ -1,1 +1,26 @@
-{"AffiliateCode":"5NEP8W","ShowShopButton":true,"PrinterWhiteList":["Airwolf 3D","Type A Machines","Other","SeeMeCNC","Printrbot","Deezmaker","Blue Eagle Labs","RoBo 3D","Solidoodle","Portabee","Lulzbot","3D Stuffmaker","Velleman"],"PreloadedLibraryFiles":["Calibration - Box.stl"]}
+{
+  "UseLiteInterface": false,
+  "ThemeColor": "",
+  "AffiliateCode": "5NEP8W",
+  "WindowTitleExtra": "",
+  "ShowShopButton": true,
+  "CheckForUpdatesOnFirstRun": false,
+  "PrinterWhiteList": [
+    "Airwolf 3D",
+    "Type A Machines",
+    "Other",
+    "SeeMeCNC",
+    "Printrbot",
+    "Deezmaker",
+    "Blue Eagle Labs",
+    "RoBo 3D",
+    "Solidoodle",
+    "Portabee",
+    "Lulzbot",
+    "3D Stuffmaker",
+    "Velleman"
+  ],
+  "PreloadedLibraryFiles": [
+    "Calibration - Box.stl"
+  ]
+}

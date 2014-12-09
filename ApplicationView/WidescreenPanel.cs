@@ -26,7 +26,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
-//#define NEW_TWO_COLUMN_MODE
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +42,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -194,31 +194,34 @@ namespace MatterHackers.MatterControl
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
-#if NEW_TWO_COLUMN_MODE
-            PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, true, View3DWidget.AutoRotate.Enabled, false);
-            partViewContent.AnchorAll();
-            
-            ColumnTwo.AddChild(partViewContent);
-#else
-            part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 
-                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), 
-                ActiveSliceSettings.Instance.BedCenter,
-                ActiveSliceSettings.Instance.BedShape, 
-                View3DWidget.WindowType.Embeded, 
-                View3DWidget.AutoRotate.Enabled);
-            part3DView.Margin = new BorderDouble(bottom: 4);
-            part3DView.AnchorAll();
+            if (OemSettings.Instance.UseLiteInterface)
+            {
+                PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, true, View3DWidget.AutoRotate.Enabled, false);
+                partViewContent.AnchorAll();
 
-            partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 
-                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                ActiveSliceSettings.Instance.BedCenter, 
-                ActiveSliceSettings.Instance.BedShape, 
-                false);
-            partGcodeView.AnchorAll();
+                ColumnTwo.AddChild(partViewContent);
+            }
+            else
+            {
+                part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                    ActiveSliceSettings.Instance.BedCenter,
+                    ActiveSliceSettings.Instance.BedShape,
+                    View3DWidget.WindowType.Embeded,
+                    View3DWidget.AutoRotate.Enabled);
+                part3DView.Margin = new BorderDouble(bottom: 4);
+                part3DView.AnchorAll();
 
-            ColumnTwo.AddChild(part3DView);
-            ColumnTwo.AddChild(partGcodeView);
-#endif
+                partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                    ActiveSliceSettings.Instance.BedCenter,
+                    ActiveSliceSettings.Instance.BedShape,
+                    false);
+                partGcodeView.AnchorAll();
+
+                ColumnTwo.AddChild(part3DView);
+                ColumnTwo.AddChild(partGcodeView);
+            }
 
             ColumnTwo.AnchorAll();
         }
@@ -245,6 +248,10 @@ namespace MatterHackers.MatterControl
             }
             else
             {
+                if (OemSettings.Instance.UseLiteInterface)
+                {
+                    return 2;
+                }
                 return 3;
             }
         }
@@ -273,16 +280,24 @@ namespace MatterHackers.MatterControl
                     LoadCompactView();
                     break;
 
-#if NEW_TWO_COLUMN_MODE
                 case 2:
-                    ApplicationController.Instance.WidescreenMode = false;
-                    LoadCompactView();
-                    LoadColumnTwo();
-                    LoadColumnThree();
+                    if (OemSettings.Instance.UseLiteInterface)
+                    {
+                        ApplicationController.Instance.WidescreenMode = false;
+                        LoadCompactView();
+                        LoadColumnTwo();
+                        LoadColumnThree();
+                    }
+                    else
+                    {
+                        ApplicationController.Instance.WidescreenMode = true;
+
+                        LoadColumnOne();
+                        // make sure we restore the state of column one because LoadColumnThree is going to save it.
+                        LoadColumnTwo();
+                        LoadColumnThree();
+                    }
                     break;
-#else
-                case 2:
-#endif
 
                 case 3:
                     ApplicationController.Instance.WidescreenMode = true;
@@ -325,40 +340,43 @@ namespace MatterHackers.MatterControl
                 case 2:
                     Padding = new BorderDouble(4);
                     ColumnOne.Visible = true;
-#if NEW_TWO_COLUMN_MODE
-                    LeftBorderLine.Visible = true;
-                    RightBorderLine.Visible = false;
-                    ColumnTwo.Visible = true;
-                    ColumnThree.Visible = false;
-                    ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                    ColumnOne.Width = ColumnTheeFixedWidth; // it can hold the slice settings so it needs to be bigger.
-#else
-                    RightBorderLine.Visible = true;                    
-                    if (RightBorderLine.Hidden)
+                    if (OemSettings.Instance.UseLiteInterface)
                     {
                         LeftBorderLine.Visible = true;
-                        if (LeftBorderLine.Hidden)
-                        {
-                            ColumnThree.Visible = false;
-                            ColumnTwo.Visible = false;
-                            ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                            
-                        }
-                        else
-                        {                            
-                            ColumnThree.Visible = false;
-                            ColumnTwo.Visible = true;
-                            ColumnOne.HAnchor = Agg.UI.HAnchor.None;  
-                        }
-                    }                    
+                        RightBorderLine.Visible = false;
+                        ColumnTwo.Visible = true;
+                        ColumnThree.Visible = false;
+                        ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                        ColumnOne.Width = ColumnTheeFixedWidth; // it can hold the slice settings so it needs to be bigger.
+                    }
                     else
                     {
-                        LeftBorderLine.Visible = false;
-                        ColumnThree.Visible = true;
-                        ColumnTwo.Visible = false;
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;   
+                        RightBorderLine.Visible = true;
+                        if (RightBorderLine.Hidden)
+                        {
+                            LeftBorderLine.Visible = true;
+                            if (LeftBorderLine.Hidden)
+                            {
+                                ColumnThree.Visible = false;
+                                ColumnTwo.Visible = false;
+                                ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+
+                            }
+                            else
+                            {
+                                ColumnThree.Visible = false;
+                                ColumnTwo.Visible = true;
+                                ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                            }
+                        }
+                        else
+                        {
+                            LeftBorderLine.Visible = false;
+                            ColumnThree.Visible = true;
+                            ColumnTwo.Visible = false;
+                            ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+                        }
                     }
-#endif
                     break;
 
                 case 3:                    
