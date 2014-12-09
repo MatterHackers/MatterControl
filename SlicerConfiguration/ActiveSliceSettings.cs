@@ -468,17 +468,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             return "Unknown";
         }
+
+        public enum SettingsStackLayers { CurrentSetings = 0, SaveSettings = 1, QualitySettings = 2, MatterialSettings = 3}; 
         /// <summary>
         /// Returns whether or not the setting is overridden by the active layer
         /// </summary>
         /// <param name="sliceSetting"></param>
         /// <returns></returns>
-        public bool SettingExistsInLayer(string sliceSetting, int layer=0)
+        public bool SettingExistsInLayer(string sliceSetting, SettingsStackLayers layer = SettingsStackLayers.CurrentSetings)
         {
             bool settingExistsInLayer;
-            if (layer < activeSettingsLayers.Count)
+            int layerIndex = (int)layer;
+            if (layerIndex < activeSettingsLayers.Count)
             {
-                settingExistsInLayer = (activeSettingsLayers[layer].settingsDictionary.ContainsKey(sliceSetting));
+                settingExistsInLayer = (activeSettingsLayers[layerIndex].settingsDictionary.ContainsKey(sliceSetting));
             }
             else
             {

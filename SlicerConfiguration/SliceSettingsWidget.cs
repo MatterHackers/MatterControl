@@ -542,11 +542,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     settingName.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
-                    if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+                    if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, ActiveSliceSettings.SettingsStackLayers.MatterialSettings))
                     {
                         addMaterialOverlay = true;
                     }
-                    else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
+                    else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, ActiveSliceSettings.SettingsStackLayers.QualitySettings))
                     {
                         addQualityOverlay = true;
                     }

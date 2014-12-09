@@ -248,19 +248,10 @@ namespace MatterHackers.MatterControl
                         reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
                     }
 
-#if false // this is to do some timing on creating tracking info
-                    Stopwatch stopWatch = new Stopwatch();
-                    stopWatch.Start();
-#endif
-                    perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(BoundingVolumeHierarchy.CreateNewHierachy(allPolys));
-                    //perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(new UnboundCollection(allPolys));
-#if false
-                    stopWatch.Stop();
-                    using (StreamWriter outputStream = File.AppendText("output.txt"))
-                    {
-                        outputStream.WriteLine("Plating Helper BoundingVolumeHierarchy.CreateNewHierachy {0:0.00} seconds".FormatWith(stopWatch.Elapsed.TotalSeconds));
-                    }
-#endif
+                    // put all the polys into an unbound collection so the work is done quickely
+                    IRayTraceable traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 1);
+                    //IRayTraceable traceData = new UnboundCollection(allPolys, UnboundCollection.OptomizeOption.OptomizeOnUse);
+                    perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(traceData);
                 }
             }
         }

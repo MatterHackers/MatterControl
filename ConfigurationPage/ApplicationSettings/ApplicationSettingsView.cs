@@ -69,9 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             this.linkButtonFactory.fontSize = 11;
-        }
-
-       
+        }       
 
         private FlowLayoutWidget GetThemeControl()
         {
@@ -107,13 +105,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             currentColorThemeBorder.AddChild(currentColorTheme);
 
             ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget(colorToChangeTo: currentColorTheme);
-            themeSelector.Margin = new BorderDouble(right: 5);
-
-            
+            themeSelector.Margin = new BorderDouble(right: 5);            
 
             colorSelectorContainer.AddChild(themeSelector);
-            colorSelectorContainer.AddChild(currentColorThemeBorder);
-            
+            colorSelectorContainer.AddChild(currentColorThemeBorder);            
 
             buttonRow.AddChild(settingLabel);
             buttonRow.AddChild(colorSelectorContainer);
@@ -126,7 +121,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
             buttonRow.Margin = new BorderDouble(top: 4);
-
 
 			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Change Display Mode"));
             settingsLabel.AutoExpandBoundsToText = true;
@@ -141,7 +135,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				RestartApplication();
 			};
-
 
             FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             optionsContainer.Margin = new BorderDouble(bottom: 6);

@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
             }
         }
 
-        public bool UseLiteInterface = false;
+        public bool UseLiteInterfaceByDefault = false;
 
         public string ThemeColor = "";
 

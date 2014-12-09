@@ -74,11 +74,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
             int indexBeingReplaced = SelectedMeshGroupIndex;
+            List<Mesh> discreetMeshes = new List<Mesh>();
             asynchMeshGroups[indexBeingReplaced].Transform(asynchMeshGroupTransforms[indexBeingReplaced].TotalTransform);
-            List<Mesh> discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroups[indexBeingReplaced], (double progress0To1, string processingState, out bool continueProcessing) =>
+            // if there are multiple meshes than just make them separate groups
+            if (asynchMeshGroups[indexBeingReplaced].Meshes.Count > 1)
             {
-                BackgroundWorker_ProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
-            });
+                foreach(Mesh mesh in asynchMeshGroups[indexBeingReplaced].Meshes)
+                {
+                    discreetMeshes.Add(mesh);
+                }
+            }
+            else // actually try and cut up the mesh into separate parts
+            {
+                discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroups[indexBeingReplaced], (double progress0To1, string processingState, out bool continueProcessing) =>
+                {
+                    BackgroundWorker_ProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
+                });
+            }
 
             asynchMeshGroups.RemoveAt(indexBeingReplaced);
             asynchPlatingDatas.RemoveAt(indexBeingReplaced);
@@ -102,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // and create selection info
                 PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, addedMeshIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
                 {
-                    BackgroundWorker_ProgressChanged(progress0To1 * .5 + .5, processingState, out continueProcessing);
+                    BackgroundWorker_ProgressChanged(.5 + progress0To1 * .5 * currentRatioDone, processingState, out continueProcessing);
                 });
                 currentRatioDone += ratioPerDiscreetMesh;
             }
