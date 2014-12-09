@@ -130,6 +130,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
 
             categoryTabs.TabBar.AddChild(new HorizontalSpacer());
+            TextWidget modeText = new TextWidget("Mode:".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+            modeText.VAnchor = VAnchor.ParentCenter;
+            categoryTabs.TabBar.AddChild(modeText);
             categoryTabs.TabBar.AddChild(settingsDetailSelector);
 
             if (settingsDetailSelector.SelectedValue == "Advanced" && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.Slic3r)
