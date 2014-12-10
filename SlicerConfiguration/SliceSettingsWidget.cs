@@ -98,7 +98,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsDetailSelector.AddItem(LocalizedString.Get("Simple"), "Simple");
             settingsDetailSelector.AddItem(LocalizedString.Get("Intermediate"), "Intermediate");
             settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
-            if (SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
+            if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
+                && SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
             {
                 settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
             }
