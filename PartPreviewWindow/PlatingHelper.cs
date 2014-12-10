@@ -248,9 +248,8 @@ namespace MatterHackers.MatterControl
                         reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
                     }
 
-                    // put all the polys into an unbound collection so the work is done quickely
-                    IRayTraceable traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 1);
-                    //IRayTraceable traceData = new UnboundCollection(allPolys, UnboundCollection.OptomizeOption.OptomizeOnUse);
+                    // only allow limited recusion to speed this up building this data
+                    IRayTraceable traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 4);
                     perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(traceData);
                 }
             }
