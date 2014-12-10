@@ -93,8 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
             if (allowAutoRotate && StaticData.Instance.FileExists(imagePathAndFile))
             {
-                ImageBuffer wattermarkImage = new ImageBuffer();
-                ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);
+                ImageBuffer wattermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
 
                 ImageBuffer bedImage = meshViewerWidget.BedImage;
                 Graphics2D bedGraphics = bedImage.NewGraphics2D();
