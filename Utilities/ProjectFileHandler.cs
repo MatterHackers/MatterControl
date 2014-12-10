@@ -260,9 +260,9 @@ namespace MatterHackers.MatterControl
             if (System.IO.File.Exists(loadedFileName))
             {
                 FileStream fs = File.OpenRead(loadedFileName);
-				ZipArchive zip = new ZipArchive(fs);
+                ZipArchive zip = new ZipArchive(fs);
                 int projectHashCode = zip.GetHashCode();
-            
+
                 //If the temp folder doesn't exist - create it, otherwise clear it
                 string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-extract", projectHashCode.ToString());
                 if (!Directory.Exists(stagingFolder))
@@ -278,36 +278,41 @@ namespace MatterHackers.MatterControl
                 List<PrintItem> printItemList = new List<PrintItem>();
                 Project projectManifest = null;
 
-				foreach (ZipArchiveEntry zipEntry in zip.Entries)
+                foreach (ZipArchiveEntry zipEntry in zip.Entries)
                 {
                     string sourceExtension = Path.GetExtension(zipEntry.Name).ToUpper();
-                    if (zipEntry.Name == "manifest.json"
+
+                    // Note: directories have empty Name properties
+                    //
+                    // Only process ZipEntries that are: 
+                    //    - not directories and 
+                    //     - are in the ValidFileExtension list or
+                    //     - have a .GCODE extension or 
+                    //     - are named manifest.json
+                    if (!string.IsNullOrWhiteSpace(zipEntry.Name) &&
+                        (zipEntry.Name == "manifest.json"
                         || MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
-                        || sourceExtension == ".GCODE")
+                        || sourceExtension == ".GCODE"))
                     {
-                        if (zipEntry.Name != null
-                            && zipEntry.Name != "")
+                        string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
+
+                        string neededPathForZip = Path.GetDirectoryName(extractedFileName);
+                        if (!Directory.Exists(neededPathForZip))
                         {
-                            string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
+                            Directory.CreateDirectory(neededPathForZip);
+                        }
 
-                            string neededPathForZip = Path.GetDirectoryName(extractedFileName);
-                            if (!Directory.Exists(neededPathForZip))
+                        using (Stream zipStream = zipEntry.Open())
+                        using (FileStream streamWriter = File.Create(extractedFileName))
+                        {
+                            zipStream.CopyTo(streamWriter);
+                        }
+
+                        if (zipEntry.Name == "manifest.json")
+                        {
+                            using (StreamReader sr = new System.IO.StreamReader(extractedFileName))
                             {
-                                Directory.CreateDirectory(neededPathForZip);
-                            }
-
-                            Stream zipStream = zipEntry.Open();
-
-                            using (FileStream streamWriter = File.Create(extractedFileName))
-                            {
-                                CopyStream(zipStream, streamWriter);
-                            }
-
-                            if (zipEntry.Name == "manifest.json")
-                            {
-                                StreamReader sr = new System.IO.StreamReader(extractedFileName);
                                 projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
-                                sr.Close();
                             }
                         }
                     }
@@ -339,16 +344,6 @@ namespace MatterHackers.MatterControl
                 return null;
             }
         }
-
-		public static void CopyStream(Stream input, Stream output)
-		{
-			byte[] buffer = new byte[4096];
-			int read;
-			while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-			{
-				output.Write(buffer, 0, read);
-			}
-		}
 
         private PrintItem GetPrintItemFromFile(string fileName, string displayName)
         {
