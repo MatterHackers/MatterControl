@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl
                     }
 
                     // only allow limited recusion to speed this up building this data
-                    IRayTraceable traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 4);
+                    IRayTraceable traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 0);
                     perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(traceData);
                 }
             }
