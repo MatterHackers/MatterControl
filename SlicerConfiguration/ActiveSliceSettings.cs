@@ -625,12 +625,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         if (line.Trim() != "" && !line.StartsWith("#"))
                         {
                             string[] settingLine = line.Split('=');
-                            string keyName = settingLine[0].Trim();
-                            string settingDefaultValue = settingLine[1].Trim();
+                            if (settingLine.Length > 1)
+                            {
+                                string keyName = settingLine[0].Trim();
+                                string settingDefaultValue = settingLine[1].Trim();
 
-                            //Add the setting to the active layer
-                            SaveValue(keyName, settingDefaultValue);
-
+                                //Add the setting to the active layer
+                                SaveValue(keyName, settingDefaultValue);
+                            }
                         }
                     }
                 }
