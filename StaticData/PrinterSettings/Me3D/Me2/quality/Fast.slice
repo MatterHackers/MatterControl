@@ -1,1 +1,6 @@
 layer_height = 0.3
+infill_speed = 80
+perimeter_speed = 80
+external_perimeter_speed = 100%
+support_material_speed = 80
+first_layer_speed = 35
