@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
-            if (OemSettings.Instance.UseLiteInterfaceByDefault)
+            if (OemSettings.Instance.UseSimpleModeByDefault)
             {
                 PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, true, View3DWidget.AutoRotate.Enabled, false);
                 partViewContent.AnchorAll();
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl
             }
             else
             {
-                if (OemSettings.Instance.UseLiteInterfaceByDefault)
+                if (OemSettings.Instance.UseSimpleModeByDefault)
                 {
                     return 2;
                 }
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl
                     break;
 
                 case 2:
-                    if (OemSettings.Instance.UseLiteInterfaceByDefault)
+                    if (OemSettings.Instance.UseSimpleModeByDefault)
                     {
                         ApplicationController.Instance.WidescreenMode = false;
                         LoadCompactView();
@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl
                 case 2:
                     Padding = new BorderDouble(4);
                     ColumnOne.Visible = true;
-                    if (OemSettings.Instance.UseLiteInterfaceByDefault)
+                    if (OemSettings.Instance.UseSimpleModeByDefault)
                     {
                         LeftBorderLine.Visible = true;
                         RightBorderLine.Visible = false;

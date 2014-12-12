@@ -41,10 +41,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			//mainContainer.AddChild(GetDisplayControl());
             //mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
-			#if __ANDROID__
 			mainContainer.AddChild(GetModeControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			#endif
 
             mainContainer.AddChild(GetThemeControl()); 
             
@@ -172,7 +170,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Change Mode"));
+			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Interface Mode"));
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
@@ -180,14 +178,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Standard", maxHeight: 200);
-			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+			StyledDropDownList interfaceModeDropList = new StyledDropDownList("Standard", maxHeight: 200);
+			interfaceModeDropList.HAnchor = HAnchor.ParentLeftRight;
 
-			optionsContainer.AddChild(releaseOptionsDropList);
+			optionsContainer.AddChild(interfaceModeDropList);
 			optionsContainer.Width = 200;
 
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Standard"), "true");
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Advanced"), "false");
+			MenuItem standardModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Standard"), "true");
+			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Advanced"), "false");
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "true", "false" };
 			string currentUpdateFeedType = UserSettings.Instance.get("IsSimpleMode");
@@ -197,8 +195,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				UserSettings.Instance.set("IsSimpleMode", "true");
 			}
 
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("IsSimpleMode");
-			releaseOptionsDropList.SelectionChanged += new EventHandler(ModeOptionsDropList_SelectionChanged);
+			interfaceModeDropList.SelectedValue = UserSettings.Instance.get("IsSimpleMode");
+			interfaceModeDropList.SelectionChanged += new EventHandler(InterfaceModeDropList_SelectionChanged);
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -360,7 +358,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             UpdateControlData.Instance.CheckForUpdateUserRequested();
         }
 
-		private void ModeOptionsDropList_SelectionChanged(object sender, EventArgs e)
+		private void InterfaceModeDropList_SelectionChanged(object sender, EventArgs e)
 		{
 			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
 			if (releaseCode != UserSettings.Instance.get("IsSimpleMode"))

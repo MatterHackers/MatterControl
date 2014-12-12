@@ -100,7 +100,6 @@
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionHelpView.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
     <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
