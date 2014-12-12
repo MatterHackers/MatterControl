@@ -97,9 +97,9 @@ namespace MatterHackers.MatterControl
                 bool lineIsVisible = true;
                 foreach (string startFilter in StartLineStringFilters)
                 {
-                    if (line != null
-                        && line.Length > 3
-                        && line.StartsWith(startFilter))
+                    if (line == null
+                        || line.Length < 3
+                        || line.StartsWith(startFilter))
                     {
                         lineIsVisible = false;
                         break;
