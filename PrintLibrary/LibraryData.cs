@@ -276,10 +276,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
         }
 
         ReportProgressRatio fileLoadReportProgress = null;
-        public void LoadFilesIntoLibrary(string[] files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+        public void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
         {
             this.fileLoadReportProgress = reportProgress;
-            if (files != null && files.Length > 0)
+            if (files != null && files.Count > 0)
             {
                 BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
                 mergeAndSavePartsBackgroundWorker.WorkerReportsProgress = true;
@@ -298,37 +298,50 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string[] fileList = e.Argument as string[];
+            IList<string> fileList = e.Argument as IList<string>;
             foreach (string loadedFileName in fileList)
             {
-                PrintItem printItem = new PrintItem();
-                printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
-                printItem.FileLocation = Path.GetFullPath(loadedFileName);
-                printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-                printItem.Commit();
+                string extension = Path.GetExtension(loadedFileName).ToUpper();
+                if (MeshFileIo.ValidFileExtensions().Contains(extension)
+                    || extension == ".GCODE")
+                {
+                    PrintItem printItem = new PrintItem();
+                    printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
+                    printItem.FileLocation = Path.GetFullPath(loadedFileName);
+                    printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+                    printItem.Commit();
 
-                List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
+                    if (MeshFileIo.ValidFileExtensions().Contains(extension))
+                    {
+                        List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
 
-                try
-                {
-                    PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-                    LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave);
-                    LibraryData.Instance.AddItem(printItemWrapper);
-                }
-                catch (System.UnauthorizedAccessException)
-                {
-                    UiThread.RunOnIdle((state) =>
+                        try
+                        {
+                            PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+                            LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave);
+                            LibraryData.Instance.AddItem(printItemWrapper);
+                        }
+                        catch (System.UnauthorizedAccessException)
+                        {
+                            UiThread.RunOnIdle((state) =>
+                            {
+                                //Do something special when unauthorized?
+                                StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
+                            });
+                        }
+                        catch
+                        {
+                            UiThread.RunOnIdle((state) =>
+                            {
+                                StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+                            });
+                        }
+                    }
+                    else // it is not a mesh so just add it
                     {
-                        //Do something special when unauthorized?
-                        StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
-                    });
-                }
-                catch
-                {
-                    UiThread.RunOnIdle((state) =>
-                    {
-                        StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-                    });
+                        PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+                        LibraryData.Instance.AddItem(printItemWrapper);
+                    }
                 }
             }
         }
