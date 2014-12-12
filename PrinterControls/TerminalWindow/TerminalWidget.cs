@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
                         {
                             if (filterOutput.Checked)
                             {
-                                textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "->M105" });
+                                textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "->M105", "<-T"});
                             }
                             else
                             {
