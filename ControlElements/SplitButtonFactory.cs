@@ -36,8 +36,8 @@ namespace MatterHackers.MatterControl
 
 		public SplitButton Generate (TupleList<string, Func<bool>> buttonList, Direction direction = Direction.Down )
 		{
-
 			DynamicDropDownMenu menu = CreateMenu(direction);
+            menu.Margin = new BorderDouble();
 			Button button = CreateButton (buttonList [0]);
 
 			for(int index =1; index < buttonList.Count; index++)

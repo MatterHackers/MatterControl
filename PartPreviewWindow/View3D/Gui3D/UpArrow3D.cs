@@ -47,10 +47,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         double zHitHeight;
         Vector3 lastMoveDelta;
         PlaneShape hitPlane;
+        View3DWidget view3DWidget;
 
-        public UpArrow3D(MeshViewerWidget meshViewerToDrawWith)
-            : base(null, meshViewerToDrawWith)
+        public UpArrow3D(View3DWidget view3DWidget)
+            : base(null, view3DWidget.meshViewerWidget)
         {
+            this.view3DWidget = view3DWidget;
             string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
             if (StaticData.Instance.FileExists(arrowFile))
             {
@@ -109,6 +111,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 lastMoveDelta = delta;
 
+                view3DWidget.PartHasBeenChanged();
                 Invalidate();
             }
 

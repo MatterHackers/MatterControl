@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 return;
             }
             UnlockEditControls();
-            saveButtons.Visible = true;
+            PartHasBeenChanged();
 
             PullMeshGroupDataFromAsynchLists();
         }
