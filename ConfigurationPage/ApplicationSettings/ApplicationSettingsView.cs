@@ -184,18 +184,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(interfaceModeDropList);
 			optionsContainer.Width = 200;
 
-			MenuItem standardModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Standard"), "true");
-			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Advanced"), "false");
+			MenuItem standardModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Standard"), "True");
+			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Advanced"), "False");
 
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "true", "false" };
-			string currentUpdateFeedType = UserSettings.Instance.get("IsSimpleMode");
-
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
-			{
-				UserSettings.Instance.set("IsSimpleMode", "true");
-			}
-
-			interfaceModeDropList.SelectedValue = UserSettings.Instance.get("IsSimpleMode");
+            interfaceModeDropList.SelectedValue = UserSettings.Instance.Fields.IsSimpleMode.ToString();
 			interfaceModeDropList.SelectionChanged += new EventHandler(InterfaceModeDropList_SelectionChanged);
 
 			buttonRow.AddChild(settingsLabel);
@@ -352,7 +344,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             });
         }
 
-
         void FixTabDot(object sender, EventArgs e)
         {
             UpdateControlData.Instance.CheckForUpdateUserRequested();
@@ -360,13 +351,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void InterfaceModeDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
-			if (releaseCode != UserSettings.Instance.get("IsSimpleMode"))
-			{
-				UserSettings.Instance.set("IsSimpleMode", releaseCode);
-				ActiveTheme.Instance.ReloadThemeSettings();
-			}
-		}
+			string isSimpleMode = ((StyledDropDownList)sender).SelectedValue;
+            if (isSimpleMode == "true")
+            {
+                UserSettings.Instance.Fields.IsSimpleMode = true;
+            }
+            else
+            {
+                UserSettings.Instance.Fields.IsSimpleMode = false;
+            }
+            ActiveTheme.Instance.ReloadThemeSettings();
+        }
 
         private void DisplayOptionsDropList_SelectionChanged(object sender, EventArgs e)
         {
