@@ -130,6 +130,7 @@
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DCreateSelecitonData.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />

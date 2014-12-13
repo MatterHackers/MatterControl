@@ -66,6 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         EventHandler SelectionChanged;
         UpArrow3D upArrow;
+        internal HeightValueDisplay heightDisplay;
 
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
@@ -104,6 +105,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         List<PlatingMeshGroupData> asynchPlatingDatas = new List<PlatingMeshGroupData>();
 
         List<PlatingMeshGroupData> MeshGroupExtraData;
+
+        public bool DisplayAllValueData { get; set; }
 
         public ScaleRotateTranslate SelectedMeshGroupTransform
         {
@@ -603,6 +606,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             upArrow = new UpArrow3D(this);
+            heightDisplay = new HeightValueDisplay(this);
             meshViewerWidget.interactionVolumes.Add(upArrow);
 
             // make sure the colors are set correctl

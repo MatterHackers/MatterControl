@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
             zHitHeight = info.hitPosition.z;
-            
+
             base.OnMouseDown(mouseEvent3D);
         }
 
@@ -132,6 +132,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             arrowTransform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * arrowTransform;
 
             TotalTransform = arrowTransform;
+
+            if (MouseOver || MouseDownOnControl)
+            {
+                view3DWidget.heightDisplay.Visible = true;
+            }
+            else if (!view3DWidget.DisplayAllValueData)
+            {
+                view3DWidget.heightDisplay.Visible = false;
+            }
+
         }
 
         private AxisAlignedBoundingBox GetBoundsForSelection()
@@ -185,8 +195,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     Vector3 bottomRight = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
                     Vector2 bottomRightScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomRight);
-
-
                 }
                 else
                 {
