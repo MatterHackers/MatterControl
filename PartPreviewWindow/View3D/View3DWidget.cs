@@ -474,7 +474,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     };
 
                     Button deleteButton = textImageButtonFactory.Generate("Delete".Localize());
-                    deleteButton.Margin = new BorderDouble(left: 20, right: 10);
+                    deleteButton.Margin = new BorderDouble(left: 20, right: 20);
                     doEdittingButtonsContainer.AddChild(deleteButton);
                     deleteButton.Click += (sender, e) =>
                     {
