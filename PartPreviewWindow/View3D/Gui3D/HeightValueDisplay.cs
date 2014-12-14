@@ -47,6 +47,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         View3DWidget view3DWidget;
         TextWidget numberDisplay;
 
+        static readonly int HorizontalLineLength = 30;
+
         public HeightValueDisplay(View3DWidget view3DWidget)
         {
             BackgroundColor = RGBA_Bytes.White;
@@ -58,10 +60,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             AddChild(numberDisplay);
             VAnchor = VAnchor.FitToChildren;
             HAnchor = HAnchor.FitToChildren;
+
+            MeshViewerToDrawWith.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+            MeshViewerToDrawWith.Draw += MeshViewerToDrawWith_Draw;
         }
 
         MeshViewerWidget MeshViewerToDrawWith { get { return view3DWidget.meshViewerWidget; } }
 
+        int SelectedBoundSideIndex = 0;
         public void SetPosition()
         {
             if (MeshViewerToDrawWith.HaveSelection)
@@ -88,7 +94,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         Vector2 testScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i]);
                         if (testScreenPosition.x > screenPosition.x)
                         {
-                            screenPosition = testScreenPosition;
+                            SelectedBoundSideIndex = i;
+                            startLineSelectionPos = testScreenPosition;
+                            Vector3 groundPos = bottomPoints[i];
+                            groundPos.z = 0;
+                            startLineGroundPos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(groundPos);
+
+                            screenPosition = testScreenPosition + new Vector2(HorizontalLineLength, 0);
                         }
                     }
                     numberDisplay.Text = "{0:0.00mm}".FormatWith(selectedBounds.minXYZ.z);
@@ -96,6 +108,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 OriginRelativeParent = screenPosition;
 
+            }
+        }
+
+        Vector2 startLineGroundPos;
+        Vector2 startLineSelectionPos;
+
+        void MeshViewerToDrawWith_Draw(object sender, EventArgs e)
+        {
+            if (Visible)
+            {
+                DrawEventArgs drawEvent = e as DrawEventArgs;
+                if (drawEvent != null)
+                {
+                    double yGround = (int)(startLineGroundPos.y + .5) + .5;
+                    drawEvent.graphics2D.Line(startLineGroundPos.x, yGround, startLineGroundPos.x + HorizontalLineLength - 5, yGround, RGBA_Bytes.Black);
+                    double ySelection = (int)(startLineSelectionPos.y + .5) + .5;
+                    drawEvent.graphics2D.Line(startLineSelectionPos.x, ySelection, startLineSelectionPos.x + HorizontalLineLength - 5, ySelection, RGBA_Bytes.Black);
+
+                    Vector2 pointerBottom = new Vector2(startLineGroundPos.x + HorizontalLineLength / 2, yGround);
+                    Vector2 pointerTop = new Vector2(startLineSelectionPos.x + HorizontalLineLength / 2, ySelection);
+                    drawEvent.graphics2D.Line(pointerBottom, pointerTop, RGBA_Bytes.Black);
+                }
+            }
+        }
+
+        void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+        {
+            if (Visible)
+            {
+                if (view3DWidget.DisplayAllValueData)
+                {
+                }
+                else
+                {
+                }
             }
         }
 
