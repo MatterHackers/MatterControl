@@ -67,7 +67,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         MeshViewerWidget MeshViewerToDrawWith { get { return view3DWidget.meshViewerWidget; } }
 
-        int SelectedBoundSideIndex = 0;
         public void SetPosition()
         {
             if (MeshViewerToDrawWith.HaveSelection)
@@ -75,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // draw the hight from the bottom to the bed
                 AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 
-                Vector2 screenPosition;
+                Vector2 screenPosition = new Vector2(-100, 0);
                 if (view3DWidget.DisplayAllValueData)
                 {
                     screenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z));
@@ -88,18 +87,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     bottomPoints[1] = new Vector3(selectedBounds.minXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
                     bottomPoints[2] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z);
                     bottomPoints[3] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-                    screenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[0]);
-                    for (int i = 1; i < 4; i++)
+                    
+                    for (int i = 0; i < 4; i++)
                     {
                         Vector2 testScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i]);
                         if (testScreenPosition.x > screenPosition.x)
                         {
-                            SelectedBoundSideIndex = i;
                             startLineSelectionPos = testScreenPosition;
-                            Vector3 groundPos = bottomPoints[i];
-                            groundPos.z = 0;
-                            startLineGroundPos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(groundPos);
-
+                            startLineGroundPos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z));
                             screenPosition = testScreenPosition + new Vector2(HorizontalLineLength, 0);
                         }
                     }
