@@ -49,10 +49,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public HeightValueDisplay(View3DWidget view3DWidget)
         {
-            BackgroundColor = RGBA_Bytes.Cyan;
+            BackgroundColor = RGBA_Bytes.White;
             this.view3DWidget = view3DWidget;
             view3DWidget.meshViewerWidget.AddChild(this);
-            numberDisplay = new TextWidget("00.00");
+            numberDisplay = new TextWidget("00.00", pointSize:8);
+            numberDisplay.Margin = new BorderDouble(3, 2);
             numberDisplay.AutoExpandBoundsToText = true;
             AddChild(numberDisplay);
             VAnchor = VAnchor.FitToChildren;

@@ -608,6 +608,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             upArrow = new UpArrow3D(this);
             heightDisplay = new HeightValueDisplay(this);
+            heightDisplay.Visible = false;
             meshViewerWidget.interactionVolumes.Add(upArrow);
 
             // make sure the colors are set correctl
