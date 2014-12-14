@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             HAnchor = HAnchor.FitToChildren;
 
             MeshViewerToDrawWith.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
-            MeshViewerToDrawWith.Draw += MeshViewerToDrawWith_Draw;
+            MeshViewerToDrawWith.DrawAfter += new DrawEventHandler(MeshViewerToDrawWith_Draw);
         }
 
         MeshViewerWidget MeshViewerToDrawWith { get { return view3DWidget.meshViewerWidget; } }
@@ -114,11 +114,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         Vector2 startLineGroundPos;
         Vector2 startLineSelectionPos;
 
-        void MeshViewerToDrawWith_Draw(object sender, EventArgs e)
+        void MeshViewerToDrawWith_Draw(GuiWidget drawingWidget, DrawEventArgs drawEvent)
         {
             if (Visible)
             {
-                DrawEventArgs drawEvent = e as DrawEventArgs;
                 if (drawEvent != null)
                 {
                     double yGround = (int)(startLineGroundPos.y + .5) + .5;

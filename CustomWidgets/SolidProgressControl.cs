@@ -69,17 +69,15 @@ namespace MatterHackers.MatterControl
             this.fillColor = ActiveTheme.Instance.PrimaryAccentColor;
             this.borderColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            this.Draw += new EventHandler(bar_Draw);
+            this.DrawAfter += new DrawEventHandler(bar_Draw);
         }
 
-        void bar_Draw(object sender, EventArgs e)
+        void bar_Draw(GuiWidget drawingWidget, DrawEventArgs drawEvent)
         {
-            DrawEventArgs drawEvent = e as DrawEventArgs;
-            GuiWidget widget = sender as GuiWidget;
-            if (widget != null && drawEvent != null && drawEvent.graphics2D != null)
+            if (drawingWidget != null && drawEvent != null && drawEvent.graphics2D != null)
             {
-                drawEvent.graphics2D.FillRectangle(0, 0, widget.Width * PercentComplete / 100.0, widget.Height, fillColor);
-                drawEvent.graphics2D.Rectangle(widget.LocalBounds, borderColor);
+                drawEvent.graphics2D.FillRectangle(0, 0, drawingWidget.Width * PercentComplete / 100.0, drawingWidget.Height, fillColor);
+                drawEvent.graphics2D.Rectangle(drawingWidget.LocalBounds, borderColor);
             }
         }
     }
