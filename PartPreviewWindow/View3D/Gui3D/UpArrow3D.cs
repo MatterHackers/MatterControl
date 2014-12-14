@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // now snap this position to the grid
                 {
                     double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
-                    AxisAlignedBoundingBox selectedBounds = GetBoundsForSelection();
+                    AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
                     double bottom = selectedBounds.minXYZ.z + delta.z;
 
                     double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public void  SetPosition()
         {
-            AxisAlignedBoundingBox selectedBounds = GetBoundsForSelection();
+            AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
             Vector3 boundsCenter = selectedBounds.Center;
             Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
@@ -144,44 +144,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         }
 
-        private AxisAlignedBoundingBox GetBoundsForSelection()
-        {
-            Matrix4X4 selectedMeshTransform = MeshViewerToDrawWith.SelectedMeshGroupTransform.TotalTransform;
-            AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.SelectedMeshGroup.GetAxisAlignedBoundingBox(selectedMeshTransform);
-            return selectedBounds;
-        }
-
-        public override void Draw2DContent(Graphics2D graphics2D)
-        {
-            if (MeshViewerToDrawWith.SelectedMeshGroup != null)
-            {
-                if (MouseOver)
-                {
-                    // draw the hight from the bottom to the bed
-                    AxisAlignedBoundingBox selectedBounds = GetBoundsForSelection();
-
-                    Vector3[] bottomPoints = new Vector3[4];
-                    bottomPoints[0] = new Vector3(selectedBounds.minXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z);
-                    bottomPoints[1] = new Vector3(selectedBounds.minXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-                    bottomPoints[2] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z);
-                    bottomPoints[3] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-                    Vector2 screenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[0]);
-                    for (int i = 1; i < 4; i++)
-                    {
-                        Vector2 testScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i]);
-                        if (testScreenPosition.x > screenPosition.x)
-                        {
-                            screenPosition = testScreenPosition;
-                        }
-                    }
-
-                    graphics2D.DrawString("{0:0.00}".FormatWith(selectedBounds.minXYZ.z), screenPosition.x, screenPosition.y);
-                }
-            }
-
-            base.Draw2DContent(graphics2D);
-        }
-
         public override void DrawGlContent(EventArgs e)
         {
             if (MeshViewerToDrawWith.SelectedMeshGroup != null)
@@ -191,7 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
 
                     // draw the hight from the bottom to the bed
-                    AxisAlignedBoundingBox selectedBounds = GetBoundsForSelection();
+                    AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 
                     Vector3 bottomRight = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
                     Vector2 bottomRightScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomRight);

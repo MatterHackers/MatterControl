@@ -250,6 +250,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (HaveSelection)
             {
                 upArrow.SetPosition();
+                heightDisplay.SetPosition();
             }
 
             hasDrawn = true;
