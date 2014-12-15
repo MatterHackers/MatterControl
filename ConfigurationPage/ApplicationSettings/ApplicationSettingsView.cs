@@ -70,8 +70,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			//mainContainer.AddChild(GetDisplayControl());
             //mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
+#if __ANDROID__
 			mainContainer.AddChild(GetModeControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+#endif
 
             mainContainer.AddChild(GetThemeControl()); 
             
