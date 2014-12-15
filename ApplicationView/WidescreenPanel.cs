@@ -56,8 +56,6 @@ namespace MatterHackers.MatterControl
     {
         static readonly int ColumnOneFixedWidth = 500;
         static readonly int ColumnTheeFixedWidth = 590;
-        static bool leftBorderLineHiden;
-        static bool rightBorderLineHiden;
         static int lastNumberOfVisiblePanels;
 
         public TabPage AboutTabPage;
@@ -74,7 +72,7 @@ namespace MatterHackers.MatterControl
         ViewGcodeBasic partGcodeView;
 
         PanelSeparator RightBorderLine;
-        PanelSeparator LeftBorderLine;
+        GuiWidget leftBorderLine;
 
         event EventHandler unregisterEvents;
 
@@ -147,16 +145,9 @@ namespace MatterHackers.MatterControl
 
         void onRightBorderClick(object sender, EventArgs e)
         {
-            RightBorderLine.Hidden = !RightBorderLine.Hidden;
+            RightBorderLine.PushedRight = !RightBorderLine.PushedRight;
+            UserSettings.Instance.Fields.ThirdPannelVisible = !RightBorderLine.PushedRight;
             UiThread.RunOnIdle(SetColumnVisibility);
-            UiThread.RunOnIdle(RightBorderLine.SetDisplayState);
-        }
-
-        void onLeftBorderClick(object sender, EventArgs e)
-        {
-            LeftBorderLine.Hidden = !LeftBorderLine.Hidden;
-            UiThread.RunOnIdle(SetColumnVisibility);
-            UiThread.RunOnIdle(LeftBorderLine.SetDisplayState);
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -265,11 +256,6 @@ namespace MatterHackers.MatterControl
 
             int numberOfPanels = NumberOfVisiblePanels();
 
-            if (LeftBorderLine != null)
-            {
-                leftBorderLineHiden = LeftBorderLine.Hidden;
-                rightBorderLineHiden = RightBorderLine.Hidden;
-            }
             PreChangePanels.CallEvents(this, null);
             RemovePanelsAndCreateEmpties();
 
@@ -309,11 +295,7 @@ namespace MatterHackers.MatterControl
                     break;
             }
 
-            LeftBorderLine.Hidden = leftBorderLineHiden;
-            RightBorderLine.Hidden = rightBorderLineHiden;
             SetColumnVisibility();
-            RightBorderLine.SetDisplayState();
-            LeftBorderLine.SetDisplayState();
 
             lastNumberOfVisiblePanels = numberOfPanels;
         }
@@ -332,8 +314,8 @@ namespace MatterHackers.MatterControl
 
                         Padding = new BorderDouble(0);
 
-                        LeftBorderLine.Visible = false;
                         RightBorderLine.Visible = false;
+                        leftBorderLine.Visible = false;
                     }
                     break;
 
@@ -342,7 +324,6 @@ namespace MatterHackers.MatterControl
                     ColumnOne.Visible = true;
                     if (UserSettings.Instance.Fields.IsSimpleMode)
                     {
-                        LeftBorderLine.Visible = true;
                         RightBorderLine.Visible = false;
                         ColumnTwo.Visible = true;
                         ColumnThree.Visible = false;
@@ -352,26 +333,16 @@ namespace MatterHackers.MatterControl
                     else
                     {
                         RightBorderLine.Visible = true;
-                        if (RightBorderLine.Hidden)
+                        if (RightBorderLine.PushedRight)
                         {
-                            LeftBorderLine.Visible = true;
-                            if (LeftBorderLine.Hidden)
-                            {
-                                ColumnThree.Visible = false;
-                                ColumnTwo.Visible = false;
-                                ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-
-                            }
-                            else
-                            {
-                                ColumnThree.Visible = false;
-                                ColumnTwo.Visible = true;
-                                ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                            }
+                            leftBorderLine.Visible = true;
+                            ColumnThree.Visible = false;
+                            ColumnTwo.Visible = true;
+                            ColumnOne.HAnchor = Agg.UI.HAnchor.None;
                         }
                         else
                         {
-                            LeftBorderLine.Visible = false;
+                            leftBorderLine.Visible = false;
                             ColumnThree.Visible = true;
                             ColumnTwo.Visible = false;
                             ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -384,22 +355,13 @@ namespace MatterHackers.MatterControl
                     Padding = new BorderDouble(4);                    
 
                     //If the middle column is hidden, left/right anchor the left column
-                    if (LeftBorderLine.Hidden)
-                    {
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                    }
-                    else
-                    {
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                        ColumnOne.Width = ColumnOneFixedWidth;
-                    }
+                    ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                    ColumnOne.Width = ColumnOneFixedWidth;
 
                     ColumnOne.Visible = true;
-                    LeftBorderLine.Visible = true;
+                    leftBorderLine.Visible = true;
                     RightBorderLine.Visible = true;
-                    ColumnThree.Visible = !RightBorderLine.Hidden;
-                    ColumnTwo.Visible = !LeftBorderLine.Hidden;
-
+                    ColumnThree.Visible = !RightBorderLine.PushedRight;
                     break;
             }
         }
@@ -418,17 +380,25 @@ namespace MatterHackers.MatterControl
             ColumnThree = new FlowLayoutWidget(FlowDirection.TopToBottom);
             ColumnThree.VAnchor = VAnchor.ParentBottomTop;
 
-            LeftBorderLine = new PanelSeparator();
             RightBorderLine = new PanelSeparator();
+            RightBorderLine.PushedRight = !UserSettings.Instance.Fields.ThirdPannelVisible;
 
             AddChild(ColumnOne);
-            AddChild(LeftBorderLine);
+            leftBorderLine = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
+            leftBorderLine.Width = 15;
+            leftBorderLine.DrawBefore += (widget, graphics2D) =>
+            {
+                RectangleDouble bounds = widget.LocalBounds;
+                bounds.Left += 3;
+                bounds.Right -= 8;
+                graphics2D.graphics2D.FillRectangle(bounds, new RGBA_Bytes(160, 160, 160));
+            };
+            AddChild(leftBorderLine);
             AddChild(ColumnTwo);
             AddChild(RightBorderLine);
             AddChild(ColumnThree);
 
             RightBorderLine.Click += new EventHandler(onRightBorderClick);
-            LeftBorderLine.Click += new EventHandler(onLeftBorderClick);
         }
 
         public void ReloadAdvancedControlsPanel(object state)

@@ -1,6 +1,11 @@
 ﻿using System;
 using System.IO;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg;
+using MatterHackers.VectorMath;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -11,52 +16,68 @@ namespace MatterHackers.MatterControl.CustomWidgets
     {
         RGBA_Bytes defaultBackgroundColor;
         RGBA_Bytes hoverBackgroundColor;
-        bool hidden;
-        ImageWidget arrowIndicator;
+        bool pushedRight;
+        ImageBuffer rightArrowIndicator;
+        ImageBuffer leftArrowIndicator;
 
-        public bool Hidden 
+        public bool PushedRight 
         { 
-            get { return hidden; }
-            set { hidden = value; }
+            get { return pushedRight; }
+            set 
+            {
+                if (pushedRight != value)
+                {
+                    pushedRight = value;
+                }
+            }
         }
 
-        public void SetDisplayState(object state = null)
+        public override void OnDraw(Graphics2D graphics2D)
         {
-            if (hidden)
+            BackBuffer.SetRecieveBlender(new BlenderBGRA());
+            RectangleDouble bounds = LocalBounds;
+            TypeFacePrinter printer;
+            Vector2 center = new Vector2((bounds.Right - bounds.Left) / 2, (bounds.Top - bounds.Bottom) / 2);
+            int textMargin = 20;
+            if (pushedRight)
             {
-                this.Width = 24;
-                arrowIndicator.Visible = true;
+                printer = new TypeFacePrinter("Advanced Controls", justification: Justification.Center, baseline: Baseline.BoundsCenter);
+                Vector2 textSize = printer.GetSize();
+                graphics2D.Render(leftArrowIndicator, new Vector2(center.x - leftArrowIndicator.Width / 2, center.y - leftArrowIndicator.Height / 2 - (textSize.x / 2 + textMargin)));
+                graphics2D.Render(leftArrowIndicator, new Vector2(center.x - leftArrowIndicator.Width / 2, center.y - leftArrowIndicator.Height / 2 + (textSize.x / 2 + textMargin)));
             }
             else
             {
-                this.Width = 4;
-                arrowIndicator.Visible = false;
+                printer = new TypeFacePrinter("Part View", justification: Justification.Center, baseline: Baseline.BoundsCenter);
+                Vector2 textSize = printer.GetSize();
+                graphics2D.Render(rightArrowIndicator, new Vector2(center.x - rightArrowIndicator.Width / 2, center.y - rightArrowIndicator.Height / 2 - (textSize.x / 2 + textMargin)));
+                graphics2D.Render(rightArrowIndicator, new Vector2(center.x - rightArrowIndicator.Width / 2, center.y - rightArrowIndicator.Height / 2 + (textSize.x / 2 + textMargin)));
             }
+            VertexSourceApplyTransform rotated = new VertexSourceApplyTransform(printer, Affine.NewRotation(MathHelper.Tau / 4));
+            VertexSourceApplyTransform positioned = new VertexSourceApplyTransform(rotated, Affine.NewTranslation(center.x, center.y));
+            graphics2D.Render(positioned, RGBA_Bytes.White);
+
+            base.OnDraw(graphics2D);
         }
         
         public PanelSeparator()
-            : base(4, 1)
+            : base(24, 1)
         {
             AddHandlers();
 
-            defaultBackgroundColor = new RGBA_Bytes(200, 200, 200);
             hoverBackgroundColor = new RGBA_Bytes(100, 100, 100);
-            
-            Agg.Image.ImageBuffer arrowImage = StaticData.Instance.LoadIcon("icon_arrow_left_16x16.png");
-            arrowIndicator = new ImageWidget(arrowImage);
-            arrowIndicator.HAnchor = Agg.UI.HAnchor.ParentCenter;
-            arrowIndicator.VAnchor = Agg.UI.VAnchor.ParentCenter;
-            arrowIndicator.Visible = true;
+            defaultBackgroundColor = new RGBA_Bytes(160, 160, 160);
 
-            this.AddChild(arrowIndicator);
+            rightArrowIndicator = StaticData.Instance.LoadIcon("icon_arrow_right_16x16.png");
+            leftArrowIndicator = StaticData.Instance.LoadIcon("icon_arrow_left_16x16.png");
 
-            this.Hidden = false;
+            this.PushedRight = false;
             this.BackgroundColor = defaultBackgroundColor;
             this.VAnchor = VAnchor.ParentBottomTop;
             this.Margin = new BorderDouble(8, 0);
             this.Cursor = Cursors.Hand;
 
-            SetDisplayState();
+            DoubleBuffer = true;
         }
 
         void AddHandlers()
