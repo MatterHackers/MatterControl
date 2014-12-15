@@ -28,17 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -115,14 +110,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 if (drawEvent != null)
                 {
+                    // draw the line that is on the ground
                     double yGround = (int)(startLineGroundPos.y + .5) + .5;
                     drawEvent.graphics2D.Line(startLineGroundPos.x, yGround, startLineGroundPos.x + HorizontalLineLength - 5, yGround, RGBA_Bytes.Black);
+                    // and the line that is at the base of the selection
                     double ySelection = (int)(startLineSelectionPos.y + .5) + .5;
                     drawEvent.graphics2D.Line(startLineSelectionPos.x, ySelection, startLineSelectionPos.x + HorizontalLineLength - 5, ySelection, RGBA_Bytes.Black);
 
+                    // draw the verticle line that shows the measurment
                     Vector2 pointerBottom = new Vector2(startLineGroundPos.x + HorizontalLineLength / 2, yGround);
                     Vector2 pointerTop = new Vector2(startLineSelectionPos.x + HorizontalLineLength / 2, ySelection);
                     drawEvent.graphics2D.Line(pointerBottom, pointerTop, RGBA_Bytes.Black);
+
+                    Vector2 direction = pointerTop - pointerBottom;
+                    if (direction.LengthSquared > 0)
+                    {
+                        PathStorage arrow = new PathStorage();
+                        arrow.MoveTo(-3, -5);
+                        arrow.LineTo(0, 0);
+                        arrow.LineTo(3, -5);
+                        double rotation = Math.Atan2(direction.y, direction.x);
+                        IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
+                        IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(pointerTop));
+                        drawEvent.graphics2D.Render(inPosition, RGBA_Bytes.Black);
+                    }
                 }
             }
         }
