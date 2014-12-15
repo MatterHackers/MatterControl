@@ -185,34 +185,24 @@ namespace MatterHackers.MatterControl
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
-            if (UserSettings.Instance.Fields.IsSimpleMode)
-            {
-                PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, true, View3DWidget.AutoRotate.Enabled, false);
-                partViewContent.AnchorAll();
+            part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape,
+                View3DWidget.WindowType.Embeded,
+                View3DWidget.AutoRotate.Enabled);
+            part3DView.Margin = new BorderDouble(bottom: 4);
+            part3DView.AnchorAll();
 
-                ColumnTwo.AddChild(partViewContent);
-            }
-            else
-            {
-                part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
-                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                    ActiveSliceSettings.Instance.BedCenter,
-                    ActiveSliceSettings.Instance.BedShape,
-                    View3DWidget.WindowType.Embeded,
-                    View3DWidget.AutoRotate.Enabled);
-                part3DView.Margin = new BorderDouble(bottom: 4);
-                part3DView.AnchorAll();
+            partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape,
+                false);
+            partGcodeView.AnchorAll();
 
-                partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
-                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                    ActiveSliceSettings.Instance.BedCenter,
-                    ActiveSliceSettings.Instance.BedShape,
-                    false);
-                partGcodeView.AnchorAll();
-
-                ColumnTwo.AddChild(part3DView);
-                ColumnTwo.AddChild(partGcodeView);
-            }
+            ColumnTwo.AddChild(part3DView);
+            ColumnTwo.AddChild(partGcodeView);
 
             ColumnTwo.AnchorAll();
         }
@@ -239,10 +229,6 @@ namespace MatterHackers.MatterControl
             }
             else
             {
-                if (UserSettings.Instance.Fields.IsSimpleMode)
-                {
-                    return 2;
-                }
                 return 3;
             }
         }
@@ -267,24 +253,6 @@ namespace MatterHackers.MatterControl
                     break;
 
                 case 2:
-                    if (UserSettings.Instance.Fields.IsSimpleMode)
-                    {
-                        ApplicationController.Instance.WidescreenMode = false;
-                        LoadCompactView();
-                        LoadColumnTwo();
-                        LoadColumnThree();
-                    }
-                    else
-                    {
-                        ApplicationController.Instance.WidescreenMode = true;
-
-                        LoadColumnOne();
-                        // make sure we restore the state of column one because LoadColumnThree is going to save it.
-                        LoadColumnTwo();
-                        LoadColumnThree();
-                    }
-                    break;
-
                 case 3:
                     ApplicationController.Instance.WidescreenMode = true;
 
@@ -322,31 +290,20 @@ namespace MatterHackers.MatterControl
                 case 2:
                     Padding = new BorderDouble(4);
                     ColumnOne.Visible = true;
-                    if (UserSettings.Instance.Fields.IsSimpleMode)
+                    RightBorderLine.Visible = true;
+                    if (RightBorderLine.PushedRight)
                     {
-                        RightBorderLine.Visible = false;
-                        ColumnTwo.Visible = true;
+                        leftBorderLine.Visible = true;
                         ColumnThree.Visible = false;
+                        ColumnTwo.Visible = true;
                         ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                        ColumnOne.Width = ColumnTheeFixedWidth; // it can hold the slice settings so it needs to be bigger.
                     }
                     else
                     {
-                        RightBorderLine.Visible = true;
-                        if (RightBorderLine.PushedRight)
-                        {
-                            leftBorderLine.Visible = true;
-                            ColumnThree.Visible = false;
-                            ColumnTwo.Visible = true;
-                            ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                        }
-                        else
-                        {
-                            leftBorderLine.Visible = false;
-                            ColumnThree.Visible = true;
-                            ColumnTwo.Visible = false;
-                            ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                        }
+                        leftBorderLine.Visible = false;
+                        ColumnThree.Visible = true;
+                        ColumnTwo.Visible = false;
+                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                     }
                     break;
 
