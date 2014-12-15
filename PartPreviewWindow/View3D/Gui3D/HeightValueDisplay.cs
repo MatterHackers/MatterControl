@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public HeightValueDisplay(View3DWidget view3DWidget)
         {
-            BackgroundColor = RGBA_Bytes.White;
+            BackgroundColor = new RGBA_Bytes(RGBA_Bytes.White, 150);
             this.view3DWidget = view3DWidget;
             view3DWidget.meshViewerWidget.AddChild(this);
             numberDisplay = new TextWidget("00.00", pointSize:8);
