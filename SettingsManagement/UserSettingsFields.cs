@@ -78,5 +78,44 @@ namespace MatterHackers.MatterControl
                 }
             }
         }
+
+        public bool ThirdPannelVisible
+        {
+            get
+            {
+                string currentValue = UserSettings.Instance.get("ThirdPannelVisible");
+                if (acceptableTrueFalseValues.IndexOf(currentValue) == -1)
+                {
+                    if (OemSettings.Instance.UseSimpleModeByDefault)
+                    {
+                        currentValue = "true";
+                    }
+                    else
+                    {
+                        currentValue = "false";
+                    }
+                    UserSettings.Instance.set("ThirdPannelVisible", currentValue);
+                }
+
+                if (currentValue == "true")
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            set
+            {
+                if (value)
+                {
+                    UserSettings.Instance.set("ThirdPannelVisible", "true");
+                }
+                else
+                {
+                    UserSettings.Instance.set("ThirdPannelVisible", "false");
+                }
+            }
+        }
     }
 }

@@ -56,8 +56,6 @@ namespace MatterHackers.MatterControl
     {
         static readonly int ColumnOneFixedWidth = 500;
         static readonly int ColumnTheeFixedWidth = 590;
-        static bool leftBorderLineHiden;
-        static bool rightBorderLineHiden;
         static int lastNumberOfVisiblePanels;
 
         public TabPage AboutTabPage;
@@ -74,7 +72,7 @@ namespace MatterHackers.MatterControl
         ViewGcodeBasic partGcodeView;
 
         PanelSeparator RightBorderLine;
-        PanelSeparator LeftBorderLine;
+        GuiWidget leftBorderLine;
 
         event EventHandler unregisterEvents;
 
@@ -147,16 +145,9 @@ namespace MatterHackers.MatterControl
 
         void onRightBorderClick(object sender, EventArgs e)
         {
-            RightBorderLine.Hidden = !RightBorderLine.Hidden;
+            RightBorderLine.PushedRight = !RightBorderLine.PushedRight;
+            UserSettings.Instance.Fields.ThirdPannelVisible = !RightBorderLine.PushedRight;
             UiThread.RunOnIdle(SetColumnVisibility);
-            UiThread.RunOnIdle(RightBorderLine.SetDisplayState);
-        }
-
-        void onLeftBorderClick(object sender, EventArgs e)
-        {
-            LeftBorderLine.Hidden = !LeftBorderLine.Hidden;
-            UiThread.RunOnIdle(SetColumnVisibility);
-            UiThread.RunOnIdle(LeftBorderLine.SetDisplayState);
         }
 
         void onActivePrintItemChanged(object sender, EventArgs e)
@@ -194,34 +185,24 @@ namespace MatterHackers.MatterControl
 
             double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
-            if (UserSettings.Instance.Fields.IsSimpleMode)
-            {
-                PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, true, View3DWidget.AutoRotate.Enabled, false);
-                partViewContent.AnchorAll();
+            part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape,
+                View3DWidget.WindowType.Embeded,
+                View3DWidget.AutoRotate.Enabled);
+            part3DView.Margin = new BorderDouble(bottom: 4);
+            part3DView.AnchorAll();
 
-                ColumnTwo.AddChild(partViewContent);
-            }
-            else
-            {
-                part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
-                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                    ActiveSliceSettings.Instance.BedCenter,
-                    ActiveSliceSettings.Instance.BedShape,
-                    View3DWidget.WindowType.Embeded,
-                    View3DWidget.AutoRotate.Enabled);
-                part3DView.Margin = new BorderDouble(bottom: 4);
-                part3DView.AnchorAll();
+            partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape,
+                false);
+            partGcodeView.AnchorAll();
 
-                partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
-                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                    ActiveSliceSettings.Instance.BedCenter,
-                    ActiveSliceSettings.Instance.BedShape,
-                    false);
-                partGcodeView.AnchorAll();
-
-                ColumnTwo.AddChild(part3DView);
-                ColumnTwo.AddChild(partGcodeView);
-            }
+            ColumnTwo.AddChild(part3DView);
+            ColumnTwo.AddChild(partGcodeView);
 
             ColumnTwo.AnchorAll();
         }
@@ -248,10 +229,6 @@ namespace MatterHackers.MatterControl
             }
             else
             {
-                if (UserSettings.Instance.Fields.IsSimpleMode)
-                {
-                    return 2;
-                }
                 return 3;
             }
         }
@@ -265,11 +242,6 @@ namespace MatterHackers.MatterControl
 
             int numberOfPanels = NumberOfVisiblePanels();
 
-            if (LeftBorderLine != null)
-            {
-                leftBorderLineHiden = LeftBorderLine.Hidden;
-                rightBorderLineHiden = RightBorderLine.Hidden;
-            }
             PreChangePanels.CallEvents(this, null);
             RemovePanelsAndCreateEmpties();
 
@@ -281,24 +253,6 @@ namespace MatterHackers.MatterControl
                     break;
 
                 case 2:
-                    if (UserSettings.Instance.Fields.IsSimpleMode)
-                    {
-                        ApplicationController.Instance.WidescreenMode = false;
-                        LoadCompactView();
-                        LoadColumnTwo();
-                        LoadColumnThree();
-                    }
-                    else
-                    {
-                        ApplicationController.Instance.WidescreenMode = true;
-
-                        LoadColumnOne();
-                        // make sure we restore the state of column one because LoadColumnThree is going to save it.
-                        LoadColumnTwo();
-                        LoadColumnThree();
-                    }
-                    break;
-
                 case 3:
                     ApplicationController.Instance.WidescreenMode = true;
 
@@ -309,11 +263,7 @@ namespace MatterHackers.MatterControl
                     break;
             }
 
-            LeftBorderLine.Hidden = leftBorderLineHiden;
-            RightBorderLine.Hidden = rightBorderLineHiden;
             SetColumnVisibility();
-            RightBorderLine.SetDisplayState();
-            LeftBorderLine.SetDisplayState();
 
             lastNumberOfVisiblePanels = numberOfPanels;
         }
@@ -332,50 +282,28 @@ namespace MatterHackers.MatterControl
 
                         Padding = new BorderDouble(0);
 
-                        LeftBorderLine.Visible = false;
                         RightBorderLine.Visible = false;
+                        leftBorderLine.Visible = false;
                     }
                     break;
 
                 case 2:
                     Padding = new BorderDouble(4);
                     ColumnOne.Visible = true;
-                    if (UserSettings.Instance.Fields.IsSimpleMode)
+                    RightBorderLine.Visible = true;
+                    if (RightBorderLine.PushedRight)
                     {
-                        LeftBorderLine.Visible = true;
-                        RightBorderLine.Visible = false;
-                        ColumnTwo.Visible = true;
+                        leftBorderLine.Visible = true;
                         ColumnThree.Visible = false;
+                        ColumnTwo.Visible = true;
                         ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                        ColumnOne.Width = ColumnTheeFixedWidth; // it can hold the slice settings so it needs to be bigger.
                     }
                     else
                     {
-                        RightBorderLine.Visible = true;
-                        if (RightBorderLine.Hidden)
-                        {
-                            LeftBorderLine.Visible = true;
-                            if (LeftBorderLine.Hidden)
-                            {
-                                ColumnThree.Visible = false;
-                                ColumnTwo.Visible = false;
-                                ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-
-                            }
-                            else
-                            {
-                                ColumnThree.Visible = false;
-                                ColumnTwo.Visible = true;
-                                ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                            }
-                        }
-                        else
-                        {
-                            LeftBorderLine.Visible = false;
-                            ColumnThree.Visible = true;
-                            ColumnTwo.Visible = false;
-                            ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                        }
+                        leftBorderLine.Visible = false;
+                        ColumnThree.Visible = true;
+                        ColumnTwo.Visible = false;
+                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                     }
                     break;
 
@@ -384,22 +312,13 @@ namespace MatterHackers.MatterControl
                     Padding = new BorderDouble(4);                    
 
                     //If the middle column is hidden, left/right anchor the left column
-                    if (LeftBorderLine.Hidden)
-                    {
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                    }
-                    else
-                    {
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                        ColumnOne.Width = ColumnOneFixedWidth;
-                    }
+                    ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+                    ColumnOne.Width = ColumnOneFixedWidth;
 
                     ColumnOne.Visible = true;
-                    LeftBorderLine.Visible = true;
+                    leftBorderLine.Visible = true;
                     RightBorderLine.Visible = true;
-                    ColumnThree.Visible = !RightBorderLine.Hidden;
-                    ColumnTwo.Visible = !LeftBorderLine.Hidden;
-
+                    ColumnThree.Visible = !RightBorderLine.PushedRight;
                     break;
             }
         }
@@ -418,17 +337,25 @@ namespace MatterHackers.MatterControl
             ColumnThree = new FlowLayoutWidget(FlowDirection.TopToBottom);
             ColumnThree.VAnchor = VAnchor.ParentBottomTop;
 
-            LeftBorderLine = new PanelSeparator();
             RightBorderLine = new PanelSeparator();
+            RightBorderLine.PushedRight = !UserSettings.Instance.Fields.ThirdPannelVisible;
 
             AddChild(ColumnOne);
-            AddChild(LeftBorderLine);
+            leftBorderLine = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
+            leftBorderLine.Width = 15;
+            leftBorderLine.DrawBefore += (widget, graphics2D) =>
+            {
+                RectangleDouble bounds = widget.LocalBounds;
+                bounds.Left += 3;
+                bounds.Right -= 8;
+                graphics2D.graphics2D.FillRectangle(bounds, new RGBA_Bytes(160, 160, 160));
+            };
+            AddChild(leftBorderLine);
             AddChild(ColumnTwo);
             AddChild(RightBorderLine);
             AddChild(ColumnThree);
 
             RightBorderLine.Click += new EventHandler(onRightBorderClick);
-            LeftBorderLine.Click += new EventHandler(onLeftBorderClick);
         }
 
         public void ReloadAdvancedControlsPanel(object state)

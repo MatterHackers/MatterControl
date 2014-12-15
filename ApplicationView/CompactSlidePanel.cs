@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
                 advancedControlsButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
                 advancedControlsButtonFactory.invertImageLocation = true;
-                Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Settings"), "icon_arrow_right_32x32.png");
+                Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Advanced\nControls"), "icon_arrow_right_32x32.png");
                 advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
                 advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
                 advancedControlsLinkButton.Cursor = Cursors.Hand;

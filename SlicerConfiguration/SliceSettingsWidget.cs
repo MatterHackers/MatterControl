@@ -84,9 +84,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            noConnectionMessageContainer.Height = 80;
+            noConnectionMessageContainer.Height = 90;
 
-            TextWidget noConnectionMessage = new TextWidget(LocalizedString.Get("No printer is currently selected. Select a printer to edit slice settings."), pointSize:10);
+            string noConnectionString = LocalizedString.Get("No printer is currently selected. Select a printer to edit slice settings.");
+            noConnectionString += "\n\n    " + LocalizedString.Get("NOTE: You need to select a printer, but do not need to connect to it.");
+            TextWidget noConnectionMessage = new TextWidget(noConnectionString, pointSize:10);
             noConnectionMessage.Margin = new BorderDouble(5);
             noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessage.VAnchor = VAnchor.ParentCenter;

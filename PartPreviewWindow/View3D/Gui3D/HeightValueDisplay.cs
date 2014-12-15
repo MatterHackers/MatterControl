@@ -28,17 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -51,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public HeightValueDisplay(View3DWidget view3DWidget)
         {
-            BackgroundColor = RGBA_Bytes.White;
+            BackgroundColor = new RGBA_Bytes(RGBA_Bytes.White, 150);
             this.view3DWidget = view3DWidget;
             view3DWidget.meshViewerWidget.AddChild(this);
             numberDisplay = new TextWidget("00.00", pointSize:8);
@@ -67,7 +62,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         MeshViewerWidget MeshViewerToDrawWith { get { return view3DWidget.meshViewerWidget; } }
 
-        int SelectedBoundSideIndex = 0;
         public void SetPosition()
         {
             if (MeshViewerToDrawWith.HaveSelection)
@@ -75,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // draw the hight from the bottom to the bed
                 AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 
-                Vector2 screenPosition;
+                Vector2 screenPosition = new Vector2(-100, 0);
                 if (view3DWidget.DisplayAllValueData)
                 {
                     screenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z));
@@ -88,18 +82,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     bottomPoints[1] = new Vector3(selectedBounds.minXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
                     bottomPoints[2] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, selectedBounds.minXYZ.z);
                     bottomPoints[3] = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-                    screenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[0]);
-                    for (int i = 1; i < 4; i++)
+                    
+                    for (int i = 0; i < 4; i++)
                     {
                         Vector2 testScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i]);
                         if (testScreenPosition.x > screenPosition.x)
                         {
-                            SelectedBoundSideIndex = i;
                             startLineSelectionPos = testScreenPosition;
-                            Vector3 groundPos = bottomPoints[i];
-                            groundPos.z = 0;
-                            startLineGroundPos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(groundPos);
-
+                            startLineGroundPos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z));
                             screenPosition = testScreenPosition + new Vector2(HorizontalLineLength, 0);
                         }
                     }
@@ -120,14 +110,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 if (drawEvent != null)
                 {
+                    // draw the line that is on the ground
                     double yGround = (int)(startLineGroundPos.y + .5) + .5;
                     drawEvent.graphics2D.Line(startLineGroundPos.x, yGround, startLineGroundPos.x + HorizontalLineLength - 5, yGround, RGBA_Bytes.Black);
+                    // and the line that is at the base of the selection
                     double ySelection = (int)(startLineSelectionPos.y + .5) + .5;
                     drawEvent.graphics2D.Line(startLineSelectionPos.x, ySelection, startLineSelectionPos.x + HorizontalLineLength - 5, ySelection, RGBA_Bytes.Black);
 
+                    // draw the verticle line that shows the measurment
                     Vector2 pointerBottom = new Vector2(startLineGroundPos.x + HorizontalLineLength / 2, yGround);
                     Vector2 pointerTop = new Vector2(startLineSelectionPos.x + HorizontalLineLength / 2, ySelection);
                     drawEvent.graphics2D.Line(pointerBottom, pointerTop, RGBA_Bytes.Black);
+
+                    Vector2 direction = pointerTop - pointerBottom;
+                    if (direction.LengthSquared > 0)
+                    {
+                        PathStorage arrow = new PathStorage();
+                        arrow.MoveTo(-3, -5);
+                        arrow.LineTo(0, 0);
+                        arrow.LineTo(3, -5);
+                        double rotation = Math.Atan2(direction.y, direction.x);
+                        IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
+                        IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(pointerTop));
+                        drawEvent.graphics2D.Render(inPosition, RGBA_Bytes.Black);
+                    }
                 }
             }
         }
