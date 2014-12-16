@@ -143,6 +143,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             UnlockEditControls();
 
+            PartHasBeenChanged();
+
             Invalidate();
         }
     }

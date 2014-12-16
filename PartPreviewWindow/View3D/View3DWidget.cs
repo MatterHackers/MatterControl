@@ -1747,13 +1747,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 int extruderIndexLocal = extruderIndex;
                 extruderSelection.Click += (sender, e) =>
                 {
-                    foreach (Mesh mesh in SelectedMeshGroup.Meshes)
+                    if (SelectedMeshGroupIndex != -1)
                     {
-                        MeshMaterialData material = MeshMaterialData.Get(mesh);
-                        if (material.MaterialIndex != extruderIndexLocal+1)
+                        foreach (Mesh mesh in SelectedMeshGroup.Meshes)
                         {
-                            material.MaterialIndex = extruderIndexLocal+1;
-                            PartHasBeenChanged();
+                            MeshMaterialData material = MeshMaterialData.Get(mesh);
+                            if (material.MaterialIndex != extruderIndexLocal + 1)
+                            {
+                                material.MaterialIndex = extruderIndexLocal + 1;
+                                PartHasBeenChanged();
+                            }
                         }
                     }
                 };
