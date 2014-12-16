@@ -26,7 +26,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
-//#define NEW_TWO_COLUMN_MODE
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +42,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -54,10 +54,7 @@ namespace MatterHackers.MatterControl
 {
     public class WidescreenPanel : FlowLayoutWidget
     {
-        static readonly int ColumnOneFixedWidth = 500;
-        static readonly int ColumnTheeFixedWidth = 590;
-        static bool leftBorderLineHiden;
-        static bool rightBorderLineHiden;
+        static readonly int ColumnOneFixedWidth = 590;
         static int lastNumberOfVisiblePanels;
 
         public TabPage AboutTabPage;
@@ -66,15 +63,10 @@ namespace MatterHackers.MatterControl
 
         FlowLayoutWidget ColumnOne;
         FlowLayoutWidget ColumnTwo;
-        FlowLayoutWidget ColumnThree;
         double Force1PanelWidth = 990 * TextWidget.GlobalPointSizeScaleRatio;
         double Force2PanelWidth = 1590 * TextWidget.GlobalPointSizeScaleRatio;
 
-        View3DWidget part3DView;
-        ViewGcodeBasic partGcodeView;
-
-        PanelSeparator RightBorderLine;
-        PanelSeparator LeftBorderLine;
+        GuiWidget leftBorderLine;
 
         event EventHandler unregisterEvents;
 
@@ -145,20 +137,6 @@ namespace MatterHackers.MatterControl
             base.OnClosed(e);
         }
 
-        void onRightBorderClick(object sender, EventArgs e)
-        {
-            RightBorderLine.Hidden = !RightBorderLine.Hidden;
-            UiThread.RunOnIdle(SetColumnVisibility);
-            UiThread.RunOnIdle(RightBorderLine.SetDisplayState);
-        }
-
-        void onLeftBorderClick(object sender, EventArgs e)
-        {
-            LeftBorderLine.Hidden = !LeftBorderLine.Hidden;
-            UiThread.RunOnIdle(SetColumnVisibility);
-            UiThread.RunOnIdle(LeftBorderLine.SetDisplayState);
-        }
-
         void onActivePrintItemChanged(object sender, EventArgs e)
         {
             if (NumberOfVisiblePanels() > 1)
@@ -192,45 +170,12 @@ namespace MatterHackers.MatterControl
         {
             ColumnTwo.CloseAndRemoveAllChildren();
 
-            double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-
-#if NEW_TWO_COLUMN_MODE
-            PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, true, View3DWidget.AutoRotate.Enabled, false);
+            PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
             partViewContent.AnchorAll();
-            
+
             ColumnTwo.AddChild(partViewContent);
-#else
-            part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 
-                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight), 
-                ActiveSliceSettings.Instance.BedCenter,
-                ActiveSliceSettings.Instance.BedShape, 
-                View3DWidget.WindowType.Embeded, 
-                View3DWidget.AutoRotate.Enabled);
-            part3DView.Margin = new BorderDouble(bottom: 4);
-            part3DView.AnchorAll();
-
-            partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem, 
-                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                ActiveSliceSettings.Instance.BedCenter, 
-                ActiveSliceSettings.Instance.BedShape, 
-                false);
-            partGcodeView.AnchorAll();
-
-            ColumnTwo.AddChild(part3DView);
-            ColumnTwo.AddChild(partGcodeView);
-#endif
 
             ColumnTwo.AnchorAll();
-        }
-
-        static int ColumnThreeCount = 0;
-        void LoadColumnThree(object state = null)
-        {
-            ColumnThree.CloseAndRemoveAllChildren();
-            ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView();
-            thirdPanelTabView.Name = "For - WideScreenPanel {0}".FormatWith(ColumnThreeCount++);
-            ColumnThree.AddChild(thirdPanelTabView);
-            ColumnThree.Width = ColumnTheeFixedWidth; //Ordering here matters - must go after children are added  
         }
 
         int NumberOfVisiblePanels()
@@ -239,14 +184,8 @@ namespace MatterHackers.MatterControl
             {
                 return 1;
             }
-            else if (this.Width < Force2PanelWidth)
-            {
-                return 2;
-            }
-            else
-            {
-                return 3;
-            }
+
+            return 2;
         }
 
         public void RecreateAllPanels(object state = null)
@@ -258,11 +197,6 @@ namespace MatterHackers.MatterControl
 
             int numberOfPanels = NumberOfVisiblePanels();
 
-            if (LeftBorderLine != null)
-            {
-                leftBorderLineHiden = LeftBorderLine.Hidden;
-                rightBorderLineHiden = RightBorderLine.Hidden;
-            }
             PreChangePanels.CallEvents(this, null);
             RemovePanelsAndCreateEmpties();
 
@@ -273,32 +207,14 @@ namespace MatterHackers.MatterControl
                     LoadCompactView();
                     break;
 
-#if NEW_TWO_COLUMN_MODE
                 case 2:
-                    ApplicationController.Instance.WidescreenMode = false;
-                    LoadCompactView();
-                    LoadColumnTwo();
-                    LoadColumnThree();
-                    break;
-#else
-                case 2:
-#endif
-
-                case 3:
-                    ApplicationController.Instance.WidescreenMode = true;
-
-                    LoadColumnOne();
-                    // make sure we restore the state of column one because LoadColumnThree is going to save it.
-                    LoadColumnTwo();
-                    LoadColumnThree();
+                        ApplicationController.Instance.WidescreenMode = false;
+                        LoadCompactView();
+                        LoadColumnTwo();
                     break;
             }
 
-            LeftBorderLine.Hidden = leftBorderLineHiden;
-            RightBorderLine.Hidden = rightBorderLineHiden;
             SetColumnVisibility();
-            RightBorderLine.SetDisplayState();
-            LeftBorderLine.SetDisplayState();
 
             lastNumberOfVisiblePanels = numberOfPanels;
         }
@@ -311,77 +227,21 @@ namespace MatterHackers.MatterControl
             {
                 case 1:
                     {
-                        ColumnThree.Visible = false;
                         ColumnTwo.Visible = false;
                         ColumnOne.Visible = true;
 
                         Padding = new BorderDouble(0);
 
-                        LeftBorderLine.Visible = false;
-                        RightBorderLine.Visible = false;
+                        leftBorderLine.Visible = false;
                     }
                     break;
 
                 case 2:
                     Padding = new BorderDouble(4);
                     ColumnOne.Visible = true;
-#if NEW_TWO_COLUMN_MODE
-                    LeftBorderLine.Visible = true;
-                    RightBorderLine.Visible = false;
                     ColumnTwo.Visible = true;
-                    ColumnThree.Visible = false;
                     ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                    ColumnOne.Width = ColumnTheeFixedWidth; // it can hold the slice settings so it needs to be bigger.
-#else
-                    RightBorderLine.Visible = true;                    
-                    if (RightBorderLine.Hidden)
-                    {
-                        LeftBorderLine.Visible = true;
-                        if (LeftBorderLine.Hidden)
-                        {
-                            ColumnThree.Visible = false;
-                            ColumnTwo.Visible = false;
-                            ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                            
-                        }
-                        else
-                        {                            
-                            ColumnThree.Visible = false;
-                            ColumnTwo.Visible = true;
-                            ColumnOne.HAnchor = Agg.UI.HAnchor.None;  
-                        }
-                    }                    
-                    else
-                    {
-                        LeftBorderLine.Visible = false;
-                        ColumnThree.Visible = true;
-                        ColumnTwo.Visible = false;
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;   
-                    }
-#endif
-                    break;
-
-                case 3:                    
-                    //All three columns shown
-                    Padding = new BorderDouble(4);                    
-
-                    //If the middle column is hidden, left/right anchor the left column
-                    if (LeftBorderLine.Hidden)
-                    {
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                    }
-                    else
-                    {
-                        ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                        ColumnOne.Width = ColumnOneFixedWidth;
-                    }
-
-                    ColumnOne.Visible = true;
-                    LeftBorderLine.Visible = true;
-                    RightBorderLine.Visible = true;
-                    ColumnThree.Visible = !RightBorderLine.Hidden;
-                    ColumnTwo.Visible = !LeftBorderLine.Hidden;
-
+                    ColumnOne.Width = ColumnOneFixedWidth; // it can hold the slice settings so it needs to be bigger.
                     break;
             }
         }
@@ -397,29 +257,24 @@ namespace MatterHackers.MatterControl
 
             ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
             ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            ColumnThree = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            ColumnThree.VAnchor = VAnchor.ParentBottomTop;
-
-            LeftBorderLine = new PanelSeparator();
-            RightBorderLine = new PanelSeparator();
 
             AddChild(ColumnOne);
-            AddChild(LeftBorderLine);
+            leftBorderLine = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
+            leftBorderLine.Width = 15;
+            leftBorderLine.DrawBefore += (widget, graphics2D) =>
+            {
+                RectangleDouble bounds = widget.LocalBounds;
+                bounds.Left += 3;
+                bounds.Right -= 8;
+                graphics2D.graphics2D.FillRectangle(bounds, new RGBA_Bytes(160, 160, 160));
+            };
+            AddChild(leftBorderLine);
             AddChild(ColumnTwo);
-            AddChild(RightBorderLine);
-            AddChild(ColumnThree);
-
-            RightBorderLine.Click += new EventHandler(onRightBorderClick);
-            LeftBorderLine.Click += new EventHandler(onLeftBorderClick);
         }
 
         public void ReloadAdvancedControlsPanel(object state)
         {
             PreChangePanels.CallEvents(this, null);
-            if (NumberOfVisiblePanels() > 1)
-            {
-                UiThread.RunOnIdle(LoadColumnThree);
-            }
         }
 
         public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)

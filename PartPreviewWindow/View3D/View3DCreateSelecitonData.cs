@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 createSelectionDataBackgroundWorker.RunWorkerAsync();
             }
+
+            SelectedMeshGroupIndex = 0;
         }
 
         void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)

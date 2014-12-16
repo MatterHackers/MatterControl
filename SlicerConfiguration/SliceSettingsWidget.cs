@@ -26,8 +26,9 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+//#define DO_IN_PLACE_EDIT
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -59,11 +60,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         AltGroupBox noConnectionMessageContainer;
         FlowLayoutWidget settingsControlBar;
         CheckBox showHelpBox;
-        CheckBox showAllDetails;
+        StyledDropDownList settingsDetailSelector;
 
         public SliceSettingsWidget(SliceSettingsWidgetUiState uiState)
         {
-            int minSettingNameWidth = 220;
+            int minSettingNameWidth = 190;
             buttonFactory.FixedHeight = 20;
             buttonFactory.fontSize = 10;
             buttonFactory.normalFillColor = RGBA_Bytes.White;
@@ -71,9 +72,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
             showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
-
-            showAllDetails = new CheckBox(0, 0, LocalizedString.Get("Show All Settings"), textSize: 10);
-            showAllDetails.Checked = UserSettings.Instance.get(SliceSettingsLevelEntry) == "Advanced";
 
             FlowLayoutWidget pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: Agg.UI.VAnchor.ParentTop);
             pageTopToBottomLayout.AnchorAll();
@@ -87,9 +85,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
             noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            noConnectionMessageContainer.Height = 80;
+            noConnectionMessageContainer.Height = 90;
 
-            TextWidget noConnectionMessage = new TextWidget(LocalizedString.Get("No printer is currently selected. Select a printer to edit slice settings."), pointSize:10);
+            string noConnectionString = LocalizedString.Get("No printer is currently selected. Please select a printer to edit slice settings.");
+            noConnectionString += "\n\n" + LocalizedString.Get("NOTE: You need to select a printer, but do not need to connect to it.");
+            TextWidget noConnectionMessage = new TextWidget(noConnectionString, pointSize:10);
             noConnectionMessage.Margin = new BorderDouble(5);
             noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             noConnectionMessage.VAnchor = VAnchor.ParentCenter;
@@ -97,10 +97,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             noConnectionMessageContainer.AddChild(noConnectionMessage);
             pageTopToBottomLayout.AddChild(noConnectionMessageContainer);
 
+            settingsDetailSelector = new StyledDropDownList("Simple", maxHeight: 200);
+            settingsDetailSelector.AddItem(LocalizedString.Get("Simple"), "Simple");
+            settingsDetailSelector.AddItem(LocalizedString.Get("Intermediate"), "Intermediate");
+            settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
+            if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
+                && SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
+            {
+                settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
+            }
+
+            settingsDetailSelector.SelectionChanged += new EventHandler(SettingsDetail_SelectionChanged);
+            settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
+            settingsDetailSelector.Margin = new BorderDouble(5, 3);
+
             categoryTabs = new TabControl();
             categoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             categoryTabs.Margin = new BorderDouble(top: 8);
             categoryTabs.AnchorAll();
+
             List<TabBar> sideTabBarsListForLayout = new List<TabBar>();
             for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
             {
@@ -118,7 +133,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 categoryPage.AddChild(sideTabs);
             }
 
-            if (showAllDetails.Checked && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.Slic3r)
+            categoryTabs.TabBar.AddChild(new HorizontalSpacer());
+            TextWidget modeText = new TextWidget("Mode:".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+            modeText.VAnchor = VAnchor.ParentCenter;
+            categoryTabs.TabBar.AddChild(modeText);
+            categoryTabs.TabBar.AddChild(settingsDetailSelector);
+
+            if (settingsDetailSelector.SelectedValue == "Advanced" && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.Slic3r)
             {
                 TabPage extraSettingsPage = new TabPage("Other");
                 SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, "Other Tab", 16,
@@ -144,23 +165,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.y);
             }
 
-            // space before checkboxes (hold the right aligned)
+            if (sideTabBarsListForLayout.Count == 1)
             {
-                GuiWidget hSpacer = new GuiWidget();
-                hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-                categoryTabs.TabBar.AddChild(hSpacer);
-            }
-
-            // add in the ability to turn on and off all details settings
-            {
-                showAllDetails.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                showAllDetails.Margin = new BorderDouble(right: 8);
-                showAllDetails.VAnchor = VAnchor.ParentCenter;
-                showAllDetails.Cursor = Cursors.Hand;
-                showAllDetails.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(RebuildSlicerSettings);
-
-                categoryTabs.TabBar.AddChild(showAllDetails);
+                sideTabBarsListForLayout[0].MinimumSize = new Vector2(0, 0);
+                sideTabBarsListForLayout[0].Width = 0;
             }
 
             // add in the ability to turn on and off help text
@@ -185,22 +193,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AnchorAll();
         }
 
-        public bool ShowingHelp
-        {
-            get { return showHelpBox.Checked; }
-        }
-
         public string UserLevel
         {
             get
             {
-                if (showAllDetails.Checked)
+                if (SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(settingsDetailSelector.SelectedValue))
                 {
-                    return "Advanced";
+                    return settingsDetailSelector.SelectedValue;
                 }
 
-                return "Beginner";
+                return "Simple";
             }
+        }
+
+        private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
+        {
+            RebuildSlicerSettings(null, null);
+        }
+
+        public bool ShowingHelp
+        {
+            get { return showHelpBox.Checked; }
         }
 
         public void CurrentlyActiveCategory(out int index, out string name)
@@ -231,20 +244,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         void RebuildSlicerSettings(object sender, EventArgs e)
         {
             UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
-            if (showAllDetails.Checked)
-            {
-                UserSettings.Instance.set(SliceSettingsLevelEntry, "Advanced");
-            }
-            else
-            {
-                UserSettings.Instance.set(SliceSettingsLevelEntry, "Beginner");
-            }
+            UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
 
-            CheckBox checkBox = sender as CheckBox;
-            if (checkBox != null)
-            {
-                ApplicationController.Instance.ReloadAdvancedControlsPanel();
-            }
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();
         }
 
         internal class ExtraSettingTextWidget : MHTextEditWidget
@@ -507,6 +509,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+#if DO_IN_PLACE_EDIT        
+        public static int SettingsIndexBeingEdited = 0;
+#endif
         private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth, int extruderIndex)
         {
             GuiWidget container = new GuiWidget();
@@ -523,6 +528,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 int intEditWidth = 60;
                 int doubleEditWidth = 60;
+                if (settingData.QuickMenuSettings.Count > 0)
+                {
+                    doubleEditWidth = 35;
+                }
                 int vectorXYEditWidth = 60;
                 int multiLineEditHeight = 60;
 
@@ -539,6 +548,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     TextWidget settingName = new TextWidget(convertedNewLines, pointSize:10);
                     settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     settingName.VAnchor = Agg.UI.VAnchor.ParentCenter;
+
+#if DO_IN_PLACE_EDIT
+                    if (SettingsIndexBeingEdited != 0)
+                    {
+                        if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, SettingsIndexBeingEdited))
+                        {
+                            CheckBox removeFromSettingCheckBox = new CheckBox("");
+                            removeFromSettingCheckBox.Checked = true;
+                            removeFromSettingCheckBox.VAnchor = VAnchor.ParentCenter;
+                            leftToRightLayout.AddChild(removeFromSettingCheckBox);
+                        }
+                        else
+                        {
+                            CheckBox addToSettingCheckBox = new CheckBox("");
+                            addToSettingCheckBox.VAnchor = VAnchor.ParentCenter;
+                            leftToRightLayout.AddChild(addToSettingCheckBox);
+                        }
+                    }
+#endif
 
                     if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
                     {
@@ -588,16 +616,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     case OrganizerSettingsData.DataEditTypes.POSITIVE_DOUBLE:
                         {
+                            FlowLayoutWidget content = new FlowLayoutWidget();
+
                             double currentValue = 0;
                             double.TryParse(sliceSettingValue, out currentValue);
                             MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
                             doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
-                                {
-                                    SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
-                                    CallEventsOnSettingsChange(settingData);
-                                };
-                            leftToRightLayout.AddChild(doubleEditWidget);
-                            leftToRightLayout.AddChild(getSettingInfoData(settingData));
+                            {
+                                SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+                                CallEventsOnSettingsChange(settingData);
+                            };
+
+                            content.AddChild(doubleEditWidget);
+                            content.AddChild(getSettingInfoData(settingData));
+
+                            if (settingData.QuickMenuSettings.Count > 0)
+                            {
+                                leftToRightLayout.AddChild(CreateQuickMenu(settingData, content, doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget));
+                            }
+                            else
+                            {
+                                leftToRightLayout.AddChild(content);
+                            }
                         }
                         break;
 
@@ -618,7 +658,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                     case OrganizerSettingsData.DataEditTypes.DOUBLE_OR_PERCENT:
                         {
-                            MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth-2, tabIndex: tabIndexForItem++);
+                            FlowLayoutWidget content = new FlowLayoutWidget();
+                            
+                            MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
                             stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
                             {
                                 TextEditWidget textEditWidget = (TextEditWidget)sender;
@@ -641,8 +683,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 CallEventsOnSettingsChange(settingData);
                             };
 
-                            leftToRightLayout.AddChild(stringEdit);
-                            leftToRightLayout.AddChild(getSettingInfoData(settingData));
+                            content.AddChild(stringEdit);
+                            content.AddChild(getSettingInfoData(settingData));
+
+                            if (settingData.QuickMenuSettings.Count > 0)
+                            {
+                                leftToRightLayout.AddChild(CreateQuickMenu(settingData, content, stringEdit.ActualTextEditWidget.InternalTextEditWidget));
+                            }
+                            else
+                            {
+                                leftToRightLayout.AddChild(content);
+                            }
                         }
                         break;
 
@@ -901,9 +952,64 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 container.AddChild(clickToEdit);
             }
 
-
-
             return container;
+        }
+
+        private GuiWidget CreateQuickMenu(OrganizerSettingsData settingData, GuiWidget content, InternalTextEditWidget internalTextWidget)
+        {
+            string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName); 
+            FlowLayoutWidget totalContent = new FlowLayoutWidget();
+
+            StyledDropDownList selectableOptions = new StyledDropDownList("Custom", maxHeight: 200);
+            selectableOptions.Margin = new BorderDouble(0, 0, 10, 0);
+
+            foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
+            {
+                string valueLocal = nameValue.Value;
+
+                MenuItem newItem = selectableOptions.AddItem(nameValue.MenuName);
+                if (sliceSettingValue == valueLocal)
+                {
+                    selectableOptions.SelectedLabel = nameValue.MenuName;
+                }
+
+                newItem.Selected += (sender, e) =>
+                {
+                    SaveSetting(settingData.SlicerConfigName, valueLocal);
+                    CallEventsOnSettingsChange(settingData);
+                    internalTextWidget.Text = valueLocal;
+                };
+            }
+
+            // put in the custom menu to allow direct editing
+            MenuItem customMenueItem = selectableOptions.AddItem("Custom");
+
+            totalContent.AddChild(selectableOptions);
+            content.VAnchor = VAnchor.ParentCenter;
+            totalContent.AddChild(content);
+
+            internalTextWidget.EditComplete += (sender, e) =>
+            {
+                bool foundSetting = false;
+                foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
+                {
+                    string localName = nameValue.MenuName;
+                    string newSliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
+                    if (newSliceSettingValue == nameValue.Value)
+                    {
+                        selectableOptions.SelectedLabel = localName;
+                        foundSetting = true;
+                        break;
+                    }
+                }
+
+                if (!foundSetting)
+                {
+                    selectableOptions.SelectedLabel = "Custom";
+                }
+            };
+
+            return totalContent;
         }
 
         private void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, string slicerConfigName, string newSingleValue)

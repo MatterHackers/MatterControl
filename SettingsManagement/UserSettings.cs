@@ -5,13 +5,18 @@ using System.Text;
 
 using MatterHackers.MatterControl;
 
-
 namespace MatterHackers.MatterControl
 {
     public class UserSettings
     {
         static UserSettings globalInstance = null;
         public Dictionary<string, DataStorage.UserSetting> settingsDictionary;
+
+        UserSettingsFields fields = new UserSettingsFields();
+        public UserSettingsFields Fields
+        {
+            get { return fields; }
+        }
 
         public static UserSettings Instance
         {

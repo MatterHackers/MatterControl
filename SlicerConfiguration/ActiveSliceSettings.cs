@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -467,17 +468,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             return "Unknown";
         }
+
         /// <summary>
         /// Returns whether or not the setting is overridden by the active layer
         /// </summary>
+        /// AbsoluteBaseSettings = 0, EditableBaseSettings = 1, PresetOverrides... 2-n (examples: QualitySettings = 2, MaterialSettings = 3) 
         /// <param name="sliceSetting"></param>
         /// <returns></returns>
-        public bool SettingExistsInLayer(string sliceSetting, int layer=0)
+        public bool SettingExistsInLayer(string sliceSetting, int layer)
         {
             bool settingExistsInLayer;
-            if (layer < activeSettingsLayers.Count)
+            int layerIndex = (int)layer;
+            if (layerIndex < activeSettingsLayers.Count)
             {
-                settingExistsInLayer = (activeSettingsLayers[layer].settingsDictionary.ContainsKey(sliceSetting));
+                settingExistsInLayer = (activeSettingsLayers[layerIndex].settingsDictionary.ContainsKey(sliceSetting));
             }
             else
             {
@@ -547,10 +551,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         private void LoadDefaultConfigrationSettings()
         {
-            string slic3rDefaultConfigurationPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", "config.ini");
             DataStorage.SliceSettingsCollection defaultCollection = new DataStorage.SliceSettingsCollection();
             defaultCollection.Name = "__default__";
-            SettingsLayer defaultSettingsLayer = LoadConfigurationSettingsFromFile(slic3rDefaultConfigurationPathAndFile, defaultCollection);
+            SettingsLayer defaultSettingsLayer = LoadConfigurationSettingsFromFile(Path.Combine("PrinterSettings", "config.ini"), defaultCollection);
             this.activeSettingsLayers.Add(defaultSettingsLayer);
         }
 
@@ -579,10 +582,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             SettingsLayer activeCollection; 
             try
             {
-                if (File.Exists(pathAndFileName))
+                if (StaticData.Instance.FileExists(pathAndFileName))
                 {
-                    string[] lines = System.IO.File.ReadAllLines(pathAndFileName);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(pathAndFileName))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#"))
@@ -623,12 +625,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         if (line.Trim() != "" && !line.StartsWith("#"))
                         {
                             string[] settingLine = line.Split('=');
-                            string keyName = settingLine[0].Trim();
-                            string settingDefaultValue = settingLine[1].Trim();
+                            if (settingLine.Length > 1)
+                            {
+                                string keyName = settingLine[0].Trim();
+                                string settingDefaultValue = settingLine[1].Trim();
 
-                            //Add the setting to the active layer
-                            SaveValue(keyName, settingDefaultValue);
-
+                                //Add the setting to the active layer
+                                SaveValue(keyName, settingDefaultValue);
+                            }
                         }
                     }
                 }
@@ -686,8 +690,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public void SaveAs()
         {
-			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration|*." + configFileExtension,documentsPath);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration|*." + configFileExtension);
 			saveParams.FileName = "default_settings.ini";
 			FileDialog.SaveFileDialog(saveParams, onExportFileSelected);
         }

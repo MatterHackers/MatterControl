@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
         ImageBuffer thumbnailImage = new Agg.Image.ImageBuffer();
 
         // all the color stuff
-        public double BorderWidth = 0; //Don't delete this - required for OnDraw
+        new public double BorderWidth = 0; //Don't delete this - required for OnDraw
         protected double borderRadius = 0;
         protected RGBA_Bytes HoverBorderColor = new RGBA_Bytes();
 
@@ -97,7 +97,8 @@ namespace MatterHackers.MatterControl
             this.PrintItem = item;
 
             if (OsInformation.OperatingSystem == OSType.Mac
-                || OsInformation.OperatingSystem == OSType.Android)
+                || OsInformation.OperatingSystem == OSType.Android 
+                || OsInformation.OperatingSystem == OSType.X11)
             {
                 partExtension = ".tga";
             }
@@ -129,8 +130,8 @@ namespace MatterHackers.MatterControl
             // set background images
             if (noThumbnailImage.Width == 0)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(noThumbnailFileName), noThumbnailImage);
-                ImageIO.LoadImageData(this.GetImageLocation(buildingThumbnailFileName), buildingThumbnailImage);
+                StaticData.Instance.LoadIcon(noThumbnailFileName, noThumbnailImage);
+                StaticData.Instance.LoadIcon(buildingThumbnailFileName, buildingThumbnailImage);
             }
             this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
 
@@ -178,13 +179,13 @@ namespace MatterHackers.MatterControl
                     {
                         case ImageSizes.Size115x115:
                             {
-                                ImageIO.LoadImageData(this.GetImageLocation(Path.ChangeExtension("icon_sd_card_115x115", partExtension)), thumbnailWidget.thumbnailImage);
+                                StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_115x115", partExtension), thumbnailWidget.thumbnailImage);
                             }
                             break;
 
                         case ImageSizes.Size50x50:
                             {
-                                ImageIO.LoadImageData(this.GetImageLocation(Path.ChangeExtension("icon_sd_card_50x50", partExtension)), thumbnailWidget.thumbnailImage);
+                                StaticData.Instance.LoadIcon(Path.ChangeExtension("icon_sd_card_50x50", partExtension), thumbnailWidget.thumbnailImage);
                             }
                             break;
 
@@ -206,6 +207,10 @@ namespace MatterHackers.MatterControl
                 ImageBuffer bigRender = LoadImageFromDisk(thumbnailWidget, stlHashCode, bigRenderSize);
                 if (bigRender == null)
                 {
+                    if (!File.Exists(thumbnailWidget.PrintItem.FileLocation))
+                    {
+                        return;
+                    }
                     List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(thumbnailWidget.PrintItem.FileLocation);
 
                     thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
@@ -479,11 +484,6 @@ namespace MatterHackers.MatterControl
             RoundedRect borderRect = new RoundedRect(this.LocalBounds, this.borderRadius);
             Stroke strokeRect = new Stroke(borderRect, BorderWidth);
             graphics2D.Render(strokeRect, HoverBorderColor);
-        }
-
-        string GetImageLocation(string imageName)
-        {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
         }
     }
 }

@@ -39,7 +39,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     {
         private void MakeCopyOfGroup()
         {
-            if (MeshGroups.Count > 0)
+            if (MeshGroups.Count > 0
+                && SelectedMeshGroupIndex != -1)
             {
                 string makingCopyLabel = LocalizedString.Get("Making Copy");
                 string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
@@ -93,7 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             UnlockEditControls();
             PullMeshGroupDataFromAsynchLists();
-            saveButtons.Visible = true;
+            PartHasBeenChanged();
 
             // now set the selection to the new copy
             MeshGroupExtraData[MeshGroups.Count - 1].currentScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;

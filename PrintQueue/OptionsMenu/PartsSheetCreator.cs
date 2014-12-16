@@ -371,11 +371,11 @@ namespace MatterHackers.MatterControl
 
             double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginMM.Top * PixelPerMM;
 
-            string logoPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PartSheetLogo.png");
-            if(File.Exists(logoPathAndFile))
+            // TODO: Application should not save data back to StaticDataPath - use application data dir instead
+            string logoPathAndFile = "PartSheetLogo.png";
+            if(StaticData.Instance.FileExists(logoPathAndFile))
             {
-                ImageBuffer logoImage = new ImageBuffer();
-                ImageIO.LoadImageData(logoPathAndFile, logoImage);
+                ImageBuffer logoImage = StaticData.Instance.LoadImage(logoPathAndFile);
                 currentlyPrintingHeightPixels -= logoImage.Height;
                 plateGraphics.Render(logoImage, (plateInventoryImage.Width - logoImage.Width) / 2, currentlyPrintingHeightPixels);
             }

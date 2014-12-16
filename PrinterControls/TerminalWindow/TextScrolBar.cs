@@ -42,20 +42,21 @@ namespace MatterHackers.MatterControl
         bool downOnBar = false;
 
         public TextScrollBar(TextScrollWidget textScrollWidget, int width)
-            : base(width, 10)
+            : base(width, ScrollBar.ScrollBarWidth)
         {
             this.textScrollWidget = textScrollWidget;
             Margin = new BorderDouble(0, 5);
             VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+            BackgroundColor = RGBA_Bytes.LightGray;
         }
 
         public override void OnDraw(Graphics2D graphics2D)
         {
-            int thumbHeight = 2;
-            graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Black);
-            double bottom = textScrollWidget.Position0To1 * (Height - thumbHeight - 2);// the 2 is the border
-            RectangleDouble thumb = new RectangleDouble(0, bottom + 1, Width, bottom + 1 + thumbHeight);// the 1 is the border
-            graphics2D.FillRectangle(thumb, RGBA_Bytes.Black);
+            int thumbHeight = 10;
+            //graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Black);
+            double bottom = textScrollWidget.Position0To1 * (Height - thumbHeight);// the 2 is the border
+            RectangleDouble thumb = new RectangleDouble(0, bottom, Width, bottom + thumbHeight);// the 1 is the border
+            graphics2D.FillRectangle(thumb, RGBA_Bytes.DarkGray);
             base.OnDraw(graphics2D);
         }
         public override void OnMouseDown(MouseEventArgs mouseEvent)

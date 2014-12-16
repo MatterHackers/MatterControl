@@ -64,7 +64,6 @@ namespace MatterHackers.MatterControl
 		Button disablePrintLevelingButton;
 
         DisableableWidget eePromControlsContainer;
-        DisableableWidget terminalCommunicationsContainer;        
         DisableableWidget printLevelingContainer;
 		
 
@@ -135,8 +134,6 @@ namespace MatterHackers.MatterControl
             controlsTopToBottomLayout.AddChild(container);
         }
 
-        Button restartButton;
-
         private void RestartApplication()
         {
             UiThread.RunOnIdle((state) =>
@@ -159,7 +156,6 @@ namespace MatterHackers.MatterControl
             if (languageCode != UserSettings.Instance.get("Language"))
             {
                 UserSettings.Instance.set("Language", languageCode);
-                restartButton.Visible = true;
             }
         }
 			
@@ -263,8 +259,7 @@ namespace MatterHackers.MatterControl
 				eePromControlsLayout.Margin = new BorderDouble(3, 0, 3, 6);
 				eePromControlsLayout.Padding = new BorderDouble(0);
                 {
-					Agg.Image.ImageBuffer eePromImage = new Agg.Image.ImageBuffer();
-					ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), eePromImage);
+					Agg.Image.ImageBuffer eePromImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "leveling-24x24.png"));
 					ImageWidget eePromIcon = new ImageWidget(eePromImage);
 					eePromIcon.Margin = new BorderDouble (right: 6);
 
@@ -388,8 +383,7 @@ namespace MatterHackers.MatterControl
                     });
                 };
 
-                Agg.Image.ImageBuffer levelingImage = new Agg.Image.ImageBuffer();
-				ImageIO.LoadImageData(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath,"Icons", "PrintStatusControls", "leveling-24x24.png"), levelingImage);
+                Agg.Image.ImageBuffer levelingImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "leveling-24x24.png"));
                 if (!ActiveTheme.Instance.IsDarkTheme)
                 {
                     InvertLightness.DoInvertLightness(levelingImage);
@@ -450,79 +444,8 @@ namespace MatterHackers.MatterControl
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			this.linkButtonFactory.fontSize = 11;
-        }
+        } 
 
-        private void SetVisibleControls()
-        {
-            return;
-            if (ActivePrinterProfile.Instance.ActivePrinter == null)
-            {
-                // no printer selected                         
-                eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-            }
-            else // we at least have a printer selected
-            {
-				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-                {
-                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
-                    case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-                    case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-                    case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:                        
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        break;
-
-                    case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        break;
-
-                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        break;
-
-                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrintToSd:
-                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-                        switch (PrinterConnectionAndCommunication.Instance.PrintingState)
-                        {
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
-                                eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                                printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                                terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                break;
-
-                            default:
-                                throw new NotImplementedException();
-                        }
-                        break;
-
-                    case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-                        eePromControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        terminalCommunicationsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-        }
-			
         event EventHandler unregisterEvents;
         private void AddHandlers()
         {
@@ -532,7 +455,6 @@ namespace MatterHackers.MatterControl
 
         private void onPrinterStatusChanged(object sender, EventArgs e)
         {
-            SetVisibleControls();
             this.Invalidate();
         }
 

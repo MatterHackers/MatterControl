@@ -48,9 +48,11 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 
         ImageBuffer LoadImage(string imageName)
         {
-            string path = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
+            string path = Path.Combine("Icons", imageName);
             ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-            ImageIO.LoadImageData(path, buffer);
+
+            StaticData.Instance.LoadImage(path, buffer);
+
             return buffer;
         }
 

@@ -33,7 +33,6 @@ namespace MatterHackers.MatterControl
             : base(400, 300)
         {
             this.printItemWrapper = printItemWrapper;
-			documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
             if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
             {
                 partIsGCode = true;
@@ -313,7 +312,7 @@ namespace MatterHackers.MatterControl
 
         void ExportGCode_Click(object state)
         {
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", initialDirectory: documentsPath, title: "Export GCode");
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
             saveParams.FileName = Path.GetFileNameWithoutExtension(printItemWrapper.Name);
@@ -352,7 +351,7 @@ namespace MatterHackers.MatterControl
 
 		void ExportX3G_Click(object state)
 		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export X3G|*.x3g", initialDirectory: documentsPath, title: "Export X3G");
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export X3G|*.x3g", title: "Export X3G");
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
 
@@ -471,7 +470,7 @@ namespace MatterHackers.MatterControl
 
         void DoExportSTL_Click(object state)
         {
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl", initialDirectory: documentsPath);  
+			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");  
 			saveParams.Title = "MatterControl: Export File";
 			saveParams.ActionButtonLabel = "Export";
             saveParams.FileName = printItemWrapper.Name;

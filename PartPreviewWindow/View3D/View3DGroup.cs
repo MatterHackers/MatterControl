@@ -83,6 +83,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void DoGroup(BackgroundWorker backgroundWorker)
         {
+            if (SelectedMeshGroupIndex == -1)
+            {
+                SelectedMeshGroupIndex = 0;
+            }
             MeshGroup meshGroupWeAreKeeping = asynchMeshGroups[SelectedMeshGroupIndex];
             for (int meshGroupToMoveIndex = asynchMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
             {
@@ -138,6 +142,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             SelectedMeshGroupIndex = MeshGroups.Count - 1;
 
             UnlockEditControls();
+
+            PartHasBeenChanged();
 
             Invalidate();
         }

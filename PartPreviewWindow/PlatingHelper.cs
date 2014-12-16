@@ -110,33 +110,14 @@ namespace MatterHackers.MatterControl
             return output;
         }
 
-        public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index, bool alsoCenterXY = true)
+        public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
         {
             AxisAlignedBoundingBox bounds = meshesGroupList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
             Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-            if (alsoCenterXY)
-            {
-                ScaleRotateTranslate moved = meshTransforms[index];
-                moved.translation *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
-                meshTransforms[index] = moved;
-            }
-            else
-            {
-                ScaleRotateTranslate moved = meshTransforms[index];
-                moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
-                meshTransforms[index] = moved;
-            }
-        }
 
-        public static void PlaceAllMeshesOnBed(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
-        {
-                throw new NotImplementedException();
-#if false
-            for (int i = 0; i < meshesList.Count; i++)
-            {
-                PlaceMeshGroupOnBed(meshesList, meshTransforms, i);
-            }
-#endif
+            ScaleRotateTranslate moved = meshTransforms[index];
+            moved.translation *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
+            meshTransforms[index] = moved;
         }
 
         public static void CenterMeshesXY(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
@@ -185,7 +166,7 @@ namespace MatterHackers.MatterControl
             int meshGroupIndex = meshesGroupsToAvoid.Count-1;
             MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
 
-            PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex, false);
+            PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
         }
 
         public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms)
@@ -258,57 +239,66 @@ namespace MatterHackers.MatterControl
                 for(int i=0; i<meshGroup.Meshes.Count; i++)
                 {
                     Mesh mesh = meshGroup.Meshes[i];
-                    List<IRayTraceable> allPolys = new List<IRayTraceable>();
-                    List<Vector3> positions = new List<Vector3>();
-                    bool continueProcessing;
-                    foreach (Face face in mesh.Faces)
-                    {
-                        positions.Clear();
-                        foreach (Vertex vertex in face.Vertices())
-                        {
-                            positions.Add(vertex.Position);
-                        }
-
-                        // We should use the teselator for this if it is greater than 3.
-                        Vector3 next = positions[1];
-                        for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
-                        {
-                            TriangleShape triangel = new TriangleShape(positions[0], next, positions[positionIndex], null);
-                            allPolys.Add(triangel);
-                            next = positions[positionIndex];
-                        }
-
-                        if (reportProgress != null)
-                        {
-                            if((currentAction % 256) == 0 || needUpdateTitle)
-                            {
-                                reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", out continueProcessing);
-                                needUpdateTitle = false;
-                            }
-                            currentAction++;
-                        }
-                    }
+                    List<IRayTraceable> allPolys = AddTraceDataForMesh(mesh, totalActionCount, ref currentAction, ref needUpdateTitle, reportProgress);
 
                     needUpdateTitle = true;
                     if (reportProgress != null)
                     {
+                        bool continueProcessing;
                         reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
                     }
 
-#if false // this is to do some timing on creating tracking info
-                    Stopwatch stopWatch = new Stopwatch();
-                    stopWatch.Start();
-#endif
-                    perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(BoundingVolumeHierarchy.CreateNewHierachy(allPolys));
-#if false
-                    stopWatch.Stop();
-                    using (StreamWriter outputStream = File.AppendText("output.txt"))
-                    {
-                        outputStream.WriteLine("Plating Helper BoundingVolumeHierarchy.CreateNewHierachy {0:0.00} seconds".FormatWith(stopWatch.Elapsed.TotalSeconds));
-                    }
-#endif
+                    // only allow limited recusion to speed this up building this data
+                    IRayTraceable traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 0);
+                    perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(traceData);
                 }
             }
+        }
+
+        public static IRayTraceable CreateTraceDataForMesh(Mesh mesh)
+        {
+            int unusedInt = 0;
+            bool unusedBool = false;
+            List<IRayTraceable>  allPolys = AddTraceDataForMesh(mesh, 0, ref unusedInt, ref unusedBool, null);
+            return BoundingVolumeHierarchy.CreateNewHierachy(allPolys);
+        }
+
+        private static List<IRayTraceable> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, ReportProgressRatio reportProgress)
+        {
+            bool continueProcessing;
+
+            List<IRayTraceable>  allPolys = new List<IRayTraceable>();
+            List<Vector3> positions = new List<Vector3>();
+
+            foreach (Face face in mesh.Faces)
+            {
+                positions.Clear();
+                foreach (Vertex vertex in face.Vertices())
+                {
+                    positions.Add(vertex.Position);
+                }
+
+                // We should use the teselator for this if it is greater than 3.
+                Vector3 next = positions[1];
+                for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
+                {
+                    TriangleShape triangel = new TriangleShape(positions[0], next, positions[positionIndex], null);
+                    allPolys.Add(triangel);
+                    next = positions[positionIndex];
+                }
+
+                if (reportProgress != null)
+                {
+                    if ((currentAction % 256) == 0 || needToUpdateProgressReport)
+                    {
+                        reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", out continueProcessing);
+                        needToUpdateProgressReport = false;
+                    }
+                    currentAction++;
+                }
+            }
+
+            return allPolys;
         }
     }
 }

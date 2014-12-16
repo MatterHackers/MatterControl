@@ -142,28 +142,35 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             :base(printerRecord, windowController)
         {            
 
+
             this.printerRecord = printerRecord;
             this.Margin = new BorderDouble(1);
             this.BackgroundColor = this.defaultBackgroundColor;
             this.Padding = new BorderDouble(0); 
             this.HAnchor = HAnchor.ParentLeftRight;
 
+			FlowLayoutWidget printerNameContainer = new FlowLayoutWidget ();
+			printerNameContainer.HAnchor = HAnchor.ParentLeftRight;
+
             printerName = new TextWidget(this.printerRecord.Name);
             printerName.TextColor = this.defaultTextColor;
-			printerName.Margin = new BorderDouble (5, 10, 5, 10);
+			printerName.Margin = new BorderDouble (5, 10, 0, 10);
             printerName.HAnchor = HAnchor.ParentLeftRight;
 
-            this.AddChild(printerName);
+			printerNameContainer.AddChild(printerName);
+
+			FlowLayoutWidget rightButtonOverlayContainer = new FlowLayoutWidget (FlowDirection.RightToLeft);
+			rightButtonOverlayContainer.HAnchor = HAnchor.ParentLeftRight;
+			rightButtonOverlayContainer.VAnchor = VAnchor.ParentBottomTop;
 
 			this.rightButtonOverlay = getItemActionButtons();
 			this.rightButtonOverlay.Padding = new BorderDouble(0);
 			this.rightButtonOverlay.Visible = true;
+			rightButtonOverlayContainer.AddChild (rightButtonOverlay);
 
+			this.AddChild (printerNameContainer);
+			this.AddChild (rightButtonOverlayContainer);
 
-			this.AddChild(rightButtonOverlay);
-            
-
-            //BindHandlers();
         }
 
 		SlideWidget getItemActionButtons()
@@ -175,7 +182,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 			else
 			{
-				buttonWidth = 80;
+				buttonWidth = 80;//80
 			}
 
 			SlideWidget buttonContainer = new SlideWidget();
@@ -184,30 +191,27 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
 
-			ClickWidget removeButton = new ClickWidget();
+            TextWidget printLabel = new TextWidget("Remove".Localize());
+            printLabel.TextColor = RGBA_Bytes.White;
+            printLabel.VAnchor = VAnchor.ParentCenter;
+            printLabel.HAnchor = HAnchor.ParentCenter;
+
+            FatFlatClickWidget removeButton = new FatFlatClickWidget(printLabel);
 			removeButton.VAnchor = VAnchor.ParentBottomTop;
 			removeButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			removeButton.Width = buttonWidth;
-	
-			TextWidget printLabel = new TextWidget("Remove".Localize());
-			printLabel.TextColor = RGBA_Bytes.White;
-			printLabel.VAnchor = VAnchor.ParentCenter;
-			printLabel.HAnchor = HAnchor.ParentCenter;
-
-			removeButton.AddChild(printLabel);
 			removeButton.Click += RemoveConnectionLink_Click;
 
-			ClickWidget editButton = new ClickWidget();
+            TextWidget editLabel = new TextWidget("Edit".Localize());
+            editLabel.TextColor = RGBA_Bytes.White;
+            editLabel.VAnchor = VAnchor.ParentCenter;
+            editLabel.HAnchor = HAnchor.ParentCenter;
+
+            FatFlatClickWidget editButton = new FatFlatClickWidget(editLabel);
 			editButton.VAnchor = VAnchor.ParentBottomTop;
 			editButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
 			editButton.Width = buttonWidth;
-
-			TextWidget editLabel = new TextWidget("Edit".Localize());
-			editLabel.TextColor = RGBA_Bytes.White;
-			editLabel.VAnchor = VAnchor.ParentCenter;
-			editLabel.HAnchor = HAnchor.ParentCenter;
-
-			editButton.AddChild(editLabel);
+			
 			editButton.Click += EditConnectionLink_Click;
 
 			buttonFlowContainer.AddChild(editButton);

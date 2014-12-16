@@ -13,7 +13,6 @@ namespace MatterHackers.MatterControl
     public class AltGroupBox : FlowLayoutWidget
     {
         GuiWidget groupBoxLabel;
-        double lineInset = 8.5;
         RGBA_Bytes borderColor = RGBA_Bytes.Black;
         GuiWidget clientArea;
 

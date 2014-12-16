@@ -7,6 +7,36 @@ using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+    public static class GCodeProcessing
+    {
+        static string[] replaceWithSettingsStrings = new string[] 
+        {
+            "first_layer_temperature",
+            "temperature", 
+            "first_layer_bed_temperature",
+            "bed_temperature",
+        };
+
+        public static string ReplaceMacroValues(string gcodeWithMacros)
+        {
+            foreach (string name in replaceWithSettingsStrings)
+            {
+                // do the replacement with {} (curly brackets)
+                {
+                    string thingToReplace = "{" + "{0}".FormatWith(name) + "}";
+                    gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
+                }
+                // do the replacement with [] (square brackets)
+                {
+                    string thingToReplace = "[" + "{0}".FormatWith(name) + "]";
+                    gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
+                }
+            }
+
+            return gcodeWithMacros;
+        }
+    }
+
     public class MapItem
     {
         string mappedKey;
@@ -75,7 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     newStartGCode.Append(line + "\n");
                 }
 
-                newStartGCode.Append(ReplaceMacroValues(base.MappedValue));
+                newStartGCode.Append(GCodeProcessing.ReplaceMacroValues(base.MappedValue));
 
                 foreach (string line in PostStartGCode())
                 {
@@ -90,33 +120,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
                 return newStartGCode.ToString();
             }
-        }
-
-        string[] replaceWithSettingsStrings = new string[] 
-        {
-            "first_layer_temperature",
-            "temperature", 
-            "first_layer_bed_temperature",
-            "bed_temperature",
-        };
-
-        private string ReplaceMacroValues(string gcodeWithMacros)
-        {
-            foreach (string name in replaceWithSettingsStrings)
-            {
-                // do the replacement with {} (curly brackets)
-                {
-                    string thingToReplace = "{" + "{0}".FormatWith(name) + "}";
-                    gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
-                }
-                // do the replacement with [] (square brackets)
-                {
-                    string thingToReplace = "[" + "{0}".FormatWith(name) + "]";
-                    gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
-                }
-            }
-
-            return gcodeWithMacros;
         }
 
         public MapStartGCode(string mappedKey, string originalKey, bool replaceCRs)

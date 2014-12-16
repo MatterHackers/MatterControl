@@ -2843,3 +2843,57 @@ Translated:Reset to Factory Defaults
 English:Save to EEProm
 Translated:Save to EEProm
 
+English:{0} is not available
+Translated:{0} is not available
+
+English:Invalid printer response
+Translated:Invalid printer response
+
+English:Could not find a selected button.
+Translated:Could not find a selected button.
+
+English:Aligning
+Translated:Aligning
+
+English:Single
+Translated:Single
+
+English:Warning - GCode file
+Translated:Warning - GCode file
+
+English:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+Translated:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+
+English:Raft Extruder
+Translated:Raft Extruder
+
+English:None
+Translated:None
+
+English:Rectangle
+Translated:Rectangle
+
+English:Outline
+Translated:Outline
+
+English:Circle
+Translated:Circle
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and may not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and may not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+
+English:Do not show this message again
+Translated:Do not show this message again
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+
+English:Cannot find this file\nWould you like to remove it from the queue?
+Translated:Cannot find this file\nWould you like to remove it from the queue?
+
+English:Supported Angles
+Translated:Supported Angles
+
+English:Amount
+Translated:Amount
+

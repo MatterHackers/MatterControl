@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             if (libraryDataView.SelectedItems.Count == 1)
             {
                 LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-                libraryItem.OpenPartViewWindow(openInEditMode:true);
+                libraryItem.OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
             }
 
         }
@@ -370,21 +370,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
         public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
         {
-            foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
-            {
-                string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (MeshFileIo.ValidFileExtensions().Contains(extension)
-                    || extension == ".GCODE")
-                {
-                    PrintItem printItem = new PrintItem();
-                    printItem.Name = Path.GetFileNameWithoutExtension(droppedFileName);
-                    printItem.FileLocation = Path.GetFullPath(droppedFileName);
-                    printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-                    printItem.Commit();
-
-                    LibraryData.Instance.AddItem(new PrintItemWrapper(printItem));
-                }
-            }
+            LibraryData.Instance.LoadFilesIntoLibrary(fileDropEventArgs.DroppedFiles);
 
             base.OnDragDrop(fileDropEventArgs);
         }
@@ -397,7 +383,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
         void importToLibraryloadFile_ClickOnIdle(object state)
         {
             OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
-			FileDialog.OpenFileDialog(openParams, onLibraryLoadFileSelected);            
+			FileDialog.OpenFileDialog(openParams, onLibraryLoadFileSelected);
         }
 
 		void onLibraryLoadFileSelected(OpenFileDialogParams openParams)

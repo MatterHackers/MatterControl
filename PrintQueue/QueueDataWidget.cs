@@ -52,17 +52,20 @@ namespace MatterHackers.MatterControl.PrintQueue
         PluginChooserWindow pluginChooserWindow;
         QueueDataView queueDataView;
         Button exportItemButton;
+		Button sendItemButton;
         Button copyItemButton;
         Button removeItemButton;
         Button enterEditModeButton;
         Button leaveEditModeButton;
-		QueueRowItem queueRowItem;
 
         Button addToQueueButton;
         Button createButton;
 
         static Button shopButton;
         event EventHandler unregisterEvents;
+
+		public delegate void SendButtonAction(object state, List<PrintItemWrapper> sendItems);
+		public static SendButtonAction sendButtonFunction = null;
 
         public QueueDataWidget(QueueDataView queueDataView)
         {
@@ -129,6 +132,12 @@ namespace MatterHackers.MatterControl.PrintQueue
                             OpenPluginChooserWindow();
                         };
                     }
+
+					sendItemButton = textImageButtonFactory.Generate("Send".Localize());
+					sendItemButton.Margin = new BorderDouble(0, 0, 3, 0);
+					sendItemButton.Click += new EventHandler(sendButton_Click);
+					sendItemButton.Visible = false;
+					buttonPanel1.AddChild(sendItemButton);
 
                     exportItemButton = textImageButtonFactory.Generate("Export".Localize());
                     exportItemButton.Margin = new BorderDouble(3, 0);
@@ -273,6 +282,26 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
         }
 
+		void sendButton_Click(object sender, EventArgs mouseEvent)
+		{
+			//Open export options
+			List<PrintItemWrapper> itemList = this.queueDataView.SelectedItems.Select(item => item.PrintItemWrapper).ToList();
+			if (sendButtonFunction != null)
+			{
+				UiThread.RunOnIdle((state) =>
+				{
+					sendButtonFunction(null, itemList);
+				});
+			}
+			else
+			{
+				UiThread.RunOnIdle((state) =>
+				{
+					StyledMessageBox.ShowMessageBox(null,"Oops! Send is currently disabled.", "Send Print");
+				});
+			}
+		}
+
         void removeButton_Click(object sender, EventArgs mouseEvent)
         {
             // Sort by index in the QueueData list to prevent positions shifting due to removes
@@ -409,10 +438,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			#if !__ANDROID__          
 			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
 
-			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-
             FileDialog.SaveFileDialog(
-                new SaveFileDialogParams("Save Parts Sheet|*.pdf", initialDirectory: documentsPath),
+                new SaveFileDialogParams("Save Parts Sheet|*.pdf"),
                 (saveParams) =>
                 {
                     string partFileName = saveParams.FileName;
@@ -439,7 +466,8 @@ namespace MatterHackers.MatterControl.PrintQueue
             int selectedCount = queueDataView.SelectedItems.Count;
             if (selectedCount > 0 && queueDataView.EditMode)
             {
-                if (selectedCount == 1)
+				sendItemButton.Visible = true;
+				if (selectedCount == 1)
                 {
                     exportItemButton.Visible = true;
                     copyItemButton.Visible = true;
@@ -459,6 +487,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 //addToQueueButton.Visible = true;
                 //createButton.Visible = true;
+				sendItemButton.Visible = false;
                 exportItemButton.Visible = false;
                 copyItemButton.Visible = false;
                 removeItemButton.Visible = false;
@@ -569,13 +598,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         void AddItemsToQueue(object state)
         {
-            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-
             FileDialog.OpenFileDialog(
                 new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams)
                 {
                     MultiSelect = true,
-                    InitialDirectory = documentsPath,
                     ActionButtonLabel = "Add to Queue",
                     Title = "MatterControl: Select A File"
                 },

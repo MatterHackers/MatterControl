@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -24,9 +26,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         TextWidget printerNameError;
         TextWidget printerModelError;
         TextWidget printerMakeError;
-        
-        string driverFile;
 
+        PrinterChooser printerManufacturerSelector;
+        
         Button nextButton;
 
 		bool usingDefaultName;
@@ -37,7 +39,20 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             //Construct inputs
             printerNameContainer = createPrinterNameContainer();
             printerMakeContainer = createPrinterMakeContainer();
-            printerModelContainer = createPrinterModelContainer();
+
+
+            if (printerManufacturerSelector.CountOfMakes == 1)
+            {
+                ActivePrinter.Make = printerManufacturerSelector.ManufacturerDropList.SelectedValue;
+
+                printerMakeContainer.Visible = false;
+                printerModelContainer = createPrinterModelContainer(printerManufacturerSelector.ManufacturerDropList.SelectedValue);
+                printerModelContainer.Visible = true;
+            }
+            else
+            {
+                printerModelContainer = createPrinterModelContainer();
+            }
 
             //Add inputs to main container
             contentRow.AddChild(printerNameContainer);
@@ -62,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         }
 
         private void SetElementState()
-        {
+        {   
             printerModelContainer.Visible = (this.ActivePrinter.Make != null);
             nextButton.Visible = (this.ActivePrinter.Model != null && this.ActivePrinter.Make !=null);
         }
@@ -109,7 +124,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerManufacturerLabel.HAnchor = HAnchor.ParentLeftRight;
             printerManufacturerLabel.Margin = elementMargin;
 
-            PrinterChooser printerManufacturerSelector = new PrinterChooser();
+            printerManufacturerSelector = new PrinterChooser();
             printerManufacturerSelector.HAnchor = HAnchor.ParentLeftRight;
             printerManufacturerSelector.Margin = elementMargin;
             printerManufacturerSelector.ManufacturerDropList.SelectionChanged += new EventHandler(ManufacturerDropList_SelectionChanged);
@@ -126,6 +141,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.HAnchor = HAnchor.ParentLeftRight;
             return container;
         }
+
+        
 
 		private FlowLayoutWidget createPrinterModelContainer(string make = "Other")
         {
@@ -163,7 +180,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             ActivePrinter.Make = ((DropDownList)sender).SelectedLabel;
             ActivePrinter.Model = null;
+            ReconstructModelSelector();
+            SetElementState();
+        }
 
+        private void ReconstructModelSelector()
+        {
             //reconstruct model selector
             int currentIndex = contentRow.GetChildIndex(printerModelContainer);
             contentRow.RemoveChild(printerModelContainer);
@@ -173,7 +195,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             contentRow.Invalidate();
 
             printerMakeError.Visible = false;
-            SetElementState();
         }
 
         private void ModelDropList_SelectionChanged(object sender, EventArgs e)
@@ -258,36 +279,66 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
 
             //Determine what if any drivers are needed
-            if (settingsDict.TryGetValue("windows_driver", out driverFile))
+            string infFileNames;
+            if (settingsDict.TryGetValue("windows_driver", out infFileNames))
             {
-                string infPathAndFileToInstall = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Drivers", driverFile);
-                switch (OsInformation.OperatingSystem)
+                string[] fileNames = infFileNames.Split(',');
+                foreach (string fileName in fileNames)
                 {
-                    case OSType.Windows:
-                        if (File.Exists(infPathAndFileToInstall))
-                        {
-                            PrinterSetupStatus.DriverNeedsToBeInstalled = true;
-                            PrinterSetupStatus.DriverFilePath = infPathAndFileToInstall;
-                        }
-                        break;
+                    switch (OsInformation.OperatingSystem)
+                    {
+                        case OSType.Windows:
 
-                    default:
-                        break;
+                            string pathForInf = Path.GetFileNameWithoutExtension(fileName);
+
+                            // TODO: It's really unexpected that the driver gets copied to the temp folder everytime a printer is setup. I'd think this only needs
+                            // to happen when the infinstaller is run (More specifically - move this to *after* the user clicks Install Driver)
+
+                            string infPath = Path.Combine("Drivers", pathForInf);
+                            string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
+
+                            if (StaticData.Instance.FileExists(infPathAndFileToInstall))
+                            {
+                                // Ensure the output directory exists
+                                string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
+                                if (!Directory.Exists(destTempPath))
+                                {
+                                    Directory.CreateDirectory(destTempPath);
+                                }
+
+                                string destTempInf = Path.GetFullPath(Path.Combine(destTempPath, fileName));
+
+                                // Sync each file from StaticData to the location on disk for serial drivers
+                                foreach (string file in StaticData.Instance.GetFiles(infPath))
+                                {
+                                    using(Stream outstream = File.OpenWrite(Path.Combine(destTempPath, Path.GetFileName(file))))
+                                    using (Stream instream = StaticData.Instance.OpenSteam(file))
+                                    {
+                                        instream.CopyTo(outstream);
+                                    }
+                                }
+
+                                PrinterSetupStatus.DriversToInstall.Add(destTempInf);
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
             }
         }
 
         private Dictionary<string, string> LoadPrinterSetupFromFile(string make, string model)
         {
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "setup.ini");
+            string setupSettingsPathAndFile = Path.Combine("PrinterSettings", make, model, "setup.ini");
             Dictionary<string, string> settingsDict = new Dictionary<string, string>();
 
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#"))
@@ -311,7 +362,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public SliceSettingsCollection LoadDefaultSliceSettings(string make, string model)
         {
             SliceSettingsCollection collection = null;
-            Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(GetDefaultPrinterSlicePath(make, model));
+			Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(Path.Combine("PrinterSettings", make, model, "config.ini"));
             
             if (settingsDict.Count > 0)
             {
@@ -328,9 +379,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         public void LoadSlicePresets(string make, string model, string tag)
         {
-            string[] slicePresetPaths = GetSlicePresets(make, model, tag);
-
-            foreach (string filePath in slicePresetPaths)
+            foreach (string filePath in GetSlicePresets(make, model, tag))
             {
                 SliceSettingsCollection collection = null;
                 Dictionary<string, string> settingsDict = LoadSliceSettingsFromFile(filePath);
@@ -373,37 +422,34 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         private string[] GetSlicePresets(string make, string model, string tag)
         {
             string[] presetPaths = new string[]{};
-            string folderPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, tag);
-            if (Directory.Exists(folderPath))
+            string folderPath = Path.Combine("PrinterSettings", make, model, tag);
+            if (StaticData.Instance.DirectoryExists(folderPath))
             {
-                presetPaths = Directory.GetFiles(folderPath);
+                presetPaths = StaticData.Instance.GetFiles(folderPath).ToArray();
             }
             return presetPaths;
-        }
-
-        private string GetDefaultPrinterSlicePath(string make, string model)
-        {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "config.ini");
         }
 
         private Dictionary<string, string> LoadSliceSettingsFromFile(string setupSettingsPathAndFile)
         {            
             Dictionary<string, string> settingsDict = new Dictionary<string, string>();
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
                     {
                         //Ignore commented lines
-                        if (!line.StartsWith("#"))
+                        if (!line.StartsWith("#") && line.Length > 0)
                         {
                             string[] settingLine = line.Split('=');
-                            string keyName = settingLine[0].Trim();
-                            string settingDefaultValue = settingLine[1].Trim();
+                            if (settingLine.Length == 2)
+                            {
+                                string keyName = settingLine[0].Trim();
+                                string settingDefaultValue = settingLine[1].Trim();
 
-                            settingsDict.Add(keyName, settingDefaultValue);
+                                settingsDict.Add(keyName, settingDefaultValue);
+                            }
                         }
                     }
                 }
@@ -425,7 +471,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
-            else if (this.PrinterSetupStatus.DriverNeedsToBeInstalled)
+            else if (this.PrinterSetupStatus.DriversToInstall.Count > 0)
             {
                 Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
                 Parent.RemoveChild(this);

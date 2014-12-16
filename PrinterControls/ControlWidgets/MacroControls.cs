@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
@@ -152,7 +153,7 @@ namespace MatterHackers.MatterControl.PrinterControls
                 macroButton.Margin = new BorderDouble(right: 5);
                 macroButton.Click += (sender, e) =>
                 {
-                    SentCommandToPrinter(macroButton.Text);
+                    SendCommandToPrinter(macroButton.Text);
                 };
                 macroButtonContainer.AddChild(macroButton);
             }
@@ -178,8 +179,9 @@ namespace MatterHackers.MatterControl.PrinterControls
             return results;            
         }
 
-        protected void SentCommandToPrinter(string command)
+        protected void SendCommandToPrinter(string command)
         {
+            command = GCodeProcessing.ReplaceMacroValues(command);
             PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(command);
         }
     }

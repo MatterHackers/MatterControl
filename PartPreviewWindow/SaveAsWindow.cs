@@ -21,9 +21,9 @@ namespace MatterHackers.MatterControl
 	{
 		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory ();
         MHTextEditWidget textToAddWidget;
-        CheckBox addToLibraryOption;        
+        CheckBox addToLibraryOption;
 
-        public delegate void SetPrintItemWrapperAndSave(PrintItemWrapper printItemWrapper);
+        public delegate void SetPrintItemWrapperAndSave(SaveAsReturnInfo returnInfo);
         SetPrintItemWrapperAndSave functionToCallOnSaveAs;
 
         public SaveAsWindow(SetPrintItemWrapperAndSave functionToCallOnSaveAs)
@@ -137,6 +137,29 @@ namespace MatterHackers.MatterControl
             SubmitForm();
         }
 
+        public class SaveAsReturnInfo
+        {
+            public string fileNameAndPath;
+            public bool placeInLibrary;
+            public string newName;
+            public PrintItemWrapper printItemWrapper;
+
+            public SaveAsReturnInfo(string newName, string fileNameAndPath, bool placeInLibrary)
+            {
+                this.newName = newName;
+                this.fileNameAndPath = fileNameAndPath;
+                this.placeInLibrary = placeInLibrary;
+
+                PrintItem printItem = new PrintItem();
+                printItem.Name = newName;
+                printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
+                printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+                printItem.Commit();
+
+                printItemWrapper = new PrintItemWrapper(printItem);
+            }
+        }
+
         private void SubmitForm()
         {
             string newName = textToAddWidget.ActualTextEditWidget.Text;
@@ -145,21 +168,8 @@ namespace MatterHackers.MatterControl
                 string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
                 string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-                PrintItem printItem = new PrintItem();
-                printItem.Name = newName;
-                printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
-                printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-                printItem.Commit();
-
-                PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-                QueueData.Instance.AddItem(printItemWrapper);
-
-                if (addToLibraryOption.Checked)
-                {
-                    LibraryData.Instance.AddItem(printItemWrapper);
-                }
-
-                functionToCallOnSaveAs(printItemWrapper);
+                SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, addToLibraryOption.Checked);
+                functionToCallOnSaveAs(returnInfo);
                 CloseOnIdle();
             }
         }

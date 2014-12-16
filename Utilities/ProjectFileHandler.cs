@@ -34,10 +34,9 @@ using System.Text;
 using System.Xml;
 using System.Reflection;
 using System.IO;
+using System.IO.Compression;
 using System.Diagnostics;
 using System.Collections.Generic;
-
-using ICSharpCode.SharpZipLib.Zip;
 
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.Agg.UI;
@@ -153,8 +152,7 @@ namespace MatterHackers.MatterControl
         //Opens Save file dialog and outputs current queue as a project
         public void SaveAs()
         {
-			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.zip", initialDirectory: documentsPath);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.zip");
 
 			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
         }
@@ -168,7 +166,8 @@ namespace MatterHackers.MatterControl
 		}
 
         static string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-        static string defaultManifestPathAndFileName = Path.Combine(applicationDataPath, "data", "temp", "project-assembly", "manifest.json");
+		static string archiveStagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-assembly");
+		static string defaultManifestPathAndFileName = Path.Combine(archiveStagingFolder, "manifest.json");
         static string defaultProjectPathAndFileName = Path.Combine(applicationDataPath, "data", "default.zip");
 
         public static void EmptyFolder(System.IO.DirectoryInfo directory)
@@ -185,14 +184,13 @@ namespace MatterHackers.MatterControl
             }            
 
             //If the temp folder doesn't exist - create it, otherwise clear it
-            string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-assembly");
-            if (!Directory.Exists(stagingFolder))
+			if (!Directory.Exists(archiveStagingFolder))
             {
-                Directory.CreateDirectory(stagingFolder);
+				Directory.CreateDirectory(archiveStagingFolder);
             }
             else
             {
-                System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(@stagingFolder);
+				System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(@archiveStagingFolder);
                 EmptyFolder(directory);
             }
 
@@ -203,44 +201,29 @@ namespace MatterHackers.MatterControl
             sw.Write(jsonString);
             sw.Close();
 
-            FileStream outputFileStream = File.Create(savedFileName);
-            ZipOutputStream zipStream = new ZipOutputStream(outputFileStream);
-            zipStream.SetLevel(3);
-            CopyFileToZip(zipStream, defaultManifestPathAndFileName);
-            {
-                foreach (KeyValuePair<string, ManifestItem> item in this.sourceFiles)
-                {
-                    CopyFileToZip(zipStream, item.Key);
-                }
-            }
-            zipStream.IsStreamOwner = true; // Makes the Close also Close the underlying stream
-            zipStream.Close();
+			foreach (KeyValuePair<string, ManifestItem> item in this.sourceFiles)
+			{
+				CopyFileToTempFolder(item.Key, item.Value.FileName);
+			}
+			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName,CompressionLevel.Optimal,true);
+		
         }
 
-        private static void CopyFileToZip(ZipOutputStream zipStream, string sourceFile)
+		private static void CopyFileToTempFolder(string sourceFile, string fileName)
         {
             if (File.Exists(sourceFile))
             {
-                ZipEntry newEntry = new ZipEntry(Path.GetFileName(sourceFile));
-                FileInfo fi = new FileInfo(sourceFile);
-                newEntry.DateTime = fi.LastWriteTime;
-                newEntry.Size = fi.Length;
-                zipStream.PutNextEntry(newEntry);
-                using (FileStream streamReader = File.OpenRead(sourceFile))
-                {
-                    CopyStream(streamReader, zipStream);
-                }
-                zipStream.CloseEntry();
-            }
-        }
+				try
+				{
+					// Will not overwrite if the destination file already exists.
+					File.Copy(sourceFile, Path.Combine(archiveStagingFolder, fileName));
+				}
 
-        public static void CopyStream(Stream input, Stream output)
-        {
-            byte[] buffer = new byte[4096];
-            int read;
-            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                output.Write(buffer, 0, read);
+				// Catch exception if the file was already copied. 
+				catch (IOException copyError)
+				{
+					Console.WriteLine(copyError.Message);
+				}
             }
         }
 
@@ -277,9 +260,9 @@ namespace MatterHackers.MatterControl
             if (System.IO.File.Exists(loadedFileName))
             {
                 FileStream fs = File.OpenRead(loadedFileName);
-                ZipFile zip = new ZipFile(fs);
+                ZipArchive zip = new ZipArchive(fs);
                 int projectHashCode = zip.GetHashCode();
-            
+
                 //If the temp folder doesn't exist - create it, otherwise clear it
                 string stagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-extract", projectHashCode.ToString());
                 if (!Directory.Exists(stagingFolder))
@@ -295,17 +278,21 @@ namespace MatterHackers.MatterControl
                 List<PrintItem> printItemList = new List<PrintItem>();
                 Project projectManifest = null;
 
-                foreach (ZipEntry zipEntry in zip)
+                foreach (ZipArchiveEntry zipEntry in zip.Entries)
                 {
-                    if (!zipEntry.IsFile)
-                    {
-                        continue;           // Ignore directories
-                    }
-
                     string sourceExtension = Path.GetExtension(zipEntry.Name).ToUpper();
-                    if (zipEntry.Name == "manifest.json"
+
+                    // Note: directories have empty Name properties
+                    //
+                    // Only process ZipEntries that are: 
+                    //    - not directories and 
+                    //     - are in the ValidFileExtension list or
+                    //     - have a .GCODE extension or 
+                    //     - are named manifest.json
+                    if (!string.IsNullOrWhiteSpace(zipEntry.Name) &&
+                        (zipEntry.Name == "manifest.json"
                         || MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
-                        || sourceExtension == ".GCODE")
+                        || sourceExtension == ".GCODE"))
                     {
                         string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);
 
@@ -315,17 +302,18 @@ namespace MatterHackers.MatterControl
                             Directory.CreateDirectory(neededPathForZip);
                         }
 
-                        Stream zipStream = zip.GetInputStream(zipEntry);
+                        using (Stream zipStream = zipEntry.Open())
                         using (FileStream streamWriter = File.Create(extractedFileName))
                         {
-                            CopyStream(zipStream, streamWriter);
+                            zipStream.CopyTo(streamWriter);
                         }
 
                         if (zipEntry.Name == "manifest.json")
                         {
-                            StreamReader sr = new System.IO.StreamReader(extractedFileName);
-                            projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
-                            sr.Close();
+                            using (StreamReader sr = new System.IO.StreamReader(extractedFileName))
+                            {
+                                projectManifest = (Project)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(Project));
+                            }
                         }
                     }
                 }

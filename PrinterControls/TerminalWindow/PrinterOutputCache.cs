@@ -83,9 +83,9 @@ namespace MatterHackers.MatterControl
         void ToPrinter(Object sender, EventArgs e)
         {
             StringEventArgs lineString = e as StringEventArgs;
-            OnHasChanged(null);
             StringEventArgs eventArgs = new StringEventArgs("->" + lineString.Data);
             PrinterLines.Add(eventArgs.Data);
+            OnHasChanged(eventArgs);
             OnHasChanged(eventArgs);
         }
 
@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl
         public void Clear()
         {
             PrinterLines.Clear();
+            OnHasChanged(null);
         }
     }
 }

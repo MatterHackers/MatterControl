@@ -130,14 +130,14 @@ namespace MatterHackers.MatterControl
                         ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             //Add the tab contents for 'Advanced Controls'
+            string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
+            sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+            sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
+
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
 			manualControlsPage = new TabPage(manualPrinterControls, printerControlsLabel);
             this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
             ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-
-			string sliceSettingsLabel = LocalizedString.Get("Slice Settings").ToUpper();
-			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-			sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
 
 			this.AddTab(new SimpleTextTabWidget(sliceTabPage, "Slice Settings Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl
                 new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
                 ActiveSliceSettings.Instance.BedCenter,
                 ActiveSliceSettings.Instance.BedShape,
-                View3DWidget.WindowType.Embeded,
+                View3DWidget.WindowMode.Embeded,
                 View3DWidget.AutoRotate.Enabled);
             part3DView.Margin = new BorderDouble(bottom: 4);
             part3DView.AnchorAll();

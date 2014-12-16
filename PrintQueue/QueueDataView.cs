@@ -85,15 +85,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void AddWatermark()
 		{
-			string imagePathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "watermark.png");
-            if (File.Exists(imagePathAndFile))
+			string imagePathAndFile = Path.Combine("OEMSettings", "watermark.png");
+            if (StaticData.Instance.FileExists(imagePathAndFile))
             {
                 ImageBuffer wattermarkImage = new ImageBuffer();
-                ImageIO.LoadImageData(imagePathAndFile, wattermarkImage);
-                //if (!ActiveTheme.Instance.IsDarkTheme)
-                //{
-                //    InvertLightness.DoInvertLightness(wattermarkImage);
-                //}
+                StaticData.Instance.LoadImage(imagePathAndFile, wattermarkImage);
 
                 GuiWidget watermarkWidget = new ImageWidget(wattermarkImage);
                 watermarkWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;

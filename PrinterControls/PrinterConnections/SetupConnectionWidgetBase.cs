@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.PrintLibrary;
 
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
@@ -15,8 +19,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
     public class PrinterSetupStatus
     {
         public Printer ActivePrinter;
-        public string DriverFilePath;
-        public bool DriverNeedsToBeInstalled = false;
+        public List<string> DriversToInstall = new List<string>();
         public Type PreviousSetupWidget;
         public Type NextSetupWidget;
 
@@ -48,25 +51,55 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             if (this.ActivePrinter.Make != null && this.ActivePrinter.Model != null)    
             {
-                List<string> calibrationPrints = LoadCalibrationPrintsFromFile(this.ActivePrinter.Make, this.ActivePrinter.Model);
-                foreach (string partFile in calibrationPrints)
+                // Load the calibration file names
+                List<string> calibrationPrintFileNames = LoadCalibrationPartNamesForPrinter(this.ActivePrinter.Make, this.ActivePrinter.Model);
+
+                string[] itemsToAdd = LibraryData.SyncCalibrationFilesToDisk(calibrationPrintFileNames);
+                if (itemsToAdd.Length > 0)
                 {
-                    string partFullPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "OEMSettings", "SampleParts", partFile);
-                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(partFullPath), partFullPath)));
+                    // Import any files sync'd to disk into the library, then add them to the queue
+                    LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd, null, (sender, e) =>
+                    {
+                        AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
+                    });
+                }
+                else
+                {
+                    // Otherwise, just ensure the item gets into the queue
+                    AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
                 }
             }
         }
 
-        private List<string> LoadCalibrationPrintsFromFile(string make, string model)
+        private static void AddItemsToQueue(List<string> calibrationPrintFileNames, string[] queueItems)
+        {
+            // After the import has completed, add each of the calibration items into the print queue
+            foreach (string fileName in calibrationPrintFileNames)
+            {
+                string nameOnly = Path.GetFileNameWithoutExtension(fileName);
+                if (queueItems.Contains(nameOnly))
+                {
+                    continue;
+                }
+
+                // If the library item does not exist in the queue, add it
+                var libraryItem = LibraryData.Instance.GetLibraryItems(nameOnly).FirstOrDefault();
+                if (libraryItem != null)
+                {
+                    QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
+                }
+            }
+        }
+
+        private List<string> LoadCalibrationPartNamesForPrinter(string make, string model)
         {
             List<string> calibrationFiles = new List<string>();
-            string setupSettingsPathAndFile = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "calibration.ini");
-            if (System.IO.File.Exists(setupSettingsPathAndFile))
+            string setupSettingsPathAndFile = Path.Combine("PrinterSettings", make, model, "calibration.ini");
+            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
             {
                 try
                 {
-                    string[] lines = System.IO.File.ReadAllLines(setupSettingsPathAndFile);
-                    foreach (string line in lines)
+                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
                     {
                         //Ignore commented lines
                         if (!line.StartsWith("#"))

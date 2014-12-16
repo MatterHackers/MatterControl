@@ -54,6 +54,11 @@ namespace MatterHackers.MatterControl
         public string get(string key)
         {
             string result;
+			if (settingsDictionary == null)
+			{
+				globalInstance.LoadData();
+			}
+
             if (settingsDictionary.ContainsKey(key))
             {
                 result = settingsDictionary[key].Value;

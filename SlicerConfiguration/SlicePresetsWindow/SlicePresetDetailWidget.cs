@@ -429,7 +429,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         this.windowController.ActivePresetLayer.settingsDictionary[addRowSettingData.SlicerConfigName] = sliceSetting;
 
                         OnSettingsChanged();
-                        HasUncommittedChanges = true;
                     }
                     addRowSettingData = null;
                     PopulateAddSettingRow(-1, -1, "-1");
@@ -475,7 +474,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             });
         }
 
-        bool HasUncommittedChanges;
         public RootedObjectEventHandler CommitStatusChanged = new RootedObjectEventHandler();
         public RootedObjectEventHandler SettingsChanged = new RootedObjectEventHandler();
 
@@ -487,7 +485,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 this.windowController.ActivePresetLayer.settingsDictionary[keyName].Value = keyValue;
 
                 OnSettingsChanged();
-                HasUncommittedChanges = true;
             }
             else
             {
@@ -499,7 +496,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 this.windowController.ActivePresetLayer.settingsDictionary[keyName] = sliceSetting;
 
                 OnSettingsChanged();
-                HasUncommittedChanges = true;
             }
         }
 
@@ -887,7 +883,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         string configFileExtension = "slice";
         void importPresets_Click(object sender, EventArgs mouseEvent)
-        {   
+        {
             OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
             openParams.ActionButtonLabel = "Load Slice Preset";
             openParams.Title = "MatterControl: Select A File";
@@ -927,7 +923,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						LoadSettingsRows();
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// Error loading configuration
 				}
@@ -941,12 +937,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void SaveAs(object state)
         {
-            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension, documentsPath);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension);
             saveParams.FileName = presetNameInput.Text;
 
 			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
-            
         }
 
 		void onSaveFileSelected(SaveFileDialogParams saveParams)

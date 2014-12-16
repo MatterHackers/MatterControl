@@ -46,6 +46,8 @@ using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.MatterControl.CreatorPlugins;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl
 {
@@ -56,6 +58,15 @@ namespace MatterHackers.MatterControl
         bool ShowMemoryUsed = false;
         bool DoCGCollectEveryDraw = false;
         public bool RestartOnClose = false;
+
+        static MatterControlApplication()
+        {
+            // Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field 
+            // initializers run before the class constructor, we need to init the platform specific provider in the static constructor (or write a custom initializer method)
+            //
+            // Initialize a standard file system backed StaticData provider
+            StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
+        }
 
         public MatterControlApplication(double width, double height)
             : base(width, height)
@@ -123,7 +134,7 @@ namespace MatterHackers.MatterControl
             }
 
             this.AddChild(ApplicationController.Instance.MainView);
-            this.MinimumSize = new Vector2(400, 400);
+            this.MinimumSize = new Vector2(570, 600);
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
 #if false // this is to test freeing gcodefile memory
@@ -140,7 +151,7 @@ namespace MatterHackers.MatterControl
             this.AnchorAll();
 
             UseOpenGL = true;
-            string version = "1.1";
+            string version = "1.2";
 
             Title = "MatterControl {0}".FormatWith(version);
             if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
@@ -160,6 +171,10 @@ namespace MatterHackers.MatterControl
                 int ypos = Math.Max(int.Parse(sizes[1]), -10);
                 DesktopPosition = new Point2D(xpos, ypos);
             }
+
+            // make sure when we start up that we are showing the 3D view
+            UserSettings.Instance.Fields.EmbededViewShowingGCode = false;
+
             ShowAsSystemWindow();
         }
 
@@ -173,16 +188,16 @@ namespace MatterHackers.MatterControl
             StringBuilder gcodeStringBuilder = new StringBuilder();
 
             int loops = 15;
-            int steps = 20;
-            double radius = 90;
-            Vector2 center = new Vector2(0, 0);
+            int steps = 200;
+            double radius = 50;
+            Vector2 center = new Vector2(150, 100);
 
             gcodeStringBuilder.AppendLine("G28 ; home all axes");
             gcodeStringBuilder.AppendLine("G90 ; use absolute coordinates");
             gcodeStringBuilder.AppendLine("G21 ; set units to millimeters");
             gcodeStringBuilder.AppendLine("G92 E0");
             gcodeStringBuilder.AppendLine("G1 F7800.000");
-            //gcodeStringBuilder.AppendLine("G1 Z" + (30).ToString());
+            gcodeStringBuilder.AppendLine("G1 Z" + (5).ToString());
             WriteMove(gcodeStringBuilder, center);
 
             for (int loop = 0; loop < loops; loop++)
@@ -238,6 +253,7 @@ namespace MatterHackers.MatterControl
 #else
             PluginFinder<MatterControlPlugin> pulginFinder = new PluginFinder<MatterControlPlugin>();
 #endif
+
             string oemName = ApplicationSettings.Instance.GetOEMName();
             foreach (MatterControlPlugin plugin in pulginFinder.Plugins)
             {
@@ -293,6 +309,16 @@ namespace MatterHackers.MatterControl
                         QueueData.Instance.AddItem(new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
                     }
                 }
+
+#if false
+                foreach (CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
+                {
+                    if (creatorInfo.description.Contains("Image"))
+                    {
+                        creatorInfo.functionToLaunchCreator(null, null);
+                    }
+                }
+#endif
             }
 
             //msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
@@ -323,13 +349,13 @@ namespace MatterHackers.MatterControl
 
             // try and open our window matching the last size that we had for it.
             string windowSize = ApplicationSettings.Instance.get("WindowSize");
-            int width = 600;
-            int height = 660;
+            int width = 1280;
+            int height = 720;
             if (windowSize != null && windowSize != "")
             {
                 string[] sizes = windowSize.Split(',');
-                width = Math.Max(int.Parse(sizes[0]), 600);
-                height = Math.Max(int.Parse(sizes[1]), 600);
+                width = Math.Max(int.Parse(sizes[0]), 1280);
+                height = Math.Max(int.Parse(sizes[1]), 720);
             }
 
             new MatterControlApplication(width, height);
@@ -387,7 +413,6 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        bool cancelClose;
         void onConfirmExit(bool messageBoxResponse)
         {
             bool CancelClose;

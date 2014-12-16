@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
         Button closeButton;
-		Button enterEditModeButton;
-		Button leaveEditModeButton;
 
         bool editMode;
 

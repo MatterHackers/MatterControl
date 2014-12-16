@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -12,7 +14,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
     {
         FlowLayoutWidget printerDriverContainer;
         TextWidget printerDriverMessage;
-        string printerDriverFilePath;
+        List<string> driversToInstall;
 
         //bool driverInstallFinished;
 
@@ -22,7 +24,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public SetupStepInstallDriver(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinterStatus)
             : base(windowController, containerWindowToClose, setupPrinterStatus)
         {
-            this.printerDriverFilePath = this.PrinterSetupStatus.DriverFilePath;
+            this.driversToInstall = this.PrinterSetupStatus.DriversToInstall;
 
 			headerLabel.Text = string.Format(LocalizedString.Get("Install Communication Driver"));
             printerDriverContainer = createPrinterDriverContainer();
@@ -30,7 +32,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             {
                 //Construct buttons
 				installButton = textImageButtonFactory.Generate(LocalizedString.Get("Install Driver"));
-                installButton.Click += new EventHandler(installButton_Click);
+                installButton.Click += (sender, e) => 
+                {
+                    UiThread.RunOnIdle(installButton_Click);
+                };
 
 				skipButton = textImageButtonFactory.Generate(LocalizedString.Get("Skip"));
                 skipButton.Click += new EventHandler(skipButton_Click);
@@ -47,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
         }
 
-        void installButton_Click(object sender, EventArgs mouseEvent)
+        void installButton_Click(object state)
         {
             bool canContinue = this.OnSave();
             if (canContinue)
@@ -111,12 +116,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     {
                         if (Path.GetExtension(fileName).ToUpper() == ".INF")
                         {
-                            var driverInstallerProcess = new Process();
+                            Process driverInstallerProcess = new Process();
                             // Prepare the process to run
                             // Enter in the command line arguments, everything you would enter after the executable name itself
+
                             driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
                             // Enter the executable to run, including the complete path
-                            string printerDriverInstallerExePathAndFileName = Path.Combine(".", "InfInstaller.exe");
+                            string printerDriverInstallerExePathAndFileName = Path.GetFullPath(Path.Combine(".", "InfInstaller.exe"));
 
                             driverInstallerProcess.StartInfo.CreateNoWindow = true;
                             driverInstallerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -126,11 +132,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                             driverInstallerProcess.StartInfo.UseShellExecute = true;
 
                             driverInstallerProcess.Start();
-
                             driverInstallerProcess.WaitForExit();
-
-                            // Retrieve the app's exit code
-                            var exitCode = driverInstallerProcess.ExitCode;
                         }
                         else
                         {
@@ -193,10 +195,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				string printerDriverMessageLabel = LocalizedString.Get("Installing");
 				string printerDriverMessageLabelFull = string.Format("{0}...", printerDriverMessageLabel);
 				printerDriverMessage.Text = printerDriverMessageLabelFull;
-                InstallDriver(this.printerDriverFilePath);
+                foreach (string driverPath in this.driversToInstall)
+                {
+                    InstallDriver(driverPath);
+                }
                 return true;
             }
-            catch
+            catch(Exception)
             {
 				printerDriverMessage.Text = LocalizedString.Get("Sorry, we were unable to install the driver.");
                 return false;

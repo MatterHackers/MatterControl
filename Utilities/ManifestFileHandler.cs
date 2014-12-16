@@ -113,8 +113,7 @@ namespace MatterHackers.MatterControl
         public void SaveAs()
         //Opens Save file dialog and outputs current queue as a project
         {
-			string documentsPath = System.Environment.GetFolderPath (System.Environment.SpecialFolder.Personal);
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.mcp", initialDirectory: documentsPath);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.mcp");
 
 			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
             

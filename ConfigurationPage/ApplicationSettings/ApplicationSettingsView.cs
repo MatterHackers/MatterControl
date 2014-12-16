@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2014, Kevin Pope
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg;
@@ -12,6 +41,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -19,7 +49,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
     {
 		Button languageRestartButton;
         Button configureUpdateFeedButton;
-        Button configureLanguageButton;
 		Button displayControlRestartButton;
         
         public ApplicationSettingsWidget()
@@ -29,15 +58,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             mainContainer.AddChild(GetLanguageControl());
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+            GuiWidget sliceEngineControl = GetSliceEngineControl();
+            if (sliceEngineControl != null
+                &&  ActivePrinterProfile.Instance.ActivePrinter != null)
+            {
+                mainContainer.AddChild(sliceEngineControl);
+                mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+            }
             
 			//Disabled for now (KP)
 			//mainContainer.AddChild(GetDisplayControl());
             //mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
-			#if __ANDROID__
+#if __ANDROID__
 			mainContainer.AddChild(GetModeControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-			#endif
+#endif
 
             mainContainer.AddChild(GetThemeControl()); 
             
@@ -62,9 +98,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             this.linkButtonFactory.fontSize = 11;
-        }
-
-       
+        }       
 
         private FlowLayoutWidget GetThemeControl()
         {
@@ -100,13 +134,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             currentColorThemeBorder.AddChild(currentColorTheme);
 
             ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget(colorToChangeTo: currentColorTheme);
-            themeSelector.Margin = new BorderDouble(right: 5);
-
-            
+            themeSelector.Margin = new BorderDouble(right: 5);            
 
             colorSelectorContainer.AddChild(themeSelector);
-            colorSelectorContainer.AddChild(currentColorThemeBorder);
-            
+            colorSelectorContainer.AddChild(currentColorThemeBorder);            
 
             buttonRow.AddChild(settingLabel);
             buttonRow.AddChild(colorSelectorContainer);
@@ -119,7 +150,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
             buttonRow.Margin = new BorderDouble(top: 4);
-
 
 			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Change Display Mode"));
             settingsLabel.AutoExpandBoundsToText = true;
@@ -135,7 +165,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				RestartApplication();
 			};
 
-
             FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             optionsContainer.Margin = new BorderDouble(bottom: 6);
 
@@ -145,8 +174,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             optionsContainer.AddChild(releaseOptionsDropList);
             optionsContainer.Width = 200;
 
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
+			MenuItem responsizeOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
+            MenuItem touchscreenOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
 
             List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
             string currentUpdateFeedType = UserSettings.Instance.get("ApplicationDisplayMode");
@@ -172,7 +201,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Change Mode"));
+			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Interface Mode"));
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
@@ -180,25 +209,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Standard", maxHeight: 200);
-			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+			StyledDropDownList interfaceModeDropList = new StyledDropDownList("Standard", maxHeight: 200);
+			interfaceModeDropList.HAnchor = HAnchor.ParentLeftRight;
 
-			optionsContainer.AddChild(releaseOptionsDropList);
+			optionsContainer.AddChild(interfaceModeDropList);
 			optionsContainer.Width = 200;
 
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Standard"), "true");
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Advanced"), "false");
+			MenuItem standardModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Standard"), "True");
+			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Advanced"), "False");
 
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "true", "false" };
-			string currentUpdateFeedType = UserSettings.Instance.get("IsSimpleMode");
-
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
-			{
-				UserSettings.Instance.set("IsSimpleMode", "true");
-			}
-
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("IsSimpleMode");
-			releaseOptionsDropList.SelectionChanged += new EventHandler(ModeOptionsDropList_SelectionChanged);
+            interfaceModeDropList.SelectedValue = UserSettings.Instance.Fields.IsSimpleMode.ToString();
+			interfaceModeDropList.SelectionChanged += new EventHandler(InterfaceModeDropList_SelectionChanged);
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -296,6 +317,44 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             return buttonRow;
         }
 
+        private FlowLayoutWidget GetSliceEngineControl()
+        {
+            FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+            buttonRow.HAnchor = HAnchor.ParentLeftRight;
+            buttonRow.Margin = new BorderDouble(top: 4);
+
+            TextWidget settingsLabel = new TextWidget("Slice Engine".Localize());
+            settingsLabel.AutoExpandBoundsToText = true;
+            settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            settingsLabel.VAnchor = VAnchor.ParentTop;
+
+            FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
+            controlsContainer.HAnchor = HAnchor.ParentLeftRight;
+
+            FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            optionsContainer.Margin = new BorderDouble(bottom: 6);
+
+            if (ActiveSliceSettings.Instance.ExtruderCount > 1)
+            {
+                // Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
+                if (ActivePrinterProfile.Instance.ActiveSliceEngineType != ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
+                {
+                    ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+                }
+
+                // don't let the silce engine change if dual extrusion
+                return null;
+            }
+
+            optionsContainer.AddChild(new SliceEngineSelector("Slice Engine".Localize()));
+            optionsContainer.Width = 200;
+
+            buttonRow.AddChild(settingsLabel);
+            buttonRow.AddChild(new HorizontalSpacer());
+            buttonRow.AddChild(optionsContainer);
+            return buttonRow;
+        }
+
         private void AddHandlers()
         {
         }
@@ -316,21 +375,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             });
         }
 
-
         void FixTabDot(object sender, EventArgs e)
         {
             UpdateControlData.Instance.CheckForUpdateUserRequested();
         }
 
-		private void ModeOptionsDropList_SelectionChanged(object sender, EventArgs e)
+		private void InterfaceModeDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
-			if (releaseCode != UserSettings.Instance.get("IsSimpleMode"))
-			{
-				UserSettings.Instance.set("IsSimpleMode", releaseCode);
-				ActiveTheme.Instance.ReloadThemeSettings();
-			}
-		}
+			string isSimpleMode = ((StyledDropDownList)sender).SelectedValue;
+            if (isSimpleMode == "True")
+            {
+                UserSettings.Instance.Fields.IsSimpleMode = true;
+            }
+            else
+            {
+                UserSettings.Instance.Fields.IsSimpleMode = false;
+            }
+            ActiveTheme.Instance.ReloadThemeSettings();
+        }
 
         private void DisplayOptionsDropList_SelectionChanged(object sender, EventArgs e)
         {

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.IO;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SettingsManagement
 {
@@ -52,10 +53,10 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
         public static void SetMakeAndModel(string make, string model)
         {
-			string pathToBedSettings = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "PrinterSettings", make, model, "BedSettings.json");
-			if (File.Exists(pathToBedSettings))
+			string pathToBedSettings = Path.Combine("PrinterSettings", make, model, "BedSettings.json");
+			if (StaticData.Instance.FileExists(pathToBedSettings))
 			{
-				string content = File.ReadAllText(pathToBedSettings);
+				string content = StaticData.Instance.ReadAllText(pathToBedSettings);
 				instance = (BedSettings)Newtonsoft.Json.JsonConvert.DeserializeObject<BedSettings>(content);
 			}
 			else

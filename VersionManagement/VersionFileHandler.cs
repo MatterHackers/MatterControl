@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Utilities;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl
 {
@@ -54,25 +55,23 @@ namespace MatterHackers.MatterControl
 
     class VersionInfoHandler
     {
-        string defaultPathAndFileName;
-
         public VersionInfoHandler()
         {
-            defaultPathAndFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "BuildInfo.txt");   
         }
         
         public VersionInfoContainer ImportVersionInfoFromJson(string loadedFileName = null)
         {
-            if (loadedFileName == null)
+            // TODO: Review all cases below. What happens if we return a default instance of VersionInfoContainer or worse yet, null. It seems likely we end up with a null
+            // reference error when someone attempts to use VersionInfo.Instance and it's invalide. Consider removing the error handing below and throwing an error when
+            // an error condition is found rather than masking it until the user goes to a section that relies on the instance - thus moving detection of the problem to
+            // an earlier stage and expanding the number of cases where it would be noticed.
+            string content = loadedFileName == null ? 
+                    StaticData.Instance.ReadAllText(Path.Combine("BuildInfo.txt")) :
+                    System.IO.File.Exists(loadedFileName) ? System.IO.File.ReadAllText(loadedFileName) : "";
+            
+            if (!string.IsNullOrWhiteSpace(content))
             {
-                loadedFileName = defaultPathAndFileName;
-            }
-
-            if (System.IO.File.Exists(loadedFileName))
-            {
-                StreamReader sr = new System.IO.StreamReader(loadedFileName);
-                VersionInfoContainer versionInfo = (VersionInfoContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(VersionInfoContainer));
-                sr.Close();
+                VersionInfoContainer versionInfo = (VersionInfoContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(content, typeof(VersionInfoContainer));
                 if (versionInfo == null)
                 {
                     return new VersionInfoContainer();
@@ -84,7 +83,5 @@ namespace MatterHackers.MatterControl
                 return null;
             }
         }
-
-        
     }
 }

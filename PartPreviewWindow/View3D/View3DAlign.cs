@@ -35,7 +35,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh;
-using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -67,6 +66,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void alignSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (SelectedMeshGroupIndex == -1)
+            {
+                SelectedMeshGroupIndex = 0;
+            }
             // make sure our thread traslates numbmers correctly (always do this in a thread)
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
@@ -99,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         ScaleRotateTranslate translated = asynchMeshGroupTransforms[meshGroupToMoveIndex];
                         translated.translation *= Matrix4X4.CreateTranslation(deltaRequired);
                         asynchMeshGroupTransforms[meshGroupToMoveIndex] = translated;
-                        saveButtons.Visible = true;
+                        PartHasBeenChanged();
                     }
                 }
             }

@@ -182,9 +182,8 @@ namespace MatterHackers.MatterControl
 
         ImageBuffer LoadUpButtonImage(string imageName)
         {
-            string path = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
             ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-            ImageIO.LoadImageData(path, buffer);
+            StaticData.Instance.LoadIcon(imageName, buffer);
 
             if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
             {
@@ -278,11 +277,6 @@ namespace MatterHackers.MatterControl
             return textImageButton;
         }
 
-        private string GetImageLocation(string imageName)
-        {
-            return Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Icons", imageName);
-        }
-
         private ButtonViewStates getButtonView(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
         {
             if (hoverImageName == null)
@@ -307,7 +301,7 @@ namespace MatterHackers.MatterControl
 
             if (normalImageName != null)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
+                StaticData.Instance.LoadIcon(normalImageName, normalImage);
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(normalImage);
@@ -316,7 +310,7 @@ namespace MatterHackers.MatterControl
 
             if (hoverImageName != null)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
+                StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(pressedImage);
@@ -325,7 +319,7 @@ namespace MatterHackers.MatterControl
 
             if (pressedImageName != null)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(hoverImageName), hoverImage);
+                StaticData.Instance.LoadIcon(hoverImageName, hoverImage);
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(hoverImage);
@@ -334,7 +328,7 @@ namespace MatterHackers.MatterControl
 
             if (disabledImageName != null)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(disabledImageName), disabledImage);
+                StaticData.Instance.LoadIcon(disabledImageName, disabledImage);
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(disabledImage);
@@ -390,7 +384,7 @@ namespace MatterHackers.MatterControl
 
             if (normalImageName != null)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(normalImageName), normalImage);
+                StaticData.Instance.LoadIcon(normalImageName, normalImage);
                 
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
@@ -400,7 +394,7 @@ namespace MatterHackers.MatterControl
 
             if (pressedImageName != null)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(pressedImageName), pressedImage);
+                StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(pressedImage);
@@ -410,7 +404,7 @@ namespace MatterHackers.MatterControl
 
             if (normalToPressedImageName != null)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(normalToPressedImageName), normalToPressedImage);
+                StaticData.Instance.LoadIcon(normalToPressedImageName, normalToPressedImage);
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(normalToPressedImage);
@@ -419,14 +413,12 @@ namespace MatterHackers.MatterControl
 
             if (pressedToNormalImageName != null)
             {
-                ImageIO.LoadImageData(this.GetImageLocation(pressedToNormalImageName), pressedToNormalImage);
+                StaticData.Instance.LoadIcon(pressedToNormalImageName, pressedToNormalImage);
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(pressedToNormalImage);
                 }
             }
-
-
 
             if (invertImageLocation)
             {
@@ -456,8 +448,7 @@ namespace MatterHackers.MatterControl
 
             if (iconImageName != null)
             {
-                iconImage = new ImageBuffer();
-                ImageIO.LoadImageData(this.GetImageLocation(iconImageName), iconImage);
+                iconImage = StaticData.Instance.LoadIcon(iconImageName);
                 if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
                 {
                     InvertLightness.DoInvertLightness(iconImage);

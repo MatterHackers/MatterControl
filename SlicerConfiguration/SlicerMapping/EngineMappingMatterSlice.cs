@@ -236,6 +236,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //supportExtruder=1
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
 
+            new ValuePlusConstant("raftExtruder", "raft_extruder", -1),
+
             //supportLineSpacing=2
             new MapItem("supportLineSpacing", "support_material_spacing"),
 

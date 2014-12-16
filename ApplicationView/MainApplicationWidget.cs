@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseDown(mouseEvent);
-			ApplicationController.Instance.MainView.HideTopContainer();
+			//ApplicationController.Instance.MainView.HideTopContainer();
 		}
 	}
 

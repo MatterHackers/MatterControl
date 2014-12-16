@@ -54,8 +54,9 @@ namespace MatterHackers.Localizations
 
             if (MatterControlTranslationMap == null)
             {
-                string pathToTranslationsFolder = Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "Translations");
-                MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
+                // The translation map is now written to disk in the AppUserDataPath
+                // TODO: Write tools to collect changes to this file and push them to a shared server for merging into the main Master.txt file 
+                MatterControlTranslationMap = new TranslationMap(ApplicationDataStorage.Instance.ApplicationUserDataPath, language);
             }
 #if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG
             return "El " + englishText + " o";

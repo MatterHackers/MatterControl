@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.ActionBar
         protected override void SetTargetTemperature()
         {
             double targetTemp;
-            if (double.TryParse(ActiveSliceSettings.Instance.GetActiveValue("first_layer_bed_temperature"), out targetTemp))
+            if (double.TryParse(ActiveSliceSettings.Instance.GetActiveValue("bed_temperature"), out targetTemp))
             {
                 double goalTemp = (int)(targetTemp + .5);
                 if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting

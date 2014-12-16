@@ -1,0 +1,1070 @@
+[
+  {
+    "SlicerConfigName": "avoid_crossing_perimeters",
+    "PresentationName": "Avoid Crossing Perimeters",
+    "HelpText": "Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "bed_shape",
+    "PresentationName": "Bed Shape",
+    "HelpText": "The shape of the physical print bed.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "rectangular,circular"
+  },
+  {
+    "SlicerConfigName": "bed_size",
+    "PresentationName": "Bed Size",
+    "HelpText": "The size of the print bed.",
+    "DataEditType": "VECTOR2",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "bed_temperature",
+    "PresentationName": "Bed Temperature",
+    "HelpText": "The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "bottom_clip_amount",
+    "PresentationName": "Bottom Clip",
+    "HelpText": "The amount to remove from the bottom of the model",
+    "DataEditType": "DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "bottom_solid_layers",
+    "PresentationName": "Number of Solid Layers\\n on the Bottom:",
+    "HelpText": "How many layers will be solid filled on the bottom surfaces of the object.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "bridge_acceleration",
+    "PresentationName": "Bridge",
+    "HelpText": "Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s�"
+  },
+  {
+    "SlicerConfigName": "bridge_fan_speed",
+    "PresentationName": "Bridging Fan Speed",
+    "HelpText": "The fan speed to use during bridging.",
+    "DataEditType": "INT",
+    "ExtraSettings": "%"
+  },
+  {
+    "SlicerConfigName": "bridge_flow_ratio",
+    "PresentationName": "Bridge Flow Ratio",
+    "HelpText": "This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "bridge_speed",
+    "PresentationName": "Bridges",
+    "HelpText": "The speed to move when bridging between walls.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "brim_width",
+    "PresentationName": "Brim Width",
+    "HelpText": "The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "build_height",
+    "PresentationName": "Build Height",
+    "HelpText": "The height of the printable area. If set to 0 the parts height will not be validated.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "cancel_gcode",
+    "PresentationName": "Cancel G-Code",
+    "HelpText": "This gcode will be inserted when the print is canceled.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "center_part_on_bed",
+    "PresentationName": "Center On Bed",
+    "HelpText": "This will cause the print to be centered on the bed. Disable this if you know your models have been created where you want them to print.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "complete_objects",
+    "PresentationName": "Complete Individual Objects",
+    "HelpText": "Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "cool_extruder_lift",
+    "PresentationName": "Enable Extruder Lift",
+    "HelpText": "Moves the extruder up off the part to allow cooling.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "cooling",
+    "PresentationName": "Enable Auto Cooling",
+    "HelpText": "Turns on and off all cooling settings (all settings below this one).",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "create_raft",
+    "PresentationName": "Create Raft",
+    "HelpText": "Turns on and off the creation of a raft which can help parts adhear to the bed.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "raft_extra_distance_around_part",
+    "PresentationName": "Expand Distance",
+    "HelpText": "The extra distance the raft will extend around the part.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "raft_air_gap",
+    "PresentationName": "Air Gap",
+    "HelpText": "The distance between the first layer and the top of the raft. A good value is typically about 1/2 your extrusion diameter. So, between 0.0 and .2 for a .4 nozzle.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "raft_fan_speed_percent",
+    "PresentationName": "Fan Speed",
+    "HelpText": "The speed to run the fan during the printing of the raft, 0 will leave the fan off.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "%"
+  },
+  {
+    "SlicerConfigName": "raft_print_speed",
+    "PresentationName": "Raft",
+    "HelpText": "The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm/s or %"
+  },
+  {
+    "SlicerConfigName": "default_acceleration",
+    "PresentationName": "Default",
+    "HelpText": "Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s�"
+  },
+  {
+    "SlicerConfigName": "disable_fan_first_layers",
+    "PresentationName": "Disable Fan For The First",
+    "HelpText": "The number of layers for which the fan will be forced to remain off.",
+    "DataEditType": "INT",
+    "ExtraSettings": "Layers"
+  },
+  {
+    "SlicerConfigName": "end_gcode",
+    "PresentationName": "End G-Code",
+    "HelpText": "This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "external_perimeter_speed",
+    "PresentationName": "Outside Perimeter",
+    "HelpText": "The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Perimeters speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm/s or %"
+  },
+  {
+    "SlicerConfigName": "external_perimeters_first",
+    "PresentationName": "External Perimeters First",
+    "HelpText": "Normally external perimeters are printed last, this makes them go first.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "extra_perimeters",
+    "PresentationName": "Generate Extra Perimeters\\n When Needed:",
+    "HelpText": "Allow slicer to generate extra perimeters when needed for sloping walls.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "extruder_clearance_height",
+    "PresentationName": "Extruder Clearance Height",
+    "HelpText": "This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "extruder_clearance_radius",
+    "PresentationName": "Extruder Clearance Radius",
+    "HelpText": "This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "extruder_count",
+    "PresentationName": "Extruder Count",
+    "HelpText": "The number of extruders this machine has.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "extruder_offset",
+    "PresentationName": "Extruder Offset",
+    "HelpText": "This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.",
+    "DataEditType": "OFFSET2",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "extruders_share_temperature",
+    "PresentationName": "Share Temperature",
+    "HelpText": "Set this if the extruders run off the same heater, if there is only one heater.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "extrusion_axis",
+    "PresentationName": "Extrusion Axis",
+    "HelpText": "This is the identifier used in the gcode to specify the extruder.",
+    "DataEditType": "STRING",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "extrusion_multiplier",
+    "PresentationName": "Extrusion Multiplier",
+    "HelpText": "All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "extrusion_width",
+    "PresentationName": "Default Extrusion Width",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %\\nleave 0 for auto"
+  },
+  {
+    "SlicerConfigName": "fan_always_on",
+    "PresentationName": "Keep Fan Always On",
+    "HelpText": "This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "fan_below_layer_time",
+    "PresentationName": "Enable Fan If Layer\\nPrint Time Is Below",
+    "HelpText": "If a layer is estimated to take less than this to print, the fan will be turned on.",
+    "DataEditType": "INT",
+    "ExtraSettings": "Seconds"
+  },
+  {
+    "SlicerConfigName": "filament_diameter",
+    "PresentationName": "Diameter",
+    "HelpText": "This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "fill_angle",
+    "PresentationName": "Starting Angle",
+    "HelpText": "Sets the starting angle of the infill. Not used when bridging.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "fill_density",
+    "PresentationName": "Fill Density",
+    "HelpText": "The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "Ratio\n(0 to 1)",
+    "QuickMenuSettings": [{"MenuName" : "Light", "Value": "10%"},{"MenuName" : "Standard", "Value": "30%"},{"MenuName" : "Heavy", "Value": "90%"}]
+  },
+  {
+    "SlicerConfigName": "fill_pattern",
+    "PresentationName": "Fill Pattern",
+    "HelpText": "The pattern used on the inside portions of the print.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "rectilinear,line,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral"
+  },
+  {
+    "SlicerConfigName": "first_layer_acceleration",
+    "PresentationName": "First Layer",
+    "HelpText": "Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.",
+    "DataEditType": "DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "first_layer_bed_temperature",
+    "PresentationName": "Bed First Layer",
+    "HelpText": "The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.",
+    "DataEditType": "DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "first_layer_extrusion_width",
+    "PresentationName": "First Layer",
+    "HelpText": "Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %\\nleave 0 for default"
+  },
+  {
+    "SlicerConfigName": "first_layer_height",
+    "PresentationName": "First Layer Height",
+    "HelpText": "Sets the height of the first layer. It is often desirable to print a taller first layer to ensure a good solid adhesion to the build plate.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %"
+  },
+  {
+    "SlicerConfigName": "first_layer_speed",
+    "PresentationName": "First Layer Speed",
+    "HelpText": "The speed to move while printing the first layer.  If expressed as a percentage it will modify the corresponding speed set above.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm/s or %"
+  },
+  {
+    "SlicerConfigName": "first_layer_temperature",
+    "PresentationName": "Extrude First Layer",
+    "HelpText": "The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "g0",
+    "PresentationName": "Use G0",
+    "HelpText": "Use G0 for moves rather than G1.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "gap_fill_speed",
+    "PresentationName": "Gap Fill",
+    "HelpText": "Speed to fill small gaps. Keep low to avoid vibration. Set to 0 to skip filling small gaps.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "gcode_arcs",
+    "PresentationName": "Use Arcs",
+    "HelpText": "Use firmware arcs rather than multiple segments for curves.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "gcode_comments",
+    "PresentationName": "Verbose G-Code",
+    "HelpText": "Include detailed comments in the gcode.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "gcode_flavor",
+    "PresentationName": "G-Code Flavor",
+    "HelpText": "Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "reprap,teacup,makerbot,sailfish,mach3_ecm,no_extrusion"
+  },
+  {
+    "SlicerConfigName": "gcode_output_type",
+    "PresentationName": "G-Code Output",
+    "HelpText": "Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "REPRAP,ULTIGCODE,MAKERBOT,BFB,MACH3"
+  },
+  {
+    "SlicerConfigName": "has_fan",
+    "PresentationName": "Has Fan",
+    "HelpText": "Specify if your printer has a fan.",
+    "DataEditType": "HARDWARE_PRESENT",
+    "ExtraSettings": "bridge_fan_speed,disable_fan_first_layers,fan_always_on,fan_below_layer_time,max_fan_speed,min_fan_speed"
+  },
+  {
+    "SlicerConfigName": "has_heated_bed",
+    "PresentationName": "Has Heated Bed",
+    "HelpText": "Specify if your printer has a heated bed.",
+    "DataEditType": "HARDWARE_PRESENT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "has_sd_card_reader",
+    "PresentationName": "Has SD Card Reader",
+    "HelpText": "Specify if your printer has the ability to plug in an SD card.",
+    "DataEditType": "HARDWARE_PRESENT",
+    "ExtraSettings": "bed_temperature,first_layer_bed_temperature"
+  },
+  {
+    "SlicerConfigName": "infill_acceleration",
+    "PresentationName": "Infill",
+    "HelpText": "Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s�"
+  },
+  {
+    "SlicerConfigName": "infill_every_layers",
+    "PresentationName": "Infill Every",
+    "HelpText": "Sets which layers will receive infill. This should normally stay set to 1 to make strong parts.",
+    "DataEditType": "INT",
+    "ExtraSettings": "layers"
+  },
+  {
+    "SlicerConfigName": "infill_extruder",
+    "PresentationName": "Infill Extruder",
+    "HelpText": "The index of the extruder to use for infill.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "infill_extrusion_width",
+    "PresentationName": "Infill",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %\\nleave 0 for default"
+  },
+  {
+    "SlicerConfigName": "infill_first",
+    "PresentationName": "Do Infill Before Perimeters",
+    "HelpText": "Sets infill to happen before perimeters are created.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "infill_only_where_needed",
+    "PresentationName": "Only Infill Where Needed",
+    "HelpText": "Creates infill only where it will be used as internal support.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "infill_overlap_perimeter",
+    "PresentationName": "Infill Overlap",
+    "HelpText": "The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "infill_speed",
+    "PresentationName": "Infill",
+    "HelpText": "The speed to print infill.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "infill_type",
+    "PresentationName": "Infill Type",
+    "HelpText": "The type of support to create inside of parts.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "CONCENTRIC,GRID,LINES,TRIANGLES"
+  },
+  {
+    "SlicerConfigName": "layer_gcode",
+    "PresentationName": "Layer Change G-Code",
+    "HelpText": "This gcode will be inserted right after the change in z height for the next layer.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "layer_height",
+    "PresentationName": "Layer Height",
+    "HelpText": "Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm",
+    "QuickMenuSettings": [{"MenuName" : "Fine", "Value": "0.1"},{"MenuName" : "Standard", "Value": "0.2"},{"MenuName" : "Coarse", "Value": "0.3"}]
+  },
+  {
+    "SlicerConfigName": "max_fan_speed",
+    "PresentationName": "Max Fan Speed",
+    "HelpText": "This is the maximum speed that your fan can run at.",
+    "DataEditType": "INT",
+    "ExtraSettings": "%"
+  },
+  {
+    "SlicerConfigName": "min_extrusion_before_retract",
+    "PresentationName": "Minimum Extrusion\\nRequiring Retraction",
+    "HelpText": "This is the minimum amount of filament that must be extruded before a retraction can occur.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "min_fan_speed",
+    "PresentationName": "Minimum Fan Speed",
+    "HelpText": "This is the minimum fan speed that your fan can run at.",
+    "DataEditType": "INT",
+    "ExtraSettings": "%"
+  },
+  {
+    "SlicerConfigName": "min_print_speed",
+    "PresentationName": "Minimum Print Speed",
+    "HelpText": "This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "min_skirt_length",
+    "PresentationName": "Minimum Extrusion Length",
+    "HelpText": "Sets the minimum amount of filament to use drawing the skirt loops. This will cause at least enough skirt loops to be drawn to use this amount of filament.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "notes",
+    "PresentationName": "notes",
+    "HelpText": "These notes will be added as comments in the header of the output gcode.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "nozzle_diameter",
+    "PresentationName": "Nozzle Diameter",
+    "HelpText": "This is the diameter of your extruder nozzle.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "only_retract_when_crossing_perimeters",
+    "PresentationName": "Only Retract When\\n Crossing Perimeters",
+    "HelpText": "Prevents retraction while within a printing perimeter.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "ooze_prevention",
+    "PresentationName": "Enable",
+    "HelpText": "This will lower the temperature of the non-printing extruder to help prevent oozing.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "overhangs",
+    "PresentationName": "Optimize Overhangs",
+    "HelpText": "Experimental feature that attempts to improve overhangs using the fan and bridge settings.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "output_filename_format",
+    "PresentationName": "Output File Name Format",
+    "HelpText": "Sets the way that slicer creates file names (this is not used by MatterControl).",
+    "DataEditType": "STRING",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "pause_gcode",
+    "PresentationName": "Pause G-Code",
+    "HelpText": "This gcode will be inserted when the printer is paused.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "perimeter_acceleration",
+    "PresentationName": "Perimeters",
+    "HelpText": "Acceleration to use on perimeters. Set to 0 to disable changing the printer's acceleration.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s�"
+  },
+  {
+    "SlicerConfigName": "perimeter_extruder",
+    "PresentationName": "Perimeter Extruder",
+    "HelpText": "The index of the extruder to use for perimeters.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "perimeter_extrusion_width",
+    "PresentationName": "Perimeters",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %\\nleave 0 for default"
+  },
+  {
+    "SlicerConfigName": "perimeter_speed",
+    "PresentationName": "Inside Perimeters",
+    "HelpText": "Sets the default movement speed while printing inside perimeters.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "perimeters",
+    "PresentationName": "Perimeters (minimum)",
+    "HelpText": "The number of external layers or shells to create.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "post_process",
+    "PresentationName": "Post-Processing Scripts",
+    "HelpText": "You can include additional programs to process the gcode after slicer is finished. The complete path of the program to run should be included here.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "print_center",
+    "PresentationName": "Print Center",
+    "HelpText": "The position (coordinates) of the center of the print bed.",
+    "DataEditType": "VECTOR2",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "raft_layers",
+    "PresentationName": "Raft Layers",
+    "HelpText": "Number of layers to print before printing any parts.",
+    "DataEditType": "INT",
+    "ExtraSettings": "layers"
+  },
+  {
+    "SlicerConfigName": "randomize_start",
+    "PresentationName": "Randomize Starting Points",
+    "HelpText": "Start each new layer from a different vertex to reduce seams.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "resume_gcode",
+    "PresentationName": "Resume G-Code",
+    "HelpText": "This gcode will be inserted when the printer is resumed.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "retract_before_travel",
+    "PresentationName": "Minimum Travel\\nRequiring Retraction",
+    "HelpText": "The minimum distance of a non-printing move that will result in a retraction.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "retract_layer_change",
+    "PresentationName": "Retract on Layer Change",
+    "HelpText": "If set, a retraction will occur prior to changing the layer height.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "retract_length",
+    "PresentationName": "Length on Move",
+    "HelpText": "The amount that the filament will be reversed after each qualifying non-printing move.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "retract_length_tool_change",
+    "PresentationName": "Length on Tool Change",
+    "HelpText": "The amount that the filament will be reversed before changing to a new tool.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "retract_lift",
+    "PresentationName": "Z Lift",
+    "HelpText": "The amount the extruder head will be lifted after each retraction.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "retract_restart_extra_toolchange",
+    "PresentationName": "Length",
+    "HelpText": "The amount the filament will be retracted when changing to a different extruder.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm\\nzero to disable"
+  },
+  {
+    "SlicerConfigName": "retract_restart_extra",
+    "PresentationName": "Extra Length On Restart",
+    "HelpText": "Additional amount of filament that will be extruded after a retraction.",
+    "DataEditType": "DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "retract_restart_extra",
+    "PresentationName": "Extra Length On Restart",
+    "HelpText": "The amount of extra extrusion that will occur when an extruder is selected.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "retract_speed",
+    "PresentationName": "Speed",
+    "HelpText": "The speed that the filament will be retracted (and re-extruded).",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "repair_outlines_extensive_stitching",
+    "PresentationName": "Connect Bad Edges",
+    "HelpText": "Try to connect mesh edges when the actual mesh data is not all the way connected.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "repair_outlines_keep_open",
+    "PresentationName": "Close Polygons",
+    "HelpText": "Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "resolution",
+    "PresentationName": "Resolution",
+    "HelpText": "The minimum feature size to consider from the model. Leave at 0 to use all the model detail.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "skirt_distance",
+    "PresentationName": "Distance from Object",
+    "HelpText": "The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm",
+    "QuickMenuSettings": [{"MenuName" : "Touching", "Value": "0"},{"MenuName" : "Standard", "Value": "3"},{"MenuName" : "Far", "Value": "10"}]
+  },
+  {
+    "SlicerConfigName": "skirt_height",
+    "PresentationName": "Skirt Height",
+    "HelpText": "The number of layers to draw the skirt.",
+    "DataEditType": "INT",
+    "ExtraSettings": "layers"
+  },
+  {
+    "SlicerConfigName": "skirts",
+    "PresentationName": "Loops",
+    "HelpText": "The number of loops to draw around all the parts on the bed.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "slowdown_below_layer_time",
+    "PresentationName": "Slow Down If Layer Print\\nTime Is Below",
+    "HelpText": "If a layer is estimated to take less than this to print, the movement speed will be reduced to try and make the layer take this long to print.",
+    "DataEditType": "INT",
+    "ExtraSettings": "Seconds"
+  },
+  {
+    "SlicerConfigName": "small_perimeter_speed",
+    "PresentationName": "Small Perimeters",
+    "HelpText": "Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm/s or %"
+  },
+  {
+    "SlicerConfigName": "solid_fill_pattern",
+    "PresentationName": "Top/Bottom Fill Pattern",
+    "HelpText": "The pattern used on the bottom and top layers of the print.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "rectilinear,concentric,hilbertcurve,achimedeancords,octagramspiral"
+  },
+  {
+    "SlicerConfigName": "solid_infill_below_area",
+    "PresentationName": "Solid Infill Threshold Area",
+    "HelpText": "Forces solid infill for any area less than this amount.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm2"
+  },
+  {
+    "SlicerConfigName": "solid_infill_every_layers",
+    "PresentationName": "Solid Infill Every",
+    "HelpText": "Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.",
+    "DataEditType": "INT",
+    "ExtraSettings": "layers"
+  },
+  {
+    "SlicerConfigName": "solid_infill_extrusion_width",
+    "PresentationName": "Solid Infill",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %\\nleave 0 for default"
+  },
+  {
+    "SlicerConfigName": "solid_infill_speed",
+    "PresentationName": "Solid Infill",
+    "HelpText": "The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "spiral_vase",
+    "PresentationName": "Spiral Vase",
+    "HelpText": "Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "standby_temperature_delta",
+    "PresentationName": "Temp Lower Amount",
+    "HelpText": "This is the amount to lower the temperature of an extruder that is not currently printing.",
+    "DataEditType": "DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "start_gcode",
+    "PresentationName": "Start G-Code",
+    "HelpText": "This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "start_perimeters_at_concave_points",
+    "PresentationName": "Start At Concave Points",
+    "HelpText": "Make sure the first point on a perimeter is a concave point.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "start_perimeters_at_non_overhang",
+    "PresentationName": "Start At Non Overhang",
+    "HelpText": "Make sure the first point on a perimeter is not an overhang.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "support_material_angle",
+    "PresentationName": "Starting Angle",
+    "HelpText": "The starting angle of the supports.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "support_material_infill_angle",
+    "PresentationName": "Infill Angle",
+    "HelpText": "The angle the support infill will be drawn.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "support_material_create_internal_support",
+    "PresentationName": "Support Everywhere",
+    "HelpText": "If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "support_material_enforce_layers",
+    "PresentationName": "Enforce Support For First",
+    "HelpText": "Generate support material everywhere not touching the bed for n layers, regardless of angle.",
+    "DataEditType": "INT",
+    "ExtraSettings": "layers"
+  },
+  {
+    "SlicerConfigName": "support_material_extruder",
+    "PresentationName": "Support Material Extruder",
+    "HelpText": "The index of the extruder to use for support material.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "raft_extruder",
+    "PresentationName": "Raft Extruder",
+    "HelpText": "The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "support_material_extrusion_width",
+    "PresentationName": "Support Material",
+    "HelpText": "You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %"
+  },
+  {
+    "SlicerConfigName": "support_material_interface_extruder",
+    "PresentationName": "Support Interface Extruder",
+    "HelpText": "The index of the extruder to use for support material interface layers.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "support_material_interface_layers",
+    "PresentationName": "Interface Layers",
+    "HelpText": "The number of layers to print between the supports and the part.",
+    "DataEditType": "INT",
+    "ExtraSettings": "layers"
+  },
+  {
+    "SlicerConfigName": "support_material_interface_spacing",
+    "PresentationName": "Interface Pattern Spacing",
+    "HelpText": "The space between lines of the interface layers (0 is solid).",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "support_material_pattern",
+    "PresentationName": "Pattern",
+    "HelpText": "The pattern used while generating support material.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "rectilinear,rectilinear-grid,honeycomb"
+  },
+  {
+    "SlicerConfigName": "support_material_spacing",
+    "PresentationName": "Pattern Spacing",
+    "HelpText": "The space between the lines of the support material.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "support_material_speed",
+    "PresentationName": "Support Material",
+    "HelpText": "The speed to print support material structures.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "support_material_threshold",
+    "PresentationName": "Amount",
+    "HelpText": "The last angle at which support material will be generated. Larger numbers will result in more support.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees",
+    "QuickMenuSettings": [{"MenuName" : "Minimum", "Value": "20"},{"MenuName" : "Standard", "Value": "45"},{"MenuName" : "All", "Value": "90"}]
+  },
+  {
+    "SlicerConfigName": "support_material_xy_distance",
+    "PresentationName": "X and Y Distance",
+    "HelpText": "The distance the support material will be from the object in the x and y direction.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "support_material_z_distance",
+    "PresentationName": "Z Distance",
+    "HelpText": "The distance the support material will be from the object in the z direction.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "support_material_z_gap_layers",
+    "PresentationName": "Z Gap",
+    "HelpText": "The number of layers to skip in z. The gap between the support and the model.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "support_material",
+    "PresentationName": "Generate Support Material",
+    "HelpText": "This turns on and off the generation of support material.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "support_type",
+    "PresentationName": "Support Type",
+    "HelpText": "The type of support to create for surfaces that need it.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "GRID,LINES"
+  },
+  {
+    "SlicerConfigName": "temperature",
+    "PresentationName": "Extruder Temperature",
+    "HelpText": "The default temperature to set the extruder to. Can sometimes be overridden on the first layer.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "thin_walls",
+    "PresentationName": "Thin Walls",
+    "HelpText": "Detect when walls are too close together and need to be extruded as just one wall.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "threads",
+    "PresentationName": "Threads",
+    "HelpText": "The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "toolchange_gcode",
+    "PresentationName": "Tool Change G-Code",
+    "HelpText": "This gcode will be inserted after every tool change.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "top_infill_extrusion_width",
+    "PresentationName": "Top Solid Infill",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm or %\\nleave 0 for default"
+  },
+  {
+    "SlicerConfigName": "top_solid_infill_speed",
+    "PresentationName": "Top Solid Infill",
+    "HelpText": "The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "top_solid_layers",
+    "PresentationName": "Number of Solid Layers\\n on the Top:",
+    "HelpText": "How many layers will be solid filled on the top surfaces of the object.",
+    "DataEditType": "INT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "travel_speed",
+    "PresentationName": "Travel",
+    "HelpText": "Speed to move when not extruding material.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm/s"
+  },
+  {
+    "SlicerConfigName": "use_firmware_retraction",
+    "PresentationName": "Use Firmware Retraction",
+    "HelpText": "Request the firmware to do retractions rather than specify the extruder movements directly.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "use_relative_e_distances",
+    "PresentationName": "Use Relative E Distances",
+    "HelpText": "Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "vibration_limit",
+    "PresentationName": "Vibration Limit",
+    "HelpText": "This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.",
+    "DataEditType": "INT",
+    "ExtraSettings": "Hz"
+  },
+  {
+    "SlicerConfigName": "wipe",
+    "PresentationName": "Wipe Before Retract",
+    "HelpText": "This will cause the extruder to move while retracting to minimize blobs.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "wipe_shield_distance",
+    "PresentationName": "Wipe Shield Distance",
+    "HelpText": "If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "wipe_tower_size",
+    "PresentationName": "Wipe Tower Size",
+    "HelpText": "If greater than 0, this is the X by Y size of a tower to use to when changing extruders",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "z_can_be_negative",
+    "PresentationName": "Z Can Be Negative",
+    "HelpText": "Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "z_offset",
+    "PresentationName": "Z Offset",
+    "HelpText": "This value will be added to all of the z positions of the created gcode.",
+    "DataEditType": "OFFSET",
+    "ExtraSettings": "mm"
+  }
+]

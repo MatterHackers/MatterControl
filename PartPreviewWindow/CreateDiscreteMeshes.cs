@@ -114,11 +114,11 @@ namespace MatterHackers.MatterControl
                                     List<Vertex> faceVertices = new List<Vertex>();
                                     foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
                                     {
-                                        Vertex newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, true, true);
+                                        Vertex newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
                                         faceVertices.Add(newVertex);
                                     }
 
-                                    meshFromCurrentVolume.CreateFace(faceVertices.ToArray(), true);
+                                    meshFromCurrentVolume.CreateFace(faceVertices.ToArray(), CreateOption.CreateNew);
                                 }
                             }
                         }
