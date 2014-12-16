@@ -840,13 +840,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 || (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(speedSetting)
                 && speedToCheck <= 0))
             {
-                string error = string.Format("The '{0}' must be greater than 0.", SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting).PresentationName);
-                string details = string.Format("It is currently set to {0}.", actualSpeedValueString);
-                string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'";
-                StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);                
+                if (data != null)
+                {                   
+                    string error = string.Format("The '{0}' must be greater than 0.", data.PresentationName);
+                    string details = string.Format("It is currently set to {0}.", actualSpeedValueString);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'";
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");     
+                }               
                 return false;
             }
-
             return true;
         }
     }

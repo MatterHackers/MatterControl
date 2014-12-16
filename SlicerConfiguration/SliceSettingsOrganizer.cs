@@ -268,8 +268,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     return settingData;
                 }
             }
-
-            throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
+            return null;
+            //GD-Turning into non-fatal exception 12/12/14
+            //throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
         }
 
         void LoadAndParseSettingsFiles()
@@ -310,7 +311,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             break;
 
                         case 8:
-                            subGroupToAddTo.SettingDataList.Add(GetSettingsData(line.Replace('"', ' ').Trim()));
+                            OrganizerSettingsData data = GetSettingsData(line.Replace('"', ' ').Trim());
+                            if (data != null)
+                            {
+                                subGroupToAddTo.SettingDataList.Add(data);
+                            }
+
                             break;
 
                         default:
