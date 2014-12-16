@@ -44,19 +44,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PartPreviewContent : GuiWidget
 	{
         event EventHandler unregisterEvents;
+
         View3DWidget partPreviewView;
 		ViewGcodeBasic viewGcodeBasic;
 		TabControl tabControl;
 		TabPage layerView;
 		View3DWidget.AutoRotate autoRotate3DView;
-		bool openInEditMode;
-		bool widgetIsEmbedded;
+        View3DWidget.OpenMode openMode;
+		View3DWidget.WindowMode windowMode;
 
-		public PartPreviewContent(PrintItemWrapper printItem, bool widgetIsEmbedded, View3DWidget.AutoRotate autoRotate3DView, bool openInEditMode = false)
+        public PartPreviewContent(PrintItemWrapper printItem, View3DWidget.WindowMode windowMode, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
-			this.openInEditMode = openInEditMode;
+			this.openMode = openMode;
 			this.autoRotate3DView = autoRotate3DView;
-			this.widgetIsEmbedded = widgetIsEmbedded;
+			this.windowMode = windowMode;
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.AnchorAll();
@@ -88,16 +89,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 
-			View3DWidget.WindowType viewType;
 			bool showCloseButton;
-			if (widgetIsEmbedded)
+            if (windowMode == View3DWidget.WindowMode.StandAlone)
 			{
-				viewType = View3DWidget.WindowType.Embeded;
 				showCloseButton = false;
 			}
 			else
 			{
-				viewType = View3DWidget.WindowType.StandAlone;
 				showCloseButton = true;
 			}
 
@@ -111,9 +109,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
 					ActiveSliceSettings.Instance.BedCenter,
 					ActiveSliceSettings.Instance.BedShape,
-					viewType,
+                    windowMode,
 					autoRotate3DView,
-					openInEditMode);
+                    openMode);
 
                 partPreviewView.Closed += (sender, e) =>
                 {

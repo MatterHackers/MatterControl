@@ -60,9 +60,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public partial class View3DWidget : PartPreview3DWidget
     {
+        EventHandler unregisterEvents;
+        public enum WindowMode { Embeded, StandAlone };
+        public enum AutoRotate { Enabled, Disabled };
+        public enum OpenMode { Viewing, Editing }
+
         readonly int EditButtonHeight = 44;
 
-        public WindowType windowType { get; set; }
+        public WindowMode windowType { get; set; }
+
+        Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
+        MeshSelectInfo meshSelectInfo;
 
         EventHandler SelectionChanged;
         UpArrow3D upArrow;
@@ -202,8 +210,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             return false;
         }
 
-        Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-        MeshSelectInfo meshSelectInfo;
         public override void OnMouseDown(MouseEventArgs mouseEvent)
         {
             autoRotating = false;
@@ -323,8 +329,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnMouseUp(mouseEvent);
         }
 
-        EventHandler unregisterEvents;
-
         public override void OnClosed(EventArgs e)
         {
             if (unregisterEvents != null)
@@ -335,10 +339,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             base.OnClosed(e);
         }
 
-        public enum WindowType { Embeded, StandAlone };
-        public enum AutoRotate { Enabled, Disabled };
-
-        public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowType windowType, AutoRotate autoRotate, bool openInEditMode = false)
+        public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
         {
             this.windowType = windowType;
             allowAutoRotate = (autoRotate == AutoRotate.Enabled);
@@ -536,7 +537,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             leftRightSpacer.HAnchor = HAnchor.ParentLeftRight;
             buttonBottomPanel.AddChild(leftRightSpacer);
 
-            if (windowType == WindowType.StandAlone)
+            if (windowType == WindowMode.StandAlone)
             {
                 Button closeButton = textImageButtonFactory.Generate("Close".Localize());
                 buttonBottomPanel.AddChild(closeButton);
@@ -575,15 +576,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             UiThread.RunOnIdle(AutoSpin);
 
-            if (printItemWrapper == null && windowType == WindowType.Embeded)
+            if (printItemWrapper == null && windowType == WindowMode.Embeded)
             {
                 enterEditButtonsContainer.Visible = false;
             }
 
-            if (windowType == WindowType.Embeded)
+            if (windowType == WindowMode.Embeded)
             {
                 PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
-                if (windowType == WindowType.Embeded)
+                if (windowType == WindowMode.Embeded)
                 {
                     // make sure we lock the controls if we are printing or paused
                     switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
@@ -598,7 +599,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
-            if (openInEditMode)
+            if (openMode == OpenMode.Editing)
             {
                 UiThread.RunOnIdle((state) =>
                 {
@@ -641,7 +642,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
         {
-            if (windowType == WindowType.Embeded)
+            if (windowType == WindowMode.Embeded)
             {
                 switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
                 {
@@ -859,7 +860,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         void meshViewerWidget_LoadDone(object sender, EventArgs e)
         {
-            if (windowType == WindowType.Embeded)
+            if (windowType == WindowMode.Embeded)
             {
                 switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
                 {

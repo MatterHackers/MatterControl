@@ -45,17 +45,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     {
         event EventHandler unregisterEvents;
         PartPreviewContent partPreviewWidget;
-        bool OpenInEditMode;
 
-        public PartPreviewMainWindow(PrintItemWrapper printItem, View3DWidget.AutoRotate autoRotate3DView, bool openInEditMode = false)
+        public PartPreviewMainWindow(PrintItemWrapper printItem, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
             : base(690, 340)
         {
             UseOpenGL = true;
-            this.OpenInEditMode = openInEditMode;
             string partPreviewTitle = LocalizedString.Get("MatterControl");
             Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
 
-			partPreviewWidget = new PartPreviewContent(printItem, false, autoRotate3DView, openInEditMode);
+            partPreviewWidget = new PartPreviewContent(printItem, View3DWidget.WindowMode.StandAlone, autoRotate3DView, openMode);
             partPreviewWidget.Closed += (sender, e) => 
             {
                 Close(); 
