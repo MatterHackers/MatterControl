@@ -26,8 +26,9 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+//#define DO_IN_PLACE_EDIT
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -508,6 +509,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
+#if DO_IN_PLACE_EDIT        
+        public static int SettingsIndexBeingEdited = 0;
+#endif
         private GuiWidget CreateSettingInfoUIControls(OrganizerSettingsData settingData, double minSettingNameWidth, int extruderIndex)
         {
             GuiWidget container = new GuiWidget();
@@ -544,6 +548,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     TextWidget settingName = new TextWidget(convertedNewLines, pointSize:10);
                     settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                     settingName.VAnchor = Agg.UI.VAnchor.ParentCenter;
+
+#if DO_IN_PLACE_EDIT
+                    if (SettingsIndexBeingEdited != 0)
+                    {
+                        if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, SettingsIndexBeingEdited))
+                        {
+                            CheckBox removeFromSettingCheckBox = new CheckBox("");
+                            removeFromSettingCheckBox.Checked = true;
+                            removeFromSettingCheckBox.VAnchor = VAnchor.ParentCenter;
+                            leftToRightLayout.AddChild(removeFromSettingCheckBox);
+                        }
+                        else
+                        {
+                            CheckBox addToSettingCheckBox = new CheckBox("");
+                            addToSettingCheckBox.VAnchor = VAnchor.ParentCenter;
+                            leftToRightLayout.AddChild(addToSettingCheckBox);
+                        }
+                    }
+#endif
 
                     if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
                     {
@@ -928,8 +951,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 container.AddChild(overlay);
                 container.AddChild(clickToEdit);
             }
-
-
 
             return container;
         }
