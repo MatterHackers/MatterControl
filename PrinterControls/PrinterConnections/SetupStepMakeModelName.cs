@@ -26,6 +26,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         TextWidget printerNameError;
         TextWidget printerModelError;
         TextWidget printerMakeError;
+
+        PrinterChooser printerManufacturerSelector;
         
         Button nextButton;
 
@@ -37,7 +39,20 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             //Construct inputs
             printerNameContainer = createPrinterNameContainer();
             printerMakeContainer = createPrinterMakeContainer();
-            printerModelContainer = createPrinterModelContainer();
+
+
+            if (printerManufacturerSelector.CountOfMakes == 1)
+            {
+                ActivePrinter.Make = printerManufacturerSelector.ManufacturerDropList.SelectedValue;
+
+                printerMakeContainer.Visible = false;
+                printerModelContainer = createPrinterModelContainer(printerManufacturerSelector.ManufacturerDropList.SelectedValue);
+                printerModelContainer.Visible = true;
+            }
+            else
+            {
+                printerModelContainer = createPrinterModelContainer();
+            }
 
             //Add inputs to main container
             contentRow.AddChild(printerNameContainer);
@@ -62,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         }
 
         private void SetElementState()
-        {
+        {   
             printerModelContainer.Visible = (this.ActivePrinter.Make != null);
             nextButton.Visible = (this.ActivePrinter.Model != null && this.ActivePrinter.Make !=null);
         }
@@ -109,7 +124,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             printerManufacturerLabel.HAnchor = HAnchor.ParentLeftRight;
             printerManufacturerLabel.Margin = elementMargin;
 
-            PrinterChooser printerManufacturerSelector = new PrinterChooser();
+            printerManufacturerSelector = new PrinterChooser();
             printerManufacturerSelector.HAnchor = HAnchor.ParentLeftRight;
             printerManufacturerSelector.Margin = elementMargin;
             printerManufacturerSelector.ManufacturerDropList.SelectionChanged += new EventHandler(ManufacturerDropList_SelectionChanged);
@@ -126,6 +141,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             container.HAnchor = HAnchor.ParentLeftRight;
             return container;
         }
+
+        
 
 		private FlowLayoutWidget createPrinterModelContainer(string make = "Other")
         {
@@ -163,7 +180,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {
             ActivePrinter.Make = ((DropDownList)sender).SelectedLabel;
             ActivePrinter.Model = null;
+            ReconstructModelSelector();
+            SetElementState();
+        }
 
+        private void ReconstructModelSelector()
+        {
             //reconstruct model selector
             int currentIndex = contentRow.GetChildIndex(printerModelContainer);
             contentRow.RemoveChild(printerModelContainer);
@@ -173,7 +195,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             contentRow.Invalidate();
 
             printerMakeError.Visible = false;
-            SetElementState();
         }
 
         private void ModelDropList_SelectionChanged(object sender, EventArgs e)
