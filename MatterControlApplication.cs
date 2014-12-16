@@ -171,6 +171,10 @@ namespace MatterHackers.MatterControl
                 int ypos = Math.Max(int.Parse(sizes[1]), -10);
                 DesktopPosition = new Point2D(xpos, ypos);
             }
+
+            // make sure when we start up that we are showing the 3D view
+            UserSettings.Instance.Fields.EmbededViewShowingGCode = false;
+
             ShowAsSystemWindow();
         }
 

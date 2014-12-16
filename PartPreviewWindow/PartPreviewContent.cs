@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
 			}
 
-			// put in the 2d gcode view
+			// put in the gcode view
 			{
 				viewGcodeBasic = new ViewGcodeBasic(printItem,
 					new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
@@ -141,7 +141,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.AddChild(tabControl);
-		}
+        
+            // if the embeded view was on the gcode tab than makes sure it stays there
+            if (UserSettings.Instance.Fields.EmbededViewShowingGCode)
+            {
+                SwitchToGcodeView();
+            }
+
+            tabControl.TabBar.TabIndexChanged += (sender, e) =>
+            {
+                if (tabControl.TabBar.SelectedTabName == "Layer View Tab")
+                {
+                    UserSettings.Instance.Fields.EmbededViewShowingGCode = true;
+                }
+                else
+                {
+                    UserSettings.Instance.Fields.EmbededViewShowingGCode = false;
+                }
+            };
+        }
 
 		public void SwitchToGcodeView()
 		{
