@@ -66,6 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         EventHandler SelectionChanged;
         UpArrow3D upArrow;
+        internal HeightValueDisplay heightDisplay;
 
         FlowLayoutWidget viewOptionContainer;
         FlowLayoutWidget rotateOptionContainer;
@@ -104,6 +105,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         List<PlatingMeshGroupData> asynchPlatingDatas = new List<PlatingMeshGroupData>();
 
         List<PlatingMeshGroupData> MeshGroupExtraData;
+
+        public bool DisplayAllValueData { get; set; }
 
         public ScaleRotateTranslate SelectedMeshGroupTransform
         {
@@ -247,6 +250,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (HaveSelection)
             {
                 upArrow.SetPosition();
+                heightDisplay.SetPosition();
             }
 
             hasDrawn = true;
@@ -474,7 +478,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     };
 
                     Button deleteButton = textImageButtonFactory.Generate("Delete".Localize());
-                    deleteButton.Margin = new BorderDouble(left: 20, right: 10);
+                    deleteButton.Margin = new BorderDouble(left: 20, right: 20);
                     doEdittingButtonsContainer.AddChild(deleteButton);
                     deleteButton.Click += (sender, e) =>
                     {
@@ -603,6 +607,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             upArrow = new UpArrow3D(this);
+            heightDisplay = new HeightValueDisplay(this);
+            heightDisplay.Visible = false;
             meshViewerWidget.interactionVolumes.Add(upArrow);
 
             // make sure the colors are set correctl

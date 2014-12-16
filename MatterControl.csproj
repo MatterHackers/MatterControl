@@ -122,7 +122,6 @@
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
-    <Compile Include="CustomWidgets\PanelSeparator.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidProgressControl.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
@@ -130,6 +129,7 @@
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DCreateSelecitonData.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />

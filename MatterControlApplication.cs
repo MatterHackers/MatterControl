@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl
             }
 
             this.AddChild(ApplicationController.Instance.MainView);
-            this.MinimumSize = new Vector2(400, 400);
+            this.MinimumSize = new Vector2(570, 600);
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
 #if false // this is to test freeing gcodefile memory
