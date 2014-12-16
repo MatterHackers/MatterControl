@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             if (libraryDataView.SelectedItems.Count == 1)
             {
                 LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-                libraryItem.OpenPartViewWindow(openInEditMode:true);
+                libraryItem.OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
             }
 
         }

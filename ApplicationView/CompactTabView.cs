@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl
                 new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
                 ActiveSliceSettings.Instance.BedCenter,
                 ActiveSliceSettings.Instance.BedShape,
-                View3DWidget.WindowType.Embeded,
+                View3DWidget.WindowMode.Embeded,
                 View3DWidget.AutoRotate.Enabled);
             part3DView.Margin = new BorderDouble(bottom: 4);
             part3DView.AnchorAll();

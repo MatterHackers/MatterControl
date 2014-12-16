@@ -26,6 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+//#define DO_IN_PLACE_EDIT
 
 using System;
 using System.Collections.Generic;
@@ -105,6 +106,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             editButton.Margin = new BorderDouble(right: 6);
             editButton.Click += (sender, e) =>
             {
+#if DO_IN_PLACE_EDIT
+                if (filterTag == "quality")
+                {
+                    SliceSettingsWidget.SettingsIndexBeingEdited = 2;
+                }
+                else
+                {
+                    SliceSettingsWidget.SettingsIndexBeingEdited = 3;
+                }
+                // If there is a setting selected then reload the silce setting widget with the presetIndex to edit.
+                ApplicationController.Instance.ReloadAdvancedControlsPanel();
+                // If no setting selected then call onNewItemSelect(object sender, EventArgs e)
+#else
                 if (filterTag == "material")
                 {
                     if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
@@ -130,6 +144,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         ApplicationController.Instance.EditQualityPresetsWindow.BringToFront();
                     }
                 }
+#endif
             };
 
             container.AddChild(editButton);
@@ -183,6 +198,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void onNewItemSelect(object sender, EventArgs e)
         {
+#if DO_IN_PLACE_EDIT
+            // pop up a dialog to request a new setting name
+            // after getting the new name select it and relead the slice setting widget editing the new setting
+            throw new NotImplementedException();
+#else    
             UiThread.RunOnIdle((state) =>
             {
                 ActiveSliceSettings.Instance.LoadAllSettings();
@@ -214,6 +234,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     }
                 }
             });
+#endif
         }
 
 

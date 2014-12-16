@@ -352,16 +352,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
             UiThread.RunOnIdle((state) =>
             {
                 this.rightButtonOverlay.SlideOut();
-                openPartView(state, false);
+                openPartView(state, View3DWidget.OpenMode.Viewing);
             });
         }
 
 
-        public void OpenPartViewWindow(bool openInEditMode = false)
+        public void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
         {
             if (viewWindowIsOpen == false)
             {
-                viewingWindow = new PartPreviewMainWindow(this.printItemWrapper, View3DWidget.AutoRotate.Enabled, openInEditMode);
+                viewingWindow = new PartPreviewMainWindow(this.printItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
                 this.viewWindowIsOpen = true;
                 viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
             }
@@ -381,12 +381,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
         }
 
 
-        private void openPartView(object state, bool openInEditMode = false)
+        private void openPartView(object state, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
         {
             string pathAndFile = this.printItemWrapper.FileLocation;
             if (File.Exists(pathAndFile))
             {
-                OpenPartViewWindow(openInEditMode);
+                OpenPartViewWindow(openMode);
             }
             else
             {

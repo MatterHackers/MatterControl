@@ -254,8 +254,8 @@ namespace MatterHackers.MatterControl.PrintQueue
         {
             this.actionButtonContainer.SlideOut();
             UiThread.RunOnIdle((state) =>
-            {                
-                OpenPartViewWindow(false);                
+            {
+                OpenPartViewWindow(View3DWidget.OpenMode.Viewing);                
             });
         }
 
@@ -294,11 +294,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.exportingWindowIsOpen = false;
 		}
 
-        public void OpenPartViewWindow(bool openInEditMode = false)
+        public void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
         {
             if (viewWindowIsOpen == false)
             {
-                viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DWidget.AutoRotate.Enabled, openInEditMode);
+                viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
                 this.viewWindowIsOpen = true;
                 viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
             }

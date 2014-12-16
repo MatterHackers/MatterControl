@@ -40,82 +40,63 @@ namespace MatterHackers.MatterControl
     {
         List<string> acceptableTrueFalseValues = new List<string>() { "true", "false" };
 
+        string IsSimpleModeKey = "IsSimpleMode";
+        string EmbededViewShowingGCodeKey = "EmbededViewShowingGCode";
+
         public bool IsSimpleMode
         {
             get
             {
-                string currentValue = UserSettings.Instance.get("IsSimpleMode");
-                if (acceptableTrueFalseValues.IndexOf(currentValue) == -1)
-                {
-                    if (OemSettings.Instance.UseSimpleModeByDefault)
-                    {
-                        currentValue = "true";
-                    }
-                    else
-                    {
-                        currentValue = "false";
-                    }
-                    UserSettings.Instance.set("IsSimpleMode", currentValue);
-                }
-
-                if(currentValue == "true")
-                {
-                    return true;
-                }
-
-                return false;
+                return GetValue(IsSimpleModeKey, OemSettings.Instance.UseSimpleModeByDefault);
             }
 
             set
             {
-                if (value)
-                {
-                    UserSettings.Instance.set("IsSimpleMode", "true");
-                }
-                else
-                {
-                    UserSettings.Instance.set("IsSimpleMode", "false");
-                }
+                SetValue(IsSimpleModeKey, value);
             }
         }
 
-        public bool ThirdPannelVisible
+        public bool EmbededViewShowingGCode
         {
             get
             {
-                string currentValue = UserSettings.Instance.get("ThirdPannelVisible");
-                if (acceptableTrueFalseValues.IndexOf(currentValue) == -1)
-                {
-                    if (OemSettings.Instance.UseSimpleModeByDefault)
-                    {
-                        currentValue = "true";
-                    }
-                    else
-                    {
-                        currentValue = "false";
-                    }
-                    UserSettings.Instance.set("ThirdPannelVisible", currentValue);
-                }
-
-                if (currentValue == "true")
-                {
-                    return true;
-                }
-
-                return false;
+                return GetValue(EmbededViewShowingGCodeKey, false);
             }
 
             set
             {
-                if (value)
+                SetValue(EmbededViewShowingGCodeKey, value);
+            }
+        }
+
+        private void SetValue(string keyToSet, bool value)
+        {
+            if (value)
+            {
+                UserSettings.Instance.set(keyToSet, "true");
+            }
+            else
+            {
+                UserSettings.Instance.set(keyToSet, "false");
+            }
+        }
+
+        private bool GetValue(string keyToRead, bool defaultValue)
+        {
+            string currentValue = UserSettings.Instance.get(keyToRead);
+            if (acceptableTrueFalseValues.IndexOf(currentValue) == -1)
+            {
+                if (defaultValue)
                 {
-                    UserSettings.Instance.set("ThirdPannelVisible", "true");
+                    currentValue = "true";
                 }
                 else
                 {
-                    UserSettings.Instance.set("ThirdPannelVisible", "false");
+                    currentValue = "false";
                 }
+                UserSettings.Instance.set(keyToRead, currentValue);
             }
+            return currentValue == "true";
         }
     }
 }
