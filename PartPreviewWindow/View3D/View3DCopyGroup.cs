@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             UnlockEditControls();
             PullMeshGroupDataFromAsynchLists();
-            saveButtons.Visible = true;
+            PartHasBeenChanged();
 
             // now set the selection to the new copy
             MeshGroupExtraData[MeshGroups.Count - 1].currentScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;

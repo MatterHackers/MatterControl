@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         ScaleRotateTranslate translated = asynchMeshGroupTransforms[meshGroupToMoveIndex];
                         translated.translation *= Matrix4X4.CreateTranslation(deltaRequired);
                         asynchMeshGroupTransforms[meshGroupToMoveIndex] = translated;
-                        saveButtons.Visible = true;
+                        PartHasBeenChanged();
                     }
                 }
             }

@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public partial class View3DWidget : PartPreview3DWidget
     {
+        readonly int EditButtonHeight = 44;
+
         public WindowType windowType { get; set; }
 
         EventHandler SelectionChanged;
@@ -309,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 && meshSelectInfo.downOnPart
                 && meshSelectInfo.lastMoveDelta != Vector3.Zero)
             {
-                saveButtons.Visible = true;
+                PartHasBeenChanged();
             }
 
             meshSelectInfo.downOnPart = false;
@@ -479,15 +481,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         DeleteSelectedMesh();
                     };
 
-                    Button exportButton = textImageButtonFactory.Generate("Export...".Localize());
-                    exportButton.Margin = new BorderDouble(right: 10);
-                    exportButton.Click += (sender, e) =>
-                    {
-                        UiThread.RunOnIdle((state) =>
-                        {
-                            OpenExportWindow();
-                        });
-                    };
+                    // put in the save button
+                    AddSaveAndSaveAs(doEdittingButtonsContainer);
                 }
 
                 KeyDown += (sender, e) =>
@@ -607,7 +602,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 });
             }
 
-            upArrow = new UpArrow3D(meshViewerWidget);
+            upArrow = new UpArrow3D(this);
             meshViewerWidget.interactionVolumes.Add(upArrow);
 
             // make sure the colors are set correctl
@@ -752,7 +747,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (MeshGroups.Count != asynchMeshGroups.Count)
             {
-                saveButtons.Visible = true;
+                PartHasBeenChanged();
             }
 
             MeshGroups.Clear();
@@ -842,7 +837,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 return;
             }
             UnlockEditControls();
-            saveButtons.Visible = true;
+            PartHasBeenChanged();
 
             if (asynchMeshGroups.Count == MeshGroups.Count + 1)
             {
@@ -946,7 +941,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
                 MeshGroupTransforms.RemoveAt(SelectedMeshGroupIndex);
                 SelectedMeshGroupIndex = Math.Min(SelectedMeshGroupIndex, MeshGroups.Count - 1);
-                saveButtons.Visible = true;
+                PartHasBeenChanged();
                 Invalidate();
             }
         }
@@ -1078,34 +1073,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 GuiWidget verticalSpacer = new GuiWidget();
                 verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
                 buttonRightPanel.AddChild(verticalSpacer);
-
-				//Save as dropdown
-				TupleList<string,Func<bool>> buttonList = new TupleList<string, Func<bool>> ();
-				buttonList.Add ("Save", () => {
-					MergeAndSavePartsToCurrentMeshFile();
-					return true;
-				});
-				buttonList.Add ("Save As", () => {
-					if (saveAsWindow == null)
-					{
-						saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
-						saveAsWindow.Closed += (sender2, e2) =>
-						{
-							saveAsWindow = null;
-						};
-					}
-					else
-					{
-						saveAsWindow.BringToFront();
-					}
-					return true;
-				});
-				SplitButtonFactory splitButtonFactory = new SplitButtonFactory ();
-				saveButtons = splitButtonFactory.Generate (buttonList);
-				saveButtons.Visible = false;
-
-                buttonRightPanel.AddChild(saveButtons);
-
             }
 
             buttonRightPanel.Padding = new BorderDouble(6, 6);
@@ -1116,7 +1083,45 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             return buttonRightPanel;
         }
 
+        private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
+        {
+            TupleList<string, Func<bool>> buttonList = new TupleList<string, Func<bool>>();
+            buttonList.Add("Save", () =>
+            {
+                MergeAndSavePartsToCurrentMeshFile();
+                return true;
+            });
+            buttonList.Add("Save As", () =>
+            {
+                if (saveAsWindow == null)
+                {
+                    saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+                    saveAsWindow.Closed += (sender2, e2) =>
+                    {
+                        saveAsWindow = null;
+                    };
+                }
+                else
+                {
+                    saveAsWindow.BringToFront();
+                }
+                return true;
+            });
+            SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
+            splitButtonFactory.FixedHeight = 40;
+            saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up);
+            saveButtons.Visible = false;
 
+            saveButtons.Margin = new BorderDouble();
+            saveButtons.VAnchor |= VAnchor.ParentCenter;
+
+            flowToAddTo.AddChild(saveButtons);
+        }
+
+        public void PartHasBeenChanged()
+        {
+            saveButtons.Visible = true;
+        }
 
         private FlowLayoutWidget CreateSaveButtons()
         {
@@ -1529,7 +1534,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             SelectedMeshGroupTransform = scale;
 
             PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-            saveButtons.Visible = true;
+            PartHasBeenChanged();
             Invalidate();
             MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
             SetApplyScaleVisability(this, null);
@@ -1540,7 +1545,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             List<GuiWidget> rotateControls = new List<GuiWidget>();
             transformControls.Add("Rotate".Localize(), rotateControls);
 
-            textImageButtonFactory.FixedWidth = 44;
+            textImageButtonFactory.FixedWidth = EditButtonHeight;
 
             FlowLayoutWidget degreesContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
             degreesContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -1577,7 +1582,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     SelectedMeshGroupTransform = rotated;
 
                     PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-                    saveButtons.Visible = true;
+                    PartHasBeenChanged();
                     Invalidate();
                 }
             };
@@ -1616,7 +1621,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     SelectedMeshGroupTransform = rotated;
 
                     PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-                    saveButtons.Visible = true;
+                    PartHasBeenChanged();
                     Invalidate();
                 }
             };
@@ -1633,7 +1638,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     MakeLowestFaceFlat(SelectedMeshGroupIndex);
 
-                    saveButtons.Visible = true;
+                    PartHasBeenChanged();
                     Invalidate();
                 }
             };
@@ -1647,7 +1652,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             List<GuiWidget> mirrorControls = new List<GuiWidget>();
             transformControls.Add("Mirror", mirrorControls);
 
-            textImageButtonFactory.FixedWidth = 44;
+            textImageButtonFactory.FixedWidth = EditButtonHeight;
 
             FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
             buttonContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -1667,7 +1672,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
-                    saveButtons.Visible = true;
+                    PartHasBeenChanged();
                     Invalidate();
                 }
             };
@@ -1687,7 +1692,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
-                    saveButtons.Visible = true;
+                    PartHasBeenChanged();
                     Invalidate();
                 }
             };
@@ -1707,7 +1712,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                     PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
-                    saveButtons.Visible = true;
+                    PartHasBeenChanged();
                     Invalidate();
                 }
             };
@@ -1741,7 +1746,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         if (material.MaterialIndex != extruderIndexLocal+1)
                         {
                             material.MaterialIndex = extruderIndexLocal+1;
-                            saveButtons.Visible = true;
+                            PartHasBeenChanged();
                         }
                     }
                 };
@@ -2075,7 +2080,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
-                saveButtons.Visible = true;
+                PartHasBeenChanged();
                 Invalidate();
             }
         }
