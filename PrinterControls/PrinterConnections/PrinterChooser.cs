@@ -16,6 +16,8 @@ namespace MatterHackers.MatterControl
     public class PrinterChooser : GuiWidget
     {
         public StyledDropDownList ManufacturerDropList;
+        private int countOfMakes = 0;
+        public int CountOfMakes { get { return countOfMakes; } }
 
         public PrinterChooser(string selectedMake = null)
         {
@@ -54,6 +56,7 @@ namespace MatterHackers.MatterControl
                             index++;
 
                         }
+                        countOfMakes += 1;
                     }
                 }
                 if (addOther)
@@ -70,7 +73,10 @@ namespace MatterHackers.MatterControl
                 }
 
             }
-
+            if (ManufacturerDropList.CountVisibleChildren() == 1)
+            {
+                ManufacturerDropList.SelectedIndex = 0;
+            }
             AddChild(ManufacturerDropList);
 
             HAnchor = HAnchor.FitToChildren;
@@ -81,6 +87,8 @@ namespace MatterHackers.MatterControl
     public class ModelChooser : GuiWidget
     {
         public StyledDropDownList ModelDropList;
+        private int countOfModels = 0;
+        public int CountOfModels { get { return countOfModels; } }
 
         public ModelChooser(string manufacturer)
         {
@@ -95,6 +103,7 @@ namespace MatterHackers.MatterControl
                 {
                     string model = Path.GetFileName(manufacturerDirectory);
                     ModelDropList.AddItem(model);
+                    countOfModels += 1;
                 }
             }
 
