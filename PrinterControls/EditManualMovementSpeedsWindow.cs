@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
         public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, EventHandler functionToCallOnSave)
             : base(260, 300)
         {
+            AlwaysOnTopOfMain = true;
             Title = LocalizedString.Get(windowTitle);
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);

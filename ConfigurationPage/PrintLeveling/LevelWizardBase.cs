@@ -80,6 +80,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
         public LevelWizardBase(int width, int height, int totalSteps)
             : base(width, height)
         {
+            AlwaysOnTopOfMain = true;
             this.totalSteps = totalSteps;
         }
 

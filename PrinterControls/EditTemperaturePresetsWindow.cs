@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
         public EditTemperaturePresetsWindow(string windowTitle, string temperatureSettings, EventHandler functionToCallOnSave)
             : base(360, 300)
         {
+            AlwaysOnTopOfMain = true;
             Title = LocalizedString.Get(windowTitle);
 
             FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);

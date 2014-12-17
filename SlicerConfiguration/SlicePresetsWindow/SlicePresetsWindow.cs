@@ -54,7 +54,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public SlicePresetsWindow(EventHandler functionToCallOnSave, string filterLabel, string filterTag, bool showList=true, int collectionID=0)
             : base(640, 480)
-        {            
+        {
+            AlwaysOnTopOfMain = true;
             Title = LocalizedString.Get("Slice Presets Editor");
             
             this.filterTag = filterTag;

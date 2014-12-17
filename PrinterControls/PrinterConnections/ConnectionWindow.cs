@@ -23,6 +23,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public ConnectionWindow()
             : base(350* TextWidget.GlobalPointSizeScaleRatio, 500* TextWidget.GlobalPointSizeScaleRatio)
         {
+            AlwaysOnTopOfMain = true;
             string connectToPrinterTitle = LocalizedString.Get("MatterControl");
             string connectToPrinterTitleEnd = LocalizedString.Get("Connect to Printer");
 			Title = string.Format("{0} - {1}",connectToPrinterTitle,connectToPrinterTitleEnd);      

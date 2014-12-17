@@ -389,6 +389,7 @@ namespace MatterHackers.MatterControl
         public EditMacrosWindow(EventHandler functionToCallOnSave)
             : base(360, 420)
         {
+            AlwaysOnTopOfMain = true;
             Title = LocalizedString.Get("Macro Editor");
             this.functionToCallOnSave = functionToCallOnSave;
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;

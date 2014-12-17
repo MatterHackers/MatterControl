@@ -91,6 +91,7 @@ namespace MatterHackers.MatterControl
 		private TerminalWindow(int width, int height)
 			: base(width, height)
 		{
+            AlwaysOnTopOfMain = true;
 			this.AddChild(new TerminalWidget(true));
 			Title = LocalizedString.Get("MatterControl - Terminal");
 			this.ShowAsSystemWindow();

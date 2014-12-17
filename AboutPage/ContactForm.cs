@@ -48,7 +48,6 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.ContactForm
 {
-    
     public class ContactFormWidget : GuiWidget
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
@@ -336,6 +335,7 @@ namespace MatterHackers.MatterControl.ContactForm
         private ContactFormWindow(string subject = "", string bodyText = "")
             : base(500, 550)
         {
+            AlwaysOnTopOfMain = true;
             Title = LocalizedString.Get("MatterControl: Submit an Issue");
 
             BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;

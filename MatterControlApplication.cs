@@ -365,6 +365,7 @@ namespace MatterHackers.MatterControl
 
         public override void OnClosed(EventArgs e)
         {
+            TerminalWindow.CloseIfOpen();
             PrinterConnectionAndCommunication.Instance.Disable();
             //Close connection to the local datastore
             Datastore.Instance.Exit();
