@@ -186,7 +186,8 @@ namespace MatterHackers.MatterControl
         public int GetMaterialSetting(int extruderPosition)
         {
             int i = 0;
-            if (ActivePrinter != null)
+            if (extruderPosition > 0
+                && ActivePrinter != null)
             {
                 string materialSettings = ActivePrinter.MaterialCollectionIds;
                 string[] materialSettingsList;

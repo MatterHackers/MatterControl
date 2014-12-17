@@ -248,6 +248,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return GetActiveValue("has_heated_bed") == "1";
         }
 
+        public bool SupportEnabled
+        {
+            get
+            {
+                return GetActiveValue("support_material") == "1";
+            }
+        }
+
+        public int SupportExtruder
+        {
+            get
+            {
+                return int.Parse(GetActiveValue("support_material_extruder"));
+            }
+        }
+
+        public bool RaftEnabled
+        {
+            get
+            {
+                return GetActiveValue("create_raft") == "1";
+            }
+        }
+
+        public int RaftExtruder
+        {
+            get
+            {
+                return int.Parse(GetActiveValue("raft_extruder"));
+            }
+        }
+
         public Dictionary<string, DataStorage.SliceSetting> DefaultSettings
         {
             get
