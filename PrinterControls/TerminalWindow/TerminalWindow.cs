@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl
 {    
     public class TerminalWindow : SystemWindow
     {
+        static readonly Vector2 minSize = new Vector2(400, 300);
         static readonly string TerminalWindowLeftOpen = "TerminalWindowLeftOpen";
         static readonly string TerminalWindowSizeKey = "TerminalWindowSize";
         static readonly string TerminalWindowPositionKey = "TerminalWindowPosition";
@@ -51,8 +52,8 @@ namespace MatterHackers.MatterControl
                 if (windowSize != null && windowSize != "")
                 {
                     string[] sizes = windowSize.Split(',');
-                    width = Math.Max(int.Parse(sizes[0]), width);
-                    height = Math.Max(int.Parse(sizes[1]), height);
+                    width = Math.Max(int.Parse(sizes[0]), (int)minSize.x);
+                    height = Math.Max(int.Parse(sizes[1]), (int)minSize.y);
                 }
 
                 connectionWindow = new TerminalWindow(width, height);
@@ -93,7 +94,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(new TerminalWidget(true));
 			Title = LocalizedString.Get("MatterControl - Terminal");
 			this.ShowAsSystemWindow();
-			MinimumSize = new Vector2(Width, Height);
+            MinimumSize = minSize;
 
             string desktopPosition = UserSettings.Instance.get(TerminalWindowPositionKey);
             if (desktopPosition != null && desktopPosition != "")
@@ -112,15 +113,32 @@ namespace MatterHackers.MatterControl
             UserSettings.Instance.Fields.SetValue(TerminalWindowLeftOpen, false);
         }
 
+        bool haveDoneSave = false;
+        void SaveOnClosing()
+        {
+            if (!haveDoneSave)
+            {
+                // save the last size of the window so we can restore it next time.
+                UserSettings.Instance.set(TerminalWindowSizeKey, string.Format("{0},{1}", Width, Height));
+                UserSettings.Instance.set(TerminalWindowPositionKey, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
+
+                // make a delay so we only save this if it is closed by the user not by the app.
+                UiThread.RunOnIdle(DelaySaveClosed, 1);
+
+                haveDoneSave = true;
+            }
+        }
+
+        public override void OnClosing(out bool cancelClose)
+        {
+            cancelClose = false;
+            SaveOnClosing();
+            base.OnClosing(out cancelClose);
+        }
+        
         public override void OnClosed(EventArgs e)
         {
-            // save the last size of the window so we can restore it next time.
-            UserSettings.Instance.set(TerminalWindowSizeKey, string.Format("{0},{1}", Width, Height));
-            UserSettings.Instance.set(TerminalWindowPositionKey, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
-
-            // make a delay so we only save this if it is closed by the user not by the app.
-            UiThread.RunOnIdle(DelaySaveClosed, 1);
-
+            SaveOnClosing();
             base.OnClosed(e);
         }
     }
