@@ -942,7 +942,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void DeleteSelectedMesh()
         {
             // don't ever delete the last mesh
-            if (MeshGroups.Count > 1)
+            if (SelectedMeshGroupIndex != -1
+                && MeshGroups.Count > 1)
             {
                 MeshGroups.RemoveAt(SelectedMeshGroupIndex);
                 MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
