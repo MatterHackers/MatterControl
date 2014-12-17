@@ -173,22 +173,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             // If we have support enabled and and are using an extruder other than 0 for it
             if (ActiveSliceSettings.Instance.SupportEnabled)
             {
-                int supportExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount - 1, ActiveSliceSettings.Instance.SupportExtruder - 1));
-                extrudersUsed[supportExtruder] = true;
+                if (ActiveSliceSettings.Instance.SupportExtruder != 0)
+                {
+                    int supportExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount - 1, ActiveSliceSettings.Instance.SupportExtruder - 1));
+                    extrudersUsed[supportExtruder] = true;
+                }
             }
 
             // If we have raft enabled and are using an extruder other than 0 for it
             if (ActiveSliceSettings.Instance.RaftEnabled)
             {
-                int raftExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount - 1, ActiveSliceSettings.Instance.RaftExtruder - 1));
-                extrudersUsed[raftExtruder] = true;
+                if (ActiveSliceSettings.Instance.RaftExtruder != 0)
+                {
+                    int raftExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount - 1, ActiveSliceSettings.Instance.RaftExtruder - 1));
+                    extrudersUsed[raftExtruder] = true;
+                }
             }
 
             switch (Path.GetExtension(fileToSlice).ToUpper())
             {
                 case ".STL":
                 case ".GCODE":
-                    extrudersUsed.Add(true);
+                    extrudersUsed[0] = true;
                     return new string[] { fileToSlice };
 
                 case ".AMF":
