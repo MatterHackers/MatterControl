@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
     public class ViewGcodeBasic : PartPreview3DWidget
     {
+        public enum WindowMode { Embeded, StandAlone };
+
         public SolidSlider selectLayerSlider;
 
         SetLayerWidget setLayerWidget;
@@ -69,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         GuiWidget gcodeDisplayWidget;
 
         EventHandler unregisterEvents;
-        bool widgetHasCloseButton;
+        WindowMode windowMode;
 
         public delegate Vector2 GetSizeFunction();
 
@@ -82,12 +84,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         MeshViewerWidget.BedShape bedShape;
         int sliderWidth;
 
-        public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, bool addCloseButton)
+        public ViewGcodeBasic(PrintItemWrapper printItem, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowMode)
         {
             this.viewerVolume = viewerVolume;
             this.bedShape = bedShape;
             this.bedCenter = bedCenter;
-            widgetHasCloseButton = addCloseButton;
+            this.windowMode = windowMode;
             this.printItem = printItem;
 
             if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
@@ -171,7 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             GuiWidget holdPanelOpen = new GuiWidget(1, generateGCodeButton.Height);
             layerSelectionButtonsPanel.AddChild(holdPanelOpen);
 
-            if (widgetHasCloseButton)
+            if (windowMode == WindowMode.StandAlone)
             {
                 Button closeButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
                 layerSelectionButtonsPanel.AddChild(closeButton);
@@ -601,7 +603,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             // Put in the sync to print checkbox
-            if (!widgetHasCloseButton)
+            if (windowMode == WindowMode.Embeded)
             {
                 syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
@@ -641,7 +643,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         private void SetSyncToPrintVisibility()
         {
-            if (!widgetHasCloseButton)
+            if (windowMode == WindowMode.Embeded)
             {
                 if (syncToPrint.Checked)
                 {

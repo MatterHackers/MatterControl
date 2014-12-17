@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 
     public class CompactApplicationView : ApplicationView
     {
-        CompactTabView widescreenPanel;
+        CompactTabView compactTabView;
         QueueDataView queueDataView;
 		GuiWidget menuSeparator;
 		PrintProgressBar progressBar; 
@@ -127,10 +127,10 @@ namespace MatterHackers.MatterControl
 
             container.AddChild(progressBar);
 			container.AddChild(menuSeparator);
-            widescreenPanel = new CompactTabView(queueDataView);
+            compactTabView = new CompactTabView(queueDataView);
 
 			BottomOverlay bottomOverlay = new BottomOverlay();
-			bottomOverlay.AddChild(widescreenPanel);
+			bottomOverlay.AddChild(compactTabView);
 
 			container.AddChild(bottomOverlay);
 

@@ -109,7 +109,6 @@ namespace MatterHackers.MatterControl
             this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", TabTextSize,
                     ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            
 			GuiWidget manualPrinterControls = new ManualPrinterControls();
 
             part3DViewContainer = new GuiWidget();
@@ -175,8 +174,6 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
 		}
 
-
-
 		void reloadSliceSettingsWidget()
 		{
 			//Store the UI state from the current display
@@ -226,8 +223,7 @@ namespace MatterHackers.MatterControl
             partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
                 new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
                 ActiveSliceSettings.Instance.BedCenter,
-                ActiveSliceSettings.Instance.BedShape,
-                false);
+                ActiveSliceSettings.Instance.BedShape, ViewGcodeBasic.WindowMode.Embeded);
             partGcodeView.AnchorAll();
 
             partGcodeViewContainer.RemoveAllChildren();

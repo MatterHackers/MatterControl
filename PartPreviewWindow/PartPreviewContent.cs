@@ -89,16 +89,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 
-			bool showCloseButton;
-            if (windowMode == View3DWidget.WindowMode.StandAlone)
-			{
-				showCloseButton = false;
-			}
-			else
-			{
-				showCloseButton = true;
-			}
-
 			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
 			// put in the 3D view
@@ -125,10 +115,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the gcode view
 			{
-				viewGcodeBasic = new ViewGcodeBasic(printItem,
-					new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-					ActiveSliceSettings.Instance.BedCenter,
-					ActiveSliceSettings.Instance.BedShape,showCloseButton);
+                ViewGcodeBasic.WindowMode gcodeWindowMode = ViewGcodeBasic.WindowMode.Embeded;
+                if (windowMode == View3DWidget.WindowMode.StandAlone)
+                {
+                    gcodeWindowMode = ViewGcodeBasic.WindowMode.StandAlone;
+                }
+
+                viewGcodeBasic = new ViewGcodeBasic(printItem,
+                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                    ActiveSliceSettings.Instance.BedCenter,
+                    ActiveSliceSettings.Instance.BedShape, gcodeWindowMode);
 
                 viewGcodeBasic.Closed += (sender, e) =>
                 {
