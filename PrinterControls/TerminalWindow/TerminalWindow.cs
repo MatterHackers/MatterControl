@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl
                 UserSettings.Instance.set(TerminalWindowPositionKey, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
 
                 // make a delay so we only save this if it is closed by the user not by the app.
-                UiThread.RunOnIdle(DelaySaveClosed, 1);
+                UiThread.RunOnIdle(DelaySaveClosed, 2);
 
                 haveDoneSave = true;
             }
