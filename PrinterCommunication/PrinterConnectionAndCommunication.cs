@@ -2271,8 +2271,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         SendLineToPrinterNow("M25"); // : Pause SD print
                         SendLineToPrinterNow("M26"); // : Set SD position
                         // never leave the extruder and the bed hot
-                        ReleaseMotors();
-                        TurnOffBedAndExtruders();
+                        DonePrintingSdFile(this, null);
                     }
                     break;
 
@@ -2353,6 +2352,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             {
                 return false;
             }
+
+            currentSdBytes = 0;
 
             ClearQueuedGCode();
             CommunicationState = CommunicationStates.PrintingFromSd;
@@ -2458,7 +2459,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             while (CommunicationState == CommunicationStates.AttemptingToConnect
                 || (PrinterIsConnected && serialPort.IsOpen && !Disconnecting))
             {
-                if(PrinterIsPrinting && PrinterIsConnected)
+                if(PrinterIsPrinting 
+                    && PrinterIsConnected
+                    && CommunicationState != CommunicationStates.PrintingFromSd)
                 {
                     TryWriteNextLineFromGCodeFile();
                 }

@@ -194,8 +194,8 @@ namespace MatterHackers.MatterControl
                     }
                     thumbnailWidget.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
                     Graphics2D graphics = thumbnailWidget.thumbnailImage.NewGraphics2D();
-                    Ellipse outline = new Ellipse(new Vector2(Width / 2.0, Height / 2.0), Width/2 + Width/12);
-                    graphics.Render(new Stroke(outline, 4), RGBA_Bytes.White);
+                    Ellipse outline = new Ellipse(new Vector2(Width / 2.0, Height / 2.0), Width/2 - Width/12);
+                    graphics.Render(new Stroke(outline, Width / 12), RGBA_Bytes.White);
 
                     UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
                     return;
