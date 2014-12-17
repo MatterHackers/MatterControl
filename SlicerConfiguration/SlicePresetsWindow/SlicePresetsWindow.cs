@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 }
                 this.ActivePresetLayer = new SettingsLayer(collection, settingsDictionary);
             }
-            UiThread.RunOnIdle(DoChangeToSlicePresetDetail);
+           UiThread.RunOnIdle(DoChangeToSlicePresetDetail);
         }
 
         DataStorage.SliceSettingsCollection GetCollection(int collectionId)

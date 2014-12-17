@@ -391,13 +391,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 foreach (KeyValuePair<String, DataStorage.SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
                 {
                     OrganizerSettingsData settingData = SliceSettingsOrganizer.Instance.GetSettingsData(item.Key);
-                    FlowLayoutWidget row = GetSettingsRow(settingData, item.Value.Value);
-                    row.Padding = new BorderDouble(3, 3, 3, 6);
+                    // Dont add row if there is no entry
+                    if (settingData != null)
+                    {
+                        FlowLayoutWidget row = GetSettingsRow(settingData, item.Value.Value);
+                        row.Padding = new BorderDouble(3, 3, 3, 6);
 
-                    settingsRowContainer.AddChild(row);
-                    HorizontalLine horizontalLine = new HorizontalLine();
-                    horizontalLine.BackgroundColor = ActiveTheme.Instance.SecondaryTextColor;
-                    settingsRowContainer.AddChild(horizontalLine);
+                        settingsRowContainer.AddChild(row);
+                        HorizontalLine horizontalLine = new HorizontalLine();
+                        horizontalLine.BackgroundColor = ActiveTheme.Instance.SecondaryTextColor;
+                        settingsRowContainer.AddChild(horizontalLine);
+                    }
                 }
             });
         }
@@ -410,6 +414,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             string[] valueArray = item.Value.Split(':');
             string configName = valueArray[2];
             addRowSettingData = SliceSettingsOrganizer.Instance.GetSettingsData(configName);
+
             AddSettingToPreset();
         }
 
@@ -867,7 +872,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 duplicateCollection.Tag = windowController.ActivePresetLayer.settingsCollectionData.Tag;
                 duplicateCollection.PrinterId = windowController.ActivePresetLayer.settingsCollectionData.PrinterId;
 
-
                 Dictionary<string, DataStorage.SliceSetting> settingsDictionary = new Dictionary<string, DataStorage.SliceSetting>();
                 IEnumerable<DataStorage.SliceSetting> settingsList = this.windowController.GetCollectionSettings(windowController.ActivePresetLayer.settingsCollectionData.Id);
                 foreach (DataStorage.SliceSetting s in settingsList)
@@ -877,6 +881,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 SettingsLayer duplicateLayer = new SettingsLayer(duplicateCollection, settingsDictionary);
                 windowController.ActivePresetLayer = duplicateLayer;
                 windowController.ChangeToSlicePresetDetail();
+                
             });
         }
 
