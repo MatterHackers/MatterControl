@@ -158,13 +158,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         }
 
+        public static List<bool> extrudersUsed = new List<bool>();
+
         public static string[] GetStlFileLocations(string fileToSlice)
         {
+            extrudersUsed.Clear();
+            
             int extruderCount = ActiveSliceSettings.Instance.ExtruderCount;
+            for(int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+            {
+                extrudersUsed.Add(false);
+            }
+
+            // If we have support enabled and and are using an extruder other than 0 for it
+            if (ActiveSliceSettings.Instance.SupportEnabled)
+            {
+                int supportExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount - 1, ActiveSliceSettings.Instance.SupportExtruder - 1));
+                extrudersUsed[supportExtruder] = true;
+            }
+
+            // If we have raft enabled and are using an extruder other than 0 for it
+            if (ActiveSliceSettings.Instance.RaftEnabled)
+            {
+                int raftExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.ExtruderCount - 1, ActiveSliceSettings.Instance.RaftExtruder - 1));
+                extrudersUsed[raftExtruder] = true;
+            }
+
             switch (Path.GetExtension(fileToSlice).ToUpper())
             {
                 case ".STL":
                 case ".GCODE":
+                    extrudersUsed.Add(true);
                     return new string[] { fileToSlice };
 
                 case ".AMF":
@@ -175,19 +199,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         extruderMeshGroups.Add(new MeshGroup());
                     }
                     int maxExtruderIndex = 0;
-                    foreach (MeshGroup meshGroup in meshGroups)
-                    {
+                    foreach(MeshGroup meshGroup in meshGroups)
+                    {                        
                         foreach (Mesh mesh in meshGroup.Meshes)
                         {
                             MeshMaterialData material = MeshMaterialData.Get(mesh);
-                            int extruderIndex = Math.Max(0, material.MaterialIndex-1);
+                            int extruderIndex = Math.Max(0, material.MaterialIndex - 1);
                             maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
-                            if(extruderIndex >= extruderCount)
+                            if (extruderIndex >= extruderCount)
                             {
+                                extrudersUsed[0] = true;
                                 extruderMeshGroups[0].Meshes.Add(mesh);
                             }
                             else
                             {
+                                extrudersUsed[extruderIndex] = true;
                                 extruderMeshGroups[extruderIndex].Meshes.Add(mesh);
                             }
                         }
