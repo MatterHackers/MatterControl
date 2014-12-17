@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        private void SetValue(string keyToSet, bool value)
+        public void SetValue(string keyToSet, bool value)
         {
             if (value)
             {
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        private bool GetValue(string keyToRead, bool defaultValue)
+        public bool GetValue(string keyToRead, bool defaultValue)
         {
             string currentValue = UserSettings.Instance.get(keyToRead);
             if (acceptableTrueFalseValues.IndexOf(currentValue) == -1)

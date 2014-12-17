@@ -163,6 +163,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0,4);
 
+            Agg.Image.ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "terminal-24x24.png"));
+            if (!ActiveTheme.Instance.IsDarkTheme)
+            {
+                InvertLightness.DoInvertLightness(terminalSettingsImage);
+            }
+
+            ImageWidget terminalIcon = new ImageWidget(terminalSettingsImage);
+            terminalIcon.Margin = new BorderDouble(right: 6, bottom: 6);
+
 			TextWidget gcodeTerminalLabel = new TextWidget("Gcode Terminal");
 			gcodeTerminalLabel.AutoExpandBoundsToText = true;
 			gcodeTerminalLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -171,7 +180,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			openGcodeTerminalButton = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
 			openGcodeTerminalButton.Click += new EventHandler(openGcodeTerminalButton_Click);
 
-			buttonRow.AddChild(gcodeTerminalLabel);
+            buttonRow.AddChild(terminalIcon);
+            buttonRow.AddChild(gcodeTerminalLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
 			buttonRow.AddChild(openGcodeTerminalButton);
 

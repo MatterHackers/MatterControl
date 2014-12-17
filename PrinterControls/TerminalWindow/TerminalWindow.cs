@@ -26,6 +26,9 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+
+using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -34,16 +37,32 @@ namespace MatterHackers.MatterControl
 {    
     public class TerminalWindow : SystemWindow
     {
+        static readonly string TerminalWindowLeftOpen = "TerminalWindowLeftOpen";
+        static readonly string TerminalWindowSizeKey = "TerminalWindowSize";
+        static readonly string TerminalWindowPositionKey = "TerminalWindowPosition";
         static TerminalWindow connectionWindow = null;
         public static void Show()
         {
             if (connectionWindow == null)
             {
-                connectionWindow = new TerminalWindow();
+                string windowSize = UserSettings.Instance.get(TerminalWindowSizeKey);
+                int width = 400;
+                int height = 300;
+                if (windowSize != null && windowSize != "")
+                {
+                    string[] sizes = windowSize.Split(',');
+                    width = Math.Max(int.Parse(sizes[0]), width);
+                    height = Math.Max(int.Parse(sizes[1]), height);
+                }
+
+                connectionWindow = new TerminalWindow(width, height);
                 connectionWindow.Closed += (parentSender, e) =>
                 {
                     connectionWindow = null;
                 };
+
+                // start with the assumption we are open and only change this is we see it close
+                UserSettings.Instance.Fields.SetValue(TerminalWindowLeftOpen, true);
             }
             else
             {
@@ -51,14 +70,58 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        public static void ShowIfLeftOpen()
+        {
+            if (UserSettings.Instance.Fields.GetValue(TerminalWindowLeftOpen, false))
+            {
+                Show();
+            }
+        }
+
+        public static void CloseIfOpen()
+        {
+            if (connectionWindow != null)
+            {
+                connectionWindow.Close();
+            }
+        }
+
 		//private since you can't make one
-		private TerminalWindow()
-			: base(400, 300)
+		private TerminalWindow(int width, int height)
+			: base(width, height)
 		{
 			this.AddChild(new TerminalWidget(true));
 			Title = LocalizedString.Get("MatterControl - Terminal");
 			this.ShowAsSystemWindow();
 			MinimumSize = new Vector2(Width, Height);
-		}
+
+            string desktopPosition = UserSettings.Instance.get(TerminalWindowPositionKey);
+            if (desktopPosition != null && desktopPosition != "")
+            {
+                string[] sizes = desktopPosition.Split(',');
+
+                //If the desktop position is less than -10,-10, override
+                int xpos = Math.Max(int.Parse(sizes[0]), -10);
+                int ypos = Math.Max(int.Parse(sizes[1]), -10);
+                DesktopPosition = new Point2D(xpos, ypos);
+            }
+        }
+
+        void DelaySaveClosed(object state)
+        {
+            UserSettings.Instance.Fields.SetValue(TerminalWindowLeftOpen, false);
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            // save the last size of the window so we can restore it next time.
+            UserSettings.Instance.set(TerminalWindowSizeKey, string.Format("{0},{1}", Width, Height));
+            UserSettings.Instance.set(TerminalWindowPositionKey, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
+
+            // make a delay so we only save this if it is closed by the user not by the app.
+            UiThread.RunOnIdle(DelaySaveClosed, 1);
+
+            base.OnClosed(e);
+        }
     }
 }

@@ -50,6 +50,9 @@ namespace MatterHackers.MatterControl
         RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
         TextImageButtonFactory controlButtonFactory = new TextImageButtonFactory();
 
+        static readonly string TerminalFilterOutputKey = "TerminalFilterOutput";
+        static readonly string TerminalAutoUppercaseKey = "TerminalAutoUppercase";
+
         public TerminalWidget(bool showInWindow)
         {
             this.BackgroundColor = backgroundColor;
@@ -71,7 +74,7 @@ namespace MatterHackers.MatterControl
 
                         filterOutput = new CheckBox(filterOutputChkTxt);
                         filterOutput.Margin = new BorderDouble(5, 5, 5, 2);
-                        filterOutput.Checked = false;
+                        filterOutput.Checked = UserSettings.Instance.Fields.GetValue(TerminalFilterOutputKey, false);
                         filterOutput.TextColor = this.textColor;
                         filterOutput.CheckedStateChanged += (object sender, EventArgs e) =>
                         {
@@ -83,6 +86,8 @@ namespace MatterHackers.MatterControl
                             {
                                 textScrollWidget.SetLineStartFilter(null);
                             }
+
+                            UserSettings.Instance.Fields.SetValue(TerminalFilterOutputKey, filterOutput.Checked);
                         };
 
                         filterOutput.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -94,13 +99,16 @@ namespace MatterHackers.MatterControl
 
                         autoUppercase = new CheckBox(autoUpperCaseChkTxt);
                         autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
-                        autoUppercase.Checked = true;
+                        autoUppercase.Checked = UserSettings.Instance.Fields.GetValue(TerminalAutoUppercaseKey, true);
                         autoUppercase.TextColor = this.textColor;
                         autoUppercase.VAnchor = Agg.UI.VAnchor.ParentBottom;
                         topBarControls.AddChild(autoUppercase);
+                        autoUppercase.CheckedStateChanged += (sender, e) =>
+                        {
+                            UserSettings.Instance.Fields.SetValue(TerminalAutoUppercaseKey, autoUppercase.Checked);
+                        };
                         manualEntryTopToBottomLayout.AddChild(topBarControls);
                     }
-
                 }
 
                 {

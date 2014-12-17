@@ -310,6 +310,8 @@ namespace MatterHackers.MatterControl
                     }
                 }
 
+                TerminalWindow.ShowIfLeftOpen();
+
 #if false
                 foreach (CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
                 {
@@ -390,6 +392,7 @@ namespace MatterHackers.MatterControl
         string confirmExit = "Confirm Exit".Localize();
         public override void OnClosing(out bool CancelClose)
         {
+            TerminalWindow.CloseIfOpen();
             // save the last size of the window so we can restore it next time.
             ApplicationSettings.Instance.set("WindowSize", string.Format("{0},{1}", Width, Height));
             ApplicationSettings.Instance.set("DesktopPosition", string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
