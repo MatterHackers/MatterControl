@@ -23,7 +23,7 @@
   {
     "SlicerConfigName": "bed_temperature",
     "PresentationName": "Bed Temperature",
-    "HelpText": "The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.",
+    "HelpText": "The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "degrees"
   },
@@ -121,7 +121,7 @@
   {
     "SlicerConfigName": "create_raft",
     "PresentationName": "Create Raft",
-    "HelpText": "Turns on and off the creation of a raft which can help parts adhear to the bed.",
+    "HelpText": "Turns on and off the creation of a raft which can help parts adhere to the bed.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },
@@ -404,7 +404,7 @@
     "PresentationName": "Infill",
     "HelpText": "Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.",
     "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "mm/s�"
+    "ExtraSettings": "mm/s"
   },
   {
     "SlicerConfigName": "infill_every_layers",
