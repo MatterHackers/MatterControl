@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls
             SetDisplayAttributes();
 
             fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, "{0}%".FormatWith(PrinterConnectionAndCommunication.Instance.FanSpeed0To255.ToString()), "100%");
+            fanSpeedDisplay.VAnchor = VAnchor.ParentCenter;
             fanSpeedDisplay.EditComplete += (sender, e) =>
             {
                 PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
@@ -129,7 +130,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			fanToggleSwitchText = new TextWidget (fanActive?"On":"Off", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			fanToggleSwitchText.VAnchor = Agg.UI.VAnchor.ParentCenter;		
-
 
 			toggleSwitch = toggleSwitchFactory.GenerateGivenTextWidget (fanToggleSwitchText,"On","Off", fanActive);		
 			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;		
