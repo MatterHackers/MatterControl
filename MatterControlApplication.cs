@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl
         bool DoCGCollectEveryDraw = false;
         public bool RestartOnClose = false;
 
+        static readonly Vector2 minSize = new Vector2(600, 600);
+
         static MatterControlApplication()
         {
             // Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field 
@@ -134,7 +136,7 @@ namespace MatterHackers.MatterControl
             }
 
             this.AddChild(ApplicationController.Instance.MainView);
-            this.MinimumSize = new Vector2(570, 600);
+            this.MinimumSize = minSize;
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
 #if false // this is to test freeing gcodefile memory
@@ -356,8 +358,8 @@ namespace MatterHackers.MatterControl
             if (windowSize != null && windowSize != "")
             {
                 string[] sizes = windowSize.Split(',');
-                width = Math.Max(int.Parse(sizes[0]), 1280);
-                height = Math.Max(int.Parse(sizes[1]), 720);
+                width = Math.Max(int.Parse(sizes[0]), (int)minSize.x+1);
+                height = Math.Max(int.Parse(sizes[1]), (int)minSize.y+1);
             }
 
             new MatterControlApplication(width, height);
