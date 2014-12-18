@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl
                         outPosition = PrintLevelingPlane.Instance.ApplyLevelingRotation(relativeMove);
                     }
 
-                    newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.##}", outPosition.x, outPosition.y, outPosition.z);
+                    newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z);
                 }
 
                 if (extruderDelta != 0)
