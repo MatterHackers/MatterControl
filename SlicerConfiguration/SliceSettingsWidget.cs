@@ -41,6 +41,74 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+    public class SliceSettingsDetailControl : FlowLayoutWidget
+    {
+        const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
+        const string SliceSettingsLevelEntry = "SliceSettingsLevel";
+        CheckBox showHelpBox;
+        StyledDropDownList settingsDetailSelector;
+
+        public SliceSettingsDetailControl()
+        {
+            showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
+            showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
+
+            settingsDetailSelector = new StyledDropDownList("Simple", maxHeight: 200);
+            settingsDetailSelector.AddItem(LocalizedString.Get("Simple"), "Simple");
+            settingsDetailSelector.AddItem(LocalizedString.Get("Intermediate"), "Intermediate");
+            settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
+            if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
+                && SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
+            {
+                settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
+            }
+
+            settingsDetailSelector.SelectionChanged += new EventHandler(SettingsDetail_SelectionChanged);
+            settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
+            settingsDetailSelector.Margin = new BorderDouble(5, 3);
+
+            TextWidget modeText = new TextWidget("Mode:".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+            modeText.VAnchor = VAnchor.ParentCenter;
+            this.AddChild(modeText);
+
+            this.AddChild(settingsDetailSelector);
+
+            // add in the ability to turn on and off help text
+            {
+                showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                showHelpBox.Margin = new BorderDouble(right: 3);
+                showHelpBox.VAnchor = VAnchor.ParentCenter;
+                showHelpBox.Cursor = Cursors.Hand;
+                showHelpBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(RebuildSlicerSettings);
+
+                this.AddChild(showHelpBox);
+            }
+        }
+
+        private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
+        {
+            RebuildSlicerSettings(null, null);
+        }
+
+        void RebuildSlicerSettings(object sender, EventArgs e)
+        {
+            UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
+            UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
+
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();
+        }
+
+        public string SelectedValue 
+        {
+            get { return settingsDetailSelector.SelectedValue; }
+        }
+
+        public bool ShowingHelp
+        {
+            get { return showHelpBox.Checked; }
+        }
+    }
+
     public class SliceSettingsWidget : GuiWidget
     {
         static List<string> settingToReloadUiWhenChanged = new List<string>() 
@@ -52,15 +120,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             "extruders_share_temperature",
         };
 
-        const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
-        const string SliceSettingsLevelEntry = "SliceSettingsLevel";
         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
+        SliceSettingsDetailControl sliceSettingsDetailControl;
 
         TabControl categoryTabs;
         AltGroupBox noConnectionMessageContainer;
         FlowLayoutWidget settingsControlBar;
-        CheckBox showHelpBox;
-        StyledDropDownList settingsDetailSelector;
 
         public SliceSettingsWidget(SliceSettingsWidgetUiState uiState)
         {
@@ -69,9 +134,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             buttonFactory.fontSize = 10;
             buttonFactory.normalFillColor = RGBA_Bytes.White;
             buttonFactory.normalTextColor = RGBA_Bytes.DarkGray;
-
-            showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
-            showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
 
             FlowLayoutWidget pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom, vAnchor: Agg.UI.VAnchor.ParentTop);
             pageTopToBottomLayout.AnchorAll();
@@ -97,24 +159,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             noConnectionMessageContainer.AddChild(noConnectionMessage);
             pageTopToBottomLayout.AddChild(noConnectionMessageContainer);
 
-            settingsDetailSelector = new StyledDropDownList("Simple", maxHeight: 200);
-            settingsDetailSelector.AddItem(LocalizedString.Get("Simple"), "Simple");
-            settingsDetailSelector.AddItem(LocalizedString.Get("Intermediate"), "Intermediate");
-            settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
-            if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
-                && SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
-            {
-                settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
-            }
-
-            settingsDetailSelector.SelectionChanged += new EventHandler(SettingsDetail_SelectionChanged);
-            settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
-            settingsDetailSelector.Margin = new BorderDouble(5, 3);
-
             categoryTabs = new TabControl();
             categoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             categoryTabs.Margin = new BorderDouble(top: 8);
             categoryTabs.AnchorAll();
+
+            sliceSettingsDetailControl = new SliceSettingsDetailControl();
 
             List<TabBar> sideTabBarsListForLayout = new List<TabBar>();
             for (int categoryIndex = 0; categoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; categoryIndex++)
@@ -134,12 +184,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
 
             categoryTabs.TabBar.AddChild(new HorizontalSpacer());
-            TextWidget modeText = new TextWidget("Mode:".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-            modeText.VAnchor = VAnchor.ParentCenter;
-            categoryTabs.TabBar.AddChild(modeText);
-            categoryTabs.TabBar.AddChild(settingsDetailSelector);
+            categoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 
-            if (settingsDetailSelector.SelectedValue == "Advanced" && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.Slic3r)
+            if (sliceSettingsDetailControl.SelectedValue == "Advanced" && ActivePrinterProfile.Instance.ActiveSliceEngineType == ActivePrinterProfile.SlicingEngineTypes.Slic3r)
             {
                 TabPage extraSettingsPage = new TabPage("Other");
                 SimpleTextTabWidget extraSettingsTextTabWidget = new SimpleTextTabWidget(extraSettingsPage, "Other Tab", 16,
@@ -171,17 +218,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 sideTabBarsListForLayout[0].Width = 0;
             }
 
-            // add in the ability to turn on and off help text
-            {
-                showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                showHelpBox.Margin = new BorderDouble(right: 3);
-                showHelpBox.VAnchor = VAnchor.ParentCenter;
-                showHelpBox.Cursor = Cursors.Hand;
-                showHelpBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(RebuildSlicerSettings);
-
-                categoryTabs.TabBar.AddChild(showHelpBox);
-            }
-
             pageTopToBottomLayout.AddChild(categoryTabs);
             AddHandlers();
             SetVisibleControls();
@@ -197,23 +233,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             get
             {
-                if (SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(settingsDetailSelector.SelectedValue))
+                if (SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(sliceSettingsDetailControl.SelectedValue))
                 {
-                    return settingsDetailSelector.SelectedValue;
+                    return sliceSettingsDetailControl.SelectedValue;
                 }
 
                 return "Simple";
             }
-        }
-
-        private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
-        {
-            RebuildSlicerSettings(null, null);
-        }
-
-        public bool ShowingHelp
-        {
-            get { return showHelpBox.Checked; }
         }
 
         public void CurrentlyActiveCategory(out int index, out string name)
@@ -239,14 +265,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 index = currentGroup.SelectedTabIndex;
                 name = currentGroup.SelectedTabName;
             }
-        }
-
-        void RebuildSlicerSettings(object sender, EventArgs e)
-        {
-            UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
-            UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
-
-            ApplicationController.Instance.ReloadAdvancedControlsPanel();
         }
 
         internal class ExtraSettingTextWidget : MHTextEditWidget
@@ -354,7 +372,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(settingInfo, minSettingNameWidth, copyIndex);
                                 topToBottomSettings.AddChild(controlsForThisSetting);
 
-                                if (showHelpBox.Checked)
+                                if (sliceSettingsDetailControl.ShowingHelp)
                                 {
                                     AddInHelpText(topToBottomSettings, settingInfo);
                                 }

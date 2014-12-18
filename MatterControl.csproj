@@ -282,9 +282,9 @@
     <Compile Include="AboutPage\AboutPage.cs" />
     <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
     <Compile Include="ControlElements\TextImageButtonFactory.cs" />
-    <Compile Include="EeProm\EePromMarlinWidget.cs" />
+    <Compile Include="EeProm\EePromMarlinWindow.cs" />
     <Compile Include="EeProm\EePromRepetierParameter.cs" />
-    <Compile Include="EeProm\EePromRepetierWidget.cs" />
+    <Compile Include="EeProm\EePromRepetierWindow.cs" />
     <Compile Include="EeProm\EePromRepetierStorage.cs" />
     <Compile Include="PartPreviewWindow\SaveAsWindow.cs" />
     <Compile Include="DataStorage\SQLiteAndroid.cs" />

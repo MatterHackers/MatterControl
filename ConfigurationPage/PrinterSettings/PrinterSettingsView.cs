@@ -52,7 +52,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             SetVisibleControls();
         }
 
-
         EditLevelingSettingsWindow editLevelingSettingsWindow;
         Button enablePrintLevelingButton;
         Button disablePrintLevelingButton;
@@ -186,27 +185,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(openGcodeTerminalButton);
 
 			return buttonRow;
-
-
 		}
 
-        static EePromMarlinWidget openEePromMarlinWidget = null;
-        static EePromRepetierWidget openEePromRepetierWidget = null;
+        static EePromMarlinWindow openEePromMarlinWidget = null;
+        static EePromRepetierWindow openEePromRepetierWidget = null;
         string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
         string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
-        string groupBoxTitle = "EEProm Settings".Localize();
         private FlowLayoutWidget GetEEPromControl()
         {
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
             buttonRow.Margin = new BorderDouble(0,4);
 
-
-            TextWidget notificationSettingsLabel = new TextWidget("EEProm Settings");
+            TextWidget notificationSettingsLabel = new TextWidget("EEProm Settings".Localize());
             notificationSettingsLabel.AutoExpandBoundsToText = true;
             notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
-            
 
             Agg.Image.ImageBuffer eePromImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "leveling-24x24.png"));
             if (!ActiveTheme.Instance.IsDarkTheme)
@@ -250,7 +244,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                             }
                             else
                             {
-                                openEePromRepetierWidget = new EePromRepetierWidget();
+                                openEePromRepetierWidget = new EePromRepetierWindow();
                                 openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) =>
                                 {
                                     openEePromRepetierWidget = null;
@@ -265,7 +259,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                             }
                             else
                             {
-                                openEePromMarlinWidget = new EePromMarlinWidget();
+                                openEePromMarlinWidget = new EePromMarlinWindow();
                                 openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) =>
                                 {
                                     openEePromMarlinWidget = null;
@@ -399,7 +393,5 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 }
             }
         }
-			
-
     }
 }

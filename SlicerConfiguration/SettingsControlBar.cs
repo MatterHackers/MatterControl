@@ -105,8 +105,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     public class SettingsControlBar : FlowLayoutWidget
     {
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        TextWidget settingsStatusDescription;
-        TextWidget unsavedChangesIndicator;
         Button saveButton;
         Button revertbutton;
 
@@ -136,34 +134,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             bottomRow.HAnchor = HAnchor.ParentLeftRight;
             bottomRow.Margin = new BorderDouble(bottom:4);
 
-            FlowLayoutWidget settingsStatusLabelContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            settingsStatusLabelContainer.VAnchor |= VAnchor.ParentTop;
-            settingsStatusLabelContainer.Margin = new BorderDouble(0);
-            {   
-                string activeSettingsLabelText = LocalizedString.Get ("Active Settings").ToUpper();
-				string activeSettingsLabelTextFull = string.Format ("{0}:", activeSettingsLabelText);
-
-				TextWidget settingsStatusLabel = new TextWidget(string.Format(activeSettingsLabelTextFull), pointSize: 10);
-                settingsStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-                settingsStatusDescription = new TextWidget("", pointSize: 14);
-                settingsStatusDescription.Margin = new BorderDouble(top: 4);
-                settingsStatusDescription.AutoExpandBoundsToText = true;
-                settingsStatusDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-                string unsavedChangesTxtBeg = LocalizedString.Get("unsaved changes");
-				string unsavedChangesTxtFull = string.Format ("({0})", unsavedChangesTxtBeg);
-				unsavedChangesIndicator = new TextWidget(unsavedChangesTxtFull, pointSize: 10);
-                unsavedChangesIndicator.AutoExpandBoundsToText = true;
-                unsavedChangesIndicator.Visible = false;
-                unsavedChangesIndicator.Margin = new BorderDouble(left: 4);
-                unsavedChangesIndicator.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-                settingsStatusLabelContainer.AddChild(settingsStatusLabel);
-                settingsStatusLabelContainer.AddChild(settingsStatusDescription);
-                settingsStatusLabelContainer.AddChild(unsavedChangesIndicator);
-            }
-
 			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
             saveButton.VAnchor = VAnchor.ParentCenter;
             saveButton.Visible = false;
@@ -176,8 +146,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             revertbutton.Margin = new BorderDouble(0,0,0,10);
             revertbutton.Click += new EventHandler(revertbutton_Click);		
             
-            bottomRow.AddChild(settingsStatusLabelContainer);
-
             GuiWidget spacer = new GuiWidget(HAnchor.ParentLeftRight);
             bottomRow.AddChild(spacer);
 
@@ -234,28 +202,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         void SetStatusDisplay()
         {            
-            string settingsLayerDescription;
-            if (ActivePrinterProfile.Instance.ActivePrinter == null)
-            {
-                settingsLayerDescription = "Default Settings";
-            }
-            else
-            {
-                settingsLayerDescription = ActivePrinterProfile.Instance.ActivePrinter.Name;
-            }
-            settingsStatusDescription.Text = string.Format("{0}", settingsLayerDescription);
-            
             if (ActiveSliceSettings.Instance.HasUncommittedChanges)
             {   
                 this.saveButton.Visible = true;
                 this.revertbutton.Visible = true;                
-                unsavedChangesIndicator.Visible = true;
             }
             else
             {
                 this.saveButton.Visible = false;
                 this.revertbutton.Visible = false;                
-                unsavedChangesIndicator.Visible = false;
             }         
         }
 
@@ -275,7 +230,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             string menuSelection = ((DropDownMenu)sender).SelectedValue;
             foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
             {
-                // if the menu we selecti is this one
+                // if the menu we select is this one
                 if (item.Item1 == menuSelection)
                 {
                     // call its function
