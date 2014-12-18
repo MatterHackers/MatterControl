@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-    public partial class EePromMarlinWidget : SystemWindow
+    public partial class EePromMarlinWindow : SystemWindow
     {
         EePromMarlinSettings currentEePromSettings;
 
@@ -85,9 +85,10 @@ namespace MatterHackers.MatterControl.EeProm
 
         int currentTabIndex = 0;
 
-        public EePromMarlinWidget()
+        public EePromMarlinWindow()
             : base(700, 480)
         {
+            AlwaysOnTopOfMain = true;
             Title = LocalizedString.Get("Marlin Firmware EEPROM Settings");
 
             currentEePromSettings = new EePromMarlinSettings();

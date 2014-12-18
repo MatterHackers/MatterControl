@@ -41,7 +41,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-    public partial class EePromRepetierWidget : SystemWindow
+    public partial class EePromRepetierWindow : SystemWindow
     {
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -54,9 +54,10 @@ namespace MatterHackers.MatterControl.EeProm
         Button buttonCancel;
         Button buttonSave;
         
-        public EePromRepetierWidget()
+        public EePromRepetierWindow()
             : base(540, 480)
         {
+            AlwaysOnTopOfMain = true;
             BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 
             currentEePromSettings = new EePromRepetierStorage();
