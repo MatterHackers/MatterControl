@@ -74,7 +74,6 @@ namespace MatterHackers.MatterControl
 
                         filterOutput = new CheckBox(filterOutputChkTxt);
                         filterOutput.Margin = new BorderDouble(5, 5, 5, 2);
-                        filterOutput.Checked = UserSettings.Instance.Fields.GetValue(TerminalFilterOutputKey, false);
                         filterOutput.TextColor = this.textColor;
                         filterOutput.CheckedStateChanged += (object sender, EventArgs e) =>
                         {
@@ -203,6 +202,17 @@ namespace MatterHackers.MatterControl
             saveParams.FileName = "print_log.txt";
 
             FileDialog.SaveFileDialog(saveParams, onExportLogFileSelected);
+        }
+
+        bool firstDraw = true;
+        public override void OnDraw(Graphics2D graphics2D)
+        {
+            if (firstDraw)
+            {
+                filterOutput.Checked = UserSettings.Instance.Fields.GetValue(TerminalFilterOutputKey, false);
+                firstDraw = false;
+            }
+            base.OnDraw(graphics2D);
         }
 
         void onExportLogFileSelected(SaveFileDialogParams saveParams)

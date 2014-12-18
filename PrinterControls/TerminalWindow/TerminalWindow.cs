@@ -42,10 +42,12 @@ namespace MatterHackers.MatterControl
         static readonly string TerminalWindowSizeKey = "TerminalWindowSize";
         static readonly string TerminalWindowPositionKey = "TerminalWindowPosition";
         static TerminalWindow connectionWindow = null;
+        static bool terminalWasOpenOnAppClose = false;
         public static void Show()
         {
             if (connectionWindow == null)
             {
+                terminalWasOpenOnAppClose = false;
                 string windowSize = UserSettings.Instance.get(TerminalWindowSizeKey);
                 int width = 400;
                 int height = 300;
@@ -83,6 +85,7 @@ namespace MatterHackers.MatterControl
         {
             if (connectionWindow != null)
             {
+                terminalWasOpenOnAppClose = true;
                 connectionWindow.Close();
             }
         }
@@ -109,37 +112,18 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        void DelaySaveClosed(object state)
-        {
-            UserSettings.Instance.Fields.SetValue(TerminalWindowLeftOpen, false);
-        }
-
-        bool haveDoneSave = false;
         void SaveOnClosing()
         {
-            if (!haveDoneSave)
-            {
-                // save the last size of the window so we can restore it next time.
-                UserSettings.Instance.set(TerminalWindowSizeKey, string.Format("{0},{1}", Width, Height));
-                UserSettings.Instance.set(TerminalWindowPositionKey, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
-
-                // make a delay so we only save this if it is closed by the user not by the app.
-                UiThread.RunOnIdle(DelaySaveClosed, 2);
-
-                haveDoneSave = true;
-            }
+            // save the last size of the window so we can restore it next time.
+            UserSettings.Instance.set(TerminalWindowSizeKey, string.Format("{0},{1}", Width, Height));
+            UserSettings.Instance.set(TerminalWindowPositionKey, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
         }
 
-        public override void OnClosing(out bool cancelClose)
-        {
-            cancelClose = false;
-            SaveOnClosing();
-            base.OnClosing(out cancelClose);
-        }
-        
         public override void OnClosed(EventArgs e)
         {
             SaveOnClosing();
+            UserSettings.Instance.Fields.SetValue(TerminalWindowLeftOpen, terminalWasOpenOnAppClose);
+
             base.OnClosed(e);
         }
     }
