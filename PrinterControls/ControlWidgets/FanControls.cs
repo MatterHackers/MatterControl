@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
     public class FanControls : ControlWidgetBase
     {
+        event EventHandler unregisterEvents;
+        EditableNumberDisplay fanSpeedDisplay;
 
 		TextWidget fanToggleSwitchText;
 		ToggleSwitch toggleSwitch;
@@ -61,33 +63,52 @@ namespace MatterHackers.MatterControl.PrinterControls
             fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
             fanControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
             fanControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-
-            {
-                FlowLayoutWidget fanControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                fanControlsLayout.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                fanControlsLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
-                fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
-                {
-                    fanControlsLayout.AddChild(CreateFanControls());
-                }
-
-                fanControlsGroupBox.AddChild(fanControlsLayout);
-            }
+            
             
             this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             this.AddChild(fanControlsGroupBox);
+
+#if true
+            FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+
+            FlowLayoutWidget fanControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
+            fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
+            {
+                fanControlsLayout.AddChild(CreateFanControls());
+            }
+
+            leftToRight.AddChild(fanControlsLayout);
+
+            fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, PrinterConnectionAndCommunication.Instance.FanSpeed0To255.ToString(), "100");
+            fanSpeedDisplay.EditComplete += (sender, e) =>
+            {
+                PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
+            };
+            leftToRight.AddChild(fanSpeedDisplay);
+            TextWidget fanSpeedPercent = new TextWidget("%", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+            fanSpeedPercent.VAnchor = Agg.UI.VAnchor.ParentCenter;
+            leftToRight.AddChild(fanSpeedPercent);
+
+            fanControlsGroupBox.AddChild(leftToRight);
+#endif
         }
 
-
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
         
         private GuiWidget CreateFanControls()
         {
-        //    PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
 
             FlowLayoutWidget leftToRight = new FlowLayoutWidget();
             leftToRight.Padding = new BorderDouble(3, 0, 0, 5) * TextWidget.GlobalPointSizeScaleRatio;
-
-            
+          
 
 			//Matt's test editing to add a on/off toggle switch
 			bool fanActive = PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0;
@@ -104,12 +125,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 			leftToRight.AddChild(new HorizontalSpacer());
 			leftToRight.AddChild(toggleSwitch);
 
-			leftToRight.Width = 200;
-
             return leftToRight;
         }
-						
-		void ToggleSwitch_Click(object sender, EventArgs e)
+
+        void FanSpeedChanged_Event(object sender, EventArgs e)
+        {
+            int printerFanSpeed = PrinterConnectionAndCommunication.Instance.FanSpeed0To255;
+
+            fanSpeedDisplay.SetDisplayString(((int)(printerFanSpeed * 100.5 / 255)).ToString());
+        }
+        
+        void ToggleSwitch_Click(object sender, EventArgs e)
 		{
 			ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
 			if (toggleSwitch.getValue ()) 
