@@ -62,7 +62,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.AnchorAll();
 			this.Load(printItem);
-		}
+        
+            // We do this after showing the system window so that when we try and take focus of the parent window (the system window)
+            // it exists and can give the focus to its child the gcode window.
+            if (printItem != null 
+                && Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
+            {
+                SwitchToGcodeView();
+            }
+        }
 
 		public void Reload(PrintItemWrapper printItem)
 		{
