@@ -14,7 +14,6 @@ namespace MatterHackers.MatterControl
     public class PrintProgressBar : GuiWidget
     {
         double currentPercent = 0;
-        Stopwatch timeSinceLastUpdate = new Stopwatch();
         RGBA_Bytes completeColor = new RGBA_Bytes(255, 255, 255);
         TextWidget printTimeRemaining;
         TextWidget printTimeElapsed;
@@ -66,7 +65,6 @@ namespace MatterHackers.MatterControl
         event EventHandler unregisterEvents;
         void AddHandlers()
         {
-            PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(Instance_WroteLine, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
@@ -105,40 +103,14 @@ namespace MatterHackers.MatterControl
             UpdatePrintStatus();
         }
 
-        void Instance_WroteLine(object sender, EventArgs e)
-        {
-            if (!timeSinceLastUpdate.IsRunning)
-            {
-                timeSinceLastUpdate.Start();
-            }
-
-            if (timeSinceLastUpdate.ElapsedMilliseconds > 999)
-            {
-                timeSinceLastUpdate.Restart();
-                currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
-                UpdatePrintStatus();
-                this.Invalidate();                
-            }
-        }
-
         void OnIdle(object state)
         {
-            if (!timeSinceLastUpdate.IsRunning)
-            {
-                timeSinceLastUpdate.Start();
-            }
-
-            if (timeSinceLastUpdate.ElapsedMilliseconds > 999)
-            {
-                timeSinceLastUpdate.Restart();
-                currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
-                UpdatePrintStatus();
-                
-            }
+            currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
+            UpdatePrintStatus();
 
             if (!WidgetHasBeenClosed)
             {
-                UiThread.RunOnIdle(OnIdle);
+                UiThread.RunOnIdle(OnIdle, 1);
             }
         }
 
@@ -149,7 +121,6 @@ namespace MatterHackers.MatterControl
                 printTimeElapsed.Text = string.Format("");
                 printTimeRemaining.Text = string.Format("");
             }
-
             else
             {
                 int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
