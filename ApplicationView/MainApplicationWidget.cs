@@ -235,6 +235,7 @@ namespace MatterHackers.MatterControl
 		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
         public ApplicationView MainView;
 
+        public event EventHandler ApplicationClosed;
         event EventHandler unregisterEvents;
 
         public bool WidescreenMode { get; set; }
@@ -262,6 +263,14 @@ namespace MatterHackers.MatterControl
             });
         }
 
+
+        public void OnApplicationClosed()
+        {
+            if (ApplicationClosed != null)
+            {
+                ApplicationClosed(null, null);
+            }
+        }
 
         public static ApplicationController Instance
         {

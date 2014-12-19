@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
         bool firstDraw = true;
         bool ShowMemoryUsed = false;
         bool DoCGCollectEveryDraw = false;
-        public bool RestartOnClose = false;
+        public bool RestartOnClose = false;        
 
         static readonly Vector2 minSize = new Vector2(600, 600);
 
@@ -373,6 +373,8 @@ namespace MatterHackers.MatterControl
             Datastore.Instance.Exit();
             PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
             SlicingQueue.Instance.ShutDownSlicingThread();
+            ApplicationController.Instance.OnApplicationClosed();
+
             if (RestartOnClose)
             {
                 string appPathAndFile = System.Reflection.Assembly.GetExecutingAssembly().Location;
