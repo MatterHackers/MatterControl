@@ -408,7 +408,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
-                    Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize());
+                    Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "296.png");
                     enterEdittingButton.Margin = new BorderDouble(right: 10);
                     enterEdittingButton.Click += (sender, e) =>
                     {
@@ -449,6 +449,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                                 });
                         });
                     };
+
+                    Button leaveEditModeButton = textImageButtonFactory.Generate("Done".Localize(), centerText: true);
+                    leaveEditModeButton.Click += (sender, e) =>
+                    {
+                        UiThread.RunOnIdle((state) =>
+                        {
+                            if (saveButtons.Visible)
+                            {
+                                StyledMessageBox.ShowMessageBox(DiscardChangedAndExitEditing, "Unsaved changes will be lost. Are you sure you want to be done editing?", "Discard Unsaved Changes", StyledMessageBox.MessageType.YES_NO);
+                            }
+                            else
+                            {
+                                DiscardChangedAndExitEditing(true);
+                            }
+                        });
+                    };
+                    doEdittingButtonsContainer.AddChild(leaveEditModeButton);
 
                     Button ungroupButton = textImageButtonFactory.Generate("Ungroup".Localize());
                     doEdittingButtonsContainer.AddChild(ungroupButton);
@@ -614,6 +631,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // make sure the colors are set correctl
             ThemeChanged(this, null);
+        }
+
+        void DiscardChangedAndExitEditing(bool response)
+        {
+            if (response == true)
+            {
+                enterEditButtonsContainer.Visible = true;
+                autoArrangeButton.Visible = false;
+                processingProgressControl.Visible = false;
+                buttonRightPanel.Visible = false;
+                doEdittingButtonsContainer.Visible = false;
+                viewControls3D.PartSelectVisible = false;
+                if (viewControls3D.partSelectButton.Checked)
+                {
+                    viewControls3D.rotateButton.ClickButton(null);
+                }
+                SelectedMeshGroupIndex = -1;
+            }
         }
 
         private void OpenExportWindow()
