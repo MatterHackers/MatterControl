@@ -408,7 +408,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
-                    Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "296.png");
+                    Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "icon_edit_32x32.png");
                     enterEdittingButton.Margin = new BorderDouble(right: 10);
                     enterEdittingButton.Click += (sender, e) =>
                     {
