@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.ActionBar
 {
     public class PrintStatusRow : FlowLayoutWidget
     {
-        Stopwatch timeSinceLastDrawTime = new Stopwatch();
         event EventHandler unregisterEvents;
 
         TextWidget activePrintName;
@@ -281,7 +280,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
         public override void OnDraw(Graphics2D graphics2D)
         {
-            timeSinceLastDrawTime.Restart();
             base.OnDraw(graphics2D);
         }
 
@@ -289,20 +287,12 @@ namespace MatterHackers.MatterControl.ActionBar
         {
             if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
             {
-                if (!timeSinceLastDrawTime.IsRunning)
-                {
-                    timeSinceLastDrawTime.Start();
-                }
-                else if (timeSinceLastDrawTime.ElapsedMilliseconds > 999)
-                {
-                    UpdatePrintStatus();
-                    timeSinceLastDrawTime.Restart();
-                }
+                UpdatePrintStatus();
             }
 
             if (!WidgetHasBeenClosed)
             {
-                UiThread.RunOnIdle(OnIdle);
+                UiThread.RunOnIdle(OnIdle, 1);
             }
         }
 

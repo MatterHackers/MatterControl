@@ -274,8 +274,6 @@ namespace MatterHackers.MatterControl
             return presetsContainer;
         }
 
-
-
         private EditableNumberDisplay GetTargetTemperatureDisplay()
         {
             targetTemperatureDisplay = new EditableNumberDisplay(textImageButtonFactory, string.Format("{0:0.0}°C", GetTargetTemperature()), string.Format("{0:0.0}°C", 240.2));

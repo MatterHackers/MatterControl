@@ -53,6 +53,19 @@ namespace MatterHackers.MatterControl.DataStorage
             }
         }
 
+        /// <summary>
+        /// Returns the application temp data folder
+        /// </summary>
+        /// <returns></returns>
+        public string ApplicationTempDataPath
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName,"data", "temp");
+            }
+        }
+
+
         public string ApplicationLibraryDataPath
         {
             get

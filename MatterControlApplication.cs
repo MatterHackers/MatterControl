@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
         bool firstDraw = true;
         bool ShowMemoryUsed = false;
         bool DoCGCollectEveryDraw = false;
-        public bool RestartOnClose = false;
+        public bool RestartOnClose = false;        
 
         static readonly Vector2 minSize = new Vector2(600, 600);
 
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl
             if (ShowMemoryUsed)
             {
                 long memory = GC.GetTotalMemory(false);
-                this.Title = "Allocated = {0:n0} : {1}ms, d{2} Size = {3}x{4}, onIdle = {5}, drawCount = {6}".FormatWith(memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height, UiThread.Count, GuiWidget.DrawCount);
+                this.Title = "Allocated = {0:n0} : {1:000}ms, d{2} Size = {3}x{4}, onIdle = {5:00}:{6:00}, drawCount = {7}".FormatWith(memory, totalDrawTime.ElapsedMilliseconds, drawCount++, this.Width, this.Height, UiThread.CountExpired, UiThread.Count, GuiWidget.DrawCount);
                 if (DoCGCollectEveryDraw)
                 {
                     GC.Collect();
@@ -373,6 +373,8 @@ namespace MatterHackers.MatterControl
             Datastore.Instance.Exit();
             PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
             SlicingQueue.Instance.ShutDownSlicingThread();
+            ApplicationController.Instance.OnApplicationClosed();
+
             if (RestartOnClose)
             {
                 string appPathAndFile = System.Reflection.Assembly.GetExecutingAssembly().Location;

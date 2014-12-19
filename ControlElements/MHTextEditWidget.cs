@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 
             if (!WidgetHasBeenClosed)
             {
-                UiThread.RunOnIdle(OnIdle);
+                UiThread.RunOnIdle(OnIdle, 1);
             }
         }
 
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl
 
             if (!WidgetHasBeenClosed)
             {
-                UiThread.RunOnIdle(OnIdle);
+                UiThread.RunOnIdle(OnIdle, 1);
             }
         }
 

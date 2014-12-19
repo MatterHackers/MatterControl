@@ -665,7 +665,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (!WidgetHasBeenClosed && autoRotating)
             {
                 // add it back in to keep it running.
-                UiThread.RunOnIdle(AutoSpin);
+                UiThread.RunOnIdle(AutoSpin, .04);
 
                 if ((!timeSinceLastSpin.IsRunning || timeSinceLastSpin.ElapsedMilliseconds > 50)
                     && hasDrawn)
