@@ -457,11 +457,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         {
                             if (saveButtons.Visible)
                             {
-                                StyledMessageBox.ShowMessageBox(DiscardChangedAndExitEditing, "Unsaved changes will be lost. Are you sure you want to be done editing?", "Discard Unsaved Changes", StyledMessageBox.MessageType.YES_NO);
+                                StyledMessageBox.ShowMessageBox(SaveChangedBeforeExitEditing, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
                             }
                             else
                             {
-                                DiscardChangedAndExitEditing(true);
+                                SaveChangedBeforeExitEditing(true);
                             }
                         });
                     };
@@ -633,22 +633,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             ThemeChanged(this, null);
         }
 
-        void DiscardChangedAndExitEditing(bool response)
+        void SaveChangedBeforeExitEditing(bool response)
         {
             if (response == true)
             {
-                enterEditButtonsContainer.Visible = true;
-                autoArrangeButton.Visible = false;
-                processingProgressControl.Visible = false;
-                buttonRightPanel.Visible = false;
-                doEdittingButtonsContainer.Visible = false;
-                viewControls3D.PartSelectVisible = false;
-                if (viewControls3D.partSelectButton.Checked)
-                {
-                    viewControls3D.rotateButton.ClickButton(null);
-                }
-                SelectedMeshGroupIndex = -1;
+                MergeAndSavePartsToCurrentMeshFile(SwitchStateToNotEditing);
             }
+            else
+            {
+                SwitchStateToNotEditing();
+            }
+        }
+
+        void SwitchStateToNotEditing()
+        {
+            enterEditButtonsContainer.Visible = true;
+            autoArrangeButton.Visible = false;
+            processingProgressControl.Visible = false;
+            buttonRightPanel.Visible = false;
+            doEdittingButtonsContainer.Visible = false;
+            viewControls3D.PartSelectVisible = false;
+            if (viewControls3D.partSelectButton.Checked)
+            {
+                viewControls3D.rotateButton.ClickButton(null);
+            }
+            SelectedMeshGroupIndex = -1;
         }
 
         private void OpenExportWindow()
@@ -1877,8 +1886,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void MergeAndSavePartsToCurrentMeshFile()
+        public delegate void AfterSaveCallback();
+        AfterSaveCallback afterSaveCallback = null;
+        private void MergeAndSavePartsToCurrentMeshFile(AfterSaveCallback eventToCallAfterSave = null)
         {
+            afterSaveCallback = eventToCallAfterSave;
+
             if (MeshGroups.Count > 0)
             {
                 string progressSavingPartsLabel = "Saving".Localize();
@@ -1968,6 +1981,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             UnlockEditControls();
             // NOTE: we do not pull the data back out of the asynch lists.
             saveButtons.Visible = false;
+
+            if (afterSaveCallback != null)
+            {
+                afterSaveCallback();
+            }
         }
 
         void expandViewOptions_CheckedStateChanged(object sender, EventArgs e)
