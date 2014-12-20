@@ -155,8 +155,8 @@ namespace MatterHackers.MatterControl
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            PopOutTextTabWidget controlsTab = new PopOutTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", textSize);
-            advancedControls.AddTab(controlsTab);
+            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", textSize,
+            ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();
