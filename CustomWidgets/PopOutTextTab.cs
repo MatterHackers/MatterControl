@@ -30,12 +30,17 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.Agg.UI
 {
@@ -78,6 +83,23 @@ namespace MatterHackers.Agg.UI
             tabTitle = new TextWidget(tabText, pointSize: pointSize, textColor: textColor);
             tabTitle.AutoExpandBoundsToText = true;
             leftToRight.AddChild(tabTitle);
+
+#if false
+            ImageBuffer popOutImage = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+            ImageBuffer popOutImageHover = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+            ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+            InvertLightness.DoInvertLightness(popOutImageClick);
+            if (!ActiveTheme.Instance.IsDarkTheme)
+            {
+                InvertLightness.DoInvertLightness(popOutImage);
+                InvertLightness.DoInvertLightness(popOutImageClick);
+            }
+
+            Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
+            popOut.VAnchor = VAnchor.ParentTop;
+            leftToRight.AddChild(popOut);
+#endif
+
             widgetState.AddChild(leftToRight);
             widgetState.Selectable = false;
             widgetState.SetBoundsToEncloseChildren();
