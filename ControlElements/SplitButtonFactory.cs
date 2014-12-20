@@ -27,6 +27,7 @@ namespace MatterHackers.MatterControl
 		public double borderWidth = 1;
 		public bool invertImageLocation = false;
 		public bool AllowThemeToAdjustImage = true;
+		private string imageName;
 
 		public double FixedHeight = 30;
 
@@ -34,8 +35,10 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		public SplitButton Generate (TupleList<string, Func<bool>> buttonList, Direction direction = Direction.Down )
+		public SplitButton Generate (TupleList<string, Func<bool>> buttonList, Direction direction = Direction.Down,string imageName = null)
 		{
+			this.imageName = imageName;
+
 			DynamicDropDownMenu menu = CreateMenu(direction);
             menu.Margin = new BorderDouble();
 			Button button = CreateButton (buttonList [0]);
@@ -64,7 +67,7 @@ namespace MatterHackers.MatterControl
 			buttonFactory.hoverBorderColor = this.hoverBorderColor;
 
 
-			Button button =  buttonFactory.Generate (buttonInfo.Item1, centerText: true);
+			Button button =  buttonFactory.Generate (buttonInfo.Item1,normalImageName: imageName, centerText: true);
 
 			button.Click += (object sender, EventArgs e) => 
             {
