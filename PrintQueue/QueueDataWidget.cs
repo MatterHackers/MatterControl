@@ -80,16 +80,16 @@ namespace MatterHackers.MatterControl.PrintQueue
             textImageButtonFactory.borderWidth = 0;
 
 
-            editButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryAccentColor;
-            editButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
-            editButtonFactory.pressedTextColor = RGBA_Bytes.White;
+            editButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            editButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            editButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            editButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             editButtonFactory.borderWidth = 0;
             editButtonFactory.FixedWidth = 70;
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
-                enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+                enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), "296.png", centerText: true);
                 leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
                 leaveEditModeButton.Visible = false;
                 
