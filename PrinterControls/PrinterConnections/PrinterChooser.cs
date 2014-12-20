@@ -73,10 +73,12 @@ namespace MatterHackers.MatterControl
                 }
 
             }
-            if (ManufacturerDropList.CountVisibleChildren() == 1)
+
+            if (ManufacturerDropList.MenuItems.Count == 1)
             {
-                ManufacturerDropList.SelectedIndex = 0;
+               ManufacturerDropList.SelectedIndex = 0;
             }
+
             AddChild(ManufacturerDropList);
 
             HAnchor = HAnchor.FitToChildren;
