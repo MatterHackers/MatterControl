@@ -18,7 +18,8 @@
     "Portabee",
     "Lulzbot",
     "3D Stuffmaker",
-    "Velleman"
+    "Velleman",
+    "OpenBeam"
   ],
   "PreloadedLibraryFiles": [
     "Calibration - Box.stl"

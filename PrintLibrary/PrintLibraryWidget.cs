@@ -79,10 +79,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
             searchButtonFactory.borderWidth = 0;
             searchButtonFactory.FixedWidth = 80;
 
-            editButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryAccentColor;
-            editButtonFactory.hoverTextColor = RGBA_Bytes.White;
-            editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
-            editButtonFactory.pressedTextColor = RGBA_Bytes.White;
+            editButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            editButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            editButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            editButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             editButtonFactory.borderWidth = 0;
             editButtonFactory.FixedWidth = 70;
 

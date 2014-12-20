@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // If the window is embeded (in the center pannel) and there is no item loaded then don't show the add button
                 enterEditButtonsContainer = new FlowLayoutWidget();
                 {
-                    Button addButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
+					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
                     addButton.Margin = new BorderDouble(right: 10);
                     enterEditButtonsContainer.AddChild(addButton);
                     addButton.Click += (sender, e) =>
@@ -408,7 +408,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
-                    Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "296.png");
+                    Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "icon_edit_32x32.png");
                     enterEdittingButton.Margin = new BorderDouble(right: 10);
                     enterEdittingButton.Click += (sender, e) =>
                     {
@@ -434,7 +434,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 doEdittingButtonsContainer.Visible = false;
 
                 {
-                    Button addButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
+					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
                     addButton.Margin = new BorderDouble(right: 10);
                     doEdittingButtonsContainer.AddChild(addButton);
                     addButton.Click += (sender, e) =>
@@ -450,22 +450,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         });
                     };
 
-                    Button leaveEditModeButton = textImageButtonFactory.Generate("Done".Localize(), centerText: true);
-                    leaveEditModeButton.Click += (sender, e) =>
-                    {
-                        UiThread.RunOnIdle((state) =>
-                        {
-                            if (saveButtons.Visible)
-                            {
-                                StyledMessageBox.ShowMessageBox(DiscardChangedAndExitEditing, "Unsaved changes will be lost. Are you sure you want to be done editing?", "Discard Unsaved Changes", StyledMessageBox.MessageType.YES_NO);
-                            }
-                            else
-                            {
-                                DiscardChangedAndExitEditing(true);
-                            }
-                        });
-                    };
-                    doEdittingButtonsContainer.AddChild(leaveEditModeButton);
+					GuiWidget separator = new GuiWidget(1, 2);
+					separator.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
+					separator.Margin = new BorderDouble(4, 2);
+					separator.VAnchor = VAnchor.ParentBottomTop;
+					doEdittingButtonsContainer.AddChild(separator);
 
                     Button ungroupButton = textImageButtonFactory.Generate("Ungroup".Localize());
                     doEdittingButtonsContainer.AddChild(ungroupButton);
@@ -488,6 +477,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         AlignToSelectedMeshGroup();
                     };
 
+					GuiWidget separatorTwo = new GuiWidget(1, 2);
+					separatorTwo.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
+					separatorTwo.Margin = new BorderDouble(4, 2);
+					separatorTwo.VAnchor = VAnchor.ParentBottomTop;
+					doEdittingButtonsContainer.AddChild(separatorTwo);
+
                     Button copyButton = textImageButtonFactory.Generate("Copy".Localize());
                     doEdittingButtonsContainer.AddChild(copyButton);
                     copyButton.Click += (sender, e) =>
@@ -495,16 +490,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                         MakeCopyOfGroup();
                     };
 
-                    Button deleteButton = textImageButtonFactory.Generate("Delete".Localize());
-                    deleteButton.Margin = new BorderDouble(left: 20, right: 20);
+                    Button deleteButton = textImageButtonFactory.Generate("Remove".Localize());
                     doEdittingButtonsContainer.AddChild(deleteButton);
                     deleteButton.Click += (sender, e) =>
                     {
                         DeleteSelectedMesh();
                     };
 
-                    // put in the save button
-                    AddSaveAndSaveAs(doEdittingButtonsContainer);
+					GuiWidget separatorThree = new GuiWidget(1, 2);
+					separatorThree.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
+					separatorThree.Margin = new BorderDouble(4, 1);
+					separatorThree.VAnchor = VAnchor.ParentBottomTop;
+					doEdittingButtonsContainer.AddChild(separatorThree);
+
+
+					Button leaveEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+					leaveEditModeButton.Click += (sender, e) =>
+						{
+							UiThread.RunOnIdle((state) =>
+								{
+									if (saveButtons.Visible)
+									{
+										StyledMessageBox.ShowMessageBox(SaveChangedBeforeExitEditing, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
+									}
+									else
+									{
+										SaveChangedBeforeExitEditing(true);
+									}
+								});
+						};
+					doEdittingButtonsContainer.AddChild(leaveEditModeButton);
+
+					// put in the save button
+					AddSaveAndSaveAs(doEdittingButtonsContainer);
                 }
 
                 KeyDown += (sender, e) =>
@@ -574,22 +592,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             AddHandlers();
 
-            if (printItemWrapper != null)
-            {
-                // Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
-                // not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
-                // parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
-                // when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
-                MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
-                if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
-                {
-                    centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
-                }
-
-                // don't load the mesh until we get all the rest of the interface built
-                meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
-                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
-            }
+            ClearBedAndLoadPrintItemWrapper(printItemWrapper);
 
             UiThread.RunOnIdle(AutoSpin);
 
@@ -633,22 +636,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             ThemeChanged(this, null);
         }
 
-        void DiscardChangedAndExitEditing(bool response)
+        private void ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
+        {
+            MeshGroups.Clear();
+            MeshGroupExtraData.Clear();
+            MeshGroupTransforms.Clear();
+            if (printItemWrapper != null)
+            {
+                // Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
+                // not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
+                // parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
+                // when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
+                MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
+                if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+                {
+                    centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
+                }
+
+                // don't load the mesh until we get all the rest of the interface built
+                meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
+                meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
+            }
+        }
+
+        void SaveChangedBeforeExitEditing(bool response)
         {
             if (response == true)
             {
-                enterEditButtonsContainer.Visible = true;
-                autoArrangeButton.Visible = false;
-                processingProgressControl.Visible = false;
-                buttonRightPanel.Visible = false;
-                doEdittingButtonsContainer.Visible = false;
-                viewControls3D.PartSelectVisible = false;
-                if (viewControls3D.partSelectButton.Checked)
-                {
-                    viewControls3D.rotateButton.ClickButton(null);
-                }
-                SelectedMeshGroupIndex = -1;
+                MergeAndSavePartsToCurrentMeshFile(SwitchStateToNotEditing);
             }
+            else
+            {
+                SwitchStateToNotEditing();
+                // and reload the part
+                ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+            }
+        }
+
+        void SwitchStateToNotEditing()
+        {
+            enterEditButtonsContainer.Visible = true;
+            autoArrangeButton.Visible = false;
+            processingProgressControl.Visible = false;
+            buttonRightPanel.Visible = false;
+            doEdittingButtonsContainer.Visible = false;
+            viewControls3D.PartSelectVisible = false;
+            if (viewControls3D.partSelectButton.Checked)
+            {
+                viewControls3D.rotateButton.ClickButton(null);
+            }
+            SelectedMeshGroupIndex = -1;
         }
 
         private void OpenExportWindow()
@@ -1152,7 +1189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             });
             SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
             splitButtonFactory.FixedHeight = 40;
-            saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up);
+			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up,imageName:"icon_save_32x32.png");
             saveButtons.Visible = false;
 
             saveButtons.Margin = new BorderDouble();
@@ -1877,8 +1914,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        private void MergeAndSavePartsToCurrentMeshFile()
+        public delegate void AfterSaveCallback();
+        AfterSaveCallback afterSaveCallback = null;
+        private void MergeAndSavePartsToCurrentMeshFile(AfterSaveCallback eventToCallAfterSave = null)
         {
+            afterSaveCallback = eventToCallAfterSave;
+
             if (MeshGroups.Count > 0)
             {
                 string progressSavingPartsLabel = "Saving".Localize();
@@ -1968,6 +2009,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             UnlockEditControls();
             // NOTE: we do not pull the data back out of the asynch lists.
             saveButtons.Visible = false;
+
+            if (afterSaveCallback != null)
+            {
+                afterSaveCallback();
+            }
         }
 
         void expandViewOptions_CheckedStateChanged(object sender, EventArgs e)

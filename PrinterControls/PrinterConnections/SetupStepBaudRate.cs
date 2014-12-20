@@ -109,7 +109,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             FlowLayoutWidget baudRateContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);            
             baudRateContainer.Margin = new BorderDouble(0);
 
-            //TO DO - Add handling for 'Other' option with attached TextEdit
             List<string> baudRates = new List<string> { "115200", "250000" };
             BorderDouble baudRateMargin = new BorderDouble(3, 3, 5, 0);
 
