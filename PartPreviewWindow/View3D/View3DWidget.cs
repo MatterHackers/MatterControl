@@ -108,6 +108,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		SaveAsWindow saveAsWindow = null;
         ExportPrintItemWindow exportingWindow = null;
 
+        bool partHasBeenEdited = false;
+
         List<MeshGroup> asynchMeshGroups = new List<MeshGroup>();
         List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
         List<PlatingMeshGroupData> asynchPlatingDatas = new List<PlatingMeshGroupData>();
@@ -503,7 +505,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					separatorThree.VAnchor = VAnchor.ParentBottomTop;
 					doEdittingButtonsContainer.AddChild(separatorThree);
 
-
 					Button leaveEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
 					leaveEditModeButton.Click += (sender, e) =>
 						{
@@ -511,11 +512,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									if (saveButtons.Visible)
 									{
-										StyledMessageBox.ShowMessageBox(SaveChangedBeforeExitEditing, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
+										StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
 									}
 									else
 									{
-										SaveChangedBeforeExitEditing(true);
+                                        if (partHasBeenEdited)
+                                        {
+                                            ExitEditingAndSaveIfRequired(false);
+                                        }
+                                        else
+                                        {
+                                            SwitchStateToNotEditing();
+                                        }
 									}
 								});
 						};
@@ -634,6 +642,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             // make sure the colors are set correctl
             ThemeChanged(this, null);
+
+            saveButtons.VisibleChanged += (sender, e) =>
+            {
+                partHasBeenEdited = true;
+            };
         }
 
         private void ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
@@ -657,9 +670,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
                 meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
             }
+
+            partHasBeenEdited = false;
         }
 
-        void SaveChangedBeforeExitEditing(bool response)
+        void ExitEditingAndSaveIfRequired(bool response)
         {
             if (response == true)
             {
