@@ -67,6 +67,16 @@ namespace MatterHackers.Agg.UI
             SetBoundsToEncloseChildren();
         }
 
+        public override void OnMouseDown(MouseEventArgs mouseEvent)
+        {
+            if (leftToRight.FirstWidgetUnderMouse)
+            {
+                OnSelected(mouseEvent);
+            }
+
+            base.OnMouseDown(mouseEvent);
+        }
+
         void tabPageControledByTab_TextChanged(object sender, EventArgs e)
         {
             normalWidget.Children[0].Text = ((GuiWidget)sender).Text;
@@ -77,17 +87,27 @@ namespace MatterHackers.Agg.UI
         }
 
         public TextWidget tabTitle;
+        FlowLayoutWidget leftToRight;
         private void AddText(string tabText, GuiWidget widgetState, RGBA_Bytes textColor, RGBA_Bytes backgroundColor, double pointSize)
         {
-            FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+            leftToRight = new FlowLayoutWidget();
             tabTitle = new TextWidget(tabText, pointSize: pointSize, textColor: textColor);
             tabTitle.AutoExpandBoundsToText = true;
             leftToRight.AddChild(tabTitle);
 
 #if false
             ImageBuffer popOutImage = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
-            ImageBuffer popOutImageHover = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
-            ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+            byte[] buffer = popOutImage.GetBuffer(); 
+            for(int i=0; i<buffer.Length; i++)
+            {
+                if ((i & 3) != 3)
+                {
+                    buffer[i] = textColor.red;
+                }
+            }
+
+            ImageBuffer popOutImageHover = new ImageBuffer(popOutImage);
+            ImageBuffer popOutImageClick = new ImageBuffer(popOutImage);
             InvertLightness.DoInvertLightness(popOutImageClick);
             if (!ActiveTheme.Instance.IsDarkTheme)
             {
@@ -96,12 +116,12 @@ namespace MatterHackers.Agg.UI
             }
 
             Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
+            popOut.Margin = new BorderDouble(3, 0);
             popOut.VAnchor = VAnchor.ParentTop;
             leftToRight.AddChild(popOut);
 #endif
 
             widgetState.AddChild(leftToRight);
-            widgetState.Selectable = false;
             widgetState.SetBoundsToEncloseChildren();
             widgetState.BackgroundColor = backgroundColor;
         }
