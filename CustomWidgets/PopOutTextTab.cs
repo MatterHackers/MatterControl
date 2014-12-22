@@ -46,6 +46,8 @@ namespace MatterHackers.Agg.UI
 {
     public class PopOutTextTabWidget : Tab
     {
+        SystemWindow systemWindow = null;
+
         public PopOutTextTabWidget(TabPage tabPageControledByTab, string internalTabName)
             : this(tabPageControledByTab, internalTabName, 12)
         {
@@ -116,6 +118,7 @@ namespace MatterHackers.Agg.UI
             }
 
             Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
+            popOut.Click += popOut_Click;
             popOut.Margin = new BorderDouble(3, 0);
             popOut.VAnchor = VAnchor.ParentTop;
             leftToRight.AddChild(popOut);
@@ -124,6 +127,96 @@ namespace MatterHackers.Agg.UI
             widgetState.AddChild(leftToRight);
             widgetState.SetBoundsToEncloseChildren();
             widgetState.BackgroundColor = backgroundColor;
+        }
+
+        GuiWidget topParent;
+        public override void OnParentChanged(EventArgs e)
+        {
+            topParent = Parent;
+            while (topParent != null && topParent.Parent != null)
+            {
+                topParent = topParent.Parent;
+            }
+            if (topParent != null)
+            {
+                topParent.DrawAfter += Parent_DrawAfter;
+            }
+            base.OnParentChanged(e);
+        }
+
+        void Parent_DrawAfter(GuiWidget drawingWidget, DrawEventArgs e)
+        {
+            UiThread.RunOnIdle((state) =>
+            {
+                //popOut_Click(null, null);
+            });
+
+            topParent.DrawAfter -= Parent_DrawAfter;
+        }
+
+        public override void OnClosed(EventArgs e)
+        {
+            if (systemWindow != null)
+            {
+                systemWindow.CloseAndRemoveAllChildren();
+                systemWindow.Close();
+            }
+            base.OnClosed(e);
+        }
+
+        void popOut_Click(object sender, EventArgs e)
+        {
+            if (systemWindow == null)
+            {
+                systemWindow = new SystemWindow(640, 400);
+                systemWindow.AlwaysOnTopOfMain = true;
+                systemWindow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+                systemWindow.Closing += systemWindow_Closing;
+                if (TabPageControlledByTab.Children.Count == 1)
+                {
+                    GuiWidget child = TabPageControlledByTab.Children[0];
+                    TabPageControlledByTab.RemoveChild(child);
+                    TabPageControlledByTab.AddChild(CreatTabPageContent());
+                    systemWindow.AddChild(child);
+                }
+                systemWindow.ShowAsSystemWindow();
+            }
+            else
+            {
+                systemWindow.BringToFront();
+            }
+        }
+
+        GuiWidget CreatTabPageContent()
+        {
+            GuiWidget allContent = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
+            Button bringBackToTabButton = new Button("Bring Back");
+            bringBackToTabButton.AnchorCenter();
+            bringBackToTabButton.Click += (sender, e) => 
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    GuiWidget systemWindow = this.systemWindow;
+                    systemWindow_Closing(null, null);
+                    systemWindow.Close();
+                });
+            };
+
+            allContent.AddChild(bringBackToTabButton);
+
+            return allContent;
+        }
+
+        void systemWindow_Closing(object sender, WidgetClosingEnventArgs closingEvent)
+        {
+            if (systemWindow.Children.Count == 1)
+            {
+                GuiWidget child = systemWindow.Children[0];
+                systemWindow.RemoveChild(child);
+                TabPageControlledByTab.RemoveAllChildren();
+                TabPageControlledByTab.AddChild(child);
+            }
+            systemWindow = null;
         }
     }
 }
