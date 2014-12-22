@@ -199,14 +199,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         private void ModelDropList_SelectionChanged(object sender, EventArgs e)
         {
-            ActivePrinter.Model = ((DropDownList)sender).SelectedLabel;
-            LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);            
-            printerModelError.Visible = false;
-            SetElementState();
-			if(usingDefaultName)
-			{
-				printerNameInput.Text = String.Format ("{0} {1} ({2})", this.ActivePrinter.Make, this.ActivePrinter.Model, ExistingPrinterCount () + 1); 
-			}
+            UiThread.RunOnIdle((state) =>
+            {
+                ActivePrinter.Model = ((DropDownList)sender).SelectedLabel;
+                LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);            
+                printerModelError.Visible = false;
+                SetElementState();
+			    if(usingDefaultName)
+			    {
+				    printerNameInput.Text = String.Format ("{0} {1} ({2})", this.ActivePrinter.Make, this.ActivePrinter.Model, ExistingPrinterCount () + 1); 
+			    }
+            });
         }
 
 		private void PrinterNameInput_KeyPressed(object sender, KeyPressEventArgs e)
