@@ -177,6 +177,9 @@ namespace MatterHackers.MatterControl
             // make sure when we start up that we are showing the 3D view
             UserSettings.Instance.Fields.EmbededViewShowingGCode = false;
 
+            // set this at startup so that we can tell next time if it got set to true in close
+            UserSettings.Instance.Fields.AppExitedNormaly = false;
+
             ShowAsSystemWindow();
         }
 
@@ -367,6 +370,7 @@ namespace MatterHackers.MatterControl
 
         public override void OnClosed(EventArgs e)
         {
+            UserSettings.Instance.Fields.AppExitedNormaly = true;
             TerminalWindow.CloseIfOpen();
             PrinterConnectionAndCommunication.Instance.Disable();
             //Close connection to the local datastore

@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl
 
         string IsSimpleModeKey = "IsSimpleMode";
         string EmbededViewShowingGCodeKey = "EmbededViewShowingGCode";
+        string AppExitedNormalyKey = "ExitedNormaly";
 
         public bool IsSimpleMode
         {
@@ -53,6 +54,19 @@ namespace MatterHackers.MatterControl
             set
             {
                 SetValue(IsSimpleModeKey, value);
+            }
+        }
+
+        public bool AppExitedNormaly
+        {
+            get
+            {
+                return GetValue(AppExitedNormalyKey, true);
+            }
+
+            set
+            {
+                SetValue(AppExitedNormalyKey, value);
             }
         }
 
