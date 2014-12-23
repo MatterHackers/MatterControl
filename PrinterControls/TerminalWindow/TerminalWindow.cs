@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
                 };
 
                 // start with the assumption we are open and only change this is we see it close
-                UserSettings.Instance.Fields.SetValue(TerminalWindowLeftOpen, true);
+                UserSettings.Instance.Fields.SetBool(TerminalWindowLeftOpen, true);
             }
             else
             {
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 
         public static void ShowIfLeftOpen()
         {
-            if (UserSettings.Instance.Fields.GetValue(TerminalWindowLeftOpen, false))
+            if (UserSettings.Instance.Fields.GetBool(TerminalWindowLeftOpen, false))
             {
                 Show();
             }
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
         public override void OnClosed(EventArgs e)
         {
             SaveOnClosing();
-            UserSettings.Instance.Fields.SetValue(TerminalWindowLeftOpen, terminalWasOpenOnAppClose);
+            UserSettings.Instance.Fields.SetBool(TerminalWindowLeftOpen, terminalWasOpenOnAppClose);
 
             base.OnClosed(e);
         }

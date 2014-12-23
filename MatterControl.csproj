@@ -119,7 +119,6 @@
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingData.cs" />
     <Compile Include="ConfigurationPage\SettingsViewBase.cs" />
     <Compile Include="ControlElements\ConditionalClickWidget.cs" />
-    <Compile Include="CrashTracker.cs" />
     <Compile Include="CustomWidgets\AltGroupBox.cs" />
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />

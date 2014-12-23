@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(threeDimensionButton);
 
 				if (UserSettings.Instance.get("LayerViewDefault") == "3D Layer"
-                    && UserSettings.Instance.Fields.AppExitedNormaly == true)
+                    && UserSettings.Instance.Fields.StartCountDurringExit == UserSettings.Instance.Fields.StartCount - 1)
 				{
 					threeDimensionButton.Checked = true;
 				}

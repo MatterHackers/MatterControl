@@ -40,50 +40,51 @@ namespace MatterHackers.MatterControl
     {
         List<string> acceptableTrueFalseValues = new List<string>() { "true", "false" };
 
+        string StartCountKey = "StartCount";
+        string StartCountDurringExitKey = "StartCountDurringExit";
+
         string IsSimpleModeKey = "IsSimpleMode";
         string EmbededViewShowingGCodeKey = "EmbededViewShowingGCode";
-        string AppExitedNormalyKey = "ExitedNormaly";
 
         public bool IsSimpleMode
         {
             get
             {
-                return GetValue(IsSimpleModeKey, OemSettings.Instance.UseSimpleModeByDefault);
+                return GetBool(IsSimpleModeKey, OemSettings.Instance.UseSimpleModeByDefault);
             }
 
             set
             {
-                SetValue(IsSimpleModeKey, value);
+                SetBool(IsSimpleModeKey, value);
             }
         }
 
-        public bool AppExitedNormaly
+        public int StartCount
         {
-            get
-            {
-                return GetValue(AppExitedNormalyKey, true);
-            }
+            get { return GetInt(StartCountKey); }
+            set { SetInt(StartCountKey, value); }
+        }
 
-            set
-            {
-                SetValue(AppExitedNormalyKey, value);
-            }
+        public int StartCountDurringExit
+        {
+            get { return GetInt(StartCountDurringExitKey); }
+            set { SetInt(StartCountDurringExitKey, value); }
         }
 
         public bool EmbededViewShowingGCode
         {
             get
             {
-                return GetValue(EmbededViewShowingGCodeKey, false);
+                return GetBool(EmbededViewShowingGCodeKey, false);
             }
 
             set
             {
-                SetValue(EmbededViewShowingGCodeKey, value);
+                SetBool(EmbededViewShowingGCodeKey, value);
             }
         }
 
-        public void SetValue(string keyToSet, bool value)
+        public void SetBool(string keyToSet, bool value)
         {
             if (value)
             {
@@ -95,7 +96,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public bool GetValue(string keyToRead, bool defaultValue)
+        public bool GetBool(string keyToRead, bool defaultValue)
         {
             string currentValue = UserSettings.Instance.get(keyToRead);
             if (acceptableTrueFalseValues.IndexOf(currentValue) == -1)
@@ -111,6 +112,23 @@ namespace MatterHackers.MatterControl
                 UserSettings.Instance.set(keyToRead, currentValue);
             }
             return currentValue == "true";
+        }
+
+        public void SetInt(string keyToSet, int value)
+        {
+            UserSettings.Instance.set(keyToSet, value.ToString());
+        }
+
+        public int GetInt(string keyToRead)
+        {
+            string currentValue = UserSettings.Instance.get(keyToRead);
+            int result = 0;
+            if(int.TryParse(currentValue, out result))
+            {
+                return result;
+            }
+
+            return 0;
         }
     }
 }
