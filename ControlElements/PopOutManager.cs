@@ -27,7 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Globalization;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg;
@@ -56,7 +58,10 @@ namespace MatterHackers.MatterControl
         #region Public Members
         public PopOutManager(GuiWidget widgetWhosContentsPopOut, Vector2 minSize, string windowTitle, string dataBaseKeyPrefix)
         {
-            this.windowTitle = windowTitle;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            string titeCaseTitle = textInfo.ToTitleCase(windowTitle.ToLower());
+
+            this.windowTitle = "MatterControl - " + titeCaseTitle;
             this.minSize = minSize;
             this.dataBaseKeyPrefix = dataBaseKeyPrefix;
             this.widgetWhosContentsPopOut = widgetWhosContentsPopOut;
@@ -150,7 +155,13 @@ namespace MatterHackers.MatterControl
         GuiWidget CreatContentForEmptyControl()
         {
             GuiWidget allContent = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
-            Button bringBackToTabButton = new Button("Bring Back");
+
+            TextImageButtonFactory bringBackButtonFactory = new TextImageButtonFactory();
+
+            Button bringBackToTabButton = bringBackButtonFactory.Generate(LocalizedString.Get("Bring Back"));
+
+            bringBackToTabButton.Margin = new BorderDouble(right: 3);
+            bringBackToTabButton.Cursor = Cursors.Hand;
             bringBackToTabButton.AnchorCenter();
             bringBackToTabButton.Click += (sender, e) =>
             {

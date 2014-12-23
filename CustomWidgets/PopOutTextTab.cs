@@ -93,7 +93,13 @@ namespace MatterHackers.Agg.UI
             leftToRight.AddChild(tabTitle);
 
 #if true
-            ImageBuffer popOutImage = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+            ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+            if (ActiveTheme.Instance.IsDarkTheme)
+            {
+                InvertLightness.DoInvertLightness(popOutImageClick);
+            }
+
+            ImageBuffer popOutImage = new ImageBuffer(popOutImageClick); 
             byte[] buffer = popOutImage.GetBuffer(); 
             for(int i=0; i<buffer.Length; i++)
             {
@@ -103,16 +109,7 @@ namespace MatterHackers.Agg.UI
                 }
             }
 
-            ImageBuffer popOutImageHover = new ImageBuffer(popOutImage);
-            ImageBuffer popOutImageClick = new ImageBuffer(popOutImage);
-            InvertLightness.DoInvertLightness(popOutImageClick);
-            if (!ActiveTheme.Instance.IsDarkTheme)
-            {
-                InvertLightness.DoInvertLightness(popOutImage);
-                InvertLightness.DoInvertLightness(popOutImageClick);
-            }
-
-            Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
+            Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
             popOut.Click += (sender, e) =>
             {
                 popOutManager.ShowContentInWindow();
