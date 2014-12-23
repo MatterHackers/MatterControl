@@ -97,7 +97,7 @@ namespace MatterHackers.Agg.UI
             tabTitle.AutoExpandBoundsToText = true;
             leftToRight.AddChild(tabTitle);
 
-#if false
+#if true
             ImageBuffer popOutImage = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
             byte[] buffer = popOutImage.GetBuffer(); 
             for(int i=0; i<buffer.Length; i++)
@@ -127,31 +127,48 @@ namespace MatterHackers.Agg.UI
             widgetState.AddChild(leftToRight);
             widgetState.SetBoundsToEncloseChildren();
             widgetState.BackgroundColor = backgroundColor;
+
+            OpenOnFristAppDraw();
         }
 
-        GuiWidget topParent;
-        public override void OnParentChanged(EventArgs e)
+        GuiWidget currentTopParent;
+        void OpenOnFristAppDraw()
         {
-            topParent = Parent;
-            while (topParent != null && topParent.Parent != null)
-            {
-                topParent = topParent.Parent;
-            }
-            if (topParent != null)
-            {
-                topParent.DrawAfter += Parent_DrawAfter;
-            }
-            base.OnParentChanged(e);
+            currentTopParent = this;
+            ParentChanged += FindParentSystemWindow;
         }
 
-        void Parent_DrawAfter(GuiWidget drawingWidget, DrawEventArgs e)
+        void FindParentSystemWindow(object sender, EventArgs e)
+        {
+            if (currentTopParent.Parent != null)
+            {
+                currentTopParent.ParentChanged -= FindParentSystemWindow;
+
+                while (currentTopParent != null && currentTopParent.Parent != null)
+                {
+                    currentTopParent = currentTopParent.Parent;
+                }
+
+                SystemWindow topParentSystemWindow = currentTopParent as SystemWindow;
+                if (topParentSystemWindow != null)
+                {
+                    topParentSystemWindow.DrawAfter += ShowOnFirstSystemWindowDraw;
+                }
+                else // keep tracking
+                {
+                    currentTopParent.ParentChanged += FindParentSystemWindow;
+                }
+            }
+        }
+
+        void ShowOnFirstSystemWindowDraw(GuiWidget drawingWidget, DrawEventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
-                //popOut_Click(null, null);
+                popOut_Click(null, null);
             });
 
-            topParent.DrawAfter -= Parent_DrawAfter;
+            currentTopParent.DrawAfter -= ShowOnFirstSystemWindowDraw;
         }
 
         public override void OnClosed(EventArgs e)
