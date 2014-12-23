@@ -150,19 +150,18 @@ namespace MatterHackers.MatterControl
 
             //Add the tab contents for 'Advanced Controls'
             string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
+            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
 #if false // LBB 2014 12 23 (soon to be dead code I expect)
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", textSize,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", textSize,
                 ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 #else // use the pop out tabs
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
             advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", new Vector2(590, 400), textSize));
 
-            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
             advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", new Vector2(400, 300), textSize));
 #endif
             string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
