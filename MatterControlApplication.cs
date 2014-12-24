@@ -73,7 +73,8 @@ namespace MatterHackers.MatterControl
         public MatterControlApplication(double width, double height)
             : base(width, height)
         {
-            CrashTracker.Reset();
+            // set this at startup so that we can tell next time if it got set to true in close
+            UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
 
             this.commandLineArgs = Environment.GetCommandLineArgs();
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -174,7 +175,7 @@ namespace MatterHackers.MatterControl
                 DesktopPosition = new Point2D(xpos, ypos);
             }
 
-            // make sure when we start up that we are showing the 3D view
+            // make sure when we start up, we are not showing the 3D view
             UserSettings.Instance.Fields.EmbededViewShowingGCode = false;
 
             ShowAsSystemWindow();
@@ -367,6 +368,8 @@ namespace MatterHackers.MatterControl
 
         public override void OnClosed(EventArgs e)
         {
+            UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
+
             TerminalWindow.CloseIfOpen();
             PrinterConnectionAndCommunication.Instance.Disable();
             //Close connection to the local datastore

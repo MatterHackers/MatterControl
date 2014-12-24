@@ -27,33 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-
+using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl;
+using System;
+using System.IO;
 
 namespace MatterHackers.Agg.UI
 {
     public class PopOutTextTabWidget : Tab
     {
-        SystemWindow systemWindow = null;
+        PopOutManager popOutManager;
 
-        public PopOutTextTabWidget(TabPage tabPageControledByTab, string internalTabName)
-            : this(tabPageControledByTab, internalTabName, 12)
+        public PopOutTextTabWidget(TabPage tabPageControledByTab, string internalTabName, Vector2 minSize)
+            : this(tabPageControledByTab, internalTabName, minSize, 12)
         {
         }
 
-        public PopOutTextTabWidget(TabPage tabPageControledByTab, string internalTabName, double pointSize)
+        public PopOutTextTabWidget(TabPage tabPageControledByTab, string internalTabName, Vector2 minSize, double pointSize)
             : base(internalTabName, new GuiWidget(), new GuiWidget(), new GuiWidget(), tabPageControledByTab)
         {
             RGBA_Bytes selectedTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -67,6 +60,8 @@ namespace MatterHackers.Agg.UI
             tabPageControledByTab.TextChanged += new EventHandler(tabPageControledByTab_TextChanged);
 
             SetBoundsToEncloseChildren();
+
+            popOutManager = new PopOutManager(TabPageControlledByTab, minSize, tabPageControledByTab.Text, internalTabName);
         }
 
         public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -97,8 +92,14 @@ namespace MatterHackers.Agg.UI
             tabTitle.AutoExpandBoundsToText = true;
             leftToRight.AddChild(tabTitle);
 
-#if false
-            ImageBuffer popOutImage = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+#if true
+            ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
+            if (ActiveTheme.Instance.IsDarkTheme)
+            {
+                InvertLightness.DoInvertLightness(popOutImageClick);
+            }
+
+            ImageBuffer popOutImage = new ImageBuffer(popOutImageClick); 
             byte[] buffer = popOutImage.GetBuffer(); 
             for(int i=0; i<buffer.Length; i++)
             {
@@ -108,17 +109,11 @@ namespace MatterHackers.Agg.UI
                 }
             }
 
-            ImageBuffer popOutImageHover = new ImageBuffer(popOutImage);
-            ImageBuffer popOutImageClick = new ImageBuffer(popOutImage);
-            InvertLightness.DoInvertLightness(popOutImageClick);
-            if (!ActiveTheme.Instance.IsDarkTheme)
+            Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
+            popOut.Click += (sender, e) =>
             {
-                InvertLightness.DoInvertLightness(popOutImage);
-                InvertLightness.DoInvertLightness(popOutImageClick);
-            }
-
-            Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
-            popOut.Click += popOut_Click;
+                popOutManager.ShowContentInWindow();
+            };
             popOut.Margin = new BorderDouble(3, 0);
             popOut.VAnchor = VAnchor.ParentTop;
             leftToRight.AddChild(popOut);
@@ -127,96 +122,6 @@ namespace MatterHackers.Agg.UI
             widgetState.AddChild(leftToRight);
             widgetState.SetBoundsToEncloseChildren();
             widgetState.BackgroundColor = backgroundColor;
-        }
-
-        GuiWidget topParent;
-        public override void OnParentChanged(EventArgs e)
-        {
-            topParent = Parent;
-            while (topParent != null && topParent.Parent != null)
-            {
-                topParent = topParent.Parent;
-            }
-            if (topParent != null)
-            {
-                topParent.DrawAfter += Parent_DrawAfter;
-            }
-            base.OnParentChanged(e);
-        }
-
-        void Parent_DrawAfter(GuiWidget drawingWidget, DrawEventArgs e)
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                //popOut_Click(null, null);
-            });
-
-            topParent.DrawAfter -= Parent_DrawAfter;
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (systemWindow != null)
-            {
-                systemWindow.CloseAndRemoveAllChildren();
-                systemWindow.Close();
-            }
-            base.OnClosed(e);
-        }
-
-        void popOut_Click(object sender, EventArgs e)
-        {
-            if (systemWindow == null)
-            {
-                systemWindow = new SystemWindow(640, 400);
-                systemWindow.AlwaysOnTopOfMain = true;
-                systemWindow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-                systemWindow.Closing += systemWindow_Closing;
-                if (TabPageControlledByTab.Children.Count == 1)
-                {
-                    GuiWidget child = TabPageControlledByTab.Children[0];
-                    TabPageControlledByTab.RemoveChild(child);
-                    TabPageControlledByTab.AddChild(CreatTabPageContent());
-                    systemWindow.AddChild(child);
-                }
-                systemWindow.ShowAsSystemWindow();
-            }
-            else
-            {
-                systemWindow.BringToFront();
-            }
-        }
-
-        GuiWidget CreatTabPageContent()
-        {
-            GuiWidget allContent = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
-            Button bringBackToTabButton = new Button("Bring Back");
-            bringBackToTabButton.AnchorCenter();
-            bringBackToTabButton.Click += (sender, e) => 
-            {
-                UiThread.RunOnIdle((state) =>
-                {
-                    GuiWidget systemWindow = this.systemWindow;
-                    systemWindow_Closing(null, null);
-                    systemWindow.Close();
-                });
-            };
-
-            allContent.AddChild(bringBackToTabButton);
-
-            return allContent;
-        }
-
-        void systemWindow_Closing(object sender, WidgetClosingEnventArgs closingEvent)
-        {
-            if (systemWindow.Children.Count == 1)
-            {
-                GuiWidget child = systemWindow.Children[0];
-                systemWindow.RemoveChild(child);
-                TabPageControlledByTab.RemoveAllChildren();
-                TabPageControlledByTab.AddChild(child);
-            }
-            systemWindow = null;
         }
     }
 }

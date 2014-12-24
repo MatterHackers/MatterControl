@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
                                 textScrollWidget.SetLineStartFilter(null);
                             }
 
-                            UserSettings.Instance.Fields.SetValue(TerminalFilterOutputKey, filterOutput.Checked);
+                            UserSettings.Instance.Fields.SetBool(TerminalFilterOutputKey, filterOutput.Checked);
                         };
 
                         filterOutput.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -98,13 +98,13 @@ namespace MatterHackers.MatterControl
 
                         autoUppercase = new CheckBox(autoUpperCaseChkTxt);
                         autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
-                        autoUppercase.Checked = UserSettings.Instance.Fields.GetValue(TerminalAutoUppercaseKey, true);
+                        autoUppercase.Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true);
                         autoUppercase.TextColor = this.textColor;
                         autoUppercase.VAnchor = Agg.UI.VAnchor.ParentBottom;
                         topBarControls.AddChild(autoUppercase);
                         autoUppercase.CheckedStateChanged += (sender, e) =>
                         {
-                            UserSettings.Instance.Fields.SetValue(TerminalAutoUppercaseKey, autoUppercase.Checked);
+                            UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
                         };
                         manualEntryTopToBottomLayout.AddChild(topBarControls);
                     }
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl
         {
             if (firstDraw)
             {
-                filterOutput.Checked = UserSettings.Instance.Fields.GetValue(TerminalFilterOutputKey, false);
+                filterOutput.Checked = UserSettings.Instance.Fields.GetBool(TerminalFilterOutputKey, false);
                 firstDraw = false;
             }
             base.OnDraw(graphics2D);
