@@ -17,22 +17,24 @@ namespace MatterHackers.MatterControl.Testing
         public void ConfirmItemIsAddedToQueue()
         {
             string testFilePath = @"C:\Users\Greg\Desktop\MatterSliceTestItems\Batman.stl";
-            QueueData.Instance.RemoveAll();
 
+            QueueData.Instance.RemoveAll();
             QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem("name", testFilePath)));
 
             // Instance count is as expected after single add
             Assert.IsTrue(QueueData.Instance.Count == 1);
 
             var printItem = QueueData.Instance.GetPrintItemWrapper(0);
-            bool isNameTheSame = printItem.Name == "name";
+            bool hasCorrectName = printItem.Name == "name";
             
             // Instance name is as expected
-            Assert.IsTrue(isNameTheSame);
+            Assert.IsTrue(hasCorrectName);
 
+            //Instance path is as expected
             Assert.IsTrue(printItem.FileLocation == testFilePath);
 
             QueueData.Instance.RemoveAll();
+
             //Instance count is as expected after queue is cleared 
             Assert.IsTrue(QueueData.Instance.Count == 0);
         }
@@ -40,8 +42,10 @@ namespace MatterHackers.MatterControl.Testing
         [Test]
         public void ConfirmMultipleItemsAreAddedToQueue()
         {
+            //TODO: Need to find a permanent location for test items so that tests will run correctly 
             string firstQueueItemToBeAdded = @"C:\Users\Greg\Desktop\MatterSliceTestItems\Batman.stl";
-            string secondQueueItemToBeAdded = @"C:\Users\Greg\Desktop\MatterSliceTestItems\chichen-itza_pyramid.stl";
+            string secondQueueItemToBeAdded = @"C:\Users\Greg\Desktop\MatterSliceTestItems\chichen-itza_pyramid.stl";                                                         
+
             QueueData.Instance.RemoveAll();
 
             QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem("nameOne", firstQueueItemToBeAdded)));
@@ -50,13 +54,28 @@ namespace MatterHackers.MatterControl.Testing
             //Instance count is as expected after single add
             Assert.IsTrue(QueueData.Instance.Count == 2);
 
-            //
-            var printItem = QueueData.Instance.GetPrintItemWrapper(0);
+
+            var firstPrintItem = QueueData.Instance.GetPrintItemWrapper(0);
+            bool firstItemHasCorrectName = firstPrintItem.Name == "nameOne";
+            //First instance name is as expected 
+            Assert.IsTrue(firstItemHasCorrectName);
+
+            //First instance path is as expected 
+            Assert.IsTrue(firstPrintItem.FileLocation == firstQueueItemToBeAdded);
+
+
+
+            var secondPrintItem = QueueData.Instance.GetPrintItemWrapper(1);
+            bool secondItemHasCorrectName = secondPrintItem.Name == "nameTwo";
+
+            //Second instance name is as expected
+            Assert.IsTrue(secondItemHasCorrectName);
+
+            //Second instance path is as expected 
+            Assert.IsTrue(secondPrintItem.FileLocation == secondQueueItemToBeAdded);
+                                
 
         }   
-
-
-
 
         public static void RunAllQueueTests()
         {
