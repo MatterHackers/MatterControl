@@ -298,6 +298,7 @@
     <Compile Include="CustomWidgets\DynamicDropDownMenu.cs" />
     <Compile Include="ControlElements\DropDownMenuFactory.cs" />
     <Compile Include="ControlElements\SplitButtonFactory.cs" />
+    <Compile Include="PrinterControls\PrinterConnections\PrinterSetupStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
