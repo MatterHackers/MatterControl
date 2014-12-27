@@ -34,34 +34,44 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public abstract class PrinterIoBase
     {
-        PrinterIoBase source;
-
-        public PrinterIoBase(PrinterIoBase source)
+        public PrinterIoBase()
         {
-            this.source = source;
         }
 
-        public string PeekNextLine()
+        public virtual PrinterMachineInstruction PeekNextInstruction()
         {
             throw new NotImplementedException();
         }
 
-        public string PopNextLine()
+        public virtual PrinterMachineInstruction PopNextInstruction()
         {
             throw new NotImplementedException();
         }
 
-        public int NumberOfLines
+        public virtual void AddInstruction(PrinterMachineInstruction newCommand)
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            throw new NotImplementedException();
+        }
+
+        public virtual int NumberOfInstruction
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public virtual double TotalSecondsInPrint 
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public virtual double SecondsRemaining
+        {
+            get { throw new NotImplementedException(); }
         }
     }
 }

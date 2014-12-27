@@ -38,10 +38,105 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
     public class PrinterIoGCodeFile : PrinterIoBase
     {
         GCodeFile loadedGCode = new GCodeFile();
+        int printerCommandQueueIndex;
         public PrinterIoGCodeFile(GCodeFile loadedGCode)
-            : base(null)
         {
             this.loadedGCode = loadedGCode;
+        }
+
+        public double TotalSecondsInPrint
+        {
+            get
+            {
+                if (loadedGCode.Count > 0)
+                {
+                    return loadedGCode.Instruction(0).secondsToEndFromHere;
+                }
+
+                return 0;
+            }
+        }
+
+        int backupAmount = 16;
+        public int CurrentlyPrintingLayer
+        {
+            get
+            {
+                int currentIndex = printerCommandQueueIndex - backupAmount;
+                if (currentIndex >= 0
+                    && currentIndex < loadedGCode.Count)
+                {
+                    for (int zIndex = 0; zIndex < loadedGCode.NumChangesInZ; zIndex++)
+                    {
+                        if (currentIndex < loadedGCode.IndexOfChangeInZ[zIndex])
+                        {
+                            return zIndex - 1;
+                        }
+                    }
+
+                    return loadedGCode.NumChangesInZ - 1;
+                }
+
+                return -1;
+            }
+        }
+
+        public int TotalLayersInPrint
+        {
+            get
+            {
+                try
+                {
+                    int layerCount = loadedGCode.NumChangesInZ;
+                    return layerCount;
+                }
+                catch
+                {
+                    return -1;
+                }
+            }
+        }
+
+        public double RatioIntoCurrentLayer
+        {
+            get
+            {
+                int currentIndex = printerCommandQueueIndex - backupAmount;
+                if (currentIndex >= 0
+                    && currentIndex < loadedGCode.Count)
+                {
+                    int currentLayer = CurrentlyPrintingLayer;
+                    int startIndex = loadedGCode.IndexOfChangeInZ[currentLayer];
+                    int endIndex = loadedGCode.Count - 1;
+                    if (currentLayer < loadedGCode.NumChangesInZ - 2)
+                    {
+                        endIndex = loadedGCode.IndexOfChangeInZ[currentLayer + 1] - 1;
+                    }
+
+                    int deltaFromStart = Math.Max(0, currentIndex - startIndex);
+                    return deltaFromStart / (double)(endIndex - startIndex);
+                }
+
+                return 0;
+            }
+        }
+
+        public double SecondsRemaining
+        {
+            get
+            {
+                if (NumberOfInstruction > 0)
+                {
+                    if (printerCommandQueueIndex >= 0
+                        && printerCommandQueueIndex < loadedGCode.Count
+                        && loadedGCode.Instruction(printerCommandQueueIndex).secondsToEndFromHere != 0)
+                    {
+                        return loadedGCode.Instruction(printerCommandQueueIndex).secondsToEndFromHere;
+                    }
+                }
+
+                return 0;
+            }
         }
     }
 }

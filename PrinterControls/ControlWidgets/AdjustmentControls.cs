@@ -31,9 +31,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls
@@ -76,7 +78,7 @@ namespace MatterHackers.MatterControl.PrinterControls
                 }
 
                 TextWidget subheader = new TextWidget("Fine-tune adjustment while actively printing", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				subheader.Margin = new BorderDouble(bottom:6);
+                subheader.Margin = new BorderDouble(bottom: 6);
                 tuningRatiosLayout.AddChild(subheader);
                 TextWidget feedRateDescription;
                 {
@@ -167,6 +169,33 @@ namespace MatterHackers.MatterControl.PrinterControls
                 }
 
                 adjustmentControlsGroupBox.AddChild(tuningRatiosLayout);
+
+                if(false)
+                {
+                    HorizontalLine line = new HorizontalLine();
+                    line.Margin = new BorderDouble(0, 10);
+                    tuningRatiosLayout.AddChild(line);
+                    TextWidget subheader2 = new TextWidget("Fine-tune z-height if print leveling enabled, while actively printing", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
+                    subheader2.Margin = new BorderDouble(bottom: 6);
+                    tuningRatiosLayout.AddChild(subheader2);
+
+                    int buttonSize = 32;
+                    ImageBuffer togetherBig = new ImageBuffer(buttonSize, buttonSize, 32, new BlenderBGRA());
+                    Graphics2D togetherBigGraphics = togetherBig.NewGraphics2D();
+                    togetherBigGraphics.Circle(new Vector2(32, 32), 12, RGBA_Bytes.Blue);
+                    Button togetherALot = textImageButtonFactory.GenerateFromImages("", togetherBig);
+
+                    ImageBuffer appartBig = new ImageBuffer(buttonSize, buttonSize, 32, new BlenderBGRA());
+                    Graphics2D appartBigGraphics = appartBig.NewGraphics2D();
+                    appartBigGraphics.Circle(new Vector2(32, 32), 12, RGBA_Bytes.Red);
+                    Button appartALot = textImageButtonFactory.GenerateFromImages("", appartBig);
+
+                    FlowLayoutWidget leftToRigth = new FlowLayoutWidget();
+                    leftToRigth.AddChild(togetherALot);
+                    leftToRigth.AddChild(appartALot);
+
+                    tuningRatiosLayout.AddChild(leftToRigth);
+                }
             }
 
             this.AddChild(adjustmentControlsGroupBox);
