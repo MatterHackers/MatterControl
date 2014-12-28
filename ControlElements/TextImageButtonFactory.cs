@@ -312,28 +312,32 @@ namespace MatterHackers.MatterControl
                 disabledImageName = normalImageName;
             }
 
-            ImageBuffer normalImage = new ImageBuffer();
-            ImageBuffer pressedImage = new ImageBuffer();
-            ImageBuffer hoverImage = new ImageBuffer();
-            ImageBuffer disabledImage = new ImageBuffer();
+            ImageBuffer normalImage = null;
+            ImageBuffer pressedImage = null;
+            ImageBuffer hoverImage = null;
+            ImageBuffer disabledImage = null;
 
             if (normalImageName != null)
             {
+                normalImage = new ImageBuffer();
                 StaticData.Instance.LoadIcon(normalImageName, normalImage);
             }
 
             if (hoverImageName != null)
             {
-                StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
+                hoverImage = new ImageBuffer();
+                StaticData.Instance.LoadIcon(hoverImageName, hoverImage);
             }
 
             if (pressedImageName != null)
             {
-                StaticData.Instance.LoadIcon(hoverImageName, hoverImage);
+                pressedImage = new ImageBuffer();
+                StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
             }
 
             if (disabledImageName != null)
             {
+                disabledImage = new ImageBuffer();
                 StaticData.Instance.LoadIcon(disabledImageName, disabledImage);
             }
 
@@ -342,31 +346,28 @@ namespace MatterHackers.MatterControl
 
         private ButtonViewStates getButtonView(string label, ImageBuffer normalImage = null, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null, bool centerText = false)
         {
-            if (normalImage == null)
-            {
-                normalImage = new ImageBuffer(0, 0, 32, new BlenderBGRA());
-            }
-            if (hoverImage == null)
+            if (hoverImage == null && normalImage != null)
             {
                 hoverImage = new ImageBuffer(normalImage);
             }
 
-            if (pressedImage == null)
+            if (pressedImage == null && hoverImage != null)
             {
                 pressedImage = new ImageBuffer(hoverImage);
             }
 
-            if (disabledImage == null)
+            if (disabledImage == null && normalImage != null)
             {
                 disabledImage = new ImageBuffer(normalImage);
             }
 
-            if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
+            if (!ActiveTheme.Instance.IsDarkTheme 
+                && AllowThemeToAdjustImage)
             {
-                InvertLightness.DoInvertLightness(normalImage);
-                InvertLightness.DoInvertLightness(pressedImage);
-                InvertLightness.DoInvertLightness(hoverImage);
-                InvertLightness.DoInvertLightness(disabledImage);
+                if(normalImage != null) InvertLightness.DoInvertLightness(normalImage);
+                if (pressedImage != null) InvertLightness.DoInvertLightness(pressedImage);
+                if (hoverImage != null) InvertLightness.DoInvertLightness(hoverImage);
+                if (disabledImage != null) InvertLightness.DoInvertLightness(disabledImage);
             }
 
             if (invertImageLocation)
