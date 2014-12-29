@@ -259,7 +259,25 @@ namespace MatterHackers.MatterControl
             return textImageCheckBoxButton;
         }
 
-		public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
+        public Button GenerateFromImages(string label, ImageBuffer normalImage, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null, bool centerText = false)
+        {
+            //Create button based on view container widget
+            ButtonViewStates buttonViewWidget = getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage, centerText);
+            Button textImageButton = new Button(0, 0, buttonViewWidget);
+
+            textImageButton.Margin = new BorderDouble(0);
+            textImageButton.Padding = new BorderDouble(0);
+
+            //Override the width if requested
+            if (this.FixedWidth != 0)
+            {
+                buttonViewWidget.Width = this.FixedWidth;
+                textImageButton.Width = this.FixedWidth;
+            }
+            return textImageButton;
+        }
+
+        public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
         {
             //Create button based on view container widget
             ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName, centerText);
@@ -294,45 +312,62 @@ namespace MatterHackers.MatterControl
                 disabledImageName = normalImageName;
             }
 
-            ImageBuffer normalImage = new ImageBuffer();
-            ImageBuffer pressedImage = new ImageBuffer();
-            ImageBuffer hoverImage = new ImageBuffer();
-            ImageBuffer disabledImage = new ImageBuffer();
+            ImageBuffer normalImage = null;
+            ImageBuffer pressedImage = null;
+            ImageBuffer hoverImage = null;
+            ImageBuffer disabledImage = null;
 
             if (normalImageName != null)
             {
+                normalImage = new ImageBuffer();
                 StaticData.Instance.LoadIcon(normalImageName, normalImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-                {
-                    InvertLightness.DoInvertLightness(normalImage);
-                }
             }
 
             if (hoverImageName != null)
             {
-                StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-                {
-                    InvertLightness.DoInvertLightness(pressedImage);
-                }
+                hoverImage = new ImageBuffer();
+                StaticData.Instance.LoadIcon(hoverImageName, hoverImage);
             }
 
             if (pressedImageName != null)
             {
-                StaticData.Instance.LoadIcon(hoverImageName, hoverImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-                {
-                    InvertLightness.DoInvertLightness(hoverImage);
-                }
+                pressedImage = new ImageBuffer();
+                StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
             }
 
             if (disabledImageName != null)
             {
+                disabledImage = new ImageBuffer();
                 StaticData.Instance.LoadIcon(disabledImageName, disabledImage);
-                if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-                {
-                    InvertLightness.DoInvertLightness(disabledImage);
-                }
+            }
+
+            return getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage, centerText);
+        }
+
+        private ButtonViewStates getButtonView(string label, ImageBuffer normalImage = null, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null, bool centerText = false)
+        {
+            if (hoverImage == null && normalImage != null)
+            {
+                hoverImage = new ImageBuffer(normalImage);
+            }
+
+            if (pressedImage == null && hoverImage != null)
+            {
+                pressedImage = new ImageBuffer(hoverImage);
+            }
+
+            if (disabledImage == null && normalImage != null)
+            {
+                disabledImage = new ImageBuffer(normalImage);
+            }
+
+            if (!ActiveTheme.Instance.IsDarkTheme 
+                && AllowThemeToAdjustImage)
+            {
+                if(normalImage != null) InvertLightness.DoInvertLightness(normalImage);
+                if (pressedImage != null) InvertLightness.DoInvertLightness(pressedImage);
+                if (hoverImage != null) InvertLightness.DoInvertLightness(hoverImage);
+                if (disabledImage != null) InvertLightness.DoInvertLightness(disabledImage);
             }
 
             if (invertImageLocation)

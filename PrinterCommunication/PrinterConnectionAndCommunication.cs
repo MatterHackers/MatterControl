@@ -1442,6 +1442,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             firmwareType = FirmwareTypes.Unknown;
             firmwareVersion = null;
 
+
+            // On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
+            // this aspect to ensure the validation logic that verifies port availablity/in use status can proceed without additional workarounds for Android
+#if __ANDROID__
+            string currentPortName = FrostedSerialPort.GetPortNames().Where(p => p != "/dev/bus/usb/002/002").FirstOrDefault();
+
+            if(!string.IsNullOrEmpty(currentPortName))
+            {
+                this.ActivePrinter.ComPort = currentPortName;
+            }
+#endif
+
             if (SerialPortIsAvailable(this.ActivePrinter.ComPort))
             {
                 //Create a timed callback to determine whether connection succeeded
@@ -1583,8 +1595,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         OnConnectionFailed(null);
                     }
 
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        Debug.WriteLine("An unexpected exception occurred: " + ex.Message);
                         OnConnectionFailed(null);
                     }
                 }
@@ -2539,8 +2552,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     OnConnectionFailed(null);
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException ex)
                 {
+                    Debug.WriteLine(ex.Message);
                     // this happens when the serial port closes after we check and before we read it.
                 }
                 catch (UnauthorizedAccessException)
