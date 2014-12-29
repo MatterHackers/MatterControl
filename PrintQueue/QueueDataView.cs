@@ -328,6 +328,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
             selectedQueueItemIndex = Math.Min(selectedQueueItemIndex, QueueData.Instance.Count-1);
             SelectedIndex = selectedQueueItemIndex;
+			EnsureSelection();
         }
 
         void SaveCurrentlySelctedItemIndex(object sender, EventArgs e)
@@ -383,9 +384,8 @@ namespace MatterHackers.MatterControl.PrintQueue
                         }
                     }
                 }
-                child.Invalidate();
-
-                Invalidate();
+                //child.Invalidate();
+                //Invalidate();
             }
 
             if (QueueData.Instance.Count == 0)
