@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 enterEditButtonsContainer = new FlowLayoutWidget();
                 {
 					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
-                    addButton.Margin = new BorderDouble(right: 10);
+                    addButton.Margin = new BorderDouble(right: 0);
                     enterEditButtonsContainer.AddChild(addButton);
                     addButton.Click += (sender, e) =>
                     {
@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     };
 
                     Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "icon_edit_32x32.png");
-                    enterEdittingButton.Margin = new BorderDouble(right: 10);
+                    enterEdittingButton.Margin = new BorderDouble(right: 4);
                     enterEdittingButton.Click += (sender, e) =>
                     {
                         EnterEditAndCreateSelectionData();
