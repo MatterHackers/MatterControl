@@ -306,6 +306,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
+    </Reference>
     <Reference Include="PdfSharp">
       <HintPath>PdfSharp.dll</HintPath>
     </Reference>
@@ -319,9 +323,6 @@
     <Reference Include="Mono.Posix" />
     <Reference Include="nunit.framework">
       <HintPath>..\agg-sharp\AggTests\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK">
-      <HintPath>..\agg-sharp\PlatformWin32\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
