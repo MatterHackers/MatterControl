@@ -1151,7 +1151,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                             viewOptionContainer.AddChild(showBuildVolumeCheckBox);
                         }
 
+#if __ANDROID__
+                        UserSettings.Instance.set("defaultRenderSetting", RenderTypes.Shaded.ToString());
+#else
                         CreateRenderTypeRadioButtons(viewOptionContainer);
+#endif
                     }
                     buttonRightPanel.AddChild(viewOptionContainer);
                 }
