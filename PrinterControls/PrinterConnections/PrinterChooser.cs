@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl
         {
             string defaultManufacturerLabel = LocalizedString.Get("Select Make");
             string defaultManufacturerLabelFull = string.Format("- {0} -", defaultManufacturerLabel);
-            ManufacturerDropList = new StyledDropDownList(defaultManufacturerLabelFull, maxHeight: 300);
+            ManufacturerDropList = new StyledDropDownList(defaultManufacturerLabelFull, maxHeight: 200);
             bool addOther = false;
             string[] printerWhiteListStrings = OemSettings.Instance.PrinterWhiteList.ToArray();
             string pathToManufacturers = "PrinterSettings";
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
         {
             string defaultModelDropDownLabel = LocalizedString.Get("Select Model");
             string defaultModelDropDownLabelFull = string.Format("- {0} -", defaultModelDropDownLabel);
-            ModelDropList = new StyledDropDownList(defaultModelDropDownLabelFull);
+			ModelDropList = new StyledDropDownList(defaultModelDropDownLabelFull,maxHeight:200);
 
             string pathToModels = Path.Combine("PrinterSettings", manufacturer);
 			if (StaticData.Instance.DirectoryExists((pathToModels)))

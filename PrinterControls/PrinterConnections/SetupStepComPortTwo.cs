@@ -170,7 +170,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }     
         }
 
-
         void onPrinterStatusChanged(object sender, EventArgs e)
         {
             if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
