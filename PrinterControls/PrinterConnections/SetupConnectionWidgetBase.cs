@@ -12,112 +12,8 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.PrintLibrary;
 
-
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
-{
-    //Wraps the printer record. Includes temporary information that we don't need in the DB.
-    public class PrinterSetupStatus
-    {
-        public Printer ActivePrinter;
-        public List<string> DriversToInstall = new List<string>();
-        public Type PreviousSetupWidget;
-        public Type NextSetupWidget;
-
-        public PrinterSetupStatus(Printer printer = null)
-        {
-            if (printer == null)
-            {
-                this.ActivePrinter = new Printer();
-                this.ActivePrinter.Make = null;
-                this.ActivePrinter.Model = null;
-                this.ActivePrinter.Name = "Default Printer ({0})".FormatWith(ExistingPrinterCount() + 1);
-                this.ActivePrinter.BaudRate = null;
-                this.ActivePrinter.ComPort = null;
-            }
-            else
-            {
-                this.ActivePrinter = printer;
-            }
-        }
-
-        public int ExistingPrinterCount()
-        {
-            string query = string.Format("SELECT COUNT(*) FROM Printer;");
-            string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
-            return Convert.ToInt32(result);
-        }
-
-        public void LoadCalibrationPrints()
-        {
-            if (this.ActivePrinter.Make != null && this.ActivePrinter.Model != null)    
-            {
-                // Load the calibration file names
-                List<string> calibrationPrintFileNames = LoadCalibrationPartNamesForPrinter(this.ActivePrinter.Make, this.ActivePrinter.Model);
-
-                string[] itemsToAdd = LibraryData.SyncCalibrationFilesToDisk(calibrationPrintFileNames);
-                if (itemsToAdd.Length > 0)
-                {
-                    // Import any files sync'd to disk into the library, then add them to the queue
-                    LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd, null, (sender, e) =>
-                    {
-                        AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
-                    });
-                }
-                else
-                {
-                    // Otherwise, just ensure the item gets into the queue
-                    AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
-                }
-            }
-        }
-
-        private static void AddItemsToQueue(List<string> calibrationPrintFileNames, string[] queueItems)
-        {
-            // After the import has completed, add each of the calibration items into the print queue
-            foreach (string fileName in calibrationPrintFileNames)
-            {
-                string nameOnly = Path.GetFileNameWithoutExtension(fileName);
-                if (queueItems.Contains(nameOnly))
-                {
-                    continue;
-                }
-
-                // If the library item does not exist in the queue, add it
-                var libraryItem = LibraryData.Instance.GetLibraryItems(nameOnly).FirstOrDefault();
-                if (libraryItem != null)
-                {
-                    QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
-                }
-            }
-        }
-
-        private List<string> LoadCalibrationPartNamesForPrinter(string make, string model)
-        {
-            List<string> calibrationFiles = new List<string>();
-            string setupSettingsPathAndFile = Path.Combine("PrinterSettings", make, model, "calibration.ini");
-            if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
-            {
-                try
-                {
-                    foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
-                    {
-                        //Ignore commented lines
-                        if (!line.StartsWith("#"))
-                        {
-                            string settingLine = line.Trim();
-                            calibrationFiles.Add(settingLine);
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            return calibrationFiles;
-        }
-    }
-    
+{       
     public class SetupConnectionWidgetBase : ConnectionWidgetBase
     {        
         public PrinterSetupStatus PrinterSetupStatus;
@@ -151,7 +47,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 this.PrinterSetupStatus = printerSetupStatus;
             }
 
-            
 			cancelButton = textImageButtonFactory.Generate (LocalizedString.Get ("Cancel"));
             cancelButton.Click += new EventHandler(CancelButton_Click);
 
