@@ -702,6 +702,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 printItem.SlicingOutputMessage.RegisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
                 printItem.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
                 SetSyncToPrintVisibility();
+            
+                generateGCodeButton.Visible = true;
             }
         }
 
