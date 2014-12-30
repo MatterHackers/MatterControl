@@ -280,10 +280,7 @@ namespace MatterHackers.MatterControl
         Stopwatch totalDrawTime = new Stopwatch();
         int drawCount = 0;
 
-        static readonly int averageCount = 64;
-        int averageIndex = 0;
-        int[] averageMsArray = new int[averageCount];
-        int totalMsInArray = 0;
+        AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 
         Gaming.Game.DataViewGraph msGraph = new Gaming.Game.DataViewGraph(new Vector2(20, 500), 50, 50, 0, 200);
         public override void OnDraw(Graphics2D graphics2D)
@@ -292,15 +289,13 @@ namespace MatterHackers.MatterControl
             GuiWidget.DrawCount = 0;
             base.OnDraw(graphics2D);
             totalDrawTime.Stop();
-            totalMsInArray -= averageMsArray[averageIndex % averageCount];
-            averageMsArray[averageIndex % averageCount] = (int)totalDrawTime.ElapsedMilliseconds;
-            totalMsInArray += averageMsArray[averageIndex % averageCount];
-            averageIndex++;
+
+            millisecondTimer.Update((int)totalDrawTime.ElapsedMilliseconds);
 
             if (ShowMemoryUsed)
             {
                 long memory = GC.GetTotalMemory(false);
-                this.Title = "Allocated = {0:n0} : {1:000}ms, d{2} Size = {3}x{4}, onIdle = {5:00}:{6:00}, drawCount = {7}".FormatWith(memory, totalMsInArray/averageCount, drawCount++, this.Width, this.Height, UiThread.CountExpired, UiThread.Count, GuiWidget.DrawCount);
+                this.Title = "Allocated = {0:n0} : {1:000}ms, d{2} Size = {3}x{4}, onIdle = {5:00}:{6:00}, drawCount = {7}".FormatWith(memory, millisecondTimer.GetAverage(), drawCount++, this.Width, this.Height, UiThread.CountExpired, UiThread.Count, GuiWidget.DrawCount);
                 if (DoCGCollectEveryDraw)
                 {
                     GC.Collect();
