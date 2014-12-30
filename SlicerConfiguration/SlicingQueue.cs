@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             while (!haltSlicingThread)
             {
-                if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null && listOfSlicingItems.Count > 0)
+                if (listOfSlicingItems.Count > 0)
                 {
                     PrintItemWrapper itemToSlice = listOfSlicingItems[0];
                     string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation);
