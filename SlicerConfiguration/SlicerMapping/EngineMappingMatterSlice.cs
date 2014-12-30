@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //supportExtruder=1
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
 
-            new ValuePlusConstant("supportExtruder", "support_material_interface_extruder", -1),
+            new ValuePlusConstant("supportInterfaceExtruder", "support_material_interface_extruder", -1),
 
             new ValuePlusConstant("raftExtruder", "raft_extruder", -1),
 
