@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg;
+using MatterHackers.MatterControl.CustomWidgets;
 using System;
 
 namespace MatterHackers.MatterControl
@@ -104,7 +105,7 @@ namespace MatterHackers.MatterControl
                 {
                     GuiWidget child = widgetWhosContentsPopOut.Children[0];
                     widgetWhosContentsPopOut.RemoveChild(child);
-                    widgetWhosContentsPopOut.AddChild(CreatContentForEmptyControl());
+                    widgetWhosContentsPopOut.AddChild(CreateContentForEmptyControl());
                     PopedOutSystemWindow.AddChild(child);
                 }
                 PopedOutSystemWindow.ShowAsSystemWindow();
@@ -152,17 +153,25 @@ namespace MatterHackers.MatterControl
             ApplicationController.Instance.MainView.DrawAfter -= ShowOnFirstSystemWindowDraw;
         }
 
-        GuiWidget CreatContentForEmptyControl()
+        GuiWidget CreateContentForEmptyControl()
         {
             GuiWidget allContent = new GuiWidget(HAnchor.ParentLeftRight, VAnchor.ParentBottomTop);
+			allContent.Padding = new BorderDouble(5, 10, 5, 10);
+
+			FlowLayoutWidget flowWidget = new FlowLayoutWidget();
+			flowWidget.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+			flowWidget.HAnchor = HAnchor.ParentLeftRight;
+			flowWidget.VAnchor = VAnchor.ParentTop;
+			flowWidget.Padding = new BorderDouble(10, 0);
+			flowWidget.Height = 60;
 
             TextImageButtonFactory bringBackButtonFactory = new TextImageButtonFactory();
+			bringBackButtonFactory.normalFillColor = RGBA_Bytes.Gray;
+			bringBackButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            Button bringBackToTabButton = bringBackButtonFactory.Generate(LocalizedString.Get("Bring Back"));
-
-            bringBackToTabButton.Margin = new BorderDouble(right: 3);
+            Button bringBackToTabButton = bringBackButtonFactory.Generate(LocalizedString.Get("Restore"));
+			bringBackToTabButton.VAnchor = VAnchor.ParentCenter;
             bringBackToTabButton.Cursor = Cursors.Hand;
-            bringBackToTabButton.AnchorCenter();
             bringBackToTabButton.Click += (sender, e) =>
             {
                 UiThread.RunOnIdle((state) =>
@@ -174,7 +183,16 @@ namespace MatterHackers.MatterControl
                 });
             };
 
-            allContent.AddChild(bringBackToTabButton);
+			TextWidget windowedModeMessage = new TextWidget(LocalizedString.Get("WINDOWED MODE: This tab has been moved to a separate window."), 
+				pointSize:10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			windowedModeMessage.VAnchor = VAnchor.ParentCenter;
+
+			flowWidget.AddChild(windowedModeMessage);
+			flowWidget.AddChild(new HorizontalSpacer());
+			flowWidget.AddChild(bringBackToTabButton);
+
+			allContent.AddChild(flowWidget);
+            
 
             return allContent;
         }

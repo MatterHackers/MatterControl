@@ -27,15 +27,41 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+// This is the base class for translators and sources to the printer communication. Things like bed leveling,
+// temperature injection, etc.
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-    public class PrinterIoInjectionFifo : PrinterIoAdapter
+    public class PrinterIoAdapter
     {
-        public PrinterIoInjectionFifo(PrinterIoBase source)
-            : base(source)
+        PrinterIoBase source;
+
+        public PrinterIoAdapter(PrinterIoBase source)
         {
+            this.source = source;
+        }
+
+        public string PeekNextInstruction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string PopNextInstruction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int NumberOfLines
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

@@ -381,8 +381,6 @@ namespace MatterHackers.MatterControl
 			LoadSlicePresets(this.ActivePrinter.Make, this.ActivePrinter.Model, "material");
 			LoadSlicePresets(this.ActivePrinter.Make, this.ActivePrinter.Model, "quality");
 
-
-
 			foreach (CustomCommands customCommand in printerCustomCommands)
 			{
 				customCommand.PrinterId = ActivePrinter.Id;

@@ -459,8 +459,6 @@ namespace MatterHackers.MatterControl
 
         public override void OnDraw(Graphics2D graphics2D)
         {
-            RoundedRect rectBorder = new RoundedRect(this.LocalBounds, 0);
-
             //Trigger thumbnail generation if neeeded
             if (!thumbNailHasBeenRequested)
             {
@@ -475,15 +473,19 @@ namespace MatterHackers.MatterControl
             }
             if (this.FirstWidgetUnderMouse)
             {
-                graphics2D.Render(rectBorder, this.HoverBackgroundColor);
+                RoundedRect rectBorder = new RoundedRect(this.LocalBounds, 0);
+                //graphics2D.Render(rectBorder, this.HoverBackgroundColor);
             }
             graphics2D.Render(thumbnailImage, Width / 2 - thumbnailImage.Width / 2, Height / 2 - thumbnailImage.Height / 2);
             base.OnDraw(graphics2D);
 
-            RectangleDouble Bounds = LocalBounds;
-            RoundedRect borderRect = new RoundedRect(this.LocalBounds, this.borderRadius);
-            Stroke strokeRect = new Stroke(borderRect, BorderWidth);
-            graphics2D.Render(strokeRect, HoverBorderColor);
+            if (HoverBorderColor.Alpha0To255 > 0)
+            {
+                RectangleDouble Bounds = LocalBounds;
+                RoundedRect borderRect = new RoundedRect(this.LocalBounds, this.borderRadius);
+                Stroke strokeRect = new Stroke(borderRect, BorderWidth);
+                graphics2D.Render(strokeRect, HoverBorderColor);
+            }
         }
     }
 }
