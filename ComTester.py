@@ -7,6 +7,7 @@ print "Initializing emulator..."
 
 """Add response callbacks here"""
 def randomTemp(command):
+	# temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
 	return "ok T:%s\n" % random.randrange(202,215)
 
 def echo(command):
