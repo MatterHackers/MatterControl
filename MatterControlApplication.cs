@@ -79,8 +79,9 @@ namespace MatterHackers.MatterControl
             this.commandLineArgs = Environment.GetCommandLineArgs();
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            foreach(string command in commandLineArgs)
+            for(int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
             {
+                string command = commandLineArgs[currentCommandIndex];
                 string commandUpper = command.ToUpper();
                 switch (commandUpper)
                 {
@@ -102,15 +103,25 @@ namespace MatterHackers.MatterControl
                         DoCGCollectEveryDraw = true;
                         break;
 
-                    case "OPEN_WITH_ACTIVE_PRINTER":
-                        Printer ActivePrinter = new Printer();
-                        ActivePrinter.Name = "Test Printer";
-                        ActivePrinter.Make = "Airwolf 3D";
-                        ActivePrinter.Model = "HD";
-                        
-                        PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
-                        test.LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);
-                        ActivePrinterProfile.Instance.ActivePrinter = ActivePrinter;
+                    case "CREATE_AND_SELECT_PRINTER":
+                        if (currentCommandIndex + 1 < commandLineArgs.Length)
+                        {
+                            currentCommandIndex++;
+                            string argument = commandLineArgs[currentCommandIndex];
+                            string[] printerData = argument.Split(',');
+                            if (printerData.Length == 2)
+                            {
+                                Printer ActivePrinter = new Printer();
+
+                                ActivePrinter.Name = "Auto: {0} {1}".FormatWith(printerData[0], printerData[1]);
+                                ActivePrinter.Make = printerData[0];
+                                ActivePrinter.Model = printerData[1];
+
+                                PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
+                                test.LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);
+                                ActivePrinterProfile.Instance.ActivePrinter = ActivePrinter;
+                            }
+                        }
                         break;
 
                 }
