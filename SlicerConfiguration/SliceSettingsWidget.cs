@@ -41,17 +41,99 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class SliceSettingsDetailControl : FlowLayoutWidget
+	public class SliceSettingsSaveBar :FlowLayoutWidget
+	{
+		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+
+		Button saveButton;
+		Button revertbutton;
+
+		public SliceSettingsSaveBar()
+		{
+			textImageButtonFactory.FixedWidth = 80 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.fontSize = (int)(10 * TextWidget.GlobalPointSizeScaleRatio);
+
+			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
+			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
+
+
+			this.textImageButtonFactory.borderWidth = 1;
+			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+
+			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
+			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
+			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+
+			this.Margin = new BorderDouble(left:2);
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
+			this.Padding = new BorderDouble(5);
+
+			string unsavedMessageText = "Unsaved Changes".Localize();
+			TextWidget unsavedMessage = new TextWidget("{0}:".FormatWith(unsavedMessageText),pointSize:10 * TextWidget.GlobalPointSizeScaleRatio);
+			unsavedMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			unsavedMessage.VAnchor = VAnchor.ParentCenter;
+
+			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save").ToUpper(),centerText:true);
+			saveButton.VAnchor = VAnchor.ParentCenter;
+			saveButton.Visible = true;
+			saveButton.Margin = new BorderDouble(5, 0, 5, 0);
+			saveButton.Click += new EventHandler(saveButton_Click);
+
+			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert").ToUpper(),centerText:true);
+			revertbutton.VAnchor = VAnchor.ParentCenter;
+			revertbutton.Visible = true;
+			revertbutton.Margin = new BorderDouble(5, 0, 0, 0);
+			revertbutton.Click += new EventHandler(revertbutton_Click);		
+
+			this.AddChild(new HorizontalSpacer());
+			this.AddChild(unsavedMessage);
+			this.AddChild(saveButton);
+			this.AddChild(revertbutton);
+			this.AddChild(new HorizontalSpacer());
+		}
+
+		void saveButton_Click(object sender, EventArgs mouseEvent)
+		{
+			ActiveSliceSettings.Instance.CommitChanges();
+		}
+
+		void revertbutton_Click(object sender, EventArgs mouseEvent)
+		{
+			ActiveSliceSettings.Instance.LoadAllSettings();
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+		}
+	}
+
+
+	public class SliceSettingsDetailControl : FlowLayoutWidget
     {
         const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
         const string SliceSettingsLevelEntry = "SliceSettingsLevel";
+
         CheckBox showHelpBox;
         StyledDropDownList settingsDetailSelector;
 
+		public DropDownMenu sliceOptionsMenuDropList;
+		private TupleList<string, Func<bool>> slicerOptionsMenuItems;
+
         public SliceSettingsDetailControl()
-        {
-            showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
+        {  
+			showHelpBox = new CheckBox(0, 0, LocalizedString.Get("Show Help"), textSize: 10);
             showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
+			// add in the ability to turn on and off help text
+			{
+				showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				showHelpBox.Margin = new BorderDouble(right: 3);
+				showHelpBox.VAnchor = VAnchor.ParentCenter;
+				showHelpBox.Cursor = Cursors.Hand;
+				showHelpBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(RebuildSlicerSettings);
+
+				this.AddChild(showHelpBox);
+			}
 
             settingsDetailSelector = new StyledDropDownList("Simple", maxHeight: 200);
             settingsDetailSelector.AddItem(LocalizedString.Get("Simple"), "Simple");
@@ -67,23 +149,81 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
             settingsDetailSelector.Margin = new BorderDouble(5, 3);
 
-            TextWidget modeText = new TextWidget("Mode:".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-            modeText.VAnchor = VAnchor.ParentCenter;
-            this.AddChild(modeText);
-
             this.AddChild(settingsDetailSelector);
-
-            // add in the ability to turn on and off help text
-            {
-                showHelpBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                showHelpBox.Margin = new BorderDouble(right: 3);
-                showHelpBox.VAnchor = VAnchor.ParentCenter;
-                showHelpBox.Cursor = Cursors.Hand;
-                showHelpBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(RebuildSlicerSettings);
-
-                this.AddChild(showHelpBox);
-            }
+			this.AddChild(GetSliceOptionsMenuDropList());
         }
+
+		DropDownMenu GetSliceOptionsMenuDropList()
+		{
+			if (sliceOptionsMenuDropList == null)
+			{
+				sliceOptionsMenuDropList = new DropDownMenu(LocalizedString.Get("Options  "));
+				sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
+				sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
+				sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+				sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
+				sliceOptionsMenuDropList.BorderWidth = 1;
+				sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
+				sliceOptionsMenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
+				sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
+
+				SetMenuItems();
+			}
+
+			return sliceOptionsMenuDropList;
+		}
+
+		void MenuDropList_SelectionChanged(object sender, EventArgs e)
+		{
+			string menuSelection = ((DropDownMenu)sender).SelectedValue;
+			foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
+			{
+				// if the menu we select is this one
+				if (item.Item1 == menuSelection)
+				{
+					// call its function
+					item.Item2();
+				}
+			}
+		}
+
+		void SetMenuItems()
+		{
+			string importTxt = LocalizedString.Get("Import");
+			string importTxtFull = string.Format("{0}", importTxt);
+			string exportTxt = LocalizedString.Get("Export");
+			string exportTxtFull = string.Format("{0}", exportTxt);
+			//Set the name and callback function of the menu items
+			slicerOptionsMenuItems = new TupleList<string, Func<bool>> 
+			{
+				{importTxtFull, ImportQueueMenu_Click},
+				{exportTxtFull, ExportQueueMenu_Click},
+			};
+
+			//Add the menu items to the menu itself
+			foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
+			{
+				sliceOptionsMenuDropList.AddItem(item.Item1);
+			}
+		}
+
+		bool ImportQueueMenu_Click()
+		{
+			UiThread.RunOnIdle((state) =>
+				{
+					ActiveSliceSettings.Instance.LoadSettingsFromIni(state);
+				});
+			return true;
+		}
+
+		bool ExportQueueMenu_Click()
+		{
+			UiThread.RunOnIdle((state) =>
+				{
+					ActiveSliceSettings.Instance.SaveAs();
+				});
+			return true;
+		}
 
         private void SettingsDetail_SelectionChanged(object sender, EventArgs e)
         {
@@ -123,9 +263,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
         SliceSettingsDetailControl sliceSettingsDetailControl;
 
+
         TabControl categoryTabs;
         AltGroupBox noConnectionMessageContainer;
         FlowLayoutWidget settingsControlBar;
+		FlowLayoutWidget settingsSaveBar;
 
         public SliceSettingsWidget(SliceSettingsWidgetUiState uiState)
         {
@@ -142,6 +284,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             settingsControlBar = new SettingsControlBar();
             pageTopToBottomLayout.AddChild(settingsControlBar);
+
+			settingsSaveBar = new SliceSettingsSaveBar();
+			settingsSaveBar.Visible = false;
+			pageTopToBottomLayout.AddChild(settingsSaveBar);
 
             noConnectionMessageContainer = new AltGroupBox(new TextWidget(LocalizedString.Get("No Printer Selected"), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
             noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
@@ -227,7 +373,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 categoryTabs.SelectTab(uiState.selectedCategory.index);
             }
 			this.AnchorAll();
+			SetStatusDisplay();
         }
+
+
+		void onCommitStatusChanged(object sender, EventArgs e)
+		{
+			SetStatusDisplay();
+		}
+
+
+		void SetStatusDisplay()
+		{            
+			if (ActiveSliceSettings.Instance.HasUncommittedChanges)
+			{   
+				settingsSaveBar.Visible = true;                
+			}
+			else
+			{
+				settingsSaveBar.Visible = false;               
+			}         
+		}
 
         public string UserLevel
         {
@@ -283,6 +449,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(APP_onPrinterStatusChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			ActiveSliceSettings.Instance.CommitStatusChanged.RegisterEvent(onCommitStatusChanged, ref unregisterEvents);
         }
 
         public override void OnClosed(EventArgs e)

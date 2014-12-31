@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //this.AddChild(new GuiWidget(6, 0));
             //this.AddChild(new SliceSelectorWidget("Item", RGBA_Bytes.Violet)); 
-            this.Height = 70;
+			this.Height = 70 * TextWidget.GlobalPointSizeScaleRatio;
         }
 
         event EventHandler unregisterEvents;
@@ -103,178 +103,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
     }
     
     public class SettingsControlBar : FlowLayoutWidget
-    {
-        TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        Button saveButton;
-        Button revertbutton;
-
-        public DropDownMenu sliceOptionsMenuDropList;
-        private TupleList<string, Func<bool>> slicerOptionsMenuItems;
-        
+    {        
         public SettingsControlBar()
             : base(FlowDirection.TopToBottom)
         {
             SetDisplayAttributes();
             AddChildElements();
-            AddHandlers();
         }        
             
         void SetDisplayAttributes()
         {            
             this.HAnchor |= HAnchor.ParentLeftRight;
-            this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+            
             this.Padding = new BorderDouble(6,10,6,5);
         }
 
         void AddChildElements()
         {
             EnhancedSettingsControlBar topRow = new EnhancedSettingsControlBar();
-            FlowLayoutWidget bottomRow = new FlowLayoutWidget();
-
-            bottomRow.HAnchor = HAnchor.ParentLeftRight;
-            bottomRow.Margin = new BorderDouble(bottom:4);
-
-			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
-            saveButton.VAnchor = VAnchor.ParentCenter;
-            saveButton.Visible = false;
-            saveButton.Margin = new BorderDouble(0, 0, 0, 10);
-			saveButton.Click += new EventHandler(saveButton_Click);
-
-			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert"));
-            revertbutton.VAnchor = VAnchor.ParentCenter;
-            revertbutton.Visible = false;
-            revertbutton.Margin = new BorderDouble(0,0,0,10);
-            revertbutton.Click += new EventHandler(revertbutton_Click);		
-            
-            GuiWidget spacer = new GuiWidget(HAnchor.ParentLeftRight);
-            bottomRow.AddChild(spacer);
-
-            bottomRow.AddChild(saveButton);
-            bottomRow.AddChild(revertbutton);
-            bottomRow.AddChild(GetSliceOptionsMenuDropList());
-
-            this.AddChild(bottomRow);
+            //this.AddChild(bottomRow);
             this.AddChild(topRow);
 
-            SetStatusDisplay();
         }
 
-        DropDownMenu GetSliceOptionsMenuDropList()
-        {
-            if (sliceOptionsMenuDropList == null)
-            {
-                sliceOptionsMenuDropList = new DropDownMenu(LocalizedString.Get("Options   "));
-                sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
-                sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
-                sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
-                sliceOptionsMenuDropList.BackgroundColor = new RGBA_Bytes(0, 0, 0, 0);
-                sliceOptionsMenuDropList.BorderWidth = 1;
-                sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
-                sliceOptionsMenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
-                sliceOptionsMenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
-
-                SetMenuItems();
-            }
-
-            return sliceOptionsMenuDropList;
-        }
-
-        event EventHandler unregisterEvents;
-        void AddHandlers()
-        {
-            ActiveSliceSettings.Instance.CommitStatusChanged.RegisterEvent(onCommitStatusChanged, ref unregisterEvents);
-        }
-
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-
-        void onCommitStatusChanged(object sender, EventArgs e)
-        {
-            SetStatusDisplay();
-        }
+        
 
 
-        void SetStatusDisplay()
-        {            
-            if (ActiveSliceSettings.Instance.HasUncommittedChanges)
-            {   
-                this.saveButton.Visible = true;
-                this.revertbutton.Visible = true;                
-            }
-            else
-            {
-                this.saveButton.Visible = false;
-                this.revertbutton.Visible = false;                
-            }         
-        }
-
-        void saveButton_Click(object sender, EventArgs mouseEvent)
-        {
-            ActiveSliceSettings.Instance.CommitChanges();
-        }
-
-        void revertbutton_Click(object sender, EventArgs mouseEvent)
-        {
-            ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationController.Instance.ReloadAdvancedControlsPanel();
-        }
-
-        void MenuDropList_SelectionChanged(object sender, EventArgs e)
-        {
-            string menuSelection = ((DropDownMenu)sender).SelectedValue;
-            foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-            {
-                // if the menu we select is this one
-                if (item.Item1 == menuSelection)
-                {
-                    // call its function
-                    item.Item2();
-                }
-            }
-        }
-
-        void SetMenuItems()
-        {
-            string importTxt = LocalizedString.Get("Import");
-            string importTxtFull = string.Format("{0}", importTxt);
-            string exportTxt = LocalizedString.Get("Export");
-            string exportTxtFull = string.Format("{0}", exportTxt);
-            //Set the name and callback function of the menu items
-            slicerOptionsMenuItems = new TupleList<string, Func<bool>> 
-            {
-				{importTxtFull, ImportQueueMenu_Click},
-				{exportTxtFull, ExportQueueMenu_Click},
-            };
-
-            //Add the menu items to the menu itself
-            foreach (Tuple<string, Func<bool>> item in slicerOptionsMenuItems)
-            {
-                sliceOptionsMenuDropList.AddItem(item.Item1);
-            }
-        }
-
-        bool ImportQueueMenu_Click()
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                ActiveSliceSettings.Instance.LoadSettingsFromIni(state);
-            });
-            return true;
-        }
-
-        bool ExportQueueMenu_Click()
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                ActiveSliceSettings.Instance.SaveAs();
-            });
-            return true;
-        }
     }
 }
