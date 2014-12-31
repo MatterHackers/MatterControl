@@ -65,6 +65,12 @@ namespace MatterHackers.MatterControl.Testing
             try { MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined(); }
             catch (Exception e) { DumpException(e); }
 
+            try { QueueTests.RunAllQueueTests(); }
+            catch (Exception e) { DumpException(e); }
+
+            try { LibraryTests.RunLibraryTests(); }
+            catch (Exception e) { DumpException(e); }
+
             if (!HadErrors)
             {
                 File.Delete(errorLogFileName);

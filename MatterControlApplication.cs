@@ -101,6 +101,18 @@ namespace MatterHackers.MatterControl
                         ShowMemoryUsed = true;
                         DoCGCollectEveryDraw = true;
                         break;
+
+                    case "OPEN_WITH_ACTIVE_PRINTER":
+                        Printer ActivePrinter = new Printer();
+                        ActivePrinter.Name = "Test Printer";
+                        ActivePrinter.Make = "Airwolf 3D";
+                        ActivePrinter.Model = "HD";
+                        
+                        PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
+                        test.LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);
+                        ActivePrinterProfile.Instance.ActivePrinter = ActivePrinter;
+                        break;
+
                 }
 
                 if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
