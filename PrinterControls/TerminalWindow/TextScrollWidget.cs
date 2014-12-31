@@ -136,7 +136,8 @@ namespace MatterHackers.MatterControl
         void CreateFilteredList()
         {
             visibleLines = new List<string>();
-            foreach (string line in allSourceLines)
+            List<string> allSourceLinesTemp = new List<string>(allSourceLines);
+            foreach (string line in allSourceLinesTemp)
             {
                 ConditionalyAddToVisible(line);
             }
