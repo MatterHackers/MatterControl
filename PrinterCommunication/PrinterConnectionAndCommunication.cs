@@ -1922,11 +1922,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         serialPort.Write(lineToWrite);
                         //Debug.Write("w: " + lineToWrite);
                     }
-                    catch (IOException)
+                    catch (IOException ex)
                     {
-                        OnConnectionFailed(null);
+                        Trace.WriteLine("Error writing to printer: " + ex.Message);
+
+                        // Handle hardware disconnects by relaying the failure reason and shutting down open resources
+                        AbortConnectionAttempt("Connection Lost - " + ex.Message);
                     }
-                    catch (TimeoutException)
+                    catch (TimeoutException ex)
                     {
                     }
                 }
@@ -1977,6 +1980,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         /// <param name="shutdownReadLoop">Shutdown/join the readFromPrinterThread</param>
         public void AbortConnectionAttempt(string abortReason, bool shutdownReadLoop = true)
         {
+            // Set .Disconnecting to allow the readloop to exit gracefully before a forced thread join (and extended timeout)
             CommunicationState = CommunicationStates.Disconnecting;
 
             // Shudown the connectionAttempt thread
