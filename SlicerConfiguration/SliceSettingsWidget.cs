@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public SliceSettingsWidget(SliceSettingsWidgetUiState uiState)
         {
-            int minSettingNameWidth = 190;
+            int minSettingNameWidth = (int)(190 * TextWidget.GlobalPointSizeScaleRatio + .5);
             buttonFactory.FixedHeight = 20;
             buttonFactory.fontSize = 10;
             buttonFactory.normalFillColor = RGBA_Bytes.White;
@@ -582,31 +582,65 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return groupTabs;
         }
 
+        public class WrappedTextWidget : GuiWidget
+        {
+            String unwrappedText;
+            TextWidget textWidget;
+            double pointSize;
+            public WrappedTextWidget(string text, double x = 0, double y = 0, 
+                double pointSize = 12, Justification justification = Justification.Left, 
+                RGBA_Bytes textColor = new RGBA_Bytes(), bool ellipsisIfClipped = true, bool underline = false, RGBA_Bytes backgroundColor = new RGBA_Bytes())
+            {
+                this.pointSize = pointSize;
+                textWidget = new TextWidget(text, x, y, pointSize, justification, textColor, ellipsisIfClipped, underline, backgroundColor);
+                textWidget.AutoExpandBoundsToText = true;
+                textWidget.HAnchor = HAnchor.ParentLeft;
+                textWidget.VAnchor = VAnchor.ParentCenter;
+                unwrappedText = text;
+                HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+                VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+                AdjustTextWrap();
+                AddChild(textWidget);
+            }
+
+            public override void OnBoundsChanged(EventArgs e)
+            {
+                AdjustTextWrap();
+                base.OnBoundsChanged(e);
+            }
+
+            private void AdjustTextWrap()
+            {
+                if (textWidget != null)
+                {
+                    if (Width > 0)
+                    {
+                        EnglishTextWrapping wrapper = new EnglishTextWrapping(pointSize);
+                        string wrappedMessage = wrapper.InsertCRs(unwrappedText, Width);
+                        textWidget.Text = wrappedMessage;
+                    }
+                }
+            }
+        }
+
         private void AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingInfo)
         {
             FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            double textRegionWidth = 380;
+            allText.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+            double textRegionWidth = 380 * TextWidget.GlobalPointSizeScaleRatio;
             allText.Margin = new BorderDouble(3);
             allText.Padding = new BorderDouble(5);
             allText.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 
             double helpPointSize = 10;
-
-            EnglishTextWrapping wrapper = new EnglishTextWrapping(helpPointSize);
-            string[] wrappedText = wrapper.WrapText(settingInfo.HelpText, textRegionWidth - allText.Padding.Width);
-            foreach (string line in wrappedText)
-            {
-                GuiWidget helpWidget = new TextWidget(line, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
-                helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
-                helpWidget.HAnchor = HAnchor.ParentLeft;
-                allText.AddChild(helpWidget);
-            }
+            
+            GuiWidget helpWidget = new WrappedTextWidget(settingInfo.HelpText, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
+            helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
+            //helpWidget.HAnchor = HAnchor.ParentLeft;
+            allText.AddChild(helpWidget);
 
             allText.MinimumSize = new Vector2(textRegionWidth, allText.MinimumSize.y);
-            if (wrappedText.Length > 0)
-            {
-                topToBottomSettings.AddChild(allText);
-            }
+            topToBottomSettings.AddChild(allText);
         }
 
         private TabControl CreateExtraSettingsSideTabsAndPages(int minSettingNameWidth, TabControl categoryTabs, out int count)
@@ -711,14 +745,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             if (ActiveSliceSettings.Instance.Contains(settingData.SlicerConfigName))
             {
-                int intEditWidth = 60;
-                int doubleEditWidth = 60;
+                int intEditWidth = (int)(60 * TextWidget.GlobalPointSizeScaleRatio + .5);
+                int doubleEditWidth = (int)(60 * TextWidget.GlobalPointSizeScaleRatio + .5);
                 if (settingData.QuickMenuSettings.Count > 0)
                 {
-                    doubleEditWidth = 35;
+                    doubleEditWidth = (int)(35 * TextWidget.GlobalPointSizeScaleRatio + .5);
                 }
-                int vectorXYEditWidth = 60;
-                int multiLineEditHeight = 60;
+                int vectorXYEditWidth = (int)(60 * TextWidget.GlobalPointSizeScaleRatio + .5);
+                int multiLineEditHeight = (int)(60 * TextWidget.GlobalPointSizeScaleRatio + .5);
 
                 string sliceSettingValue = ActiveSliceSettings.Instance.GetActiveValue(settingData.SlicerConfigName);
                 leftToRightLayout.Margin = new BorderDouble(0, 2);
