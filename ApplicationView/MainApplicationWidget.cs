@@ -109,7 +109,9 @@ namespace MatterHackers.MatterControl
 			TopContainer.HAnchor = HAnchor.ParentLeftRight;
 
             ApplicationMenuRow menuRow = new ApplicationMenuRow();
+			#if !__ANDROID__
 			TopContainer.AddChild(menuRow);
+			#endif
 
             menuSeparator = new GuiWidget();
             menuSeparator.Height = 12;
