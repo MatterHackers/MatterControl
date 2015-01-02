@@ -72,6 +72,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public RadioButton twoDimensionButton;
 		public RadioButton threeDimensionButton;
 
+        static bool userChangedTo3DThisRun = false;
+
 		public ViewControlsToggle()
 		{
 			TextImageButtonFactory iconTextImageButtonFactory = new TextImageButtonFactory();
@@ -98,7 +100,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(threeDimensionButton);
 
 				if (UserSettings.Instance.get("LayerViewDefault") == "3D Layer"
-                    && UserSettings.Instance.Fields.StartCountDurringExit == UserSettings.Instance.Fields.StartCount - 1)
+                    && 
+                    (UserSettings.Instance.Fields.StartCountDurringExit == UserSettings.Instance.Fields.StartCount - 1
+                    || userChangedTo3DThisRun)
+                    )
 				{
 					threeDimensionButton.Checked = true;
 				}
@@ -111,6 +116,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				twoDimensionButton.Checked = true;
 			}
+
+            threeDimensionButton.Click += (sender, e) =>
+            {
+                userChangedTo3DThisRun = true;
+            };
 			Margin = new BorderDouble(5,5,200,5);
 			HAnchor |= Agg.UI.HAnchor.ParentRight;
 			VAnchor = Agg.UI.VAnchor.ParentTop;
