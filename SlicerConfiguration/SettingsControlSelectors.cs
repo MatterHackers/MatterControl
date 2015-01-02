@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
 
             this.HAnchor = HAnchor.ParentLeftRight;
-            this.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+			this.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             GuiWidget accentBar = new GuiWidget(1, 5);

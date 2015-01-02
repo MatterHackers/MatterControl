@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //this.AddChild(new GuiWidget(6, 0));
             //this.AddChild(new SliceSelectorWidget("Item", RGBA_Bytes.Violet)); 
-			this.Height = 70 * TextWidget.GlobalPointSizeScaleRatio;
+			this.Height = 60 * TextWidget.GlobalPointSizeScaleRatio;
         }
 
         event EventHandler unregisterEvents;
@@ -114,9 +114,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         void SetDisplayAttributes()
         {            
             this.HAnchor |= HAnchor.ParentLeftRight;
-			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-            
-            this.Padding = new BorderDouble(6,10,6,5);
+			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;            
+            this.Padding = new BorderDouble(8);
         }
 
         void AddChildElements()

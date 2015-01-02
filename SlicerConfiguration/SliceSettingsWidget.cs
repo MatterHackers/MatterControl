@@ -58,8 +58,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 
 			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 180);
+			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 180);
 
 			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
 			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -77,17 +77,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			unsavedMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			unsavedMessage.VAnchor = VAnchor.ParentCenter;
 
+			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert").ToUpper(),centerText:true);
+			revertbutton.VAnchor = VAnchor.ParentCenter;
+			revertbutton.Visible = true;
+			revertbutton.Margin = new BorderDouble(5, 0, 0, 0);
+			revertbutton.Click += new EventHandler(revertbutton_Click);	
+
+			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 255);
+			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 255);
+			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
 			saveButton = textImageButtonFactory.Generate(LocalizedString.Get("Save").ToUpper(),centerText:true);
 			saveButton.VAnchor = VAnchor.ParentCenter;
 			saveButton.Visible = true;
 			saveButton.Margin = new BorderDouble(5, 0, 5, 0);
 			saveButton.Click += new EventHandler(saveButton_Click);
-
-			revertbutton = textImageButtonFactory.Generate(LocalizedString.Get("Revert").ToUpper(),centerText:true);
-			revertbutton.VAnchor = VAnchor.ParentCenter;
-			revertbutton.Visible = true;
-			revertbutton.Margin = new BorderDouble(5, 0, 0, 0);
-			revertbutton.Click += new EventHandler(revertbutton_Click);		
 
 			this.AddChild(new HorizontalSpacer());
 			this.AddChild(unsavedMessage);
