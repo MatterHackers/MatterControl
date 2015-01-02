@@ -587,20 +587,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             String unwrappedText;
             TextWidget textWidget;
             double pointSize;
-            public WrappedTextWidget(string text, double x = 0, double y = 0, 
+            public WrappedTextWidget(string text, double startingWidth, 
                 double pointSize = 12, Justification justification = Justification.Left, 
                 RGBA_Bytes textColor = new RGBA_Bytes(), bool ellipsisIfClipped = true, bool underline = false, RGBA_Bytes backgroundColor = new RGBA_Bytes())
             {
                 this.pointSize = pointSize;
-                textWidget = new TextWidget(text, x, y, pointSize, justification, textColor, ellipsisIfClipped, underline, backgroundColor);
+                textWidget = new TextWidget(text, 0, 0, pointSize, justification, textColor, ellipsisIfClipped, underline, backgroundColor);
                 textWidget.AutoExpandBoundsToText = true;
                 textWidget.HAnchor = HAnchor.ParentLeft;
                 textWidget.VAnchor = VAnchor.ParentCenter;
                 unwrappedText = text;
-                HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-                VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-                AdjustTextWrap();
+                HAnchor = HAnchor.ParentLeftRight;
+                VAnchor = VAnchor.FitToChildren;
                 AddChild(textWidget);
+
+                Width = startingWidth;
             }
 
             public override void OnBoundsChanged(EventArgs e)
@@ -626,7 +627,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         private void AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingInfo)
         {
             FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            allText.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+            allText.HAnchor = HAnchor.ParentLeftRight;
             double textRegionWidth = 380 * TextWidget.GlobalPointSizeScaleRatio;
             allText.Margin = new BorderDouble(3);
             allText.Padding = new BorderDouble(5);
@@ -634,7 +635,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             double helpPointSize = 10;
             
-            GuiWidget helpWidget = new WrappedTextWidget(settingInfo.HelpText, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
+            GuiWidget helpWidget = new WrappedTextWidget(settingInfo.HelpText, textRegionWidth, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
             helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
             //helpWidget.HAnchor = HAnchor.ParentLeft;
             allText.AddChild(helpWidget);
