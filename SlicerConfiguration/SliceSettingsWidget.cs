@@ -620,7 +620,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {
                     if (Width > 0)
                     {
-                        EnglishTextWrapping wrapper = new EnglishTextWrapping(pointSize);
+                        EnglishTextWrapping wrapper = new EnglishTextWrapping(textWidget.Printer.TypeFaceStyle.EmSizeInPoints);
                         string wrappedMessage = wrapper.InsertCRs(unwrappedText, Width);
                         textWidget.Text = wrappedMessage;
                     }
