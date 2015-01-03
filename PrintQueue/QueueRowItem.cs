@@ -563,10 +563,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public void SetTextColors(RGBA_Bytes color)
         {
-            this.partLabel.TextColor = color;
-            this.partStatus.TextColor = color;
+            if (this.partLabel.TextColor != color)
+            {
+                this.partLabel.TextColor = color;
+                this.partStatus.TextColor = color;
 
-            editControls.SendToChildren(new ChangeTextColorEventArgs(color));
+                editControls.SendToChildren(new ChangeTextColorEventArgs(color));
+            }
         }
 
         public override void OnDraw(Graphics2D graphics2D)

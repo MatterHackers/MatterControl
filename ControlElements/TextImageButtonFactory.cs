@@ -108,11 +108,22 @@ namespace MatterHackers.MatterControl
         {
             if (borderColor.Alpha0To255 > 0)
             {
-                RectangleDouble boarderRectangle = LocalBounds;
-                //boarderRectangle.Inflate(-borderWidth / 2);
-                RoundedRect rectBorder = new RoundedRect(boarderRectangle, this.borderRadius);
+                RectangleDouble borderRectangle = LocalBounds;
 
-                graphics2D.Render(new Stroke(rectBorder, borderWidth), borderColor);
+                if (borderWidth > 0)
+                {
+                    if (borderWidth == 1)
+                    {
+                        graphics2D.Rectangle(borderRectangle, borderColor);
+                    }
+                    else
+                    {
+                        //boarderRectangle.Inflate(-borderWidth / 2);
+                        RoundedRect rectBorder = new RoundedRect(borderRectangle, this.borderRadius);
+
+                        graphics2D.Render(new Stroke(rectBorder, borderWidth), borderColor);
+                    }
+                }
             }
 
             if (this.fillColor.Alpha0To255 > 0)

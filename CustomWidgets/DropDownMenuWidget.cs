@@ -239,9 +239,19 @@ namespace MatterHackers.Agg.UI
         private void DrawBorder(Graphics2D graphics2D)
         {
             RectangleDouble Bounds = LocalBounds;
-            RoundedRect borderRect = new RoundedRect(this.LocalBounds, 0);
-            Stroke strokeRect = new Stroke(borderRect, borderWidth);
-            graphics2D.Render(strokeRect, BorderColor);
+            if (borderWidth > 0)
+            {
+                if (borderWidth == 1)
+                {
+                    graphics2D.Rectangle(Bounds, BorderColor);
+                }
+                else
+                {
+                    RoundedRect borderRect = new RoundedRect(this.LocalBounds, 0);
+                    Stroke strokeRect = new Stroke(borderRect, borderWidth);
+                    graphics2D.Render(strokeRect, BorderColor);
+                }
+            }
         }
 
         public void AddItem(string name, string value = null, double pointSize = 12)

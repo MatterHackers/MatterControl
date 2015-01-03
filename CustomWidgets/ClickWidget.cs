@@ -107,9 +107,20 @@ namespace MatterHackers.MatterControl
         public override void OnDraw(Graphics2D graphics2D)
         {
             RectangleDouble borderRectangle = LocalBounds;
-            RoundedRect rectBorder = new RoundedRect(borderRectangle, 0);
 
-            graphics2D.Render(new Stroke(rectBorder, BorderWidth), BorderColor);
+            if (BorderWidth > 0)
+            {
+                if (BorderWidth == 1)
+                {
+                    graphics2D.Rectangle(borderRectangle, BorderColor);
+                }
+                else
+                {
+                    RoundedRect rectBorder = new RoundedRect(borderRectangle, 0);
+
+                    graphics2D.Render(new Stroke(rectBorder, BorderWidth), BorderColor);
+                }
+            }
             base.OnDraw(graphics2D);
         }
     }
