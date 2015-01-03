@@ -857,7 +857,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     windowController.functionToCallOnSave(this, null);
                     windowController.ChangeToSlicePresetList();
                     ActiveSliceSettings.Instance.LoadAllSettings();
-                    ApplicationController.Instance.ReloadAdvancedControlsPanel();
+                    // Dissabled this as the pannel is already reloaded from LoadAllSettings LBB 2015 01 03.
+                    //ApplicationController.Instance.ReloadAdvancedControlsPanel();
                 }
             });
         }
