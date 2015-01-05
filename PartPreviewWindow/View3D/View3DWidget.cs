@@ -253,8 +253,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
+        bool firstDraw = true;
         public override void OnDraw(Graphics2D graphics2D)
         {
+            if (firstDraw)
+            {
+                ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+                firstDraw = false;
+            }
+
             if (HaveSelection)
             {
                 upArrow.SetPosition();
@@ -599,8 +606,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             AddChild(viewControls3D);
 
             AddHandlers();
-
-            ClearBedAndLoadPrintItemWrapper(printItemWrapper);
 
             UiThread.RunOnIdle(AutoSpin);
 
