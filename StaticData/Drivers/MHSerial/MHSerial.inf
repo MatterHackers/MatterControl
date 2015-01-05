@@ -34,6 +34,7 @@ mega2560ref8888.name="TAURINO - ATmega2560 compatible2"
 brainwave.name="Brainwave"
 brainwave.bootloader.name="Brainwave Boot Loader"
 printrboard.name="Printrboard"
+smoothieboard.name="Smoothie Board"
 
 [DefaultInstall]
 CopyINF=arduino.inf
@@ -85,6 +86,9 @@ DefaultDestDir=12
 %brainwave.name%=DriverInstall, USB\VID_16D0&PID_076B&MI_00
 %brainwave.bootloader.name%=DriverInstall, USB\VID_239A&PID_0001
 %printrboard.name%=DriverInstall, USB\VID_16C0&PID_0483&REV_0100
+%smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_00
+%smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_04
+%smoothieboard.name%=DriverInstall, USB\VID_1F00&PID_2012
 
 [DeviceList.NTamd64]
 %due.bossa.name%=DriverInstall, USB\VID_03EB&PID_6124
@@ -117,6 +121,9 @@ DefaultDestDir=12
 %brainwave.name%=DriverInstall, USB\VID_16D0&PID_076B&MI_00
 %brainwave.bootloader.name%=DriverInstall, USB\VID_239A&PID_0001
 %printrboard.name%=DriverInstall, USB\VID_16C0&PID_0483&REV_0100
+%smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_00
+%smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_04
+%smoothieboard.name%=DriverInstall, USB\VID_1F00&PID_2012
 
 [DeviceList.NTia64]
 %esplora.bootloader.name%=DriverInstall, USB\VID_2341&PID_003C
@@ -146,6 +153,9 @@ DefaultDestDir=12
 %brainwave.name%=DriverInstall, USB\VID_16D0&PID_076B&MI_00
 %brainwave.bootloader.name%=DriverInstall, USB\VID_239A&PID_0001
 %printrboard.name%=DriverInstall, USB\VID_16C0&PID_0483&REV_0100
+%smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_00
+%smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_04
+%smoothieboard.name%=DriverInstall, USB\VID_1F00&PID_2012
 
 [DriverInstall]
 include=mdmcpq.inf,usb.inf
