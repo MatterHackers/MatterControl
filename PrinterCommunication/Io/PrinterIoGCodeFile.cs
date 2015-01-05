@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             this.loadedGCode = loadedGCode;
         }
 
-        public double TotalSecondsInPrint
+        public override double TotalSecondsInPrint
         {
             get
             {
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             }
         }
 
-        public double SecondsRemaining
+        public override double SecondsRemaining
         {
             get
             {
