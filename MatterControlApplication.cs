@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl
                                 ActivePrinter.Model = printerData[1];
 
                                 PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
-                                test.LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);
+                                test.LoadDefaultSliceSettings(ActivePrinter.Make, ActivePrinter.Model);
                                 ActivePrinterProfile.Instance.ActivePrinter = ActivePrinter;
                             }
                         }

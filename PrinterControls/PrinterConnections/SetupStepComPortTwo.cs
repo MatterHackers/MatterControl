@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void MoveToManualConfiguration(object state)
         {
-            Parent.AddChild(new SetupStepComPortManual((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+            Parent.AddChild(new SetupStepComPortManual((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
             Parent.RemoveChild(this);
         }
 

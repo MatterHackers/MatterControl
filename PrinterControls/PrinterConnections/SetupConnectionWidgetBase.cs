@@ -16,7 +16,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {       
     public class SetupConnectionWidgetBase : ConnectionWidgetBase
     {        
-        public PrinterSetupStatus PrinterSetupStatus;
+        public PrinterSetupStatus currentPrinterSetupStatus;
 
         //private GuiWidget mainContainer;
 
@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         public Printer ActivePrinter 
         { 
-            get { return PrinterSetupStatus.ActivePrinter; } 
+            get { return currentPrinterSetupStatus.ActivePrinter; } 
         }
 
         public SetupConnectionWidgetBase(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus printerSetupStatus = null)
@@ -40,11 +40,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             if (printerSetupStatus == null)
             {
-                this.PrinterSetupStatus = new PrinterSetupStatus();
+                this.currentPrinterSetupStatus = new PrinterSetupStatus();
             }
             else
             {
-                this.PrinterSetupStatus = printerSetupStatus;
+                this.currentPrinterSetupStatus = printerSetupStatus;
             }
 
 			cancelButton = textImageButtonFactory.Generate (LocalizedString.Get ("Cancel"));

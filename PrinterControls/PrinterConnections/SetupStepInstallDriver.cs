@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public SetupStepInstallDriver(ConnectionWindow windowController, GuiWidget containerWindowToClose, PrinterSetupStatus setupPrinterStatus)
             : base(windowController, containerWindowToClose, setupPrinterStatus)
         {
-            this.driversToInstall = this.PrinterSetupStatus.DriversToInstall;
+            this.driversToInstall = this.currentPrinterSetupStatus.DriversToInstall;
 
 			headerLabel.Text = string.Format(LocalizedString.Get("Install Communication Driver"));
             printerDriverContainer = createPrinterDriverContainer();
@@ -97,12 +97,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
             if (this.ActivePrinter.BaudRate == null)
             {
-                Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+                Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
             else
             {
-                Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+                Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
         }

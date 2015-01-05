@@ -221,21 +221,21 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             // you can call this like this
             //             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));
 
-            if (this.PrinterSetupStatus.DriversToInstall.Count > 0)
+            if (this.currentPrinterSetupStatus.DriversToInstall.Count > 0)
             {
-                Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+                Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
             else
             {
-                Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+                Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
         }
 
         void RecreateCurrentWidget(object state)
         {
-            Parent.AddChild(new SetupStepComPortManual((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+            Parent.AddChild(new SetupStepComPortManual((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
             Parent.RemoveChild(this);
         }
 

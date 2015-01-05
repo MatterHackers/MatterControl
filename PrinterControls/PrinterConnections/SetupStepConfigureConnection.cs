@@ -109,18 +109,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             //             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));            
             if (this.ActivePrinter.BaudRate == null)
             {
-                Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+                Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
                 Parent.RemoveChild(this);               
                 
             }
-            else if (this.PrinterSetupStatus.DriversToInstall.Count > 0)
+            else if (this.currentPrinterSetupStatus.DriversToInstall.Count > 0)
             {
-                Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+                Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
             else
             {
-                Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.PrinterSetupStatus));
+                Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
                 Parent.RemoveChild(this);
             }
         }
