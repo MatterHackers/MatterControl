@@ -243,17 +243,17 @@ namespace MatterHackers.MatterControl
         public bool SmallChange { get; set; }
         public bool LargeChange { get; set; }
 
-        public SolidSlider(Vector2 positionOfTrackFirstValue, double widthInPixels, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
+        public SolidSlider(Vector2 positionOfTrackFirstValue, double thumbWidth, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
         {
             View = new SolidSlideView(this);
-            View.TrackHeight = widthInPixels;
+            View.TrackHeight = thumbWidth;
             OriginRelativeParent = positionOfTrackFirstValue;
             //TotalWidthInPixels = widthInPixels;
             Orientation = orientation;
             Minimum = minimum;
             Maximum = maximum;
-            ThumbWidth = widthInPixels;
-            ThumbHeight = widthInPixels * 1.4;
+            ThumbWidth = thumbWidth;
+            ThumbHeight = thumbWidth * 1.4;
 
             MinimumSize = new Vector2(Width, Height);
         }

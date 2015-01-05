@@ -69,14 +69,12 @@ namespace MatterHackers.MatterControl.PrinterControls
                 tuningRatiosLayout.HAnchor = HAnchor.ParentLeftRight;
                 tuningRatiosLayout.Padding = new BorderDouble(3, 0, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
 
-                double sliderWidth;
+                double sliderWidth = 300;
+                double sliderThumbWidth = 10;
                 if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
                 {
-                    sliderWidth = 20;
-                }
-                else
-                {
-                    sliderWidth = 10;
+                    sliderWidth = 280;
+                    sliderThumbWidth = 20;
                 }
 
                 TextWidget subheader = new TextWidget("Fine-tune adjustment while actively printing", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor);
@@ -98,10 +96,10 @@ namespace MatterHackers.MatterControl.PrinterControls
                         feedRateDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         feedRateDescription.VAnchor = VAnchor.ParentCenter;
                         feedRateLeftToRight.AddChild(feedRateDescription);
-                        feedRateRatioSlider = new SolidSlider(new Vector2(), sliderWidth, minFeedRateRatio, maxFeedRateRatio);
+                        feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minFeedRateRatio, maxFeedRateRatio);
                         feedRateRatioSlider.Margin = new BorderDouble(5, 0);
                         feedRateRatioSlider.Value = PrinterConnectionAndCommunication.Instance.FeedRateRatio;
-                        feedRateRatioSlider.TotalWidthInPixels = 300;
+                        feedRateRatioSlider.TotalWidthInPixels = sliderWidth;
                         feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
                         feedRateRatioSlider.ValueChanged += (sender, e) =>
                         {
@@ -143,8 +141,8 @@ namespace MatterHackers.MatterControl.PrinterControls
                         extrusionDescription.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                         extrusionDescription.VAnchor = VAnchor.ParentCenter;
                         leftToRight.AddChild(extrusionDescription);
-                        extrusionRatioSlider = new SolidSlider(new Vector2(), sliderWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal);
-                        extrusionRatioSlider.TotalWidthInPixels = 300;
+                        extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal);
+                        extrusionRatioSlider.TotalWidthInPixels = sliderWidth;
                         extrusionRatioSlider.Margin = new BorderDouble(5, 0);
                         extrusionRatioSlider.Value = PrinterConnectionAndCommunication.Instance.ExtrusionRatio;
                         extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
