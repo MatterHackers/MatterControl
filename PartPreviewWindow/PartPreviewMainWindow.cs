@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             totalDrawTime.Stop();
 
             millisecondTimer.Update((int)totalDrawTime.ElapsedMilliseconds);
-            millisecondTimer.DrawTopCenter(this, graphics2D);
+            millisecondTimer.Draw(graphics2D, this.Width * 3 / 4 - 15, this.Height - 40);
         }
 #endif
 
