@@ -170,10 +170,13 @@ namespace MatterHackers.MatterControl
         {
             ColumnTwo.CloseAndRemoveAllChildren();
 
-            PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
-            partViewContent.AnchorAll();
+            UiThread.RunOnIdle((state2) =>
+            {
+                PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
+                partViewContent.AnchorAll();
 
-            ColumnTwo.AddChild(partViewContent);
+                ColumnTwo.AddChild(partViewContent);
+            });
 
             ColumnTwo.AnchorAll();
         }

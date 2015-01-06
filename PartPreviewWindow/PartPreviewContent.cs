@@ -41,111 +41,118 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PartPreviewContent : GuiWidget
-	{
+    public class PartPreviewContent : GuiWidget
+    {
         event EventHandler unregisterEvents;
 
         View3DWidget partPreviewView;
-		ViewGcodeBasic viewGcodeBasic;
-		TabControl tabControl;
-		TabPage layerView;
-		View3DWidget.AutoRotate autoRotate3DView;
+        ViewGcodeBasic viewGcodeBasic;
+        TabControl tabControl;
+        TabPage layerView;
+        View3DWidget.AutoRotate autoRotate3DView;
         View3DWidget.OpenMode openMode;
-		View3DWidget.WindowMode windowMode;
+        View3DWidget.WindowMode windowMode;
 
         public PartPreviewContent(PrintItemWrapper printItem, View3DWidget.WindowMode windowMode, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
-		{
-			this.openMode = openMode;
-			this.autoRotate3DView = autoRotate3DView;
-			this.windowMode = windowMode;
+        {
+            this.openMode = openMode;
+            this.autoRotate3DView = autoRotate3DView;
+            this.windowMode = windowMode;
 
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.AnchorAll();
-			this.Load(printItem);
-        
+            BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+            this.AnchorAll();
+            this.Load(printItem);
+
             // We do this after showing the system window so that when we try and take focus of the parent window (the system window)
             // it exists and can give the focus to its child the gcode window.
-            if (printItem != null 
+            if (printItem != null
                 && Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
             {
                 SwitchToGcodeView();
             }
         }
 
-		public void Reload(PrintItemWrapper printItem)
-		{
-			this.RemoveAllChildren();
-			this.Load(printItem);
-		}
+        public void Reload(PrintItemWrapper printItem)
+        {
+            this.RemoveAllChildren();
+            this.Load(printItem);
+        }
 
-		void Load(PrintItemWrapper printItem)
-		{
-			tabControl = new TabControl();
-			tabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+        void Load(PrintItemWrapper printItem)
+        {
+            tabControl = new TabControl();
+            tabControl.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
 
-			tabControl.TabBar.Padding = new BorderDouble(top: 6);
+            tabControl.TabBar.Padding = new BorderDouble(top: 6);
 
-			RGBA_Bytes selectedTabColor;
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Responsive)
-			{
-				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
-			}
-			else
-			{
-				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
-				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
-			}
+            RGBA_Bytes selectedTabColor;
+            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Responsive)
+            {
+                tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+                selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
+            }
+            else
+            {
+                tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
+                selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
+            }
 
-			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+            double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
-			// put in the 3D view
-			{
-				string part3DViewLabelFull = string.Format("{0} {1} ", "3D", "View".Localize()).ToUpper();
+            // put in the 3D view
+            string part3DViewLabelFull = string.Format("{0} {1} ", "3D", "View".Localize()).ToUpper();
 
-				partPreviewView = new View3DWidget(printItem,
-					new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-					ActiveSliceSettings.Instance.BedCenter,
-					ActiveSliceSettings.Instance.BedShape,
-                    windowMode,
-					autoRotate3DView,
-                    openMode);
+            partPreviewView = new View3DWidget(printItem,
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape,
+                windowMode,
+                autoRotate3DView,
+                openMode);
 
-                partPreviewView.Closed += (sender, e) =>
-                {
-                    Close();
-                };
+            partPreviewView.Closed += (sender, e) =>
+            {
+                Close();
+            };
 
-				TabPage partPreview3DView = new TabPage(partPreviewView, part3DViewLabelFull);
-				tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView, "3D View Tab", 16,
-					selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
-			}
+            TabPage partPreview3DView = new TabPage(partPreviewView, part3DViewLabelFull);
 
-			// put in the gcode view
-			{
-                ViewGcodeBasic.WindowMode gcodeWindowMode = ViewGcodeBasic.WindowMode.Embeded;
-                if (windowMode == View3DWidget.WindowMode.StandAlone)
-                {
-                    gcodeWindowMode = ViewGcodeBasic.WindowMode.StandAlone;
-                }
+            // put in the gcode view
+            ViewGcodeBasic.WindowMode gcodeWindowMode = ViewGcodeBasic.WindowMode.Embeded;
+            if (windowMode == View3DWidget.WindowMode.StandAlone)
+            {
+                gcodeWindowMode = ViewGcodeBasic.WindowMode.StandAlone;
+            }
 
-                viewGcodeBasic = new ViewGcodeBasic(printItem,
-                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                    ActiveSliceSettings.Instance.BedCenter,
-                    ActiveSliceSettings.Instance.BedShape, gcodeWindowMode);
+            viewGcodeBasic = new ViewGcodeBasic(printItem,
+                new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+                ActiveSliceSettings.Instance.BedCenter,
+                ActiveSliceSettings.Instance.BedShape, gcodeWindowMode);
 
-                viewGcodeBasic.Closed += (sender, e) =>
-                {
-                    Close();
-                };
+            viewGcodeBasic.Closed += (sender, e) =>
+            {
+                Close();
+            };
 
-				layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View").ToUpper());
-				tabControl.AddTab(new SimpleTextTabWidget(layerView, "Layer View Tab", 16,
-					selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
-			}
+            layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View").ToUpper());
 
-			this.AddChild(tabControl);
-        
+            int tabPointSize = 16;
+            // add the correct tabs based on wether we are stand alone or embeded
+            if (windowMode == View3DWidget.WindowMode.StandAlone)
+            {
+                tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
+                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
+                tabControl.AddTab(new SimpleTextTabWidget(layerView, "Layer View Tab", tabPointSize,
+                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
+            }
+            else
+            {
+                tabControl.AddTab(new PopOutTextTabWidget(partPreview3DView, "3D View Tab", new Vector2(590, 400), tabPointSize));
+                tabControl.AddTab(new PopOutTextTabWidget(layerView, "Layer View Tab", new Vector2(590, 400), tabPointSize));
+            }
+
+            this.AddChild(tabControl);
+
             // if the embeded view was on the gcode tab than makes sure it stays there
             if (UserSettings.Instance.Fields.EmbededViewShowingGCode)
             {
@@ -165,19 +172,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             };
         }
 
-		public void SwitchToGcodeView()
-		{
-			tabControl.TabBar.SwitchToPage(layerView);
-			viewGcodeBasic.Focus();
-		}
+        public void SwitchToGcodeView()
+        {
+            tabControl.TabBar.SwitchToPage(layerView);
+            viewGcodeBasic.Focus();
+        }
 
-		public override void OnClosed(EventArgs e)
-		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-			base.OnClosed(e);
-		}
-	}
+        public override void OnClosed(EventArgs e)
+        {
+            if (unregisterEvents != null)
+            {
+                unregisterEvents(this, null);
+            }
+            base.OnClosed(e);
+        }
+    }
 }
