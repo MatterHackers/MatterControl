@@ -39,8 +39,6 @@ namespace MatterHackers.MatterControl
             noContentFieldDescription.AutoExpandBoundsToText = true;
             AddChild(noContentFieldDescription);
             SetNoContentFieldDescriptionVisibility();
-
-            UiThread.RunOnIdle(OnIdle);
         }
 
         private void SetNoContentFieldDescriptionVisibility()
@@ -65,23 +63,30 @@ namespace MatterHackers.MatterControl
 
         public void OnIdle(object state)
         {
-            if (timeSinceLastTextChanged.IsRunning && timeSinceLastTextChanged.Elapsed.Seconds > 2)
+            if (timeSinceLastTextChanged.IsRunning)
             {
-                if (actuallTextEditWidget.InternalTextEditWidget.TextHasChanged())
+                if (timeSinceLastTextChanged.Elapsed.Seconds > 2)
                 {
-                    actuallTextEditWidget.InternalTextEditWidget.OnEditComplete();
-                }
-                timeSinceLastTextChanged.Stop();
-            }
+                    if (actuallTextEditWidget.InternalTextEditWidget.TextHasChanged())
+                    {
+                        actuallTextEditWidget.InternalTextEditWidget.OnEditComplete();
+                    }
+                    timeSinceLastTextChanged.Stop();
 
-            if (!WidgetHasBeenClosed)
-            {
-                UiThread.RunOnIdle(OnIdle, 1);
+                }
+                if (!WidgetHasBeenClosed)
+                {
+                    UiThread.RunOnIdle(OnIdle, 1);
+                }
             }
         }
 
         void internalTextEditWidget_TextChanged(object sender, EventArgs e)
         {
+            if (!timeSinceLastTextChanged.IsRunning)
+            {
+                UiThread.RunOnIdle(OnIdle, 1);
+            }
             timeSinceLastTextChanged.Restart();
         }
 
@@ -168,8 +173,6 @@ namespace MatterHackers.MatterControl
 
             actuallNumberEdit.TextChanged += new EventHandler(internalNumberEdit_TextChanged);
             actuallNumberEdit.InternalTextEditWidget.EditComplete += new EventHandler(InternalTextEditWidget_EditComplete);
-
-            UiThread.RunOnIdle(OnIdle);
         }
 
         public override int TabIndex
@@ -189,23 +192,32 @@ namespace MatterHackers.MatterControl
             timeSinceLastTextChanged.Stop();
         }
 
-
         public void OnIdle(object state)
         {
-            if (timeSinceLastTextChanged.IsRunning && timeSinceLastTextChanged.Elapsed.Seconds > 2)
+            if (timeSinceLastTextChanged.IsRunning)
             {
-                actuallNumberEdit.InternalNumberEdit.OnEditComplete();
-                timeSinceLastTextChanged.Stop();
-            }
+                if (timeSinceLastTextChanged.Elapsed.Seconds > 2)
+                {
+                    if (actuallNumberEdit.InternalTextEditWidget.TextHasChanged())
+                    {
+                        actuallNumberEdit.InternalTextEditWidget.OnEditComplete();
+                    }
+                    timeSinceLastTextChanged.Stop();
 
-            if (!WidgetHasBeenClosed)
-            {
-                UiThread.RunOnIdle(OnIdle, 1);
+                }
+                if (!WidgetHasBeenClosed)
+                {
+                    UiThread.RunOnIdle(OnIdle, 1);
+                }
             }
         }
 
         void internalNumberEdit_TextChanged(object sender, EventArgs e)
         {
+            if (!timeSinceLastTextChanged.IsRunning)
+            {
+                UiThread.RunOnIdle(OnIdle, 1);
+            }
             timeSinceLastTextChanged.Restart();
         }
 
