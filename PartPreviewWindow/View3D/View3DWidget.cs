@@ -1358,9 +1358,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             sizeDisplay[axisIndex] = new EditableNumberDisplay(textImageButtonFactory, "100", "1000.00");
             sizeDisplay[axisIndex].EditComplete += (sender, e) =>
             {
-                SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
-                sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
-                UpdateSizeInfo();
+                if (HaveSelection)
+                {
+                    SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
+                    sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
+                    UpdateSizeInfo();
+                }
+                else
+                {
+                    sizeDisplay[axisIndex].SetDisplayString("---");
+                }
             };
 
             leftToRight.AddChild(sizeDisplay[axisIndex]);
