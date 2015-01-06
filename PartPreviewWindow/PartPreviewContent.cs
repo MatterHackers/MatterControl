@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -138,7 +139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             int tabPointSize = 16;
             // add the correct tabs based on wether we are stand alone or embeded
-            if (windowMode == View3DWidget.WindowMode.StandAlone)
+            if (windowMode == View3DWidget.WindowMode.StandAlone || OsInformation.OperatingSystem == OSType.Android)
             {
                 tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
                     selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
