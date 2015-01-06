@@ -107,6 +107,12 @@ namespace MatterHackers.MatterControl
                 actuallTextEditWidget.Text = value;
             }
         }
+
+        public bool SelectAllOnFocus
+        {
+            get { return actuallTextEditWidget.InternalTextEditWidget.SelectAllOnFocus; }
+            set { actuallTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value; }
+        }
     }
 
     public class MHPasswordTextEditWidget : MHTextEditWidget
@@ -222,6 +228,12 @@ namespace MatterHackers.MatterControl
             {
                 actuallNumberEdit.Text = value;
             }
+        }
+
+        public bool SelectAllOnFocus 
+        {
+            get { return ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus; }
+            set { ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus = value; }
         }
     }
 }

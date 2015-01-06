@@ -818,6 +818,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
                                 CallEventsOnSettingsChange(settingData);
                             };
+                            intEditWidget.SelectAllOnFocus = true;
+
                             leftToRightLayout.AddChild(intEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
                         }
@@ -833,6 +835,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
                                 CallEventsOnSettingsChange(settingData);
                             };
+                            doubleEditWidget.SelectAllOnFocus = true;
                             leftToRightLayout.AddChild(doubleEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
                         }
@@ -850,6 +853,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
                                 CallEventsOnSettingsChange(settingData);
                             };
+                            doubleEditWidget.SelectAllOnFocus = true;
 
                             content.AddChild(doubleEditWidget);
                             content.AddChild(getSettingInfoData(settingData));
@@ -875,6 +879,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
                                 CallEventsOnSettingsChange(settingData);
                             };
+                            doubleEditWidget.SelectAllOnFocus = true; 
                             leftToRightLayout.AddChild(doubleEditWidget);
                             leftToRightLayout.AddChild(getSettingInfoData(settingData));
                         }
@@ -906,6 +911,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
                                 CallEventsOnSettingsChange(settingData);
                             };
+                            stringEdit.SelectAllOnFocus = true; 
 
                             content.AddChild(stringEdit);
                             content.AddChild(getSettingInfoData(settingData));
@@ -1038,15 +1044,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                 SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
                                 CallEventsOnSettingsChange(settingData);
                             };
+                            xEditWidget.SelectAllOnFocus = true;
 
                             leftToRightLayout.AddChild(xEditWidget);
                             leftToRightLayout.AddChild(new HorizontalSpacer());
 
                             yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
-                                {
-                                    SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-                                    CallEventsOnSettingsChange(settingData);
-                                };
+                            {
+                                SaveSetting(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
+                                CallEventsOnSettingsChange(settingData);
+                            };
+                            yEditWidget.SelectAllOnFocus = true;
                             leftToRightLayout.AddChild(yEditWidget);
                         }
                         break;
@@ -1063,6 +1071,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
                                     CallEventsOnSettingsChange(settingData);
                                 };
+                                xEditWidget.SelectAllOnFocus = true;
                                 leftToRightLayout.AddChild(xEditWidget);
                                 leftToRightLayout.AddChild(new HorizontalSpacer());
                             }
@@ -1073,6 +1082,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     SaveCommaSeparatedIndexSetting(extruderIndexLocal, settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "x" + yEditWidget.ActuallNumberEdit.Value.ToString());
                                     CallEventsOnSettingsChange(settingData);
                                 };
+                                yEditWidget.SelectAllOnFocus = true;
                                 leftToRightLayout.AddChild(yEditWidget);
                             }
                         }
