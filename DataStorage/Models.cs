@@ -57,28 +57,44 @@ namespace MatterHackers.MatterControl.DataStorage
             isSaved = false;
         }
 
+        static readonly int maxRetries = 20;
+        int retryCount = 0;
         private void TryHandleInsert()
         {
+            retryCount++;
             try
             {
-                Datastore.Instance.dbSQLite.Insert(this);
+                if (retryCount < maxRetries)
+                {
+                    Datastore.Instance.dbSQLite.Insert(this);
+                }
             }
             catch (Exception)
             {
+                Thread.Sleep(100);
                 this.TryHandleInsert();
             }
+
+            retryCount = 0;
         }
 
         private void TryHandleUpdate()
         {
+            retryCount++;
             try
             {
-                Datastore.Instance.dbSQLite.Update(this);
+                if (retryCount < maxRetries)
+                {
+                    Datastore.Instance.dbSQLite.Update(this);
+                }
             }
             catch (Exception)
             {
+                Thread.Sleep(100);
                 this.TryHandleUpdate();
             }
+
+            retryCount = 0;
         }
 
         public virtual void Commit()
