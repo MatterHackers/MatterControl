@@ -170,7 +170,15 @@ namespace MatterHackers.MatterControl
         void LoadColumnTwo(object state = null)
         {
             columnTwoRequestCount++;
-            if (columnTwoRequestCount == 1)
+            if(columnTwoRequestCount == 1)
+            {
+                UiThread.RunOnIdle(RebuildColumnTwo);
+            }
+        }
+
+        void RebuildColumnTwo(object state)
+        {
+            if (columnTwoRequestCount > 0)
             {
                 ColumnTwo.CloseAndRemoveAllChildren();
 
@@ -183,7 +191,7 @@ namespace MatterHackers.MatterControl
                     columnTwoRequestCount--;
                     if (columnTwoRequestCount > 0)
                     {
-                        UiThread.RunOnIdle(LoadColumnTwo);
+                        UiThread.RunOnIdle(RebuildColumnTwo, .1);
                     }
                 });
 
