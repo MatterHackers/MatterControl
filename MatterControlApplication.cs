@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl
             gcodeStringBuilder.AppendLine("G90 ; use absolute coordinates");
             gcodeStringBuilder.AppendLine("G21 ; set units to millimeters");
             gcodeStringBuilder.AppendLine("G92 E0");
-            gcodeStringBuilder.AppendLine("G1 F7800.000");
+            gcodeStringBuilder.AppendLine("G1 F7800");
             gcodeStringBuilder.AppendLine("G1 Z" + (5).ToString());
             WriteMove(gcodeStringBuilder, center);
 
