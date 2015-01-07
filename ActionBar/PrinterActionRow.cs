@@ -169,7 +169,10 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 connectionWindow = new ConnectionWindow();
                 this.connectionWindowIsOpen = true;
+
+				//This function gets called on printer selection (see onActivePrinterChanged)
                 this.functionToCallOnSelect = functionToCallOnSelect;
+
                 connectionWindow.Closed += new EventHandler(ConnectionWindow_Closed);
             }
             else

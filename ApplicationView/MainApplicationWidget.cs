@@ -232,6 +232,12 @@ namespace MatterHackers.MatterControl
         static ApplicationController globalInstance;
         public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
         public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
+
+		public delegate string GetSessionInfoDelegate();
+		public static event GetSessionInfoDelegate privateGetSessionInfo;
+		public static event EventHandler privateStartLogin;
+		public static event EventHandler privateStartLogout;
 
 		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
 		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
@@ -251,7 +257,35 @@ namespace MatterHackers.MatterControl
         public void ThemeChanged(object sender, EventArgs e)
         {
             ReloadAll(null, null);
-        }      
+        }   
+
+		public void StartLogin()
+		{
+			if (privateStartLogin != null)
+			{
+				privateStartLogin(null, null);
+			}
+		}
+
+		public void StartLogout()
+		{
+			if (privateStartLogout != null)
+			{
+				privateStartLogout(null, null);
+			}
+		}
+
+		public string GetSessionUsername()
+		{
+			if (privateGetSessionInfo != null)
+			{
+				return privateGetSessionInfo();
+			}
+			else
+			{
+				return null;
+			}
+		}
         
 
         public void ReloadAll(object sender, EventArgs e)
@@ -262,6 +296,10 @@ namespace MatterHackers.MatterControl
                 WidescreenPanel.PreChangePanels.CallEvents(this, null);
                 MainView.CloseAndRemoveAllChildren();
                 MainView.AddElements();
+				if (DoneReloadingAll != null)
+				{
+					DoneReloadingAll.CallEvents(null, null);
+				}
             });
         }
 
