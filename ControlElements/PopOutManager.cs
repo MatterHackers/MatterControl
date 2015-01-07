@@ -141,14 +141,17 @@ namespace MatterHackers.MatterControl
 
         void ShowOnFirstSystemWindowDraw(GuiWidget drawingWidget, DrawEventArgs e)
         {
-            UiThread.RunOnIdle((state) =>
+            if (widgetWhosContentsPopOut.Children.Count > 0)
             {
-                bool wasLeftOpen = UserSettings.Instance.Fields.GetBool(WindowLeftOpenKey, false);
-                if (wasLeftOpen)
+                UiThread.RunOnIdle((state) =>
                 {
-                    ShowContentInWindow();
-                }
-            });
+                    bool wasLeftOpen = UserSettings.Instance.Fields.GetBool(WindowLeftOpenKey, false);
+                    if (wasLeftOpen)
+                    {
+                        ShowContentInWindow();
+                    }
+                });
+            }
 
             ApplicationController.Instance.MainView.DrawAfter -= ShowOnFirstSystemWindowDraw;
         }

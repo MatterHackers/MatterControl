@@ -166,37 +166,16 @@ namespace MatterHackers.MatterControl
             ColumnOne.Width = ColumnOneFixedWidth; //Ordering here matters - must go after children are added
         }
 
-        int columnTwoRequestCount = 0;
         void LoadColumnTwo(object state = null)
         {
-            columnTwoRequestCount++;
-            if(columnTwoRequestCount == 1)
-            {
-                UiThread.RunOnIdle(RebuildColumnTwo);
-            }
-        }
+            ColumnTwo.CloseAndRemoveAllChildren();
 
-        void RebuildColumnTwo(object state)
-        {
-            if (columnTwoRequestCount > 0)
-            {
-                ColumnTwo.CloseAndRemoveAllChildren();
+            PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
+            partViewContent.AnchorAll();
 
-                UiThread.RunOnIdle((state2) =>
-                {
-                    PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
-                    partViewContent.AnchorAll();
+            ColumnTwo.AddChild(partViewContent);
 
-                    ColumnTwo.AddChild(partViewContent);
-                    columnTwoRequestCount--;
-                    if (columnTwoRequestCount > 0)
-                    {
-                        UiThread.RunOnIdle(RebuildColumnTwo, .1);
-                    }
-                });
-
-                ColumnTwo.AnchorAll();
-            }
+            ColumnTwo.AnchorAll();
         }
 
         int NumberOfVisiblePanels()
