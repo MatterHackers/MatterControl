@@ -2930,9 +2930,6 @@ Translated:Expand Distance
 English:Insert
 Translated:Insert
 
-English:Insert
-Translated:Insert
-
 English:Restore
 Translated:Restore
 
