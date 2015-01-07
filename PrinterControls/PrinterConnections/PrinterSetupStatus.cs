@@ -241,16 +241,21 @@ namespace MatterHackers.MatterControl
 			{
 				try
 				{
-					foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
+					foreach (string lineIn in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
 					{
+                        string line = lineIn.Trim();
 						//Ignore commented lines
-						if (!line.StartsWith("#"))
+						if (line.Length > 0
+                            && !line.StartsWith("#"))
 						{
 							string[] settingLine = line.Split('=');
-							string keyName = settingLine[0].Trim();
-							string settingDefaultValue = settingLine[1].Trim();
+                            if (settingLine.Length > 1)
+                            {
+                                string keyName = settingLine[0].Trim();
+                                string settingDefaultValue = settingLine[1].Trim();
 
-							settingsDict.Add(keyName, settingDefaultValue);
+                                settingsDict.Add(keyName, settingDefaultValue);
+                            }
 						}
 					}
 				}
