@@ -271,8 +271,6 @@ namespace MatterHackers.MatterControl.DataStorage
             }
         }
     }
-
-
 }
 
 

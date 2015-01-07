@@ -2515,3 +2515,426 @@ Translated:Select the baud rate.
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 Translated:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 
+English:This is the minimum amount of filament that must be extruded before a retraction can occur.
+Translated:This is the minimum amount of filament that must be extruded before a retraction can occur.
+
+English:Support Options
+Translated:Support Options
+
+English:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
+Translated:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
+
+English:Support Everywhere
+Translated:Support Everywhere
+
+English:The angle the support infill will be drawn.
+Translated:The angle the support infill will be drawn.
+
+English:Infill Angle
+Translated:Infill Angle
+
+English:Grid
+Translated:Grid
+
+English:Moves
+Translated:Moves
+
+English:Retractions
+Translated:Retractions
+
+English:Speeds
+Translated:Speeds
+
+English:Extrusion
+Translated:Extrusion
+
+English:Special thanks to Alessandro Ranellucci for his incredible work on
+Translated:Special thanks to Alessandro Ranellucci for his incredible work on
+
+English:Dilimleme Motoru
+Translated:Dilimleme Motoru
+
+English:Clear
+Translated:Clear
+
+English:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+Translated:Lets the bed leveling code know if the printer can support the z axis going below 0. A printer with min z endstops or software end stops may not be able to.
+
+English:Z Can Be Negative
+Translated:Z Can Be Negative
+
+English:Export as X3G
+Translated:Export as X3G
+
+English:Select an Image
+Translated:Select an Image
+
+English:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+Translated:If greater than 0, this is the X by Y size of a tower to use to when changing extruders
+
+English:Extruder Change
+Translated:Extruder Change
+
+English:Wipe Tower Size
+Translated:Wipe Tower Size
+
+English:Sorry, we were unable to install the driver.
+Translated:Sorry, we were unable to install the driver.
+
+English:Tuning Adjustment
+Translated:Tuning Adjustment
+
+English:Release
+Translated:Release
+
+English:No printer is currently selected. Select a printer to edit slice settings.
+Translated:No printer is currently selected. Select a printer to edit slice settings.
+
+English:Part Preview
+Translated:Part Preview
+
+English:Layer Preview
+Translated:Layer Preview
+
+English:Enable Cloud Monitoring (disabled)
+Translated:Enable Cloud Monitoring (disabled)
+
+English:Warning - Moving Too Low
+Translated:Warning - Moving Too Low
+
+English:Oops! Could not find this file:
+Translated:Oops! Could not find this file:
+
+English:The number of extruders this machine has.
+Translated:The number of extruders this machine has.
+
+English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
+Translated:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
+
+English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
+Translated:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
+
+English:Minimum Print Speed
+Translated:Minimum Print Speed
+
+English:Skirt and Raft
+Translated:Skirt and Raft
+
+English:Length on Move
+Translated:Length on Move
+
+English:Length on Tool Change
+Translated:Length on Tool Change
+
+English:Minimum Extrusion\nRequiring Retraction
+Translated:Minimum Extrusion\nRequiring Retraction
+
+English:Minimum Fan Speed
+Translated:Minimum Fan Speed
+
+English:Extruder Count
+Translated:Extruder Count
+
+English:Hardware
+Translated:Hardware
+
+English:Search Library
+Translated:Search Library
+
+English:My Library
+Translated:My Library
+
+English:Add to Library
+Translated:Add to Library
+
+English:Group
+Translated:Group
+
+English:Ungroup
+Translated:Ungroup
+
+English:Align...
+Translated:Align...
+
+English:Selection
+Translated:Selection
+
+English:Entering Editor
+Translated:Entering Editor
+
+English:Creating Edit Data
+Translated:Creating Edit Data
+
+English:Finding Meshes
+Translated:Finding Meshes
+
+English:Preheat
+Translated:Preheat
+
+English:Extruder Temperature Override
+Translated:Extruder Temperature Override
+
+English:Bed Temperature Override
+Translated:Bed Temperature Override
+
+English:Hardware Settings
+Translated:Hardware Settings
+
+English:Cloud Settings
+Translated:Cloud Settings
+
+English:Application Settings
+Translated:Application Settings
+
+English:Update Notification Feed
+Translated:Update Notification Feed
+
+English:Pre-Release
+Translated:Pre-Release
+
+English:Development
+Translated:Development
+
+English:Language Options
+Translated:Language Options
+
+English:Change Display Mode
+Translated:Change Display Mode
+
+English:Theme/Display Options
+Translated:Theme/Display Options
+
+English:Design
+Translated:Design
+
+English:Normal
+Translated:Normal
+
+English:Touchscreen
+Translated:Touchscreen
+
+English:Theme
+Translated:Theme
+
+English:Display Options
+Translated:Display Options
+
+English:Set this if the extruders run off the same heater, if there is only one heater.
+Translated:Set this if the extruders run off the same heater, if there is only one heater.
+
+English:Share Temperature
+Translated:Share Temperature
+
+English:Export...
+Translated:Export...
+
+English:Temperature
+Translated:Temperature
+
+English:Align
+Translated:Align
+
+English:Material 1
+Translated:Material 1
+
+English:Material 2
+Translated:Material 2
+
+English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+Translated:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+
+English:Color {0}
+Translated:Color {0}
+
+English:Extruder {0}
+Translated:Extruder {0}
+
+English:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
+Translated:You can specify the extrusion with or set this to a % of the main extrusion widthe. Leave this as 0 to allow automatic calculation.
+
+English:Material 3
+Translated:Material 3
+
+English:Material 4
+Translated:Material 4
+
+English:Material 5
+Translated:Material 5
+
+English:Unknown Reason
+Translated:Unknown Reason
+
+English:Port already in use
+Translated:Port already in use
+
+English:Unsupported Baud Rate
+Translated:Unsupported Baud Rate
+
+English:Port not found
+Translated:Port not found
+
+English:Cancelled
+Translated:Cancelled
+
+English:You can only connect when not currently connected.
+Translated:You can only connect when not currently connected.
+
+English:Warning - No EEProm Mapping
+Translated:Warning - No EEProm Mapping
+
+English:The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+Translated:The speed to run the fan during the printing of the raft, 0 will leave the fan off.
+
+English:The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
+Translated:The speed to print the layers of the raft (other than the first layer). This can be set explicitly or as a  percentage of the Infill speed.
+
+English:Preparing Meshes
+Translated:Preparing Meshes
+
+English:Grouping Meshes
+Translated:Grouping Meshes
+
+English:No COM ports available
+Translated:No COM ports available
+
+English:Stable
+Translated:Stable
+
+English:Beta
+Translated:Beta
+
+English:Alpha
+Translated:Alpha
+
+English:Ungrouping
+Translated:Ungrouping
+
+English:Grouping
+Translated:Grouping
+
+English:WARNING: Disconnecting will cancel the print.
+Translated:WARNING: Disconnecting will cancel the print.
+
+English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
+Translated:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
+
+English:This is the diameter of your extruder nozzle.
+Translated:This is the diameter of your extruder nozzle.
+
+English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
+Translated:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
+
+English:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
+Translated:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
+
+English:The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
+Translated:The default temperature to set the extruder to. Can sometimes be overridden on the first layer.
+
+English:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
+Translated:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
+
+English:Please Confirm
+Translated:Please Confirm
+
+English:Reset to Factory Defaults
+Translated:Reset to Factory Defaults
+
+English:Save to EEProm
+Translated:Save to EEProm
+
+English:{0} is not available
+Translated:{0} is not available
+
+English:Invalid printer response
+Translated:Invalid printer response
+
+English:Could not find a selected button.
+Translated:Could not find a selected button.
+
+English:Aligning
+Translated:Aligning
+
+English:Single
+Translated:Single
+
+English:Warning - GCode file
+Translated:Warning - GCode file
+
+English:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+Translated:The index of the extruder to use for the raft. Setting this to 0 will use the support extruder index.
+
+English:Raft Extruder
+Translated:Raft Extruder
+
+English:None
+Translated:None
+
+English:Rectangle
+Translated:Rectangle
+
+English:Outline
+Translated:Outline
+
+English:Circle
+Translated:Circle
+
+English:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and may not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+Translated:The file you are attempting to print is a GCode file.\n\nGCode files tell your printer exactly what to do.  They are not modified by SliceSettings and may not be appropriate for your specific printer configuration.\n\nOnly print from GCode files if you know they mach your current printer and configuration.\n\nAre you sure you want to print this GCode file?
+
+English:Do not show this message again
+Translated:Do not show this message again
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+
+English:Cannot find this file\nWould you like to remove it from the queue?
+Translated:Cannot find this file\nWould you like to remove it from the queue?
+
+English:Supported Angles
+Translated:Supported Angles
+
+English:Amount
+Translated:Amount
+
+English:Settings
+Translated:Settings
+
+English:Unsaved Changes
+Translated:Unsaved Changes
+
+English:No printer is currently selected. Please select a printer to edit slice settings.
+Translated:No printer is currently selected. Please select a printer to edit slice settings.
+
+English:NOTE: You need to select a printer, but do not need to connect to it.
+Translated:NOTE: You need to select a printer, but do not need to connect to it.
+
+English:Simple
+Translated:Simple
+
+English:Intermediate
+Translated:Intermediate
+
+English:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
+
+English:Turns on and off the creation of a raft which can help parts adhere to the bed.
+Translated:Turns on and off the creation of a raft which can help parts adhere to the bed.
+
+English:Options  
+Translated:Options  
+
+English:Expand Distance
+Translated:Expand Distance
+
+English:Insert
+Translated:Insert
+
+English:Restore
+Translated:Restore
+
+English:WINDOWED MODE: This tab has been moved to a separate window.
+Translated:WINDOWED MODE: This tab has been moved to a separate window.
+

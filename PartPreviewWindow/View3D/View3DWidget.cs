@@ -1290,6 +1290,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 scaleRatioContainer.AddChild(new HorizontalSpacer());
 
                 scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50, allowDecimals: true, increment: .05);
+                scaleRatioControl.SelectAllOnFocus = true;
                 scaleRatioControl.VAnchor = VAnchor.ParentCenter;
                 scaleRatioContainer.AddChild(scaleRatioControl);
                 scaleRatioControl.ActuallNumberEdit.KeyPressed += (sender, e) =>
@@ -1358,9 +1359,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             sizeDisplay[axisIndex] = new EditableNumberDisplay(textImageButtonFactory, "100", "1000.00");
             sizeDisplay[axisIndex].EditComplete += (sender, e) =>
             {
-                SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
-                sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
-                UpdateSizeInfo();
+                if (HaveSelection)
+                {
+                    SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
+                    sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
+                    UpdateSizeInfo();
+                }
+                else
+                {
+                    sizeDisplay[axisIndex].SetDisplayString("---");
+                }
             };
 
             leftToRight.AddChild(sizeDisplay[axisIndex]);

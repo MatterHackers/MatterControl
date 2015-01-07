@@ -2897,3 +2897,45 @@ Translated:Supported Angles
 English:Amount
 Translated:Amount
 
+English:Settings
+Translated:Settings
+
+English:Unsaved Changes
+Translated:Unsaved Changes
+
+English:No printer is currently selected. Please select a printer to edit slice settings.
+Translated:No printer is currently selected. Please select a printer to edit slice settings.
+
+English:NOTE: You need to select a printer, but do not need to connect to it.
+Translated:NOTE: You need to select a printer, but do not need to connect to it.
+
+English:Simple
+Translated:Simple
+
+English:Intermediate
+Translated:Intermediate
+
+English:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
+Translated:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
+
+English:Turns on and off the creation of a raft which can help parts adhere to the bed.
+Translated:Turns on and off the creation of a raft which can help parts adhere to the bed.
+
+English:Options  
+Translated:Options  
+
+English:Expand Distance
+Translated:Expand Distance
+
+English:Insert
+Translated:Insert
+
+English:Insert
+Translated:Insert
+
+English:Restore
+Translated:Restore
+
+English:WINDOWED MODE: This tab has been moved to a separate window.
+Translated:WINDOWED MODE: This tab has been moved to a separate window.
+
