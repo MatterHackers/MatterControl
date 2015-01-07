@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
         protected double borderWidth = 1;
         protected double borderRadius = 0;
 
-        public TextImageWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes borderColor, RGBA_Bytes textColor, double borderWidth, BorderDouble margin, ImageBuffer image = null, int fontSize = 12, FlowDirection flowDirection = FlowDirection.LeftToRight, double height = 40, double width = 0, bool centerText = false)
+		public TextImageWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes borderColor, RGBA_Bytes textColor, double borderWidth, BorderDouble margin, ImageBuffer image = null, int fontSize = 12, FlowDirection flowDirection = FlowDirection.LeftToRight, double height = 40, double width = 0, bool centerText = false, double imageSpacing = 0)
             : base()
         {
             this.image = image;
@@ -76,6 +76,7 @@ namespace MatterHackers.MatterControl
                 
                 imageWidget = new ImageWidget(image);
                 imageWidget.VAnchor = VAnchor.ParentCenter;
+				imageWidget.Margin = new BorderDouble(right: imageSpacing);
                 container.AddChild(imageWidget);
             }
 
@@ -164,6 +165,7 @@ namespace MatterHackers.MatterControl
         FlowDirection flowDirection;
         public double FixedWidth = 0;
         public double FixedHeight = 40;
+		public double ImageSpacing = 0;
 
         public TooltipButton GenerateTooltipButton(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null)
         {
@@ -392,10 +394,10 @@ namespace MatterHackers.MatterControl
 
             //Create the multi-state button view
             ButtonViewStates buttonViewWidget = new ButtonViewStates(
-                new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText),
-                new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, hoverImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText),
-                new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText),
-                new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, disabledImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText)
+				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, hoverImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, disabledImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText, imageSpacing: ImageSpacing)
             );
             return buttonViewWidget;
         }

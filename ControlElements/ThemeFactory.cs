@@ -93,6 +93,14 @@ namespace MatterHackers.MatterControl
             }
         }
 
+		public RGBA_Bytes Transparent
+		{
+			get
+			{
+				return new RGBA_Bytes(0,0,0,0);
+			}
+		}
+
         public RGBA_Bytes TransparentDarkOverlay
         {
             get
