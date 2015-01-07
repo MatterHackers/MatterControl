@@ -70,20 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             ShowAsSystemWindow();
         }
 
-#if __ANDROID__
-        Stopwatch totalDrawTime = new Stopwatch();
-        AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            totalDrawTime.Restart();
-            base.OnDraw(graphics2D);
-            totalDrawTime.Stop();
-
-            millisecondTimer.Update((int)totalDrawTime.ElapsedMilliseconds);
-            millisecondTimer.Draw(graphics2D, this.Width * 3 / 4 - 15, this.Height - 40);
-        }
-#endif
-
         private void AddHandlers()
         {
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
