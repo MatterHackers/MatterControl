@@ -56,7 +56,7 @@ namespace MatterHackers.Localizations
 
             if (MatterControlTranslationMap == null)
             {
-                string pathToTranslationsFolder = Path.Combine(StaticData.Instance.MapPath("Translations"));
+                string pathToTranslationsFolder = "Translations";
                 MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
             }
 #if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG

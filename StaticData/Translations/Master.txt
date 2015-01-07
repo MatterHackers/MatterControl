@@ -2920,3 +2920,19 @@ Translated:The default temperature to set the bed to. Can sometimes be overridde
 
 English:Turns on and off the creation of a raft which can help parts adhere to the bed.
 Translated:Turns on and off the creation of a raft which can help parts adhere to the bed.
+
+English:Options  
+Translated:Options  
+
+English:Expand Distance
+Translated:Expand Distance
+
+English:Insert
+Translated:Insert
+
+English:Restore
+Translated:Restore
+
+English:WINDOWED MODE: This tab has been moved to a separate window.
+Translated:WINDOWED MODE: This tab has been moved to a separate window.
+
