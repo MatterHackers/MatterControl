@@ -34,10 +34,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-using MatterHackers.Agg;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.Localizations
 {
@@ -56,8 +54,9 @@ namespace MatterHackers.Localizations
 
             if (MatterControlTranslationMap == null)
             {
-                string pathToTranslationsFolder = Path.Combine(StaticData.Instance.MapPath("Translations"));
-                MatterControlTranslationMap = new TranslationMap(pathToTranslationsFolder, language);
+                // The translation map is now written to disk in the AppUserDataPath
+                // TODO: Write tools to collect changes to this file and push them to a shared server for merging into the main Master.txt file 
+                MatterControlTranslationMap = new TranslationMap(ApplicationDataStorage.Instance.ApplicationUserDataPath, language);
             }
 #if DEBUG_SHOW_TRANSLATED_STRINGS && DEBUG
             return "El " + englishText + " o";
