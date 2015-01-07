@@ -1290,6 +1290,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 scaleRatioContainer.AddChild(new HorizontalSpacer());
 
                 scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50, allowDecimals: true, increment: .05);
+                scaleRatioControl.SelectAllOnFocus = true;
                 scaleRatioControl.VAnchor = VAnchor.ParentCenter;
                 scaleRatioContainer.AddChild(scaleRatioControl);
                 scaleRatioControl.ActuallNumberEdit.KeyPressed += (sender, e) =>
