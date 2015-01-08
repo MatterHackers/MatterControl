@@ -110,7 +110,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // remove the original mesh and replace it with these new meshes
             PullMeshGroupDataFromAsynchLists();
 
-			buttonRightPanel.Visible = true;
+            SelectedMeshGroupIndex = 0;
+            buttonRightPanel.Visible = true;
             UnlockEditControls();
             viewControls3D.partSelectButton.ClickButton(null);
 
@@ -129,7 +130,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
             }
-            SelectedMeshGroupIndex = 0;
         }
     }
 }
