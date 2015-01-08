@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public enum WindowMode { Embeded, StandAlone };
         public enum AutoRotate { Enabled, Disabled };
         public enum OpenMode { Viewing, Editing }
+        OpenMode openMode;
 
         readonly int EditButtonHeight = 44;
 
@@ -350,6 +351,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
         {
+            this.openMode = openMode;
             this.windowType = windowType;
             allowAutoRotate = (autoRotate == AutoRotate.Enabled);
             autoRotating = allowAutoRotate;
@@ -631,14 +633,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-
-            if (openMode == OpenMode.Editing)
-            {
-                UiThread.RunOnIdle((state) =>
-                {
-                    EnterEditAndCreateSelectionData();
-                });
-            }
 
             upArrow = new UpArrow3D(this);
             heightDisplay = new HeightValueDisplay(this);
@@ -971,6 +965,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             SelectionChanged(this, null);
+
+            if (openMode == OpenMode.Editing)
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    EnterEditAndCreateSelectionData();
+                });
+            }
         }
 
         bool viewIsInEditModePreLock = false;

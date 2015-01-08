@@ -64,8 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 createSelectionDataBackgroundWorker.RunWorkerAsync();
             }
-
-            SelectedMeshGroupIndex = 0;
         }
 
         void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -131,6 +129,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             {
                 LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
             }
+            SelectedMeshGroupIndex = 0;
         }
     }
 }
