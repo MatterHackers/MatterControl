@@ -146,6 +146,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 if (value != SelectedMeshGroupIndex)
                 {
                     meshViewerWidget.SelectedMeshGroupIndex = value;
+                    if (SelectionChanged != null)
+                    {
+                        SelectionChanged(this, null);
+                    }
                     Invalidate();
                 }
             }
@@ -237,11 +241,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                             Invalidate();
                             meshSelectInfo.downOnPart = true;
-
-                            if (SelectionChanged != null)
-                            {
-                                SelectionChanged(this, null);
-                            }
                         }
                         else
                         {
