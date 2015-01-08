@@ -51,7 +51,7 @@ using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl
 {
-    class FirstPanelTabView : TabControl
+    public class FirstPanelTabView : TabControl
     {
         public static int firstPanelCurrentTab = 0;
 

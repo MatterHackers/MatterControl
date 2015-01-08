@@ -939,7 +939,7 @@
     "PresentationName": "Z Gap",
     "HelpText": "The number of layers to skip in z. The gap between the support and the model.",
     "DataEditType": "INT",
-    "ExtraSettings": ""
+    "ExtraSettings": "layers"
   },
   {
     "SlicerConfigName": "support_material",

@@ -57,7 +57,6 @@ namespace MatterHackers.MatterControl
         static readonly int ColumnOneFixedWidth = 590;
         static int lastNumberOfVisiblePanels;
 
-        public TabPage AboutTabPage;
         TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
         RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
@@ -145,25 +144,16 @@ namespace MatterHackers.MatterControl
             }
         }
 
+        CompactSlidePanel compactSlidePanel;
         void LoadCompactView()
         {
             queueDataView = new QueueDataView();
             
             ColumnOne.RemoveAllChildren();
             ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-            ColumnOne.AddChild(new CompactSlidePanel(queueDataView));
+            compactSlidePanel = new CompactSlidePanel(queueDataView);
+            ColumnOne.AddChild(compactSlidePanel);
             ColumnOne.AnchorAll();
-        }
-
-        void LoadColumnOne()
-        {
-            queueDataView = new QueueDataView();
-
-            ColumnOne.VAnchor = VAnchor.ParentBottomTop;
-            ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-            ColumnOne.AddChild(new PrintProgressBar());
-            ColumnOne.AddChild(new FirstPanelTabView(queueDataView));
-            ColumnOne.Width = ColumnOneFixedWidth; //Ordering here matters - must go after children are added
         }
 
         void LoadColumnTwo(object state = null)
@@ -242,6 +232,7 @@ namespace MatterHackers.MatterControl
                     ColumnTwo.Visible = true;
                     ColumnOne.HAnchor = Agg.UI.HAnchor.None;
                     ColumnOne.Width = ColumnOneFixedWidth; // it can hold the slice settings so it needs to be bigger.
+                    ColumnOne.MinimumSize = new Vector2(Math.Max(compactSlidePanel.TabBarWidth, ColumnOneFixedWidth), 0); //Ordering here matters - must go after children are added
                     break;
             }
         }

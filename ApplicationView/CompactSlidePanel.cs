@@ -69,6 +69,8 @@ namespace MatterHackers.MatterControl
             get { return GetPanel(1); }
         }
 
+        public double TabBarWidth { get { return mainControlsTabControl.Width; } }
+
         static int lastPanelIndexBeforeReload = 0;
         public CompactSlidePanel(QueueDataView queueDataView)
             : base(2)
@@ -108,6 +110,8 @@ namespace MatterHackers.MatterControl
                 
                 mainControlsTabControl.TabBar.AddChild(hSpacer);
                 mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
+                mainControlsTabControl.TabBar.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+                mainControlsTabControl.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 
                 this.LeftPanel.AddChild(mainControlsTabControl);
             }
