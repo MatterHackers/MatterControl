@@ -334,7 +334,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void SetAnimationPosition()
         {
             int currentLayer = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
-            if (currentLayer >= 0)
+            if (currentLayer <= 0)
+            {
+                selectLayerSlider.Value = 0;
+                layerRenderRatioSlider.SecondValue = 0;
+                layerRenderRatioSlider.FirstValue = 0;
+            }
+            else
             {
                 selectLayerSlider.Value = currentLayer-1;
                 layerRenderRatioSlider.SecondValue = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;

@@ -27,6 +27,7 @@
 
 # This is to test connection and printing. We use it with com0com 
 # to validate MatterControl under various situations.
+from time import sleep
 import sys
 import argparse
 import serial
@@ -65,6 +66,7 @@ def main(argv):
 		if len(line) > 0:
 			print(line)
 			response = getCorrectResponse(line)
+			sleep(0.02)
 			print response
 			ser.write(response)
 	ser.close()

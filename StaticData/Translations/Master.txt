@@ -3029,3 +3029,9 @@ Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'F
 English:Save Slice Configuration
 Translated:Save Slice Configuration
 
+English:Printing: {0}
+Translated:Printing: {0}
+
+English:Finished Print: {0}
+Translated:Finished Print: {0}
+
