@@ -846,19 +846,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     return false;
                 }
 
+                string normalSpeedLocation = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'".Localize();
                 // If the given speed is part of the current slice engine then check that it is greater than 0.
-                if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("first_layer_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("gap_fill_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("infill_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("perimeter_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("retract_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("small_perimeter_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("solid_infill_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("support_material_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("top_solid_infill_speed")) return false;
-                if (!ValidateGoodSpeedSettingGreaterThan0("travel_speed")) return false;                
+                if (!ValidateGoodSpeedSettingGreaterThan0("bridge_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("external_perimeter_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("first_layer_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("gap_fill_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("infill_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("perimeter_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("small_perimeter_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("solid_infill_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("support_material_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("top_solid_infill_speed", normalSpeedLocation)) return false;
+                if (!ValidateGoodSpeedSettingGreaterThan0("travel_speed", normalSpeedLocation)) return false;
+
+                string retractSpeedLocation = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'".Localize();
+                if (!ValidateGoodSpeedSettingGreaterThan0("retract_speed", retractSpeedLocation)) return false;
             }
             catch(Exception e)
             {
@@ -870,7 +873,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             return true;
         }
 
-        private bool ValidateGoodSpeedSettingGreaterThan0(string speedSetting)
+        private bool ValidateGoodSpeedSettingGreaterThan0(string speedSetting, string speedLocation)
         {
             string actualSpeedValueString = GetActiveValue(speedSetting);
             string speedValueString = actualSpeedValueString;
@@ -892,10 +895,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 OrganizerSettingsData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);                
                 if (data != null)
                 {                   
-                    string error = string.Format("The '{0}' must be greater than 0.", data.PresentationName);
-                    string details = string.Format("It is currently set to {0}.", actualSpeedValueString);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'";
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");     
+                    string error = string.Format("The '{0}' must be greater than 0.".Localize(), data.PresentationName);
+                    string details = string.Format("It is currently set to {0}.".Localize(), actualSpeedValueString);
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}\n-> {3}", error, details, speedLocation, data.PresentationName), "Slice Error");     
                 }               
                 return false;
             }
