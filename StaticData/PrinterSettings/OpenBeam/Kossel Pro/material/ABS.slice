@@ -10,5 +10,5 @@ max_fan_speed = 0
 perimeter_speed = 30
 retract_length = 6
 support_material_speed = 40
-stravel_speed = 150
+travel_speed = 150
 raft_extruder = 0
