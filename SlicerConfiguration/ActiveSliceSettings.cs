@@ -729,7 +729,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         public void SaveAs()
         {
-            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration|*." + configFileExtension);
+            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*." + configFileExtension);
 			saveParams.FileName = "default_settings.ini";
 			FileDialog.SaveFileDialog(saveParams, onExportFileSelected);
         }
@@ -786,63 +786,63 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             {
                 if (LayerHeight > NozzleDiameter)
                 {
-                    string error = LocalizedString.Get("'Layer Height' must be less than or equal to the 'Nozzle Diameter'.");
-                    string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}", LayerHeight, NozzleDiameter);
-                    string location = LocalizedString.Get("Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'");
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
+                    string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), LayerHeight, NozzleDiameter);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'".Localize();
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
                     return false;
                 }
                 else if (FirstLayerHeight > NozzleDiameter)
                 {
-                    string error = LocalizedString.Get("First Layer Height' must be less than or equal to the 'Nozzle Diameter'.");
-                    string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}", FirstLayerHeight, NozzleDiameter);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'";
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    string error = "First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
+                    string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), FirstLayerHeight, NozzleDiameter);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'".Localize();
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
                     return false;
                 }
 
                 if (FirstLayerExtrusionWidth > NozzleDiameter * 4)
                 {
-                    string error = LocalizedString.Get("First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.");
-                    string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}", GetActiveValue("first_layer_extrusion_width"), NozzleDiameter);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'";
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    string error = "First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
+                    string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetActiveValue("first_layer_extrusion_width"), NozzleDiameter);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'".Localize();
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
                     return false;
                 }
 
                 if (MinFanSpeed > 100)
                 {
-                    string error = "The Min Fan Speed can only go as high as 100%.";
-                    string details = string.Format("It is currently set to {0}.", MinFanSpeed);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (Advanced display)";
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    string error = "The Min Fan Speed can only go as high as 100%.".Localize();
+                    string details = string.Format("It is currently set to {0}.".Localize(), MinFanSpeed);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (Advanced display)".Localize();
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
                     return false;
                 }
 
                 if (MaxFanSpeed > 100)
                 {
-                    string error = "The Max Fan Speed can only go as high as 100%.";
-                    string details = string.Format("It is currently set to {0}.", MaxFanSpeed);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (Advanced display)";
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    string error = "The Max Fan Speed can only go as high as 100%.".Localize();
+                    string details = string.Format("It is currently set to {0}.".Localize(), MaxFanSpeed);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Cooling' (Advanced display)".Localize();
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
                     return false;
                 }
 
                 if (ExtruderCount < 1)
                 {
-                    string error = "The Extruder Count must be at least 1.";
-                    string details = string.Format("It is currently set to {0}.", ExtruderCount);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Printer' -> 'General' (Advanced display)";
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    string error = "The Extruder Count must be at least 1.".Localize();
+                    string details = string.Format("It is currently set to {0}.".Localize(), ExtruderCount);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Printer' -> 'General' (Advanced display)".Localize();
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
                     return false;
                 }
 
                 if (FillDensity < 0 || FillDensity > 1)
                 {
-                    string error = "The Fill Density must be between 0 and 1 inclusive.";
-                    string details = string.Format("It is currently set to {0}.", FillDensity);
-                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'";
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error");
+                    string error = "The Fill Density must be between 0 and 1 inclusive.".Localize();
+                    string details = string.Format("It is currently set to {0}.".Localize(), FillDensity);
+                    string location = "Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'".Localize();
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
                     return false;
                 }
 
@@ -866,7 +866,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             catch(Exception e)
             {
                 string stackTraceNoBackslashRs = e.StackTrace.Replace("\r", "");
-                ContactFormWindow.Open("Parse Error while slicing", e.Message + stackTraceNoBackslashRs);
+                ContactFormWindow.Open("Parse Error while slicing".Localize(), e.Message + stackTraceNoBackslashRs);
                 return false;
             }
 
@@ -897,7 +897,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 {                   
                     string error = string.Format("The '{0}' must be greater than 0.".Localize(), data.PresentationName);
                     string details = string.Format("It is currently set to {0}.".Localize(), actualSpeedValueString);
-                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}\n-> {3}", error, details, speedLocation, data.PresentationName), "Slice Error");     
+                    StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2} -> '{3}'", error, details, speedLocation, data.PresentationName), "Slice Error".Localize());
                 }               
                 return false;
             }

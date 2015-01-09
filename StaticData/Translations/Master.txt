@@ -3011,3 +3011,21 @@ Translated:Completed Prints:
 English:Total Print Time:
 Translated:Total Print Time:
 
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+
+English:The '{0}' must be greater than 0.
+Translated:The '{0}' must be greater than 0.
+
+English:It is currently set to {0}.
+Translated:It is currently set to {0}.
+
+English:Slice Error
+Translated:Slice Error
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+
+English:Save Slice Configuration
+Translated:Save Slice Configuration
+
