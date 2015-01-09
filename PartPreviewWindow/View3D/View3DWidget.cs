@@ -931,15 +931,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             UnlockEditControls();
             PartHasBeenChanged();
 
-            if (asynchMeshGroups.Count == MeshGroups.Count + 1)
-            {
-                // if we are only adding one part to the plate set the selection to it
-                SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
-            }
+            bool addingOnlyOneItem = asynchMeshGroups.Count == MeshGroups.Count + 1;
 
             if (MeshGroups.Count > 0)
             {
                 PullMeshGroupDataFromAsynchLists();
+                if (addingOnlyOneItem)
+                {
+                    // if we are only adding one part to the plate set the selection to it
+                    SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
+                }
             }
         }
 
