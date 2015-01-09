@@ -726,6 +726,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 SetAnimationPosition();
             }
 
+            EnsureKeyDownHooked();
+
+            if (partToStartLoadingOnFirstDraw != null)
+            {
+                gcodeViewWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
+                partToStartLoadingOnFirstDraw = null;
+            }
+            base.OnDraw(graphics2D);
+        }
+
+        private void EnsureKeyDownHooked()
+        {
+            // let's just check that we are still hooked up to our parent window (this is to make pop outs work correctly)
+            if (widgetThatHasKeyDownHooked != null)
+            {
+                GuiWidget topParent = Parent;
+                while (topParent as SystemWindow == null)
+                {
+                    topParent = topParent.Parent;
+                }
+
+                if (topParent != widgetThatHasKeyDownHooked)
+                {
+                    widgetThatHasKeyDownHooked.KeyDown -= Parent_KeyDown;
+                    widgetThatHasKeyDownHooked = null;
+                }
+            }
+
             if (widgetThatHasKeyDownHooked == null)
             {
                 GuiWidget parent = Parent;
@@ -736,12 +764,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 parent.KeyDown += Parent_KeyDown;
                 widgetThatHasKeyDownHooked = parent;
             }
-            if (partToStartLoadingOnFirstDraw != null)
-            {
-                gcodeViewWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
-                partToStartLoadingOnFirstDraw = null;
-            }
-            base.OnDraw(graphics2D);
         }
 
         void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
