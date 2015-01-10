@@ -651,7 +651,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (windowMode == WindowMode.Embeded)
             {
-                if (syncToPrint.Checked)
+                if (syncToPrint.Checked && 
+                    (PrinterConnectionAndCommunication.Instance.PrinterIsPaused 
+                    || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting))
                 {
                     SetAnimationPosition();
                     //navigationWidget.Visible = false;
@@ -707,10 +709,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // register for done slicing and slicing messages
                 printItem.SlicingOutputMessage.RegisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
                 printItem.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
-                SetSyncToPrintVisibility();
             
                 generateGCodeButton.Visible = true;
             }
+            SetSyncToPrintVisibility();
         }
 
         string partToStartLoadingOnFirstDraw = null;
@@ -727,7 +729,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         GuiWidget widgetThatHasKeyDownHooked = null;
         public override void OnDraw(Graphics2D graphics2D)
         {
-            if (syncToPrint != null && syncToPrint.Checked)
+            if (syncToPrint != null 
+                && syncToPrint.Checked
+                &&
+                (PrinterConnectionAndCommunication.Instance.PrinterIsPaused
+                    || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting))
             {
                 SetAnimationPosition();
             }
