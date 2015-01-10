@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             else
             {
-                selectLayerSlider.Value = currentLayer-1;
+                selectLayerSlider.Value = currentLayer - 1;
                 layerRenderRatioSlider.SecondValue = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
                 layerRenderRatioSlider.FirstValue = 0;
             }
@@ -651,9 +651,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (windowMode == WindowMode.Embeded)
             {
-                if (syncToPrint.Checked && 
-                    (PrinterConnectionAndCommunication.Instance.PrinterIsPaused 
-                    || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting))
+                bool printerIsRunningPrint = PrinterConnectionAndCommunication.Instance.PrinterIsPaused || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
+
+                if (syncToPrint.Checked && printerIsRunningPrint)
                 {
                     SetAnimationPosition();
                     //navigationWidget.Visible = false;
@@ -729,11 +729,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         GuiWidget widgetThatHasKeyDownHooked = null;
         public override void OnDraw(Graphics2D graphics2D)
         {
+            bool printerIsRunningPrint = PrinterConnectionAndCommunication.Instance.PrinterIsPaused || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
             if (syncToPrint != null 
                 && syncToPrint.Checked
-                &&
-                (PrinterConnectionAndCommunication.Instance.PrinterIsPaused
-                    || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting))
+                && printerIsRunningPrint)
             {
                 SetAnimationPosition();
             }

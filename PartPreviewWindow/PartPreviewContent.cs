@@ -153,24 +153,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             this.AddChild(tabControl);
-
-            // if the embeded view was on the gcode tab than makes sure it stays there
-            if (UserSettings.Instance.Fields.EmbededViewShowingGCode)
-            {
-                SwitchToGcodeView();
-            }
-
-            tabControl.TabBar.TabIndexChanged += (sender, e) =>
-            {
-                if (tabControl.TabBar.SelectedTabName == "Layer View Tab")
-                {
-                    UserSettings.Instance.Fields.EmbededViewShowingGCode = true;
-                }
-                else
-                {
-                    UserSettings.Instance.Fields.EmbededViewShowingGCode = false;
-                }
-            };
         }
 
         public void SwitchToGcodeView()
