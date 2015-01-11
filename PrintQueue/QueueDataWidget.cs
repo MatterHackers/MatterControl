@@ -593,7 +593,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         void AddPartCopyToQueue(object state)
         {
             var partInfo = state as PartToAddToQueue;
-            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(partInfo.Name, partInfo.FileLocation)), partInfo.InsertAfterIndex);
+            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(partInfo.Name, partInfo.FileLocation)), QueueData.ValidateSizeOn32BitSystems.Skip, partInfo.InsertAfterIndex);
         }
 
         void AddItemsToQueue(object state)

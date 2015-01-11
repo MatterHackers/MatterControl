@@ -467,14 +467,6 @@ namespace MatterHackers.MatterControl.PrintQueue
             this.Margin = new BorderDouble(6,0,6,6);
         }
 
-        
-
-        void AddPartToQueue(object state)
-        {
-            PartToAddToQueue partToAddToQueue = (PartToAddToQueue)state;
-            QueueData.Instance.AddItem(new PrintItemWrapper( new PrintItem(partToAddToQueue.Name, partToAddToQueue.FileLocation)), partToAddToQueue.insertAfterIndex);
-        }
-
         string alsoRemoveFromSdCardMessage = "Would you also like to remove this file from the Printer's SD Card?".Localize();
         string alsoRemoveFromSdCardTitle = "Remove From Printer's SD Card?";
         internal void DeletePartFromQueue(object state)
