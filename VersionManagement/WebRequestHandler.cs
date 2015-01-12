@@ -167,63 +167,7 @@ namespace MatterHackers.MatterControl.VersionManagement
             doRequestWorker.RunWorkerAsync();
         }
     }
-
-    //To do - move this
-    public class NotificationRequest : WebRequestBase
-    {
-        public NotificationRequest(string printName)
-        {
-
-            if (UserSettings.Instance.get("AfterPrintFinishedSendEmail") == "true")
-            {
-                string emailAddress = UserSettings.Instance.get("NotificationEmailAddress");
-                requestValues["EmailAddress"] = emailAddress;
-            }
-            if (UserSettings.Instance.get("AfterPrintFinishedSendTextMessage") == "true")
-            {
-                string phoneNumber = UserSettings.Instance.get("NotificationPhoneNumber");
-                requestValues["PhoneNumber"] = phoneNumber;
-            }
-            requestValues["PrintItemName"] = printName;
-            uri = "https://mattercontrol.appspot.com/api/1/send-print-notification";
-        }
-
-        public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
-        {
-            JsonResponseDictionary response = responseValues;
-        }
-
-        public override void Request()
-        {
-            //If the client token exists, use it, otherwise wait for client token before making request
-            if (ApplicationSettings.Instance.get("ClientToken") == null)
-            {
-                RequestClientToken request = new RequestClientToken();
-                request.RequestSucceeded += new EventHandler(onClientTokenRequestSucceeded);
-                request.Request();
-            }
-            else
-            {
-                onClientTokenReady();
-            }
-        }
-
-        private void onClientTokenRequestSucceeded(object sender, EventArgs e)
-        {
-            onClientTokenReady();
-        }
-
-        public void onClientTokenReady()
-        {
-            string clientToken = ApplicationSettings.Instance.get("ClientToken");
-            requestValues["ClientToken"] = clientToken;
-            if (clientToken != null)
-            {
-                base.Request();
-            }
-        }
-    }
-
+   
     //To do - move this
     class ContactFormRequest : WebRequestBase
     {

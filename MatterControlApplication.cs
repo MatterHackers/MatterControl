@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
             StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
         }
 
-        public void OpenCameraPreview()
+        public static void OpenCameraPreview()
         {
             //Camera launcher placeholder (KP)
             if (ApplicationSettings.Instance.get("HardwareHasCamera") == "true")
@@ -81,8 +81,14 @@ namespace MatterHackers.MatterControl
             {
                 //Do something else (like show warning message)
             }
+        }
 
-
+        public static void PlaySound(string fileName)
+        {
+            using (var mediaStream = StaticData.Instance.OpenSteam(Path.Combine("Sounds", fileName)))
+            {
+                (new System.Media.SoundPlayer(mediaStream)).Play();
+            }
         }
 
         public MatterControlApplication(double width, double height)
