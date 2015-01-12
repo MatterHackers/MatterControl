@@ -915,7 +915,7 @@
   {
     "SlicerConfigName": "support_material_threshold",
     "PresentationName": "Amount",
-    "HelpText": "Smaller number create less support. Larger numbers will result in more support. The first angle from the bed that requires support. ",
+    "HelpText": "Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "degrees",
     "QuickMenuSettings": [{"MenuName" : "Minimum", "Value": "20"},{"MenuName" : "Standard", "Value": "45"},{"MenuName" : "All", "Value": "90"}]
