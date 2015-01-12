@@ -3035,3 +3035,18 @@ Translated:Printing: {0}
 English:Finished Print: {0}
 Translated:Finished Print: {0}
 
+English:Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.
+Translated:Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.
+
+English:Preview
+Translated:Preview
+
+English:Send Test
+Translated:Send Test
+
+English:NOTE: Standard messaging rates may apply.
+Translated:NOTE: Standard messaging rates may apply.
+
+English:Include a picture of my finished print
+Translated:Include a picture of my finished print
+

@@ -97,6 +97,7 @@ namespace MatterHackers.MatterControl
                 }
 
                 PopedOutSystemWindow = new SystemWindow(width, height);
+				PopedOutSystemWindow.Padding = new BorderDouble(3);
                 PopedOutSystemWindow.Title = windowTitle;
                 PopedOutSystemWindow.AlwaysOnTopOfMain = true;
                 PopedOutSystemWindow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
