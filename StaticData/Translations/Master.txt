@@ -2936,3 +2936,102 @@ Translated:Restore
 English:WINDOWED MODE: This tab has been moved to a separate window.
 Translated:WINDOWED MODE: This tab has been moved to a separate window.
 
+English:Sending File(s)...
+Translated:Sending File(s)...
+
+English:Slicing File(s)...
+Translated:Slicing File(s)...
+
+English:Edit Outline
+Translated:Edit Outline
+
+English:Use Alpha
+Translated:Use Alpha
+
+English:Start Threshold:
+Translated:Start Threshold:
+
+English:End Threshold:
+Translated:End Threshold:
+
+English:Edit Model
+Translated:Edit Model
+
+English:Invert
+Translated:Invert
+
+English:Size:
+Translated:Size:
+
+English:Height:
+Translated:Height:
+
+English:Edit Base
+Translated:Edit Base
+
+English:Infill:
+Translated:Infill:
+
+English:Unlock to Save
+Translated:Unlock to Save
+
+English:Save & Exit
+Translated:Save & Exit
+
+English:Finding Parts:
+Translated:Finding Parts:
+
+English:Add Image
+Translated:Add Image
+
+English:Search Google
+Translated:Search Google
+
+English:Word Edit
+Translated:Word Edit
+
+English:Spacing:
+Translated:Spacing:
+
+English:Underline
+Translated:Underline
+
+English:Rotation:
+Translated:Rotation:
+
+English:Enter Text Here
+Translated:Enter Text Here
+
+English:Inserting image...
+Translated:Inserting image...
+
+English:Completed Prints:
+Translated:Completed Prints:
+
+English:Total Print Time:
+Translated:Total Print Time:
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+
+English:The '{0}' must be greater than 0.
+Translated:The '{0}' must be greater than 0.
+
+English:It is currently set to {0}.
+Translated:It is currently set to {0}.
+
+English:Slice Error
+Translated:Slice Error
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+
+English:Save Slice Configuration
+Translated:Save Slice Configuration
+
+English:Printing: {0}
+Translated:Printing: {0}
+
+English:Finished Print: {0}
+Translated:Finished Print: {0}
+

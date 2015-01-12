@@ -334,9 +334,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void SetAnimationPosition()
         {
             int currentLayer = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
-            if (currentLayer >= 0)
+            if (currentLayer <= 0)
             {
-                selectLayerSlider.Value = currentLayer-1;
+                selectLayerSlider.Value = 0;
+                layerRenderRatioSlider.SecondValue = 0;
+                layerRenderRatioSlider.FirstValue = 0;
+            }
+            else
+            {
+                selectLayerSlider.Value = currentLayer - 1;
                 layerRenderRatioSlider.SecondValue = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
                 layerRenderRatioSlider.FirstValue = 0;
             }
@@ -645,7 +651,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             if (windowMode == WindowMode.Embeded)
             {
-                if (syncToPrint.Checked)
+                bool printerIsRunningPrint = PrinterConnectionAndCommunication.Instance.PrinterIsPaused || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
+
+                if (syncToPrint.Checked && printerIsRunningPrint)
                 {
                     SetAnimationPosition();
                     //navigationWidget.Visible = false;
@@ -701,10 +709,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // register for done slicing and slicing messages
                 printItem.SlicingOutputMessage.RegisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
                 printItem.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
-                SetSyncToPrintVisibility();
             
                 generateGCodeButton.Visible = true;
             }
+            SetSyncToPrintVisibility();
         }
 
         string partToStartLoadingOnFirstDraw = null;
@@ -721,9 +729,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         GuiWidget widgetThatHasKeyDownHooked = null;
         public override void OnDraw(Graphics2D graphics2D)
         {
-            if (syncToPrint != null && syncToPrint.Checked)
+            bool printerIsRunningPrint = PrinterConnectionAndCommunication.Instance.PrinterIsPaused || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
+            if (syncToPrint != null 
+                && syncToPrint.Checked
+                && printerIsRunningPrint)
             {
                 SetAnimationPosition();
+            }
+
+            EnsureKeyDownHooked();
+
+            if (partToStartLoadingOnFirstDraw != null)
+            {
+                gcodeViewWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
+                partToStartLoadingOnFirstDraw = null;
+            }
+            base.OnDraw(graphics2D);
+        }
+
+        private void EnsureKeyDownHooked()
+        {
+            // let's just check that we are still hooked up to our parent window (this is to make pop outs work correctly)
+            if (widgetThatHasKeyDownHooked != null)
+            {
+                GuiWidget topParent = Parent;
+                while (topParent as SystemWindow == null)
+                {
+                    topParent = topParent.Parent;
+                }
+
+                if (topParent != widgetThatHasKeyDownHooked)
+                {
+                    widgetThatHasKeyDownHooked.KeyDown -= Parent_KeyDown;
+                    widgetThatHasKeyDownHooked = null;
+                }
             }
 
             if (widgetThatHasKeyDownHooked == null)
@@ -736,12 +775,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 parent.KeyDown += Parent_KeyDown;
                 widgetThatHasKeyDownHooked = parent;
             }
-            if (partToStartLoadingOnFirstDraw != null)
-            {
-                gcodeViewWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
-                partToStartLoadingOnFirstDraw = null;
-            }
-            base.OnDraw(graphics2D);
         }
 
         void Parent_KeyDown(object sender, KeyEventArgs keyEvent)

@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public enum WindowMode { Embeded, StandAlone };
         public enum AutoRotate { Enabled, Disabled };
         public enum OpenMode { Viewing, Editing }
+        OpenMode openMode;
 
         readonly int EditButtonHeight = 44;
 
@@ -145,6 +146,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 if (value != SelectedMeshGroupIndex)
                 {
                     meshViewerWidget.SelectedMeshGroupIndex = value;
+                    if (SelectionChanged != null)
+                    {
+                        SelectionChanged(this, null);
+                    }
                     Invalidate();
                 }
             }
@@ -236,11 +241,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                             Invalidate();
                             meshSelectInfo.downOnPart = true;
-
-                            if (SelectionChanged != null)
-                            {
-                                SelectionChanged(this, null);
-                            }
                         }
                         else
                         {
@@ -350,6 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
         {
+            this.openMode = openMode;
             this.windowType = windowType;
             allowAutoRotate = (autoRotate == AutoRotate.Enabled);
             autoRotating = allowAutoRotate;
@@ -631,14 +632,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-
-            if (openMode == OpenMode.Editing)
-            {
-                UiThread.RunOnIdle((state) =>
-                {
-                    EnterEditAndCreateSelectionData();
-                });
-            }
 
             upArrow = new UpArrow3D(this);
             heightDisplay = new HeightValueDisplay(this);
@@ -938,15 +931,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             UnlockEditControls();
             PartHasBeenChanged();
 
-            if (asynchMeshGroups.Count == MeshGroups.Count + 1)
-            {
-                // if we are only adding one part to the plate set the selection to it
-                SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
-            }
+            bool addingOnlyOneItem = asynchMeshGroups.Count == MeshGroups.Count + 1;
 
             if (MeshGroups.Count > 0)
             {
                 PullMeshGroupDataFromAsynchLists();
+                if (addingOnlyOneItem)
+                {
+                    // if we are only adding one part to the plate set the selection to it
+                    SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
+                }
             }
         }
 
@@ -971,6 +965,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
 
             SelectionChanged(this, null);
+
+            if (openMode == OpenMode.Editing)
+            {
+                UiThread.RunOnIdle((state) =>
+                {
+                    EnterEditAndCreateSelectionData();
+                });
+            }
         }
 
         bool viewIsInEditModePreLock = false;

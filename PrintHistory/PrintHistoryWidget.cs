@@ -68,13 +68,13 @@ namespace MatterHackers.MatterControl.PrintHistory
                 completedStatsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 completedStatsContainer.Padding = new BorderDouble(6, 2);
 
-                showOnlyCompletedCheckbox = new CheckBox(LocalizedString.Get("Only Show Completed"), historyPanelTextColor, textSize: 10);
+                showOnlyCompletedCheckbox = new CheckBox("Only Show Completed".Localize(), historyPanelTextColor, textSize: 10);
                 showOnlyCompletedCheckbox.Margin = new BorderDouble(top: 8);
                 bool showOnlyCompleted = (UserSettings.Instance.get("PrintHistoryFilterShowCompleted") == "true");
                 showOnlyCompletedCheckbox.Checked = showOnlyCompleted;
                 showOnlyCompletedCheckbox.Width = 200;
 
-                completedStatsContainer.AddChild(new TextWidget("Completed Prints: ", pointSize: 10, textColor: historyPanelTextColor));
+                completedStatsContainer.AddChild(new TextWidget("Completed Prints:".Localize() + " ", pointSize: 10, textColor: historyPanelTextColor));
                 completedStatsContainer.AddChild(new TextWidget(GetCompletedPrints().ToString(), pointSize: 14, textColor: historyPanelTextColor));
                 completedStatsContainer.AddChild(new HorizontalSpacer());
                 completedStatsContainer.AddChild(showOnlyCompletedCheckbox);
@@ -83,13 +83,13 @@ namespace MatterHackers.MatterControl.PrintHistory
                 historyStatsContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 historyStatsContainer.Padding = new BorderDouble(6, 2);
 
-                showTimestampCheckbox = new CheckBox(LocalizedString.Get("Show Timestamp"), historyPanelTextColor, textSize: 10);
+                showTimestampCheckbox = new CheckBox("Show Timestamp".Localize(), historyPanelTextColor, textSize: 10);
                 //showTimestampCheckbox.Margin = new BorderDouble(top: 8);
                 bool showTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
                 showTimestampCheckbox.Checked = showTimestamp;
                 showTimestampCheckbox.Width = 200;
 
-                historyStatsContainer.AddChild(new TextWidget("Total Print Time: ", pointSize: 10, textColor: historyPanelTextColor));
+                historyStatsContainer.AddChild(new TextWidget("Total Print Time:".Localize() + " ", pointSize: 10, textColor: historyPanelTextColor));
                 historyStatsContainer.AddChild(new TextWidget(GetPrintTimeString(), pointSize: 14, textColor: historyPanelTextColor));
                 historyStatsContainer.AddChild(new HorizontalSpacer());
                 historyStatsContainer.AddChild(showTimestampCheckbox);

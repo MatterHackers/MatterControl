@@ -1,0 +1,14 @@
+bed_temperature = 95
+bridge_fan_speed = 0
+bridge_speed = 30
+disable_fan_first_layers = 0
+end_gcode = M104 S0 ; turn off temperature\nG28 X0  ; home X axis\nM84     ; disable motors
+external_perimeter_speed = 25
+first_layer_extrusion_width = 125%
+infill_speed = 40
+max_fan_speed = 0
+perimeter_speed = 30
+retract_length = 6
+support_material_speed = 40
+travel_speed = 150
+raft_extruder = 0

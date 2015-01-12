@@ -64,8 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                 createSelectionDataBackgroundWorker.RunWorkerAsync();
             }
-
-            SelectedMeshGroupIndex = 0;
         }
 
         void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -112,7 +110,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             // remove the original mesh and replace it with these new meshes
             PullMeshGroupDataFromAsynchLists();
 
-			buttonRightPanel.Visible = true;
+            SelectedMeshGroupIndex = 0;
+            buttonRightPanel.Visible = true;
             UnlockEditControls();
             viewControls3D.partSelectButton.ClickButton(null);
 

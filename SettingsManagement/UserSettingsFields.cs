@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl
         string StartCountDurringExitKey = "StartCountDurringExit";
 
         string IsSimpleModeKey = "IsSimpleMode";
-        string EmbededViewShowingGCodeKey = "EmbededViewShowingGCode";
 
         public bool IsSimpleMode
         {
@@ -69,19 +68,6 @@ namespace MatterHackers.MatterControl
         {
             get { return GetInt(StartCountDurringExitKey); }
             set { SetInt(StartCountDurringExitKey, value); }
-        }
-
-        public bool EmbededViewShowingGCode
-        {
-            get
-            {
-                return GetBool(EmbededViewShowingGCodeKey, false);
-            }
-
-            set
-            {
-                SetBool(EmbededViewShowingGCodeKey, value);
-            }
         }
 
         public void SetBool(string keyToSet, bool value)

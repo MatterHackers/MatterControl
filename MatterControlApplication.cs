@@ -213,9 +213,6 @@ namespace MatterHackers.MatterControl
                 DesktopPosition = new Point2D(xpos, ypos);
             }
 
-            // make sure when we start up, we are not showing the 3D view
-            UserSettings.Instance.Fields.EmbededViewShowingGCode = false;
-
             ShowAsSystemWindow();
         }
 

@@ -41,6 +41,8 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -282,16 +284,80 @@ namespace MatterHackers.MatterControl.PrintQueue
             return listToReturn;
         }
 
-        public void AddItem(PrintItemWrapper item, int indexToInsert = -1)
+        bool Is32Bit()
         {
-            if (indexToInsert == -1)
-            {
-                indexToInsert = PrintItems.Count;
-            }
-            PrintItems.Insert(indexToInsert, item);
-            OnItemAdded(new IndexArgs(indexToInsert));
-            SaveDefaultQueue();
+			if (IntPtr.Size == 4)
+			{
+				return true;
+			}
+
+			return false;
         }
+
+		PrintItemWrapper partUnderConsideration = null;
+		public enum ValidateSizeOn32BitSystems { Required, Skip }
+        public void AddItem(PrintItemWrapper item, ValidateSizeOn32BitSystems checkSize = ValidateSizeOn32BitSystems.Required, int indexToInsert = -1)
+        {
+			if (Is32Bit())
+			{
+				// Check if the part we are adding is BIG. If it is warn the user and 
+				// possibly don't add it
+				if(File.Exists(item.FileLocation))
+				{
+					bool warnAboutFileSize = false;
+					switch (Path.GetExtension(item.FileLocation).ToUpper())
+					{
+						case "STL":
+							warnAboutFileSize = StlProcessing.CheckIfShouldWarnOn32Bit(item.FileLocation);
+							break;
+
+						case "AMF":
+							warnAboutFileSize = AmfProcessing.CheckIfShouldWarnOn32Bit(item.FileLocation);
+							break;
+					}
+
+					if (warnAboutFileSize)
+					{
+						partUnderConsideration = item;
+						// Show a dialog and only load the part to the queue if the user clicks yes.
+						UiThread.RunOnIdle((state) =>
+						{
+							string memoryWarningMessage = "Are you sure you want to add this part to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.".Localize();
+							StyledMessageBox.ShowMessageBox(UserSaidToAllowAddToQueue, memoryWarningMessage, "File May Cause Problems".Localize(), StyledMessageBox.MessageType.YES_NO, "Add To Queue", "Do Not Add");
+							// show a dialog to tell the user there is an update
+						});
+						return;
+					}
+					else
+					{
+						DoAddItem(item, indexToInsert);
+					}
+				}
+			}
+			else
+			{
+				DoAddItem(item, indexToInsert);
+			}
+        }
+
+		void UserSaidToAllowAddToQueue(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
+				DoAddItem(partUnderConsideration, -1);
+			}
+		}
+
+		private void DoAddItem(PrintItemWrapper item, int indexToInsert)
+		{
+			if (indexToInsert == -1)
+			{
+				indexToInsert = PrintItems.Count;
+			}
+			PrintItems.Insert(indexToInsert, item);
+			OnItemAdded(new IndexArgs(indexToInsert));
+			SaveDefaultQueue();
+		}
 
         public void LoadDefaultQueue()
         {
@@ -302,7 +368,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             {
                 foreach (PrintItem item in partFiles)
                 {
-                    AddItem(new PrintItemWrapper(item));
+					AddItem(new PrintItemWrapper(item), QueueData.ValidateSizeOn32BitSystems.Skip);
                 }
             }
             RemoveAllSdCardFiles();

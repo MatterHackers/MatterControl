@@ -684,7 +684,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     {
                         if (currentIndex < loadedGCode.IndexOfChangeInZ[zIndex])
                         {
-                            return zIndex-1;
+                            return zIndex;
                         }
                     }
 
@@ -720,11 +720,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     && currentIndex < loadedGCode.Count)
                 {
                     int currentLayer = CurrentlyPrintingLayer;
-                    int startIndex = loadedGCode.IndexOfChangeInZ[currentLayer];
-                    int endIndex = loadedGCode.Count - 1;
-                    if (currentLayer < loadedGCode.NumChangesInZ - 2)
+                    int startIndex = 0;
+                    if (currentLayer > 0)
                     {
-                        endIndex = loadedGCode.IndexOfChangeInZ[currentLayer + 1] - 1;
+                        startIndex = loadedGCode.IndexOfChangeInZ[currentLayer-1];
+                    }
+                    int endIndex = loadedGCode.Count - 1;
+                    if (currentLayer < loadedGCode.NumChangesInZ - 1)
+                    {
+                        endIndex = loadedGCode.IndexOfChangeInZ[currentLayer];
                     }
 
                     int deltaFromStart = Math.Max(0, currentIndex - startIndex);
