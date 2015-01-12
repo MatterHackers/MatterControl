@@ -70,6 +70,21 @@ namespace MatterHackers.MatterControl
             StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
         }
 
+        public void OpenCameraPreview()
+        {
+            //Camera launcher placeholder (KP)
+            if (ApplicationSettings.Instance.get("HardwareHasCamera") == "true")
+            {
+                //Do something
+            }
+            else
+            {
+                //Do something else (like show warning message)
+            }
+
+
+        }
+
         public MatterControlApplication(double width, double height)
             : base(width, height)
         {

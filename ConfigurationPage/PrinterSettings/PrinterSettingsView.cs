@@ -20,6 +20,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         Button configureAutoLevelButton;
         Button configureEePromButton;
 		Button openGcodeTerminalButton;
+		Button openCameraButton;
 
         DisableableWidget eePromControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
@@ -45,9 +46,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			mainContainer.AddChild(terminalCommunicationsContainer);
 
+			DisableableWidget cameraContainer = new DisableableWidget();
+			cameraContainer.AddChild(GetCameraControl());
+
+			if (ApplicationSettings.Instance.get("HardwareHasCamera") == "true")
+			{
+				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+				mainContainer.AddChild(cameraContainer);
+			}
 
             AddChild(mainContainer);
-
             AddHandlers();
             SetVisibleControls();
         }
@@ -156,6 +164,38 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             base.OnClosed(e);
         }
         
+
+		private FlowLayoutWidget GetCameraControl()
+		{
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Margin = new BorderDouble(0,4);
+
+			Agg.Image.ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon(Path.Combine("PrintStatusControls", "camera-24x24.png"));
+			if (!ActiveTheme.Instance.IsDarkTheme)
+			{
+				InvertLightness.DoInvertLightness(cameraIconImage);
+			}
+
+			ImageWidget cameraIcon = new ImageWidget(cameraIconImage);
+			cameraIcon.Margin = new BorderDouble(right: 6, bottom: 6);
+
+			TextWidget gcodeTerminalLabel = new TextWidget("Camera");
+			gcodeTerminalLabel.AutoExpandBoundsToText = true;
+			gcodeTerminalLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;
+
+			openCameraButton = textImageButtonFactory.Generate("Preview".Localize().ToUpper());
+			openCameraButton.Click += new EventHandler(openCameraPreview_Click);
+
+			buttonRow.AddChild(cameraIcon);
+			buttonRow.AddChild(gcodeTerminalLabel);
+			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(openCameraButton);
+
+			return buttonRow;
+		}
+
         private FlowLayoutWidget GetGcodeTerminalControl()
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -227,6 +267,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }
+
+		void openCameraPreview_Click(object sender, EventArgs e)
+		{
+			MatterControlApplication.Instance.OpenCameraPreview();
+		}
 
         void configureEePromButton_Click(object sender, EventArgs mouseEvent)
         {
