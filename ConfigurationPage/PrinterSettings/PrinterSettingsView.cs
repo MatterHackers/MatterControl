@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		void openCameraPreview_Click(object sender, EventArgs e)
 		{
-			MatterControlApplication.OpenCameraPreview();
+			MatterControlApplication.Instance.OpenCameraPreview();
 		}
 
         void configureEePromButton_Click(object sender, EventArgs mouseEvent)

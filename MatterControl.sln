@@ -106,8 +106,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9EA7B0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintNotifications", "..\CloudServicesPlugin\PrintNotifications\PrintNotifications.csproj", "{291CD87C-2C58-4369-9D85-238C7EB31542}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarlinFirmwareUpdatePlugin", "..\MarlinFirmwareUpdatePlugin\MarlinFirmwareUpdatePlugin\MarlinFirmwareUpdatePlugin.csproj", "{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -694,22 +692,6 @@ Global
 		{291CD87C-2C58-4369-9D85-238C7EB31542}.Release64|x64.ActiveCfg = Release64|x64
 		{291CD87C-2C58-4369-9D85-238C7EB31542}.Release64|x64.Build.0 = Release64|x64
 		{291CD87C-2C58-4369-9D85-238C7EB31542}.Release64|x86.ActiveCfg = Release64|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Debug64|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Debug64|Any CPU.Build.0 = Debug|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Debug64|x64.ActiveCfg = Debug|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Debug64|x86.ActiveCfg = Debug|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Release|x64.ActiveCfg = Release|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Release|x86.ActiveCfg = Release|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Release64|Any CPU.ActiveCfg = Release|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Release64|Any CPU.Build.0 = Release|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Release64|x64.ActiveCfg = Release|Any CPU
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934}.Release64|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -739,7 +721,6 @@ Global
 		{6782BF37-8139-4DC6-885E-98D22D1FB258} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 		{F5D74163-145F-47BF-83DC-D0E07249C6CA} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 		{291CD87C-2C58-4369-9D85-238C7EB31542} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
-		{1B4AF237-0171-4D5C-B2C1-B8F3EB9A5934} = {DA2BE4E5-5FB2-4C74-9170-0D2513AAFC84}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MatterControl.csproj

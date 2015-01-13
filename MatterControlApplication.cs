@@ -61,6 +61,31 @@ namespace MatterHackers.MatterControl
 
         static readonly Vector2 minSize = new Vector2(600, 600);
 
+		static MatterControlApplication instance;
+		public static MatterControlApplication Instance
+		{
+			get
+			{
+				if(instance == null)
+				{
+					// try and open our window matching the last size that we had for it.
+					string windowSize = ApplicationSettings.Instance.get("WindowSize");
+					int width = 1280;
+					int height = 720;
+					if (windowSize != null && windowSize != "")
+					{
+						string[] sizes = windowSize.Split(',');
+						width = Math.Max(int.Parse(sizes[0]), (int)minSize.x+1);
+						height = Math.Max(int.Parse(sizes[1]), (int)minSize.y+1);
+					}
+
+					instance = new MatterControlApplication(width, height);
+				}
+
+				return instance;
+			}
+		}
+
         static MatterControlApplication()
         {
             // Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field 
@@ -70,7 +95,7 @@ namespace MatterHackers.MatterControl
             StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
         }
 
-        public static void OpenCameraPreview()
+        public void OpenCameraPreview()
         {
             //Camera launcher placeholder (KP)
             if (ApplicationSettings.Instance.get("HardwareHasCamera") == "true")
@@ -91,7 +116,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public MatterControlApplication(double width, double height)
+        private MatterControlApplication(double width, double height)
             : base(width, height)
         {
             // set this at startup so that we can tell next time if it got set to true in close
@@ -397,18 +422,7 @@ namespace MatterHackers.MatterControl
 
             Datastore.Instance.Initialize();
 
-            // try and open our window matching the last size that we had for it.
-            string windowSize = ApplicationSettings.Instance.get("WindowSize");
-            int width = 1280;
-            int height = 720;
-            if (windowSize != null && windowSize != "")
-            {
-                string[] sizes = windowSize.Split(',');
-                width = Math.Max(int.Parse(sizes[0]), (int)minSize.x+1);
-                height = Math.Max(int.Parse(sizes[1]), (int)minSize.y+1);
-            }
-
-            new MatterControlApplication(width, height);
+			MatterControlApplication app = MatterControlApplication.Instance;
         }
 
         public override void OnClosed(EventArgs e)
