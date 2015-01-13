@@ -437,16 +437,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         internal void CancelCurrentSlicing()
         {
-            if (slicerProcess != null)
-            {
-                using (TimedLock.Lock(slicerProcess, "SlicingProcess"))
-                {
-                    if (slicerProcess != null && !slicerProcess.HasExited)
-                    {
-                        slicerProcess.Kill();
-                    }
-                }
-            }
+			if (slicerProcess != null)
+			{
+				using (TimedLock.Lock(slicerProcess, "SlicingProcess"))
+				{
+					if (slicerProcess != null && !slicerProcess.HasExited)
+					{
+						slicerProcess.Kill();
+					}
+				}
+			}
+			else
+			{
+				MatterHackers.MatterSlice.MatterSlice.Stop();
+			}
         }
     }
 }
