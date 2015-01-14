@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                                 if (!sdCardItemInQueue && validSdCardItem)
                                 {
                                     // If there is not alread an sd card item in the queue with this name then add it.
-                                    AddItem(new PrintItemWrapper(new PrintItem(currentEvent.Data, QueueData.SdCardFileName)));
+									AddItem(new PrintItemWrapper(new PrintItem(currentEvent.Data, QueueData.SdCardFileName)));
                                 }
                             }
                             break;
@@ -302,9 +302,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				// Check if the part we are adding is BIG. If it is warn the user and 
 				// possibly don't add it
-				if(File.Exists(item.FileLocation))
+				bool warnAboutFileSize = false;
+				if (File.Exists(item.FileLocation))
 				{
-					bool warnAboutFileSize = false;
 					switch (Path.GetExtension(item.FileLocation).ToUpper())
 					{
 						case "STL":
@@ -315,23 +315,23 @@ namespace MatterHackers.MatterControl.PrintQueue
 							warnAboutFileSize = AmfProcessing.CheckIfShouldWarnOn32Bit(item.FileLocation);
 							break;
 					}
+				}
 
-					if (warnAboutFileSize)
+				if (warnAboutFileSize)
+				{
+					partUnderConsideration = item;
+					// Show a dialog and only load the part to the queue if the user clicks yes.
+					UiThread.RunOnIdle((state) =>
 					{
-						partUnderConsideration = item;
-						// Show a dialog and only load the part to the queue if the user clicks yes.
-						UiThread.RunOnIdle((state) =>
-						{
-							string memoryWarningMessage = "Are you sure you want to add this part to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.".Localize();
-							StyledMessageBox.ShowMessageBox(UserSaidToAllowAddToQueue, memoryWarningMessage, "File May Cause Problems".Localize(), StyledMessageBox.MessageType.YES_NO, "Add To Queue", "Do Not Add");
-							// show a dialog to tell the user there is an update
-						});
-						return;
-					}
-					else
-					{
-						DoAddItem(item, indexToInsert);
-					}
+						string memoryWarningMessage = "Are you sure you want to add this part to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.".Localize();
+						StyledMessageBox.ShowMessageBox(UserSaidToAllowAddToQueue, memoryWarningMessage, "File May Cause Problems".Localize(), StyledMessageBox.MessageType.YES_NO, "Add To Queue", "Do Not Add");
+						// show a dialog to tell the user there is an update
+					});
+					return;
+				}
+				else
+				{
+					DoAddItem(item, indexToInsert);
 				}
 			}
 			else

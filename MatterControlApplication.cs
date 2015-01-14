@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl
                 TextWidget.GlobalPointSizeScaleRatio = 1.3;
             }
 
-            this.AddChild(ApplicationController.Instance.MainView);
+			this.AddChild(ApplicationController.Instance.MainView);
             this.MinimumSize = minSize;
             this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 
