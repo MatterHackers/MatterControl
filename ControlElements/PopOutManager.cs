@@ -87,8 +87,8 @@ namespace MatterHackers.MatterControl
                 UserSettings.Instance.Fields.SetBool(WindowLeftOpenKey, true);
 
                 string windowSize = UserSettings.Instance.get(WindowSizeKey);
-                int width = 400;
-                int height = 300;
+                int width = 600;
+                int height = 400;
                 if (windowSize != null && windowSize != "")
                 {
                     string[] sizes = windowSize.Split(',');
