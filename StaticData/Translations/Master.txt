@@ -3050,3 +3050,12 @@ Translated:NOTE: Standard messaging rates may apply.
 English:Include a picture of my finished print
 Translated:Include a picture of my finished print
 
+English:Send to Remote Device
+Translated:Send to Remote Device
+
+English:Slice Files Prior to Send
+Translated:Slice Files Prior to Send
+
+English:Please wait. Retrieving available devices...
+Translated:Please wait. Retrieving available devices...
+
