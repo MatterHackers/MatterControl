@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -135,6 +136,42 @@ namespace MatterHackers.MatterControl
                         Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
                         testDispatch.RunTests();
                         return;
+
+					case "MHSERIAL_TO_ANDROID":
+						{
+							Dictionary<string, string> vidPid_NameDictionary = new Dictionary<string, string>();
+							string[] MHSerialLines = File.ReadAllLines(Path.Combine("..", "..", "StaticData", "Drivers", "MHSerial", "MHSerial.inf"));
+							foreach (string line in MHSerialLines)
+							{
+								if (line.Contains("=DriverInstall,"))
+								{
+									string name = Regex.Match(line, "%(.*).name").Groups[1].Value;
+									string vid = Regex.Match(line, "VID_(.*)&PID").Groups[1].Value;
+									string pid = Regex.Match(line, "PID_([0-9a-fA-F]+)").Groups[1].Value;
+									string vidPid = "{0},{1}".FormatWith(vid, pid);
+									if (!vidPid_NameDictionary.ContainsKey(vidPid))
+									{
+										vidPid_NameDictionary.Add(vidPid, name);
+									}
+								}
+							}
+
+							using (StreamWriter deviceFilter = new StreamWriter("deviceFilter.txt"))
+							{
+								using (StreamWriter serialPort = new StreamWriter("serialPort.txt"))
+								{
+									foreach (KeyValuePair<string, string> vidPid_Name in vidPid_NameDictionary)
+									{
+										string[] vidPid = vidPid_Name.Key.Split(',');
+										int vid = Int32.Parse(vidPid[0], System.Globalization.NumberStyles.HexNumber);
+										int pid = Int32.Parse(vidPid[1], System.Globalization.NumberStyles.HexNumber);
+										serialPort.WriteLine("customTable.AddProduct(0x{0:X4}, 0x{1:X4}, cdcDriverType);  // {2}".FormatWith(vid, pid, vidPid_Name.Value));
+										deviceFilter.WriteLine("<!-- {2} -->\n<usb-device vendor-id=\"{0}\" product-id=\"{1}\" />".FormatWith(vid, pid, vidPid_Name.Value));
+									}
+								}
+							}
+						}
+						return;
 
                     case "CLEAR_CACHE":
                         AboutPage.DeleteCacheData();
