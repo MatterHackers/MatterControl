@@ -51,4 +51,3 @@ top_infill_extrusion_width = .4
 top_solid_infill_speed = 50
 top_solid_layers = 3
 travel_speed = 160
-z_offset = 0
