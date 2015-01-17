@@ -167,16 +167,20 @@ namespace MatterHackers.MatterControl
             }
             set
             {
-                double newPosition0To1 = Math.Max(0, Math.Min((value - Minimum) / (Maximum - Minimum), 1));
-                if (newPosition0To1 != Position0To1)
-                {
-                    Position0To1 = newPosition0To1;
-                    if (ValueChanged != null)
-                    {
-                        ValueChanged(this, null);
-                    }
-                    Invalidate();
-                }
+				double newPosition0To1 = Minimum;
+				if (Maximum - Minimum != 0)
+				{
+					newPosition0To1 = Math.Max(0, Math.Min((value - Minimum) / (Maximum - Minimum), 1));
+				}
+				if (newPosition0To1 != Position0To1)
+				{
+					Position0To1 = newPosition0To1;
+					if (ValueChanged != null)
+					{
+						ValueChanged(this, null);
+					}
+					Invalidate();
+				}
             }
         }
 

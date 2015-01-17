@@ -129,6 +129,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         static PrinterConnectionAndCommunication globalInstance;
         string connectionFailureMessage = "Unknown Reason";
 
+		bool waitingForPosition = false;
+
         public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
 
         public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
@@ -1193,6 +1195,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
 
             PositionRead.CallEvents(this, null);
+
+			waitingForPosition = false;
         }
 
         double currentSdBytes = 0;
@@ -1590,11 +1594,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         readFromPrinterThread.Name = "Read From Printer";
                         readFromPrinterThread.IsBackground = true;
                         readFromPrinterThread.Start();
-
-                        // let's check if the printer will talk to us
-                        ReadPosition();
-                        SendLineToPrinterNow("M105");
-                        SendLineToPrinterNow("M115");
                     }
                     catch (System.ArgumentOutOfRangeException)
                     {
@@ -2097,7 +2096,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             bool pauseRequested = false;
             using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile2"))
             {
-                if (printerCommandQueueIndex < loadedGCode.Count)
+				if (printerCommandQueueIndex < loadedGCode.Count)
                 {
                     if (firstLineToResendIndex < allCheckSumLinesSent.Count)
                     {
@@ -2105,9 +2104,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     }
                     else
                     {
-                        string lineToWrite = loadedGCode.Instruction(printerCommandQueueIndex).Line;
+						if (waitingForPosition)
+						{
+							// we are wating for a postion response don't print more
+							return;
+						}
+
+						string lineToWrite = loadedGCode.Instruction(printerCommandQueueIndex).Line;
                         string[] splitOnSemicolon = lineToWrite.Split(';');
                         string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
+
+						if (lineToWrite.Contains("M114"))
+						{
+							waitingForPosition = true;
+						}
+						
                         if (trimedLine.Length > 0)
                         {
                             if (lineToWrite == "MH_PAUSE")
@@ -2431,6 +2442,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
+			waitingForPosition = false;
 
             LinesToWriteQueue.Clear();
             ClearQueuedGCode();
@@ -2477,7 +2489,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         string lastLineRead = "";
         public void ReadFromPrinter()
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             timeSinceLastReadAnything.Restart();
             // we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
             while (CommunicationState == CommunicationStates.AttemptingToConnect
@@ -2487,7 +2499,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     && PrinterIsConnected
                     && CommunicationState != CommunicationStates.PrintingFromSd)
                 {
-                    TryWriteNextLineFromGCodeFile();
+					TryWriteNextLineFromGCodeFile();
                 }
 
                 try
