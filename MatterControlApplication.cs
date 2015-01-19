@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        public static void PlaySound(string fileName)
+        public void PlaySound(string fileName)
         {
             using (var mediaStream = StaticData.Instance.OpenSteam(Path.Combine("Sounds", fileName)))
             {
