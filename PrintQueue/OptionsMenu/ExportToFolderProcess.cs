@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         EventHandler unregisterEvents;
         public void Start()
         {
-            if (QueueData.Instance.Count > 0)
+			if (allFilesToExport.Count > 0)
             {
                 if (StartingNextPart != null)
                 {
@@ -99,7 +99,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                 }
 
                 savedGCodeFileNames = new List<string>();
-                allFilesToExport = QueueData.Instance.CreateReadOnlyPartList();
                 foreach (PrintItem part in allFilesToExport)
                 {
                     PrintItemWrapper printItemWrapper = new PrintItemWrapper(part);
@@ -148,7 +147,10 @@ namespace MatterHackers.MatterControl.PrintQueue
             }
             else
             {
-                UpdatePartStatus(this, new StringEventArgs("Calculating Total cm3..."));
+				if (UpdatePartStatus != null)
+				{
+					UpdatePartStatus(this, new StringEventArgs("Calculating Total cm3..."));
+				}
 
                 if (savedGCodeFileNames.Count > 0)
                 {
