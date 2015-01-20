@@ -1001,25 +1001,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
                 if (gcodePathAndFileName != "")
                 {
-                    bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
-                    if (File.Exists(gcodePathAndFileName)
-                        && (originalIsGCode || File.ReadAllText(gcodePathAndFileName).Contains("filament used")))
-                    {
-                        string gcodeFileContents = "";
-                        using (FileStream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                        {
-                            using (StreamReader gcodeStreamReader = new StreamReader(fileStream))
-                            {
-                                gcodeFileContents = gcodeStreamReader.ReadToEnd();
-                            }
-                        }
+					bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
+					if (File.Exists(gcodePathAndFileName))
+					{
+						// read the last few k of the file nad see if it says "filament used". We use this marker to tell if the file finished writing
+						if (originalIsGCode)
+						{
+							PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+							return;
+						}
+						else
+						{
+							int bufferSize = 8000;
+							using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
+							{
+								byte[] buffer = new byte[bufferSize];
+								fileStream.Seek(fileStream.Length - bufferSize, SeekOrigin.Begin);
+								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
+								if (fileEnd.Contains("filament used"))
+								{
+									PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+									return;
+								}
+							}
+						}
+					}
 
-                        PrinterConnectionAndCommunication.Instance.StartPrint(gcodeFileContents);
-                    }
-                    else
-                    {
-                        PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
-                    }
+					PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
                 }
             }
         }
@@ -2461,20 +2470,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReleaseMotors();
         }
 
-        public bool StartPrint(string gcodeFileContents)
+        public bool StartPrint2(string gcodeFilename)
         {
             if (!PrinterIsConnected || PrinterIsPrinting)
             {
                 return false;
-            }
-
-            gcodeFileContents = gcodeFileContents.Replace("\r\n", "\n");
-            gcodeFileContents = gcodeFileContents.Replace('\r', '\n');
-            string[] gcodeLines = gcodeFileContents.Split('\n');
-            List<string> printableGCode = new List<string>(gcodeLines.Length);
-            foreach (string line in gcodeLines)
-            {
-                printableGCode.Add(line);
             }
 
             ExtrusionRatio = 1;
@@ -2483,7 +2483,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             LinesToWriteQueue.Clear();
             ClearQueuedGCode();
-            loadedGCode = GCodeFile.ParseGCodeString(string.Join("\n", printableGCode.ToArray()));
+			loadedGCode = new GCodeFile(gcodeFilename);
 
             switch (communicationState)
             {
@@ -2511,11 +2511,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                 default:
                     throw new NotFiniteNumberException();
-            }
-
-            if (printableGCode.Count == 0)
-            {
-                return true;
             }
 
             return true;

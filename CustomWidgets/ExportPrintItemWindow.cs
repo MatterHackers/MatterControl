@@ -263,38 +263,47 @@ namespace MatterHackers.MatterControl
             PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent(DoneWritingToSdCard, ref unregisterEvents);
         }
 
-        void PartSlicedStartPrintingToSd(object sender, EventArgs e)
-        {
-            // tell the printer to start the print
-            PrintItemWrapper partToPrint = sender as PrintItemWrapper;
-            if (partToPrint != null)
-            {
-                partToPrint.SlicingDone.UnregisterEvent(PartSlicedStartPrintingToSd, ref unregisterEvents);
-                string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
-                if (gcodePathAndFileName != "")
-                {
-                    bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
-                    if (File.Exists(gcodePathAndFileName)
-                        && (originalIsGCode || File.ReadAllText(gcodePathAndFileName).Contains("filament used")))
-                    {
-                        string gcodeFileContents = "";
-                        using (FileStream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                        {
-                            using (StreamReader gcodeStreamReader = new StreamReader(fileStream))
-                            {
-                                gcodeFileContents = gcodeStreamReader.ReadToEnd();
-                            }
-                        }
+		void PartSlicedStartPrintingToSd(object sender, EventArgs e)
+		{
+			// tell the printer to start the print
+			PrintItemWrapper partToPrint = sender as PrintItemWrapper;
+			if (partToPrint != null)
+			{
+				partToPrint.SlicingDone.UnregisterEvent(PartSlicedStartPrintingToSd, ref unregisterEvents);
+				string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
+				if (gcodePathAndFileName != "")
+				{
+					bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
+					if (File.Exists(gcodePathAndFileName))
+					{
+						// read the last few k of the file nad see if it says "filament used". We use this marker to tell if the file finished writing
+						if (originalIsGCode)
+						{
+							PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+							return;
+						}
+						else
+						{
+							int bufferSize = 8000;
+							using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
+							{
+								byte[] buffer = new byte[bufferSize];
+								fileStream.Seek(fileStream.Length - bufferSize, SeekOrigin.Begin);
+								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
+								if (fileEnd.Contains("filament used"))
+								{
+									PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+									return;
+								}
+							}
+						}
+					}
 
-                        PrinterConnectionAndCommunication.Instance.StartPrint(gcodeFileContents);
-                    }
-                    else
-                    {
-                        PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
-                    }
-                }
-            }
-        }
+					PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
+				}
+			}
+		}
 
         void DoneWritingToSdCard(object sender, EventArgs e)
         {
