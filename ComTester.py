@@ -51,6 +51,8 @@ def parseChecksumLine(command):
 		spaceIndex = command.find(' ') + 1
 		endIndex = command.find('*')
 		return command[spaceIndex:endIndex]
+	else:
+		return command
 
 def getCorrectResponse(command):
 	try:

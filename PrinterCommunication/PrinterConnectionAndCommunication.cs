@@ -162,7 +162,41 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         bool printWasCanceled = false;
         int firstLineToResendIndex = 0;
         PrintTask activePrintTask;
-        List<string> allCheckSumLinesSent = new List<string>();
+
+		class CheckSumLines
+		{
+			static readonly int RingBufferCount = 16;
+
+			int addedCount = 0;
+			string[] ringBuffer = new string[RingBufferCount];
+
+			public string this[int index]
+			{
+				get
+				{
+					return ringBuffer[index % RingBufferCount];
+				}
+
+				set
+				{
+					ringBuffer[index % RingBufferCount] = value;
+				}
+			}
+
+			internal void Add(string lineWithChecksum)
+			{
+				this[addedCount++] = lineWithChecksum;
+			}
+
+			internal void Clear()
+			{
+				addedCount = 0;
+			}
+
+			public int Count { get { return addedCount; } }
+		}
+
+		CheckSumLines allCheckSumLinesSent = new CheckSumLines();
 
         List<string> LinesToWriteQueue = new List<string>();
 
@@ -1594,7 +1628,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         readFromPrinterThread.Name = "Read From Printer";
                         readFromPrinterThread.IsBackground = true;
                         readFromPrinterThread.Start();
-                    }
+					
+						// We have to send a line because some printers (like old printrbots) do not send anything when connecting and there is no other way to know they are there.
+						SendLineToPrinterNow("M105");
+					}
                     catch (System.ArgumentOutOfRangeException)
                     {
                         connectionFailureMessage = LocalizedString.Get("Unsupported Baud Rate");
