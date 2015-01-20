@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
     public class PrinterIoGCodeFile : PrinterIoBase
     {
-        GCodeFile loadedGCode = new GCodeFile();
+        GCodeFile loadedGCode;
         int printerCommandQueueIndex;
         public PrinterIoGCodeFile(GCodeFile loadedGCode)
         {
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                 {
                     for (int zIndex = 0; zIndex < loadedGCode.NumChangesInZ; zIndex++)
                     {
-                        if (currentIndex < loadedGCode.IndexOfChangeInZ[zIndex])
+                        if (currentIndex < loadedGCode.GetInstructionIndexAtLayer(zIndex))
                         {
                             return zIndex - 1;
                         }
@@ -106,11 +106,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
                     && currentIndex < loadedGCode.Count)
                 {
                     int currentLayer = CurrentlyPrintingLayer;
-                    int startIndex = loadedGCode.IndexOfChangeInZ[currentLayer];
+                    int startIndex = loadedGCode.GetInstructionIndexAtLayer(currentLayer);
                     int endIndex = loadedGCode.Count - 1;
                     if (currentLayer < loadedGCode.NumChangesInZ - 2)
                     {
-                        endIndex = loadedGCode.IndexOfChangeInZ[currentLayer + 1] - 1;
+                        endIndex = loadedGCode.GetInstructionIndexAtLayer(currentLayer + 1) - 1;
                     }
 
                     int deltaFromStart = Math.Max(0, currentIndex - startIndex);

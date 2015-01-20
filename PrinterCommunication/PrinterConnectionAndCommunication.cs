@@ -296,7 +296,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         double actualBedTemperature;
         double targetBedTemperature;
         string printJobDisplayName = null;
-        GCodeFile loadedGCode = new GCodeFile();
+        GCodeFile loadedGCode = new GCodeFileLoaded(); // we start out by setting it to a nothing file
         IFrostedSerialPort serialPort;
         Thread readFromPrinterThread;
         Thread connectThread;
@@ -2450,7 +2450,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             LinesToWriteQueue.Clear();
             ClearQueuedGCode();
-			loadedGCode = new GCodeFile(gcodeFilename);
+			loadedGCode = GCodeFile.Load(gcodeFilename);
 
             switch (communicationState)
             {
