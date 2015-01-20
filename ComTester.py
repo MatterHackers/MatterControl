@@ -39,14 +39,25 @@ def randomTemp(command):
 	# temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
 	return "ok T:%s\n" % random.randrange(202,215)
 
-def echo(command):
+def getPosition(command):
+	# temp commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
+	return "X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00\nok\n"
+
+def echo(command): 
 	return command
+	
+def parseChecksumLine(command):
+	if command[0] == 'N':
+		spaceIndex = command.find(' ') + 1
+		endIndex = command.find('*')
+		return command[spaceIndex:endIndex]
 
 def getCorrectResponse(command):
 	try:
 		#Remove line returns
-		command = ''.join(command.splitlines())
-		if command in responses:			
+		command = ''.join(command.splitlines()) # strip of the trailing cr (\n)
+		command = parseChecksumLine(command)
+		if command in responses:
 			return responses[command](command)
 	except Exception, e:
 		print e
@@ -54,7 +65,7 @@ def getCorrectResponse(command):
 	return 'ok\n'
 
 """Dictionary of command and response callback"""
-responses = { "M105" : randomTemp, "A": echo}
+responses = { "M105" : randomTemp, "A" : echo, "M114" : getPosition , "N" : parseChecksumLine}
 
 def main(argv):
 	parser = argparse.ArgumentParser(description='Set up a printer emulation.')
@@ -66,7 +77,7 @@ def main(argv):
 		if len(line) > 0:
 			print(line)
 			response = getCorrectResponse(line)
-			sleep(0.02)
+			# sleep(0.02)
 			print response
 			ser.write(response)
 	ser.close()

@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             return listToReturn;
         }
 
-        bool Is32Bit()
+        static bool Is32Bit()
         {
 			if (IntPtr.Size == 4)
 			{

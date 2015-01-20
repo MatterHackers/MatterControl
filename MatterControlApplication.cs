@@ -284,41 +284,41 @@ namespace MatterHackers.MatterControl
             ShowAsSystemWindow();
         }
 
-        private static void WriteMove(StringBuilder gcodeStringBuilder, Vector2 center)
+		private static void WriteMove(StreamWriter file, Vector2 center)
         {
-            gcodeStringBuilder.AppendLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
+			file.WriteLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
         }
 
         public static void WriteTestGCodeFile()
         {
-            StringBuilder gcodeStringBuilder = new StringBuilder();
+			using (StreamWriter file = new StreamWriter("PerformanceTest.gcode"))
+			{
+				//int loops = 150000;
+				int loops = 150;
+				int steps = 200;
+				double radius = 50;
+				Vector2 center = new Vector2(150, 100);
 
-            int loops = 15;
-            int steps = 200;
-            double radius = 50;
-            Vector2 center = new Vector2(150, 100);
+				file.WriteLine("G28 ; home all axes");
+				file.WriteLine("G90 ; use absolute coordinates");
+				file.WriteLine("G21 ; set units to millimeters");
+				file.WriteLine("G92 E0");
+				file.WriteLine("G1 F7800");
+				file.WriteLine("G1 Z" + (5).ToString());
+				WriteMove(file, center);
 
-            gcodeStringBuilder.AppendLine("G28 ; home all axes");
-            gcodeStringBuilder.AppendLine("G90 ; use absolute coordinates");
-            gcodeStringBuilder.AppendLine("G21 ; set units to millimeters");
-            gcodeStringBuilder.AppendLine("G92 E0");
-            gcodeStringBuilder.AppendLine("G1 F7800");
-            gcodeStringBuilder.AppendLine("G1 Z" + (5).ToString());
-            WriteMove(gcodeStringBuilder, center);
+				for (int loop = 0; loop < loops; loop++)
+				{
+					for (int step = 0; step < steps; step++)
+					{
+						Vector2 nextPosition = new Vector2(radius, 0);
+						nextPosition.Rotate(MathHelper.Tau / steps * step);
+						WriteMove(file, center + nextPosition);
+					}
+				}
 
-            for (int loop = 0; loop < loops; loop++)
-            {
-                for (int step = 0; step < steps; step++)
-                {
-                    Vector2 nextPosition = new Vector2(radius, 0);
-                    nextPosition.Rotate(MathHelper.Tau / steps * step);
-                    WriteMove(gcodeStringBuilder, center + nextPosition);
-                }
-            }
-
-            gcodeStringBuilder.AppendLine("M84     ; disable motors");
-
-            System.IO.File.WriteAllText("PerformanceTest.gcode", gcodeStringBuilder.ToString());
+				file.WriteLine("M84     ; disable motors");
+			}
         }
 
         void CheckOnPrinter(object state)
