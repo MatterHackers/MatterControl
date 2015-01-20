@@ -1012,7 +1012,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 						else
 						{
-							int bufferSize = 8000;
+							int bufferSize = 32000;
 							using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
 							{
 								byte[] buffer = new byte[bufferSize];
