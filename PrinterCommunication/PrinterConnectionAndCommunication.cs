@@ -712,22 +712,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                int currentIndex = printerCommandQueueIndex - backupAmount;
-                if (currentIndex >= 0
-                    && currentIndex < loadedGCode.Count)
-                {
-                    for(int zIndex = 0; zIndex < loadedGCode.NumChangesInZ; zIndex++)
-                    {
-                        if (currentIndex < loadedGCode.IndexOfChangeInZ[zIndex])
-                        {
-                            return zIndex;
-                        }
-                    }
-
-                    return loadedGCode.NumChangesInZ - 1;
-                }
-
-                return -1;
+                int instructionIndex = printerCommandQueueIndex - backupAmount;
+				return loadedGCode.GetLayerIndex(instructionIndex);
             }
         }
 
@@ -751,27 +737,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                int currentIndex = printerCommandQueueIndex - backupAmount;
-                if (currentIndex >= 0
-                    && currentIndex < loadedGCode.Count)
-                {
-                    int currentLayer = CurrentlyPrintingLayer;
-                    int startIndex = 0;
-                    if (currentLayer > 0)
-                    {
-                        startIndex = loadedGCode.IndexOfChangeInZ[currentLayer-1];
-                    }
-                    int endIndex = loadedGCode.Count - 1;
-                    if (currentLayer < loadedGCode.NumChangesInZ - 1)
-                    {
-                        endIndex = loadedGCode.IndexOfChangeInZ[currentLayer];
-                    }
-
-                    int deltaFromStart = Math.Max(0, currentIndex - startIndex);
-                    return deltaFromStart / (double)(endIndex - startIndex);
-                }
-
-                return 0;
+				int instructionIndex = printerCommandQueueIndex - backupAmount;
+				return loadedGCode.Ratio0to1IntoContainedLayer(instructionIndex);
             }
         }
 
@@ -1016,7 +983,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
 							{
 								byte[] buffer = new byte[bufferSize];
-								fileStream.Seek(fileStream.Length - bufferSize, SeekOrigin.Begin);
+								fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
 								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
 								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 								if (fileEnd.Contains("filament used"))

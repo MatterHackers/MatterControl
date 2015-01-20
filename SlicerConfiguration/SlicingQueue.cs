@@ -374,22 +374,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                             if (File.Exists(gcodePathAndFileName)
                                 && File.Exists(currentConfigurationFileAndPath))
                             {
-                                using (StreamWriter gcodeWirter = File.AppendText(gcodePathAndFileName))
-                                {
-                                    string oemName = "MatterControl";
-                                    if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
-                                    {
-                                        oemName = oemName + " - {0}".FormatWith(OemSettings.Instance.WindowTitleExtra);
-                                    }
+								// make sure we have not already written the settings onto this file
+								bool fileHaseSettings = false;
+								int bufferSize = 32000;
+								using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
+								{
+									byte[] buffer = new byte[bufferSize];
+									fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
+									int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+									string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
+									if (fileEnd.Contains("GCode settings used"))
+									{
+										fileHaseSettings = true;
+									}
+								}
 
-                                    gcodeWirter.WriteLine("; {0} Version {1} Build {2} : GCode settings used".FormatWith(oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion));
-                                    gcodeWirter.WriteLine("; Date {0} Time {1}:{2:00}".FormatWith(DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute));
+								if (!fileHaseSettings)
+								{
+									using (StreamWriter gcodeWirter = File.AppendText(gcodePathAndFileName))
+									{
+										string oemName = "MatterControl";
+										if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
+										{
+											oemName = oemName + " - {0}".FormatWith(OemSettings.Instance.WindowTitleExtra);
+										}
 
-                                    foreach (string line in File.ReadLines(currentConfigurationFileAndPath))
-                                    {
-                                        gcodeWirter.WriteLine("; {0}".FormatWith(line));
-                                    }
-                                }
+										gcodeWirter.WriteLine("; {0} Version {1} Build {2} : GCode settings used".FormatWith(oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion));
+										gcodeWirter.WriteLine("; Date {0} Time {1}:{2:00}".FormatWith(DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute));
+
+										foreach (string line in File.ReadLines(currentConfigurationFileAndPath))
+										{
+											gcodeWirter.WriteLine("; {0}".FormatWith(line));
+										}
+									}
+								}
                             }
                         }
                         catch(Exception)

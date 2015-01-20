@@ -200,6 +200,30 @@ namespace MatterHackers.MatterControl
                     UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
                     return;
                 }
+				else if (Path.GetExtension(thumbnailWidget.PrintItem.FileLocation).ToUpper() == ".GCODE")
+				{
+					CreateImage(thumbnailWidget);
+					thumbnailWidget.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+					Graphics2D graphics = thumbnailWidget.thumbnailImage.NewGraphics2D();
+					Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
+					Ellipse outline = new Ellipse(center, Width / 2 - Width / 12);
+					graphics.Render(new Stroke(outline, Width / 12), RGBA_Bytes.White);
+					graphics.DrawString("GCode", center.x, center.y, 8 * Width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
+
+					UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
+					return;
+				}
+				else if (!File.Exists(thumbnailWidget.PrintItem.FileLocation))
+				{
+					CreateImage(thumbnailWidget);
+					thumbnailWidget.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+					Graphics2D graphics = thumbnailWidget.thumbnailImage.NewGraphics2D();
+					Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
+					graphics.DrawString("Missing", center.x, center.y, 8 * Width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
+
+					UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
+					return;
+				}
                 
                 string stlHashCode = thumbnailWidget.PrintItem.StlFileHashCode.ToString();
 
@@ -259,6 +283,27 @@ namespace MatterHackers.MatterControl
                 UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
             }
         }
+
+		private static void CreateImage(PartThumbnailWidget thumbnailWidget)
+		{
+			switch (thumbnailWidget.Size)
+			{
+				case ImageSizes.Size115x115:
+					{
+						thumbnailWidget.thumbnailImage = new ImageBuffer(115, 115, 32, new BlenderBGRA());
+					}
+					break;
+
+				case ImageSizes.Size50x50:
+					{
+						thumbnailWidget.thumbnailImage = new ImageBuffer(50, 50, 32, new BlenderBGRA());
+					}
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
 
         void EnsureImageUpdated(object state)
         {
