@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                     string thingToReplace = "{" + "{0}".FormatWith(name) + "}";
                     gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
                 }
-                // do the replacement with [] (square brackets)
+                // do the replacement with [] (square brackets) Slic3r uses only square brackets
                 {
                     string thingToReplace = "[" + "{0}".FormatWith(name) + "]";
                     gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
