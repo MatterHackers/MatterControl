@@ -126,6 +126,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 refreshComPorts.VAnchor = VAnchor.ParentBottom;
                 refreshComPorts.Click += new EventHandler(RefreshComPorts);
 
+                FlowLayoutWidget comPortContainer = null;
+
+#if !__ANDROID__ 
                 TextWidget comPortLabel = new TextWidget(LocalizedString.Get("Serial Port"), 0, 0, 10);
                 comPortLabel.TextColor = this.defaultTextColor;
 
@@ -134,7 +137,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 comPortLabelWidget.Margin = new BorderDouble(0, 0, 0, 10);
                 comPortLabelWidget.HAnchor = HAnchor.ParentLeftRight;
 
-                FlowLayoutWidget comPortContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+                comPortContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
                 comPortContainer.Margin = new BorderDouble(0);
                 comPortContainer.HAnchor = HAnchor.ParentLeftRight;
                 
@@ -181,7 +184,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     comPortOption.TextColor = this.subContainerTextColor;
                     comPortContainer.AddChild(comPortOption);
                 }
-
+#endif
 
                 TextWidget baudRateLabel = new TextWidget(LocalizedString.Get("Baud Rate"), 0, 0, 10);
                 baudRateLabel.TextColor = this.defaultTextColor;
@@ -208,8 +211,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     enableAutoconnect.Checked = ((StateBeforeRefresh)state).autoConnect;
                 }
 
-				SerialPortControl serialPortScroll = new SerialPortControl();
-				serialPortScroll.AddChild(comPortContainer);
+                SerialPortControl serialPortScroll = new SerialPortControl();
+
+                if (comPortContainer != null) 
+                {
+                    serialPortScroll.AddChild (comPortContainer);
+                }
 
                 ConnectionControlContainer.VAnchor = VAnchor.ParentBottomTop;
                 ConnectionControlContainer.AddChild(printerNameLabel);
