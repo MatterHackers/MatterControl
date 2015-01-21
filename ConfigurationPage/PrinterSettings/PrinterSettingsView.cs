@@ -328,14 +328,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             });
         }
 
-        void openGcodeTerminalButton_Click(object sender, EventArgs mouseEvent)
+		void openGcodeTerminalButton_Click(object sender, EventArgs mouseEvent)
 		{
-
 			UiThread.RunOnIdle((state) =>
-				{
-					TerminalWindow.Show();
-				});
-			
+			{
+				TerminalWindow.Show();
+			});
 		}
 
         private void onPrinterStatusChanged(object sender, EventArgs e)

@@ -135,12 +135,15 @@ namespace MatterHackers.MatterControl
 
         void CreateFilteredList()
         {
-            visibleLines = new List<string>();
-            List<string> allSourceLinesTemp = new List<string>(allSourceLines);
-            foreach (string line in allSourceLinesTemp)
-            {
-                ConditionalyAddToVisible(line);
-            }
+			using (TimedLock.Lock(this, "CreatingFilteredList"))
+			{
+				visibleLines = new List<string>();
+				List<string> allSourceLinesTemp = new List<string>(allSourceLines);
+				foreach (string line in allSourceLinesTemp)
+				{
+					ConditionalyAddToVisible(line);
+				}
+			}
         }
 
         public void SetLineStartFilter(string[] startLineStringsToFilter)
@@ -178,39 +181,42 @@ namespace MatterHackers.MatterControl
             int numLinesToDraw = NumVisibleLines;
 
             double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
-            int startLineIndex = visibleLines.Count - numLinesToDraw;
-            if (forceStartLine != -1)
-            {
-                y = LocalBounds.Top;
+			using (TimedLock.Lock(this, "DrawingLines"))
+			{
+				int startLineIndex = visibleLines.Count - numLinesToDraw;
+				if (forceStartLine != -1)
+				{
+					y = LocalBounds.Top;
 
-                if (forceStartLine > visibleLines.Count - numLinesToDraw)
-                {
-                    forceStartLine = -1;
-                }
-                else
-                {
-                    // make sure we show all the lines we can
-                    startLineIndex = Math.Min(forceStartLine, startLineIndex);
-                }
-            }
-            int endLineIndex = visibleLines.Count;
-            for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
-            {
-                if (lineIndex >= 0)
-                {
-                    if (visibleLines[lineIndex] != null)
-                    {
-                        printer.Text = visibleLines[lineIndex];
-                        printer.Origin = new Vector2(Bounds.Left + 2, y);
-                        printer.Render(graphics2D, TextColor);
-                    }
-                }
-                y -= printer.TypeFaceStyle.EmSizeInPixels;
-                if (y < -printer.TypeFaceStyle.EmSizeInPixels)
-                {
-                    break;
-                }
-            }
+					if (forceStartLine > visibleLines.Count - numLinesToDraw)
+					{
+						forceStartLine = -1;
+					}
+					else
+					{
+						// make sure we show all the lines we can
+						startLineIndex = Math.Min(forceStartLine, startLineIndex);
+					}
+				}
+				int endLineIndex = visibleLines.Count;
+				for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
+				{
+					if (lineIndex >= 0)
+					{
+						if (visibleLines[lineIndex] != null)
+						{
+							printer.Text = visibleLines[lineIndex];
+							printer.Origin = new Vector2(Bounds.Left + 2, y);
+							printer.Render(graphics2D, TextColor);
+						}
+					}
+					y -= printer.TypeFaceStyle.EmSizeInPixels;
+					if (y < -printer.TypeFaceStyle.EmSizeInPixels)
+					{
+						break;
+					}
+				}
+			}
 
             base.OnDraw(graphics2D);
         }
