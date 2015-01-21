@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl
                 }
 				else if (Path.GetExtension(thumbnailWidget.PrintItem.FileLocation).ToUpper() == ".GCODE")
 				{
-					CreateImage(thumbnailWidget);
+					CreateImage(thumbnailWidget, Width, Height);
 					thumbnailWidget.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
 					Graphics2D graphics = thumbnailWidget.thumbnailImage.NewGraphics2D();
 					Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl
 				}
 				else if (!File.Exists(thumbnailWidget.PrintItem.FileLocation))
 				{
-					CreateImage(thumbnailWidget);
+					CreateImage(thumbnailWidget, Width, Height);
 					thumbnailWidget.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
 					Graphics2D graphics = thumbnailWidget.thumbnailImage.NewGraphics2D();
 					Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
@@ -284,25 +284,9 @@ namespace MatterHackers.MatterControl
             }
         }
 
-		private static void CreateImage(PartThumbnailWidget thumbnailWidget)
+		private static void CreateImage(PartThumbnailWidget thumbnailWidget, double Width, double Height)
 		{
-			switch (thumbnailWidget.Size)
-			{
-				case ImageSizes.Size115x115:
-					{
-						thumbnailWidget.thumbnailImage = new ImageBuffer(115, 115, 32, new BlenderBGRA());
-					}
-					break;
-
-				case ImageSizes.Size50x50:
-					{
-						thumbnailWidget.thumbnailImage = new ImageBuffer(50, 50, 32, new BlenderBGRA());
-					}
-					break;
-
-				default:
-					throw new NotImplementedException();
-			}
+			thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
 		}
 
         void EnsureImageUpdated(object state)
