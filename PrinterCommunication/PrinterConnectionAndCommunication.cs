@@ -697,10 +697,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     if (FeedRateRatio != 0)
                     {
-                        return (int)(loadedGCode.Instruction(0).secondsToEndFromHere / FeedRateRatio);
+						return (int)(loadedGCode.TotalSecondsInPrint / FeedRateRatio);
                     }
 
-                    return (int)(loadedGCode.Instruction(0).secondsToEndFromHere);
+					return (int)(loadedGCode.TotalSecondsInPrint);
                 }
 
                 return 0;
@@ -803,9 +803,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     return 100.0;
                 }
-                else if (NumberOfLinesInCurrentPrint > 0 && TotalSecondsInPrint > 0)
+                else if (NumberOfLinesInCurrentPrint > 0)
                 {
-                    return Math.Min(99.9, ((1 - ((double)SecondsRemaining / (double)TotalSecondsInPrint)) * 100));
+					return Math.Min(99.9, (double)printerCommandQueueIndex / (double)NumberOfLinesInCurrentPrint * 100);
                 }
                 else
                 {
