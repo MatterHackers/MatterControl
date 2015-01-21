@@ -773,10 +773,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 {
                     parent = parent.Parent;
                 }
+				UnHookWidgetThatHasKeyDownHooked();
                 parent.KeyDown += Parent_KeyDown;
                 widgetThatHasKeyDownHooked = parent;
             }
         }
+
+		void UnHookWidgetThatHasKeyDownHooked()
+		{
+			if (widgetThatHasKeyDownHooked != null)
+			{
+				widgetThatHasKeyDownHooked.KeyDown -= Parent_KeyDown;
+			}
+		}
 
         void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
         {
@@ -982,10 +991,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         public override void OnClosed(EventArgs e)
         {
-            if (widgetThatHasKeyDownHooked != null)
-            {
-                widgetThatHasKeyDownHooked.KeyDown -= Parent_KeyDown;
-            }
+			UnHookWidgetThatHasKeyDownHooked();
 
             if (unregisterEvents != null)
             {
