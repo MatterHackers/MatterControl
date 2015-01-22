@@ -227,7 +227,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				ConnectionControlContainer.AddChild(serialPortScroll);
                 ConnectionControlContainer.AddChild(baudRateLabel);
                 ConnectionControlContainer.AddChild(baudRateWidget);
+#if !__ANDROID__ 
                 ConnectionControlContainer.AddChild(enableAutoconnect);
+#endif
             }
 
             FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
