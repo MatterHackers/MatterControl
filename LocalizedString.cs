@@ -65,6 +65,11 @@ namespace MatterHackers.Localizations
             return MatterControlTranslationMap.Translate(englishText);
         }
 
+		public static void ResetTranslationMap()
+		{
+			MatterControlTranslationMap = null;
+		}
+
         public static string Localize(this string englishString)
         {
             return Get(englishString);
