@@ -398,7 +398,7 @@ namespace MatterHackers.MatterControl
         {
             if (ActivePrinterProfile.Instance.DoPrintLeveling)
             {
-                GCodeFile unleveledGCode = new GCodeFile(source);
+				GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(source);
                 if (applyLeveling.Checked)
                 {
                     PrintLevelingPlane.Instance.ApplyLeveling(unleveledGCode);

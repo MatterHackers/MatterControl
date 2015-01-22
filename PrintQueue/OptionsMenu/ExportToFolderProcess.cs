@@ -177,11 +177,6 @@ namespace MatterHackers.MatterControl.PrintQueue
                                     }
                                 }
                             }
-                            if (!foundAmountInGCode)
-                            {
-                                GCodeFile gcodeFile = new GCodeFile(gcodeFileName);
-                                total += gcodeFile.GetFilamentCubicMm(ActiveSliceSettings.Instance.FilamentDiameter) / 1000;
-                            }
                         }
                     }
 
@@ -195,7 +190,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                         if (ActivePrinterProfile.Instance.DoPrintLeveling)
                         {
-                            GCodeFile unleveledGCode = new GCodeFile(savedGcodeFileName);
+							GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(savedGcodeFileName);
                             PrintLevelingPlane.Instance.ApplyLeveling(unleveledGCode);
                             unleveledGCode.Save(outputPathAndName);
                         }

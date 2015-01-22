@@ -55,9 +55,21 @@ namespace MatterHackers.MatterControl
             }
         }
 
+		static bool Is32Bit()
+		{
+			if (IntPtr.Size == 4)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+
         public List<string> PrinterLines = new List<string>();
 
         public RootedObjectEventHandler HasChanged = new RootedObjectEventHandler();
+		int maxLinesToBuffer = int.MaxValue - 1;
 
         event EventHandler unregisterEvents;
         PrinterOutputCache()
@@ -65,11 +77,20 @@ namespace MatterHackers.MatterControl
             PrinterConnectionAndCommunication.Instance.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
+			if (Is32Bit())
+			{
+				// About 10 megs worth. Average line length in gcode file is about 14 and we store strings as chars (16 bit) so 450,000 lines.
+				maxLinesToBuffer = 450000;
+			}
         }
 
         void OnHasChanged(EventArgs e)
         {
             HasChanged.CallEvents(this, e);
+			if (PrinterLines.Count > maxLinesToBuffer)
+			{
+				Clear();
+			}
         }
 
         void FromPrinter(Object sender, EventArgs e)
