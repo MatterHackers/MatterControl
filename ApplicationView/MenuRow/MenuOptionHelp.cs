@@ -87,8 +87,8 @@ namespace MatterHackers.MatterControl
         bool help_Click()
         {
             UiThread.RunOnIdle((state) =>
-            {   
-                System.Diagnostics.Process.Start("http://www.mattercontrol.com/articles");
+            {
+				MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles");
             });
             return true;
         }
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle((state) =>
 				{
-					System.Diagnostics.Process.Start("http://wiki.mattercontrol.com/Release_Notes");
+					MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
 				});            
 			return true;
 		}
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
         {
             UiThread.RunOnIdle((state) =>
             {
-                System.Diagnostics.Process.Start("http://www.mattercontrol.com/articles/mattercontrol-getting-started");
+				MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles/mattercontrol-getting-started");
             });
             
             return true;

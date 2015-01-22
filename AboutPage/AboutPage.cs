@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl
                         linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
                         linkButton.Click += (sender, mouseEvent) => 
                         {
-                            System.Diagnostics.Process.Start(elementState.Href); 
+							MatterControlApplication.Instance.LaunchBrowser(elementState.Href); 
                         };
                         currentRow.AddChild(linkButton);
                     }

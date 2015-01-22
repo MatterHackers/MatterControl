@@ -81,6 +81,8 @@ namespace MatterHackers.MatterControl
 					}
 
 					instance = new MatterControlApplication(width, height);
+
+					instance.ShowAsSystemWindow();
 				}
 
 				return instance;
@@ -95,6 +97,14 @@ namespace MatterHackers.MatterControl
             // Initialize a standard file system backed StaticData provider
             StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
         }
+
+		public void LaunchBrowser(string targetUri)
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				System.Diagnostics.Process.Start(targetUri);
+			});
+		}
 
         public void OpenCameraPreview()
         {
@@ -280,8 +290,6 @@ namespace MatterHackers.MatterControl
                 int ypos = Math.Max(int.Parse(sizes[1]), -10);
                 DesktopPosition = new Point2D(xpos, ypos);
             }
-
-            ShowAsSystemWindow();
         }
 
 		private static void WriteMove(StreamWriter file, Vector2 center)
