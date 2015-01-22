@@ -363,15 +363,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         {
             UiThread.RunOnIdle((state) =>
             {
-                //horrible hack - to be replaced
+                // Iterate to the top SystemWindow
                 GuiWidget parent = this;
-                while (parent as MatterControlApplication == null)
+                while (parent.Parent != null)
                 {
                     parent = parent.Parent;
                 }
-                MatterControlApplication app = parent as MatterControlApplication;
+
+                // MatterControlApplication is the root child on the SystemWindow object
+                MatterControlApplication app = parent.Children[0] as MatterControlApplication;
+#if !__ANDROID__ 
                 app.RestartOnClose = true;
                 app.Close();
+#else
+                // Re-initialize and load
+                LocalizedString.ResetTranslationMap();
+                ApplicationController.Instance.MainView = new CompactApplicationView();
+                app.RemoveAllChildren();
+                app.AddChild(new SoftKeyboardContentOffset(ApplicationController.Instance.MainView, 280));
+                app.AnchorAll();
+#endif
             });
         }
 
