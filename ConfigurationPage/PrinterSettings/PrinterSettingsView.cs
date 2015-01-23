@@ -7,6 +7,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -17,7 +18,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
     public class HardwareSettingsWidget : SettingsViewBase
     {
-        Button configureAutoLevelButton;
         Button configureEePromButton;
 		Button openGcodeTerminalButton;
 		Button openCameraButton;
@@ -36,10 +36,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             eePromControlsContainer.AddChild(GetEEPromControl());
             terminalCommunicationsContainer = new DisableableWidget();
 			terminalCommunicationsContainer.AddChild(GetGcodeTerminalControl());
-            printLevelingContainer = new DisableableWidget();
-            printLevelingContainer.AddChild(GetAutoLevelControl());
 
-            mainContainer.AddChild(printLevelingContainer); 
+			printLevelingContainer = new DisableableWidget();
+			if (!ActiveSliceSettings.Instance.HasHardwareLeveling())
+			{
+				printLevelingContainer.AddChild(GetAutoLevelControl());
+
+				mainContainer.AddChild(printLevelingContainer);
+			}
+
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             mainContainer.AddChild(eePromControlsContainer);
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -70,9 +75,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
             buttonRow.Margin = new BorderDouble(0,4);
 
-            configureAutoLevelButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+            Button configureAutoLevelButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
             configureAutoLevelButton.Margin = new BorderDouble(left: 6);
             configureAutoLevelButton.VAnchor = VAnchor.ParentCenter;
+			configureAutoLevelButton.Click += new EventHandler(configureAutoLevelButton_Click);
 
             TextWidget notificationSettingsLabel = new TextWidget("Automatic Print Leveling");
             notificationSettingsLabel.AutoExpandBoundsToText = true;
@@ -262,7 +268,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         private void AddHandlers()
         {
-            configureAutoLevelButton.Click += new EventHandler(configureAutoLevelButton_Click);
             configureEePromButton.Click += new EventHandler(configureEePromButton_Click);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);

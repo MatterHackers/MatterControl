@@ -228,12 +228,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
         }
 
-        public bool HasFan()
-        {
-            return GetActiveValue("has_fan") == "1";
-        }
+		public bool HasFan()
+		{
+			return GetActiveValue("has_fan") == "1";
+		}
 
-        public bool HasSdCardReader()
+		public bool HasHardwareLeveling()
+		{
+			return GetActiveValue("has_hardware_leveling") == "1";
+		}
+
+		public bool HasSdCardReader()
         {
             return GetActiveValue("has_sd_card_reader") == "1";
         }

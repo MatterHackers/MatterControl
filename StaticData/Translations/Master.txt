@@ -3086,3 +3086,9 @@ Translated:Please wait. Sending files...
 English:File too big to load.
 Translated:File too big to load.
 
+English:Specify if your printer has the ability to do print leveling directly (support for G29).
+Translated:Specify if your printer has the ability to do print leveling directly (support for G29).
+
+English:Has Hardware Leveling
+Translated:Has Hardware Leveling
+

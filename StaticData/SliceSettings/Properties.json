@@ -386,6 +386,13 @@
     "ExtraSettings": "bridge_fan_speed,disable_fan_first_layers,fan_always_on,fan_below_layer_time,max_fan_speed,min_fan_speed"
   },
   {
+    "SlicerConfigName": "has_hardware_leveling",
+    "PresentationName": "Has Hardware Leveling",
+    "HelpText": "Specify if your printer has the ability to do print leveling directly (support for G29).",
+    "DataEditType": "HARDWARE_PRESENT",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "has_heated_bed",
     "PresentationName": "Has Heated Bed",
     "HelpText": "Specify if your printer has a heated bed.",
