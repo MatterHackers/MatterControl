@@ -56,15 +56,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
             if (StaticData.Instance.FileExists(arrowFile))
             {
-                using(Stream arrowStream = StaticData.Instance.OpenSteam(arrowFile))
-                { 
-                    List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
-                    upArrow = loadedMeshGroups[0].Meshes[0];
+                using(Stream staticDataStream = StaticData.Instance.OpenSteam(arrowFile))
+                {
+					using (MemoryStream arrowStream = new MemoryStream())
+					{
+						staticDataStream.CopyTo(arrowStream, 1 << 16);
+						List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile));
+						upArrow = loadedMeshGroups[0].Meshes[0];
 
-                    CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
-                    AxisAlignedBoundingBox arrowBounds = upArrow.GetAxisAlignedBoundingBox();
-                    //CollisionVolume = new CylinderShape(arrowBounds.XSize / 2, arrowBounds.ZSize, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
-                    //CollisionVolume = new CylinderShape(arrowBounds.XSize / 2 * 4, arrowBounds.ZSize * 4, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
+						CollisionVolume = PlatingHelper.CreateTraceDataForMesh(upArrow);
+						AxisAlignedBoundingBox arrowBounds = upArrow.GetAxisAlignedBoundingBox();
+						//CollisionVolume = new CylinderShape(arrowBounds.XSize / 2, arrowBounds.ZSize, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
+						//CollisionVolume = new CylinderShape(arrowBounds.XSize / 2 * 4, arrowBounds.ZSize * 4, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
+					}
                 }
             }
         }
