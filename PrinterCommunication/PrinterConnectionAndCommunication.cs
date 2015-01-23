@@ -306,35 +306,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         int lastRemainingSecondsReported = 0;
         int printerCommandQueueIndex = -1;
 
-        public bool DtrEnableOnConnect
-        {
-            get
-            {
-                if (ActivePrinter != null)
-                {
-                    //return !ActivePrinter.SuppressDtrOnConnect;
-                }
-
-                return true;
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-#if false
-                if (ActivePrinter != null)
-                {
-                    bool enableDtrOnConnect = !ActivePrinter.SuppressDtrOnConnect;
-                    if (enableDtrOnConnect != value)
-                    {
-                        ActivePrinter.SuppressDtrOnConnect = !value;
-                        ActivePrinter.Commit();
-                    }
-                }
-#endif
-            }
-        }
-
         Vector3 currentDestination;
         Vector3 lastReportedPosition;
 
@@ -1598,7 +1569,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     try
                     {
-                        serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, DtrEnableOnConnect);
+                        serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, true);
 
                         readFromPrinterThread = new Thread(ReadFromPrinter);
                         readFromPrinterThread.Name = "Read From Printer";
@@ -1607,6 +1578,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					
 						// We have to send a line because some printers (like old printrbots) do not send anything when connecting and there is no other way to know they are there.
 						SendLineToPrinterNow("M105");
+						SendLineToPrinterNow("M115");
 					}
                     catch (System.ArgumentOutOfRangeException)
                     {
@@ -1953,36 +1925,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     OnConnectionFailed(null);
                 }
-            }
-        }
-
-        public void PulseRtsLow()
-        {
-            if (serialPort == null && this.ActivePrinter != null)
-            {   
-                serialPort = FrostedSerialPort.Create(this.ActivePrinter.ComPort);
-                serialPort.BaudRate = this.BaudRate;
-                if (PrinterConnectionAndCommunication.Instance.DtrEnableOnConnect)
-                {
-                    serialPort.DtrEnable = true;
-                }
-
-                // Set the read/write timeouts
-                serialPort.ReadTimeout = 500;
-                serialPort.WriteTimeout = 500;
-                serialPort.Open();
-                
-                serialPort.RtsEnable = true;
-                serialPort.RtsEnable = false;
-                try
-                {
-                    Thread.Sleep(1);
-                }
-                catch
-                {
-                }
-                serialPort.RtsEnable = true;
-                serialPort.Close();
             }
         }
 
