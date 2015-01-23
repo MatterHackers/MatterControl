@@ -80,9 +80,13 @@ namespace MatterHackers.MatterControl
 						height = Math.Max(int.Parse(sizes[1]), (int)minSize.y+1);
 					}
 
-					instance = new MatterControlApplication(width, height);
+					bool showWindow;
+					instance = new MatterControlApplication(width, height, out showWindow);
 
-					instance.ShowAsSystemWindow();
+					if (showWindow)
+					{
+						instance.ShowAsSystemWindow();
+					}
 				}
 
 				return instance;
@@ -127,9 +131,11 @@ namespace MatterHackers.MatterControl
             }
         }
 
-        private MatterControlApplication(double width, double height)
+        private MatterControlApplication(double width, double height, out bool showWindow)
             : base(width, height)
         {
+			showWindow = false;
+ 
             // set this at startup so that we can tell next time if it got set to true in close
             UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
 
@@ -139,7 +145,7 @@ namespace MatterHackers.MatterControl
             for(int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
             {
                 string command = commandLineArgs[currentCommandIndex];
-                string commandUpper = command.ToUpper();
+				string commandUpper = command.ToUpper();
                 switch (commandUpper)
                 {
                     case "TEST":
@@ -290,6 +296,8 @@ namespace MatterHackers.MatterControl
                 int ypos = Math.Max(int.Parse(sizes[1]), -10);
                 DesktopPosition = new Point2D(xpos, ypos);
             }
+
+			showWindow = true;
         }
 
 		private static void WriteMove(StreamWriter file, Vector2 center)
