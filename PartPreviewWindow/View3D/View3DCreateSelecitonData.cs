@@ -120,11 +120,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             if (DoAddFileAfterCreatingEditData)
             {
                 FileDialog.OpenFileDialog(
-                    new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-                    (openParams) =>
-                    {
-                        LoadAndAddPartsToPlate(openParams.FileNames);
-                    });
+					new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+					(openParams) =>
+					{
+						LoadAndAddPartsToPlate(openParams.FileNames);
+					});
+				DoAddFileAfterCreatingEditData = false;
             }
             else if (pendingPartsToLoad.Count > 0)
             {
