@@ -75,6 +75,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         {
             //avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
             new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
+
+			new MapItemToBool("outsidePerimetersFirst", "external_perimeters_first"),
              
             //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
             new MapItem("bottomClipAmount", "bottom_clip_amount"),
