@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl.PrintHistory
     public class PrintHistoryDataView : ScrollableWidget
     {
         public bool ShowTimestamp;
+		public event EventHandler DoneLoading;
 
         private void SetDisplayAttributes()
         {
@@ -91,8 +92,17 @@ namespace MatterHackers.MatterControl.PrintHistory
                     AddChild(new PrintHistoryListItem(part, ShowTimestamp));
                 }
             }
+
+			OnDoneLoading(null);
         }
 
+		void OnDoneLoading(EventArgs e)
+		{
+			if (DoneLoading != null)
+			{
+				DoneLoading(this, e);
+			}
+		}
 
         protected FlowLayoutWidget topToBottomItemList;
        

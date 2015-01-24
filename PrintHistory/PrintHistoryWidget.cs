@@ -55,6 +55,9 @@ namespace MatterHackers.MatterControl.PrintHistory
         CheckBox showTimestampCheckbox;
         PrintHistoryDataView historyView;
 
+		TextWidget completedPrintsCount;
+		TextWidget totalPrintTime;
+
         public PrintHistoryWidget()
         {
             SetDisplayAttributes();
@@ -75,7 +78,9 @@ namespace MatterHackers.MatterControl.PrintHistory
                 showOnlyCompletedCheckbox.Width = 200;
 
                 completedStatsContainer.AddChild(new TextWidget("Completed Prints:".Localize() + " ", pointSize: 10, textColor: historyPanelTextColor));
-                completedStatsContainer.AddChild(new TextWidget(GetCompletedPrints().ToString(), pointSize: 14, textColor: historyPanelTextColor));
+				completedPrintsCount = new TextWidget(GetCompletedPrints().ToString(), pointSize: 14, textColor: historyPanelTextColor);
+				completedPrintsCount.AutoExpandBoundsToText = true;
+				completedStatsContainer.AddChild(completedPrintsCount);
                 completedStatsContainer.AddChild(new HorizontalSpacer());
                 completedStatsContainer.AddChild(showOnlyCompletedCheckbox);
 
@@ -90,7 +95,8 @@ namespace MatterHackers.MatterControl.PrintHistory
                 showTimestampCheckbox.Width = 200;
 
                 historyStatsContainer.AddChild(new TextWidget("Total Print Time:".Localize() + " ", pointSize: 10, textColor: historyPanelTextColor));
-                historyStatsContainer.AddChild(new TextWidget(GetPrintTimeString(), pointSize: 14, textColor: historyPanelTextColor));
+				totalPrintTime = new TextWidget(GetPrintTimeString(), pointSize: 14, textColor: historyPanelTextColor);
+				historyStatsContainer.AddChild(totalPrintTime);
                 historyStatsContainer.AddChild(new HorizontalSpacer());
                 historyStatsContainer.AddChild(showTimestampCheckbox);
                 
@@ -113,6 +119,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                 allControls.AddChild(searchPanel);
                 historyView = new PrintHistoryDataView();
+				historyView.DoneLoading += historyView_DoneLoading;
                 allControls.AddChild(historyView);
                 allControls.AddChild(buttonPanel);
             }
@@ -122,6 +129,17 @@ namespace MatterHackers.MatterControl.PrintHistory
 
             AddHandlers();
         }
+
+		void historyView_DoneLoading(object sender, EventArgs e)
+		{
+			UpdateCompletedCount();
+		}
+
+		void UpdateCompletedCount()
+		{
+			completedPrintsCount.Text = GetCompletedPrints().ToString();
+			totalPrintTime.Text = GetPrintTimeString();
+		}
 
         private void AddHandlers()
         {
@@ -170,7 +188,6 @@ namespace MatterHackers.MatterControl.PrintHistory
             var results = DataStorage.Datastore.Instance.dbSQLite.ExecuteScalar<int>(query);
             return results;
         }
-
 
         private string GetPrintTimeString()
         {
