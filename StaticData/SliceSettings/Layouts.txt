@@ -60,6 +60,8 @@ Advanced
         perimeters
         avoid_crossing_perimeters
         spiral_vase
+        randomize_start
+        external_perimeters_first
       Top & Bottom Layers
         top_solid_layers
         bottom_solid_layers
@@ -68,9 +70,6 @@ Advanced
         start_perimeters_at_concave_points
         start_perimeters_at_non_overhang
         thin_walls
-      Advanced
-        randomize_start
-        external_perimeters_first
     Infill
       Infill
         fill_density
