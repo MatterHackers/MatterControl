@@ -1928,6 +1928,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
+        public void PulseRtsLow()
+        {
+            if (serialPort == null && this.ActivePrinter != null)
+            {   
+                serialPort = FrostedSerialPort.Create(this.ActivePrinter.ComPort);
+                serialPort.BaudRate = this.BaudRate;
+
+                // Set the read/write timeouts
+                serialPort.ReadTimeout = 500;
+                serialPort.WriteTimeout = 500;
+                serialPort.Open();
+                
+                serialPort.RtsEnable = true;
+                serialPort.RtsEnable = false;
+                try
+                {
+                    Thread.Sleep(1);
+                }
+                catch
+                {
+                }
+                serialPort.RtsEnable = true;
+                serialPort.Close();
+            }
+        }
         /// <summary>
         /// Abort an ongoing attempt to establish communcation with a printer due to the specified problem. This is a specialized
         /// version of the functionality that's previously been in .Disable but focused specifically on the task of aborting an 
