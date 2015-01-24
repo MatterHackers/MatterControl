@@ -1575,53 +1575,73 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
-        public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
-        {
-            foreach (string file in fileDropEventArgs.DroppedFiles)
-            {
-                string extension = Path.GetExtension(file).ToUpper();
-                if (MeshFileIo.ValidFileExtensions().Contains(extension))
-                {
-                    fileDropEventArgs.AcceptDrop = true;
-                }
-            }
-            base.OnDragEnter(fileDropEventArgs);
-        }
+		bool AllowDragDrop()
+		{
+			if (!enterEditButtonsContainer.Visible
+				&& !doEdittingButtonsContainer.Visible)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+		{
+			if (AllowDragDrop())
+			{
+				foreach (string file in fileDropEventArgs.DroppedFiles)
+				{
+					string extension = Path.GetExtension(file).ToUpper();
+					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					{
+						fileDropEventArgs.AcceptDrop = true;
+					}
+				}
+			}
+			base.OnDragEnter(fileDropEventArgs);
+		}
 
         public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
         {
-            foreach (string file in fileDropEventArgs.DroppedFiles)
-            {
-                string extension = Path.GetExtension(file).ToUpper();
-                if (MeshFileIo.ValidFileExtensions().Contains(extension))
-                {
-                    fileDropEventArgs.AcceptDrop = true;
-                }
-            }
+			if (AllowDragDrop())
+			{
+				foreach (string file in fileDropEventArgs.DroppedFiles)
+				{
+					string extension = Path.GetExtension(file).ToUpper();
+					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					{
+						fileDropEventArgs.AcceptDrop = true;
+					}
+				}
+			}
             base.OnDragOver(fileDropEventArgs);
         }
 
         public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
         {
-            pendingPartsToLoad.Clear();
-            foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
-            {
-                string extension = Path.GetExtension(droppedFileName).ToUpper();
-                if (MeshFileIo.ValidFileExtensions().Contains(extension))
-                {
-                    pendingPartsToLoad.Add(droppedFileName);
-                }
-            }
+			if (AllowDragDrop())
+			{
+				pendingPartsToLoad.Clear();
+				foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
+				{
+					string extension = Path.GetExtension(droppedFileName).ToUpper();
+					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					{
+						pendingPartsToLoad.Add(droppedFileName);
+					}
+				}
 
-            bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
-            if (enterEditModeBeforeAddingParts)
-            {
-                EnterEditAndCreateSelectionData();
-            }
-            else
-            {
-                LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-            }
+				bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
+				if (enterEditModeBeforeAddingParts)
+				{
+					EnterEditAndCreateSelectionData();
+				}
+				else
+				{
+					LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+				}
+			}
 
             base.OnDragDrop(fileDropEventArgs);
         }
