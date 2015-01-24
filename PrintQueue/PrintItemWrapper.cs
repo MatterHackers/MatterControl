@@ -187,7 +187,9 @@ namespace MatterHackers.MatterControl.PrintQueue
                                 readData[i] = fileSizeAsBytes[i];
                             }
 
-                            this.stlFileHashCode = agg_basics.ComputeHash(readData);
+							int hashCode = agg_basics.ComputeHash(readData);
+							int fileSizeInt = (int)sizeOfFile;
+							this.stlFileHashCode = new { hashCode, currentWriteTime, fileSizeInt }.GetHashCode();
                         }
                     }
                 }
