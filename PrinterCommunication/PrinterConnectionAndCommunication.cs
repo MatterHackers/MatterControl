@@ -2069,7 +2069,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         string[] splitOnSemicolon = lineToWrite.Split(';');
                         string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
 
-						if (lineToWrite.Contains("M114"))
+						if (lineToWrite.Contains("M114") 
+							&& CommunicationState != CommunicationStates.PrintingToSd)
 						{
 							waitingForPosition = true;
 						}

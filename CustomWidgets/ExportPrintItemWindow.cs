@@ -293,6 +293,7 @@ namespace MatterHackers.MatterControl
 								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 								if (fileEnd.Contains("filament used"))
 								{
+									System.Threading.Thread.Sleep(10000);
 									PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
 									return;
 								}
