@@ -90,7 +90,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
 
                 printItemWrapper.PrintItem.Commit();
-            }
+			
+				// let the queue know that the item has changed so it load the correct part
+				QueueData.Instance.SaveDefaultQueue();
+			}
 
             printItemWrapper.OnFileHasChanged();
         }

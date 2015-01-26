@@ -659,7 +659,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
                 // when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
                 MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
-				if (PartShouldBeCentered(printItemWrapper))
+				if (!PartShouldBeCentered(printItemWrapper))
                 {
                     centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
                 }
