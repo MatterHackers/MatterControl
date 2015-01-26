@@ -74,11 +74,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups)
+        static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
         {
+			string[] metaData = { "Created By", "MatterControl" };
+			if (AbsolutePositioned)
+			{
+				metaData = new string[] { "Created By", "MatterControl", "BedPosition", "Absolute" };
+			}
             if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
             {
-                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
+                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
                 MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
             }
             else // save a copy to the library and update this to point at it
@@ -86,7 +91,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
                 printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, new string[] { "Created By", "MatterControl" });
+                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
                 MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
 
                 printItemWrapper.PrintItem.Commit();
@@ -284,22 +289,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
             this.fileLoadReportProgress = reportProgress;
             if (files != null && files.Count > 0)
             {
-                BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
-                mergeAndSavePartsBackgroundWorker.WorkerReportsProgress = true;
+                BackgroundWorker loadFilesIntoLibraryBackgroundWorker = new BackgroundWorker();
+                loadFilesIntoLibraryBackgroundWorker.WorkerReportsProgress = true;
 
-                mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
-                mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
+                loadFilesIntoLibraryBackgroundWorker.DoWork += new DoWorkEventHandler(loadFilesIntoLibraryBackgoundWorker_DoWork);
+                loadFilesIntoLibraryBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted);
 
                 if (callback != null)
                 {
-                    mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += callback;
+                    loadFilesIntoLibraryBackgroundWorker.RunWorkerCompleted += callback;
                 }
 
-                mergeAndSavePartsBackgroundWorker.RunWorkerAsync(files);
+                loadFilesIntoLibraryBackgroundWorker.RunWorkerAsync(files);
             }
         }
 
-        void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        void loadFilesIntoLibraryBackgoundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             IList<string> fileList = e.Argument as IList<string>;
             foreach (string loadedFileName in fileList)
@@ -321,7 +326,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                         try
                         {
                             PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-                            LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave);
+                            LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
                             LibraryData.Instance.AddItem(printItemWrapper);
                         }
                         catch (System.UnauthorizedAccessException)
@@ -349,7 +354,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             }
         }
 
-        void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        void loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
         }
    }

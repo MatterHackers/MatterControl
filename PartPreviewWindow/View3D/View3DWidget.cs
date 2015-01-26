@@ -687,7 +687,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							byte[] buffer = new byte[bufferSize];
 							int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
 							string startingContent = System.Text.Encoding.UTF8.GetString(buffer);
-							if (startingContent.Contains("MatterControl"))
+							if (startingContent.Contains("BedPosition") && startingContent.Contains("Absolute"))
 							{
 								return false;
 							}
@@ -2044,7 +2044,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     BackgroundWorker_ProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
                 }
 
-                LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups);
+                LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
             }
             catch (System.UnauthorizedAccessException)
             {
