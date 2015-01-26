@@ -3092,3 +3092,9 @@ Translated:Specify if your printer has the ability to do print leveling directly
 English:Has Hardware Leveling
 Translated:Has Hardware Leveling
 
+English:The Fill Density must be between 0 and 1 inclusive.
+Translated:The Fill Density must be between 0 and 1 inclusive.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
+

@@ -20,7 +20,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
     public class TemperatureControls : ControlWidgetBase
     {
-
         public List<DisableableWidget> ExtruderWidgetContainers = new List<DisableableWidget>();
         public DisableableWidget BedTemperatureControlWidget;
 
@@ -55,7 +54,6 @@ namespace MatterHackers.MatterControl.PrinterControls
                     mainContainer.AddChild(extruderTemperatureControlWidget);
                     mainContainer.AddChild(new HorizontalLine(separatorLineColor));
                     ExtruderWidgetContainers.Add(extruderTemperatureControlWidget);
-
                 }
             }
             else

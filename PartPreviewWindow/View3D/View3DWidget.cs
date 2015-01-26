@@ -659,7 +659,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 // parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
                 // when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
                 MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
-                if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+				if (PartShouldBeCentered(printItemWrapper))
                 {
                     centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
                 }
@@ -671,6 +671,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             partHasBeenEdited = false;
         }
+
+		private static bool PartShouldBeCentered(PrintItemWrapper printItemWrapper)
+		{
+			if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+			{
+				if (File.Exists(printItemWrapper.FileLocation))
+				{
+					using (Stream uncompressedFileStream = File.OpenRead(printItemWrapper.FileLocation))
+					{
+						using (Stream fileStream = AmfProcessing.GetCompressedStreamIfRequired(uncompressedFileStream))
+						{
+							// read up the first 32k and make sure it says the file was created my MatterControl
+							int bufferSize = 32000;
+							byte[] buffer = new byte[bufferSize];
+							int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+							string startingContent = System.Text.Encoding.UTF8.GetString(buffer);
+							if (startingContent.Contains("MatterControl"))
+							{
+								return false;
+							}
+						}
+					}
+				}
+			}
+
+			return true;
+		}
 
         void ExitEditingAndSaveIfRequired(bool response)
         {

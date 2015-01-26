@@ -186,8 +186,7 @@ namespace MatterHackers.MatterControl
                     // put in the target temperature controls
                     temperatureIndicator.AddChild(GetTargetTemperatureDisplay());
 
-                    FlowLayoutWidget helperTextWidget = GetHelpTextWidget();
-                    
+                    FlowLayoutWidget helperTextWidget = GetHelpTextWidget();                    
 
                     GuiWidget hspacer = new GuiWidget();
                     hspacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;

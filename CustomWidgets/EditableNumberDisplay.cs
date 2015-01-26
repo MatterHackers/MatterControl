@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl
             : base(Agg.UI.FlowDirection.LeftToRight)
         {
             this.Margin = new BorderDouble(3, 0);
-            this.VAnchor |= VAnchor.ParentBottomTop;
+			this.VAnchor = VAnchor.ParentCenter;
 
             clickableValueContainer = new ClickWidget();
             clickableValueContainer.VAnchor = VAnchor.ParentBottomTop;
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
             setButton.Margin = new BorderDouble(left: 6);
             setButton.Visible = false;
 
-            numberInputField.ActuallNumberEdit.EnterPressed += new KeyEventHandler(ActuallNumberEdit_EnterPressed);
+			numberInputField.ActuallNumberEdit.EnterPressed += new KeyEventHandler(ActuallNumberEdit_EnterPressed);
 
             numberInputField.KeyDown += (sender, e) =>
             {

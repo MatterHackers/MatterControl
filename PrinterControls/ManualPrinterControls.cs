@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
         static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
-
         
         public ManualPrinterControls()
         {
