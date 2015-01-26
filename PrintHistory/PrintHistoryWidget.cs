@@ -96,6 +96,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
                 historyStatsContainer.AddChild(new TextWidget("Total Print Time:".Localize() + " ", pointSize: 10, textColor: historyPanelTextColor));
 				totalPrintTime = new TextWidget(GetPrintTimeString(), pointSize: 14, textColor: historyPanelTextColor);
+				totalPrintTime.AutoExpandBoundsToText = true;
 				historyStatsContainer.AddChild(totalPrintTime);
                 historyStatsContainer.AddChild(new HorizontalSpacer());
                 historyStatsContainer.AddChild(showTimestampCheckbox);
