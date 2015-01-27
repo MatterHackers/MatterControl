@@ -1226,18 +1226,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             });
             buttonList.Add("Save As", () =>
             {
-                if (saveAsWindow == null)
-                {
-                    saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
-                    saveAsWindow.Closed += (sender2, e2) =>
-                    {
-                        saveAsWindow = null;
-                    };
-                }
-                else
-                {
-                    saveAsWindow.BringToFront();
-                }
+				UiThread.RunOnIdle(OpenSaveAsWindow);
                 return true;
             });
             SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
@@ -1250,6 +1239,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             flowToAddTo.AddChild(saveButtons);
         }
+
+		void OpenSaveAsWindow(object state)
+		{
+			if (saveAsWindow == null)
+			{
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
+			}
+			else
+			{
+				saveAsWindow.BringToFront();
+			}
+		}
+
+		void SaveAsWindow_Closed(object sender, EventArgs e)
+		{
+			this.saveAsWindow = null;
+		}
 
         public void PartHasBeenChanged()
         {
