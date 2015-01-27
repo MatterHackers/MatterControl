@@ -198,11 +198,14 @@ namespace MatterHackers.MatterControl.CreatorPlugins
                 CreatorInformation callCorrectFunctionHold = creatorInfo;
                 pluginRow.Click += (sender, e) =>
                 {
-                    if (RegisteredCreators.Instance.Creators.Count > 0)
-                    {
-                        callCorrectFunctionHold.functionToLaunchCreator(null, null);
-                    }
-                    UiThread.RunOnIdle(CloseOnIdle);
+					if (RegisteredCreators.Instance.Creators.Count > 0)
+					{
+						UiThread.RunOnIdle(CloseOnIdle, callCorrectFunctionHold);
+					}
+					else
+					{
+						UiThread.RunOnIdle(CloseOnIdle);
+					}
                 };
 
                 pluginRow.Cursor = Cursors.Hand;
@@ -256,6 +259,14 @@ namespace MatterHackers.MatterControl.CreatorPlugins
         void CloseOnIdle(object state)
         {
             Close();
+			CreatorInformation callCorrectFunctionHold = state as CreatorInformation;
+			if (callCorrectFunctionHold != null)
+			{
+				UiThread.RunOnIdle((state2) =>
+				{
+					callCorrectFunctionHold.functionToLaunchCreator(null, null);
+				});
+			}
         }
     }
 }
