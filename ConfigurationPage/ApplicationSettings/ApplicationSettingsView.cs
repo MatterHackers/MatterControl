@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 LocalizedString.ResetTranslationMap();
                 ApplicationController.Instance.MainView = new CompactApplicationView();
                 app.RemoveAllChildren();
-                app.AddChild(new SoftKeyboardContentOffset(ApplicationController.Instance.MainView, 280));
+                app.AddChild(new SoftKeyboardContentOffset(ApplicationController.Instance.MainView, SoftKeyboardContentOffset.AndroidKeyboardOffset));
                 app.AnchorAll();
 #endif
             });
