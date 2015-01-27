@@ -461,8 +461,8 @@ namespace MatterHackers.MatterControl
                     textWidget.Padding = new BorderDouble(3, 0);
                     this.AddChild(textWidget);
                 }
-                this.Height = 40;
-                this.Width = 40;
+                this.Height = 40 * TextWidget.GlobalPointSizeScaleRatio;
+				this.Width = 40 * TextWidget.GlobalPointSizeScaleRatio;
             }
 
             public override void OnDraw(Graphics2D graphics2D)
@@ -494,7 +494,7 @@ namespace MatterHackers.MatterControl
             public MoveButton Generate(string label, PrinterConnectionAndCommunication.Axis axis, double movementFeedRate)
             {
                 //Create button based on view container widget
-                ButtonViewStates buttonViewWidget = getButtonView(label);
+                ButtonViewStates buttonViewWidget = GetButtonView(label);
                 MoveButton textImageButton = new MoveButton(0, 0, buttonViewWidget, axis, movementFeedRate);
                 textImageButton.Margin = new BorderDouble(0);
                 textImageButton.Padding = new BorderDouble(0);
@@ -504,14 +504,14 @@ namespace MatterHackers.MatterControl
             public ExtrudeButton Generate(string label, double movementFeedRate, int extruderNumber = 0)
             {
                 //Create button based on view container widget
-                ButtonViewStates buttonViewWidget = getButtonView(label);
+                ButtonViewStates buttonViewWidget = GetButtonView(label);
                 ExtrudeButton textImageButton = new ExtrudeButton(0, 0, buttonViewWidget, movementFeedRate, extruderNumber);
                 textImageButton.Margin = new BorderDouble(0);
                 textImageButton.Padding = new BorderDouble(0);
                 return textImageButton;
             }
 
-            private ButtonViewStates getButtonView(string label)
+            private ButtonViewStates GetButtonView(string label)
             {                
                 //Create the multi-state button view
                 ButtonViewStates buttonViewWidget = new ButtonViewStates(

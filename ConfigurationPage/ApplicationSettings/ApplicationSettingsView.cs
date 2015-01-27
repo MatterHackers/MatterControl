@@ -168,14 +168,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-            StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
-            releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+            StyledDropDownList interfaceOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+            interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
-            optionsContainer.AddChild(releaseOptionsDropList);
+            optionsContainer.AddChild(interfaceOptionsDropList);
             optionsContainer.Width = 200;
 
-			MenuItem responsizeOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
-            MenuItem touchscreenOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
+			MenuItem responsizeOptionsDropDownItem = interfaceOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
+            MenuItem touchscreenOptionsDropDownItem = interfaceOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
 
             List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
             string currentUpdateFeedType = UserSettings.Instance.get("ApplicationDisplayMode");
@@ -185,8 +185,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 UserSettings.Instance.set("ApplicationDisplayMode", "responsive");
             }
 
-            releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("ApplicationDisplayMode");
-            releaseOptionsDropList.SelectionChanged += new EventHandler(DisplayOptionsDropList_SelectionChanged);
+            interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get("ApplicationDisplayMode");
+            interfaceOptionsDropList.SelectionChanged += new EventHandler(DisplayOptionsDropList_SelectionChanged);
 
             buttonRow.AddChild(settingsLabel);
             buttonRow.AddChild(new HorizontalSpacer());
