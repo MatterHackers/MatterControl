@@ -1241,7 +1241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 return true;
             });
             SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
-            splitButtonFactory.FixedHeight = 40;
+			splitButtonFactory.FixedHeight = 40 * TextWidget.GlobalPointSizeScaleRatio;
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up,imageName:"icon_save_32x32.png");
             saveButtons.Visible = false;
 
@@ -1262,7 +1262,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             //Create Save Button
             double oldWidth = whiteButtonFactory.FixedWidth;
-            whiteButtonFactory.FixedWidth = 56;
+			whiteButtonFactory.FixedWidth = 56 * TextWidget.GlobalPointSizeScaleRatio;
             Button saveButton = whiteButtonFactory.Generate("Save".Localize(), centerText: true);
             saveButton.Cursor = Cursors.Hand;
             saveButtons.AddChild(saveButton);

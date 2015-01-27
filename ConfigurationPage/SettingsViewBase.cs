@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
     public class SettingsViewBase : AltGroupBox
     {
-        protected readonly int TallButtonHeight = 25;
+		protected readonly int TallButtonHeight = (int)(25 * TextWidget.GlobalPointSizeScaleRatio + .5);
         protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
         protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
         protected RGBA_Bytes separatorLineColor;

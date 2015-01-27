@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
                 buttonRow.Padding = new BorderDouble(0, 3);
             }
 
-            int minButtonWidth = 50;
+			int minButtonWidth = (int)(50 * TextWidget.GlobalPointSizeScaleRatio + .5);
             
             switch (messageType)
             {

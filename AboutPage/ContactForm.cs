@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            whiteButtonFactory.FixedWidth = 138;
+			whiteButtonFactory.FixedWidth = 138 * TextWidget.GlobalPointSizeScaleRatio;
             whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
             whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
             whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;

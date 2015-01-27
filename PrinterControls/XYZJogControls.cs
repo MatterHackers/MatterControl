@@ -95,8 +95,8 @@ namespace MatterHackers.MatterControl
 
                     {
                         TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-                        buttonFactory.FixedHeight = 20;
-                        buttonFactory.FixedWidth = 30;
+						buttonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
+						buttonFactory.FixedWidth = 30 * TextWidget.GlobalPointSizeScaleRatio;
                         buttonFactory.fontSize = 8;
                         buttonFactory.Margin = new BorderDouble(0);
                         buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -281,8 +281,8 @@ namespace MatterHackers.MatterControl
 
             {
                 TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-                buttonFactory.FixedHeight = 20;
-                buttonFactory.FixedWidth = 30;
+				buttonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
+				buttonFactory.FixedWidth = 30 * TextWidget.GlobalPointSizeScaleRatio;
                 buttonFactory.fontSize = 8;
                 buttonFactory.Margin = new BorderDouble(0);
                 buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;

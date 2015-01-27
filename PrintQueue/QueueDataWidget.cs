@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             editButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
             editButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             editButtonFactory.borderWidth = 0;
-            editButtonFactory.FixedWidth = 70;
+			editButtonFactory.FixedWidth = 70 * TextWidget.GlobalPointSizeScaleRatio;
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
