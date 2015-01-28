@@ -32,12 +32,14 @@ namespace MatterHackers.MatterControl
             container.Padding = new BorderDouble(6,0);
 
             printTimeElapsed = new TextWidget("", pointSize:11);
+			printTimeElapsed.Printer.DrawFromHintedCache = true;
             printTimeElapsed.AutoExpandBoundsToText = true;
             printTimeElapsed.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
 
             printTimeRemaining = new TextWidget("", pointSize: 11);
-            printTimeRemaining.AutoExpandBoundsToText = true;
+			printTimeRemaining.Printer.DrawFromHintedCache = true;
+			printTimeRemaining.AutoExpandBoundsToText = true;
             printTimeRemaining.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
             GuiWidget spacer = new GuiWidget();
