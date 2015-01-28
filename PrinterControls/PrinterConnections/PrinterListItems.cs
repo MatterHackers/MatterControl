@@ -230,14 +230,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void RemoveConnectionLink_Click(object sender, EventArgs mouseEvent)
         {
-
             if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
-                int connectedPrinterHash = ActivePrinterProfile.Instance.ActivePrinter.GetHashCode();
-                int printerOptionHash = this.printerRecord.GetHashCode();
-
                 //Disconnect printer if the printer being removed is currently connected
-                if (connectedPrinterHash == printerOptionHash)
+				if (this.printerRecord.Id == ActivePrinterProfile.Instance.ActivePrinter.Id)
                 {
                     PrinterConnectionAndCommunication.Instance.Disable();
                     ActivePrinterProfile.Instance.ActivePrinter = null;
