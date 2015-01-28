@@ -470,7 +470,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             }
             else
             {
-                this.containerWindowToClose.Close();
+				UiThread.RunOnIdle((state) =>
+				{
+					this.containerWindowToClose.Close();
+				});
             }
         }
 
