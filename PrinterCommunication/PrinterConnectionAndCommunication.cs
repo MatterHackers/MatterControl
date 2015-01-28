@@ -280,6 +280,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                                 }
                             }
                             break;
+
+						default:
+							if (!timeSinceStartedPrint.IsRunning
+								&& value == CommunicationStates.Printing)
+							{
+								// If we are just satrting to print (we know we were not pasued or it would have stoped above)
+								timeSinceStartedPrint.Restart();
+							}
+							break;
                     }
 
                     communicationState = value;
@@ -718,12 +727,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                if (!timeSinceStartedPrint.IsRunning
-                    && PrinterIsPrinting)
-                {
-                    timeSinceStartedPrint.Restart();
-                }
-
                 if (NumberOfLinesInCurrentPrint > 0)
                 {
                     if (printerCommandQueueIndex >= 0
