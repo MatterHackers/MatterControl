@@ -204,8 +204,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
                 {
                     QueueData.Instance.AddItem(this.printItemWrapper, 0);
-                    QueueData.Instance.SelectedIndex = 0;
-                    PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+					QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
+					PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
                 }
                 else
                 {
