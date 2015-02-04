@@ -160,6 +160,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         FoundStringContainsCallbacks WriteLineContainsCallBacks = new FoundStringContainsCallbacks();
 
         bool printWasCanceled = false;
+		public bool PrintWasCanceled { get { return printWasCanceled; } }
         int firstLineToResendIndex = 0;
         PrintTask activePrintTask;
 
@@ -948,7 +949,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// read the last few k of the file nad see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{
-							PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+							PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
 							return;
 						}
 						else
@@ -962,7 +963,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 								if (fileEnd.Contains("filament used"))
 								{
-									PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+									PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
 									return;
 								}
 							}
@@ -1947,7 +1948,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 serialPort.RtsEnable = false;
                 try
                 {
-                    Thread.Sleep(1);
+                    Thread.Sleep(100);
                 }
                 catch
                 {
@@ -1956,7 +1957,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 serialPort.Close();
             }
         }
-        /// <summary>
+
+		public void RebootBoard()
+		{
+			if (this.ActivePrinter != null
+				&&  serialPort != null)
+			{
+				serialPort.RtsEnable = true;
+				serialPort.DtrEnable = true;
+				Thread.Sleep(100);
+				serialPort.RtsEnable = false;
+				serialPort.DtrEnable = false;
+				Thread.Sleep(100);
+				serialPort.RtsEnable = true;
+				serialPort.DtrEnable = true;
+
+				ClearQueuedGCode();
+				// let the process know we canceled not ended normaly.
+				CommunicationState = CommunicationStates.Connected;
+			}
+		}
+
+		/// <summary>
         /// Abort an ongoing attempt to establish communcation with a printer due to the specified problem. This is a specialized
         /// version of the functionality that's previously been in .Disable but focused specifically on the task of aborting an 
         /// ongoing connection. Ideally we should unify all abort invocations to use this implementation rather than the mix
@@ -2408,13 +2430,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReleaseMotors();
         }
 
-        public bool StartPrint2(string gcodeFilename)
+        public bool StartPrint(string gcodeFilename)
         {
             if (!PrinterIsConnected || PrinterIsPrinting)
             {
                 return false;
             }
 
+			printWasCanceled = false;
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
 			waitingForPosition = false;
