@@ -7,6 +7,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 this.ActivePrinter.BaudRate = "250000";
                 try
                 {
-                    this.ActivePrinter.ComPort = FrostedSerialPort.GetPortNames()[0];
+					this.ActivePrinter.ComPort = FrostedSerialPort.GetPortNames().FirstOrDefault();
                 }
                 catch
                 {
@@ -84,7 +85,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 {
                     try
                     {
-                        this.ActivePrinter.ComPort = FrostedSerialPort.GetPortNames()[0];
+						this.ActivePrinter.ComPort = FrostedSerialPort.GetPortNames().FirstOrDefault();
                     }
                     catch
                     {
@@ -108,7 +109,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             ConnectionControlContainer = new FlowLayoutWidget(FlowDirection.TopToBottom); 
             ConnectionControlContainer.Padding = new BorderDouble(5);
             ConnectionControlContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-            ConnectionControlContainer.HAnchor = HAnchor.ParentLeftRight;            
+            ConnectionControlContainer.HAnchor = HAnchor.ParentLeftRight;
             {
                 TextWidget printerNameLabel = new TextWidget(LocalizedString.Get("Printer Name"), 0, 0, 10);
                 printerNameLabel.TextColor = this.defaultTextColor;
