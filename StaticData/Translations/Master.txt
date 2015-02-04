@@ -3104,3 +3104,9 @@ Translated:Inserting Text
 English:Saving Parts:
 Translated:Saving Parts:
 
+English:Reset Connection
+Translated:Reset Connection
+
+English:Reboots the firmware on the controller
+Translated:Reboots the firmware on the controller
+

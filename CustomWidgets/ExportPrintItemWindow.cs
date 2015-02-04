@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl
 						// read the last few k of the file nad see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{
-							PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+							PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
 							return;
 						}
 						else
@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl
 								if (fileEnd.Contains("filament used"))
 								{
 									System.Threading.Thread.Sleep(10000);
-									PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+									PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
 									return;
 								}
 							}
