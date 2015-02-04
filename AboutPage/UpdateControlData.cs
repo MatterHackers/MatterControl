@@ -121,6 +121,10 @@ namespace MatterHackers.MatterControl
 				{
 					return "pkg";
 				}
+				else if (OsInformation.OperatingSystem == OSType.X11)
+				{
+					return "deb";
+				}
 				else if (OsInformation.OperatingSystem == OSType.Android)
 				{
 					return "apk";
@@ -247,6 +251,11 @@ namespace MatterHackers.MatterControl
 
         void DownloadUpdate()
         {
+            (new Thread(new ThreadStart(() => DownloadUpdateTask()))).Start();
+        }
+
+        void DownloadUpdateTask()
+        {
             if (!WaitingToCompleteTransaction())
             {
 
@@ -264,7 +273,6 @@ namespace MatterHackers.MatterControl
                     downloadAttempts++;
                     SetUpdateStatus(UpdateStatusStates.UpdateDownloading);
                     string downloadUri = string.Format("https://mattercontrol.appspot.com/downloads/development/{0}", ApplicationSettings.Instance.get("CurrentBuildToken"));
-
 
                     //Make HEAD request to determine the size of the download (required by GAE)
                     System.Net.WebRequest request = System.Net.WebRequest.Create(downloadUri);
