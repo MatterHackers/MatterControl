@@ -49,6 +49,7 @@ using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
 using Microsoft.Win32.SafeHandles;
+using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
@@ -2430,11 +2431,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReleaseMotors();
         }
 
-        public bool StartPrint(string gcodeFilename)
+        public void StartPrint(string gcodeFilename)
         {
             if (!PrinterIsConnected || PrinterIsPrinting)
             {
-                return false;
+                return;
             }
 
 			printWasCanceled = false;
@@ -2444,38 +2445,54 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             LinesToWriteQueue.Clear();
             ClearQueuedGCode();
+
+			BackgroundWorker loadGCodeWorker = new BackgroundWorker();
+			loadGCodeWorker.DoWork += new DoWorkEventHandler(loadGCodeWorker_DoWork);
+			loadGCodeWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadGCodeWorker_RunWorkerCompleted);
+			loadGCodeWorker.RunWorkerAsync(gcodeFilename);
+		}
+
+		void loadGCodeWorker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			string gcodeFilename = e.Argument as string;
 			loadedGCode = GCodeFile.Load(gcodeFilename);
+		}
 
-            switch (communicationState)
-            {
-                case CommunicationStates.PreparingToPrintToSd:
-                    activePrintTask = null;
-                    CommunicationState = CommunicationStates.PrintingToSd;
-                    break;
+		void loadGCodeWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			switch (communicationState)
+			{
+				case CommunicationStates.PreparingToPrintToSd:
+					activePrintTask = null;
+					CommunicationState = CommunicationStates.PrintingToSd;
+					break;
 
-                case CommunicationStates.PreparingToPrint:
-                    if (ActivePrintItem.PrintItem.Id == 0)
-                    {
-                        ActivePrintItem.PrintItem.Commit();
-                    }
+				case CommunicationStates.PreparingToPrint:
+					if (ActivePrintItem.PrintItem.Id == 0)
+					{
+						ActivePrintItem.PrintItem.Commit();
+					}
 
-                    activePrintTask = new PrintTask();
-                    activePrintTask.PrintStart = DateTime.Now;
-                    activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
-                    activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
-                    activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
-                    activePrintTask.PrintComplete = false;
-                    activePrintTask.Commit();
+					activePrintTask = new PrintTask();
+					activePrintTask.PrintStart = DateTime.Now;
+					activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+					activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
+					activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
+					activePrintTask.PrintComplete = false;
+					activePrintTask.Commit();
 
-                    CommunicationState = CommunicationStates.Printing;
-                    break;
+					CommunicationState = CommunicationStates.Printing;
+					break;
 
-                default:
-                    throw new NotFiniteNumberException();
-            }
-
-            return true;
-        }
+				default:
+#if DEBUG
+					throw new Exception("We are not preparing to print so we should not be starting to print");
+#else
+					CommunicationState = CommunicationStates.Connected;
+					break;
+#endif
+			}
+		}
 
         const int MAX_INVALID_CONNECTION_CHARS = 3;
         string dataLastRead = "";
