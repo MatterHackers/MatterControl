@@ -1442,7 +1442,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             // On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
             // this aspect to ensure the validation logic that verifies port availablity/in use status can proceed without additional workarounds for Android
 #if __ANDROID__
-            string currentPortName = FrostedSerialPort.GetPortNames().Where(p => p != "/dev/bus/usb/002/002").FirstOrDefault();
+            string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
 
             if(!string.IsNullOrEmpty(currentPortName))
             {
