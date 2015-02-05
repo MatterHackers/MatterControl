@@ -1552,8 +1552,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             {
                 return false;
             }
-
         }
+
+		void JoinReadFromPrinterThread()
+		{
+			Console.WriteLine("ReadFromPrinter thread Joined.");
+			if (readFromPrinterThread != null)
+			{
+				readFromPrinterThread.Join(JoinThreadTimeoutMs);
+				readFromPrinterThread = null;
+			}
+		}
 
         void AttemptToConnect(string serialPortName, int baudRate)
         {
@@ -1576,6 +1585,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     {
                         serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, true);
 
+						JoinReadFromPrinterThread();
+
+						Console.WriteLine("ReadFromPrinter thread created.");
                         readFromPrinterThread = new Thread(ReadFromPrinter);
                         readFromPrinterThread.Name = "Read From Printer";
                         readFromPrinterThread.IsBackground = true;
@@ -2038,10 +2050,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 ForceImmediateWrites = false;
 
                 CommunicationState = CommunicationStates.Disconnecting;
-                if (readFromPrinterThread != null)
-                {
-                    readFromPrinterThread.Join(JoinThreadTimeoutMs);
-                }
+				JoinReadFromPrinterThread();
                 serialPort.Close();
                 serialPort.Dispose();
                 serialPort = null;
@@ -2367,10 +2376,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     CommunicationState = CommunicationStates.FailedToConnect;
                     connectThread.Join(JoinThreadTimeoutMs);
                     CommunicationState = CommunicationStates.Disconnecting;
-                    if (readFromPrinterThread != null)
-                    {
-                        readFromPrinterThread.Join(JoinThreadTimeoutMs);
-                    }
+					JoinReadFromPrinterThread();
                     if (serialPort != null)
                     {
                         serialPort.Close();
