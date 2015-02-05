@@ -114,7 +114,6 @@ namespace MatterHackers.MatterControl.EeProm
             this.AddChild(topToBottom);
 
             translate();
-            //MatterControlApplication.Instance.LanguageChanged += translate;
 
             ShowAsSystemWindow();
 
