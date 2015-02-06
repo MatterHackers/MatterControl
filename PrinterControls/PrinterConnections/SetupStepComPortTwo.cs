@@ -140,16 +140,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
         void ConnectButton_Click(object sender, EventArgs mouseEvent)
         {
-            string candidatePort = null;
-            currentPortNames = FrostedSerialPort.GetPortNames();
-            foreach (string portName in currentPortNames)
-            {
-                if (!startingPortNames.Any(portName.Contains))
-                {
-                    candidatePort = portName;
-                }
-            }
-
+            // Select the first port that's in GetPortNames() but not in startingPortNames
+            string candidatePort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
             if (candidatePort == null)
             {
                 printerErrorMessage.TextColor = RGBA_Bytes.Red;
