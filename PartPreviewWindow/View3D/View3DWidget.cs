@@ -897,13 +897,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
-            string[] filesToLoad = e.Argument as string[];
-            if (filesToLoad != null && filesToLoad.Length > 0)
+            string[] filesToLoadIncludingZips = e.Argument as string[];
+			List<string> filesToLoad = new List<string>();
+			if (filesToLoadIncludingZips != null && filesToLoadIncludingZips.Length > 0)
             {
-                double ratioPerFile = 1.0 / filesToLoad.Length;
-                double currentRatioDone = 0;
+				for (int i = 0; i < filesToLoadIncludingZips.Length; i++)
+				{
+					string loadedFileName = filesToLoadIncludingZips[i];
+					string extension = Path.GetExtension(loadedFileName).ToUpper();
+					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					{
+						filesToLoad.Add(loadedFileName);
+					}
+					else if (extension == ".ZIP")
+					{
+						ProjectFileHandler project = new ProjectFileHandler(null);
+						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+						if (partFiles != null)
+						{
+							foreach (PrintItem part in partFiles)
+							{
+								filesToLoad.Add(part.FileLocation);
+							}
+						}
+					}
+				}
 
-                for (int i = 0; i < filesToLoad.Length; i++)
+				double ratioPerFile = 1.0 / filesToLoad.Count;
+				double currentRatioDone = 0;
+				for (int i = 0; i < filesToLoad.Count; i++)
                 {
                     string loadedFileName = filesToLoad[i];
                     List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
@@ -1626,8 +1648,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
-					string extension = Path.GetExtension(file).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					string extension = Path.GetExtension(file).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						fileDropEventArgs.AcceptDrop = true;
 					}
@@ -1642,8 +1664,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
-					string extension = Path.GetExtension(file).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					string extension = Path.GetExtension(file).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						fileDropEventArgs.AcceptDrop = true;
 					}
@@ -1659,21 +1681,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				pendingPartsToLoad.Clear();
 				foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
 				{
-					string extension = Path.GetExtension(droppedFileName).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					string extension = Path.GetExtension(droppedFileName).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						pendingPartsToLoad.Add(droppedFileName);
 					}
 				}
 
-				bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
-				if (enterEditModeBeforeAddingParts)
+				if (pendingPartsToLoad.Count > 0)
 				{
-					EnterEditAndCreateSelectionData();
-				}
-				else
-				{
-					LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+					bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
+					if (enterEditModeBeforeAddingParts)
+					{
+						EnterEditAndCreateSelectionData();
+					}
+					else
+					{
+						LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+					}
 				}
 			}
 
