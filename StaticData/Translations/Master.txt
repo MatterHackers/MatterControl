@@ -3110,3 +3110,6 @@ Translated:Reset Connection
 English:Reboots the firmware on the controller
 Translated:Reboots the firmware on the controller
 
+English:Please wait. Slicing files {0} of {1}
+Translated:Please wait. Slicing files {0} of {1}
+

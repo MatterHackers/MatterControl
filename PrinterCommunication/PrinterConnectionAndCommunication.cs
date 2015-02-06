@@ -811,9 +811,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     return 100.0;
                 }
-                else if (NumberOfLinesInCurrentPrint > 0)
+                else if (NumberOfLinesInCurrentPrint > 0
+					&& loadedGCode != null)
                 {
-					return Math.Min(99.9, (double)printerCommandQueueIndex / (double)NumberOfLinesInCurrentPrint * 100);
+					return loadedGCode.PercentComplete(printerCommandQueueIndex);
                 }
                 else
                 {
