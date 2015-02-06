@@ -311,21 +311,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		internal class ReadThreadHolder
 		{
-			static int currentReadThreadIndex = 0;
 			readonly int JoinThreadTimeoutMs = 5000;
 
+			static int currentReadThreadIndex = 0;
 			int creationIndex;
-			Thread readFromPrinterThread;
 
-			internal ReadThreadHolder(ThreadStart readFromPrinterFunction)
+			internal static void Start(DoWorkEventHandler readFromPrinterFunction)
 			{
-				readFromPrinterThread = new Thread(readFromPrinterFunction);
-				readFromPrinterThread.Name = "Read From Printer";
-				readFromPrinterThread.IsBackground = true;
-				readFromPrinterThread.Start();
+				new ReadThreadHolder(readFromPrinterFunction);
+			}
 
+			ReadThreadHolder(DoWorkEventHandler readFromPrinterFunction)
+			{
 				currentReadThreadIndex++;
 				creationIndex = currentReadThreadIndex;
+
+				BackgroundWorker readFromPrinterWorker = new BackgroundWorker();
+				readFromPrinterWorker.DoWork += readFromPrinterFunction;
+
+				readFromPrinterWorker.RunWorkerAsync(this);
 			}
 
 			internal bool IsCurrentThread()
@@ -333,19 +337,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				return currentReadThreadIndex == creationIndex;
 			}
 
-			internal void Join()
+			internal static void Join()
 			{
 				currentReadThreadIndex++;
-				Console.WriteLine("ReadFromPrinter thread Joined.");
-				if (readFromPrinterThread != null)
-				{
-					readFromPrinterThread.Join(JoinThreadTimeoutMs);
-					readFromPrinterThread = null;
-				}
 			}
 		}
 
-		ReadThreadHolder readThreadHolder = null;
         Thread connectThread;
 
         private PrintItemWrapper activePrintItem;
@@ -480,7 +477,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
                 return globalInstance;
             }
-
         }
 
         PrinterConnectionAndCommunication()
@@ -1611,13 +1607,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     {
                         serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, true);
 						
-						if(readThreadHolder != null)
-						{
-							readThreadHolder.Join();
-						}
+						ReadThreadHolder.Join();
 
 						Console.WriteLine("ReadFromPrinter thread created.");
-						readThreadHolder = new ReadThreadHolder(ReadFromPrinter);
+						ReadThreadHolder.Start(ReadFromPrinter);
 					
 						// We have to send a line because some printers (like old printrbots) do not send anything when connecting and there is no other way to know they are there.
 						SendLineToPrinterNow("M105");
@@ -2037,9 +2030,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
 
             // Shutdown the readFromPrinter thread
-            if (shutdownReadLoop && readThreadHolder != null)
+            if (shutdownReadLoop)
             {
-				readThreadHolder.Join();
+				ReadThreadHolder.Join();
             }
 
             // Shudown the serial port
@@ -2076,10 +2069,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 ForceImmediateWrites = false;
 
                 CommunicationState = CommunicationStates.Disconnecting;
-				if (readThreadHolder != null)
-				{
-					readThreadHolder.Join();
-				}
+				ReadThreadHolder.Join();
 				serialPort.Close();
                 serialPort.Dispose();
                 serialPort = null;
@@ -2405,10 +2395,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     CommunicationState = CommunicationStates.FailedToConnect;
                     connectThread.Join(JoinThreadTimeoutMs);
                     CommunicationState = CommunicationStates.Disconnecting;
-					if(readThreadHolder != null)
-					{
-						readThreadHolder.Join();
-					}
+					ReadThreadHolder.Join();
                     if (serialPort != null)
                     {
                         serialPort.Close();
@@ -2535,8 +2522,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         const int MAX_INVALID_CONNECTION_CHARS = 3;
         string dataLastRead = "";
         string lastLineRead = "";
-        public void ReadFromPrinter()
+        public void ReadFromPrinter(object sender, DoWorkEventArgs e)
         {
+			ReadThreadHolder readThreadHolder = e.Argument as ReadThreadHolder;
+
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             timeSinceLastReadAnything.Restart();
             // we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
