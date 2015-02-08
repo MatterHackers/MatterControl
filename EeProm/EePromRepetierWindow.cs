@@ -111,7 +111,13 @@ namespace MatterHackers.MatterControl.EeProm
 
             topToBottom.AddChild(buttonBar);
 
-            this.AddChild(topToBottom);
+#if __ANDROID__
+			TerminalWidget terminalWidget = new TerminalWidget(true);
+			this.AddChild(new SoftKeyboardContentOffset(topToBottom, SoftKeyboardContentOffset.AndroidKeyboardOffset));
+			//topToBottom.Closed += (sender, e) => { Close(); };
+#else
+			this.AddChild(topToBottom);
+#endif
 
             translate();
 
@@ -198,6 +204,7 @@ namespace MatterHackers.MatterControl.EeProm
                 double currentValue;
                 double.TryParse(newSetting.Value, out currentValue);
                 MHNumberEdit valueEdit = new MHNumberEdit(currentValue, pixelWidth: 80, allowNegatives: true, allowDecimals: true);
+				valueEdit.SelectAllOnFocus = true;
                 valueEdit.TabIndex = currentTabIndex++;
                 valueEdit.VAnchor = Agg.UI.VAnchor.ParentCenter;
                 valueEdit.ActuallNumberEdit.EditComplete += (sender, e) =>

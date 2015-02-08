@@ -183,7 +183,13 @@ namespace MatterHackers.MatterControl.EeProm
 
             PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
+#if __ANDROID__
+			TerminalWidget terminalWidget = new TerminalWidget(true);
+			this.AddChild(new SoftKeyboardContentOffset(mainContainer, SoftKeyboardContentOffset.AndroidKeyboardOffset));
+			//mainContainer.Closed += (sender, e) => { Close(); };
+#else
 			AddChild(mainContainer);
+#endif
 
             ShowAsSystemWindow();
 
@@ -199,6 +205,7 @@ namespace MatterHackers.MatterControl.EeProm
         private GuiWidget CreateMHNumEdit(ref MHNumberEdit numberEditToCreate)
         {
             numberEditToCreate = new MHNumberEdit(0, pixelWidth: 80, allowNegatives: true, allowDecimals: true);
+			numberEditToCreate.SelectAllOnFocus = true;
             numberEditToCreate.VAnchor = Agg.UI.VAnchor.ParentCenter;
             numberEditToCreate.Margin = new BorderDouble(3, 0);
             return numberEditToCreate;
