@@ -1446,12 +1446,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                int baudRate = 0;
+                int baudRate = 250000;
                 if (this.ActivePrinter != null)
                 {
                     try
                     {
-                        baudRate = Convert.ToInt32(this.ActivePrinter.BaudRate);
+						if (this.ActivePrinter.BaudRate != null)
+						{
+							baudRate = Convert.ToInt32(this.ActivePrinter.BaudRate);
+						}
                     }
                     catch
                     {
