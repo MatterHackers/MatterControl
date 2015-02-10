@@ -678,11 +678,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (File.Exists(printItemWrapper.FileLocation))
 				{
-					using (Stream uncompressedFileStream = File.OpenRead(printItemWrapper.FileLocation))
+					try
 					{
-						using (Stream fileStream = AmfProcessing.GetCompressedStreamIfRequired(uncompressedFileStream))
+						using (Stream uncompressedFileStream = File.OpenRead(printItemWrapper.FileLocation))
 						{
-							try
+							using (Stream fileStream = AmfProcessing.GetCompressedStreamIfRequired(uncompressedFileStream))
 							{
 								// read up the first 32k and make sure it says the file was created my MatterControl
 								int bufferSize = 32000;
@@ -694,11 +694,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									return false;
 								}
 							}
-							catch(Exception)
-							{
-								return false;
-							}
 						}
+					}
+					catch (Exception)
+					{
+						return false;
 					}
 				}
 			}
