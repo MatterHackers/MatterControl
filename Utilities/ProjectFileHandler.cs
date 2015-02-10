@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl
 				CopyFileToTempFolder(item.Key, item.Value.FileName);
 			}
 
-			// TODO: Figure out why exceptions throw here are silently surpressed and work out how to handle the case where users select an existing file
+            // TODO: Figure out why exceptions throw here are silently suppressed and work out how to handle the case where users select an existing file
 			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName,CompressionLevel.Optimal, true);
 		}
 
