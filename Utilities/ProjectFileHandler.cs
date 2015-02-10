@@ -194,20 +194,17 @@ namespace MatterHackers.MatterControl
                 EmptyFolder(directory);
             }
 
-            //Create and save the project manifest file into the temp directory
-            string jsonString = JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented);
-            FileStream fs = new FileStream(defaultManifestPathAndFileName, FileMode.Create);
-            StreamWriter sw = new System.IO.StreamWriter(fs);
-            sw.Write(jsonString);
-            sw.Close();
+			//Create and save the project manifest file into the temp directory
+			File.WriteAllText(defaultManifestPathAndFileName, JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented));
 
 			foreach (KeyValuePair<string, ManifestItem> item in this.sourceFiles)
 			{
 				CopyFileToTempFolder(item.Key, item.Value.FileName);
 			}
-			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName,CompressionLevel.Optimal,true);
-		
-        }
+
+            // TODO: Figure out why exceptions throw here are silently suppressed and work out how to handle the case where users select an existing file
+			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName,CompressionLevel.Optimal, true);
+		}
 
 		private static void CopyFileToTempFolder(string sourceFile, string fileName)
         {
