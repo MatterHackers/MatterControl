@@ -682,12 +682,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						using (Stream fileStream = AmfProcessing.GetCompressedStreamIfRequired(uncompressedFileStream))
 						{
-							// read up the first 32k and make sure it says the file was created my MatterControl
-							int bufferSize = 32000;
-							byte[] buffer = new byte[bufferSize];
-							int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
-							string startingContent = System.Text.Encoding.UTF8.GetString(buffer);
-							if (startingContent.Contains("BedPosition") && startingContent.Contains("Absolute"))
+							try
+							{
+								// read up the first 32k and make sure it says the file was created my MatterControl
+								int bufferSize = 32000;
+								byte[] buffer = new byte[bufferSize];
+								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+								string startingContent = System.Text.Encoding.UTF8.GetString(buffer);
+								if (startingContent.Contains("BedPosition") && startingContent.Contains("Absolute"))
+								{
+									return false;
+								}
+							}
+							catch(Exception)
 							{
 								return false;
 							}
@@ -2051,6 +2058,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
+		bool saveSucceded = true;
         void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             SaveAsWindow.SaveAsReturnInfo returnInfo = e.Argument as SaveAsWindow.SaveAsReturnInfo;
@@ -2076,10 +2084,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     BackgroundWorker_ProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
                 }
 
-                LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
+				saveSucceded = true;
+				LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
             }
             catch (System.UnauthorizedAccessException)
             {
+				saveSucceded = false;
                 UiThread.RunOnIdle((state) =>
                 {
                     //Do something special when unauthorized?
@@ -2088,7 +2098,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             catch
             {
-                UiThread.RunOnIdle((state) =>
+				saveSucceded = false;
+				UiThread.RunOnIdle((state) =>
                 {
                     StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
                 });
@@ -2120,8 +2131,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 return;
             }
             UnlockEditControls();
+
             // NOTE: we do not pull the data back out of the asynch lists.
-            saveButtons.Visible = false;
+			if (saveSucceded)
+			{
+				saveButtons.Visible = false;
+			}
 
             if (afterSaveCallback != null)
             {
