@@ -202,7 +202,32 @@ namespace MatterHackers.MatterControl
 				CopyFileToTempFolder(item.Key, item.Value.FileName);
 			}
 
-            // TODO: Figure out why exceptions throw here are silently suppressed and work out how to handle the case where users select an existing file
+			// Delete or move existing file out of the way as CreateFromDirectory will not overwrite and thows an exception
+			if(File.Exists(savedFileName))
+			{
+				try
+				{
+					File.Delete(savedFileName);
+				}
+				catch(Exception ex)
+				{
+					string directory = Path.GetDirectoryName(savedFileName);
+					string fileName = Path.GetFileNameWithoutExtension(savedFileName);
+					string extension = Path.GetExtension(savedFileName);
+					string candidatePath;
+
+					for(int i = 1; i < 20; i++)
+					{
+						candidatePath = Path.Combine(directory, string.Format("{0}({1}){2}", fileName, i, extension));
+						if(!File.Exists(candidatePath))
+						{
+							File.Move(savedFileName, candidatePath);
+							break;
+						}
+					}
+				}
+			}
+
 			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName,CompressionLevel.Optimal, true);
 		}
 
