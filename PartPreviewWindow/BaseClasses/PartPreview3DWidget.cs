@@ -59,33 +59,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
         protected ViewControls3D viewControls3D;
 
+		bool needToRecretaeBed = false;
+
         public PartPreview3DWidget()
         {
-            SliceSettingsWidget.RegisterForSettingsChange("bed_size", RecreateBedAndPartPosition, ref unregisterEvents);
-            SliceSettingsWidget.RegisterForSettingsChange("print_center", RecreateBedAndPartPosition, ref unregisterEvents);
-            SliceSettingsWidget.RegisterForSettingsChange("build_height", RecreateBedAndPartPosition, ref unregisterEvents);
-            SliceSettingsWidget.RegisterForSettingsChange("bed_shape", RecreateBedAndPartPosition, ref unregisterEvents);
-            SliceSettingsWidget.RegisterForSettingsChange("center_part_on_bed", RecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("bed_size", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("print_center", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("build_height", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("bed_shape", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
+            SliceSettingsWidget.RegisterForSettingsChange("center_part_on_bed", SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
 #if false
             "extruder_offset",
 #endif
 
-            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(RecreateBedAndPartPosition, ref unregisterEvents);
+            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(SetFlagToRecreateBedAndPartPosition, ref unregisterEvents);
         }
 
-        void RecreateBedAndPartPosition(object sender, EventArgs e)
+        void SetFlagToRecreateBedAndPartPosition(object sender, EventArgs e)
         {
-            double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-
-            UiThread.RunOnIdle((state) =>
-            {
-                meshViewerWidget.CreatePrintBed(
-                    new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-                    ActiveSliceSettings.Instance.BedCenter,
-                    ActiveSliceSettings.Instance.BedShape);
-                PutOemImageOnBed();
-            });
+			needToRecretaeBed = true;
         }
+
+		void RecreateBed()
+		{
+			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+
+			UiThread.RunOnIdle((state) =>
+			{
+				meshViewerWidget.CreatePrintBed(
+					new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+					ActiveSliceSettings.Instance.BedCenter,
+					ActiveSliceSettings.Instance.BedShape);
+				PutOemImageOnBed();
+			});
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if(needToRecretaeBed)
+			{
+				needToRecretaeBed = false;
+				RecreateBed();
+			}
+			base.OnDraw(graphics2D);
+		}
 
         protected void PutOemImageOnBed()
         {

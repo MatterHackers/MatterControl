@@ -194,20 +194,42 @@ namespace MatterHackers.MatterControl
                 EmptyFolder(directory);
             }
 
-            //Create and save the project manifest file into the temp directory
-            string jsonString = JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented);
-            FileStream fs = new FileStream(defaultManifestPathAndFileName, FileMode.Create);
-            StreamWriter sw = new System.IO.StreamWriter(fs);
-            sw.Write(jsonString);
-            sw.Close();
+			//Create and save the project manifest file into the temp directory
+			File.WriteAllText(defaultManifestPathAndFileName, JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented));
 
 			foreach (KeyValuePair<string, ManifestItem> item in this.sourceFiles)
 			{
 				CopyFileToTempFolder(item.Key, item.Value.FileName);
 			}
-			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName,CompressionLevel.Optimal,true);
-		
-        }
+
+			// Delete or move existing file out of the way as CreateFromDirectory will not overwrite and thows an exception
+			if(File.Exists(savedFileName))
+			{
+				try
+				{
+					File.Delete(savedFileName);
+				}
+				catch(Exception ex)
+				{
+					string directory = Path.GetDirectoryName(savedFileName);
+					string fileName = Path.GetFileNameWithoutExtension(savedFileName);
+					string extension = Path.GetExtension(savedFileName);
+					string candidatePath;
+
+					for(int i = 1; i < 20; i++)
+					{
+						candidatePath = Path.Combine(directory, string.Format("{0}({1}){2}", fileName, i, extension));
+						if(!File.Exists(candidatePath))
+						{
+							File.Move(savedFileName, candidatePath);
+							break;
+						}
+					}
+				}
+			}
+
+			ZipFile.CreateFromDirectory(archiveStagingFolder, savedFileName,CompressionLevel.Optimal, true);
+		}
 
 		private static void CopyFileToTempFolder(string sourceFile, string fileName)
         {

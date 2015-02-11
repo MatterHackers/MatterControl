@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 		private Button CreateDefaultButton(string buttonText)
 		{
 			TextImageButtonFactory buttonFactory = new TextImageButtonFactory ();
-			buttonFactory.FixedHeight = 30;
+			buttonFactory.FixedHeight = 30 * TextWidget.GlobalPointSizeScaleRatio;
 			buttonFactory.normalFillColor = RGBA_Bytes.White;
 			buttonFactory.normalTextColor = RGBA_Bytes.Black;
 			buttonFactory.hoverTextColor = RGBA_Bytes.Black;

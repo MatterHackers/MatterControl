@@ -400,7 +400,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             buttonPanel.CloseAndRemoveAllChildren();
 
             double oldWidth = textImageButtonFactory.FixedWidth;
-            textImageButtonFactory.FixedWidth = 44;
+			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
 
             FlowLayoutWidget modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             modelInfoContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -495,7 +495,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         private void AddLayerInfo(FlowLayoutWidget buttonPanel)
         {
             double oldWidth = textImageButtonFactory.FixedWidth;
-            textImageButtonFactory.FixedWidth = 44;
+			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
 
             FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -520,8 +520,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             buttonPanel.CloseAndRemoveAllChildren();
 
-            double oldWidth = textImageButtonFactory.FixedWidth; 
-            textImageButtonFactory.FixedWidth = 44;
+            double oldWidth = textImageButtonFactory.FixedWidth;
+			textImageButtonFactory.FixedWidth = 44 * TextWidget.GlobalPointSizeScaleRatio;
 
             FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;

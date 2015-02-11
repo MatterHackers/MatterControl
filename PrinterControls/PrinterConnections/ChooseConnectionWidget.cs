@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				editButtonFactory.disabledTextColor = ActiveTheme.Instance.SecondaryAccentColor;
 				editButtonFactory.pressedTextColor = RGBA_Bytes.White;
 				editButtonFactory.borderWidth = 0;
-				editButtonFactory.FixedWidth = 60;
+				editButtonFactory.FixedWidth = 60 * TextWidget.GlobalPointSizeScaleRatio;
                 
                 this.AnchorAll();
                 this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;

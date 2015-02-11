@@ -678,20 +678,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (File.Exists(printItemWrapper.FileLocation))
 				{
-					using (Stream uncompressedFileStream = File.OpenRead(printItemWrapper.FileLocation))
+					try
 					{
-						using (Stream fileStream = AmfProcessing.GetCompressedStreamIfRequired(uncompressedFileStream))
+						using (Stream uncompressedFileStream = File.OpenRead(printItemWrapper.FileLocation))
 						{
-							// read up the first 32k and make sure it says the file was created my MatterControl
-							int bufferSize = 32000;
-							byte[] buffer = new byte[bufferSize];
-							int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
-							string startingContent = System.Text.Encoding.UTF8.GetString(buffer);
-							if (startingContent.Contains("BedPosition") && startingContent.Contains("Absolute"))
+							using (Stream fileStream = AmfProcessing.GetCompressedStreamIfRequired(uncompressedFileStream))
 							{
-								return false;
+								// read up the first 32k and make sure it says the file was created my MatterControl
+								int bufferSize = 32000;
+								byte[] buffer = new byte[bufferSize];
+								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+								string startingContent = System.Text.Encoding.UTF8.GetString(buffer);
+								if (startingContent.Contains("BedPosition") && startingContent.Contains("Absolute"))
+								{
+									return false;
+								}
 							}
 						}
+					}
+					catch (Exception)
+					{
+						return false;
 					}
 				}
 			}
@@ -897,13 +904,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
-            string[] filesToLoad = e.Argument as string[];
-            if (filesToLoad != null && filesToLoad.Length > 0)
+            string[] filesToLoadIncludingZips = e.Argument as string[];
+			List<string> filesToLoad = new List<string>();
+			if (filesToLoadIncludingZips != null && filesToLoadIncludingZips.Length > 0)
             {
-                double ratioPerFile = 1.0 / filesToLoad.Length;
-                double currentRatioDone = 0;
+				for (int i = 0; i < filesToLoadIncludingZips.Length; i++)
+				{
+					string loadedFileName = filesToLoadIncludingZips[i];
+					string extension = Path.GetExtension(loadedFileName).ToUpper();
+					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					{
+						filesToLoad.Add(loadedFileName);
+					}
+					else if (extension == ".ZIP")
+					{
+						ProjectFileHandler project = new ProjectFileHandler(null);
+						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+						if (partFiles != null)
+						{
+							foreach (PrintItem part in partFiles)
+							{
+								filesToLoad.Add(part.FileLocation);
+							}
+						}
+					}
+				}
 
-                for (int i = 0; i < filesToLoad.Length; i++)
+				double ratioPerFile = 1.0 / filesToLoad.Count;
+				double currentRatioDone = 0;
+				for (int i = 0; i < filesToLoad.Count; i++)
                 {
                     string loadedFileName = filesToLoad[i];
                     List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
@@ -1230,7 +1259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 return true;
             });
             SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
-            splitButtonFactory.FixedHeight = 40;
+			splitButtonFactory.FixedHeight = 40 * TextWidget.GlobalPointSizeScaleRatio;
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up,imageName:"icon_save_32x32.png");
             saveButtons.Visible = false;
 
@@ -1269,7 +1298,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             //Create Save Button
             double oldWidth = whiteButtonFactory.FixedWidth;
-            whiteButtonFactory.FixedWidth = 56;
+			whiteButtonFactory.FixedWidth = 56 * TextWidget.GlobalPointSizeScaleRatio;
             Button saveButton = whiteButtonFactory.Generate("Save".Localize(), centerText: true);
             saveButton.Cursor = Cursors.Hand;
             saveButtons.AddChild(saveButton);
@@ -1626,8 +1655,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
-					string extension = Path.GetExtension(file).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					string extension = Path.GetExtension(file).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						fileDropEventArgs.AcceptDrop = true;
 					}
@@ -1642,8 +1671,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
-					string extension = Path.GetExtension(file).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					string extension = Path.GetExtension(file).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						fileDropEventArgs.AcceptDrop = true;
 					}
@@ -1659,21 +1688,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				pendingPartsToLoad.Clear();
 				foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
 				{
-					string extension = Path.GetExtension(droppedFileName).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					string extension = Path.GetExtension(droppedFileName).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						pendingPartsToLoad.Add(droppedFileName);
 					}
 				}
 
-				bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
-				if (enterEditModeBeforeAddingParts)
+				if (pendingPartsToLoad.Count > 0)
 				{
-					EnterEditAndCreateSelectionData();
-				}
-				else
-				{
-					LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+					bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
+					if (enterEditModeBeforeAddingParts)
+					{
+						EnterEditAndCreateSelectionData();
+					}
+					else
+					{
+						LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+					}
 				}
 			}
 
@@ -2026,6 +2058,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
+		bool saveSucceded = true;
         void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             SaveAsWindow.SaveAsReturnInfo returnInfo = e.Argument as SaveAsWindow.SaveAsReturnInfo;
@@ -2051,10 +2084,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     BackgroundWorker_ProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
                 }
 
-                LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
+				saveSucceded = true;
+				LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
             }
             catch (System.UnauthorizedAccessException)
             {
+				saveSucceded = false;
                 UiThread.RunOnIdle((state) =>
                 {
                     //Do something special when unauthorized?
@@ -2063,7 +2098,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
             catch
             {
-                UiThread.RunOnIdle((state) =>
+				saveSucceded = false;
+				UiThread.RunOnIdle((state) =>
                 {
                     StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
                 });
@@ -2095,8 +2131,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 return;
             }
             UnlockEditControls();
+
             // NOTE: we do not pull the data back out of the asynch lists.
-            saveButtons.Visible = false;
+			if (saveSucceded)
+			{
+				saveButtons.Visible = false;
+			}
 
             if (afterSaveCallback != null)
             {

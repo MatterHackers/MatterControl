@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
                 buttonBar.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
                 buttonBar.Padding = new BorderDouble(0, 3);
 
-                textImageButtonFactory.FixedWidth = 60;
+                textImageButtonFactory.FixedWidth = 60 * TextWidget.GlobalPointSizeScaleRatio;
                 backButton = textImageButtonFactory.Generate(LocalizedString.Get("Back"), centerText: true);
                 backButton.Click += new EventHandler(back_Click);
 

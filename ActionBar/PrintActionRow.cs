@@ -34,6 +34,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
         TooltipButton resumeButton;
         TooltipButton cancelButton;
+		TooltipButton resetConnectionButton;
 
         TooltipButton reprintButton;
         TooltipButton doneWithCurrentPartButton;
@@ -89,6 +90,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			string cancelButtonMessage = LocalizedString.Get("Stop the current print");
 			cancelButton = makeButton(cancelButtonText, cancelButtonMessage);
 
+			string resetConnectionButtonText = "Reset Connection".Localize();
+			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
+			resetConnectionButton = makeButton(resetConnectionButtonText, resetConnectionButtonMessage);
+
 			string resumeButtonText = LocalizedString.Get("Resume");
 			string resumeButtonMessage = LocalizedString.Get ("Resume the current print");
 			resumeButton = makeButton(resumeButtonText, resumeButtonMessage);
@@ -122,7 +127,10 @@ namespace MatterHackers.MatterControl.ActionBar
             this.AddChild(cancelButton);
             allPrintButtons.Add(cancelButton);
 
-            this.AddChild(cancelConnectButton);
+			this.AddChild(resetConnectionButton);
+			allPrintButtons.Add(resetConnectionButton);
+			
+			this.AddChild(cancelConnectButton);
             allPrintButtons.Add(cancelConnectButton);
 
             this.AddChild(reprintButton);
@@ -147,7 +155,8 @@ namespace MatterHackers.MatterControl.ActionBar
             pauseButton.Click += new EventHandler(onPauseButton_Click);
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
-            cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
+			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(ResetConnectionButton_Click); };
+			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
             reprintButton.Click += new EventHandler(onReprintButton_Click);
             doneWithCurrentPartButton.Click += new EventHandler(onDoneWithCurrentPartButton_Click);
             ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
@@ -233,10 +242,15 @@ namespace MatterHackers.MatterControl.ActionBar
             else
             {
                 CancelPrinting();
-            }
-        }
+			}
+		}
 
-        void onConfirmCancelPrint(bool messageBoxResponse)
+		void ResetConnectionButton_Click(object state)
+		{
+			PrinterConnectionAndCommunication.Instance.RebootBoard();
+		}
+		
+		void onConfirmCancelPrint(bool messageBoxResponse)
         {
             if (messageBoxResponse)
 			{	
@@ -257,7 +271,8 @@ namespace MatterHackers.MatterControl.ActionBar
             }            
             PrinterConnectionAndCommunication.Instance.Stop();
             timeSincePrintStarted.Reset();
-        }
+			UiThread.RunOnIdle((state2) => { SetButtonStates(); });
+		}
 
         void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
         {
@@ -360,8 +375,20 @@ namespace MatterHackers.MatterControl.ActionBar
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
                     case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-                        this.activePrintButtons.Add(pauseButton);
-                        this.activePrintButtons.Add(cancelButton);
+						if (!timeSincePrintStarted.IsRunning)
+						{
+							timeSincePrintStarted.Restart();
+						}
+
+						if (!PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+						{
+							this.activePrintButtons.Add(pauseButton);
+							this.activePrintButtons.Add(cancelButton);
+						}
+						else
+						{
+							this.activePrintButtons.Add(resetConnectionButton);
+						}
                         EnableActiveButtons();
                         break;
 

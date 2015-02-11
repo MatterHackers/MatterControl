@@ -29,7 +29,7 @@ namespace MatterHackers.MatterControl
 		public bool AllowThemeToAdjustImage = true;
 		private string imageName;
 
-		public double FixedHeight = 30;
+		public double FixedHeight = 30 * TextWidget.GlobalPointSizeScaleRatio;
 
 		public SplitButtonFactory ()
 		{

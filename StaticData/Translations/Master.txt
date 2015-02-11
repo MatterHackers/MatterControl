@@ -3098,3 +3098,18 @@ Translated:The Fill Density must be between 0 and 1 inclusive.
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
 Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
 
+English:Inserting Text
+Translated:Inserting Text
+
+English:Saving Parts:
+Translated:Saving Parts:
+
+English:Reset Connection
+Translated:Reset Connection
+
+English:Reboots the firmware on the controller
+Translated:Reboots the firmware on the controller
+
+English:Please wait. Slicing files {0} of {1}
+Translated:Please wait. Slicing files {0} of {1}
+

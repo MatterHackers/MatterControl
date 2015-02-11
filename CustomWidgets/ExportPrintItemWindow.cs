@@ -16,6 +16,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
+using System.ComponentModel;
 
 namespace MatterHackers.MatterControl
 {
@@ -279,7 +280,7 @@ namespace MatterHackers.MatterControl
 						// read the last few k of the file nad see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{
-							PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+							PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
 							return;
 						}
 						else
@@ -294,7 +295,7 @@ namespace MatterHackers.MatterControl
 								if (fileEnd.Contains("filament used"))
 								{
 									System.Threading.Thread.Sleep(10000);
-									PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+									PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
 									return;
 								}
 							}
@@ -327,8 +328,8 @@ namespace MatterHackers.MatterControl
 			saveParams.ActionButtonLabel = "Export";
             saveParams.FileName = Path.GetFileNameWithoutExtension(printItemWrapper.Name);
 
+			Close();
 			FileDialog.SaveFileDialog(saveParams, onExportGcodeFileSelected);
-
         }
 
 		void onExportGcodeFileSelected(SaveFileDialogParams saveParams)
@@ -346,13 +347,11 @@ namespace MatterHackers.MatterControl
                 string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
                 if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
 				{
-					Close();
 					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
 					printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
 				}
 				else if (partIsGCode)
 				{
-					Close();
 					SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
 				}
 			}
@@ -473,39 +472,80 @@ namespace MatterHackers.MatterControl
             CreateWindowContent();   
         }
 
-        void exportSTL_Click(object sender, EventArgs mouseEvent)
-        {
-            UiThread.RunOnIdle(DoExportSTL_Click);
-        }
-
-        void DoExportSTL_Click(object state)
-        {
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");  
-			saveParams.Title = "MatterControl: Export File";
-			saveParams.ActionButtonLabel = "Export";
-            saveParams.FileName = printItemWrapper.Name;
-
-            FileDialog.SaveFileDialog(saveParams, onExportStlFileSelected);
-        }
-
         void exportAMF_Click(object sender, EventArgs mouseEvent)
         {
-            UiThread.RunOnIdle(DoExportAMF_Click);
+			UiThread.RunOnIdle((state) =>
+			{
+				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath);
+				saveParams.Title = "MatterControl: Export File";
+				saveParams.ActionButtonLabel = "Export";
+				saveParams.FileName = printItemWrapper.Name;
+
+				Close();
+				FileDialog.SaveFileDialog(saveParams, onExportAmfFileSelected);
+			});
         }
 
-        void DoExportAMF_Click(object state)
-        {
-            SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath);
-            saveParams.Title = "MatterControl: Export File";
-            saveParams.ActionButtonLabel = "Export";
-            saveParams.FileName = printItemWrapper.Name;
-
-            FileDialog.SaveFileDialog(saveParams, onExportAmfFileSelected);
-        }
-
-        void onExportStlFileSelected(SaveFileDialogParams saveParams)
+		void onExportAmfFileSelected(SaveFileDialogParams saveParams)
 		{
-			Close();
+			BackgroundWorker saveWorker = new BackgroundWorker();
+			saveWorker.DoWork += amfSaveWorker_DoWork;
+			saveWorker.RunWorkerAsync(saveParams);
+		}
+
+		void amfSaveWorker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			SaveFileDialogParams saveParams = e.Argument as SaveFileDialogParams;
+
+			if (saveParams.FileName != null)
+			{
+				string filePathToSave = saveParams.FileName;
+				if (filePathToSave != null && filePathToSave != "")
+				{
+					string extension = Path.GetExtension(filePathToSave);
+					if (extension == "")
+					{
+						File.Delete(filePathToSave);
+						filePathToSave += ".amf";
+					}
+					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+					{
+						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+					}
+					else
+					{
+						List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
+						MeshFileIo.Save(meshGroups, filePathToSave);
+					}
+					ShowFileIfRequested(filePathToSave);
+				}
+			}
+		}
+
+		void exportSTL_Click(object sender, EventArgs mouseEvent)
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");
+				saveParams.Title = "MatterControl: Export File";
+				saveParams.ActionButtonLabel = "Export";
+				saveParams.FileName = printItemWrapper.Name;
+
+				Close();
+				FileDialog.SaveFileDialog(saveParams, onExportStlFileSelected);
+			});
+		}
+
+		void onExportStlFileSelected(SaveFileDialogParams saveParams)
+		{
+			BackgroundWorker saveWorker = new BackgroundWorker();
+			saveWorker.DoWork += stlSaveWorker_DoWork;
+			saveWorker.RunWorkerAsync(saveParams);
+		}
+
+		void stlSaveWorker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			SaveFileDialogParams saveParams = e.Argument as SaveFileDialogParams;
 			if (saveParams.FileName != null)
 			{
 				string filePathToSave = saveParams.FileName;
@@ -530,34 +570,6 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
-
-        void onExportAmfFileSelected(SaveFileDialogParams saveParams)
-        {
-            Close();
-            if (saveParams.FileName != null)
-            {
-                string filePathToSave = saveParams.FileName;
-                if (filePathToSave != null && filePathToSave != "")
-                {
-                    string extension = Path.GetExtension(filePathToSave);
-                    if (extension == "")
-                    {
-                        File.Delete(filePathToSave);
-                        filePathToSave += ".amf";
-                    }
-                    if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-                    {
-                        File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-                    }
-                    else
-                    {
-                        List<MeshGroup> meshGroups = MeshFileIo.Load(printItemWrapper.FileLocation);
-                        MeshFileIo.Save(meshGroups, filePathToSave);
-                    }
-                    ShowFileIfRequested(filePathToSave);
-                }
-            }
-        }
 
         void sliceItem_Done(object sender, EventArgs e)
         {
@@ -610,8 +622,6 @@ namespace MatterHackers.MatterControl
 			exportX3GProcess.Arguments = gpxArgs;
 			Process.Start(exportX3GProcess);
 			ShowFileIfRequested(x3gOutputPath);
-
-
 		}
     }
 }

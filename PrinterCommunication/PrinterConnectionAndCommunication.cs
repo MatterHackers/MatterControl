@@ -49,6 +49,7 @@ using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
 using Microsoft.Win32.SafeHandles;
+using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
@@ -101,8 +102,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
     /// </summary>
     public class PrinterConnectionAndCommunication
     {
-        readonly int JoinThreadTimeoutMs = 5000;
-
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
@@ -160,6 +159,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         FoundStringContainsCallbacks WriteLineContainsCallBacks = new FoundStringContainsCallbacks();
 
         bool printWasCanceled = false;
+		public bool PrintWasCanceled { get { return printWasCanceled; } }
         int firstLineToResendIndex = 0;
         PrintTask activePrintTask;
 
@@ -280,6 +280,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                                 }
                             }
                             break;
+
+						default:
+							if (!timeSinceStartedPrint.IsRunning
+								&& value == CommunicationStates.Printing)
+							{
+								// If we are just satrting to print (we know we were not pasued or it would have stoped above)
+								timeSinceStartedPrint.Restart();
+							}
+							break;
                     }
 
                     communicationState = value;
@@ -298,7 +307,42 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         string printJobDisplayName = null;
         GCodeFile loadedGCode = new GCodeFileLoaded(); // we start out by setting it to a nothing file
         IFrostedSerialPort serialPort;
-        Thread readFromPrinterThread;
+		readonly int JoinThreadTimeoutMs = 5000;
+
+		internal class ReadThreadHolder
+		{
+			readonly int JoinThreadTimeoutMs = 5000;
+
+			static int currentReadThreadIndex = 0;
+			int creationIndex;
+
+			internal static void Start(DoWorkEventHandler readFromPrinterFunction)
+			{
+				new ReadThreadHolder(readFromPrinterFunction);
+			}
+
+			ReadThreadHolder(DoWorkEventHandler readFromPrinterFunction)
+			{
+				currentReadThreadIndex++;
+				creationIndex = currentReadThreadIndex;
+
+				BackgroundWorker readFromPrinterWorker = new BackgroundWorker();
+				readFromPrinterWorker.DoWork += readFromPrinterFunction;
+
+				readFromPrinterWorker.RunWorkerAsync(this);
+			}
+
+			internal bool IsCurrentThread()
+			{
+				return currentReadThreadIndex == creationIndex;
+			}
+
+			internal static void Join()
+			{
+				currentReadThreadIndex++;
+			}
+		}
+
         Thread connectThread;
 
         private PrintItemWrapper activePrintItem;
@@ -433,7 +477,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
                 return globalInstance;
             }
-
         }
 
         PrinterConnectionAndCommunication()
@@ -718,12 +761,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                if (!timeSinceStartedPrint.IsRunning
-                    && PrinterIsPrinting)
-                {
-                    timeSinceStartedPrint.Restart();
-                }
-
                 if (NumberOfLinesInCurrentPrint > 0)
                 {
                     if (printerCommandQueueIndex >= 0
@@ -774,9 +811,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     return 100.0;
                 }
-                else if (NumberOfLinesInCurrentPrint > 0)
+                else if (NumberOfLinesInCurrentPrint > 0
+					&& loadedGCode != null)
                 {
-					return Math.Min(99.9, (double)printerCommandQueueIndex / (double)NumberOfLinesInCurrentPrint * 100);
+					return loadedGCode.PercentComplete(printerCommandQueueIndex);
                 }
                 else
                 {
@@ -945,7 +983,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// read the last few k of the file nad see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{
-							PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+							PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
 							return;
 						}
 						else
@@ -959,7 +997,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 								if (fileEnd.Contains("filament used"))
 								{
-									PrinterConnectionAndCommunication.Instance.StartPrint2(gcodePathAndFileName);
+									PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
 									return;
 								}
 							}
@@ -1408,12 +1446,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                int baudRate = 0;
+                int baudRate = 250000;
                 if (this.ActivePrinter != null)
                 {
                     try
                     {
-                        baudRate = Convert.ToInt32(this.ActivePrinter.BaudRate);
+						if (this.ActivePrinter.BaudRate != null)
+						{
+							baudRate = Convert.ToInt32(this.ActivePrinter.BaudRate);
+						}
                     }
                     catch
                     {
@@ -1438,7 +1479,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             // On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
             // this aspect to ensure the validation logic that verifies port availablity/in use status can proceed without additional workarounds for Android
 #if __ANDROID__
-            string currentPortName = FrostedSerialPort.GetPortNames().Where(p => p != "/dev/bus/usb/002/002").FirstOrDefault();
+            string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
 
             if(!string.IsNullOrEmpty(currentPortName))
             {
@@ -1547,7 +1588,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             {
                 return false;
             }
-
         }
 
         void AttemptToConnect(string serialPortName, int baudRate)
@@ -1570,11 +1610,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     try
                     {
                         serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, true);
+						
+						ReadThreadHolder.Join();
 
-                        readFromPrinterThread = new Thread(ReadFromPrinter);
-                        readFromPrinterThread.Name = "Read From Printer";
-                        readFromPrinterThread.IsBackground = true;
-                        readFromPrinterThread.Start();
+						Console.WriteLine("ReadFromPrinter thread created.");
+						ReadThreadHolder.Start(ReadFromPrinter);
 					
 						// We have to send a line because some printers (like old printrbots) do not send anything when connecting and there is no other way to know they are there.
 						SendLineToPrinterNow("M105");
@@ -1944,7 +1984,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 serialPort.RtsEnable = false;
                 try
                 {
-                    Thread.Sleep(1);
+                    Thread.Sleep(100);
                 }
                 catch
                 {
@@ -1953,7 +1993,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 serialPort.Close();
             }
         }
-        /// <summary>
+
+		public void RebootBoard()
+		{
+			if (this.ActivePrinter != null
+				&&  serialPort != null)
+			{
+				serialPort.RtsEnable = true;
+				serialPort.DtrEnable = true;
+				Thread.Sleep(100);
+				serialPort.RtsEnable = false;
+				serialPort.DtrEnable = false;
+				Thread.Sleep(100);
+				serialPort.RtsEnable = true;
+				serialPort.DtrEnable = true;
+
+				ClearQueuedGCode();
+				// let the process know we canceled not ended normaly.
+				CommunicationState = CommunicationStates.Connected;
+			}
+		}
+
+		/// <summary>
         /// Abort an ongoing attempt to establish communcation with a printer due to the specified problem. This is a specialized
         /// version of the functionality that's previously been in .Disable but focused specifically on the task of aborting an 
         /// ongoing connection. Ideally we should unify all abort invocations to use this implementation rather than the mix
@@ -1973,9 +2034,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
 
             // Shutdown the readFromPrinter thread
-            if (shutdownReadLoop && readFromPrinterThread != null)
+            if (shutdownReadLoop)
             {
-                readFromPrinterThread.Join(JoinThreadTimeoutMs);
+				ReadThreadHolder.Join();
             }
 
             // Shudown the serial port
@@ -2012,11 +2073,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 ForceImmediateWrites = false;
 
                 CommunicationState = CommunicationStates.Disconnecting;
-                if (readFromPrinterThread != null)
-                {
-                    readFromPrinterThread.Join(JoinThreadTimeoutMs);
-                }
-                serialPort.Close();
+				ReadThreadHolder.Join();
+				serialPort.Close();
                 serialPort.Dispose();
                 serialPort = null;
                 CommunicationState = CommunicationStates.Disconnected;
@@ -2341,10 +2399,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     CommunicationState = CommunicationStates.FailedToConnect;
                     connectThread.Join(JoinThreadTimeoutMs);
                     CommunicationState = CommunicationStates.Disconnecting;
-                    if (readFromPrinterThread != null)
-                    {
-                        readFromPrinterThread.Join(JoinThreadTimeoutMs);
-                    }
+					ReadThreadHolder.Join();
                     if (serialPort != null)
                     {
                         serialPort.Close();
@@ -2405,62 +2460,81 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ReleaseMotors();
         }
 
-        public bool StartPrint2(string gcodeFilename)
+        public void StartPrint(string gcodeFilename)
         {
             if (!PrinterIsConnected || PrinterIsPrinting)
             {
-                return false;
+                return;
             }
 
+			printWasCanceled = false;
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
 			waitingForPosition = false;
 
             LinesToWriteQueue.Clear();
             ClearQueuedGCode();
+
+			BackgroundWorker loadGCodeWorker = new BackgroundWorker();
+			loadGCodeWorker.DoWork += new DoWorkEventHandler(loadGCodeWorker_DoWork);
+			loadGCodeWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadGCodeWorker_RunWorkerCompleted);
+			loadGCodeWorker.RunWorkerAsync(gcodeFilename);
+		}
+
+		void loadGCodeWorker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			string gcodeFilename = e.Argument as string;
 			loadedGCode = GCodeFile.Load(gcodeFilename);
+		}
 
-            switch (communicationState)
-            {
-                case CommunicationStates.PreparingToPrintToSd:
-                    activePrintTask = null;
-                    CommunicationState = CommunicationStates.PrintingToSd;
-                    break;
+		void loadGCodeWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			switch (communicationState)
+			{
+				case CommunicationStates.PreparingToPrintToSd:
+					activePrintTask = null;
+					CommunicationState = CommunicationStates.PrintingToSd;
+					break;
 
-                case CommunicationStates.PreparingToPrint:
-                    if (ActivePrintItem.PrintItem.Id == 0)
-                    {
-                        ActivePrintItem.PrintItem.Commit();
-                    }
+				case CommunicationStates.PreparingToPrint:
+					if (ActivePrintItem.PrintItem.Id == 0)
+					{
+						ActivePrintItem.PrintItem.Commit();
+					}
 
-                    activePrintTask = new PrintTask();
-                    activePrintTask.PrintStart = DateTime.Now;
-                    activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
-                    activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
-                    activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
-                    activePrintTask.PrintComplete = false;
-                    activePrintTask.Commit();
+					activePrintTask = new PrintTask();
+					activePrintTask.PrintStart = DateTime.Now;
+					activePrintTask.PrinterId = ActivePrinterProfile.Instance.ActivePrinter.Id;
+					activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
+					activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
+					activePrintTask.PrintComplete = false;
+					activePrintTask.Commit();
 
-                    CommunicationState = CommunicationStates.Printing;
-                    break;
+					CommunicationState = CommunicationStates.Printing;
+					break;
 
-                default:
-                    throw new NotFiniteNumberException();
-            }
-
-            return true;
-        }
+				default:
+#if DEBUG
+					throw new Exception("We are not preparing to print so we should not be starting to print");
+#else
+					CommunicationState = CommunicationStates.Connected;
+					break;
+#endif
+			}
+		}
 
         const int MAX_INVALID_CONNECTION_CHARS = 3;
         string dataLastRead = "";
         string lastLineRead = "";
-        public void ReadFromPrinter()
+        public void ReadFromPrinter(object sender, DoWorkEventArgs e)
         {
+			ReadThreadHolder readThreadHolder = e.Argument as ReadThreadHolder;
+
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             timeSinceLastReadAnything.Restart();
             // we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
             while (CommunicationState == CommunicationStates.AttemptingToConnect
-                || (PrinterIsConnected && serialPort.IsOpen && !Disconnecting))
+                || (PrinterIsConnected && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
             {
                 if(PrinterIsPrinting 
                     && PrinterIsConnected
@@ -2472,7 +2546,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 try
                 {
                     while (serialPort != null
-                        && serialPort.BytesToRead > 0)
+                        && serialPort.BytesToRead > 0
+						&& readThreadHolder.IsCurrentThread())
                     {
                         using (TimedLock.Lock(this, "ReadFromPrinter"))
                         {

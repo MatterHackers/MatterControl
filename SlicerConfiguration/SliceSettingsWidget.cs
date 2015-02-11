@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public SliceSettingsWidget(SliceSettingsWidgetUiState uiState)
         {
             int minSettingNameWidth = (int)(190 * TextWidget.GlobalPointSizeScaleRatio + .5);
-            buttonFactory.FixedHeight = 20;
+			buttonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
             buttonFactory.fontSize = 10;
             buttonFactory.normalFillColor = RGBA_Bytes.White;
             buttonFactory.normalTextColor = RGBA_Bytes.DarkGray;

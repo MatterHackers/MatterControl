@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.PrinterControls
             homeAllButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
             homeAllButton.Click += new EventHandler(homeAll_Click);
 
-            textImageButtonFactory.FixedWidth = (int)homeAllButton.Width;
+			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * TextWidget.GlobalPointSizeScaleRatio;
             homeXButton = textImageButtonFactory.Generate("X", centerText: true);
             homeXButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
             homeXButton.Click += new EventHandler(homeXButton_Click);

@@ -77,14 +77,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
             searchButtonFactory.disabledTextColor = RGBA_Bytes.White;
             searchButtonFactory.pressedTextColor = RGBA_Bytes.White;
             searchButtonFactory.borderWidth = 0;
-            searchButtonFactory.FixedWidth = 80;
+			searchButtonFactory.FixedWidth = 80 * TextWidget.GlobalPointSizeScaleRatio;
 
             editButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
             editButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
             editButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
             editButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
             editButtonFactory.borderWidth = 0;
-            editButtonFactory.FixedWidth = 70;
+			editButtonFactory.FixedWidth = 70 * TextWidget.GlobalPointSizeScaleRatio;
 
             FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
