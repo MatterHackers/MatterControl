@@ -1424,6 +1424,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
             {
+                // Update communication state so an abort below is guaranteed to fire OnCommunicationStateChanged
+                CommunicationState = CommunicationStates.AttemptingToConnect;
+
+                // Start the process of requesting permission and exit if permission is not currently granted
+                if(!FrostedSerialPort.EnsureDeviceAccess())
+                {
+                    CommunicationState = CommunicationStates.FailedToConnect;
+                    return;
+                }
+
                 ConnectToPrinter(PrinterConnectionAndCommunication.Instance.ActivePrinter);
             }
         }
