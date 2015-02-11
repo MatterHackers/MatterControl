@@ -125,10 +125,13 @@ namespace MatterHackers.MatterControl
 
         public void PlaySound(string fileName)
         {
-            using (var mediaStream = StaticData.Instance.OpenSteam(Path.Combine("Sounds", fileName)))
-            {
-                (new System.Media.SoundPlayer(mediaStream)).Play();
-            }
+			if (OsInformation.OperatingSystem == OSType.Windows)
+			{
+				using (var mediaStream = StaticData.Instance.OpenSteam(Path.Combine("Sounds", fileName)))
+				{
+					(new System.Media.SoundPlayer(mediaStream)).Play();
+				}
+			}
         }
 
         private MatterControlApplication(double width, double height, out bool showWindow)
