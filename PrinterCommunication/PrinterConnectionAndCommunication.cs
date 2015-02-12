@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         static PrinterConnectionAndCommunication globalInstance;
         string connectionFailureMessage = "Unknown Reason";
 
-		bool waitingForPosition = false;
+		Stopwatch waitingForPosition = new Stopwatch();
 
         public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
 
@@ -1215,7 +1215,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             PositionRead.CallEvents(this, null);
 
-			waitingForPosition = false;
+			waitingForPosition.Stop();
+			waitingForPosition.Reset();
         }
 
         double currentSdBytes = 0;
@@ -2152,7 +2153,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     }
                     else
                     {
-						if (waitingForPosition)
+						int waitTimeInMs = 60000; // 60 seconds
+						if (waitingForPosition.IsRunning && waitingForPosition.ElapsedMilliseconds < waitTimeInMs)
 						{
 							// we are wating for a postion response don't print more
 							return;
@@ -2165,7 +2167,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						if (lineToWrite.Contains("M114") 
 							&& CommunicationState != CommunicationStates.PrintingToSd)
 						{
-							waitingForPosition = true;
+							waitingForPosition.Restart();
 						}
 						
                         if (trimedLine.Length > 0)
@@ -2480,7 +2482,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			printWasCanceled = false;
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
-			waitingForPosition = false;
+			waitingForPosition.Stop();
+			waitingForPosition.Restart();
 
             LinesToWriteQueue.Clear();
             ClearQueuedGCode();
