@@ -36,6 +36,8 @@ brainwave.bootloader.name="Brainwave Boot Loader"
 printrboard.name="Printrboard"
 smoothieboard.name="Smoothie Board"
 makeit.name="MakeIt"
+ramps.name="RAMPS"
+ftdi.name="FTDI"
 
 [DefaultInstall]
 CopyINF=arduino.inf
@@ -92,6 +94,8 @@ DefaultDestDir=12
 %smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_04
 %smoothieboard.name%=DriverInstall, USB\VID_1F00&PID_2012
 %makeit.name%=DriverInstall, USB\VID_0403&PID_6015
+%ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
+%ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
 
 [DeviceList.NTamd64]
 %due.bossa.name%=DriverInstall, USB\VID_03EB&PID_6124
@@ -129,6 +133,8 @@ DefaultDestDir=12
 %smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_04
 %smoothieboard.name%=DriverInstall, USB\VID_1F00&PID_2012
 %makeit.name%=DriverInstall, USB\VID_0403&PID_6015
+%ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
+%ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
 
 [DeviceList.NTia64]
 %esplora.bootloader.name%=DriverInstall, USB\VID_2341&PID_003C
@@ -163,6 +169,8 @@ DefaultDestDir=12
 %smoothieboard.name%=DriverInstall, USB\VID_1D50&PID_6015&MI_04
 %smoothieboard.name%=DriverInstall, USB\VID_1F00&PID_2012
 %makeit.name%=DriverInstall, USB\VID_0403&PID_6015
+%ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
+%ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
 
 [DriverInstall]
 include=mdmcpq.inf,usb.inf
