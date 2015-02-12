@@ -107,7 +107,6 @@ namespace MatterHackers.MatterControl
             StringEventArgs eventArgs = new StringEventArgs("->" + lineString.Data);
             PrinterLines.Add(eventArgs.Data);
             OnHasChanged(eventArgs);
-            OnHasChanged(eventArgs);
         }
 
         void Instance_ConnectionFailed(object sender, EventArgs e)
