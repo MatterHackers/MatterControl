@@ -23,19 +23,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.printerRecord = printerRecord;
             this.windowController = windowController;
         }
-
     }
 
     class PrinterListItemView : PrinterListItem
-    {        
-        TextWidget printerName;       
+    {
+        TextWidget printerName;
         
         RGBA_Bytes defaultBackgroundColor = new RGBA_Bytes(250,250,250);
         RGBA_Bytes hoverBackgroundColor = new RGBA_Bytes(204, 204, 204);
 
         RGBA_Bytes defaultTextColor = new RGBA_Bytes(34, 34, 34);
         RGBA_Bytes hoverTextColor = new RGBA_Bytes(34, 34, 34);
-
 
         public PrinterListItemView(Printer printerRecord, ConnectionWindow windowController)
             :base(printerRecord, windowController)
@@ -68,7 +66,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     availableText = PrinterConnectionAndCommunication.Instance.PrinterConnectionStatusVerbose;                    
                     availableColor = new RGBA_Bytes(0,95,107);
                 }
-            }        
+            }
 
             TextWidget availableIndicator = new TextWidget(availableText, pointSize: 10);
             availableIndicator.TextColor = availableColor;
@@ -83,15 +81,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             BindHandlers();
         }
 
-
-
         public void BindHandlers()
         {
             this.MouseEnter += new EventHandler(onMouse_Enter);
             this.MouseLeave += new EventHandler(onMouse_Leave);
             this.MouseUp += new MouseEventHandler(onMouse_Up);
         }
-
 
         void onMouse_Up(object sender, EventArgs e)
         {
@@ -116,14 +111,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.BackgroundColor = this.hoverBackgroundColor;
             this.printerName.TextColor = this.hoverTextColor;
         }
-			
 
         void onMouse_Leave(object sender, EventArgs args)
         {
-	
             this.BackgroundColor = this.defaultBackgroundColor;
             this.printerName.TextColor = this.defaultTextColor;  
-
         }
     }
 
@@ -141,8 +133,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         public PrinterListItemEdit(Printer printerRecord, ConnectionWindow windowController)
             :base(printerRecord, windowController)
         {            
-
-
             this.printerRecord = printerRecord;
             this.Margin = new BorderDouble(1);
             this.BackgroundColor = this.defaultBackgroundColor;
@@ -170,7 +160,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			this.AddChild (printerNameContainer);
 			this.AddChild (rightButtonOverlayContainer);
-
         }
 
 		SlideWidget getItemActionButtons()
@@ -224,21 +213,21 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		}
 
         void EditConnectionLink_Click(object sender, EventArgs mouseEvent)
-        {            
+        {
             this.windowController.ChangedToEditPrinter(this.printerRecord);
         }
 
         void RemoveConnectionLink_Click(object sender, EventArgs mouseEvent)
         {
-            if (ActivePrinterProfile.Instance.ActivePrinter != null)
+            //Disconnect printer if the printer being removed is currently connected
+            if (ActivePrinterProfile.Instance.ActivePrinter != null && this.printerRecord.Id == ActivePrinterProfile.Instance.ActivePrinter.Id)
             {
-                //Disconnect printer if the printer being removed is currently connected
-				if (this.printerRecord.Id == ActivePrinterProfile.Instance.ActivePrinter.Id)
-                {
+                UiThread.RunOnIdle((state) => {
                     PrinterConnectionAndCommunication.Instance.Disable();
                     ActivePrinterProfile.Instance.ActivePrinter = null;
-                }
+                }, null, 0.5);
             }
+
             this.printerRecord.Delete();
             this.windowController.ChangeToChoosePrinter(true);
         }
