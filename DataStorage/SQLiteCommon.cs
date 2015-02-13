@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.DataStorage
 		List<T> Query<T>(string query, params object[] args) where T : new();
         //SQLiteCommand CreateCommand(string cmdText, params object[] ps);
         T ExecuteScalar<T>(string query, params object[] args);
+        int InsertAll(System.Collections.IEnumerable objects);
+        void RunInTransaction (Action action);
         void Close();
     }
 
