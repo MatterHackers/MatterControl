@@ -877,8 +877,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 IEnumerable<DataStorage.SliceSetting> settingsList = this.windowController.GetCollectionSettings(windowController.ActivePresetLayer.settingsCollectionData.Id);
                 foreach (DataStorage.SliceSetting s in settingsList)
                 {
-                    settingsDictionary[s.Name] = s;
-                }
+                    DataStorage.SliceSetting newSetting = new DataStorage.SliceSetting();
+                    newSetting.Name = s.Name;
+                    newSetting.Value = s.Value;
+
+                    settingsDictionary.Add(s.Name, newSetting);
+                    
+                } 
+
                 SettingsLayer duplicateLayer = new SettingsLayer(duplicateCollection, settingsDictionary);
                 windowController.ActivePresetLayer = duplicateLayer;
                 windowController.ChangeToSlicePresetDetail();
