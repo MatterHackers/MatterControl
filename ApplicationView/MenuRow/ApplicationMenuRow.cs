@@ -31,11 +31,17 @@ namespace MatterHackers.MatterControl
             this.HAnchor = HAnchor.ParentLeftRight;
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            // put in the file menu
-            MenuOptionFile menuOptionFile = new MenuOptionFile();
-            this.AddChild(menuOptionFile);
+			// put in the file menu
+			MenuOptionFile menuOptionFile = new MenuOptionFile();
+			this.AddChild(menuOptionFile);
 
-            // put in the help menu
+#if false
+			// put in the view menu
+			MenuOptionView menuOptionView = new MenuOptionView();
+			this.AddChild(menuOptionView);
+#endif
+
+			// put in the help menu
             MenuOptionHelp menuOptionHelp = new MenuOptionHelp();
             this.AddChild(menuOptionHelp);
 

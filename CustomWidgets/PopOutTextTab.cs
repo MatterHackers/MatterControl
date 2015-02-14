@@ -92,7 +92,6 @@ namespace MatterHackers.Agg.UI
             tabTitle.AutoExpandBoundsToText = true;
             leftToRight.AddChild(tabTitle);
 
-#if true
             ImageBuffer popOutImageClick = StaticData.Instance.LoadIcon(Path.Combine("icon_pop_out_32x32.png"));
             if (ActiveTheme.Instance.IsDarkTheme)
             {
@@ -117,7 +116,6 @@ namespace MatterHackers.Agg.UI
             popOut.Margin = new BorderDouble(3, 0);
             popOut.VAnchor = VAnchor.ParentTop;
             leftToRight.AddChild(popOut);
-#endif
 
             widgetState.AddChild(leftToRight);
             widgetState.SetBoundsToEncloseChildren();

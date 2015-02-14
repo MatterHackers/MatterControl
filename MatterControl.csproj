@@ -132,6 +132,7 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuOptionView.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
     <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
@@ -340,6 +341,7 @@
     <Reference Include="PdfSharp">
       <HintPath>PdfSharp.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />

@@ -152,18 +152,11 @@ namespace MatterHackers.MatterControl
             string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
             string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
             sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-#if false // LBB 2014 12 23 (soon to be dead code I expect)
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", textSize,
-                        ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", textSize,
-                ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-#else // use the pop out tabs
-            advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), "Slice Settings Tab", new Vector2(590, 400), textSize));
+			advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), SliceSettingsTabName, new Vector2(590, 400), textSize));
+            advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), ControlsTabName, new Vector2(400, 300), textSize));
 
-            advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), "Controls Tab", new Vector2(400, 300), textSize));
-#endif
-            string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
+			string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
             ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();
             advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", textSize,
                         ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
@@ -173,7 +166,17 @@ namespace MatterHackers.MatterControl
             return advancedControls;
         }
 
-        public void ReloadSliceSettings(object state)
+		public static string SliceSettingsTabName
+		{
+			get { return "Slice Settings Tab"; }
+		}
+
+		public static string ControlsTabName
+		{
+			get { return "Controls Tab"; }
+		}
+
+		public void ReloadSliceSettings(object state)
         {
             lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
 

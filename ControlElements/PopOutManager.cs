@@ -79,6 +79,24 @@ namespace MatterHackers.MatterControl
             PositionKey = dataBaseKeyPrefix + PositionSufix;
         }
 
+		public static void SetPopOutState(string dataBaseKeyPrefix, bool poppedOut)
+		{
+			string windowLeftOpenKey = dataBaseKeyPrefix + WindowLeftOpenSufix;
+			UserSettings.Instance.Fields.SetBool(windowLeftOpenKey, poppedOut);
+		}
+
+		public static void SetStates(string dataBaseKeyPrefix, bool poppedOut, double width, double height, double positionX, double positionY)
+		{
+			string windowLeftOpenKey = dataBaseKeyPrefix + WindowLeftOpenSufix;
+			string windowSizeKey = dataBaseKeyPrefix + WindowSizeSufix;
+			string positionKey = dataBaseKeyPrefix + PositionSufix;
+
+			UserSettings.Instance.Fields.SetBool(windowLeftOpenKey, poppedOut);
+
+			UserSettings.Instance.set(windowSizeKey, string.Format("{0},{1}", width, height));
+			UserSettings.Instance.set(positionKey, string.Format("{0},{1}", positionX, positionY));
+		}
+
         public void ShowContentInWindow()
         {
             if (PopedOutSystemWindow == null)
