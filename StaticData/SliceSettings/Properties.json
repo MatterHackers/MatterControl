@@ -467,7 +467,7 @@
     "PresentationName": "Infill Type",
     "HelpText": "The type of support to create inside of parts.",
     "DataEditType": "LIST",
-    "ExtraSettings": "CONCENTRIC,GRID,LINES,TRIANGLES"
+    "ExtraSettings": "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC"
   },
   {
     "SlicerConfigName": "layer_gcode",
