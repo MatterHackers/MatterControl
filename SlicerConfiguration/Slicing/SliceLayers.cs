@@ -73,10 +73,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Slicing
 		{
 		}
 
-		public List<SliceLayer> GetAllLayers(Mesh meshToSlice, double firstLayerHeight, double otherLayerHeights, double bottomClip)
+		public List<SliceLayer> GetAllLayers(Mesh meshToSlice, double firstLayerHeight, double otherLayerHeights)
 		{
 			AxisAlignedBoundingBox meshBounds = meshToSlice.GetAxisAlignedBoundingBox();
-			double heightWithoutFirstLayer = meshBounds.ZSize - firstLayerHeight - bottomClip;
+			double heightWithoutFirstLayer = meshBounds.ZSize - firstLayerHeight;
 			int layerCount = (int)((heightWithoutFirstLayer / otherLayerHeights) + .5);
 			double currentZ = otherLayerHeights;
 			if (firstLayerHeight > 0)
