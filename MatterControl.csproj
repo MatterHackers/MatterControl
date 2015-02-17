@@ -219,6 +219,7 @@
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetListWidget.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
+    <Compile Include="SlicerConfiguration\Slicing\SliceLayers.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />

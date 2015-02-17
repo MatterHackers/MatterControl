@@ -77,8 +77,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         {
             zHitHeight = mouseEvent3D.info.hitPosition.z;
             lastMoveDelta= new Vector3();
-            double distanceToHit = Vector3.Dot(mouseEvent3D.info.hitPosition, mouseEvent3D.MouseRay.direction);
-            hitPlane = new PlaneShape(mouseEvent3D.MouseRay.direction, distanceToHit, null);
+            double distanceToHit = Vector3.Dot(mouseEvent3D.info.hitPosition, mouseEvent3D.MouseRay.directionNormal);
+            hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
 
             IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
             zHitHeight = info.hitPosition.z;
