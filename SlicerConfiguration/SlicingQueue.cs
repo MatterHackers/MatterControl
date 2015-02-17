@@ -34,6 +34,7 @@ using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.Slicing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -314,6 +315,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     break;
                             }
 
+#if false
+							Mesh loadedMesh = StlProcessing.Load(fileToSlice);
+							SliceLayers layers = new SliceLayers();
+							layers.GetAllLayers(loadedMesh, .2, .2);
+							layers.DumpSegmentsToGcode("test.gcode");
+#endif
                             
 							if (OsInformation.OperatingSystem == OSType.Android ||
 								((OsInformation.OperatingSystem == OSType.Mac || runInProcess)

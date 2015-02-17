@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,35 +36,11 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using MatterHackers.RayTracer;
+using MatterHackers.Agg;
+using System.IO;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.Slicing
+namespace MatterHackers.MatterControl.Slicing
 {
-	public class SliceLayer
-	{
-		internal struct Segment
-		{
-			Vector2 start;
-			Vector2 end;
-
-			internal Segment(Vector2 start, Vector2 end)
-			{
-				this.start = start;
-				this.end = end;
-			}
-		}
-
-		double zHeight;
-		public double ZHeight { get { return zHeight; } } 
-		List<Segment> unorderedSegments;
-		internal List<Segment> UnorderedSegments { get { return unorderedSegments; } }
-		List<PathStorage> perimeters;
-
-		public SliceLayer(double zHeight)
-		{
-			this.zHeight = zHeight;
-		}
-	}
-
 	public class SliceLayers
 	{
 		List<SliceLayer> allLayers = new List<SliceLayer>();
@@ -73,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Slicing
 		{
 		}
 
-		public List<SliceLayer> GetAllLayers(Mesh meshToSlice, double firstLayerHeight, double otherLayerHeights)
+		public void GetAllLayers(Mesh meshToSlice, double firstLayerHeight, double otherLayerHeights)
 		{
 			AxisAlignedBoundingBox meshBounds = meshToSlice.GetAxisAlignedBoundingBox();
 			double heightWithoutFirstLayer = meshBounds.ZSize - firstLayerHeight;
@@ -119,13 +95,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Slicing
 					}
 				}
 			}
-
-			throw new NotImplementedException();
 		}
 
 		public SliceLayer GetPerimetersAtHeight(Mesh meshToSlice, double zHeight)
 		{
 			throw new NotImplementedException();
+		}
+
+		public void DumpSegmentsToGcode(string filename)
+		{
+			StreamWriter stream = new StreamWriter(filename);
+			stream.Write("; some gcode to look at the layer segments");
+			int extrudeAmount = 0;
+			for (int layerIndex = 0; layerIndex < allLayers.Count; layerIndex++)
+			{
+				stream.Write("; LAYER:{0}\n".FormatWith(layerIndex));
+				List<SliceLayer.Segment> unorderedSegments = allLayers[layerIndex].UnorderedSegments;
+				for (int segmentIndex = 0; segmentIndex < unorderedSegments.Count; segmentIndex++)
+				{
+					SliceLayer.Segment segment = unorderedSegments[segmentIndex];
+					stream.Write("G1 X{0}Y{1}\n", segment.start.x, segment.start.y);
+					stream.Write("G1 X{0}Y{1}E{2}\n", segment.end.x, segment.end.y, extrudeAmount++);
+				}
+			}
+			stream.Close();
 		}
 	}
 }
