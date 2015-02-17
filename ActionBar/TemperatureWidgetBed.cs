@@ -108,9 +108,9 @@ namespace MatterHackers.MatterControl.ActionBar
         string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
         protected override void SetTargetTemperature()
         {
-            double targetTemp;
-            if (double.TryParse(ActiveSliceSettings.Instance.GetActiveValue("bed_temperature"), out targetTemp))
-            {
+            double targetTemp = ActiveSliceSettings.Instance.BedTemperature;
+			if (targetTemp != 0)
+			{
                 double goalTemp = (int)(targetTemp + .5);
                 if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
                     && PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed

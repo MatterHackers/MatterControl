@@ -595,7 +595,7 @@ namespace MatterHackers.MatterControl
 
         protected override double GetPreheatTemperature()
         {
-            return Convert.ToDouble(ActiveSliceSettings.Instance.GetActiveValue("bed_temperature"));
+            return ActiveSliceSettings.Instance.BedTemperature;
         } 
 
         protected override double GetActualTemperature()

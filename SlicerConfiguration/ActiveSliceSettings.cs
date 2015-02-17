@@ -248,6 +248,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return GetActiveValue("gcode_flavor") == "makerbot";
 		}
 
+		public double BedTemperature
+		{
+			get 
+			{
+				double targetTemp = 0;
+				if (HasHeatedBed())
+				{
+					double.TryParse(ActiveSliceSettings.Instance.GetActiveValue("bed_temperature"), out targetTemp);
+				}
+				return targetTemp;
+			}
+		}
+
         public bool HasHeatedBed()
         {
             return GetActiveValue("has_heated_bed") == "1";

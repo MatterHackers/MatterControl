@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             preStartGCode.Add("; automatic settings before start_gcode");
             AddDefaultIfNotPresent(preStartGCode, "G21", preStartGCodeLines, "set units to millimeters");
             AddDefaultIfNotPresent(preStartGCode, "M107", preStartGCodeLines, "fan off");
-            double bed_temperature = MapItem.GetValueForKey("bed_temperature");
+            double bed_temperature = ActiveSliceSettings.Instance.BedTemperature;
             if (bed_temperature > 0)
             {
                 string setBedTempString = string.Format("M190 S{0}", bed_temperature);

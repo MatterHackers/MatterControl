@@ -151,10 +151,13 @@ namespace MatterHackers.MatterControl.ActionBar
             FlowLayoutWidget temperatureWidgets = new FlowLayoutWidget(FlowDirection.TopToBottom);
             {
                 extruderTemperatureWidget = new TemperatureWidgetExtruder();
-                bedTemperatureWidget = new TemperatureWidgetBed();
-
                 temperatureWidgets.AddChild(extruderTemperatureWidget);
-                temperatureWidgets.AddChild(bedTemperatureWidget);
+				
+				bedTemperatureWidget = new TemperatureWidgetBed();
+				if (ActiveSliceSettings.Instance.HasHeatedBed())
+				{
+					temperatureWidgets.AddChild(bedTemperatureWidget);
+				}
             }            
             temperatureWidgets.VAnchor |= VAnchor.ParentTop;
             temperatureWidgets.Margin = new BorderDouble(left: 6);
