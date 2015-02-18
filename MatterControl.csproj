@@ -221,6 +221,8 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayer.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayers.cs" />
+    <Compile Include="SlicerConfiguration\Slicing\Tests\SliceLayersTests.cs" />
+    <Compile Include="SlicerConfiguration\Slicing\Tests\UnitTests.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />

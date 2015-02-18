@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,43 +31,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using MatterHackers.RayTracer;
+
+using NUnit.Framework;
 using MatterHackers.Agg;
-using System.IO;
+using MatterHackers.Agg.Image;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.Slicing
+namespace MatterHackers.MatterControl.Slicing.Tests
 {
-	public class SliceLayer
-	{
-		public struct Segment
-		{
-			internal Vector2 start;
-			public Vector2 Start { get { return start; } }
-			internal Vector2 end;
-			public Vector2 End { get { return end; } }
+    public static class UnitTests
+    {
+        static bool ranTests = false;
 
-			internal Segment(Vector2 start, Vector2 end)
-			{
-				this.start = start;
-				this.end = end;
-			}
-		}
+        public static bool RanTests { get { return ranTests; } }
+        public static void Run()
+        {
+            if (!ranTests)
+            {
+				SliceLayersTests layerTests = new SliceLayersTests();
+				layerTests.SliceCubeSegmets();
 
-		double zHeight;
-		public double ZHeight { get { return zHeight; } } 
-		List<Segment> unorderedSegments = new List<Segment>();
-		public List<Segment> UnorderedSegments { get { return unorderedSegments; } }
-
-		List<PathStorage> perimeters;
-		public List<PathStorage> Perimeters { get { return perimeters; } }
-
-		public SliceLayer(double zHeight)
-		{
-			this.zHeight = zHeight;
-		}
-	}
+                ranTests = true;
+            }
+        }
+    }
 }

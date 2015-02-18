@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,43 +31,45 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using MatterHackers.RayTracer;
+
+using NUnit.Framework;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.VectorMath;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using System.IO;
+using MatterHackers.MatterControl.DataStorage;
 
-namespace MatterHackers.MatterControl.Slicing
+namespace MatterHackers.MatterControl.Slicing.Tests
 {
-	public class SliceLayer
-	{
-		public struct Segment
+    public class SliceLayersTests
+    {
+		[Test]
+		public void SliceCubeSegmets()
 		{
-			internal Vector2 start;
-			public Vector2 Start { get { return start; } }
-			internal Vector2 end;
-			public Vector2 End { get { return end; } }
+			string pathToMesh = Path.Combine("..", "..", "StaticData", "OEMSettings", "SampleParts");
+			string meshFileName = Path.Combine(pathToMesh, "Calibration - Box.stl");
+			Mesh cubeMesh = StlProcessing.Load(meshFileName);
 
-			internal Segment(Vector2 start, Vector2 end)
+			AxisAlignedBoundingBox bounds = cubeMesh.GetAxisAlignedBoundingBox();
+			Assert.IsTrue(bounds.ZSize == 10);
+
+			SliceLayers layers = new SliceLayers();
+			layers.GetPerimetersForAllLayers(cubeMesh, .2, .2);
+			Assert.IsTrue(layers.AllLayers.Count == 50);
+
+			foreach(SliceLayer layer in layers.AllLayers)
 			{
-				this.start = start;
-				this.end = end;
+				Assert.IsTrue(layer.UnorderedSegments.Count == 8);
+
+				// work in progress
+				//Assert.IsTrue(layer.Perimeters.Count == 1);
+				//Assert.IsTrue(layer.Perimeters[0].Count == 8);
 			}
+
+			layers.GetPerimetersForAllLayers(cubeMesh, .2, .1);
+			Assert.IsTrue(layers.AllLayers.Count == 99);
 		}
-
-		double zHeight;
-		public double ZHeight { get { return zHeight; } } 
-		List<Segment> unorderedSegments = new List<Segment>();
-		public List<Segment> UnorderedSegments { get { return unorderedSegments; } }
-
-		List<PathStorage> perimeters;
-		public List<PathStorage> Perimeters { get { return perimeters; } }
-
-		public SliceLayer(double zHeight)
-		{
-			this.zHeight = zHeight;
-		}
-	}
-}
+    }
+}   

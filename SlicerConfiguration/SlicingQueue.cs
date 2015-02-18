@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #if false
 							Mesh loadedMesh = StlProcessing.Load(fileToSlice);
 							SliceLayers layers = new SliceLayers();
-							layers.GetAllLayers(loadedMesh, .2, .2);
+							layers.GetPerimetersForAllLayers(loadedMesh, .2, .2);
 							layers.DumpSegmentsToGcode("test.gcode");
 #endif
                             

@@ -44,13 +44,15 @@ namespace MatterHackers.MatterControl.Slicing
 	public class SliceLayers
 	{
 		List<SliceLayer> allLayers = new List<SliceLayer>();
+		public List<SliceLayer> AllLayers { get { return allLayers; } }
 
 		public SliceLayers()
 		{
 		}
 
-		public void GetAllLayers(Mesh meshToSlice, double firstLayerHeight, double otherLayerHeights)
+		public void GetPerimetersForAllLayers(Mesh meshToSlice, double firstLayerHeight, double otherLayerHeights)
 		{
+			AllLayers.Clear();
 			AxisAlignedBoundingBox meshBounds = meshToSlice.GetAxisAlignedBoundingBox();
 			double heightWithoutFirstLayer = meshBounds.ZSize - firstLayerHeight;
 			int layerCount = (int)((heightWithoutFirstLayer / otherLayerHeights) + .5);

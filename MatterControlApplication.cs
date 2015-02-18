@@ -249,6 +249,7 @@ namespace MatterHackers.MatterControl
                 MatterHackers.Agg.Tests.UnitTests.Run();
                 MatterHackers.VectorMath.Tests.UnitTests.Run();
                 MatterHackers.Agg.UI.Tests.UnitTests.Run();
+				MatterHackers.MatterControl.Slicing.Tests.UnitTests.Run();
 
                 // you can turn this on to debug some bounds issues
                 //GuiWidget.DebugBoundsUnderMouse = true;
