@@ -43,6 +43,7 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.Localizations;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -303,17 +304,33 @@ namespace MatterHackers.MatterControl.PrintQueue
 				// Check if the part we are adding is BIG. If it is warn the user and 
 				// possibly don't add it
 				bool warnAboutFileSize = false;
+				long estimatedMemoryUse = 0;
 				if (File.Exists(item.FileLocation))
 				{
 					switch (Path.GetExtension(item.FileLocation).ToUpper())
 					{
 						case "STL":
-							warnAboutFileSize = StlProcessing.CheckIfShouldWarnOn32Bit(item.FileLocation);
+							estimatedMemoryUse = StlProcessing.GetEstimatedMemoryUse(item.FileLocation);
 							break;
 
 						case "AMF":
-							warnAboutFileSize = AmfProcessing.CheckIfShouldWarnOn32Bit(item.FileLocation);
+							estimatedMemoryUse = AmfProcessing.GetEstimatedMemoryUse(item.FileLocation);
 							break;
+					}
+
+					if (OsInformation.OperatingSystem == OSType.Android) 
+					{
+						if (estimatedMemoryUse > 100000000)
+						{
+							warnAboutFileSize = true;
+						}
+					}
+					else
+					{
+						if (estimatedMemoryUse > 500000000)
+						{
+							warnAboutFileSize = true;
+						}
 					}
 				}
 
