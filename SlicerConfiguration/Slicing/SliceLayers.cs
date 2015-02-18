@@ -83,9 +83,15 @@ namespace MatterHackers.MatterControl.Slicing
 				{
 					SliceLayer layer = allLayers[layerIndex];
 					double zHeight = layer.ZHeight;
-					if (zHeight < minZ || zHeight > maxZ)
+					if (zHeight < minZ)
 					{
+						// not up to the start of the face yet
 						continue;
+					}
+					if (zHeight > maxZ)
+					{
+						// done with this face
+						break;
 					}
 					Plane cutPlane = new Plane(Vector3.UnitZ, zHeight);
 

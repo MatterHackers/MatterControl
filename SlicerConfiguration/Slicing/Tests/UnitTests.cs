@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Slicing.Tests
             if (!ranTests)
             {
 				SliceLayersTests layerTests = new SliceLayersTests();
-				layerTests.SliceCubeSegmets();
+				layerTests.SliceLayersGeneratingCorrectSegmets();
 
                 ranTests = true;
             }

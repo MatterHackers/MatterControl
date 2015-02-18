@@ -43,13 +43,14 @@ using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Slicing.Tests
 {
+	[TestFixture]
     public class SliceLayersTests
     {
 		[Test]
-		public void SliceCubeSegmets()
+		public void SliceLayersGeneratingCorrectSegmets()
 		{
-			string pathToMesh = Path.Combine("..", "..", "StaticData", "OEMSettings", "SampleParts");
-			string meshFileName = Path.Combine(pathToMesh, "Calibration - Box.stl");
+			string pathToMesh = Path.Combine("..", "..", "TestMeshes", "SliceLayers");
+			string meshFileName = Path.Combine(pathToMesh, "Box20x20x10.stl");
 			Mesh cubeMesh = StlProcessing.Load(meshFileName);
 
 			AxisAlignedBoundingBox bounds = cubeMesh.GetAxisAlignedBoundingBox();
