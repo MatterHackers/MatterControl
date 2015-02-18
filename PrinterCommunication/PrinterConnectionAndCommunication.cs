@@ -2483,7 +2483,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ExtrusionRatio = 1;
             FeedRateRatio = 1;
 			waitingForPosition.Stop();
-			waitingForPosition.Restart();
+			waitingForPosition.Reset();
 
             LinesToWriteQueue.Clear();
             ClearQueuedGCode();
