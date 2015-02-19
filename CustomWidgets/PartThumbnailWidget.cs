@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl
 					return;
 				}
                 
-                string stlHashCode = thumbnailWidget.PrintItem.StlFileHashCode.ToString();
+                string stlHashCode = thumbnailWidget.PrintItem.FileHashCode.ToString();
 
                 Point2D bigRenderSize = new Point2D(460, 460);
                 ImageBuffer bigRender = LoadImageFromDisk(thumbnailWidget, stlHashCode, bigRenderSize);
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl
         private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)
         {
             ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
-            string imageFileName = GetFilenameForSize(stlHashCode, ref size);
+            string imageFileName = GetFilenameForSize(stlHashCode, size);
 
             if (File.Exists(imageFileName))
             {
@@ -327,7 +327,12 @@ namespace MatterHackers.MatterControl
             return null;
         }
 
-        private static string GetFilenameForSize(string stlHashCode, ref Point2D size)
+		public static string GetImageFilenameForItem(PrintItemWrapper item)
+		{
+			return GetFilenameForSize(item.FileHashCode.ToString(), new Point2D(460, 460));
+		}
+
+        private static string GetFilenameForSize(string stlHashCode, Point2D size)
         {
             string folderToSaveThumbnailsTo = ThumbnailPath();
             string imageFileName = Path.Combine(folderToSaveThumbnailsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, size.x, size.y), partExtension));
@@ -384,9 +389,8 @@ namespace MatterHackers.MatterControl
                 }
 
                 // and save it to disk
-                string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-                string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
-                string imageFileName = Path.Combine(folderToSavePrintsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, size.x, size.y),partExtension));
+				string imageFileName = GetFilenameForSize(stlHashCode, size);
+				string folderToSavePrintsTo = Path.GetDirectoryName(imageFileName);
 
                 if (!Directory.Exists(folderToSavePrintsTo))
                 {

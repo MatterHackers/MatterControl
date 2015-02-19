@@ -1063,13 +1063,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 double exturderIndex = 0;
                 if (GCodeFile.GetFirstNumberAfter("T", foundStringEventArgs.LineToCheck, ref exturderIndex))
                 {
-                    SetTargetExtruderTemperature((int)exturderIndex, tempBeingSet);
+					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
+					int extruderIndex0Based = Math.Min((int)exturderIndex, MAX_EXTRUDERS - 1);
+					SetTargetExtruderTemperature(extruderIndex0Based, tempBeingSet);
                 }
                 else
                 {
                     // we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-                    SetTargetExtruderTemperature(0, tempBeingSet);
-                }
+					SetTargetExtruderTemperature(0, tempBeingSet);
+				}
                 OnExtruderTemperatureSet(e);
             }
         }

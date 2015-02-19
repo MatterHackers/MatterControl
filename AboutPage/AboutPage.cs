@@ -311,24 +311,7 @@ namespace MatterHackers.MatterControl
 
         public static void DeleteCacheData()
         {
-            // delete everything in the GCodeOutputPath
-            //   AppData\Local\MatterControl\data\gcode
-            // delete everything in the temp data that is not in use
-            //   AppData\Local\MatterControl\data\temp
-            //     plateImages
-            //     project-assembly
-            //     project-extract
-            //     stl
-
-            // first AppData\Local\MatterControl\data\gcode
-            string gcodeOutputPath = DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath;
-            try
-            {
-                Directory.Delete(gcodeOutputPath, true);
-            }
-            catch (Exception)
-            {
-            }
+			MatterControlApplication.DeleteCacheData();
         }
 
 #if false // kevin code 2014 04 22

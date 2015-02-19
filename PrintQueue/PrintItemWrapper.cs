@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         public PrintItem PrintItem { get; set; }
         String fileType;
 
-        int stlFileHashCode;
+        int fileHashCode;
         long writeTime = 0;
 
         public bool CurrentlySlicing { get; set; }
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PrintQueue
             set { this.PrintItem.FileLocation = value; }
         }
 
-        public int StlFileHashCode
+        public int FileHashCode
         {
             get
             {
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 bool fileExists = System.IO.File.Exists(this.FileLocation);
                 if (fileExists)
                 {
-                    if (this.stlFileHashCode == 0 || writeTime != currentWriteTime)
+                    if (this.fileHashCode == 0 || writeTime != currentWriteTime)
                     {
                         writeTime = currentWriteTime;
                         using (FileStream fileStream = new FileStream(this.FileLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -189,12 +189,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 							int hashCode = agg_basics.ComputeHash(readData);
 							int fileSizeInt = (int)sizeOfFile;
-							this.stlFileHashCode = new { hashCode, currentWriteTime, fileSizeInt }.GetHashCode();
+							this.fileHashCode = new { hashCode, currentWriteTime, fileSizeInt }.GetHashCode();
                         }
                     }
                 }
 
-                return this.stlFileHashCode;
+                return this.fileHashCode;
             }
         }
 
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
                 string engineString = ((int)ActivePrinterProfile.Instance.ActiveSliceEngineType).ToString();
 
-                string gcodeFileName = this.StlFileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
+                string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
                 string gcodePathAndFileName = Path.Combine(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
                 return gcodePathAndFileName;
             }

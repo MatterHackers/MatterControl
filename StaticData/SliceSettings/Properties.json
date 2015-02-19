@@ -231,6 +231,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "heat_extruder_before_homing",
+    "PresentationName": "Heat Before Homing",
+    "HelpText": "Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.",
+    "DataEditType": "CHECK_BOX",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "extrusion_axis",
     "PresentationName": "Extrusion Axis",
     "HelpText": "This is the identifier used in the gcode to specify the extruder.",

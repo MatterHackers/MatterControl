@@ -3113,3 +3113,9 @@ Translated:Reboots the firmware on the controller
 English:Please wait. Slicing files {0} of {1}
 Translated:Please wait. Slicing files {0} of {1}
 
+English:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
+Translated:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
+
+English:Heat Before Homing
+Translated:Heat Before Homing
+

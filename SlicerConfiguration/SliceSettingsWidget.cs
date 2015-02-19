@@ -112,7 +112,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-
 	public class SliceSettingsDetailControl : FlowLayoutWidget
     {
         const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";

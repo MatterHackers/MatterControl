@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         public static readonly string SdCardFileName = "SD_CARD";
 
         private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
-        private List<PrintItemWrapper> PrintItems
+        public List<PrintItemWrapper> PrintItems
         {
             get { return printItems; }
         }

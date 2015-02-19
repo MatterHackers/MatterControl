@@ -548,5 +548,54 @@ namespace MatterHackers.MatterControl
             }
 
         }
-    }
+
+		public static void DeleteCacheData()
+		{
+			// delete everything in the GCodeOutputPath
+			//   AppData\Local\MatterControl\data\gcode
+			// delete everything in the temp data that is not in use
+			//   AppData\Local\MatterControl\data\temp
+			//     plateImages
+			//     project-assembly
+			//     project-extract
+			//     stl
+			// delete all unreference models in Library
+			//   AppData\Local\MatterControl\Library 
+			// delete all old update downloads
+			//   AppData\updates
+
+			// start cleaning out unused data
+			// MatterControl\data\gcode
+			RemoveDirectory(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath);
+
+			RemoveDirectory(Path.Combine(DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath, "updates"));
+
+			HashSet<string> referencedMeshFilePaths = new HashSet<string>();
+			HashSet<string> referencedThumbnailFiles = new HashSet<string>();
+			// Get a list of all the stl and amf files referenced in the queue or library.
+			foreach (PrintItemWrapper printItem in QueueData.Instance.PrintItems)
+			{
+				string fileLocation = printItem.FileLocation;
+				if (!referencedMeshFilePaths.Contains(fileLocation))
+				{
+					referencedMeshFilePaths.Add(fileLocation);
+					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItem));
+				}
+			}
+		}
+
+		private static void RemoveDirectory(string directoryToRemove)
+		{
+			try
+			{
+				if (Directory.Exists(directoryToRemove))
+				{
+					Directory.Delete(directoryToRemove, true);
+				}
+			}
+			catch (Exception)
+			{
+			}
+		}
+	}
 }

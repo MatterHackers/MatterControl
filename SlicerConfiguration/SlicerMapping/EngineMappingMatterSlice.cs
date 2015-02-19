@@ -234,6 +234,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //startCode=M109 S210
             new MapStartGCode("startCode", "start_gcode", true),
 
+			new NotPassedItem("", "heat_extruder_before_homing"),
+
             //supportExtruder=1
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
 
