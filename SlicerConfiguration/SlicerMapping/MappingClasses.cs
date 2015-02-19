@@ -152,16 +152,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
 
 			// Start heating all the extruder that we are going to use.
-            for (int i = 0; i < numberOfHeatedExtruders; i++)
+            for (int extruderIndex = 0; extruderIndex < numberOfHeatedExtruders; extruderIndex++)
             {
-                if (extrudersUsed.Count > i
-                    && extrudersUsed[i])
+                if (extrudersUsed.Count > extruderIndex
+                    && extrudersUsed[extruderIndex])
                 {
-                    string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", i);
+                    string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex);
                     if (materialTemperature != "0")
                     {
-						string setTempString = "M104 T{0} S{1}".FormatWith(i, materialTemperature);
-                        AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("start heating extruder {0}", i));
+						string setTempString = "M104 T{0} S{1}".FormatWith(extruderIndex, materialTemperature);
+                        AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("start heating extruder {0}", extruderIndex));
                     }
                 }
             }
@@ -169,16 +169,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
 			if (ActiveSliceSettings.Instance.GetActiveValue("heat_extruder_before_homing") == "1")
 			{
-				for (int i = 0; i < numberOfHeatedExtruders; i++)
+				for (int extruderIndex = 0; extruderIndex < numberOfHeatedExtruders; extruderIndex++)
 				{
-					if (extrudersUsed.Count > i
-						&& extrudersUsed[i])
+					if (extrudersUsed.Count > extruderIndex
+						&& extrudersUsed[extruderIndex])
 					{
-						string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", i);
+						string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex);
 						if (materialTemperature != "0")
 						{
-							string setTempString = "M109 T{0} S{1}".FormatWith(i, materialTemperature);
-							AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("wait for extruder {0}", i));
+							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex, materialTemperature);
+							AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("wait for extruder {0}", extruderIndex));
 						}
 					}
 				}
@@ -193,12 +193,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         private void SwitchToFirstActiveExtruder(List<bool> extrudersUsed, string[] preStartGCodeLines, List<string> preStartGCode)
         {
             // make sure we are on the first active extruder
-            for (int i = 0; i < extrudersUsed.Count; i++)
+            for (int extruderIndex = 0; extruderIndex < extrudersUsed.Count; extruderIndex++)
             {
-                if (extrudersUsed[i])
+                if (extrudersUsed[extruderIndex])
                 {
                     // set the active extruder to the first one that will be printing
-                    AddDefaultIfNotPresent(preStartGCode, "T{0}".FormatWith(i), preStartGCodeLines, "set the active extruder to {0}".FormatWith(i));
+                    AddDefaultIfNotPresent(preStartGCode, "T{0}".FormatWith(extruderIndex), preStartGCodeLines, "set the active extruder to {0}".FormatWith(extruderIndex));
                     break; // then break so we don't set it to a different ones
                 }
             }
@@ -221,16 +221,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// don't set the extrudes to heating if we alread waited for them to reach temp
 			if (ActiveSliceSettings.Instance.GetActiveValue("heat_extruder_before_homing") != "1")
 			{
-				for (int i = 0; i < numberOfHeatedExtruders; i++)
+				for (int extruderIndex = 0; extruderIndex < numberOfHeatedExtruders; extruderIndex++)
 				{
-					if (extrudersUsed.Count > i
-						&& extrudersUsed[i])
+					if (extrudersUsed.Count > extruderIndex
+						&& extrudersUsed[extruderIndex])
 					{
-						string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", i + 1);
+						string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex + 1);
 						if (materialTemperature != "0")
 						{
-							string setTempString = "M109 T{0} S{1}".FormatWith(i, materialTemperature);
-							AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", i));
+							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex, materialTemperature);
+							AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", extruderIndex));
 						}
 					}
 				}
