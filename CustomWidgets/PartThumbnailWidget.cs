@@ -91,17 +91,22 @@ namespace MatterHackers.MatterControl
 
         static string partExtension = ".png";
 
+		static void EnsureCorrectPartExtension()
+		{
+			if (OsInformation.OperatingSystem == OSType.Mac
+				|| OsInformation.OperatingSystem == OSType.Android
+				|| OsInformation.OperatingSystem == OSType.X11)
+			{
+				partExtension = ".tga";
+			}
+		}
+
         event EventHandler unregisterEvents;
         public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, ImageSizes size)
         {
             this.PrintItem = item;
 
-            if (OsInformation.OperatingSystem == OSType.Mac
-                || OsInformation.OperatingSystem == OSType.Android 
-                || OsInformation.OperatingSystem == OSType.X11)
-            {
-                partExtension = ".tga";
-            }
+			EnsureCorrectPartExtension();
 
             // Set Display Attributes
             this.Margin = new BorderDouble(0);
@@ -334,7 +339,9 @@ namespace MatterHackers.MatterControl
 
         private static string GetFilenameForSize(string stlHashCode, Point2D size)
         {
-            string folderToSaveThumbnailsTo = ThumbnailPath();
+			EnsureCorrectPartExtension();
+			
+			string folderToSaveThumbnailsTo = ThumbnailPath();
             string imageFileName = Path.Combine(folderToSaveThumbnailsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, size.x, size.y), partExtension));
             return imageFileName;
         }

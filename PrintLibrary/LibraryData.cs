@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
     public class LibraryData
     {
         private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
-        private List<PrintItemWrapper> PrintItems
+        public List<PrintItemWrapper> PrintItems
         {
             get { return printItems; }
         }

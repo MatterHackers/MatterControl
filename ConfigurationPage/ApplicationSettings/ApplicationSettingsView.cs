@@ -42,6 +42,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -59,8 +60,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             mainContainer.AddChild(GetLanguageControl());
             mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             GuiWidget sliceEngineControl = GetSliceEngineControl();
-            if (sliceEngineControl != null
-                &&  ActivePrinterProfile.Instance.ActivePrinter != null)
+            if (ActivePrinterProfile.Instance.ActivePrinter != null)
             {
                 mainContainer.AddChild(sliceEngineControl);
                 mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -74,6 +74,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(GetModeControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 #endif
+			mainContainer.AddChild(GetClearHistoryControl());
+			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			
 
             mainContainer.AddChild(GetThemeControl()); 
             
@@ -82,7 +85,34 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             AddHandlers();
         }
 
-        private void SetDisplayAttributes()
+		private FlowLayoutWidget GetClearHistoryControl()
+		{
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Margin = new BorderDouble(0, 4);
+
+			TextWidget clearHistoryLabel = new TextWidget("Clear Print History".Localize());
+			clearHistoryLabel.AutoExpandBoundsToText = true;
+			clearHistoryLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			clearHistoryLabel.VAnchor = VAnchor.ParentCenter;
+
+			Button clearHistoryButton = textImageButtonFactory.Generate("Remove All".Localize().ToUpper());
+			clearHistoryButton.Click += clearHistoryButton_Click;
+
+			//buttonRow.AddChild(eePromIcon);
+			buttonRow.AddChild(clearHistoryLabel);
+			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(clearHistoryButton);
+
+			return buttonRow;
+		}
+
+		void clearHistoryButton_Click(object sender, EventArgs e)
+		{
+			PrintHistoryData.Instance.ClearHistory();
+		}
+
+		private void SetDisplayAttributes()
         {
             //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.Margin = new BorderDouble(2, 4, 2, 0);
@@ -317,7 +347,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             return buttonRow;
         }
 
-        private FlowLayoutWidget GetSliceEngineControl()
+		private FlowLayoutWidget GetSliceEngineControl()
         {
             FlowLayoutWidget buttonRow = new FlowLayoutWidget();
             buttonRow.HAnchor = HAnchor.ParentLeftRight;
@@ -340,10 +370,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 if (ActivePrinterProfile.Instance.ActiveSliceEngineType != ActivePrinterProfile.SlicingEngineTypes.MatterSlice)
                 {
                     ActivePrinterProfile.Instance.ActiveSliceEngineType = ActivePrinterProfile.SlicingEngineTypes.MatterSlice;
+					ApplicationController.Instance.ReloadAll(null, null);
                 }
-
-                // don't let the silce engine change if dual extrusion
-                return null;
             }
 
             optionsContainer.AddChild(new SliceEngineSelector("Slice Engine".Localize()));

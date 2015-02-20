@@ -47,6 +47,8 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.Localizations;
+using System.Diagnostics;
+using System.IO;
 
 namespace MatterHackers.MatterControl
 {
@@ -198,7 +200,9 @@ namespace MatterHackers.MatterControl
         
         public override void AddElements()
         {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			Stopwatch timer = Stopwatch.StartNew();
+			timer.Start();
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
             container.AnchorAll();
@@ -213,12 +217,16 @@ namespace MatterHackers.MatterControl
             menuSeparator.Margin = new BorderDouble(3, 6, 3, 3);
 
             container.AddChild(menuSeparator);
+			Console.WriteLine("{0} ms 1".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 
             widescreenPanel = new WidescreenPanel();
             container.AddChild(widescreenPanel);
+			Console.WriteLine("{0} ms 2".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 
-            this.AddChild(container);
-        }
+			Console.WriteLine("{0} ms 3".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
+			this.AddChild(container);
+			Console.WriteLine("{0} ms 3".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
+		}
 
         void Initialize()
         {

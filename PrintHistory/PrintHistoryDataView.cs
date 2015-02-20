@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
         public PrintHistoryDataView()
         {
+			PrintHistoryData.Instance.HistoryCleared.RegisterEvent(HistoryDeleted, ref unregisterEvents);
             ShowTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
             
             SetDisplayAttributes();
@@ -129,6 +130,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 
             LoadHistoryItems();
         }
+
+		public void HistoryDeleted(object sender, EventArgs e)
+		{
+			ReloadData(this, null);
+		}
 
         void AddHandlers()
         {

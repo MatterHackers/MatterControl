@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.HtmlParsing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.PrintLibrary;
 
 namespace MatterHackers.MatterControl
 {
@@ -323,9 +324,9 @@ namespace MatterHackers.MatterControl
 			{
 			}
 		}
-		
+
 		public static void DeleteCacheData()
-        {
+		{
 			// delete everything in the GCodeOutputPath
 			//   AppData\Local\MatterControl\data\gcode
 			// delete everything in the temp data that is not in use
@@ -343,20 +344,61 @@ namespace MatterHackers.MatterControl
 			// MatterControl\data\gcode
 			RemoveDirectory(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath);
 
-			RemoveDirectory(Path.Combine(DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath, "updates"));
+			string userDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
+			RemoveDirectory(Path.Combine(userDataPath, "updates"));
 
-			HashSet<string> referencedMeshFilePaths = new HashSet<string>();
+			HashSet<string> referencedPrintItemsFilePaths = new HashSet<string>();
 			HashSet<string> referencedThumbnailFiles = new HashSet<string>();
 			// Get a list of all the stl and amf files referenced in the queue or library.
 			foreach (PrintItemWrapper printItem in QueueData.Instance.PrintItems)
 			{
 				string fileLocation = printItem.FileLocation;
-				if (!referencedMeshFilePaths.Contains(fileLocation))
+				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
 				{
-					referencedMeshFilePaths.Add(fileLocation);
+					referencedPrintItemsFilePaths.Add(fileLocation);
 					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItem));
 				}
 			}
+
+			foreach (PrintItemWrapper printItem in LibraryData.Instance.PrintItems)
+			{
+				string fileLocation = printItem.FileLocation;
+				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
+				{
+					referencedPrintItemsFilePaths.Add(fileLocation);
+					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItem));
+				}
+			}
+
+			// Enumerate every file and if it is a mesh file or image file and not in our list, delete it.
+			foreach (string file in Directory.EnumerateFiles(userDataPath, "*.*", SearchOption.AllDirectories))
+			{
+				switch (Path.GetExtension(file).ToUpper())
+				{
+					case ".STL":
+					case ".AMF":
+					case ".GCODE":
+						if (!referencedPrintItemsFilePaths.Contains(file))
+						{
+							File.Delete(file);
+						}
+						break;
+
+					case ".PNG":
+					case ".TGA":
+						if (!referencedThumbnailFiles.Contains(file))
+						{
+							File.Delete(file);
+						}
+						break;
+
+					case ".JSON":
+						// may want to clean these up eventually
+						break;
+				}
+			}
+
+			// We could also clean up any empty directories.
 		}
 
 #if false // kevin code 2014 04 22

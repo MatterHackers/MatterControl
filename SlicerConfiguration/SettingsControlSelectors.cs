@@ -296,19 +296,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //Add Each SliceEngineInfo Objects to DropMenu
             foreach (SliceEngineInfo engineMenuItem in SlicingQueue.AvailableSliceEngines)
             {
-                MenuItem item = AddItem(engineMenuItem.Name);
-                ActivePrinterProfile.SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
-                item.Selected += (sender, e) =>
-                {
-                    ActivePrinterProfile.Instance.ActiveSliceEngineType = itemEngineType;
-                    ApplicationController.Instance.ReloadAdvancedControlsPanel();
-                };
+				bool engineAllowed = true;
+				if (ActiveSliceSettings.Instance.ExtruderCount > 1 && engineMenuItem.Name != "MatterSlice")
+				{
+					engineAllowed = false;
+				}
+				
+				if(engineAllowed)
+				{
+					MenuItem item = AddItem(engineMenuItem.Name);
+					ActivePrinterProfile.SlicingEngineTypes itemEngineType = engineMenuItem.GetSliceEngineType();
+					item.Selected += (sender, e) =>
+					{
+						if (ActivePrinterProfile.Instance.ActiveSliceEngineType != itemEngineType)
+						{
+							ActivePrinterProfile.Instance.ActiveSliceEngineType = itemEngineType;
+							ApplicationController.Instance.ReloadAdvancedControlsPanel();
+						}
+					};
 
-                //Set item as selected if it matches the active slice engine
-                if (engineMenuItem.GetSliceEngineType() == ActivePrinterProfile.Instance.ActiveSliceEngineType)
-                {
-                    SelectedLabel = engineMenuItem.Name;
-                }
+					//Set item as selected if it matches the active slice engine
+					if (engineMenuItem.GetSliceEngineType() == ActivePrinterProfile.Instance.ActiveSliceEngineType)
+					{
+						SelectedLabel = engineMenuItem.Name;
+					}
+				}
             }
 
             //If nothing is selected (ie selected engine is not available) set to 

@@ -3119,3 +3119,6 @@ Translated:Normally while printing the printer will home before heating the extr
 English:Heat Before Homing
 Translated:Heat Before Homing
 
+English:Clear Print History
+Translated:Clear Print History
+

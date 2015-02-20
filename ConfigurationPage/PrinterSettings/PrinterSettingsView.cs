@@ -18,7 +18,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
     public class HardwareSettingsWidget : SettingsViewBase
     {
-        Button configureEePromButton;
 		Button openGcodeTerminalButton;
 		Button openCameraButton;
 
@@ -256,7 +255,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             ImageWidget eePromIcon = new ImageWidget(eePromImage);            
             eePromIcon.Margin = new BorderDouble(right: 6);
 
-            configureEePromButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+            Button configureEePromButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			configureEePromButton.Click += new EventHandler(configureEePromButton_Click);
             
             //buttonRow.AddChild(eePromIcon);
             buttonRow.AddChild(notificationSettingsLabel);
@@ -268,7 +268,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         private void AddHandlers()
         {
-            configureEePromButton.Click += new EventHandler(configureEePromButton_Click);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
         }

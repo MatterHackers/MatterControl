@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.PrintHistory
         static PrintHistoryData instance;
         public bool ShowTimestamp;
 
+		public RootedObjectEventHandler HistoryCleared = new RootedObjectEventHandler();
+
         public static PrintHistoryData Instance
         {
             get
@@ -97,5 +99,12 @@ namespace MatterHackers.MatterControl.PrintHistory
             IEnumerable<DataStorage.PrintTask> result = (IEnumerable<DataStorage.PrintTask>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintTask>(query);
             return result;
         }
-    }
+
+		internal void ClearHistory()
+		{
+			string query = string.Format("DELETE FROM PrintTask;");
+			DataStorage.Datastore.Instance.dbSQLite.ExecuteScalar<DataStorage.PrintTask>(query);
+			HistoryCleared.CallEvents(this, null);
+		}
+	}
 }
