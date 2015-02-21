@@ -2102,6 +2102,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             OnEnabledChanged(null);
         }
 
+		double MaxTimeToMoveForSentInstructions()
+		{
+			double maxTime = 0;
+			for(int i = Math.Max(0, printerCommandQueueIndex - backupAmount); i < printerCommandQueueIndex; i++)
+			{
+				maxTime = Math.Max(maxTime, loadedGCode.Instruction(i).secondsThisLine);
+			}
+
+			return maxTime * 1.5;
+		}
+
         Stopwatch timeSinceLastWrite = new Stopwatch();
         void TryWriteNextLineFromGCodeFile()
         {
@@ -2117,7 +2128,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     {
                         // the last instruction was a move
                         PrinterMachineInstruction lastInstruction = loadedGCode.Instruction(printerCommandQueueIndex - 1);
-                        bool wasMoveAndNoOK = (lastInstruction.Line.Contains("G0 ") || lastInstruction.Line.Contains("G1 ")) && timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > 5;
+						double epectedSecondsToWait = Math.Max(5, MaxTimeToMoveForSentInstructions());
+						bool wasMoveAndNoOK = (lastInstruction.Line.Contains("G0 ") || lastInstruction.Line.Contains("G1 ")) 
+							&& timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > epectedSecondsToWait;
                         {
                             // This code is to try and make sure the printer does not stop on transmission errors.
                             // If it has been more than 10 seconds since the printer responded anything 
