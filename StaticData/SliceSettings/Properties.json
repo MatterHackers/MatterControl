@@ -817,7 +817,7 @@
   {
     "SlicerConfigName": "start_gcode",
     "PresentationName": "Start G-Code",
-    "HelpText": "This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].",
+    "HelpText": "This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [temperature].",
     "DataEditType": "MULTI_LINE_TEXT",
     "ExtraSettings": ""
   },

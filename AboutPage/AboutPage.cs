@@ -370,15 +370,42 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			// Enumerate every file and if it is a mesh file or image file and not in our list, delete it.
-			foreach (string file in Directory.EnumerateFiles(userDataPath, "*.*", SearchOption.AllDirectories))
+			// If the count is less than 0 then we have never run and we need to populate the library and queue still. So don't delete anything yet.
+			if (referencedPrintItemsFilePaths.Count > 0)
+			{
+				CleanDirectory(userDataPath, referencedPrintItemsFilePaths, referencedThumbnailFiles);
+			}
+		}
+
+		static int CleanDirectory(string path, HashSet<string> referencedPrintItemsFilePaths, HashSet<string> referencedThumbnailFiles)
+		{
+			int contentCount = 0;
+			foreach (string directory in Directory.EnumerateDirectories(path))
+			{
+				int directoryContentCount = CleanDirectory(directory, referencedPrintItemsFilePaths, referencedThumbnailFiles);
+				if (directoryContentCount == 0)
+				{
+					Directory.Delete(directory);
+				}
+				else
+				{
+					// it has a directory that has content
+					contentCount++;
+				}
+			}
+
+			foreach (string file in Directory.EnumerateFiles(path, "*.*"))
 			{
 				switch (Path.GetExtension(file).ToUpper())
 				{
 					case ".STL":
 					case ".AMF":
 					case ".GCODE":
-						if (!referencedPrintItemsFilePaths.Contains(file))
+						if (referencedPrintItemsFilePaths.Contains(file))
+						{
+							contentCount++;
+						}
+						else
 						{
 							File.Delete(file);
 						}
@@ -386,7 +413,11 @@ namespace MatterHackers.MatterControl
 
 					case ".PNG":
 					case ".TGA":
-						if (!referencedThumbnailFiles.Contains(file))
+						if (referencedThumbnailFiles.Contains(file))
+						{
+							contentCount++;
+						}
+						else
 						{
 							File.Delete(file);
 						}
@@ -394,11 +425,17 @@ namespace MatterHackers.MatterControl
 
 					case ".JSON":
 						// may want to clean these up eventually
+						contentCount++; // if we delete these we should not incement this
+						break;
+
+					default:
+						// we have something in the directory that we are not going to delete
+						contentCount++;
 						break;
 				}
 			}
 
-			// We could also clean up any empty directories.
+			return contentCount;
 		}
 
 #if false // kevin code 2014 04 22

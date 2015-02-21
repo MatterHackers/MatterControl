@@ -58,8 +58,7 @@ namespace MatterHackers.MatterControl
 
 		public abstract void AddElements();
 		public abstract void HideTopContainer();
-		public abstract void ToggleTopContainer();
-        
+		public abstract void ToggleTopContainer();        
     }
 
     public class CompactApplicationView : ApplicationView
@@ -153,9 +152,7 @@ namespace MatterHackers.MatterControl
 		public TopContainerWidget()
 			: base(FlowDirection.TopToBottom)
 		{
-
 		}
-
 
 		public void SetOriginalHeight()
 		{
