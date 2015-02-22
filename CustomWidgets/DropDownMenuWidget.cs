@@ -70,39 +70,12 @@ namespace MatterHackers.Agg.UI
         {
         }
 
-        public DropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
-            : base(direction)
-        {
-            MenuAsWideAsItems = true;
-            SetDisplayAttributes();
-
-            MenuItems.CollectionChanged += new NotifyCollectionChangedEventHandler(MenuItems_CollectionChanged);
-            
-            mainControlText = new TextWidget(topMenuText, pointSize: pointSize);
-            mainControlText.TextColor = this.TextColor;
-            mainControlText.AutoExpandBoundsToText = true;
-            mainControlText.VAnchor = UI.VAnchor.ParentCenter;
-            mainControlText.HAnchor = UI.HAnchor.ParentLeft;
-            AddChild(mainControlText);
-            HAnchor = HAnchor.FitToChildren;
-            VAnchor = VAnchor.FitToChildren;
-
-            MouseEnter += new EventHandler(DropDownList_MouseEnter);
-            MouseLeave += new EventHandler(DropDownList_MouseLeave);
-
-            //IE Don't show arrow unless color is set explicitly
-            NormalArrowColor = new RGBA_Bytes(255, 255, 255, 0);
-            HoverArrowColor = TextColor;
-        }
-
-		public DropDownMenu(string topMenuText, GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
-			: base(buttonView, direction)
+		void SetStates(string topMenuText, double pointSize)
 		{
 			MenuAsWideAsItems = true;
 			SetDisplayAttributes();
 
 			MenuItems.CollectionChanged += new NotifyCollectionChangedEventHandler(MenuItems_CollectionChanged);
-
 			mainControlText = new TextWidget(topMenuText, pointSize: pointSize);
 			mainControlText.TextColor = this.TextColor;
 			mainControlText.AutoExpandBoundsToText = true;
@@ -120,6 +93,24 @@ namespace MatterHackers.Agg.UI
 			HoverArrowColor = TextColor;
 		}
 
+        public DropDownMenu(string topMenuText, Direction direction = Direction.Down, double pointSize = 12)
+            : base(direction)
+        {
+			SetStates(topMenuText, pointSize);
+        }
+
+		public DropDownMenu(string topMenuText, GuiWidget buttonView, Direction direction = Direction.Down, double pointSize = 12)
+			: base(buttonView, direction)
+		{
+			SetStates(topMenuText, pointSize);
+		}
+
+		protected override void DropListItems_Closed(object sender, EventArgs e)
+		{
+			BackgroundColor = NormalColor;
+			base.DropListItems_Closed(sender, e);
+		}
+		
         void DropDownList_MouseLeave(object sender, EventArgs e)
         {
             if (!this.IsOpen)
