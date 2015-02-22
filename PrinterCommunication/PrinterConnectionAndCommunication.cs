@@ -1944,11 +1944,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
 						if (PrinterIsPrinting)
 						{
-							CommunicationUnconditionalFromPrinter.CallEvents(this, new StringEventArgs("[{0}] {1}".FormatWith(timeSinceStartedPrint.ElapsedMilliseconds, lineToWrite)));
+							string lineWidthoutCR = lineToWrite.Substring(0, lineToWrite.Length - 2);
+							CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("{0} [{1}]\n".FormatWith(lineWidthoutCR, timeSinceStartedPrint.ElapsedMilliseconds)));
 						}
 						else
 						{
-							CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
+							CommunicationUnconditionalToPrinter.CallEvents(this, currentEvent);
 						}
 
                         if (lineWithoutChecksum != null)
@@ -2609,7 +2610,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
 										if (PrinterIsPrinting)
 										{
-											CommunicationUnconditionalFromPrinter.CallEvents(this, new StringEventArgs("[{0}] {1}".FormatWith(timeSinceStartedPrint.ElapsedMilliseconds, lastLineRead)));
+											CommunicationUnconditionalFromPrinter.CallEvents(this, new StringEventArgs("{0} [{1}]\n".FormatWith(lastLineRead, timeSinceStartedPrint.ElapsedMilliseconds)));
 										}
 										else
 										{
