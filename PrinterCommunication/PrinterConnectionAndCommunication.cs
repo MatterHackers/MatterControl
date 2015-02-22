@@ -1941,8 +1941,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                     // write data to communication
                     {
-                        StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
-                        CommunicationUnconditionalToPrinter.CallEvents(this, currentEvent);
+						StringEventArgs currentEvent = new StringEventArgs(lineToWrite);
+						if (PrinterIsPrinting)
+						{
+							CommunicationUnconditionalFromPrinter.CallEvents(this, new StringEventArgs("[{0}] {1}".FormatWith(timeSinceStartedPrint.ElapsedMilliseconds, lineToWrite)));
+						}
+						else
+						{
+							CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
+						}
 
                         if (lineWithoutChecksum != null)
                         {
@@ -2599,8 +2606,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                                     // process this command
                                     {
-                                        StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
-                                        CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
+										StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
+										if (PrinterIsPrinting)
+										{
+											CommunicationUnconditionalFromPrinter.CallEvents(this, new StringEventArgs("[{0}] {1}".FormatWith(timeSinceStartedPrint.ElapsedMilliseconds, lastLineRead)));
+										}
+										else
+										{
+											CommunicationUnconditionalFromPrinter.CallEvents(this, currentEvent);
+										}
 
                                         FoundStringEventArgs foundResponse = new FoundStringEventArgs(currentEvent.Data);
                                         ReadLineStartCallBacks.CheckForKeys(foundResponse);

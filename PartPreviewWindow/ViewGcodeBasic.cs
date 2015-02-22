@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         static string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
         static string pressGenerateMessage = "Press 'generate' to view layers".Localize();
         static string fileNotFoundMessage = "File not found on disk.".Localize();
-		static string fileTooBigToLoad = "File too big to load.".Localize();
+		static string fileTooBigToLoad = "GCode file too big to load for '{0}'.".Localize();
 
         Vector2 bedCenter;
         Vector3 viewerVolume;
@@ -865,7 +865,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (GCodeFile.FileTooBigToLoad(printItem.FileLocation))
 				{
-					SetProcessingMessage(string.Format("{0}\n'{1}'", fileTooBigToLoad, Path.GetFileName(printItem.FileLocation)));
+					SetProcessingMessage(string.Format(fileTooBigToLoad, printItem.Name));
 				}
 				else
 				{
