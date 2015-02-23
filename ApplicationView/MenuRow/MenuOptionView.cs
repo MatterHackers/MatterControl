@@ -75,38 +75,38 @@ namespace MatterHackers.MatterControl
 		int heightAdjust = -35;
 		bool layout1_Click()
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				double width = System.Windows.SystemParameters.FullPrimaryScreenWidth;
-				double height = System.Windows.SystemParameters.FullPrimaryScreenHeight;
-
-				MatterControlApplication.Instance.DesktopPosition = new Point2D(0, 0);
-				MatterControlApplication.Instance.Width = width / 3;
-				MatterControlApplication.Instance.Height = height;
-
-				PopOutManager.SetStates(ThirdPanelTabView.SliceSettingsTabName, true, width / 3, height + heightAdjust, width / 3 * 2 + widthAdjust, 0);
-				PopOutManager.SetStates(ThirdPanelTabView.ControlsTabName, false, width / 3, height / 2 + heightAdjust, width / 3 * 2 + widthAdjust, height / 2);
-				ApplicationController.Instance.ReloadAll(null, null);
-
-			});
+//			UiThread.RunOnIdle((state) =>
+//			{
+//				double width = System.Windows.SystemParameters.FullPrimaryScreenWidth;
+//				double height = System.Windows.SystemParameters.FullPrimaryScreenHeight;
+//
+//				MatterControlApplication.Instance.DesktopPosition = new Point2D(0, 0);
+//				MatterControlApplication.Instance.Width = width / 3;
+//				MatterControlApplication.Instance.Height = height;
+//
+//				PopOutManager.SetStates(ThirdPanelTabView.SliceSettingsTabName, true, width / 3, height + heightAdjust, width / 3 * 2 + widthAdjust, 0);
+//				PopOutManager.SetStates(ThirdPanelTabView.ControlsTabName, false, width / 3, height / 2 + heightAdjust, width / 3 * 2 + widthAdjust, height / 2);
+//				ApplicationController.Instance.ReloadAll(null, null);
+//
+//			});
 			return true;
 		}
 	
 		bool layout2_Click()
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				double width = System.Windows.SystemParameters.PrimaryScreenWidth;
-				double height = System.Windows.SystemParameters.PrimaryScreenHeight;
-
-				MatterControlApplication.Instance.DesktopPosition = new Point2D(0, 0);
-				MatterControlApplication.Instance.Width = width / 3;
-				MatterControlApplication.Instance.Height = height;
-
-				PopOutManager.SetStates(ThirdPanelTabView.SliceSettingsTabName, true, width / 3, height / 2 + heightAdjust, width / 3 * 2 + widthAdjust, 0);
-				PopOutManager.SetStates(ThirdPanelTabView.ControlsTabName, true, width / 3, height / 2 + heightAdjust * 2, width / 3 * 2 + widthAdjust, height / 2);
-				ApplicationController.Instance.ReloadAll(null, null);
-			});
+//			UiThread.RunOnIdle((state) =>
+//			{
+//				double width = System.Windows.SystemParameters.PrimaryScreenWidth;
+//				double height = System.Windows.SystemParameters.PrimaryScreenHeight;
+//
+//				MatterControlApplication.Instance.DesktopPosition = new Point2D(0, 0);
+//				MatterControlApplication.Instance.Width = width / 3;
+//				MatterControlApplication.Instance.Height = height;
+//
+//				PopOutManager.SetStates(ThirdPanelTabView.SliceSettingsTabName, true, width / 3, height / 2 + heightAdjust, width / 3 * 2 + widthAdjust, 0);
+//				PopOutManager.SetStates(ThirdPanelTabView.ControlsTabName, true, width / 3, height / 2 + heightAdjust * 2, width / 3 * 2 + widthAdjust, height / 2);
+//				ApplicationController.Instance.ReloadAll(null, null);
+//			});
 			return true;
 		}
 	}
