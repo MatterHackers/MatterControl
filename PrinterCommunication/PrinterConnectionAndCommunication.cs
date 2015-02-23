@@ -1945,7 +1945,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						if (PrinterIsPrinting)
 						{
 							string lineWidthoutCR = lineToWrite.Substring(0, lineToWrite.Length - 2);
-							CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("{0} [{1}]\n".FormatWith(lineWidthoutCR, timeSinceStartedPrint.ElapsedMilliseconds)));
+							CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("{0} [{1:0.000}]\n".FormatWith(lineWidthoutCR, timeSinceStartedPrint.Elapsed.TotalSeconds)));
 						}
 						else
 						{
@@ -2610,7 +2610,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										StringEventArgs currentEvent = new StringEventArgs(lastLineRead);
 										if (PrinterIsPrinting)
 										{
-											CommunicationUnconditionalFromPrinter.CallEvents(this, new StringEventArgs("{0} [{1}]\n".FormatWith(lastLineRead, timeSinceStartedPrint.ElapsedMilliseconds)));
+											CommunicationUnconditionalFromPrinter.CallEvents(this, new StringEventArgs("{0} [{1:0.000}]\n".FormatWith(lastLineRead, timeSinceStartedPrint.Elapsed.TotalSeconds)));
 										}
 										else
 										{
