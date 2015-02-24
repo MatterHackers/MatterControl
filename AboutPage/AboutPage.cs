@@ -385,7 +385,13 @@ namespace MatterHackers.MatterControl
 				int directoryContentCount = CleanDirectory(directory, referencedPrintItemsFilePaths, referencedThumbnailFiles);
 				if (directoryContentCount == 0)
 				{
-					Directory.Delete(directory);
+					try
+					{
+						Directory.Delete(directory);
+					}
+					catch (Exception)
+					{
+					}
 				}
 				else
 				{
@@ -407,7 +413,13 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							File.Delete(file);
+							try
+							{
+								File.Delete(file);
+							}
+							catch (Exception)
+							{
+							}
 						}
 						break;
 
@@ -419,7 +431,13 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							File.Delete(file);
+							try
+							{
+								File.Delete(file);
+							}
+							catch (Exception)
+							{
+							}
 						}
 						break;
 
