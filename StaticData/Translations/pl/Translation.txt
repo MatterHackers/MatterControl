@@ -2937,3 +2937,196 @@ Translated:Restore
 
 English:WINDOWED MODE: This tab has been moved to a separate window.
 Translated:WINDOWED MODE: This tab has been moved to a separate window.
+
+English:Sending File(s)...
+Translated:Sending File(s)...
+
+English:Slicing File(s)...
+Translated:Slicing File(s)...
+
+English:Edit Outline
+Translated:Edit Outline
+
+English:Use Alpha
+Translated:Use Alpha
+
+English:Start Threshold:
+Translated:Start Threshold:
+
+English:End Threshold:
+Translated:End Threshold:
+
+English:Edit Model
+Translated:Edit Model
+
+English:Invert
+Translated:Invert
+
+English:Size:
+Translated:Size:
+
+English:Height:
+Translated:Height:
+
+English:Edit Base
+Translated:Edit Base
+
+English:Infill:
+Translated:Infill:
+
+English:Unlock to Save
+Translated:Unlock to Save
+
+English:Save & Exit
+Translated:Save & Exit
+
+English:Finding Parts:
+Translated:Finding Parts:
+
+English:Add Image
+Translated:Add Image
+
+English:Search Google
+Translated:Search Google
+
+English:Word Edit
+Translated:Word Edit
+
+English:Spacing:
+Translated:Spacing:
+
+English:Underline
+Translated:Underline
+
+English:Rotation:
+Translated:Rotation:
+
+English:Enter Text Here
+Translated:Enter Text Here
+
+English:Inserting image...
+Translated:Inserting image...
+
+English:Completed Prints:
+Translated:Completed Prints:
+
+English:Total Print Time:
+Translated:Total Print Time:
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+
+English:The '{0}' must be greater than 0.
+Translated:The '{0}' must be greater than 0.
+
+English:It is currently set to {0}.
+Translated:It is currently set to {0}.
+
+English:Slice Error
+Translated:Slice Error
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+
+English:Save Slice Configuration
+Translated:Save Slice Configuration
+
+English:Printing: {0}
+Translated:Printing: {0}
+
+English:Finished Print: {0}
+Translated:Finished Print: {0}
+
+English:Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.
+Translated:Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.
+
+English:Preview
+Translated:Preview
+
+English:Send Test
+Translated:Send Test
+
+English:NOTE: Standard messaging rates may apply.
+Translated:NOTE: Standard messaging rates may apply.
+
+English:Include a picture of my finished print
+Translated:Include a picture of my finished print
+
+English:Send to Remote Device
+Translated:Send to Remote Device
+
+English:Slice Files Prior to Send
+Translated:Slice Files Prior to Send
+
+English:Please wait. Retrieving available devices...
+Translated:Please wait. Retrieving available devices...
+
+English:Token request failed...
+Translated:Token request failed...
+
+English:Oops! Your session has expired.  Please sign-in again to continue.
+Translated:Oops! Your session has expired.  Please sign-in again to continue.
+
+English:Sorry! Unable to connect to server. Please try again later.
+Translated:Sorry! Unable to connect to server. Please try again later.
+
+English:All done! Files have been sent.
+Translated:All done! Files have been sent.
+
+English:Retry
+Translated:Retry
+
+English:Please wait. Preparing to send...
+Translated:Please wait. Preparing to send...
+
+English:Token received...
+Translated:Token received...
+
+English:Please wait. Sending files...
+Translated:Please wait. Sending files...
+
+English:File too big to load.
+Translated:File too big to load.
+
+English:Specify if your printer has the ability to do print leveling directly (support for G29).
+Translated:Specify if your printer has the ability to do print leveling directly (support for G29).
+
+English:Has Hardware Leveling
+Translated:Has Hardware Leveling
+
+English:The Fill Density must be between 0 and 1 inclusive.
+Translated:The Fill Density must be between 0 and 1 inclusive.
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
+
+English:Inserting Text
+Translated:Inserting Text
+
+English:Saving Parts:
+Translated:Saving Parts:
+
+English:Reset Connection
+Translated:Reset Connection
+
+English:Reboots the firmware on the controller
+Translated:Reboots the firmware on the controller
+
+English:Please wait. Slicing files {0} of {1}
+Translated:Please wait. Slicing files {0} of {1}
+
+English:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
+Translated:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
+
+English:Heat Before Homing
+Translated:Heat Before Homing
+
+English:Clear Print History
+Translated:Clear Print History
+
+English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [temperature].
+Translated:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [temperature].
+
+English:GCode file too big to load for '{0}'.
+Translated:GCode file too big to load for '{0}'.
+
