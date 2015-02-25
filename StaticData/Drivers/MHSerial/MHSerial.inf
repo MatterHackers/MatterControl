@@ -38,6 +38,7 @@ smoothieboard.name="Smoothie Board"
 makeit.name="MakeIt"
 ramps.name="RAMPS"
 ftdi.name="FTDI"
+flashforge.name="Flashforge"
 
 [DefaultInstall]
 CopyINF=arduino.inf
@@ -96,6 +97,7 @@ DefaultDestDir=12
 %makeit.name%=DriverInstall, USB\VID_0403&PID_6015
 %ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
 %ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
+%flashforge.name%=DriverInstall, USB\VID_23C1&PID_D314&REV_0001
 
 [DeviceList.NTamd64]
 %due.bossa.name%=DriverInstall, USB\VID_03EB&PID_6124
@@ -135,6 +137,7 @@ DefaultDestDir=12
 %makeit.name%=DriverInstall, USB\VID_0403&PID_6015
 %ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
 %ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
+%flashforge.name%=DriverInstall, USB\VID_23C1&PID_D314&REV_0001
 
 [DeviceList.NTia64]
 %esplora.bootloader.name%=DriverInstall, USB\VID_2341&PID_003C
@@ -171,6 +174,7 @@ DefaultDestDir=12
 %makeit.name%=DriverInstall, USB\VID_0403&PID_6015
 %ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
 %ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
+%flashforge.name%=DriverInstall, USB\VID_23C1&PID_D314&REV_0001
 
 [DriverInstall]
 include=mdmcpq.inf,usb.inf
