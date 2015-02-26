@@ -88,9 +88,6 @@ namespace MatterHackers.MatterControl.ActionBar
             disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
             disconnectPrinterButton.Cursor = Cursors.Hand;
 
-            // Bind connect button states to active printer state
-            this.SetConnectionButtonVisibleState(null);
-
             selectActivePrinterButton = new PrinterSelectButton();
             selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
             selectActivePrinterButton.Cursor = Cursors.Hand;
@@ -103,8 +100,8 @@ namespace MatterHackers.MatterControl.ActionBar
                 selectActivePrinterButton.Margin = new BorderDouble(0, 6, 6, 3);
             }
 
-            string emergencyStopText = "Stop".Localize().ToUpper();
-            emergencyStopButton = actionBarButtonFactory.Generate(emergencyStopText, "e_stop.png");
+            string emergencyStopText = "Emergency Stop".Localize().ToUpper();
+            emergencyStopButton = actionBarButtonFactory.Generate(emergencyStopText, "e_stop4.png");
             if (ApplicationController.Instance.WidescreenMode)
             {
                 emergencyStopButton.Margin = new BorderDouble(0, 0, 3, 3);
@@ -114,6 +111,8 @@ namespace MatterHackers.MatterControl.ActionBar
                 emergencyStopButton.Margin = new BorderDouble(6, 0, 3, 3);
             }
             
+            // Bind connect button states to active printer state
+            this.SetConnectionButtonVisibleState(null);
 
             actionBarButtonFactory.invertImageLocation = true;
 
@@ -121,7 +120,6 @@ namespace MatterHackers.MatterControl.ActionBar
             this.AddChild(disconnectPrinterButton);
             this.AddChild(selectActivePrinterButton);
             this.AddChild(emergencyStopButton);
-            
             //this.AddChild(CreateOptionsMenu());
         }
 
@@ -256,18 +254,7 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        void SetEmergencyStopVisibleState(object state)
-        {
-            if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected && ActiveSliceSettings.Instance.HasEmergencyStop() == true)
-            {
-                emergencyStopButton.Visible = true;
-            }
-            else
-            {
-                emergencyStopButton.Visible = false;
-            }
-        }
-
+        
         void SetConnectionButtonVisibleState(object state)
         {            
             
@@ -287,12 +274,12 @@ namespace MatterHackers.MatterControl.ActionBar
             // Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
             connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
             disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
+            emergencyStopButton.Visible = PrinterConnectionAndCommunication.Instance.PrinterIsConnected && ActiveSliceSettings.Instance.HasEmergencyStop();
         }
 
         void onPrinterStatusChanged(object sender, EventArgs e)
         {
-            UiThread.RunOnIdle(SetEmergencyStopVisibleState);
-            UiThread.RunOnIdle(SetConnectionButtonVisibleState);      
+            UiThread.RunOnIdle(SetConnectionButtonVisibleState);
         }
     }
 }
