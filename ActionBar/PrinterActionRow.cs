@@ -12,6 +12,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrinterCommunication;
 
@@ -25,6 +26,7 @@ namespace MatterHackers.MatterControl.ActionBar
         Button connectPrinterButton;
         Button disconnectPrinterButton;
         Button selectActivePrinterButton;
+        Button emergencyStopButton; 
 
         ConnectionWindow connectionWindow;
         bool connectionWindowIsOpen = false;
@@ -100,6 +102,17 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 selectActivePrinterButton.Margin = new BorderDouble(0, 6, 6, 3);
             }
+
+            string emergencyStopText = "Stop".Localize().ToUpper();
+            emergencyStopButton = actionBarButtonFactory.Generate(emergencyStopText, "e_stop.png");
+            if (ApplicationController.Instance.WidescreenMode)
+            {
+                emergencyStopButton.Margin = new BorderDouble(0, 0, 3, 3);
+            }
+            else
+            {
+                emergencyStopButton.Margin = new BorderDouble(6, 0, 3, 3);
+            }
             
 
             actionBarButtonFactory.invertImageLocation = true;
@@ -107,6 +120,8 @@ namespace MatterHackers.MatterControl.ActionBar
             this.AddChild(connectPrinterButton);
             this.AddChild(disconnectPrinterButton);
             this.AddChild(selectActivePrinterButton);
+            this.AddChild(emergencyStopButton);
+            
             //this.AddChild(CreateOptionsMenu());
         }
 
@@ -121,6 +136,7 @@ namespace MatterHackers.MatterControl.ActionBar
             selectActivePrinterButton.Click += new EventHandler(onSelectActivePrinterButton_Click);
             connectPrinterButton.Click += new EventHandler(onConnectButton_Click);
             disconnectPrinterButton.Click += new EventHandler(onDisconnectButtonClick);
+            emergencyStopButton.Click += new EventHandler(emergencyStopButton_Click);
 
             base.AddHandlers();
         }
@@ -149,6 +165,12 @@ namespace MatterHackers.MatterControl.ActionBar
                 }
             }
         }
+
+        void emergencyStopButton_Click(object sender, EventArgs mouseEvent)
+        {
+            PrinterConnectionAndCommunication.Instance.RebootBoard();
+        }
+
 
         void ConnectToActivePrinter()
         {            
@@ -234,6 +256,18 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
+        void SetEmergencyStopVisibleState(object state)
+        {
+            if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected && ActiveSliceSettings.Instance.HasEmergencyStop() == true)
+            {
+                emergencyStopButton.Visible = true;
+            }
+            else
+            {
+                emergencyStopButton.Visible = false;
+            }
+        }
+
         void SetConnectionButtonVisibleState(object state)
         {            
             
@@ -257,6 +291,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
         void onPrinterStatusChanged(object sender, EventArgs e)
         {
+            UiThread.RunOnIdle(SetEmergencyStopVisibleState);
             UiThread.RunOnIdle(SetConnectionButtonVisibleState);      
         }
     }
