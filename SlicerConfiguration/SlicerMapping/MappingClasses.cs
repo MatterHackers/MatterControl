@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
         public virtual string MappedValue { get { return OriginalValue; } }
     }
 
-    public class NotPassedItem : MapItem
+    public class VisibleButNotMappedToEngine : MapItem
     {
         public override string MappedValue
         {
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public NotPassedItem(string mappedKey, string originalKey)
+        public VisibleButNotMappedToEngine(string mappedKey, string originalKey)
             : base(mappedKey, originalKey)
         {
         }

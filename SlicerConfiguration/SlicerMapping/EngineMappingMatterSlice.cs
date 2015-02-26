@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
             new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
             
-            new NotPassedItem("", "extruder_count"),
-            new NotPassedItem("", "extruders_share_temperature"),
+            new VisibleButNotMappedToEngine("", "extruder_count"),
+            new VisibleButNotMappedToEngine("", "extruders_share_temperature"),
 
             //endCode=M104 S0
             new MapEndGCode("endCode", "end_gcode"),
@@ -204,14 +204,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
             new MapRepairOutlines("repairOutlines", "repair_outlines_extensive_stitching"),
-            new NotPassedItem("", "repair_outlines_keep_open"),
+            new VisibleButNotMappedToEngine("", "repair_outlines_keep_open"),
 
-            new NotPassedItem("", "has_fan"),
-            new NotPassedItem("", "has_hardware_leveling"),
-            new NotPassedItem("", "has_heated_bed"),
-            new NotPassedItem("", "has_sd_card_reader"),
-            new NotPassedItem("", "z_can_be_negative"),
-            new NotPassedItem("", "show_reset_connection"),
+            new VisibleButNotMappedToEngine("", "has_fan"),
+            new VisibleButNotMappedToEngine("", "has_hardware_leveling"),
+            new VisibleButNotMappedToEngine("", "has_heated_bed"),
+            new VisibleButNotMappedToEngine("", "has_sd_card_reader"),
+            new VisibleButNotMappedToEngine("", "z_can_be_negative"),
+            new VisibleButNotMappedToEngine("", "show_reset_connection"),
 
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //startCode=M109 S210
             new MapStartGCode("startCode", "start_gcode", true),
 
-			new NotPassedItem("", "heat_extruder_before_homing"),
+			new VisibleButNotMappedToEngine("", "heat_extruder_before_homing"),
 
             //supportExtruder=1
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             
             // get the check box on the screen
             new SupportMatterial("supportEndAngle", "support_material"),
-            new NotPassedItem("", "support_material_threshold"),
+            new VisibleButNotMappedToEngine("", "support_material_threshold"),
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
             new MapItem("supportType", "support_type"),
@@ -277,16 +277,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
             new MapItem("wipeTowerSize", "wipe_tower_size"),
 
-            new NotPassedItem("", "pause_gcode"),
-            new NotPassedItem("", "resume_gcode"),
-            new NotPassedItem("", "cancel_gcode"),
+            new VisibleButNotMappedToEngine("", "pause_gcode"),
+            new VisibleButNotMappedToEngine("", "resume_gcode"),
+            new VisibleButNotMappedToEngine("", "cancel_gcode"),
 
-            new NotPassedItem("", "bed_size"),
-            new NotPassedItem("", "build_height"),
+            new VisibleButNotMappedToEngine("", "bed_size"),
+            new VisibleButNotMappedToEngine("", "build_height"),
 
-            new NotPassedItem("", "temperature"),
-            new NotPassedItem("", "bed_temperature"),
-            new NotPassedItem("", "bed_shape"),
+            new VisibleButNotMappedToEngine("", "temperature"),
+            new VisibleButNotMappedToEngine("", "bed_temperature"),
+            new VisibleButNotMappedToEngine("", "bed_shape"),
         };
 
         public static void WriteMatterSliceSettingsFile(string outputFilename)
