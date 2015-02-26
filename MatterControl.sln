@@ -77,7 +77,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{DA2B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFileDialogs", "Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj", "{A526DC5D-65F3-461B-805F-D3AC9665F5C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextCreator", "..\MatterControlPlugins\TextCreator\TextCreator.csproj", "{F49EC1DD-D645-4709-8667-B57318AF67B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextCreator", "TextCreator\TextCreator.csproj", "{F49EC1DD-D645-4709-8667-B57318AF67B0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterSlice", "Submodules\MatterSlice\MatterSlice.csproj", "{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}"
 EndProject
