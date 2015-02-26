@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
         static EePromMarlinWindow openEePromMarlinWidget = null;
         static EePromRepetierWindow openEePromRepetierWidget = null;
-        string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize();
+        string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
         string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
         private FlowLayoutWidget GetEEPromControl()
         {

@@ -3137,3 +3137,6 @@ Translated:Show Reset Connection
 English:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
 Translated:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
 
+English:You may need to wait a minute for your printer to finish initializing.
+Translated:You may need to wait a minute for your printer to finish initializing.
+
