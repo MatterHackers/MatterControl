@@ -142,27 +142,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\agg-sharp\Gui\Gui.csproj">
+    <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj">
       <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\agg-sharp\Tesselate\Tesselate.csproj">
+    <ProjectReference Include="..\Submodules\agg-sharp\Tesselate\Tesselate.csproj">
       <Project>{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}</Project>
       <Name>Tesselate</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\agg-sharp\VectorMath\VectorMath.csproj">
+    <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\agg-sharp\Csg\Csg.csproj">
+    <ProjectReference Include="..\Submodules\agg-sharp\Csg\Csg.csproj">
       <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
       <Name>Csg</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\agg-sharp\agg\Agg.csproj">
+    <ProjectReference Include="..\Submodules\agg-sharp\Agg\Agg.csproj">
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\agg-sharp\PolygonMesh\PolygonMesh.csproj">
+    <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
       <Name>PolygonMesh</Name>
     </ProjectReference>

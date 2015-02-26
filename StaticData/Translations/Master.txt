@@ -3128,18 +3128,12 @@ Translated:This gcode will be inserted into the output right after the temperatu
 English:GCode file too big to load for '{0}'.
 Translated:GCode file too big to load for '{0}'.
 
-English:Emergency Stop
-Translated:Emergency Stop
+English:Reset\nConnection
+Translated:Reset\nConnection
 
-English:Immediately kills connection to printer
-Translated:Immediately kills connection to printer
+English:Show Reset Connection
+Translated:Show Reset Connection
 
-English:Make the emergency stop option available during print.
-Translated:Make the emergency stop option available during print.
-
-English:Enable Emergency Stop
-Translated:Enable Emergency Stop
-
-English:Stop
-Translated:Stop
+English:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
+Translated:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
 

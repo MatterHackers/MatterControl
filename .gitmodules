@@ -1,0 +1,9 @@
+[submodule "Submodules/RemotingLite"]
+	path = Submodules/RemotingLite
+	url = https://github.com/MatterHackers/RemotingLite.git
+[submodule "Submodules/MatterSlice"]
+	path = Submodules/MatterSlice
+	url = https://github.com/MatterHackers/MatterSlice.git
+[submodule "Submodules/agg-sharp"]
+	path = Submodules/agg-sharp
+	url = https://github.com/MatterHackers/agg-sharp.git

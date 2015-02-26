@@ -239,7 +239,7 @@ Advanced
         has_hardware_leveling
         has_heated_bed
         has_sd_card_reader
-        has_emergency_stop
+        show_reset_connection
         extruder_count
         heat_extruder_before_homing
         extruders_share_temperature

@@ -261,6 +261,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"has_hardware_leveling",
             "has_sd_card_reader",
             "extruder_count",
+			"show_reset_connection",
             "extruders_share_temperature",
         };
 

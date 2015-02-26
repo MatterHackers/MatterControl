@@ -233,9 +233,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return GetActiveValue("has_fan") == "1";
 		}
 
-        public bool HasEmergencyStop()
+        public bool ShowResetConnection()
         {
-            return GetActiveValue("has_emergency_stop") == "1";
+            return GetActiveValue("show_reset_connection") == "1";
         }
 
 		public bool HasHardwareLeveling()

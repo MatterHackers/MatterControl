@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new NotPassedItem("", "has_heated_bed"),
             new NotPassedItem("", "has_sd_card_reader"),
             new NotPassedItem("", "z_can_be_negative"),
-            new NotPassedItem("", "has_emergency_stop"),
+            new NotPassedItem("", "show_reset_connection"),
 
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),

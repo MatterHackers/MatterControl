@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.ActionBar
         Button connectPrinterButton;
         Button disconnectPrinterButton;
         Button selectActivePrinterButton;
-        Button emergencyStopButton; 
+        Button resetConnectionButton; 
 
         ConnectionWindow connectionWindow;
         bool connectionWindowIsOpen = false;
@@ -100,15 +100,15 @@ namespace MatterHackers.MatterControl.ActionBar
                 selectActivePrinterButton.Margin = new BorderDouble(0, 6, 6, 3);
             }
 
-            string emergencyStopText = "Emergency Stop".Localize().ToUpper();
-            emergencyStopButton = actionBarButtonFactory.Generate(emergencyStopText, "e_stop4.png");
+            string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
+            resetConnectionButton = actionBarButtonFactory.Generate(resetConnectionText, "e_stop4.png");
             if (ApplicationController.Instance.WidescreenMode)
             {
-                emergencyStopButton.Margin = new BorderDouble(0, 0, 3, 3);
+                resetConnectionButton.Margin = new BorderDouble(0, 0, 3, 3);
             }
             else
             {
-                emergencyStopButton.Margin = new BorderDouble(6, 0, 3, 3);
+                resetConnectionButton.Margin = new BorderDouble(6, 0, 3, 3);
             }
             
             // Bind connect button states to active printer state
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.ActionBar
             this.AddChild(connectPrinterButton);
             this.AddChild(disconnectPrinterButton);
             this.AddChild(selectActivePrinterButton);
-            this.AddChild(emergencyStopButton);
+            this.AddChild(resetConnectionButton);
             //this.AddChild(CreateOptionsMenu());
         }
 
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.ActionBar
             selectActivePrinterButton.Click += new EventHandler(onSelectActivePrinterButton_Click);
             connectPrinterButton.Click += new EventHandler(onConnectButton_Click);
             disconnectPrinterButton.Click += new EventHandler(onDisconnectButtonClick);
-            emergencyStopButton.Click += new EventHandler(emergencyStopButton_Click);
+            resetConnectionButton.Click += new EventHandler(resetConnectionButton_Click);
 
             base.AddHandlers();
         }
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.ActionBar
             }
         }
 
-        void emergencyStopButton_Click(object sender, EventArgs mouseEvent)
+        void resetConnectionButton_Click(object sender, EventArgs mouseEvent)
         {
             PrinterConnectionAndCommunication.Instance.RebootBoard();
         }
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.ActionBar
             // Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
             connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
             disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
-            emergencyStopButton.Visible = PrinterConnectionAndCommunication.Instance.PrinterIsConnected && ActiveSliceSettings.Instance.HasEmergencyStop();
+            resetConnectionButton.Visible = PrinterConnectionAndCommunication.Instance.PrinterIsConnected && ActiveSliceSettings.Instance.ShowResetConnection();
         }
 
         void onPrinterStatusChanged(object sender, EventArgs e)

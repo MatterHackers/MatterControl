@@ -414,9 +414,9 @@
     "ExtraSettings": "bed_temperature,first_layer_bed_temperature"
   },
   {
-    "SlicerConfigName": "has_emergency_stop",
-    "PresentationName": "Enable Emergency Stop",
-    "HelpText": "Make the emergency stop option available during print.",
+    "SlicerConfigName": "show_reset_connection",
+    "PresentationName": "Show Reset Connection",
+    "HelpText": "Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.",
     "DataEditType": "HARDWARE_PRESENT",
     "ExtraSettings": ""
   },

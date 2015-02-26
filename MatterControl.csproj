@@ -355,10 +355,10 @@
     <Reference Include="System.Core" />
     <Reference Include="Mono.Posix" />
     <Reference Include="nunit.framework">
-      <HintPath>..\agg-sharp\AggTests\nunit.framework.dll</HintPath>
+      <HintPath>Submodules\agg-sharp\AggTests\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
-      <HintPath>..\agg-sharp\PlatformWin32\OpenTK.dll</HintPath>
+      <HintPath>Submodules\agg-sharp\PlatformWin32\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -391,59 +391,59 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\agg-sharp\clipper_library\clipper_library.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\Csg\Csg.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\Csg\Csg.csproj">
       <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
       <Name>Csg</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\Gui\Gui.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj">
       <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\ImageProcessing\ImageProcessing.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\ImageProcessing\ImageProcessing.csproj">
       <Project>{036BCCBA-52D8-457C-84AE-8821F209FE4A}</Project>
       <Name>ImageProcessing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\MarchingSquares\MarchingSquares.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj">
       <Project>{DF6845CD-64C6-4263-8357-DA8066855739}</Project>
       <Name>MarchingSquares</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
       <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
       <Name>PlatformAbstract</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\RayTracer\RayTracer.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\RayTracer\RayTracer.csproj">
       <Project>{1E01ABE0-B494-4FE4-B0D6-540133286887}</Project>
       <Name>RayTracer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\VectorMath\VectorMath.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
       <Project>{F67AE800-B0C7-42A8-836F-597B4E74591C}</Project>
       <Name>GCodeVisualizer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
       <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
       <Name>SerialPortCommunication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
       <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
       <Name>WindowsFileDialogs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MatterSlice\MatterSlice.csproj">
+    <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
       <Name>MatterSlice</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
       <Project>{A737BC76-165B-46C6-82B7-8871C7C92942}</Project>
       <Name>MeshViewer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\Tesselate\Tesselate.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\Tesselate\Tesselate.csproj">
       <Project>{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}</Project>
       <Name>Tesselate</Name>
     </ProjectReference>
@@ -455,19 +455,19 @@
       <Project>{3DF4CB3D-9A03-4256-9A81-70523AAD828B}</Project>
       <Name>Launcher</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\OpenGlGui\OpenGlGui.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\OpenGlGui\OpenGlGui.csproj">
       <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
       <Name>OpenGlGui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
       <Project>{545B6912-77FF-4B34-BA76-6C3D6A32BE6A}</Project>
       <Name>RenderOpenGl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\PolygonMesh\PolygonMesh.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
       <Name>PolygonMesh</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\PlatformWin32\PlatformWin32.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>
     </ProjectReference>
@@ -475,11 +475,11 @@
       <Project>{865172A0-A1A9-49C2-9386-F2FDB4E141B7}</Project>
       <Name>MatterControlPluginSystem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\Localizations\Localizations.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\Localizations\Localizations.csproj">
       <Project>{CA96058C-1A37-465D-A357-D6D695B13D25}</Project>
       <Name>Localizations</Name>
     </ProjectReference>
-    <ProjectReference Include="..\agg-sharp\Agg\Agg.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\Agg\Agg.csproj">
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
     </ProjectReference>
