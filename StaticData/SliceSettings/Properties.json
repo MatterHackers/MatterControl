@@ -414,6 +414,13 @@
     "ExtraSettings": "bed_temperature,first_layer_bed_temperature"
   },
   {
+    "SlicerConfigName": "has_emergency_stop",
+    "PresentationName": "Enable Emergency Stop",
+    "HelpText": "Make the emergency stop option available during print.",
+    "DataEditType": "HARDWARE_PRESENT",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "infill_acceleration",
     "PresentationName": "Infill",
     "HelpText": "Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.",
