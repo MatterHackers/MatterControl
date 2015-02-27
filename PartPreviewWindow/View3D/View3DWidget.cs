@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+//#define SPLITTING_TEST
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -777,6 +779,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             }
         }
 
+#if SPLITTING_TEST
+		Mesh originalMesh = null;
+#endif
         bool hasDrawn = false;
         Stopwatch timeSinceLastSpin = new Stopwatch();
         void AutoSpin(object state)
@@ -800,6 +805,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(rotateAboutZ);
                     Invalidate();
                 }
+
+#if SPLITTING_TEST // this some polygon splitting test code
+				if (MeshGroups.Count > 0
+					&& MeshGroups[0].Meshes.Count > 0)
+				{
+					if (originalMesh == null)
+					{
+						originalMesh = Mesh.Copy(MeshGroups[0].Meshes[0]);
+					}
+
+					Mesh meshToTransform = Mesh.Copy(originalMesh);
+
+					Vertex vertexCreated;
+					MeshEdge meshEdgeCreated;
+					meshToTransform.CleanAndMergMesh();
+					meshToTransform.SplitMeshEdge(meshToTransform.MeshEdges[0], out vertexCreated, out meshEdgeCreated);
+					meshToTransform.CleanAndMergMesh();
+
+					MeshGroups[0].Meshes[0] = meshToTransform;
+				}
+#endif
             }
         }
 
