@@ -49,7 +49,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Csg", "Submodules\agg-sharp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonMesh", "Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj", "{86F6AAF2-9B50-40B8-A427-1897D76471C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agg", "Submodules\agg-sharp\Agg\Agg.csproj", "{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agg", "Submodules\agg-sharp\agg\Agg.csproj", "{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenGlGui", "Submodules\agg-sharp\OpenGlGui\OpenGlGui.csproj", "{C958F745-156E-4BDC-A24A-3721C7BE7B8A}"
 EndProject
