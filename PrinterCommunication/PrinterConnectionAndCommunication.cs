@@ -2344,10 +2344,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				switch (trimedLine)
 				{
-					case "@RETURN_TO_INITIAL_PAUSE_POSITION":
+					case "@RESTORE_XYZ_POSITION":
 						return "G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate);
 
-					case "@INGNORE_EXTRUSIONS_DURING_PAUSE":
+					case "@RESTORE_E_POSITION":
 						return "G92 E{0:0.00000}".FormatWith(currentExtruderDestination);
 				}
 			}
