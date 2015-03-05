@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
 #endif
             {
 #if IS_WINDOWS_FORMS
-                Clipboard.SetSystemClipboardFunctions(System.Windows.Forms.Clipboard.GetText, System.Windows.Forms.Clipboard.SetText, System.Windows.Forms.Clipboard.ContainsText);
+                Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
 #endif
 
                 MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();

@@ -351,6 +351,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         int printerCommandQueueIndex = -1;
 
         Vector3 currentDestination;
+		double currentFeedRate;
+		double currentExtruderDestination;
         Vector3 lastReportedPosition;
 
         public Vector3 CurrentDestination { get { return currentDestination; } }
@@ -1717,6 +1719,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.y);
                 GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.z);
 
+				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentExtruderDestination);
+				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentFeedRate);
+
                 if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
                 {
                     newDestination += currentDestination;
@@ -2263,11 +2268,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
 
                 // Add the pause_gcode to the loadedGCode.GCodeCommandQueue
-                double currentFeedRate = loadedGCode.Instruction(injectionStartIndex).FeedRate;
                 string pauseGCode = ActiveSliceSettings.Instance.GetActiveValue("pause_gcode");
                 if (pauseGCode.Trim() == "")
                 {
-                    int lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), injectionStartIndex);
+					// inject the resume_gcode to execute when we resume printing
+					string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
+					int lastIndexAdded = InjectGCode(resumeGCode, injectionStartIndex);
+					
+					// put in the code to return to return to our pre-pause postion 
+					lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), injectionStartIndex);
                     DoPause();
                 }
                 else
@@ -2283,7 +2292,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
                         lastIndexAdded = InjectGCode(resumeGCode, lastIndexAdded);
 
-                        lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), lastIndexAdded);
+						// put in the code to return to return to our pre-pause postion 
+						lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), lastIndexAdded);
                     }
                 }
             }
@@ -2311,6 +2321,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
                 if (trimedLine != "")
                 {
+					trimedLine = ReplacePrinterMacros(trimedLine);
+
                     if (loadedGCode.Count > indexToStartInjection)
                     {
                         loadedGCode.Insert(indexToStartInjection, new PrinterMachineInstruction(trimedLine, loadedGCode.Instruction(indexToStartInjection)));
@@ -2325,6 +2337,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             return indexToStartInjection + linesAdded;
         }
+
+		private string ReplacePrinterMacros(string trimedLine)
+		{
+			if (trimedLine.StartsWith("@"))
+			{
+				switch (trimedLine)
+				{
+					case "@RETURN_TO_INITIAL_PAUSE_POSITION":
+						return "G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate);
+
+					case "@INGNORE_EXTRUSIONS_DURING_PAUSE":
+						return "G92 E{0:0.00000}".FormatWith(currentExtruderDestination);
+				}
+			}
+
+			return trimedLine;
+		}
 
         public void Resume()
         {
