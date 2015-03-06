@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
         bool stopTryingToConnect = false;
 
-        static readonly int MAX_EXTRUDERS = 16;
+        const int MAX_EXTRUDERS = 16;
         double[] actualExtruderTemperature = new double[MAX_EXTRUDERS];
         double[] targetExtruderTemperature = new double[MAX_EXTRUDERS];
         double actualBedTemperature;
@@ -464,7 +464,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         return true;
 
                     default:
-                        throw new NotImplementedException("Make sure very satus returns the correct connected state.");
+                        throw new NotImplementedException("Make sure every satus returns the correct connected state.");
                 }
             }
         }
@@ -2785,16 +2785,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             // Register to detect the file deleted confirmation.
             // This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
-            ReadLineStartCallBacks.AddCallBackToKey("File deleted:", FileDelteConfirmed);
+            ReadLineStartCallBacks.AddCallBackToKey("File deleted:", FileDeleteConfirmed);
             // and send the line to delete the file
             SendLineToPrinterNow("M30 {0}".FormatWith(fileName.ToLower()));
         }
 
-        void FileDelteConfirmed(object sender, EventArgs e)
+        void FileDeleteConfirmed(object sender, EventArgs e)
         {
             UiThread.RunOnIdle((state) =>
             {
-                ReadLineStartCallBacks.RemoveCallBackFromKey("File deleted:", FileDelteConfirmed);
+                ReadLineStartCallBacks.RemoveCallBackFromKey("File deleted:", FileDeleteConfirmed);
             });
             PrintingCanContinue(this, null);
         }
