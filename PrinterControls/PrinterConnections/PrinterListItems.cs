@@ -40,9 +40,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         {            
             this.Margin = new BorderDouble(1);
             this.BackgroundColor = this.defaultBackgroundColor;
-            this.Padding = new BorderDouble(0); 
-		
-            string[] comportNames = FrostedSerialPort.GetPortNames();
+            this.Padding = new BorderDouble(0);
+
+			string[] comportNames = FrostedSerialPortFactory.Instance.GetPortNames();
             bool portIsAvailable = comportNames.Contains(printerRecord.ComPort);
 
             printerName = new TextWidget(this.printerRecord.Name);

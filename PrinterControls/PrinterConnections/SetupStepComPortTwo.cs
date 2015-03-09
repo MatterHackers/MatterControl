@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             : base(windowController, containerWindowToClose, setupPrinterStatus)
         {
 
-            startingPortNames = FrostedSerialPort.GetPortNames();
+			startingPortNames = FrostedSerialPortFactory.Instance.GetPortNames();
             contentRow.AddChild(createPrinterConnectionMessageContainer());
             {
                 //Construct buttons
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         void ConnectButton_Click(object sender, EventArgs mouseEvent)
         {
             // Select the first port that's in GetPortNames() but not in startingPortNames
-            string candidatePort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
+			string candidatePort = FrostedSerialPortFactory.Instance.GetPortNames().Except(startingPortNames).FirstOrDefault();
             if (candidatePort == null)
             {
                 printerErrorMessage.TextColor = RGBA_Bytes.Red;

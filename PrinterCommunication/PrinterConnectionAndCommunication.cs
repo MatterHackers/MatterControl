@@ -1433,7 +1433,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 CommunicationState = CommunicationStates.AttemptingToConnect;
 
                 // Start the process of requesting permission and exit if permission is not currently granted
-                if(!FrostedSerialPort.EnsureDeviceAccess())
+				if (!FrostedSerialPortFactory.Instance.EnsureDeviceAccess())
                 {
                     CommunicationState = CommunicationStates.FailedToConnect;
                     return;
@@ -1530,7 +1530,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             // Allow the user to set the appropriate properties.
-            var portNames = FrostedSerialPort.GetPortNames();
+			var portNames = FrostedSerialPortFactory.Instance.GetPortNames();
             //Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
             if (portNames.Length > 0)
             {
@@ -1596,7 +1596,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             try
             {
-                string[] portNames = FrostedSerialPort.GetPortNames();
+				string[] portNames = FrostedSerialPortFactory.Instance.GetPortNames();
                 return portNames.Any(x => string.Compare(x, portName, true) == 0);
             }
             catch
@@ -1624,7 +1624,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
                     try
                     {
-                        serialPort = FrostedSerialPort.CreateAndOpen(serialPortName, baudRate, true);
+						serialPort = FrostedSerialPortFactory.Instance.CreateAndOpen(serialPortName, baudRate, true);
 						
 						ReadThreadHolder.Join();
 
@@ -1997,8 +1997,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         public void PulseRtsLow()
         {
             if (serialPort == null && this.ActivePrinter != null)
-            {   
-                serialPort = FrostedSerialPort.Create(this.ActivePrinter.ComPort);
+            {
+				serialPort = FrostedSerialPortFactory.Instance.Create(this.ActivePrinter.ComPort);
                 serialPort.BaudRate = this.BaudRate;
 
                 // Set the read/write timeouts
