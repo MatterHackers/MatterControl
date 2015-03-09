@@ -118,6 +118,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintClient", "..\MatterCon
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrintServer", "PrintServer", "{8F938919-F383-4BAE-BB95-13AB2A94088E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientServerInterface", "..\MatterControlPrintServer\ClientServerInterface\ClientServerInterface.csproj", "{04B850F0-5A39-4157-A227-A574064110D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1038,6 +1040,30 @@ Global
 		{275568A0-7E5E-4151-8960-E54665FF5DF7}.Release64|Mixed Platforms.Build.0 = Release|Any CPU
 		{275568A0-7E5E-4151-8960-E54665FF5DF7}.Release64|x64.ActiveCfg = Release|Any CPU
 		{275568A0-7E5E-4151-8960-E54665FF5DF7}.Release64|x86.ActiveCfg = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug64|Any CPU.ActiveCfg = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug64|Any CPU.Build.0 = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug64|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug64|Mixed Platforms.Build.0 = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug64|x64.ActiveCfg = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Debug64|x86.ActiveCfg = Debug|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release|x64.ActiveCfg = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release|x86.ActiveCfg = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release64|Any CPU.ActiveCfg = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release64|Any CPU.Build.0 = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release64|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release64|Mixed Platforms.Build.0 = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release64|x64.ActiveCfg = Release|Any CPU
+		{04B850F0-5A39-4157-A227-A574064110D2}.Release64|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1073,6 +1099,7 @@ Global
 		{002B1D12-4DBB-4ECF-B481-5EBECBC1666E} = {8F938919-F383-4BAE-BB95-13AB2A94088E}
 		{275568A0-7E5E-4151-8960-E54665FF5DF7} = {8F938919-F383-4BAE-BB95-13AB2A94088E}
 		{8F938919-F383-4BAE-BB95-13AB2A94088E} = {4E79BE4E-275E-4901-9173-E9096B7318F0}
+		{04B850F0-5A39-4157-A227-A574064110D2} = {8F938919-F383-4BAE-BB95-13AB2A94088E}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MatterControl.csproj
