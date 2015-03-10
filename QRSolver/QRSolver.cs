@@ -1,6 +1,5 @@
 ﻿using System;
 
-#if false
 public class QRSolver
 {
 	int i4_min(int i1, int i2)
@@ -1412,11 +1411,11 @@ public class QRSolver
 		index of the first zero diagonal element of R, and B is left unaltered.
 	*/
 	{
-		int cab;
-		int cb;
-		int cqty;
-		int cqy;
-		int cr;
+		bool cab;
+		bool cb;
+		bool cqty;
+		bool cqy;
+		bool cr;
 		int i;
 		int info;
 		int j;
@@ -1443,22 +1442,22 @@ public class QRSolver
 		*/
 		if (ju == 0)
 		{
-			if (cqy != 0)
+			if (cqy)
 			{
 				qy[0] = y[0];
 			}
 
-			if (cqty != 0)
+			if (cqty)
 			{
 				qty[0] = y[0];
 			}
 
-			if (cab != 0)
+			if (cab)
 			{
 				ab[0] = y[0];
 			}
 
-			if (cb != 0)
+			if (cb)
 			{
 				if (a[0 + 0 * lda] == 0.0)
 				{
@@ -1470,7 +1469,7 @@ public class QRSolver
 				}
 			}
 
-			if (cr != 0)
+			if (cr)
 			{
 				rsd[0] = 0.0;
 			}
@@ -1479,7 +1478,7 @@ public class QRSolver
 		/*
 		  Set up to compute QY or QTY.
 		*/
-		if (cqy != 0)
+		if (cqy)
 		{
 			for (i = 1; i <= n; i++)
 			{
@@ -1487,7 +1486,7 @@ public class QRSolver
 			}
 		}
 
-		if (cqty != 0)
+		if (cqty)
 		{
 			for (i = 1; i <= n; i++)
 			{
@@ -1497,7 +1496,7 @@ public class QRSolver
 		/*
 		  Compute QY.
 		*/
-		if (cqy != 0)
+		if (cqy)
 		{
 			for (jj = 1; jj <= ju; jj++)
 			{
@@ -1516,7 +1515,7 @@ public class QRSolver
 		/*
 		  Compute Q'*Y.
 		*/
-		if (cqty != 0)
+		if (cqty)
 		{
 			for (j = 1; j <= ju; j++)
 			{
@@ -1533,7 +1532,7 @@ public class QRSolver
 		/*
 		  Set up to compute B, RSD, or AB.
 		*/
-		if (cb != 0)
+		if (cb)
 		{
 			for (i = 1; i <= k; i++)
 			{
@@ -1541,7 +1540,7 @@ public class QRSolver
 			}
 		}
 
-		if (cab != 0)
+		if (cab)
 		{
 			for (i = 1; i <= k; i++)
 			{
@@ -1565,7 +1564,7 @@ public class QRSolver
 			}
 		}
 
-		if (cr != 0)
+		if (cr)
 		{
 			for (i = 1; i <= k; i++)
 			{
@@ -1575,7 +1574,7 @@ public class QRSolver
 		/*
 		  Compute B.
 		*/
-		if (cb != 0)
+		if (cb)
 		{
 			for (jj = 1; jj <= k; jj++)
 			{
@@ -1599,7 +1598,7 @@ public class QRSolver
 		/*
 		  Compute RSD or AB as required.
 		*/
-		if (cr != 0 || cab != 0)
+		if (cr || cab)
 		{
 			for (jj = 1; jj <= ju; jj++)
 			{
@@ -1610,14 +1609,14 @@ public class QRSolver
 					temp = a[j - 1 + (j - 1) * lda];
 					a[j - 1 + (j - 1) * lda] = qraux[j - 1];
 
-					if (cr != 0)
+					if (cr)
 					{
 						t = -ddot(n - j + 1, a, j - 1 + (j - 1) * lda, 1, rsd, j - 1, 1)
 						  / a[j - 1 + (j - 1) * lda];
 						daxpy(n - j + 1, t, a, j - 1 + (j - 1) * lda, 1, rsd, j - 1, 1);
 					}
 
-					if (cab != 0)
+					if (cab)
 					{
 						t = -ddot(n - j + 1, a, j - 1 + (j - 1) * lda, 1, ab, j - 1, 1)
 						  / a[j - 1 + (j - 1) * lda];
@@ -1917,4 +1916,3 @@ public class QRSolver
 	}
 	/******************************************************************************/
 }
-#endif
