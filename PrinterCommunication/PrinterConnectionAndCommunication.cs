@@ -2025,6 +2025,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (this.ActivePrinter != null
 				&&  serialPort != null)
 			{
+				// first make sure we are not printing if possible (cancel slicing)
+				Stop();
+
 				serialPort.RtsEnable = true;
 				serialPort.DtrEnable = true;
 				Thread.Sleep(100);
@@ -2473,7 +2476,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     CommunicationState = CommunicationStates.Disconnected;
                     break;
 
-                case CommunicationStates.PreparingToPrint:
+				case CommunicationStates.PreparingToPrint:
+				case CommunicationStates.PreparingToPrintToSd:
+					SlicingQueue.Instance.CancelCurrentSlicing();
                     CommunicationState = CommunicationStates.Connected;
                     break;
             }
@@ -2556,6 +2561,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			switch (communicationState)
 			{
+				case CommunicationStates.Connected:
+					// This can happen if the printer is reset during the silcing of the part.
+					break;
+
 				case CommunicationStates.PreparingToPrintToSd:
 					activePrintTask = null;
 					CommunicationState = CommunicationStates.PrintingToSd;
