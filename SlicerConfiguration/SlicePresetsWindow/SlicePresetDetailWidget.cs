@@ -341,10 +341,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                                     {
                                         itemName = "{0} ({1})".FormatWith(itemName, setting.ExtraSettings.Replace("\\n", " "));
                                     }
-
-                                    MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
-                                    settingMenuItem.Selected += new EventHandler(OnItemSelected);
-                                    settingMenuItem.Selected += new EventHandler(OnSettingSelected);
+                                    if (ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(setting.SlicerConfigName))
+                                    {
+                                        MenuItem settingMenuItem = settingDropDownList.AddItem(itemName, itemValue);
+                                        settingMenuItem.Selected += new EventHandler(OnItemSelected);
+                                        settingMenuItem.Selected += new EventHandler(OnSettingSelected);
+                                    }
                                 }
                             }
                         }
@@ -391,12 +393,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                 foreach (KeyValuePair<String, DataStorage.SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
                 {
                     OrganizerSettingsData settingData = SliceSettingsOrganizer.Instance.GetSettingsData(item.Key);
+
                     // Dont add row if there is no entry
-                    if (settingData != null)
+                    if (settingData != null && ActivePrinterProfile.Instance.ActiveSliceEngine.MapContains(settingData.SlicerConfigName))
                     {
                         FlowLayoutWidget row = GetSettingsRow(settingData, item.Value.Value);
                         row.Padding = new BorderDouble(3, 3, 3, 6);
-
                         settingsRowContainer.AddChild(row);
                         HorizontalLine horizontalLine = new HorizontalLine();
                         horizontalLine.BackgroundColor = ActiveTheme.Instance.SecondaryTextColor;
