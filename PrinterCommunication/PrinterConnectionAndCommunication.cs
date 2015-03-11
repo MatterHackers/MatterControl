@@ -1433,7 +1433,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 CommunicationState = CommunicationStates.AttemptingToConnect;
 
                 // Start the process of requesting permission and exit if permission is not currently granted
-				if (!FrostedSerialPortFactory.Instance.EnsureDeviceAccess())
+				if (!FrostedSerialPort.EnsureDeviceAccess())
                 {
                     CommunicationState = CommunicationStates.FailedToConnect;
                     return;
@@ -1530,7 +1530,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             // Allow the user to set the appropriate properties.
-			var portNames = FrostedSerialPortFactory.Instance.GetPortNames();
+			var portNames = FrostedSerialPort.GetPortNames();
             //Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
             if (portNames.Length > 0)
             {
@@ -1596,7 +1596,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             try
             {
-				string[] portNames = FrostedSerialPortFactory.Instance.GetPortNames();
+				string[] portNames = FrostedSerialPort.GetPortNames();
                 return portNames.Any(x => string.Compare(x, portName, true) == 0);
             }
             catch

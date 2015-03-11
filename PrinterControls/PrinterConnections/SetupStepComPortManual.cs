@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
             
             int portIndex = 0;
-			foreach (string serialPort in FrostedSerialPortFactory.Instance.GetPortNames())
+			foreach (string serialPort in FrostedSerialPort.GetPortNames())
             {
                 //Filter com port list based on usb type (applies to Mac mostly)
                 bool looks_like_mac = serialPort.StartsWith("/dev/tty.");
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             if (portIndex == 0)
             {
 
-				foreach (string serialPort in FrostedSerialPortFactory.Instance.GetPortNames())
+				foreach (string serialPort in FrostedSerialPort.GetPortNames())
                 {
                     SerialPortIndexRadioButton comPortOption = createComPortOption(serialPort);
                     container.AddChild(comPortOption);

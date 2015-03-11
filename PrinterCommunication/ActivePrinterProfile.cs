@@ -363,7 +363,7 @@ namespace MatterHackers.MatterControl
         {
             string query = string.Format("SELECT * FROM Printer;");
             IEnumerable<Printer> printer_profiles = (IEnumerable<Printer>)Datastore.Instance.dbSQLite.Query<Printer>(query);
-			string[] comportNames = FrostedSerialPortFactory.Instance.GetPortNames();
+			string[] comportNames = FrostedSerialPort.GetPortNames();
 
             foreach (DataStorage.Printer printer in printer_profiles)
             {

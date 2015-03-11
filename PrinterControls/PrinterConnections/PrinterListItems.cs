@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
             this.BackgroundColor = this.defaultBackgroundColor;
             this.Padding = new BorderDouble(0);
 
-			string[] comportNames = FrostedSerialPortFactory.Instance.GetPortNames();
+			string[] comportNames = FrostedSerialPort.GetPortNames();
             bool portIsAvailable = comportNames.Contains(printerRecord.ComPort);
 
             printerName = new TextWidget(this.printerRecord.Name);
