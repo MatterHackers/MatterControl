@@ -2025,6 +2025,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (this.ActivePrinter != null
 				&&  serialPort != null)
 			{
+				bool wasConnected = PrinterIsConnected;
 				// first make sure we are not printing if possible (cancel slicing)
 				Stop();
 
@@ -2038,8 +2039,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				serialPort.DtrEnable = true;
 
 				ClearQueuedGCode();
-				// let the process know we canceled not ended normaly.
-				CommunicationState = CommunicationStates.Connected;
+
+				if (wasConnected)
+				{
+					// let the process know we canceled not ended normaly.
+					CommunicationState = CommunicationStates.Connected;
+				}
 			}
 		}
 

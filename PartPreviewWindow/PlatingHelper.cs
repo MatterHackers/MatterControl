@@ -120,34 +120,15 @@ namespace MatterHackers.MatterControl
             meshTransforms[index] = moved;
         }
 
-        public static void CenterMeshesXY(List<Mesh> meshesList, List<ScaleRotateTranslate> meshTransforms)
+		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
         {
-            bool first = true;
-            AxisAlignedBoundingBox totalBounds = new AxisAlignedBoundingBox(new Vector3(), new Vector3());
-            for(int index= 0; index<meshesList.Count; index++)
-            {
-                if(first)
-                {
-                    totalBounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
-                    first = false;
-                }
-                else
-                {
-                    AxisAlignedBoundingBox bounds = meshesList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
-                    totalBounds = AxisAlignedBoundingBox.Union(totalBounds, bounds);
-                }
-            }
+			AxisAlignedBoundingBox bounds = meshesGroupList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
+			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
-            Vector3 boundsCenter = (totalBounds.maxXYZ + totalBounds.minXYZ) / 2;
-            boundsCenter.z = 0;
-
-            for (int index = 0; index < meshesList.Count; index++)
-            {
-                ScaleRotateTranslate moved = meshTransforms[index];
-                moved.translation *= Matrix4X4.CreateTranslation(-boundsCenter);
-                meshTransforms[index] = moved;
-            }
-        }
+			ScaleRotateTranslate moved = meshTransforms[index];
+			moved.translation *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.x + bounds.XSize / 2, -boundsCenter.y + bounds.YSize / 2, 0));
+			meshTransforms[index] = moved;
+		}
 
         public static void FindPositionForGroupAndAddToPlate(MeshGroup meshGroupToAdd, ScaleRotateTranslate meshTransform, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> meshesGroupsToAvoid, List<ScaleRotateTranslate> meshTransforms)
         {
@@ -163,7 +144,11 @@ namespace MatterHackers.MatterControl
             meshTransform.SetCenteringForMeshGroup(meshGroupToAdd);
             meshTransforms.Add(meshTransform);
 
-            int meshGroupIndex = meshesGroupsToAvoid.Count-1;
+			int meshGroupIndex = meshesGroupsToAvoid.Count - 1;
+
+			// now actually center the part we are going to finde a position for
+			CenterMeshGroupXY(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
+
             MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
 
             PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);

@@ -34,7 +34,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
         TooltipButton resumeButton;
         TooltipButton cancelButton;
-		TooltipButton resetConnectionButton;
 
         TooltipButton reprintButton;
         TooltipButton doneWithCurrentPartButton;
@@ -90,10 +89,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			string cancelButtonMessage = LocalizedString.Get("Stop the current print");
 			cancelButton = makeButton(cancelButtonText, cancelButtonMessage);
 
-			string resetConnectionButtonText = "Reset Connection".Localize();
-			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
-			resetConnectionButton = makeButton(resetConnectionButtonText, resetConnectionButtonMessage);
-
 			string resumeButtonText = LocalizedString.Get("Resume");
 			string resumeButtonMessage = LocalizedString.Get ("Resume the current print");
 			resumeButton = makeButton(resumeButtonText, resumeButtonMessage);
@@ -127,9 +122,6 @@ namespace MatterHackers.MatterControl.ActionBar
             this.AddChild(cancelButton);
             allPrintButtons.Add(cancelButton);
 
-			this.AddChild(resetConnectionButton);
-			allPrintButtons.Add(resetConnectionButton);
-			
 			this.AddChild(cancelConnectButton);
             allPrintButtons.Add(cancelConnectButton);
 
@@ -155,7 +147,6 @@ namespace MatterHackers.MatterControl.ActionBar
             pauseButton.Click += new EventHandler(onPauseButton_Click);
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
-			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(ResetConnectionButton_Click); };
 			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };            
             reprintButton.Click += new EventHandler(onReprintButton_Click);
             doneWithCurrentPartButton.Click += new EventHandler(onDoneWithCurrentPartButton_Click);
@@ -384,10 +375,6 @@ namespace MatterHackers.MatterControl.ActionBar
 						{
 							this.activePrintButtons.Add(pauseButton);
 							this.activePrintButtons.Add(cancelButton);
-						}
-						else
-						{
-							this.activePrintButtons.Add(resetConnectionButton);
 						}
                         EnableActiveButtons();
                         break;
