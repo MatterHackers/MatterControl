@@ -1605,7 +1605,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
             {
-                if (CommunicationState == CommunicationStates.Disconnected)
+                if (!PrinterIsConnected)
                 {
                     try
                     {
