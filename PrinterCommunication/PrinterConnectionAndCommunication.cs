@@ -233,6 +233,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             set
             {
+				switch (value)
+				{
+					case CommunicationStates.AttemptingToConnect:
+#if DEBUG
+						if (serialPort == null)
+						{
+							throw new Exception("The serial port should be constructed prior to setting this or we can fail our connection on a write before it has a chance to be created.");
+						}
+#endif
+						break;
+				}
+
                 if (communicationState != value)
                 {
                     switch (communicationState)
@@ -1429,9 +1441,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null)
             {
-                // Update communication state so an abort below is guaranteed to fire OnCommunicationStateChanged
-                CommunicationState = CommunicationStates.AttemptingToConnect;
-
                 // Start the process of requesting permission and exit if permission is not currently granted
 				if (!FrostedSerialPort.EnsureDeviceAccess())
                 {
@@ -1485,7 +1494,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             PrinterOutputCache.Instance.Clear();
             LinesToWriteQueue.Clear();
             //Attempt connecting to a specific printer
-            CommunicationState = CommunicationStates.AttemptingToConnect;
             this.stopTryingToConnect = false;
             firmwareType = FirmwareTypes.Unknown;
             firmwareVersion = null;
@@ -1569,28 +1577,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             OnEnabledChanged(e);
         }
 
-        //Windows-only function
-        bool SerialPortAlreadyOpen(string portName)
-        {
-            if (OsInformation.OperatingSystem == OSType.Windows)
-            {
-                const int dwFlagsAndAttributes = 0x40000000;
-                const int GENERIC_READ = unchecked((int)0x80000000);
-                const int GENERIC_WRITE = 0x40000000;
-
-                //Borrowed from Microsoft's Serial Port Open Method :)
-                using (SafeFileHandle hFile = CreateFile(@"\\.\" + portName, GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero))
-                {
-                    hFile.Close();
-                    return hFile.IsInvalid;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public bool SerialPortIsAvailable(string portName)
         //Check is serial port is in the list of available serial ports
         {
@@ -1614,17 +1600,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 throw new Exception(LocalizedString.Get("You can only connect when not currently connected."));
             }
 
-            CommunicationState = CommunicationStates.AttemptingToConnect;
             bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
-            bool serialPortIsAlreadyOpen = SerialPortAlreadyOpen(serialPortName);
+            bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.Instance.SerialPortAlreadyOpen(serialPortName);
 
             if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
             {
-                if (CommunicationState == CommunicationStates.AttemptingToConnect)
+                if (CommunicationState == CommunicationStates.Disconnected)
                 {
                     try
                     {
 						serialPort = FrostedSerialPortFactory.Instance.CreateAndOpen(serialPortName, baudRate, true);
+						// wait a bit of time to let the firmware start up
+						Thread.Sleep(500);
+						CommunicationState = CommunicationStates.AttemptingToConnect;
 						
 						ReadThreadHolder.Join();
 
@@ -1640,7 +1628,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         connectionFailureMessage = LocalizedString.Get("Unsupported Baud Rate");
                         OnConnectionFailed(null);
                     }
-
                     catch (Exception ex)
                     {
                         Debug.WriteLine("An unexpected exception occurred: " + ex.Message);
@@ -2027,7 +2014,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				bool wasConnected = PrinterIsConnected;
 				// first make sure we are not printing if possible (cancel slicing)
+				IFrostedSerialPort currentSerialPort = serialPort;
 				Stop();
+				serialPort = currentSerialPort;
 
 				serialPort.RtsEnable = true;
 				serialPort.DtrEnable = true;
