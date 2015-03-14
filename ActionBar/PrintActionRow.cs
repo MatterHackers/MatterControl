@@ -364,7 +364,6 @@ namespace MatterHackers.MatterControl.ActionBar
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
                     case PrinterConnectionAndCommunication.CommunicationStates.Printing:
 						if (!timeSincePrintStarted.IsRunning)
 						{

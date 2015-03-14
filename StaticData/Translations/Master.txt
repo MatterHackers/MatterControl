@@ -3140,3 +3140,6 @@ Translated:Makes visible a button that will reset the connection when pressed. T
 English:You may need to wait a minute for your printer to finish initializing.
 Translated:You may need to wait a minute for your printer to finish initializing.
 
+English: Export to Folder or SD Card
+Translated: Export to Folder or SD Card
+

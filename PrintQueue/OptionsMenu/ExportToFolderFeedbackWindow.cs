@@ -20,8 +20,8 @@ namespace MatterHackers.MatterControl
             : base(300, 500)
         {
             BackgroundColor = backgroundColor;
-			string exportingToFolderTitle = LocalizedString.Get("MatterControl");
-			string exportingToFolderTitleFull = LocalizedString.Get("Exporting to Folder");
+			string exportingToFolderTitle = "MatterControl".Localize();
+			string exportingToFolderTitleFull = "Exporting to Folder or SD Card".Localize();
 			Title = string.Format("{0} - {1}", exportingToFolderTitle, exportingToFolderTitleFull);
             this.totalParts = totalParts;
 

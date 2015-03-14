@@ -126,19 +126,6 @@ namespace MatterHackers.MatterControl
                 } );
                 middleRowContainer.AddChild(exportGCode);
 
-                if (ActiveSliceSettings.Instance.HasSdCardReader() && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-                {
-                    string exportSdCardText = "Export to Printer SD Card".Localize();
-                    Button exportToSdCard = textImageButtonFactory.Generate(exportSdCardText);
-                    exportToSdCard.HAnchor = HAnchor.ParentLeft;
-                    exportToSdCard.Cursor = Cursors.Hand;
-                    exportToSdCard.Click += new EventHandler((object sender, EventArgs e) =>
-                    {
-                        UiThread.RunOnIdle(ExportToSdCard_Click);
-                    });
-                    middleRowContainer.AddChild(exportToSdCard);
-                }
-
 				bool showExportX3GButton = ActiveSliceSettings.Instance.IsMakerbotGCodeFlavor();
 				if (showExportX3GButton)
                 {
@@ -215,110 +202,6 @@ namespace MatterHackers.MatterControl
         {
             longName.Replace(' ', '_');
             return longName.Substring(0, Math.Min(longName.Length, 8));
-        }
-
-        bool levelingEnabledStateBeforeSdOutput;
-        void ExportToSdCard_Click(object state)
-        {
-            if (applyLeveling != null && applyLeveling.Checked) // check if the user wants that output leveled
-            {
-                // Check if the printer needs to run calibration to print
-                PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-                if (levelingData != null
-                    && levelingData.needsPrintLeveling
-                    && levelingData.sampledPosition0.z == 0
-                    && levelingData.sampledPosition1.z == 0
-                    && levelingData.sampledPosition2.z == 0)
-                {
-                    LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
-                    // we will exit and not export until the printe has been leveled
-                    Close();
-                    return;
-                }
-            }
-
-            // set the printer to this item
-            PrinterConnectionAndCommunication.Instance.ActivePrintItem = printItemWrapper;
-            // tell the printer to save to sd.
-            StringBuilder commands = new StringBuilder();
-            string sdUsableName = Get8Name(printItemWrapper.Name);
-            commands.AppendLine("M28 {0}.gco".FormatWith(sdUsableName)); // Begin write to SD card
-            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
-
-            // check if we need to turn off the print leveling
-            levelingEnabledStateBeforeSdOutput = ActivePrinterProfile.Instance.DoPrintLeveling;
-            if (applyLeveling != null && !applyLeveling.Checked)
-            {
-                ActivePrinterProfile.Instance.DoPrintLeveling = false;
-            }
-
-            // Tell the printer we are getting ready to print
-            PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrintToSd;
-
-            // slice the part or start the gcode printing
-            Close();
-            PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-            SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-            partToPrint.SlicingDone.RegisterEvent(PartSlicedStartPrintingToSd, ref unregisterEvents);
-            // register to know when the print finishes so we can close the sd save
-            PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent(DoneWritingToSdCard, ref unregisterEvents);
-        }
-
-		void PartSlicedStartPrintingToSd(object sender, EventArgs e)
-		{
-			// tell the printer to start the print
-			PrintItemWrapper partToPrint = sender as PrintItemWrapper;
-			if (partToPrint != null)
-			{
-				partToPrint.SlicingDone.UnregisterEvent(PartSlicedStartPrintingToSd, ref unregisterEvents);
-				string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
-				if (gcodePathAndFileName != "")
-				{
-					bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
-					if (File.Exists(gcodePathAndFileName))
-					{
-						// read the last few k of the file nad see if it says "filament used". We use this marker to tell if the file finished writing
-						if (originalIsGCode)
-						{
-							PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
-							return;
-						}
-						else
-						{
-							int bufferSize = 8000;
-							using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
-							{
-								byte[] buffer = new byte[bufferSize];
-								fileStream.Seek(fileStream.Length - bufferSize, SeekOrigin.Begin);
-								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
-								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
-								if (fileEnd.Contains("filament used"))
-								{
-									System.Threading.Thread.Sleep(10000);
-									PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
-									return;
-								}
-							}
-						}
-					}
-
-					PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Connected;
-				}
-			}
-		}
-
-        void DoneWritingToSdCard(object sender, EventArgs e)
-        {
-            // get rid of the hook to print finished
-            PrinterConnectionAndCommunication.Instance.PrintFinished.UnregisterEvent(DoneWritingToSdCard, ref unregisterEvents);
-            // send the command to stop writing to sd
-            StringBuilder commands = new StringBuilder();
-            commands.AppendLine("M29"); // Stop writing to SD card            
-            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
-            // load the new sd card info to the queue
-            QueueData.Instance.LoadFilesFromSD();
-
-            ActivePrinterProfile.Instance.DoPrintLeveling = levelingEnabledStateBeforeSdOutput;
         }
 
         void ExportGCode_Click(object state)

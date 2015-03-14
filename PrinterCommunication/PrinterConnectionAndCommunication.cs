@@ -211,8 +211,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             Connected, 
             PreparingToPrint,
             Printing,
-            PreparingToPrintToSd,
-            PrintingToSd,
             PrintingFromSd, 
             Paused,
             FinishedPrint,
@@ -250,7 +248,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     switch (communicationState)
                     {
                         // if it was printing
-                        case CommunicationStates.PrintingToSd:
                         case CommunicationStates.Printing:
                             {
                                 // and is changing to paused
@@ -467,9 +464,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     case CommunicationStates.Disconnecting:
                     case CommunicationStates.Connected:
                     case CommunicationStates.PreparingToPrint:
-                    case CommunicationStates.PreparingToPrintToSd:
                     case CommunicationStates.Printing:
-                    case CommunicationStates.PrintingToSd:
                     case CommunicationStates.PrintingFromSd:
                     case CommunicationStates.Paused:
                     case CommunicationStates.FinishedPrint:
@@ -521,7 +516,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
             ReadLineContainsCallBacks.AddCallBackToKey("RS:", PrinterRequestsResend);
             ReadLineContainsCallBacks.AddCallBackToKey("Resend:", PrinterRequestsResend);
-            ReadLineContainsCallBacks.AddCallBackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
+
+			ReadLineContainsCallBacks.AddCallBackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
+			ReadLineStartCallBacks.AddCallBackToKey("EXTENSIONS:", PrinterStatesExtensions);
 
             WriteLineStartCallBacks.AddCallBackToKey("M104", ExtruderTemperatureWasWritenToPrinter);
             WriteLineStartCallBacks.AddCallBackToKey("M109", ExtruderTemperatureWasWritenToPrinter);
@@ -560,10 +557,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         return false;
 
                     case CommunicationStates.Printing:
-                    case CommunicationStates.PrintingToSd:
                     case CommunicationStates.PrintingFromSd:
                     case CommunicationStates.PreparingToPrint:
-                    case CommunicationStates.PreparingToPrintToSd:
                     case CommunicationStates.Paused:
                         return true;
 
@@ -586,13 +581,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     case CommunicationStates.FailedToConnect:
                     case CommunicationStates.Connected:
                     case CommunicationStates.PreparingToPrint:
-                    case CommunicationStates.PreparingToPrintToSd:
                     case CommunicationStates.Paused:
                     case CommunicationStates.FinishedPrint:
                         return false;
 
                     case CommunicationStates.Printing:
-                    case CommunicationStates.PrintingToSd:
                     case CommunicationStates.PrintingFromSd:
                         return true;
 
@@ -667,12 +660,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         return "Connected".Localize();
                     case CommunicationStates.PreparingToPrint:
                         return "Preparing To Print".Localize();
-                    case CommunicationStates.PreparingToPrintToSd:
-                        return "Preparing To Send To SD Card".Localize();
                     case CommunicationStates.Printing:
                         return "Printing".Localize();
-                    case CommunicationStates.PrintingToSd:
-                        return "Sending To SD Card".Localize();
                     case CommunicationStates.PrintingFromSd:
                         return "Printing From SD Card".Localize();
                     case CommunicationStates.Paused:
@@ -1008,10 +997,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								byte[] buffer = new byte[bufferSize];
 								fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
 								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+								fileStream.Close();
+
 								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 								if (fileEnd.Contains("filament used"))
 								{
-									PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
+									if (firmwareUriGcodeSend)
+									{
+										currentSdBytes = 0;
+
+										ClearQueuedGCode();
+										CommunicationState = CommunicationStates.PrintingFromSd;
+
+										SendLineToPrinterNow("M23 {0}".FormatWith(gcodePathAndFileName)); // Send the SD File
+										SendLineToPrinterNow("M24"); // Start/resume SD print
+
+										ReadLineStartCallBacks.AddCallBackToKey("Done printing file", DonePrintingSdFile);
+									}
+									else
+									{
+										PrinterConnectionAndCommunication.Instance.StartPrint(gcodePathAndFileName);
+									}
 									return;
 								}
 							}
@@ -1331,6 +1337,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             firstLineToResendIndex = int.Parse(splitOnColon[1]) - 1;
         }
 
+		bool firmwareUriGcodeSend = false;
+		public void PrinterStatesExtensions(object sender, EventArgs e)
+		{
+			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
+			if (foundStringEventArgs != null)
+			{
+				if (foundStringEventArgs.LineToCheck.Contains("URI_GCODE_SEND"))
+				{
+					firmwareUriGcodeSend = true;
+				}
+			}
+		}
+
         public void PrinterStatesFirmware(object sender, EventArgs e)
         {
             FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
@@ -1497,7 +1516,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             this.stopTryingToConnect = false;
             firmwareType = FirmwareTypes.Unknown;
             firmwareVersion = null;
-
+			firmwareUriGcodeSend = false;
 
             // On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
             // this aspect to ensure the validation logic that verifies port availablity/in use status can proceed without additional workarounds for Android
@@ -2189,8 +2208,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                         string[] splitOnSemicolon = lineToWrite.Split(';');
                         string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
 
-						if (lineToWrite.Contains("M114") 
-							&& CommunicationState != CommunicationStates.PrintingToSd)
+						if (lineToWrite.Contains("M114") )
 						{
 							waitingForPosition.Restart();
 						}
@@ -2410,11 +2428,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     }
                     break;
 
-                case CommunicationStates.PrintingToSd:
-                    CommunicationState = CommunicationStates.Connected;
-                    printWasCanceled = true;
-                    break;
-
                 case CommunicationStates.Printing:
                     {
                         using (TimedLock.Lock(this, "CancelingPrint"))
@@ -2471,7 +2484,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     break;
 
 				case CommunicationStates.PreparingToPrint:
-				case CommunicationStates.PreparingToPrintToSd:
 					SlicingQueue.Instance.CancelCurrentSlicing();
                     CommunicationState = CommunicationStates.Connected;
                     break;
@@ -2557,11 +2569,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				case CommunicationStates.Connected:
 					// This can happen if the printer is reset during the silcing of the part.
-					break;
-
-				case CommunicationStates.PreparingToPrintToSd:
-					activePrintTask = null;
-					CommunicationState = CommunicationStates.PrintingToSd;
 					break;
 
 				case CommunicationStates.PreparingToPrint:

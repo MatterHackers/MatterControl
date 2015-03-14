@@ -43,6 +43,9 @@ def getPosition(command):
 	# temp commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
 	return "X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00\nok\n"
 
+def reportMarlinFirmware(command):
+	return 'FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a\nok\n'
+
 def echo(command): 
 	return command
 	
@@ -67,7 +70,7 @@ def getCorrectResponse(command):
 	return 'ok\n'
 
 """Dictionary of command and response callback"""
-responses = { "M105" : randomTemp, "A" : echo, "M114" : getPosition , "N" : parseChecksumLine}
+responses = { "M105" : randomTemp, "A" : echo, "M114" : getPosition , "N" : parseChecksumLine, "M115" : reportMarlinFirmware }
 
 def main(argv):
 	parser = argparse.ArgumentParser(description='Set up a printer emulation.')

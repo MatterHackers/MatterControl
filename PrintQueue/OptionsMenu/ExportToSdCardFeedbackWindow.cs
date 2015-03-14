@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using MatterHackers.Localizations;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
@@ -19,7 +20,7 @@ namespace MatterHackers.MatterControl
             : base(300, 500)
         {
             BackgroundColor = backgroundColor;
-            Title = "MatterControl - Exporting to Folder";
+            Title = "MatterControl - Exporting to Folder or SD Card".Localize();
             this.totalParts = totalParts;
 
             feedback.Padding = new BorderDouble(5, 5);

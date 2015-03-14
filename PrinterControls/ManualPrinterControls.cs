@@ -195,18 +195,6 @@ namespace MatterHackers.MatterControl
                         tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
                         break;
 
-                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingToSd:
-                        foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
-                        {
-                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        }
-                        temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        break;
-
                     case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
                         foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
                         {
@@ -220,7 +208,6 @@ namespace MatterHackers.MatterControl
                         break;
 
                     case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrintToSd:
                     case PrinterConnectionAndCommunication.CommunicationStates.Printing:
                         switch (PrinterConnectionAndCommunication.Instance.PrintingState)
                         {

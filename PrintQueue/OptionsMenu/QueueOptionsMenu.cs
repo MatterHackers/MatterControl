@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
         public QueueOptionsMenu()
         {
-			MenuDropList = new DropDownMenu(LocalizedString.Get("Options   "), Direction.Up);
+			MenuDropList = new DropDownMenu("Options   ".Localize(), Direction.Up);
             MenuDropList.VAnchor = VAnchor.ParentBottomTop;
             MenuDropList.BorderWidth = 1;
             MenuDropList.MenuAsWideAsItems = false;
@@ -88,18 +88,18 @@ namespace MatterHackers.MatterControl.PrintQueue
         void SetMenuItems()
         {
             menuItems = new TupleList<string, Func<bool>>();
-			menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Design"), null));
-            menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Export to Zip"), exportQueueToZipMenu_Click));
+			menuItems.Add(new Tuple<string,Func<bool>>("Design".Localize(), null));
+            menuItems.Add(new Tuple<string,Func<bool>>(" Export to Zip".Localize(), exportQueueToZipMenu_Click));
             menuItems.Add(new Tuple<string,Func<bool>>("GCode", null));
-            menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Export to Folder"), exportGCodeToFolderButton_Click));
+			menuItems.Add(new Tuple<string, Func<bool>>(" Export to Folder or SD Card".Localize(), exportGCodeToFolderButton_Click));
             //menuItems.Add(new Tuple<string, Func<bool>>("X3G", null));
-            //menuItems.Add(new Tuple<string, Func<bool>>(LocalizedString.Get("Export to Folder"), exportX3GButton_Click));
+			//menuItems.Add(new Tuple<string, Func<bool>>("Export to Folder".Localize(), exportX3GButton_Click));
 
             if (ActiveSliceSettings.Instance.HasSdCardReader())
             {
                 menuItems.Add(new Tuple<string, Func<bool>>("SD Card", null));
-                menuItems.Add(new Tuple<string, Func<bool>>(LocalizedString.Get(" Load Files"), loadFilesFromSDButton_Click));
-                menuItems.Add(new Tuple<string, Func<bool>>(LocalizedString.Get(" Eject SD Card"), ejectSDCardButton_Click));
+				menuItems.Add(new Tuple<string, Func<bool>>(" Load Files".Localize(), loadFilesFromSDButton_Click));
+				menuItems.Add(new Tuple<string, Func<bool>>(" Eject SD Card".Localize(), ejectSDCardButton_Click));
             }
             
             // The pdf export library is not working on the mac at the moment so we don't include the 
@@ -107,14 +107,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 			if (OsInformation.OperatingSystem == OSType.Windows)
             {
                 // mac cannot export to pdf
-                menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Other"), null));
-				menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Create Part Sheet"), createPartsSheetsButton_Click));
-                menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Remove All"), removeAllFromQueueButton_Click));
+				menuItems.Add(new Tuple<string, Func<bool>>("Other".Localize(), null));
+				menuItems.Add(new Tuple<string, Func<bool>>(" Create Part Sheet".Localize(), createPartsSheetsButton_Click));
+				menuItems.Add(new Tuple<string, Func<bool>>(" Remove All".Localize(), removeAllFromQueueButton_Click));
             }
             else
             {
-                menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get("Other"), null));                
-                menuItems.Add(new Tuple<string,Func<bool>>(LocalizedString.Get(" Remove All"), removeAllFromQueueButton_Click));
+				menuItems.Add(new Tuple<string, Func<bool>>("Other".Localize(), null));
+				menuItems.Add(new Tuple<string, Func<bool>>(" Remove All".Localize(), removeAllFromQueueButton_Click));
             }
 
             BorderDouble padding = MenuDropList.MenuItemsPadding;
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void SelectLocationToExportGCode(object state)
         {
             SelectFolderDialogParams selectParams = new SelectFolderDialogParams("Select Location To Save Files");
-			selectParams.ActionButtonLabel = LocalizedString.Get("Export");
+			selectParams.ActionButtonLabel = "Export".Localize();
             selectParams.Title = "MatterControl: Select A Folder";
 
             FileDialog.SelectFolderDialog(selectParams, onSelectFolderDialog);
