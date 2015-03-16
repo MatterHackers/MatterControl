@@ -85,13 +85,13 @@ namespace MatterHackers.MatterControl.EeProm
 
             {
                 ScrollableWidget settingsAreaScrollBox = new ScrollableWidget(true);
-                settingsAreaScrollBox.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+                settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.ParentLeftRight;
                 settingsAreaScrollBox.AnchorAll();
 				settingsAreaScrollBox.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
                 topToBottom.AddChild(settingsAreaScrollBox);
 
                 settingsColmun = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                settingsColmun.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+                settingsColmun.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 
                 settingsAreaScrollBox.AddChild(settingsColmun);
             }

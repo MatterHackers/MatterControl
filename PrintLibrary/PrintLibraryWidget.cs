@@ -346,7 +346,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
             {
                 string extension = Path.GetExtension(file).ToUpper();
                 if (MeshFileIo.ValidFileExtensions().Contains(extension)
-                    || extension == ".GCODE")
+					|| extension == ".GCODE"
+					|| extension == ".ZIP")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }
@@ -360,7 +361,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
             {
                 string extension = Path.GetExtension(file).ToUpper();
                 if (MeshFileIo.ValidFileExtensions().Contains(extension)
-                    || extension == ".GCODE")
+                    || extension == ".GCODE"
+					|| extension == ".ZIP")
                 {
                     fileDropEventArgs.AcceptDrop = true;
                 }

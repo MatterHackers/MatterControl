@@ -311,48 +311,69 @@ namespace MatterHackers.MatterControl.PrintLibrary
             {
                 string extension = Path.GetExtension(loadedFileName).ToUpper();
                 if (MeshFileIo.ValidFileExtensions().Contains(extension)
-                    || extension == ".GCODE")
+                    || extension == ".GCODE"
+					|| extension == ".ZIP")
                 {
-                    PrintItem printItem = new PrintItem();
-                    printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
-                    printItem.FileLocation = Path.GetFullPath(loadedFileName);
-                    printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-                    printItem.Commit();
-
-                    if (MeshFileIo.ValidFileExtensions().Contains(extension))
-                    {
-                        List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
-
-                        try
-                        {
-                            PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-                            LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
-                            LibraryData.Instance.AddItem(printItemWrapper);
-                        }
-                        catch (System.UnauthorizedAccessException)
-                        {
-                            UiThread.RunOnIdle((state) =>
-                            {
-                                //Do something special when unauthorized?
-                                StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
-                            });
-                        }
-                        catch
-                        {
-                            UiThread.RunOnIdle((state) =>
-                            {
-                                StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-                            });
-                        }
-                    }
-                    else // it is not a mesh so just add it
-                    {
-                        PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-                        LibraryData.Instance.AddItem(printItemWrapper);
-                    }
+					if (extension == ".ZIP")
+					{
+						ProjectFileHandler project = new ProjectFileHandler(null);
+						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+						if (partFiles != null)
+						{
+							foreach (PrintItem part in partFiles)
+							{
+								AddStlOrGcode(part.FileLocation, Path.GetExtension(part.FileLocation).ToUpper());
+							}
+						}
+					}
+					else
+					{
+						AddStlOrGcode(loadedFileName, extension);
+					}
                 }
             }
         }
+
+		private static void AddStlOrGcode(string loadedFileName, string extension)
+		{
+			PrintItem printItem = new PrintItem();
+			printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
+			printItem.FileLocation = Path.GetFullPath(loadedFileName);
+			printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+			printItem.Commit();
+
+			if (MeshFileIo.ValidFileExtensions().Contains(extension))
+			{
+				List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
+
+				try
+				{
+					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+					LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
+					LibraryData.Instance.AddItem(printItemWrapper);
+				}
+				catch (System.UnauthorizedAccessException)
+				{
+					UiThread.RunOnIdle((state) =>
+					{
+						//Do something special when unauthorized?
+						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
+					});
+				}
+				catch
+				{
+					UiThread.RunOnIdle((state) =>
+					{
+						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+					});
+				}
+			}
+			else // it is not a mesh so just add it
+			{
+				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+				LibraryData.Instance.AddItem(printItemWrapper);
+			}
+		}
 
         void loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
