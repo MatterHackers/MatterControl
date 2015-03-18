@@ -3143,3 +3143,6 @@ Translated:You may need to wait a minute for your printer to finish initializing
 English: Export to Folder or SD Card
 Translated: Export to Folder or SD Card
 
+English:Converting image...
+Translated:Converting image...
+

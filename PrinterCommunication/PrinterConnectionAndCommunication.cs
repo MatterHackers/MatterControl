@@ -992,7 +992,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						else
 						{
 							int bufferSize = 32000;
-							using (Stream fileStream = File.OpenRead(gcodePathAndFileName))
+							using (Stream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 							{
 								byte[] buffer = new byte[bufferSize];
 								fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
@@ -1007,10 +1007,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										currentSdBytes = 0;
 
 										ClearQueuedGCode();
-										CommunicationState = CommunicationStates.PrintingFromSd;
 
 										SendLineToPrinterNow("M23 {0}".FormatWith(gcodePathAndFileName)); // Send the SD File
 										SendLineToPrinterNow("M24"); // Start/resume SD print
+
+										CommunicationState = CommunicationStates.PrintingFromSd;
 
 										ReadLineStartCallBacks.AddCallBackToKey("Done printing file", DonePrintingSdFile);
 									}
