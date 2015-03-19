@@ -196,6 +196,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(cameraIcon);
 			buttonRow.AddChild(gcodeTerminalLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
+#if __ANDROID__ 
+			CheckBox syncCameraCheckbox = new CheckBox(0, 0, "Sync".Localize(), 10);
+			syncCameraCheckbox.Margin = new BorderDouble(0,0,12,0);
+			syncCameraCheckbox.VAnchor = VAnchor.ParentCenter;
+			syncCameraCheckbox.Checked = PrinterSettings.Instance.get("PublishBedImage") == "true";
+			syncCameraCheckbox.Click += (sender, e) => 
+			{
+				CheckBox thisControl = sender as CheckBox;
+				PrinterSettings.Instance.set("PublishBedImage", thisControl.Checked ? "true" : "false");
+			};
+			buttonRow.AddChild(syncCameraCheckbox);
+#endif
 			buttonRow.AddChild(openCameraButton);
 
 			return buttonRow;
