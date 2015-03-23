@@ -1,0 +1,2 @@
+layer_height = 0.15
+start_gcode = M42 P5 S128\nG28 X0 Y0 ; home all axes\nM106 S160\nG28 X0 Y0 Z0\nG91\nG1 Z5 F3000\nT0\nG1 E35 F100 ;  Extrude primer filament\nT1\nG1 E35 F100\nT0
