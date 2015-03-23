@@ -1,5 +1,5 @@
-first_layer_temperature = 200
-temperature = 200
+first_layer_temperature = 198
+temperature = 198
 retract_length = 2
 retract_speed = 55
 infill_speed = 50

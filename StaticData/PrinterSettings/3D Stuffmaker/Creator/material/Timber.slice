@@ -1,8 +1,0 @@
-first_layer_temperature = 200
-temperature = 200
-retract_length = 2
-retract_speed = 55
-infill_speed = 50
-perimeter_speed = 50
-external_perimeter_speed = 45
-support_material_speed = 50
