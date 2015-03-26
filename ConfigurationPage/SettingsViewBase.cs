@@ -23,6 +23,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         protected RGBA_Bytes separatorLineColor;
         protected FlowLayoutWidget mainContainer;
 
+		protected ToggleSwitchFactory toggleSwitchFactory = new ToggleSwitchFactory();
+
         public SettingsViewBase(string title)
             : base(new TextWidget(title, pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor))
         {
@@ -52,6 +54,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
             this.linkButtonFactory.fontSize = 11;
-        }       
+        } 
+
+		protected ToggleSwitch GenerateToggleSwitch(GuiWidget parentContainer, bool initiallyChecked)
+		{
+			TextWidget toggleLabel = new TextWidget(initiallyChecked ? "On" : "Off", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			toggleLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			toggleLabel.Margin = new BorderDouble (right: 4);
+
+			ToggleSwitch toggleSwitch = toggleSwitchFactory.GenerateGivenTextWidget(toggleLabel, "On", "Off", initiallyChecked);
+			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			toggleSwitch.SwitchState = initiallyChecked;
+
+			parentContainer.AddChild(toggleLabel);
+			parentContainer.AddChild(toggleSwitch);
+
+			return toggleSwitch;
+		}
     }
 }

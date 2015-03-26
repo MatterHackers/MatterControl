@@ -65,8 +65,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
         }
 
         EditLevelingSettingsWindow editLevelingSettingsWindow;
-        Button enablePrintLevelingButton;
-        Button disablePrintLevelingButton;
         TextWidget printLevelingStatusLabel;
         private FlowLayoutWidget GetAutoLevelControl()
         {
@@ -125,15 +123,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             ImageWidget levelingIcon = new ImageWidget(levelingImage);
 			levelingIcon.Margin = new BorderDouble (right: 6);
 
-            enablePrintLevelingButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
-			enablePrintLevelingButton.Margin = new BorderDouble(left:6);
-			enablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-			enablePrintLevelingButton.Click += new EventHandler(enablePrintLeveling_Click);
+			GuiWidget levelingSwitchContainer = new FlowLayoutWidget();
+			levelingSwitchContainer.VAnchor = VAnchor.ParentCenter;
+			levelingSwitchContainer.Margin = new BorderDouble(left: 16);
 
-            disablePrintLevelingButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
-			disablePrintLevelingButton.Margin = new BorderDouble(left:6);
-			disablePrintLevelingButton.VAnchor = VAnchor.ParentCenter;
-			disablePrintLevelingButton.Click += new EventHandler(disablePrintLeveling_Click);
+			ToggleSwitch printLevelingSwitch = GenerateToggleSwitch(levelingSwitchContainer, PrinterSettings.Instance.get("PublishBedImage") == "true");
+			printLevelingSwitch.SwitchState = ActivePrinterProfile.Instance.DoPrintLeveling;
+			printLevelingSwitch.SwitchStateChanged += (sender, e) => 
+			{
+				ActivePrinterProfile.Instance.DoPrintLeveling = printLevelingSwitch.SwitchState;
+			};
+			levelingSwitchContainer.SetBoundsToEncloseChildren();
 
 			printLevelingStatusLabel = new TextWidget ("");
 			printLevelingStatusLabel.AutoExpandBoundsToText = true;
@@ -153,9 +153,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.AddChild(printLevelingStatusLabel);
             buttonRow.AddChild(editButton);
             buttonRow.AddChild(new HorizontalSpacer());
-            buttonRow.AddChild(enablePrintLevelingButton);
-            buttonRow.AddChild(disablePrintLevelingButton);
             buttonRow.AddChild(runPrintLevelingButton);
+			buttonRow.AddChild(levelingSwitchContainer);
+
             SetPrintLevelButtonVisiblity();
             return buttonRow;
         }
@@ -168,7 +168,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             }
             base.OnClosed(e);
         }
-        
 
 		private FlowLayoutWidget GetCameraControl()
 		{
@@ -183,32 +182,38 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 
 			ImageWidget cameraIcon = new ImageWidget(cameraIconImage);
-			cameraIcon.Margin = new BorderDouble(right: 6, bottom: 6);
+			cameraIcon.Margin = new BorderDouble(right: 6);
 
-			TextWidget gcodeTerminalLabel = new TextWidget("Camera");
-			gcodeTerminalLabel.AutoExpandBoundsToText = true;
-			gcodeTerminalLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;
+			TextWidget cameraLabel = new TextWidget("Camera Sync");
+			cameraLabel.AutoExpandBoundsToText = true;
+			cameraLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			cameraLabel.VAnchor = VAnchor.ParentCenter;
 
 			openCameraButton = textImageButtonFactory.Generate("Preview".Localize().ToUpper());
 			openCameraButton.Click += new EventHandler(openCameraPreview_Click);
+			openCameraButton.Margin = new BorderDouble(left:6);
 
 			buttonRow.AddChild(cameraIcon);
-			buttonRow.AddChild(gcodeTerminalLabel);
+			buttonRow.AddChild(cameraLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
-#if __ANDROID__ 
-			CheckBox syncCameraCheckbox = new CheckBox(0, 0, "Sync".Localize(), 10);
-			syncCameraCheckbox.Margin = new BorderDouble(0,0,12,0);
-			syncCameraCheckbox.VAnchor = VAnchor.ParentCenter;
-			syncCameraCheckbox.Checked = PrinterSettings.Instance.get("PublishBedImage") == "true";
-			syncCameraCheckbox.Click += (sender, e) => 
-			{
-				CheckBox thisControl = sender as CheckBox;
-				PrinterSettings.Instance.set("PublishBedImage", thisControl.Checked ? "true" : "false");
-			};
-			buttonRow.AddChild(syncCameraCheckbox);
-#endif
 			buttonRow.AddChild(openCameraButton);
+#if __ANDROID__ 
+
+			GuiWidget publishImageSwitchContainer = new FlowLayoutWidget();
+			publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
+			publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
+
+			ToggleSwitch toggleSwitch = GenerateToggleSwitch(publishImageSwitchContainer, PrinterSettings.Instance.get("PublishBedImage") == "true");
+			toggleSwitch.SwitchStateChanged += (sender, e) => 
+			{
+				ToggleSwitch thisControl = sender as ToggleSwitch;
+				PrinterSettings.Instance.set("PublishBedImage", thisControl.SwitchState ? "true" : "false");
+			};
+
+			publishImageSwitchContainer.SetBoundsToEncloseChildren();
+
+			buttonRow.AddChild(publishImageSwitchContainer);
+#endif
 
 			return buttonRow;
 		}
@@ -358,21 +363,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             this.Invalidate();
         }
 
-        void enablePrintLeveling_Click(object sender, EventArgs mouseEvent)
-        {
-            ActivePrinterProfile.Instance.DoPrintLeveling = true;
-        }
-
-        void disablePrintLeveling_Click(object sender, EventArgs mouseEvent)
-        {
-            ActivePrinterProfile.Instance.DoPrintLeveling = false;
-        }
-
         void SetPrintLevelButtonVisiblity()
         {
-            enablePrintLevelingButton.Visible = !ActivePrinterProfile.Instance.DoPrintLeveling;
-            disablePrintLevelingButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
-
             if (ActivePrinterProfile.Instance.DoPrintLeveling)
             {
                 printLevelingStatusLabel.Text = LocalizedString.Get("Automatic Print Leveling (enabled)");
