@@ -186,16 +186,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
             centerPartPreviewAndControls.AnchorAll();
+           
 
             gcodeDisplayWidget = new GuiWidget(HAnchor.ParentLeftRight, Agg.UI.VAnchor.ParentBottomTop);
-
-            SetProcessingMessage("Press 'Add' to select an item.".Localize());
+            String firstProcessingMessage = "Press 'Add' to select an item.".Localize();
             if (printItem != null)
             {
-                SetProcessingMessage(LocalizedString.Get("Loading GCode..."));
+                firstProcessingMessage =LocalizedString.Get("Loading GCode...");
                 if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
                 {
                     gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
+                    
                 }
                 else
                 {
@@ -206,16 +207,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
                         if (printItem.SlicingHadError)
                         {
-                            SetProcessingMessage(slicingErrorMessage);
+                            firstProcessingMessage = slicingErrorMessage;
                         }
                         else
                         {
-                            SetProcessingMessage(pressGenerateMessage);
+                            firstProcessingMessage = pressGenerateMessage;
                         }
 
                         if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
                         {
-                            gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
+                            gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));                            
                         }
 
                         // we only hook these up to make sure we can regenerate the gcode when we want
@@ -224,7 +225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                     }
                     else
                     {
-                        SetProcessingMessage(string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name));
+                        firstProcessingMessage = string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name);
                     }
                 }
             }
@@ -233,6 +234,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 generateGCodeButton.Visible = false;
             }
 
+            SetProcessingMessage(firstProcessingMessage);
             centerPartPreviewAndControls.AddChild(gcodeDisplayWidget);
 
             buttonRightPanel = CreateRightButtonPanel();
