@@ -346,7 +346,17 @@ namespace MatterHackers.MatterControl
 
         void CheckOnPrinter(object state)
         {
-            PrinterConnectionAndCommunication.Instance.OnIdle();
+			try
+			{
+				PrinterConnectionAndCommunication.Instance.OnIdle();
+			}
+			catch(Exception e)
+			{
+				Debug.Print(e.Message);
+#if DEBUG
+				throw e;
+#endif
+			}
             UiThread.RunOnIdle(CheckOnPrinter);
         }
 

@@ -289,9 +289,9 @@ namespace MatterHackers.MatterControl
                     PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
                     if (levelingData != null)
                     {
-                        for (int i = 0; i < unleveledGCode.Count; i++)
+						for (int lineIndex = 0; lineIndex < unleveledGCode.LineCount; lineIndex++)
                         {
-                            PrinterMachineInstruction instruction = unleveledGCode.Instruction(i);
+                            PrinterMachineInstruction instruction = unleveledGCode.Instruction(lineIndex);
 
                             List<string> linesToWrite = null;
                             switch (levelingData.levelingSystem)
@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl
                             foreach(string line in linesToWrite)
                             {
                                 PrinterMachineInstruction newInstruction = new PrinterMachineInstruction(line);
-                                unleveledGCode.Insert(++i, newInstruction); 
+                                unleveledGCode.Insert(++lineIndex, newInstruction); 
                             }
                         }
                     }

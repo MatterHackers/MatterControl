@@ -244,8 +244,11 @@ namespace MatterHackers.MatterControl.ActionBar
 		void onConfirmCancelPrint(bool messageBoxResponse)
         {
             if (messageBoxResponse)
-			{	
-                CancelPrinting();
+			{
+				UiThread.RunOnIdle((state) =>
+				{
+					CancelPrinting();
+				});
             }
         }
 

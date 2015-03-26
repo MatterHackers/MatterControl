@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
     public class PrinterIoGCodeFile : PrinterIoBase
     {
         GCodeFile loadedGCode;
-        int printerCommandQueueIndex;
+        int printerCommandQueueLineIndex;
         public PrinterIoGCodeFile(GCodeFile loadedGCode)
         {
             this.loadedGCode = loadedGCode;
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         {
             get
             {
-                if (loadedGCode.Count > 0)
+				if (loadedGCode.LineCount > 0)
                 {
                     return loadedGCode.Instruction(0).secondsToEndFromHere;
                 }
@@ -62,9 +62,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         {
             get
             {
-                int currentIndex = printerCommandQueueIndex - backupAmount;
+                int currentIndex = printerCommandQueueLineIndex - backupAmount;
                 if (currentIndex >= 0
-                    && currentIndex < loadedGCode.Count)
+					&& currentIndex < loadedGCode.LineCount)
                 {
                     for (int zIndex = 0; zIndex < loadedGCode.NumChangesInZ; zIndex++)
                     {
@@ -101,19 +101,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
         {
             get
             {
-                int currentIndex = printerCommandQueueIndex - backupAmount;
-                if (currentIndex >= 0
-                    && currentIndex < loadedGCode.Count)
+                int currentLineIndex = printerCommandQueueLineIndex - backupAmount;
+                if (currentLineIndex >= 0
+					&& currentLineIndex < loadedGCode.LineCount)
                 {
                     int currentLayer = CurrentlyPrintingLayer;
                     int startIndex = loadedGCode.GetInstructionIndexAtLayer(currentLayer);
-                    int endIndex = loadedGCode.Count - 1;
+					int endIndex = loadedGCode.LineCount - 1;
                     if (currentLayer < loadedGCode.NumChangesInZ - 2)
                     {
                         endIndex = loadedGCode.GetInstructionIndexAtLayer(currentLayer + 1) - 1;
                     }
 
-                    int deltaFromStart = Math.Max(0, currentIndex - startIndex);
+                    int deltaFromStart = Math.Max(0, currentLineIndex - startIndex);
                     return deltaFromStart / (double)(endIndex - startIndex);
                 }
 
@@ -127,11 +127,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
             {
                 if (NumberOfInstruction > 0)
                 {
-                    if (printerCommandQueueIndex >= 0
-                        && printerCommandQueueIndex < loadedGCode.Count
-                        && loadedGCode.Instruction(printerCommandQueueIndex).secondsToEndFromHere != 0)
+                    if (printerCommandQueueLineIndex >= 0
+						&& printerCommandQueueLineIndex < loadedGCode.LineCount
+                        && loadedGCode.Instruction(printerCommandQueueLineIndex).secondsToEndFromHere != 0)
                     {
-                        return loadedGCode.Instruction(printerCommandQueueIndex).secondsToEndFromHere;
+                        return loadedGCode.Instruction(printerCommandQueueLineIndex).secondsToEndFromHere;
                     }
                 }
 

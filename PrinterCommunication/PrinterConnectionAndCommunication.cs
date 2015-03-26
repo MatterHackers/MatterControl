@@ -357,7 +357,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         private PrintItemWrapper activePrintItem;
 
         int lastRemainingSecondsReported = 0;
-        int printerCommandQueueIndex = -1;
+        int printerCommandQueueLineIndex = -1;
 
         Vector3 currentDestination;
 		double currentFeedRate;
@@ -702,7 +702,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                return loadedGCode.Count;
+				return loadedGCode.LineCount;
             }
         }
 
@@ -710,7 +710,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                if (loadedGCode.Count > 0)
+				if (loadedGCode.LineCount > 0)
                 {
                     if (FeedRateRatio != 0)
                     {
@@ -729,7 +729,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                int instructionIndex = printerCommandQueueIndex - backupAmount;
+                int instructionIndex = printerCommandQueueLineIndex - backupAmount;
 				return loadedGCode.GetLayerIndex(instructionIndex);
             }
         }
@@ -754,7 +754,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-				int instructionIndex = printerCommandQueueIndex - backupAmount;
+				int instructionIndex = printerCommandQueueLineIndex - backupAmount;
 				return loadedGCode.Ratio0to1IntoContainedLayer(instructionIndex);
             }
         }
@@ -766,13 +766,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             {
                 if (NumberOfLinesInCurrentPrint > 0)
                 {
-                    if (printerCommandQueueIndex >= 0
-                        && printerCommandQueueIndex < loadedGCode.Count
-                        && loadedGCode.Instruction(printerCommandQueueIndex).secondsToEndFromHere != 0)
+                    if (printerCommandQueueLineIndex >= 0
+						&& printerCommandQueueLineIndex < loadedGCode.LineCount
+                        && loadedGCode.Instruction(printerCommandQueueLineIndex).secondsToEndFromHere != 0)
                     {
                         if (FeedRateRatio != 0)
                         {
-                            lastRemainingSecondsReported = (int)(loadedGCode.Instruction(printerCommandQueueIndex).secondsToEndFromHere / FeedRateRatio);
+                            lastRemainingSecondsReported = (int)(loadedGCode.Instruction(printerCommandQueueLineIndex).secondsToEndFromHere / FeedRateRatio);
                         }
                     }
 
@@ -817,7 +817,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 else if (NumberOfLinesInCurrentPrint > 0
 					&& loadedGCode != null)
                 {
-					return loadedGCode.PercentComplete(printerCommandQueueIndex);
+					return loadedGCode.PercentComplete(printerCommandQueueLineIndex);
                 }
                 else
                 {
@@ -855,7 +855,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
                 
                 if (CommunicationState == CommunicationStates.PrintingFromSd
-                    && (!timeWaitingForSdProgress.IsRunning || timeWaitingForSdProgress.Elapsed.TotalSeconds > 60))
+                    && (!timeWaitingForSdProgress.IsRunning || timeWaitingForSdProgress.Elapsed.TotalSeconds > 10))
                 {
                     timeWaitingForSdProgress.Restart();
                     SendLineToPrinterNow("M27"); // : Report SD print status
@@ -1889,12 +1889,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     if (PrinterIsPrinting && CommunicationState != CommunicationStates.PrintingFromSd)
                     {
                         // insert the command into the printing queue at the head
-                        if (printerCommandQueueIndex >= 0
-                            && printerCommandQueueIndex < loadedGCode.Count - 1)
+                        if (printerCommandQueueLineIndex >= 0
+							&& printerCommandQueueLineIndex < loadedGCode.LineCount - 1)
                         {
-                            if (!loadedGCode.Instruction(printerCommandQueueIndex + 1).Line.Contains(lineToWrite))
+                            if (!loadedGCode.Instruction(printerCommandQueueLineIndex + 1).Line.Contains(lineToWrite))
                             {
-                                loadedGCode.Insert(printerCommandQueueIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.Instruction(printerCommandQueueIndex)));
+                                loadedGCode.Insert(printerCommandQueueLineIndex + 1, new PrinterMachineInstruction(lineToWrite, loadedGCode.Instruction(printerCommandQueueLineIndex)));
                             }
                         }
                     }
@@ -2135,7 +2135,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		double MaxTimeToMoveForSentInstructions()
 		{
 			double maxTime = 0;
-			for(int i = Math.Max(0, printerCommandQueueIndex - backupAmount); i < printerCommandQueueIndex; i++)
+			for(int i = Math.Max(0, printerCommandQueueLineIndex - backupAmount); i < printerCommandQueueLineIndex; i++)
 			{
 				maxTime = Math.Max(maxTime, loadedGCode.Instruction(i).secondsThisLine);
 			}
@@ -2154,10 +2154,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile1"))
                 {
                     // we are still sending commands
-                    if (printerCommandQueueIndex > 0 && printerCommandQueueIndex < loadedGCode.Count - 1)
+					if (printerCommandQueueLineIndex > 0 && printerCommandQueueLineIndex < loadedGCode.LineCount - 1)
                     {
                         // the last instruction was a move
-                        PrinterMachineInstruction lastInstruction = loadedGCode.Instruction(printerCommandQueueIndex - 1);
+                        PrinterMachineInstruction lastInstruction = loadedGCode.Instruction(printerCommandQueueLineIndex - 1);
 						double epectedSecondsToWait = Math.Max(5, MaxTimeToMoveForSentInstructions());
 						bool wasMoveAndNoOK = (lastInstruction.Line.Contains("G0 ") || lastInstruction.Line.Contains("G1 ")) 
 							&& timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > epectedSecondsToWait;
@@ -2190,7 +2190,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             bool pauseRequested = false;
             using (TimedLock.Lock(this, "WriteNextLineFromGCodeFile2"))
             {
-				if (printerCommandQueueIndex < loadedGCode.Count)
+				if (printerCommandQueueLineIndex < loadedGCode.LineCount)
                 {
                     if (firstLineToResendIndex < allCheckSumLinesSent.Count)
                     {
@@ -2205,7 +2205,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							return;
 						}
 
-						string lineToWrite = loadedGCode.Instruction(printerCommandQueueIndex).Line;
+						string lineToWrite = loadedGCode.Instruction(printerCommandQueueLineIndex).Line;
                         string[] splitOnSemicolon = lineToWrite.Split(';');
                         string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
 
@@ -2222,7 +2222,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                             }
                             else if (lineToWrite == "M226" || lineToWrite == "@pause")
                             {
-                                RequestPause(printerCommandQueueIndex + 1);
+                                RequestPause(printerCommandQueueLineIndex + 1);
                             }
                             else
                             {
@@ -2231,7 +2231,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                             firstLineToResendIndex++;
                         }
-                        printerCommandQueueIndex++;
+                        printerCommandQueueLineIndex++;
                     }
                 }
                 else if (printWasCanceled)
@@ -2244,7 +2244,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
                 else
                 {
-                    if (printerCommandQueueIndex == loadedGCode.Count)
+					if (printerCommandQueueLineIndex == loadedGCode.LineCount)
                     {
                         CommunicationState = CommunicationStates.FinishedPrint;
 
@@ -2271,7 +2271,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (injectionStartIndex == 0)
             {
-                injectionStartIndex = printerCommandQueueIndex;
+                injectionStartIndex = printerCommandQueueLineIndex;
             }
 
             if (PrinterIsPrinting)
@@ -2323,7 +2323,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
-        private int InjectGCode(string codeToInject, int indexToStartInjection)
+        private int InjectGCode(string codeToInject, int lineIndexToStartInjection)
         {
             codeToInject = GCodeProcessing.ReplaceMacroValues(codeToInject);
 
@@ -2339,9 +2339,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 {
 					trimedLine = ReplacePrinterMacros(trimedLine);
 
-                    if (loadedGCode.Count > indexToStartInjection)
+					if (loadedGCode.LineCount > lineIndexToStartInjection)
                     {
-                        loadedGCode.Insert(indexToStartInjection, new PrinterMachineInstruction(trimedLine, loadedGCode.Instruction(indexToStartInjection)));
+                        loadedGCode.Insert(lineIndexToStartInjection, new PrinterMachineInstruction(trimedLine, loadedGCode.Instruction(lineIndexToStartInjection)));
                     }
                     else
                     {
@@ -2351,7 +2351,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                 }
             }
 
-            return indexToStartInjection + linesAdded;
+            return lineIndexToStartInjection + linesAdded;
         }
 
 		private string ReplacePrinterMacros(string trimedLine)
@@ -2403,7 +2403,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         void ClearQueuedGCode()
         {
             loadedGCode.Clear();
-            printerCommandQueueIndex = 0;
+            printerCommandQueueLineIndex = 0;
             lastRemainingSecondsReported = 0;
 
             allCheckSumLinesSent.Clear();
@@ -2439,7 +2439,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                             if (cancelGCode.Trim() != "")
                             {
                                 // add any gcode we want to print while canceling
-                                InjectGCode(cancelGCode, printerCommandQueueIndex);
+                                InjectGCode(cancelGCode, printerCommandQueueLineIndex);
                             }
                             // let the process know we canceled not ended normaly.
                             printWasCanceled = true;

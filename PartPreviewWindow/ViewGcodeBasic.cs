@@ -875,7 +875,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
             if (gcodeViewWidget != null
                 && gcodeViewWidget.LoadedGCode != null
-                && gcodeViewWidget.LoadedGCode.Count > 0)
+				&& gcodeViewWidget.LoadedGCode.LineCount > 0)
             {
                 CreateOptionsContent();
 				buttonRightPanel.Visible = true;

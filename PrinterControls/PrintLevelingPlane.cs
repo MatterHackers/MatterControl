@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl
 
         public void ApplyLeveling(GCodeFile unleveledGCode)
         {
-            for(int i=0; i<unleveledGCode.Count; i++)
+			for (int i = 0; i < unleveledGCode.LineCount; i++)
             {
                 PrinterMachineInstruction instruction = unleveledGCode.Instruction(i);
                 Vector3 currentDestination = instruction.Position;
