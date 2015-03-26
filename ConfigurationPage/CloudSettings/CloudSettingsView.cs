@@ -212,10 +212,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
 
+			GuiWidget levelingSwitchContainer = new FlowLayoutWidget();
+			levelingSwitchContainer.VAnchor = VAnchor.ParentCenter;
+			levelingSwitchContainer.Margin = new BorderDouble(left: 16);
+
+			ToggleSwitch enablePrintNotificationsSwitch = GenerateToggleSwitch(levelingSwitchContainer, UserSettings.Instance.get("PrintNotificationsEnabled") == "true");
+			enablePrintNotificationsSwitch.SwitchStateChanged += (sender, e) => 
+			{
+				UserSettings.Instance.set("PrintNotificationsEnabled", enablePrintNotificationsSwitch.SwitchState ? "true" : "false");
+			};
+			levelingSwitchContainer.SetBoundsToEncloseChildren();
+
             buttonRow.AddChild(levelingIcon);
             buttonRow.AddChild(notificationSettingsLabel);
             buttonRow.AddChild(new HorizontalSpacer());
-            buttonRow.AddChild(configureNotificationSettingsButton);
+			buttonRow.AddChild(configureNotificationSettingsButton);
+			buttonRow.AddChild(levelingSwitchContainer);
+
             return buttonRow;
         }
 

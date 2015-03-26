@@ -21,8 +21,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		Button openGcodeTerminalButton;
 		Button openCameraButton;
 
-		private ToggleSwitchFactory toggleSwitchFactory = new ToggleSwitchFactory();
-
         DisableableWidget eePromControlsContainer;
         DisableableWidget terminalCommunicationsContainer;
         DisableableWidget printLevelingContainer;
@@ -127,6 +125,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			GuiWidget levelingSwitchContainer = new FlowLayoutWidget();
 			levelingSwitchContainer.VAnchor = VAnchor.ParentCenter;
+			levelingSwitchContainer.Margin = new BorderDouble(left: 16);
 
 			ToggleSwitch printLevelingSwitch = GenerateToggleSwitch(levelingSwitchContainer, PrinterSettings.Instance.get("PublishBedImage") == "true");
 			printLevelingSwitch.SwitchState = ActivePrinterProfile.Instance.DoPrintLeveling;
@@ -134,7 +133,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				ActivePrinterProfile.Instance.DoPrintLeveling = printLevelingSwitch.SwitchState;
 			};
-
 			levelingSwitchContainer.SetBoundsToEncloseChildren();
 
 			printLevelingStatusLabel = new TextWidget ("");
@@ -155,8 +153,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             buttonRow.AddChild(printLevelingStatusLabel);
             buttonRow.AddChild(editButton);
             buttonRow.AddChild(new HorizontalSpacer());
-            buttonRow.AddChild(levelingSwitchContainer);
             buttonRow.AddChild(runPrintLevelingButton);
+			buttonRow.AddChild(levelingSwitchContainer);
+
             SetPrintLevelButtonVisiblity();
             return buttonRow;
         }
@@ -169,22 +168,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
             }
             base.OnClosed(e);
         }
-
-		ToggleSwitch GenerateToggleSwitch(GuiWidget parentContainer, bool initiallyChecked)
-		{
-			TextWidget toggleLabel = new TextWidget(initiallyChecked ? "On" : "Off", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			toggleLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
-
-			ToggleSwitch toggleSwitch = toggleSwitchFactory.GenerateGivenTextWidget(toggleLabel, "On", "Off", initiallyChecked);
-			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			toggleSwitch.SwitchState = initiallyChecked;
-			toggleSwitch.Margin = new BorderDouble (0, 0, 12, 0);
-
-			parentContainer.AddChild(toggleLabel);
-			parentContainer.AddChild(toggleSwitch);
-
-			return toggleSwitch;
-		}
 
 		private FlowLayoutWidget GetCameraControl()
 		{
@@ -199,29 +182,38 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 
 			ImageWidget cameraIcon = new ImageWidget(cameraIconImage);
-			cameraIcon.Margin = new BorderDouble(right: 6, bottom: 6);
+			cameraIcon.Margin = new BorderDouble(right: 6);
 
-			TextWidget gcodeTerminalLabel = new TextWidget("Camera Sync");
-			gcodeTerminalLabel.AutoExpandBoundsToText = true;
-			gcodeTerminalLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;
+			TextWidget cameraLabel = new TextWidget("Camera Sync");
+			cameraLabel.AutoExpandBoundsToText = true;
+			cameraLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			cameraLabel.VAnchor = VAnchor.ParentCenter;
 
 			openCameraButton = textImageButtonFactory.Generate("Preview".Localize().ToUpper());
 			openCameraButton.Click += new EventHandler(openCameraPreview_Click);
 			openCameraButton.Margin = new BorderDouble(left:6);
 
 			buttonRow.AddChild(cameraIcon);
-			buttonRow.AddChild(gcodeTerminalLabel);
+			buttonRow.AddChild(cameraLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(openCameraButton);
 #if __ANDROID__ 
-			ToggleSwitch toggleSwitch = GenerateToggleSwitch(buttonRow, PrinterSettings.Instance.get("PublishBedImage") == "true");
+
+			GuiWidget publishImageSwitchContainer = new FlowLayoutWidget();
+			publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
+			publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
+
+			ToggleSwitch toggleSwitch = GenerateToggleSwitch(publishImageSwitchContainer, PrinterSettings.Instance.get("PublishBedImage") == "true");
 			toggleSwitch.SwitchStateChanged += (sender, e) => 
 			{
 				ToggleSwitch thisControl = sender as ToggleSwitch;
 				PrinterSettings.Instance.set("PublishBedImage", thisControl.SwitchState ? "true" : "false");
 			};
+
+			publishImageSwitchContainer.SetBoundsToEncloseChildren();
+
+			buttonRow.AddChild(publishImageSwitchContainer);
 #endif
-			buttonRow.AddChild(openCameraButton);
 
 			return buttonRow;
 		}
