@@ -206,18 +206,23 @@ namespace MatterHackers.MatterControl
                         break;
 
                     case "CREATE_AND_SELECT_PRINTER":
-                        if (currentCommandIndex + 1 < commandLineArgs.Length)
+                        if (currentCommandIndex + 1 <= commandLineArgs.Length)
                         {
                             currentCommandIndex++;
                             string argument = commandLineArgs[currentCommandIndex];
                             string[] printerData = argument.Split(',');
-                            if (printerData.Length == 2)
+                            if (printerData.Length >= 2)
                             {
                                 Printer ActivePrinter = new Printer();
 
                                 ActivePrinter.Name = "Auto: {0} {1}".FormatWith(printerData[0], printerData[1]);
                                 ActivePrinter.Make = printerData[0];
                                 ActivePrinter.Model = printerData[1];
+
+								if (printerData.Length == 3)
+								{
+									ActivePrinter.ComPort = printerData[2];
+								}
 
                                 PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
                                 test.LoadDefaultSliceSettings(ActivePrinter.Make, ActivePrinter.Model);

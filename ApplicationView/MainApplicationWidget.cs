@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl
 
 			Console.WriteLine("{0} ms 3".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 			this.AddChild(container);
-			Console.WriteLine("{0} ms 3".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
+			Console.WriteLine("{0} ms 4".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 		}
 
         void Initialize()
