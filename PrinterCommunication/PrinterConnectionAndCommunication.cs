@@ -2179,7 +2179,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                             }
                             else
                             {
-                                // we are wating for the ok so let's wait
+                                // we are waiting for the ok so let's wait
                                 return;
                             }
                         }
@@ -2201,7 +2201,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						int waitTimeInMs = 60000; // 60 seconds
 						if (waitingForPosition.IsRunning && waitingForPosition.ElapsedMilliseconds < waitTimeInMs)
 						{
-							// we are wating for a postion response don't print more
+							// we are waiting for a postion response don't print more
 							return;
 						}
 
