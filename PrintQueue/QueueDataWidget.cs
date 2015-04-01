@@ -38,6 +38,7 @@ using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -57,6 +58,7 @@ namespace MatterHackers.MatterControl.PrintQueue
         Button removeItemButton;
         Button enterEditModeButton;
         Button leaveEditModeButton;
+        Button addToLibraryButton;
 
         Button addToQueueButton;
         Button createButton;
@@ -138,6 +140,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 					sendItemButton.Click += new EventHandler(sendButton_Click);
 					sendItemButton.Visible = false;
 					buttonPanel1.AddChild(sendItemButton);
+
+                    addToLibraryButton = textImageButtonFactory.Generate("Add To Library".Localize());
+                    addToLibraryButton.Margin = new BorderDouble(3, 0);
+                    addToLibraryButton.Click += new EventHandler(addToLibraryButton_Click);
+                    addToLibraryButton.Visible = false;
+                    buttonPanel1.AddChild(addToLibraryButton);
 
                     exportItemButton = textImageButtonFactory.Generate("Export".Localize());
                     exportItemButton.Margin = new BorderDouble(3, 0);
@@ -316,6 +324,15 @@ namespace MatterHackers.MatterControl.PrintQueue
             this.queueDataView.SelectedItems.Clear();
         }
 
+        void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
+        {
+            foreach (QueueRowItem  queueItem in queueDataView.SelectedItems)
+            {
+                LibraryData.Instance.AddItem(queueItem.PrintItemWrapper);
+            }
+            queueDataView.ClearSelectedItems();
+        }
+
         void copy_Button_Click(object sender, EventArgs mouseEvent)
         {
             CreateCopyInQueue();
@@ -472,12 +489,14 @@ namespace MatterHackers.MatterControl.PrintQueue
                     exportItemButton.Visible = true;
                     copyItemButton.Visible = true;
                     removeItemButton.Visible = true;
+                    addToLibraryButton.Visible = true;
                 }
                 else
                 {
                     exportItemButton.Visible = false;
                     copyItemButton.Visible = false;
                     removeItemButton.Visible = true;
+                    addToLibraryButton.Visible = true;
                 }
 
                 //addToQueueButton.Visible = false;
@@ -491,6 +510,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                 exportItemButton.Visible = false;
                 copyItemButton.Visible = false;
                 removeItemButton.Visible = false;
+                addToLibraryButton.Visible = false;
             }
         }
 
