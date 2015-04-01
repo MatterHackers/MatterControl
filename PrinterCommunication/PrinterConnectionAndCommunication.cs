@@ -2117,8 +2117,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
                 CommunicationState = CommunicationStates.Disconnecting;
 				ReadThreadHolder.Join();
-				serialPort.Close();
-                serialPort.Dispose();
+				if (serialPort != null)
+				{
+					serialPort.Close();
+					serialPort.Dispose();
+				}
                 serialPort = null;
                 CommunicationState = CommunicationStates.Disconnected;
                 LinesToWriteQueue.Clear();
