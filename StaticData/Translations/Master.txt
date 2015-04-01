@@ -3146,3 +3146,6 @@ Translated: Export to Folder or SD Card
 English:Converting image...
 Translated:Converting image...
 
+English:Add To Library
+Translated:Add To Library
+
