@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new VisibleButNotMappedToEngine("", "extruders_share_temperature"),
 
             //endCode=M104 S0
-            new MapEndGCode("endCode", "end_gcode"),
+            new GCodeForSlicer("endCode", "end_gcode"),
 
             new MapItem("zOffset", "z_offset"),
 
@@ -234,6 +234,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //startCode=M109 S210
             new MapStartGCode("startCode", "start_gcode", true),
+
+			new GCodeForSlicer("toolChangeCode", "toolchange_gcode"),
 
 			new VisibleButNotMappedToEngine("", "heat_extruder_before_homing"),
 
@@ -547,18 +549,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             }
         }
 
-        public class MapEndGCode : InjectGCodeCommands
+        public class GCodeForSlicer : InjectGCodeCommands
         {
             public override string MappedValue
             {
                 get
                 {
-                    string endGCode = base.MappedValue.Replace("\n", "\\n");
-                    return endGCode;
+                    string gCode = base.MappedValue.Replace("\n", "\\n");
+                    return gCode;
                 }
             }
 
-            public MapEndGCode(string mappedKey, string originalKey)
+            public GCodeForSlicer(string mappedKey, string originalKey)
                 : base(mappedKey, originalKey)
             {
             }
