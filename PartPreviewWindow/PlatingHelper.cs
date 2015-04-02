@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
     {
         public Vector3 currentScale = new Vector3(1,1,1);
         public double xSpacing;
-        public List<IRayTraceable> meshTraceableData = new List<IRayTraceable>();
+        public List<IPrimitive> meshTraceableData = new List<IPrimitive>();
     }
 
     public static class PlatingHelper
@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl
                 for(int i=0; i<meshGroup.Meshes.Count; i++)
                 {
                     Mesh mesh = meshGroup.Meshes[i];
-                    List<IRayTraceable> allPolys = AddTraceDataForMesh(mesh, totalActionCount, ref currentAction, ref needUpdateTitle, reportProgress);
+                    List<IPrimitive> allPolys = AddTraceDataForMesh(mesh, totalActionCount, ref currentAction, ref needUpdateTitle, reportProgress);
 
                     needUpdateTitle = true;
                     if (reportProgress != null)
@@ -234,25 +234,25 @@ namespace MatterHackers.MatterControl
                     }
 
                     // only allow limited recusion to speed this up building this data
-                    IRayTraceable traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 0);
+                    IPrimitive traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 0);
                     perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(traceData);
                 }
             }
         }
 
-        public static IRayTraceable CreateTraceDataForMesh(Mesh mesh)
+        public static IPrimitive CreateTraceDataForMesh(Mesh mesh)
         {
             int unusedInt = 0;
             bool unusedBool = false;
-            List<IRayTraceable>  allPolys = AddTraceDataForMesh(mesh, 0, ref unusedInt, ref unusedBool, null);
+            List<IPrimitive>  allPolys = AddTraceDataForMesh(mesh, 0, ref unusedInt, ref unusedBool, null);
             return BoundingVolumeHierarchy.CreateNewHierachy(allPolys);
         }
 
-        private static List<IRayTraceable> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, ReportProgressRatio reportProgress)
+        private static List<IPrimitive> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, ReportProgressRatio reportProgress)
         {
             bool continueProcessing;
 
-            List<IRayTraceable>  allPolys = new List<IRayTraceable>();
+            List<IPrimitive>  allPolys = new List<IPrimitive>();
             List<Vector3> positions = new List<Vector3>();
 
             foreach (Face face in mesh.Faces)

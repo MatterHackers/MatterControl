@@ -288,15 +288,15 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
                 return false;
             }
 
-            List<IRayTraceable> mesheTraceables = new List<IRayTraceable>();
+            List<IPrimitive> mesheTraceables = new List<IPrimitive>();
             for (int i = 0; i < MeshGroupExtraData.Count; i++)
             {
-                foreach (IRayTraceable traceData in MeshGroupExtraData[i].meshTraceableData)
+                foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
                 {
                     mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i].TotalTransform));
                 }
             }
-            IRayTraceable allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
+            IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
 
             Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition); 
             Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
@@ -308,8 +308,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
                 for (int i = 0; i < MeshGroupExtraData.Count; i++)
                 {
-                    List<IRayTraceable> insideBounds = new List<IRayTraceable>();
-                    foreach (IRayTraceable traceData in MeshGroupExtraData[i].meshTraceableData)
+                    List<IPrimitive> insideBounds = new List<IPrimitive>();
+                    foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
                     {
                         traceData.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
                     }
