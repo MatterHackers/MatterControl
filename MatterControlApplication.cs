@@ -43,6 +43,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PluginSystem;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -58,9 +59,10 @@ namespace MatterHackers.MatterControl
         bool firstDraw = true;
         bool ShowMemoryUsed = false;
         bool DoCGCollectEveryDraw = false;
-        public bool RestartOnClose = false;        
+        public bool RestartOnClose = false;
 
         static readonly Vector2 minSize = new Vector2(600, 600);
+        event EventHandler unregisterEvent;
 
 		static MatterControlApplication instance;
 		public static MatterControlApplication Instance
@@ -227,10 +229,41 @@ namespace MatterHackers.MatterControl
                                 PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
                                 test.LoadDefaultSliceSettings(ActivePrinter.Make, ActivePrinter.Model);
                                 ActivePrinterProfile.Instance.ActivePrinter = ActivePrinter;
+
                             }
+                        }
+                        
+                        break;
+
+                    case "CONNECT_TO_PRINTER":
+                        if (currentCommandIndex + 1 <= commandLineArgs.Length)
+                        {
+                            PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
                         }
                         break;
 
+                    case "START_PRINT":
+                        if (currentCommandIndex + 1 <= commandLineArgs.Length)
+                        {
+                            bool hasBeenRun = false;
+                            currentCommandIndex++;
+                            string fullPath = commandLineArgs[currentCommandIndex];
+                            QueueData.Instance.RemoveAll();
+                            if (!string.IsNullOrEmpty(fullPath))
+                            {
+                                string fileName = Path.GetFileNameWithoutExtension(fullPath);
+                                QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(fileName, fullPath)));
+                                PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent ((sender, e) =>
+                                {
+                                    if (!hasBeenRun && PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Connected)
+                                    {
+                                        hasBeenRun = true;
+                                        PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+                                    }
+                                }, ref unregisterEvent); 
+                            }
+                        }
+                        break;
                 }
 
                 if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
@@ -306,6 +339,7 @@ namespace MatterHackers.MatterControl
                 //If the desktop position is less than -10,-10, override
                 int xpos = Math.Max(int.Parse(sizes[0]), -10);                
                 int ypos = Math.Max(int.Parse(sizes[1]), -10);
+    
                 DesktopPosition = new Point2D(xpos, ypos);
             }
 
@@ -443,7 +477,7 @@ namespace MatterHackers.MatterControl
                 }
             }
 
-            if (firstDraw)
+            if (firstDraw && commandLineArgs.Length < 2)
             {
                 UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
