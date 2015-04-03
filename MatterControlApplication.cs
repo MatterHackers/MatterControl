@@ -86,16 +86,6 @@ namespace MatterHackers.MatterControl
 					bool showWindow;
 					instance = new MatterControlApplication(width, height, out showWindow);
 
-#if !DEBUG
-					if (OemSettings.Instance.WindowTitleExtra == "Experimental")
-					{
-						string version = "1.2";
-						string appName = "MatterControl Desktop (PC)";
-
-						Insights.Initialize("4beb34a757b64c95b06984bfda87ccca093b7723", version, appName);
-					}
-#endif
-
 					if (showWindow)
 					{
 						instance.ShowAsSystemWindow();
@@ -490,7 +480,17 @@ namespace MatterHackers.MatterControl
 
             if (firstDraw && commandLineArgs.Length < 2)
             {
-                UiThread.RunOnIdle(DoAutoConnectIfRequired);
+#if !DEBUG
+				if (OemSettings.Instance.WindowTitleExtra == "Experimental")
+				{
+					string version = "1.2";
+					string appName = "MatterControl Desktop (PC)";
+
+					Insights.Initialize("4beb34a757b64c95b06984bfda87ccca093b7723", version, appName);
+				}
+#endif
+				
+				UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
                 firstDraw = false;
                 foreach (string arg in commandLineArgs)
