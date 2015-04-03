@@ -50,6 +50,7 @@ using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.Agg.PlatformAbstract;
+using Xamarin;
 
 namespace MatterHackers.MatterControl
 {
@@ -84,6 +85,16 @@ namespace MatterHackers.MatterControl
 
 					bool showWindow;
 					instance = new MatterControlApplication(width, height, out showWindow);
+
+#if !DEBUG
+					if (OemSettings.Instance.WindowTitleExtra == "Experimental")
+					{
+						string version = "1.2";
+						string appName = "MatterControl Desktop (PC)";
+
+						Insights.Initialize("4beb34a757b64c95b06984bfda87ccca093b7723", version, appName);
+					}
+#endif
 
 					if (showWindow)
 					{
@@ -526,7 +537,7 @@ namespace MatterHackers.MatterControl
         [STAThread]
         public static void Main()
         {
-            // Make sure we have the right woring directory as we assume everything relative to the executable.
+			// Make sure we have the right woring directory as we assume everything relative to the executable.
             Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
             Datastore.Instance.Initialize();
