@@ -50,7 +50,6 @@ using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.Agg.PlatformAbstract;
-using Xamarin;
 
 namespace MatterHackers.MatterControl
 {
@@ -98,7 +97,7 @@ namespace MatterHackers.MatterControl
 
         static MatterControlApplication()
         {
-            // Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field 
+			// Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field 
             // initializers run before the class constructor, we need to init the platform specific provider in the static constructor (or write a custom initializer method)
             //
             // Initialize a standard file system backed StaticData provider
@@ -140,6 +139,7 @@ namespace MatterHackers.MatterControl
         private MatterControlApplication(double width, double height, out bool showWindow)
             : base(width, height)
         {
+			Name = "MatterControl";
 			showWindow = false;
  
             // set this at startup so that we can tell next time if it got set to true in close
@@ -480,16 +480,6 @@ namespace MatterHackers.MatterControl
 
             if (firstDraw && commandLineArgs.Length < 2)
             {
-#if !DEBUG
-				if (OemSettings.Instance.WindowTitleExtra == "Experimental")
-				{
-					string version = "1.2";
-					string appName = "MatterControl Desktop (PC)";
-
-					Insights.Initialize("4beb34a757b64c95b06984bfda87ccca093b7723", version, appName);
-				}
-#endif
-				
 				UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
                 firstDraw = false;
