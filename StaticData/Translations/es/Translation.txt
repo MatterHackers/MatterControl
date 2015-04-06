@@ -3130,3 +3130,24 @@ Translated:This gcode will be inserted into the output right after the temperatu
 English:GCode file too big to load for '{0}'.
 Translated:GCode file too big to load for '{0}'.
 
+English:Reset\nConnection
+Translated:Reset\nConnection
+
+English:Show Reset Connection
+Translated:Show Reset Connection
+
+English:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
+Translated:Makes visible a button that will reset the connection when pressed. This can be used on printers that support it as an emergency stop.
+
+English:You may need to wait a minute for your printer to finish initializing.
+Translated:You may need to wait a minute for your printer to finish initializing.
+
+English: Export to Folder or SD Card
+Translated: Export to Folder or SD Card
+
+English:Converting image...
+Translated:Converting image...
+
+English:Add To Library
+Translated:Add To Library
+

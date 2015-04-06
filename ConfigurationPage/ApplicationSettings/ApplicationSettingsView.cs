@@ -66,14 +66,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 mainContainer.AddChild(new HorizontalLine(separatorLineColor));
             }
             
-			//Disabled for now (KP)
-			//mainContainer.AddChild(GetDisplayControl());
-            //mainContainer.AddChild(new HorizontalLine(separatorLineColor));
-
-#if __ANDROID__
-			mainContainer.AddChild(GetModeControl());
+#if !__ANDROID__
+			mainContainer.AddChild(GetDisplayControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+
 #endif
+			if(UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+			{
+				mainContainer.AddChild(GetModeControl());
+				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
+			}
+			
 			mainContainer.AddChild(GetClearHistoryControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			
