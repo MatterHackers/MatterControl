@@ -304,7 +304,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
         public static void DoPostLoadInitialization(object sender, DoWorkEventArgs doWorkEventArgs)
         {
             GCodeRenderer gCodeRenderer = (GCodeRenderer)doWorkEventArgs.Argument;
-            gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
+			try
+			{
+				gCodeRenderer.GCodeFileToDraw.GetFilamentUsedMm(ActiveSliceSettings.Instance.NozzleDiameter);
+			}
+			catch (Exception)
+			{
+			}
+			gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
         }
 
         void postLoadInitialization_ProgressChanged(object sender, ProgressChangedEventArgs e)
