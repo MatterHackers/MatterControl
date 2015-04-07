@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget cameraIcon = new ImageWidget(cameraIconImage);
 			cameraIcon.Margin = new BorderDouble(right: 6);
 
-			TextWidget cameraLabel = new TextWidget("Camera Sync");
+			TextWidget cameraLabel = new TextWidget("Camera Monitoring");
 			cameraLabel.AutoExpandBoundsToText = true;
 			cameraLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			cameraLabel.VAnchor = VAnchor.ParentCenter;
