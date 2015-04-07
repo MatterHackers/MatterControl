@@ -218,7 +218,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             ConnectionLost
         };
 
-        CommunicationStates communicationState = CommunicationStates.Disconnected;
+		CommunicationStates communicationState = CommunicationStates.Disconnected;
+		
+		CommunicationStates prePauseCommunicationState = CommunicationStates.Printing;
 
         bool ForceImmediateWrites = false;
 
@@ -248,11 +250,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication
                     switch (communicationState)
                     {
                         // if it was printing
+						case CommunicationStates.PrintingFromSd:
                         case CommunicationStates.Printing:
                             {
                                 // and is changing to paused
                                 if (value == CommunicationStates.Paused)
                                 {
+									if(communicationState == CommunicationStates.Printing)
+									{
+										prePauseCommunicationState = CommunicationStates.Printing;
+									}
+									else
+									{
+										prePauseCommunicationState = CommunicationStates.PrintingFromSd;
+									}
                                     timeSinceStartedPrint.Stop();
                                 }
                                 else if (value == CommunicationStates.FinishedPrint)
@@ -800,7 +811,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             get
             {
-                if (CommunicationState == CommunicationStates.PrintingFromSd)
+                if (CommunicationState == CommunicationStates.PrintingFromSd
+					|| (communicationState == CommunicationStates.Paused && prePauseCommunicationState == CommunicationStates.PrintingFromSd))
                 {
                     if (totalSdBytes > 0)
                     {
@@ -2378,7 +2390,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (PrinterIsPaused)
             {
-                if (ActivePrintItem.PrintItem.FileLocation == QueueData.SdCardFileName)
+				if (prePauseCommunicationState == CommunicationStates.PrintingFromSd)
                 {
                     CommunicationState = CommunicationStates.PrintingFromSd;
 
