@@ -43,6 +43,7 @@ using Sqlite3Statement = System.IntPtr;
 #endif
 
 using MatterHackers.MatterControl.DataStorage;
+using System.Runtime.InteropServices;
 
 namespace SQLiteWin32
 {
