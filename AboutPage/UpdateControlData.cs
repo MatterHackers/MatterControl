@@ -72,10 +72,10 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler UpdateStatusChanged = new RootedObjectEventHandler();
 
 #if __ANDROID__
-		static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
-		static string updateFileLocation = Path.Combine(applicationDataPath, "updates"); 
-#else
 		static string updateFileLocation = Path.Combine(DataStorage.ApplicationDataStorage.Instance.PublicDataStoragePath, "updates");
+#else
+		static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
+		static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
 #endif
 
 		UpdateStatusStates updateStatus;

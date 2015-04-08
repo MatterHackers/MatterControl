@@ -391,22 +391,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\MatterControlPrintServer\PrintServer_Client\PrintServer_Client.csproj">
-      <Project>{275568a0-7e5e-4151-8960-e54665ff5df7}</Project>
-      <Name>PrintServer_Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MatterControlPrintServer\PrintServer_Interface\PrintServer_Interface.csproj">
-      <Project>{04b850f0-5a39-4157-a227-a574064110d2}</Project>
-      <Name>PrintServer_Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MatterControlPrintServer\PrintServer_Server\PrintServer_Server.csproj">
-      <Project>{002b1d12-4dbb-4ecf-b481-5ebecbc1666e}</Project>
-      <Name>PrintServer_Server</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MatterControlPrintServer\RemotingLite\src\RemotingLite.csproj">
-      <Project>{0affa4eb-edea-43cc-8045-c7d1fe557803}</Project>
-      <Name>RemotingLite</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
