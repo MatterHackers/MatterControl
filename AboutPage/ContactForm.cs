@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,28 +23,18 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.FieldValidation;
+using MatterHackers.MatterControl.VersionManagement;
+using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Text.RegularExpressions;
-
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.VersionManagement;
-using MatterHackers.MatterControl.FieldValidation;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.ContactForm
 {
@@ -52,26 +42,26 @@ namespace MatterHackers.MatterControl.ContactForm
 	{
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
-		Button submitButton;
-		Button cancelButton;
-		Button doneButton;
-		FlowLayoutWidget formContainer;
-		FlowLayoutWidget messageContainer;
+		private Button submitButton;
+		private Button cancelButton;
+		private Button doneButton;
+		private FlowLayoutWidget formContainer;
+		private FlowLayoutWidget messageContainer;
 
-		TextWidget submissionStatus;
-		GuiWidget centerContainer;
+		private TextWidget submissionStatus;
+		private GuiWidget centerContainer;
 
-		MHTextEditWidget questionInput;
-		TextWidget questionErrorMessage;
+		private MHTextEditWidget questionInput;
+		private TextWidget questionErrorMessage;
 
-		MHTextEditWidget detailInput;
-		TextWidget detailErrorMessage;
+		private MHTextEditWidget detailInput;
+		private TextWidget detailErrorMessage;
 
-		MHTextEditWidget emailInput;
-		TextWidget emailErrorMessage;
+		private MHTextEditWidget emailInput;
+		private TextWidget emailErrorMessage;
 
-		MHTextEditWidget nameInput;
-		TextWidget nameErrorMessage;
+		private MHTextEditWidget nameInput;
+		private TextWidget nameErrorMessage;
 
 		public ContactFormWidget(string subjectText, string bodyText)
 		{
@@ -253,7 +243,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			submitButton.Click += new EventHandler(SubmitContactForm);
 		}
 
-		void SubmitContactForm(object sender, EventArgs mouseEvent)
+		private void SubmitContactForm(object sender, EventArgs mouseEvent)
 		{
 			if (ValidateContactForm())
 			{
@@ -274,13 +264,13 @@ namespace MatterHackers.MatterControl.ContactForm
 			}
 		}
 
-		void onPostRequestSucceeded(object sender, EventArgs e)
+		private void onPostRequestSucceeded(object sender, EventArgs e)
 		{
 			submissionStatus.Text = LocalizedString.Get("Thank you!  Your information has been submitted.");
 			doneButton.Visible = true;
 		}
 
-		void onPostRequestFailed(object sender, EventArgs e)
+		private void onPostRequestFailed(object sender, EventArgs e)
 		{
 			submissionStatus.Text = LocalizedString.Get("Sorry!  We weren't able to submit your request.");
 			doneButton.Visible = true;
@@ -312,8 +302,8 @@ namespace MatterHackers.MatterControl.ContactForm
 
 	public class ContactFormWindow : SystemWindow
 	{
-		static ContactFormWindow contactFormWindow;
-		static bool contactFormIsOpen;
+		private static ContactFormWindow contactFormWindow;
+		private static bool contactFormIsOpen;
 
 		static public void Open(string subject = "", string bodyText = "")
 		{
@@ -332,7 +322,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			}
 		}
 
-		ContactFormWidget contactFormWidget;
+		private ContactFormWidget contactFormWidget;
 
 		private ContactFormWindow(string subject = "", string bodyText = "")
 			: base(500, 550)
@@ -355,7 +345,8 @@ namespace MatterHackers.MatterControl.ContactForm
 			MinimumSize = new Vector2(500, 550);
 		}
 
-		event EventHandler unregisterEvents;
+		private event EventHandler unregisterEvents;
+
 		private void AddHandlers()
 		{
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);

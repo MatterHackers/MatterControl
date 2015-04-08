@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,170 +23,164 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.VersionManagement;
+using System;
 
 namespace MatterHackers.MatterControl
 {
-    public class UpdateControlView : FlowLayoutWidget
-    {
-        Button downloadUpdateLink;
-        Button checkUpdateLink;
-        Button installUpdateLink;
-        TextWidget updateStatusText;
+	public class UpdateControlView : FlowLayoutWidget
+	{
+		private Button downloadUpdateLink;
+		private Button checkUpdateLink;
+		private Button installUpdateLink;
+		private TextWidget updateStatusText;
 
-        event EventHandler unregisterEvents;
-        RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
-        TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private event EventHandler unregisterEvents;
 
-        public UpdateControlView()
-        {
-            textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
-            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+		private RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-            HAnchor = HAnchor.ParentLeftRight;
-            BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-            Padding = new BorderDouble(6, 5);
-            {
-                updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                updateStatusText.AutoExpandBoundsToText = true;
-                updateStatusText.VAnchor = VAnchor.ParentCenter;
+		public UpdateControlView()
+		{
+			textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-                GuiWidget horizontalSpacer = new GuiWidget();
-                horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
+			HAnchor = HAnchor.ParentLeftRight;
+			BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+			Padding = new BorderDouble(6, 5);
+			{
+				updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				updateStatusText.AutoExpandBoundsToText = true;
+				updateStatusText.VAnchor = VAnchor.ParentCenter;
 
-                checkUpdateLink = textImageButtonFactory.Generate("Check for Update".Localize());
-                checkUpdateLink.VAnchor = VAnchor.ParentCenter;
-                checkUpdateLink.Click += CheckForUpdate;
-                checkUpdateLink.Visible = false;
+				GuiWidget horizontalSpacer = new GuiWidget();
+				horizontalSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-                downloadUpdateLink = textImageButtonFactory.Generate("Download Update".Localize());
-                downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
-                downloadUpdateLink.Click += DownloadUpdate;
-                downloadUpdateLink.Visible = false;
+				checkUpdateLink = textImageButtonFactory.Generate("Check for Update".Localize());
+				checkUpdateLink.VAnchor = VAnchor.ParentCenter;
+				checkUpdateLink.Click += CheckForUpdate;
+				checkUpdateLink.Visible = false;
 
-                installUpdateLink = textImageButtonFactory.Generate("Install Update".Localize());
-                installUpdateLink.VAnchor = VAnchor.ParentCenter;
-                installUpdateLink.Click += InstallUpdate;
-                installUpdateLink.Visible = false;
+				downloadUpdateLink = textImageButtonFactory.Generate("Download Update".Localize());
+				downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
+				downloadUpdateLink.Click += DownloadUpdate;
+				downloadUpdateLink.Visible = false;
 
-                AddChild(updateStatusText);
-                AddChild(horizontalSpacer);
-                AddChild(checkUpdateLink);
-                AddChild(downloadUpdateLink);
-                AddChild(installUpdateLink);
-            }
+				installUpdateLink = textImageButtonFactory.Generate("Install Update".Localize());
+				installUpdateLink.VAnchor = VAnchor.ParentCenter;
+				installUpdateLink.Click += InstallUpdate;
+				installUpdateLink.Visible = false;
 
-            UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(UpdateStatusChanged, ref unregisterEvents);
+				AddChild(updateStatusText);
+				AddChild(horizontalSpacer);
+				AddChild(checkUpdateLink);
+				AddChild(downloadUpdateLink);
+				AddChild(installUpdateLink);
+			}
 
-            MinimumSize = new VectorMath.Vector2(0, 50);
+			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(UpdateStatusChanged, ref unregisterEvents);
 
-            UpdateStatusChanged(null, null);
-        }
+			MinimumSize = new VectorMath.Vector2(0, 50);
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
+			UpdateStatusChanged(null, null);
+		}
 
-        public void CheckForUpdate(object sender, EventArgs e)
-        {
-            UpdateControlData.Instance.CheckForUpdateUserRequested();
-        }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
 
-        public void InstallUpdate(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!UpdateControlData.Instance.InstallUpdate(this))
-                {
-                    installUpdateLink.Visible = false;
-                    updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
-                }
-            }
-            catch
-            {
-                installUpdateLink.Visible = false;
-                updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
-            }
-        }
+		public void CheckForUpdate(object sender, EventArgs e)
+		{
+			UpdateControlData.Instance.CheckForUpdateUserRequested();
+		}
 
+		public void InstallUpdate(object sender, EventArgs e)
+		{
+			try
+			{
+				if (!UpdateControlData.Instance.InstallUpdate(this))
+				{
+					installUpdateLink.Visible = false;
+					updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+				}
+			}
+			catch
+			{
+				installUpdateLink.Visible = false;
+				updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+			}
+		}
 
-        public void DownloadUpdate(object sender, EventArgs e)
-        {
-            downloadUpdateLink.Visible = false;
-            updateStatusText.Text = string.Format("Retrieving download info...".Localize());
+		public void DownloadUpdate(object sender, EventArgs e)
+		{
+			downloadUpdateLink.Visible = false;
+			updateStatusText.Text = string.Format("Retrieving download info...".Localize());
 
-            UpdateControlData.Instance.InitiateUpdateDownload();
-        }
+			UpdateControlData.Instance.InitiateUpdateDownload();
+		}
 
-        void UpdateStatusChanged(object sender, EventArgs e)
-        {
-            switch (UpdateControlData.Instance.UpdateStatus)
-            {
-                case UpdateControlData.UpdateStatusStates.MayBeAvailable:
-                    updateStatusText.Text = string.Format("New updates may be available.".Localize());
-                    checkUpdateLink.Visible = true;
-                    break;
+		private void UpdateStatusChanged(object sender, EventArgs e)
+		{
+			switch (UpdateControlData.Instance.UpdateStatus)
+			{
+				case UpdateControlData.UpdateStatusStates.MayBeAvailable:
+					updateStatusText.Text = string.Format("New updates may be available.".Localize());
+					checkUpdateLink.Visible = true;
+					break;
 
-                case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
-                    updateStatusText.Text = "Checking for updates...".Localize();
-                    checkUpdateLink.Visible = false;
-                    break;
+				case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
+					updateStatusText.Text = "Checking for updates...".Localize();
+					checkUpdateLink.Visible = false;
+					break;
 
-                case UpdateControlData.UpdateStatusStates.UnableToConnectToServer:
-                    updateStatusText.Text = "Oops! Unable to connect to server.".Localize();
-                    downloadUpdateLink.Visible = false;
-                    installUpdateLink.Visible = false;
-                    checkUpdateLink.Visible = true;
-                    break;
+				case UpdateControlData.UpdateStatusStates.UnableToConnectToServer:
+					updateStatusText.Text = "Oops! Unable to connect to server.".Localize();
+					downloadUpdateLink.Visible = false;
+					installUpdateLink.Visible = false;
+					checkUpdateLink.Visible = true;
+					break;
 
-                case UpdateControlData.UpdateStatusStates.UpdateAvailable:
-                    updateStatusText.Text = string.Format("There is a recommended update available.".Localize());
-                    downloadUpdateLink.Visible = true;
-                    installUpdateLink.Visible = false;
-                    checkUpdateLink.Visible = false;
-                    break;
+				case UpdateControlData.UpdateStatusStates.UpdateAvailable:
+					updateStatusText.Text = string.Format("There is a recommended update available.".Localize());
+					downloadUpdateLink.Visible = true;
+					installUpdateLink.Visible = false;
+					checkUpdateLink.Visible = false;
+					break;
 
-                case UpdateControlData.UpdateStatusStates.UpdateDownloading:
-                    string newText = "Downloading updates...".Localize();
-                    newText = "{0} {1}%".FormatWith(newText, UpdateControlData.Instance.DownloadPercent);
-                    updateStatusText.Text = newText;
-                    break;
+				case UpdateControlData.UpdateStatusStates.UpdateDownloading:
+					string newText = "Downloading updates...".Localize();
+					newText = "{0} {1}%".FormatWith(newText, UpdateControlData.Instance.DownloadPercent);
+					updateStatusText.Text = newText;
+					break;
 
-                case UpdateControlData.UpdateStatusStates.ReadyToInstall:
-                    updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
-                    downloadUpdateLink.Visible = false;
-                    installUpdateLink.Visible = true;
-                    checkUpdateLink.Visible = false;
-                    break;
+				case UpdateControlData.UpdateStatusStates.ReadyToInstall:
+					updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
+					downloadUpdateLink.Visible = false;
+					installUpdateLink.Visible = true;
+					checkUpdateLink.Visible = false;
+					break;
 
-                case UpdateControlData.UpdateStatusStates.UpToDate:
-                    updateStatusText.Text = string.Format("Your application is up-to-date.".Localize());
-                    downloadUpdateLink.Visible = false;
-                    installUpdateLink.Visible = false;
-                    checkUpdateLink.Visible = true;
-                    break;
+				case UpdateControlData.UpdateStatusStates.UpToDate:
+					updateStatusText.Text = string.Format("Your application is up-to-date.".Localize());
+					downloadUpdateLink.Visible = false;
+					installUpdateLink.Visible = false;
+					checkUpdateLink.Visible = true;
+					break;
 
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-    }
+				default:
+					throw new NotImplementedException();
+			}
+		}
+	}
 }

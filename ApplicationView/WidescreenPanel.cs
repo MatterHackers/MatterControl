@@ -1,15 +1,23 @@
-﻿/*
+﻿using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
+
+/*
 Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,271 +31,251 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using MatterHackers.Agg;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.Font;
-using MatterHackers.VectorMath;
-
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-    public class WidescreenPanel : FlowLayoutWidget
-    {
-        static readonly int ColumnOneFixedWidth = 590;
-        static int lastNumberOfVisiblePanels;
+	public class WidescreenPanel : FlowLayoutWidget
+	{
+		private static readonly int ColumnOneFixedWidth = 590;
+		private static int lastNumberOfVisiblePanels;
 
-        TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
-        RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
+		private TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
+		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
-        FlowLayoutWidget ColumnOne;
-        FlowLayoutWidget ColumnTwo;
-        double Force1PanelWidth = 990 * TextWidget.GlobalPointSizeScaleRatio;
-        double Force2PanelWidth = 1590 * TextWidget.GlobalPointSizeScaleRatio;
+		private FlowLayoutWidget ColumnOne;
+		private FlowLayoutWidget ColumnTwo;
+		private double Force1PanelWidth = 990 * TextWidget.GlobalPointSizeScaleRatio;
+		private double Force2PanelWidth = 1590 * TextWidget.GlobalPointSizeScaleRatio;
 
-        GuiWidget leftBorderLine;
+		private GuiWidget leftBorderLine;
 
-        event EventHandler unregisterEvents;
+		private event EventHandler unregisterEvents;
 
-        public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
+		public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
 
-        QueueDataView queueDataView = null;
-        
-        public WidescreenPanel()
-            : base(FlowDirection.LeftToRight)
-        {
-            Name = "WidescreenPanel";
-            AnchorAll();
-            BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            Padding = new BorderDouble(4);
+		private QueueDataView queueDataView = null;
 
-            ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
-            PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-            ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
-            this.BoundsChanged += new EventHandler(onBoundsChanges);
-        }
+		public WidescreenPanel()
+			: base(FlowDirection.LeftToRight)
+		{
+			Name = "WidescreenPanel";
+			AnchorAll();
+			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			Padding = new BorderDouble(4);
 
-        public void ReloadAdvancedControlsPanelTrigger(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
-        }
+			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(LoadSettingsOnPrinterChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
+			this.BoundsChanged += new EventHandler(onBoundsChanges);
+		}
 
-        public override void OnParentChanged(EventArgs e)
-        {
-            lastNumberOfVisiblePanels = 0;
-            RecreateAllPanels();
-            base.OnParentChanged(e);
-        }
+		public void ReloadAdvancedControlsPanelTrigger(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
+		}
 
-        void onBoundsChanges(Object sender, EventArgs e)
-        {
-            if (NumberOfVisiblePanels() != lastNumberOfVisiblePanels)
-            {
-                RecreateAllPanels();
-            }
-        }
+		public override void OnParentChanged(EventArgs e)
+		{
+			lastNumberOfVisiblePanels = 0;
+			RecreateAllPanels();
+			base.OnParentChanged(e);
+		}
 
-        void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.ShowHoverText("View Manual Printer Controls and Slicing Settings");
-        }
+		private void onBoundsChanges(Object sender, EventArgs e)
+		{
+			if (NumberOfVisiblePanels() != lastNumberOfVisiblePanels)
+			{
+				RecreateAllPanels();
+			}
+		}
 
-        void onMouseLeaveBoundsAdvancedControlsLink(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.HideHoverText();
-        }
+		private void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.ShowHoverText("View Manual Printer Controls and Slicing Settings");
+		}
 
-        void onMouseEnterBoundsPrintQueueLink(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.ShowHoverText("View Queue and Library");
-        }
+		private void onMouseLeaveBoundsAdvancedControlsLink(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.HideHoverText();
+		}
 
-        void onMouseLeaveBoundsPrintQueueLink(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.HideHoverText();
-        }
+		private void onMouseEnterBoundsPrintQueueLink(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.ShowHoverText("View Queue and Library");
+		}
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
+		private void onMouseLeaveBoundsPrintQueueLink(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.HideHoverText();
+		}
 
-        void onActivePrintItemChanged(object sender, EventArgs e)
-        {
-            if (NumberOfVisiblePanels() > 1)
-            {
-                UiThread.RunOnIdle(LoadColumnTwo);
-            }
-        }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
 
-        CompactSlidePanel compactSlidePanel;
-        void LoadCompactView()
-        {
-            queueDataView = new QueueDataView();
-            
-            ColumnOne.RemoveAllChildren();
-            ColumnOne.AddChild(new ActionBarPlus(queueDataView));
-            compactSlidePanel = new CompactSlidePanel(queueDataView);
-            ColumnOne.AddChild(compactSlidePanel);
-            ColumnOne.AnchorAll();
-        }
+		private void onActivePrintItemChanged(object sender, EventArgs e)
+		{
+			if (NumberOfVisiblePanels() > 1)
+			{
+				UiThread.RunOnIdle(LoadColumnTwo);
+			}
+		}
 
-        void LoadColumnTwo(object state = null)
-        {
-            ColumnTwo.CloseAndRemoveAllChildren();
+		private CompactSlidePanel compactSlidePanel;
 
-            PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
-            partViewContent.AnchorAll();
+		private void LoadCompactView()
+		{
+			queueDataView = new QueueDataView();
 
-            ColumnTwo.AddChild(partViewContent);
+			ColumnOne.RemoveAllChildren();
+			ColumnOne.AddChild(new ActionBarPlus(queueDataView));
+			compactSlidePanel = new CompactSlidePanel(queueDataView);
+			ColumnOne.AddChild(compactSlidePanel);
+			ColumnOne.AnchorAll();
+		}
 
-            ColumnTwo.AnchorAll();
-        }
+		private void LoadColumnTwo(object state = null)
+		{
+			ColumnTwo.CloseAndRemoveAllChildren();
 
-        int NumberOfVisiblePanels()
-        {
-            if (this.Width < Force1PanelWidth)
-            {
-                return 1;
-            }
+			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled);
+			partViewContent.AnchorAll();
 
-            return 2;
-        }
+			ColumnTwo.AddChild(partViewContent);
 
-        public void RecreateAllPanels(object state = null)
-        {
-            if (Width == 0)
-            {
-                return;
-            }
+			ColumnTwo.AnchorAll();
+		}
 
-            int numberOfPanels = NumberOfVisiblePanels();
+		private int NumberOfVisiblePanels()
+		{
+			if (this.Width < Force1PanelWidth)
+			{
+				return 1;
+			}
 
-            PreChangePanels.CallEvents(this, null);
-            RemovePanelsAndCreateEmpties();
+			return 2;
+		}
 
-            switch (numberOfPanels)
-            {
-                case 1:
-                    ApplicationController.Instance.WidescreenMode = false;
-                    LoadCompactView();
-                    break;
+		public void RecreateAllPanels(object state = null)
+		{
+			if (Width == 0)
+			{
+				return;
+			}
 
-                case 2:
-                        ApplicationController.Instance.WidescreenMode = false;
-                        LoadCompactView();
-                        LoadColumnTwo();
-                    break;
-            }
+			int numberOfPanels = NumberOfVisiblePanels();
 
-            SetColumnVisibility();
+			PreChangePanels.CallEvents(this, null);
+			RemovePanelsAndCreateEmpties();
 
-            lastNumberOfVisiblePanels = numberOfPanels;
-        }
+			switch (numberOfPanels)
+			{
+				case 1:
+					ApplicationController.Instance.WidescreenMode = false;
+					LoadCompactView();
+					break;
 
-        void SetColumnVisibility(object state = null)
-        {
-            int numberOfPanels = NumberOfVisiblePanels();
+				case 2:
+					ApplicationController.Instance.WidescreenMode = false;
+					LoadCompactView();
+					LoadColumnTwo();
+					break;
+			}
 
-            switch (numberOfPanels)
-            {
-                case 1:
-                    {
-                        ColumnTwo.Visible = false;
-                        ColumnOne.Visible = true;
+			SetColumnVisibility();
 
-                        Padding = new BorderDouble(0);
+			lastNumberOfVisiblePanels = numberOfPanels;
+		}
 
-                        leftBorderLine.Visible = false;
-                    }
-                    break;
+		private void SetColumnVisibility(object state = null)
+		{
+			int numberOfPanels = NumberOfVisiblePanels();
 
-                case 2:
-                    Padding = new BorderDouble(4);
-                    ColumnOne.Visible = true;
-                    ColumnTwo.Visible = true;
-                    ColumnOne.HAnchor = Agg.UI.HAnchor.None;
-                    ColumnOne.Width = ColumnOneFixedWidth; // it can hold the slice settings so it needs to be bigger.
-                    ColumnOne.MinimumSize = new Vector2(Math.Max(compactSlidePanel.TabBarWidth, ColumnOneFixedWidth), 0); //Ordering here matters - must go after children are added
-                    break;
-            }
-        }
+			switch (numberOfPanels)
+			{
+				case 1:
+					{
+						ColumnTwo.Visible = false;
+						ColumnOne.Visible = true;
 
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            base.OnDraw(graphics2D);
-        }
+						Padding = new BorderDouble(0);
 
-        private void RemovePanelsAndCreateEmpties()
-        {
-            CloseAndRemoveAllChildren();
+						leftBorderLine.Visible = false;
+					}
+					break;
 
-            ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				case 2:
+					Padding = new BorderDouble(4);
+					ColumnOne.Visible = true;
+					ColumnTwo.Visible = true;
+					ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+					ColumnOne.Width = ColumnOneFixedWidth; // it can hold the slice settings so it needs to be bigger.
+					ColumnOne.MinimumSize = new Vector2(Math.Max(compactSlidePanel.TabBarWidth, ColumnOneFixedWidth), 0); //Ordering here matters - must go after children are added
+					break;
+			}
+		}
 
-            AddChild(ColumnOne);
-            leftBorderLine = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
-            leftBorderLine.Width = 15;
-            leftBorderLine.DrawBefore += (widget, graphics2D) =>
-            {
-                RectangleDouble bounds = widget.LocalBounds;
-                bounds.Left += 3;
-                bounds.Right -= 8;
-                graphics2D.graphics2D.FillRectangle(bounds, new RGBA_Bytes(160, 160, 160));
-            };
-            AddChild(leftBorderLine);
-            AddChild(ColumnTwo);
-        }
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
+		}
 
-        public void ReloadAdvancedControlsPanel(object state)
-        {
-            PreChangePanels.CallEvents(this, null);
-        }
+		private void RemovePanelsAndCreateEmpties()
+		{
+			CloseAndRemoveAllChildren();
 
-        public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
-        {
-            ActiveSliceSettings.Instance.LoadAllSettings();
-            ApplicationController.Instance.ReloadAll(null, null); 
-        }
-    }    
+			ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-    class NotificationWidget : GuiWidget
-    {
-        public NotificationWidget()
-            : base(12, 12)
-        {
-        }
+			AddChild(ColumnOne);
+			leftBorderLine = new GuiWidget(vAnchor: VAnchor.ParentBottomTop);
+			leftBorderLine.Width = 15;
+			leftBorderLine.DrawBefore += (widget, graphics2D) =>
+			{
+				RectangleDouble bounds = widget.LocalBounds;
+				bounds.Left += 3;
+				bounds.Right -= 8;
+				graphics2D.graphics2D.FillRectangle(bounds, new RGBA_Bytes(160, 160, 160));
+			};
+			AddChild(leftBorderLine);
+			AddChild(ColumnTwo);
+		}
 
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            graphics2D.Circle(Width / 2, Height / 2, Width / 2, RGBA_Bytes.White);
-            graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, RGBA_Bytes.Red);
-            graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, RGBA_Bytes.White);
-            base.OnDraw(graphics2D);
-        }
-    }
+		public void ReloadAdvancedControlsPanel(object state)
+		{
+			PreChangePanels.CallEvents(this, null);
+		}
+
+		public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
+		{
+			ActiveSliceSettings.Instance.LoadAllSettings();
+			ApplicationController.Instance.ReloadAll(null, null);
+		}
+	}
+
+	internal class NotificationWidget : GuiWidget
+	{
+		public NotificationWidget()
+			: base(12, 12)
+		{
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			graphics2D.Circle(Width / 2, Height / 2, Width / 2, RGBA_Bytes.White);
+			graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, RGBA_Bytes.Red);
+			graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, RGBA_Bytes.White);
+			base.OnDraw(graphics2D);
+		}
+	}
 }

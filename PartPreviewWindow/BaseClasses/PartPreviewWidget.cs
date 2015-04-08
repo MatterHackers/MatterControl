@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,98 +23,85 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class PartPreviewWidget : GuiWidget
-    {
-        protected readonly int ShortButtonHeight = 25;
-        protected int SideBarButtonWidth;
+	public class PartPreviewWidget : GuiWidget
+	{
+		protected readonly int ShortButtonHeight = 25;
+		protected int SideBarButtonWidth;
 
-        protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        protected TextImageButtonFactory checkboxButtonFactory = new TextImageButtonFactory();
-        protected TextImageButtonFactory expandMenuOptionFactory = new TextImageButtonFactory();
-        protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
+		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		protected TextImageButtonFactory checkboxButtonFactory = new TextImageButtonFactory();
+		protected TextImageButtonFactory expandMenuOptionFactory = new TextImageButtonFactory();
+		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
 
-        protected ViewControls2D viewControls2D;
+		protected ViewControls2D viewControls2D;
 
-        protected Cover buttonRightPanelDisabledCover;
-        protected FlowLayoutWidget buttonRightPanel;
+		protected Cover buttonRightPanelDisabledCover;
+		protected FlowLayoutWidget buttonRightPanel;
 
-        public PartPreviewWidget()
-        {
-            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
-            {
-                SideBarButtonWidth = 180;
-                ShortButtonHeight = 40;
-            }
-            else
-            {
-                SideBarButtonWidth = 138;
-                ShortButtonHeight = 30;
-            }
-            
-            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+		public PartPreviewWidget()
+		{
+			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			{
+				SideBarButtonWidth = 180;
+				ShortButtonHeight = 40;
+			}
+			else
+			{
+				SideBarButtonWidth = 138;
+				ShortButtonHeight = 30;
+			}
 
-            whiteButtonFactory.FixedWidth = SideBarButtonWidth;
-            whiteButtonFactory.FixedHeight = ShortButtonHeight;
-            whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
-            whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
-            whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
-            whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
-            whiteButtonFactory.borderWidth = 1;
-            whiteButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-            whiteButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            expandMenuOptionFactory.FixedWidth = SideBarButtonWidth;
-            expandMenuOptionFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            expandMenuOptionFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            expandMenuOptionFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            expandMenuOptionFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            expandMenuOptionFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 50);
-            expandMenuOptionFactory.pressedFillColor = new RGBA_Bytes(255, 255, 255, 50);
-            expandMenuOptionFactory.disabledFillColor = new RGBA_Bytes(255, 255, 255, 50);
+			whiteButtonFactory.FixedWidth = SideBarButtonWidth;
+			whiteButtonFactory.FixedHeight = ShortButtonHeight;
+			whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
+			whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
+			whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
+			whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
+			whiteButtonFactory.borderWidth = 1;
+			whiteButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			whiteButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-            checkboxButtonFactory.fontSize = 11;
-            checkboxButtonFactory.FixedWidth = SideBarButtonWidth;
-            checkboxButtonFactory.borderWidth = 3;
+			expandMenuOptionFactory.FixedWidth = SideBarButtonWidth;
+			expandMenuOptionFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			expandMenuOptionFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			expandMenuOptionFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			expandMenuOptionFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			expandMenuOptionFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 50);
+			expandMenuOptionFactory.pressedFillColor = new RGBA_Bytes(255, 255, 255, 50);
+			expandMenuOptionFactory.disabledFillColor = new RGBA_Bytes(255, 255, 255, 50);
 
-            checkboxButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            checkboxButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 0);
-            checkboxButtonFactory.normalFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			checkboxButtonFactory.fontSize = 11;
+			checkboxButtonFactory.FixedWidth = SideBarButtonWidth;
+			checkboxButtonFactory.borderWidth = 3;
 
-            checkboxButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            checkboxButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 50);
-            checkboxButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 50);
+			checkboxButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			checkboxButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 0);
+			checkboxButtonFactory.normalFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            checkboxButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            checkboxButtonFactory.pressedBorderColor = new RGBA_Bytes(0, 0, 0, 50);
+			checkboxButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			checkboxButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 50);
+			checkboxButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 50);
 
-            checkboxButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			checkboxButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			checkboxButtonFactory.pressedBorderColor = new RGBA_Bytes(0, 0, 0, 50);
 
-            BackgroundColor = RGBA_Bytes.White;
-        }
-    }
+			checkboxButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+			BackgroundColor = RGBA_Bytes.White;
+		}
+	}
 }

@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,297 +23,299 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-using MatterHackers.Agg;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.PolygonMesh;
-using MatterHackers.Agg.UI;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.Agg.PlatformAbstract;
-
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-    public class LibraryData
-    {
-        private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
-        public List<PrintItemWrapper> PrintItems
-        {
-            get { return printItems; }
-        }
+	public class LibraryData
+	{
+		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
 
-        public RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
-        public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
-        public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
-        public RootedObjectEventHandler OrderChanged = new RootedObjectEventHandler();
+		public List<PrintItemWrapper> PrintItems
+		{
+			get { return printItems; }
+		}
 
-        private DataStorage.PrintItemCollection libraryCollection;
+		public RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
+		public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
+		public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
+		public RootedObjectEventHandler OrderChanged = new RootedObjectEventHandler();
 
-        static LibraryData instance;
-        public static LibraryData Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new LibraryData();
-                    instance.LoadLibraryItems();
-                }
-                return instance;
-            }
-        }
+		private DataStorage.PrintItemCollection libraryCollection;
 
-        static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
-        {
+		private static LibraryData instance;
+
+		public static LibraryData Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new LibraryData();
+					instance.LoadLibraryItems();
+				}
+				return instance;
+			}
+		}
+
+		static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
+		{
 			string[] metaData = { "Created By", "MatterControl" };
 			if (AbsolutePositioned)
 			{
 				metaData = new string[] { "Created By", "MatterControl", "BedPosition", "Absolute" };
 			}
-            if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
-            {
-                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-                MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
-            }
-            else // save a copy to the library and update this to point at it
-            {
-                string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
-                printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+			if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+			{
+				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
+			}
+			else // save a copy to the library and update this to point at it
+			{
+				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
+				printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-                MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-                MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
+				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
 
-                printItemWrapper.PrintItem.Commit();
-			
+				printItemWrapper.PrintItem.Commit();
+
 				// let the queue know that the item has changed so it load the correct part
 				QueueData.Instance.SaveDefaultQueue();
 			}
 
-            printItemWrapper.OnFileHasChanged();
-        }
+			printItemWrapper.OnFileHasChanged();
+		}
 
-        string keywordFilter = "";
-        public string KeywordFilter
-        {
-            get { return keywordFilter; }
-            set
-            {
-                if (this.keywordFilter != value)
-                {
-                    this.keywordFilter = value;
-                    LoadLibraryItems();
-                }
-            }
-        }
+		private string keywordFilter = "";
 
-        public void AddItem(PrintItemWrapper item, int indexToInsert = -1)
-        {
-            if (indexToInsert == -1)
-            {
-                indexToInsert = PrintItems.Count;
-            }
-            PrintItems.Insert(indexToInsert, item);
-            OnItemAdded(new IndexArgs(indexToInsert));
-        }
+		public string KeywordFilter
+		{
+			get { return keywordFilter; }
+			set
+			{
+				if (this.keywordFilter != value)
+				{
+					this.keywordFilter = value;
+					LoadLibraryItems();
+				}
+			}
+		}
 
-        public void RemoveItem(PrintItemWrapper printItemWrapper)
-        {
-            int index = PrintItems.IndexOf(printItemWrapper);
-            if (index < 0)
-            {
-                // It may be possible to have the same item in the remove list twice.
-                // so if it is not in the PrintItems then ignore it.
-                return;
-            }
-            PrintItems.RemoveAt(index);
-            
-            // and remove it from the data base
-            printItemWrapper.Delete();
+		public void AddItem(PrintItemWrapper item, int indexToInsert = -1)
+		{
+			if (indexToInsert == -1)
+			{
+				indexToInsert = PrintItems.Count;
+			}
+			PrintItems.Insert(indexToInsert, item);
+			OnItemAdded(new IndexArgs(indexToInsert));
+		}
 
-            OnItemRemoved(new IndexArgs(index));
-        }
+		public void RemoveItem(PrintItemWrapper printItemWrapper)
+		{
+			int index = PrintItems.IndexOf(printItemWrapper);
+			if (index < 0)
+			{
+				// It may be possible to have the same item in the remove list twice.
+				// so if it is not in the PrintItems then ignore it.
+				return;
+			}
+			PrintItems.RemoveAt(index);
 
-        public PrintItemWrapper GetPrintItemWrapper(int index)
-        {
-            if(index >= 0 && index < Count)
-            {
-                return PrintItems[index];
-            }
+			// and remove it from the data base
+			printItemWrapper.Delete();
 
-            return null;
-        }
+			OnItemRemoved(new IndexArgs(index));
+		}
 
-        public List<PrintItem> CreateReadOnlyPartList()
-        {
-            List<PrintItem> listToReturn = new List<PrintItem>();
-            for (int i = 0; i < Count; i++)
-            {
-                listToReturn.Add(GetPrintItemWrapper(i).PrintItem);
-            }
-            return listToReturn;
-        }
+		public PrintItemWrapper GetPrintItemWrapper(int index)
+		{
+			if (index >= 0 && index < Count)
+			{
+				return PrintItems[index];
+			}
 
-        public DataStorage.PrintItemCollection LibraryCollection
-        {
-            get 
-            {
-                // Attempt to initialize the library from the Datastore if null
-                if (libraryCollection == null)
-                {
-                    libraryCollection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
-                }
+			return null;
+		}
 
-                // If the _library collection is still missing, create and populate it with default content
-                if (libraryCollection == null)
-                {
-                    libraryCollection = new PrintItemCollection();
-                    libraryCollection.Name = "_library";
-                    libraryCollection.Commit();
+		public List<PrintItem> CreateReadOnlyPartList()
+		{
+			List<PrintItem> listToReturn = new List<PrintItem>();
+			for (int i = 0; i < Count; i++)
+			{
+				listToReturn.Add(GetPrintItemWrapper(i).PrintItem);
+			}
+			return listToReturn;
+		}
 
-                    // Preload library with Oem supplied list of default parts
-                    string[] itemsToAdd = LibraryData.SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
-                    if (itemsToAdd.Length > 0)
-                    {
-                        // Import any files sync'd to disk into the library, then add them to the queue
-                        LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd);
-                    }
-                }
-                return libraryCollection;
-            }
-        }
+		public DataStorage.PrintItemCollection LibraryCollection
+		{
+			get
+			{
+				// Attempt to initialize the library from the Datastore if null
+				if (libraryCollection == null)
+				{
+					libraryCollection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
+				}
 
-        internal static string[] SyncCalibrationFilesToDisk(List<string> calibrationPrintFileNames)
-        {
-            // Ensure the CalibrationParts directory exists to store/import the files from disk
-            string tempPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "calibration-parts");
-            Directory.CreateDirectory(tempPath);
+				// If the _library collection is still missing, create and populate it with default content
+				if (libraryCollection == null)
+				{
+					libraryCollection = new PrintItemCollection();
+					libraryCollection.Name = "_library";
+					libraryCollection.Commit();
 
-            // Build a list of temporary files that should be imported into the library
-            return calibrationPrintFileNames.Where(fileName =>
-            {
-                // Filter out items that already exist in the library
-                return LibraryData.Instance.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
-            }).Select(fileName =>
-            {
-                // Copy calibration prints from StaticData to the filesystem before importing into the library
-                string tempFile = Path.Combine(tempPath, Path.GetFileName(fileName));
-                using (FileStream outstream = File.OpenWrite(tempFile))
-                using (Stream instream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "SampleParts", fileName)))
-                {
-                    instream.CopyTo(outstream);
-                }
+					// Preload library with Oem supplied list of default parts
+					string[] itemsToAdd = LibraryData.SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
+					if (itemsToAdd.Length > 0)
+					{
+						// Import any files sync'd to disk into the library, then add them to the queue
+						LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd);
+					}
+				}
+				return libraryCollection;
+			}
+		}
 
-                // Project the new filename to the output
-                return tempFile;
-            }).ToArray();
-        }
+		internal static string[] SyncCalibrationFilesToDisk(List<string> calibrationPrintFileNames)
+		{
+			// Ensure the CalibrationParts directory exists to store/import the files from disk
+			string tempPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "calibration-parts");
+			Directory.CreateDirectory(tempPath);
 
-        internal IEnumerable<DataStorage.PrintItem> GetLibraryItems(string keyphrase = null)
-        {   
-            if (LibraryCollection == null)
-            {
-                return null;
-            }
-            else
-            {
-                string query;
-                if (keyphrase == null)
-                {
-                    query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", libraryCollection.Id);
-                }
-                else
-                {
-                    query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} AND Name LIKE '%{1}%' ORDER BY Name ASC;", libraryCollection.Id, keyphrase);
-                }
-                IEnumerable<DataStorage.PrintItem> result = (IEnumerable<DataStorage.PrintItem>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintItem>(query);
-                return result;
-            }            
-        }
+			// Build a list of temporary files that should be imported into the library
+			return calibrationPrintFileNames.Where(fileName =>
+			{
+				// Filter out items that already exist in the library
+				return LibraryData.Instance.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
+			}).Select(fileName =>
+			{
+				// Copy calibration prints from StaticData to the filesystem before importing into the library
+				string tempFile = Path.Combine(tempPath, Path.GetFileName(fileName));
+				using (FileStream outstream = File.OpenWrite(tempFile))
+				using (Stream instream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "SampleParts", fileName)))
+				{
+					instream.CopyTo(outstream);
+				}
 
-        public void LoadLibraryItems()
-        {
-            PrintItems.Clear();
-            IEnumerable<DataStorage.PrintItem> partFiles = GetLibraryItems(keywordFilter);
-            if (partFiles != null)
-            {
-                foreach (PrintItem part in partFiles)
-                {
-                    PrintItems.Add(new PrintItemWrapper(part));
-                }
-            }
-            OnDataReloaded(null);
-        }
+				// Project the new filename to the output
+				return tempFile;
+			}).ToArray();
+		}
 
-        public void OnDataReloaded(EventArgs e)
-        {
-            DataReloaded.CallEvents(this, e);
-        }
+		internal IEnumerable<DataStorage.PrintItem> GetLibraryItems(string keyphrase = null)
+		{
+			if (LibraryCollection == null)
+			{
+				return null;
+			}
+			else
+			{
+				string query;
+				if (keyphrase == null)
+				{
+					query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", libraryCollection.Id);
+				}
+				else
+				{
+					query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} AND Name LIKE '%{1}%' ORDER BY Name ASC;", libraryCollection.Id, keyphrase);
+				}
+				IEnumerable<DataStorage.PrintItem> result = (IEnumerable<DataStorage.PrintItem>)DataStorage.Datastore.Instance.dbSQLite.Query<DataStorage.PrintItem>(query);
+				return result;
+			}
+		}
 
-        public void OnItemAdded(EventArgs e)
-        {
-            ItemAdded.CallEvents(this, e);
-        }
+		public void LoadLibraryItems()
+		{
+			PrintItems.Clear();
+			IEnumerable<DataStorage.PrintItem> partFiles = GetLibraryItems(keywordFilter);
+			if (partFiles != null)
+			{
+				foreach (PrintItem part in partFiles)
+				{
+					PrintItems.Add(new PrintItemWrapper(part));
+				}
+			}
+			OnDataReloaded(null);
+		}
 
-        public void OnItemRemoved(EventArgs e)
-        {
-            ItemRemoved.CallEvents(this, e);
-        }
+		public void OnDataReloaded(EventArgs e)
+		{
+			DataReloaded.CallEvents(this, e);
+		}
 
-        public void SaveLibraryItems()
-        {
-            //
-        }
+		public void OnItemAdded(EventArgs e)
+		{
+			ItemAdded.CallEvents(this, e);
+		}
 
-        public int Count
-        {
-            get
-            {
-                return PrintItems.Count;
-            }
-        }
+		public void OnItemRemoved(EventArgs e)
+		{
+			ItemRemoved.CallEvents(this, e);
+		}
 
-        ReportProgressRatio fileLoadReportProgress = null;
-        public void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
-        {
-            this.fileLoadReportProgress = reportProgress;
-            if (files != null && files.Count > 0)
-            {
-                BackgroundWorker loadFilesIntoLibraryBackgroundWorker = new BackgroundWorker();
-                loadFilesIntoLibraryBackgroundWorker.WorkerReportsProgress = true;
+		public void SaveLibraryItems()
+		{
+			//
+		}
 
-                loadFilesIntoLibraryBackgroundWorker.DoWork += new DoWorkEventHandler(loadFilesIntoLibraryBackgoundWorker_DoWork);
-                loadFilesIntoLibraryBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted);
+		public int Count
+		{
+			get
+			{
+				return PrintItems.Count;
+			}
+		}
 
-                if (callback != null)
-                {
-                    loadFilesIntoLibraryBackgroundWorker.RunWorkerCompleted += callback;
-                }
+		private ReportProgressRatio fileLoadReportProgress = null;
 
-                loadFilesIntoLibraryBackgroundWorker.RunWorkerAsync(files);
-            }
-        }
+		public void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		{
+			this.fileLoadReportProgress = reportProgress;
+			if (files != null && files.Count > 0)
+			{
+				BackgroundWorker loadFilesIntoLibraryBackgroundWorker = new BackgroundWorker();
+				loadFilesIntoLibraryBackgroundWorker.WorkerReportsProgress = true;
 
-        void loadFilesIntoLibraryBackgoundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            IList<string> fileList = e.Argument as IList<string>;
-            foreach (string loadedFileName in fileList)
-            {
-                string extension = Path.GetExtension(loadedFileName).ToUpper();
-                if (MeshFileIo.ValidFileExtensions().Contains(extension)
-                    || extension == ".GCODE"
+				loadFilesIntoLibraryBackgroundWorker.DoWork += new DoWorkEventHandler(loadFilesIntoLibraryBackgoundWorker_DoWork);
+				loadFilesIntoLibraryBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted);
+
+				if (callback != null)
+				{
+					loadFilesIntoLibraryBackgroundWorker.RunWorkerCompleted += callback;
+				}
+
+				loadFilesIntoLibraryBackgroundWorker.RunWorkerAsync(files);
+			}
+		}
+
+		private void loadFilesIntoLibraryBackgoundWorker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			IList<string> fileList = e.Argument as IList<string>;
+			foreach (string loadedFileName in fileList)
+			{
+				string extension = Path.GetExtension(loadedFileName).ToUpper();
+				if (MeshFileIo.ValidFileExtensions().Contains(extension)
+					|| extension == ".GCODE"
 					|| extension == ".ZIP")
-                {
+				{
 					if (extension == ".ZIP")
 					{
 						ProjectFileHandler project = new ProjectFileHandler(null);
@@ -330,9 +332,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						AddStlOrGcode(loadedFileName, extension);
 					}
-                }
-            }
-        }
+				}
+			}
+		}
 
 		private static void AddStlOrGcode(string loadedFileName, string extension)
 		{
@@ -375,8 +377,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-        void loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-        }
-   }
+		private void loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+		}
+	}
 }

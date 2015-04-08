@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,181 +23,181 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace MatterHackers.MatterControl.CreatorPlugins
 {
-    public class PluginChooserWindow : SystemWindow
-    {
-        protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        protected TextImageButtonFactory unlockButtonFactory = new TextImageButtonFactory();
-        List<GuiWidget> listWithValues = new List<GuiWidget>();        
+	public class PluginChooserWindow : SystemWindow
+	{
+		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		protected TextImageButtonFactory unlockButtonFactory = new TextImageButtonFactory();
+		private List<GuiWidget> listWithValues = new List<GuiWidget>();
 
-        ImageBuffer LoadImage(string imageName)
-        {
-            string path = Path.Combine("Icons", imageName);
-            ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
+		private ImageBuffer LoadImage(string imageName)
+		{
+			string path = Path.Combine("Icons", imageName);
+			ImageBuffer buffer = new ImageBuffer(10, 10, 32, new BlenderBGRA());
 
-            StaticData.Instance.LoadImage(path, buffer);
+			StaticData.Instance.LoadImage(path, buffer);
 
-            return buffer;
-        }
+			return buffer;
+		}
 
-        public PluginChooserWindow()
-            : base(360, 300)
-        {
-            AddElements();
-            ShowAsSystemWindow();
-            MinimumSize = new Vector2(360, 300);
-            AddHandlers();
-        }
+		public PluginChooserWindow()
+			: base(360, 300)
+		{
+			AddElements();
+			ShowAsSystemWindow();
+			MinimumSize = new Vector2(360, 300);
+			AddHandlers();
+		}
 
-        event EventHandler unregisterEvents;
-        protected void AddHandlers()
-        {
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-        }
+		private event EventHandler unregisterEvents;
 
-        public void ThemeChanged(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle(Reload);
-        }
+		protected void AddHandlers()
+		{
+			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+		}
 
-        public void TriggerReload(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle(Reload);
-        }
+		public void ThemeChanged(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(Reload);
+		}
 
-        public void Reload(object state)
-        {
-            this.RemoveAllChildren();
-            this.AddElements();
-        }
+		public void TriggerReload(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(Reload);
+		}
 
-        public void AddElements()
-        {
-			Title = LocalizedString.Get("Design Add-ons");            
+		public void Reload(object state)
+		{
+			this.RemoveAllChildren();
+			this.AddElements();
+		}
 
-            FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            topToBottom.AnchorAll();
-            topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+		public void AddElements()
+		{
+			Title = LocalizedString.Get("Design Add-ons");
 
-            FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-            headerRow.HAnchor = HAnchor.ParentLeftRight;
-            headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-            headerRow.Padding = new BorderDouble(0, 3, 0, 3);
-            {
+			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			topToBottom.AnchorAll();
+			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+
+			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
+			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+			{
 				string elementHeaderLabelBeg = LocalizedString.Get("Select a Design Tool");
 				string elementHeaderLabelFull = string.Format("{0}:", elementHeaderLabelBeg);
 				string elementHeaderLabel = elementHeaderLabelFull;
 				TextWidget elementHeader = new TextWidget(string.Format(elementHeaderLabel), pointSize: 14);
-                elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                elementHeader.HAnchor = HAnchor.ParentLeftRight;
-                elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				elementHeader.HAnchor = HAnchor.ParentLeftRight;
+				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
 
-                headerRow.AddChild(elementHeader);
-            }
+				headerRow.AddChild(elementHeader);
+			}
 
-            topToBottom.AddChild(headerRow);
+			topToBottom.AddChild(headerRow);
 
-            GuiWidget presetsFormContainer = new GuiWidget();
-            {
-                presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
-                presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
-                presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-            }
+			GuiWidget presetsFormContainer = new GuiWidget();
+			{
+				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
+				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
+				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			}
 
-            FlowLayoutWidget pluginRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            pluginRowContainer.AnchorAll();
-            presetsFormContainer.AddChild(pluginRowContainer);            
-            
-            unlockButtonFactory.Margin = new BorderDouble(10,0);
-            if (ActiveTheme.Instance.IsDarkTheme)
-            {
-                unlockButtonFactory.normalFillColor = new RGBA_Bytes(0, 0, 0, 100);
-                unlockButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 100);
-                unlockButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 50);
-                unlockButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 50);
-            }
-            else
-            {
-                unlockButtonFactory.normalFillColor = new RGBA_Bytes(0, 0, 0, 50);
-                unlockButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 50);
-                unlockButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 100);
-                unlockButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 100);
-            }
+			FlowLayoutWidget pluginRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			pluginRowContainer.AnchorAll();
+			presetsFormContainer.AddChild(pluginRowContainer);
 
-            foreach(CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
-            {
-                FlowLayoutWidget pluginListingContainer = new FlowLayoutWidget();
-                pluginListingContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                pluginListingContainer.BackgroundColor = RGBA_Bytes.White;
-                pluginListingContainer.Padding = new BorderDouble(0);
-                pluginListingContainer.Margin = new BorderDouble(6, 0, 6, 6);                
-                
-                ClickWidget pluginRow = new ClickWidget();
-                pluginRow.Margin = new BorderDouble(6, 0, 6, 0);        
-                pluginRow.Height = 38;
-                pluginRow.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			unlockButtonFactory.Margin = new BorderDouble(10, 0);
+			if (ActiveTheme.Instance.IsDarkTheme)
+			{
+				unlockButtonFactory.normalFillColor = new RGBA_Bytes(0, 0, 0, 100);
+				unlockButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 100);
+				unlockButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 50);
+				unlockButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 50);
+			}
+			else
+			{
+				unlockButtonFactory.normalFillColor = new RGBA_Bytes(0, 0, 0, 50);
+				unlockButtonFactory.normalBorderColor = new RGBA_Bytes(0, 0, 0, 50);
+				unlockButtonFactory.hoverFillColor = new RGBA_Bytes(0, 0, 0, 100);
+				unlockButtonFactory.hoverBorderColor = new RGBA_Bytes(0, 0, 0, 100);
+			}
 
-                FlowLayoutWidget macroRow = new FlowLayoutWidget();
-                macroRow.AnchorAll();
-                macroRow.BackgroundColor = RGBA_Bytes.White;
+			foreach (CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
+			{
+				FlowLayoutWidget pluginListingContainer = new FlowLayoutWidget();
+				pluginListingContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				pluginListingContainer.BackgroundColor = RGBA_Bytes.White;
+				pluginListingContainer.Padding = new BorderDouble(0);
+				pluginListingContainer.Margin = new BorderDouble(6, 0, 6, 6);
 
-                if (creatorInfo.iconPath != "")
-                {
-                    ImageBuffer imageBuffer = LoadImage(creatorInfo.iconPath);
-                    ImageWidget imageWidget = new ImageWidget(imageBuffer);
-                    imageWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
-                    macroRow.AddChild(imageWidget);
-                }
+				ClickWidget pluginRow = new ClickWidget();
+				pluginRow.Margin = new BorderDouble(6, 0, 6, 0);
+				pluginRow.Height = 38;
+				pluginRow.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-                bool userHasPermission;
-                if (!creatorInfo.paidAddOnFlag)
-                {
-                    userHasPermission = true;
-                }
-                else
-                {
-                    userHasPermission = creatorInfo.permissionFunction();
-                }
+				FlowLayoutWidget macroRow = new FlowLayoutWidget();
+				macroRow.AnchorAll();
+				macroRow.BackgroundColor = RGBA_Bytes.White;
 
-                string addOnDescription;
-                addOnDescription = creatorInfo.description;
-                TextWidget buttonLabel = new TextWidget(addOnDescription, pointSize: 14);
-                buttonLabel.Margin = new BorderDouble(left: 10);
-                buttonLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
-                macroRow.AddChild(buttonLabel);
+				if (creatorInfo.iconPath != "")
+				{
+					ImageBuffer imageBuffer = LoadImage(creatorInfo.iconPath);
+					ImageWidget imageWidget = new ImageWidget(imageBuffer);
+					imageWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
+					macroRow.AddChild(imageWidget);
+				}
 
-                if (!userHasPermission)
-                {                    
-                    TextWidget demoLabel = new TextWidget("(demo)", pointSize: 10);
+				bool userHasPermission;
+				if (!creatorInfo.paidAddOnFlag)
+				{
+					userHasPermission = true;
+				}
+				else
+				{
+					userHasPermission = creatorInfo.permissionFunction();
+				}
 
-                    demoLabel.Margin = new BorderDouble(left: 4);
-                    demoLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
-                    macroRow.AddChild(demoLabel);
-                }
+				string addOnDescription;
+				addOnDescription = creatorInfo.description;
+				TextWidget buttonLabel = new TextWidget(addOnDescription, pointSize: 14);
+				buttonLabel.Margin = new BorderDouble(left: 10);
+				buttonLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
+				macroRow.AddChild(buttonLabel);
 
-                FlowLayoutWidget hSpacer = new FlowLayoutWidget();
-                hSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                macroRow.AddChild(hSpacer);
+				if (!userHasPermission)
+				{
+					TextWidget demoLabel = new TextWidget("(demo)", pointSize: 10);
 
-                CreatorInformation callCorrectFunctionHold = creatorInfo;
-                pluginRow.Click += (sender, e) =>
-                {
+					demoLabel.Margin = new BorderDouble(left: 4);
+					demoLabel.VAnchor = Agg.UI.VAnchor.ParentCenter;
+					macroRow.AddChild(demoLabel);
+				}
+
+				FlowLayoutWidget hSpacer = new FlowLayoutWidget();
+				hSpacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				macroRow.AddChild(hSpacer);
+
+				CreatorInformation callCorrectFunctionHold = creatorInfo;
+				pluginRow.Click += (sender, e) =>
+				{
 					if (RegisteredCreators.Instance.Creators.Count > 0)
 					{
 						UiThread.RunOnIdle(CloseOnIdle, callCorrectFunctionHold);
@@ -206,59 +206,60 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 					{
 						UiThread.RunOnIdle(CloseOnIdle);
 					}
-                };
+				};
 
-                pluginRow.Cursor = Cursors.Hand;
-                macroRow.Selectable = false;
-                pluginRow.AddChild(macroRow);
+				pluginRow.Cursor = Cursors.Hand;
+				macroRow.Selectable = false;
+				pluginRow.AddChild(macroRow);
 
-                pluginListingContainer.AddChild(pluginRow);
+				pluginListingContainer.AddChild(pluginRow);
 
-                if (!userHasPermission)
-                {
-                    Button unlockButton = unlockButtonFactory.Generate("Unlock");
-                    unlockButton.Margin = new BorderDouble(0);
-                    unlockButton.Cursor = Cursors.Hand;
-                    unlockButton.Click += (sender, e) =>
-                    {
-                        callCorrectFunctionHold.unlockFunction();
-                    };
-                    pluginListingContainer.AddChild(unlockButton);
-                }
+				if (!userHasPermission)
+				{
+					Button unlockButton = unlockButtonFactory.Generate("Unlock");
+					unlockButton.Margin = new BorderDouble(0);
+					unlockButton.Cursor = Cursors.Hand;
+					unlockButton.Click += (sender, e) =>
+					{
+						callCorrectFunctionHold.unlockFunction();
+					};
+					pluginListingContainer.AddChild(unlockButton);
+				}
 
-                pluginRowContainer.AddChild(pluginListingContainer);
-                if (callCorrectFunctionHold.unlockRegisterFunction != null)
-                {
-                    callCorrectFunctionHold.unlockRegisterFunction(TriggerReload, ref unregisterEvents);
-                }
-            }
+				pluginRowContainer.AddChild(pluginListingContainer);
+				if (callCorrectFunctionHold.unlockRegisterFunction != null)
+				{
+					callCorrectFunctionHold.unlockRegisterFunction(TriggerReload, ref unregisterEvents);
+				}
+			}
 
-            topToBottom.AddChild(presetsFormContainer);
-            BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			topToBottom.AddChild(presetsFormContainer);
+			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
-            cancelPresetsButton.Click += (sender, e) => {
-                UiThread.RunOnIdle(CloseOnIdle);            
-            };
+			cancelPresetsButton.Click += (sender, e) =>
+			{
+				UiThread.RunOnIdle(CloseOnIdle);
+			};
 
-            FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-            buttonRow.HAnchor = HAnchor.ParentLeftRight;
-            buttonRow.Padding = new BorderDouble(0, 3);
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Padding = new BorderDouble(0, 3);
 
-            GuiWidget hButtonSpacer = new GuiWidget();
-            hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
-            
-            buttonRow.AddChild(hButtonSpacer);
-            buttonRow.AddChild(cancelPresetsButton);
+			GuiWidget hButtonSpacer = new GuiWidget();
+			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-            topToBottom.AddChild(buttonRow);
+			buttonRow.AddChild(hButtonSpacer);
+			buttonRow.AddChild(cancelPresetsButton);
 
-            AddChild(topToBottom);
-        }
+			topToBottom.AddChild(buttonRow);
 
-        void CloseOnIdle(object state)
-        {
-            Close();
+			AddChild(topToBottom);
+		}
+
+		private void CloseOnIdle(object state)
+		{
+			Close();
 			CreatorInformation callCorrectFunctionHold = state as CreatorInformation;
 			if (callCorrectFunctionHold != null)
 			{
@@ -267,6 +268,6 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 					callCorrectFunctionHold.functionToLaunchCreator(null, null);
 				});
 			}
-        }
-    }
+		}
+	}
 }

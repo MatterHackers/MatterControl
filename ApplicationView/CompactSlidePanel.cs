@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,161 +23,147 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using MatterHackers.Agg;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.Font;
-using MatterHackers.VectorMath;
-
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrintQueue;
+using System;
 
 namespace MatterHackers.MatterControl
 {
-    public class CompactSlidePanel : SlidePanel
-    {
-        event EventHandler unregisterEvents;
+	public class CompactSlidePanel : SlidePanel
+	{
+		private event EventHandler unregisterEvents;
 
-        TabControl mainControlsTabControl;
-        public TabPage QueueTabPage;
-        public TabPage AboutTabPage;
+		private TabControl mainControlsTabControl;
+		public TabPage QueueTabPage;
+		public TabPage AboutTabPage;
 
-        QueueDataView queueDataView;
+		private QueueDataView queueDataView;
 
-        GuiWidget LeftPanel
-        {
-            get { return GetPanel(0); }
-        }
+		private GuiWidget LeftPanel
+		{
+			get { return GetPanel(0); }
+		}
 
-        GuiWidget RightPanel
-        {
-            get { return GetPanel(1); }
-        }
+		private GuiWidget RightPanel
+		{
+			get { return GetPanel(1); }
+		}
 
-        public double TabBarWidth { get { return mainControlsTabControl.Width; } }
+		public double TabBarWidth { get { return mainControlsTabControl.Width; } }
 
-        static int lastPanelIndexBeforeReload = 0;
-        public CompactSlidePanel(QueueDataView queueDataView)
-            : base(2)
-        {
-            this.queueDataView = queueDataView;
+		private static int lastPanelIndexBeforeReload = 0;
 
-            // do the front panel stuff
-            {
-                // first add the print progress bar
-                this.LeftPanel.AddChild(new PrintProgressBar());
+		public CompactSlidePanel(QueueDataView queueDataView)
+			: base(2)
+		{
+			this.queueDataView = queueDataView;
 
-                // construct the main controls tab control
-                mainControlsTabControl = new FirstPanelTabView(queueDataView);
+			// do the front panel stuff
+			{
+				// first add the print progress bar
+				this.LeftPanel.AddChild(new PrintProgressBar());
 
-                TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
-                advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-                advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-                advancedControlsButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-                advancedControlsButtonFactory.fontSize = 10;
+				// construct the main controls tab control
+				mainControlsTabControl = new FirstPanelTabView(queueDataView);
 
-                advancedControlsButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
-                advancedControlsButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-                advancedControlsButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
+				advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				advancedControlsButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				advancedControlsButtonFactory.fontSize = 10;
 
-                advancedControlsButtonFactory.invertImageLocation = true;
-                Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Advanced\nControls"), "icon_arrow_right_32x32.png");
-                advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
-                advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
-                advancedControlsLinkButton.Cursor = Cursors.Hand;
-                advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
-                advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsAdvancedControlsLink);
-                advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsAdvancedControlsLink);
+				advancedControlsButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
+				advancedControlsButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				advancedControlsButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-                GuiWidget hSpacer = new GuiWidget();
-                hSpacer.HAnchor = HAnchor.ParentLeftRight;
+				advancedControlsButtonFactory.invertImageLocation = true;
+				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Advanced\nControls"), "icon_arrow_right_32x32.png");
+				advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
+				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
+				advancedControlsLinkButton.Cursor = Cursors.Hand;
+				advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
+				advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsAdvancedControlsLink);
+				advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsAdvancedControlsLink);
 
-                
-                mainControlsTabControl.TabBar.AddChild(hSpacer);
-                mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
-                mainControlsTabControl.TabBar.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-                mainControlsTabControl.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+				GuiWidget hSpacer = new GuiWidget();
+				hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-                this.LeftPanel.AddChild(mainControlsTabControl);
-            }
+				mainControlsTabControl.TabBar.AddChild(hSpacer);
+				mainControlsTabControl.TabBar.AddChild(advancedControlsLinkButton);
+				mainControlsTabControl.TabBar.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+				mainControlsTabControl.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 
-            // do the right panel
-            {
-                this.RightPanel.AddChild(new PrintProgressBar());
-                ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView(AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
-                thirdPanelTabView.Name = "For - CompactSlidePanel";
-                this.RightPanel.AddChild(thirdPanelTabView);
-            }
+				this.LeftPanel.AddChild(mainControlsTabControl);
+			}
 
-            WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
+			// do the right panel
+			{
+				this.RightPanel.AddChild(new PrintProgressBar());
+				ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView(AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
+				thirdPanelTabView.Name = "For - CompactSlidePanel";
+				this.RightPanel.AddChild(thirdPanelTabView);
+			}
 
-            SetPanelIndexImediate(lastPanelIndexBeforeReload);
-        }
+			WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
 
-        void SaveCurrentPanelIndex(object sender, EventArgs e)
-        {
-            lastPanelIndexBeforeReload = PanelIndex;
-        }
+			SetPanelIndexImediate(lastPanelIndexBeforeReload);
+		}
 
-        void AdvancedControlsButton_Click(object sender, EventArgs mouseEvent)
-        {
-            if (this.PanelIndex == 0)
-            {
-                this.PanelIndex = 1;
-            }
-            else
-            {
-                this.PanelIndex = 0;
-            }
-        }
+		private void SaveCurrentPanelIndex(object sender, EventArgs e)
+		{
+			lastPanelIndexBeforeReload = PanelIndex;
+		}
 
-        void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("View Manual Printer Controls and Slicing Settings"));
-        }
+		private void AdvancedControlsButton_Click(object sender, EventArgs mouseEvent)
+		{
+			if (this.PanelIndex == 0)
+			{
+				this.PanelIndex = 1;
+			}
+			else
+			{
+				this.PanelIndex = 0;
+			}
+		}
 
-        void onMouseLeaveBoundsAdvancedControlsLink(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.HideHoverText();
-        }
+		private void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("View Manual Printer Controls and Slicing Settings"));
+		}
 
-        void onMouseEnterBoundsPrintQueueLink(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("View Queue and Library"));
-        }
+		private void onMouseLeaveBoundsAdvancedControlsLink(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.HideHoverText();
+		}
 
-        void onMouseLeaveBoundsPrintQueueLink(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.HideHoverText();
-        }
+		private void onMouseEnterBoundsPrintQueueLink(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("View Queue and Library"));
+		}
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
+		private void onMouseLeaveBoundsPrintQueueLink(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.HideHoverText();
+		}
 
-        void DoNotChangePanel()
-        {
-            //Empty function used as placeholder
-        }
-    }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
+
+		private void DoNotChangePanel()
+		{
+			//Empty function used as placeholder
+		}
+	}
 }

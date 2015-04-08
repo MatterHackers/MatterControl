@@ -1,6 +1,6 @@
-﻿using System;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg;
+using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -31,31 +31,31 @@ namespace MatterHackers.MatterControl
 
 		public double FixedHeight = 30 * TextWidget.GlobalPointSizeScaleRatio;
 
-		public SplitButtonFactory ()
+		public SplitButtonFactory()
 		{
 		}
 
-		public SplitButton Generate (TupleList<string, Func<bool>> buttonList, Direction direction = Direction.Down,string imageName = null)
+		public SplitButton Generate(TupleList<string, Func<bool>> buttonList, Direction direction = Direction.Down, string imageName = null)
 		{
 			this.imageName = imageName;
 
 			DynamicDropDownMenu menu = CreateMenu(direction);
-            menu.Margin = new BorderDouble();
-			Button button = CreateButton (buttonList [0]);
+			menu.Margin = new BorderDouble();
+			Button button = CreateButton(buttonList[0]);
 
-			for(int index =1; index < buttonList.Count; index++)
+			for (int index = 1; index < buttonList.Count; index++)
 			{
-				menu.addItem (buttonList[index].Item1,buttonList[index].Item2);
+				menu.addItem(buttonList[index].Item1, buttonList[index].Item2);
 			}
 
-			SplitButton splitButton = new SplitButton (button, menu);
+			SplitButton splitButton = new SplitButton(button, menu);
 
 			return splitButton;
 		}
 
-		private Button CreateButton(Tuple<string,Func<bool>> buttonInfo)
+		private Button CreateButton(Tuple<string, Func<bool>> buttonInfo)
 		{
-			TextImageButtonFactory buttonFactory = new TextImageButtonFactory ();
+			TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
 			buttonFactory.FixedHeight = this.FixedHeight;
 			buttonFactory.normalFillColor = this.normalFillColor;
@@ -66,11 +66,10 @@ namespace MatterHackers.MatterControl
 			buttonFactory.normalBorderColor = this.normalBorderColor;
 			buttonFactory.hoverBorderColor = this.hoverBorderColor;
 
+			Button button = buttonFactory.Generate(buttonInfo.Item1, normalImageName: imageName, centerText: true);
 
-			Button button =  buttonFactory.Generate (buttonInfo.Item1,normalImageName: imageName, centerText: true);
-
-			button.Click += (object sender, EventArgs e) => 
-            {
+			button.Click += (object sender, EventArgs e) =>
+			{
 				buttonInfo.Item2();
 			};
 
@@ -79,7 +78,7 @@ namespace MatterHackers.MatterControl
 
 		private DynamicDropDownMenu CreateMenu(Direction direction = Direction.Down)
 		{
-			DropDownMenuFactory menuFactory = new DropDownMenuFactory ();
+			DropDownMenuFactory menuFactory = new DropDownMenuFactory();
 
 			menuFactory.normalFillColor = this.normalFillColor;
 			menuFactory.hoverFillColor = this.hoverFillColor;
@@ -95,8 +94,8 @@ namespace MatterHackers.MatterControl
 			menuFactory.hoverTextColor = this.hoverTextColor;
 			menuFactory.pressedTextColor = this.pressedTextColor;
 			menuFactory.disabledTextColor = this.disabledTextColor;
-					
-			DynamicDropDownMenu menu = menuFactory.Generate(direction:direction);
+
+			DynamicDropDownMenu menu = menuFactory.Generate(direction: direction);
 
 			menu.Height = FixedHeight;
 			menu.BorderColor = normalBorderColor;
@@ -108,4 +107,3 @@ namespace MatterHackers.MatterControl
 		}
 	}
 }
-

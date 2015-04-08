@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,82 +23,77 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-    public class PrinterConfigurationScrollWidget : ScrollableWidget
-    {
-        public PrinterConfigurationScrollWidget()
-            : base(true)
-        {
-            ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-            AnchorAll();
+	public class PrinterConfigurationScrollWidget : ScrollableWidget
+	{
+		public PrinterConfigurationScrollWidget()
+			: base(true)
+		{
+			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			AnchorAll();
 			AddChild(new PrinterConfigurationWidget());
-        }
-    }
-    
-    public class PrinterConfigurationWidget : GuiWidget
-    {
-        readonly int TallButtonHeight = 25;
+		}
+	}
 
-        TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+	public class PrinterConfigurationWidget : GuiWidget
+	{
+		private readonly int TallButtonHeight = 25;
 
-        public PrinterConfigurationWidget()
-        {
-            SetDisplayAttributes();
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
-            HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            VAnchor = Agg.UI.VAnchor.FitToChildren;
+		public PrinterConfigurationWidget()
+		{
+			SetDisplayAttributes();
 
-            FlowLayoutWidget mainLayoutContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            mainLayoutContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            mainLayoutContainer.VAnchor = Agg.UI.VAnchor.FitToChildren;
-            mainLayoutContainer.Padding = new BorderDouble(top: 10);
+			HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			VAnchor = Agg.UI.VAnchor.FitToChildren;
 
-            HardwareSettingsWidget hardwareGroupbox = new HardwareSettingsWidget();
-            mainLayoutContainer.AddChild(hardwareGroupbox);
+			FlowLayoutWidget mainLayoutContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			mainLayoutContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			mainLayoutContainer.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			mainLayoutContainer.Padding = new BorderDouble(top: 10);
 
-            CloudSettingsWidget cloudGroupbox = new CloudSettingsWidget();
-            mainLayoutContainer.AddChild(cloudGroupbox);
+			HardwareSettingsWidget hardwareGroupbox = new HardwareSettingsWidget();
+			mainLayoutContainer.AddChild(hardwareGroupbox);
 
-            ApplicationSettingsWidget applicationGroupbox = new ApplicationSettingsWidget();
-            mainLayoutContainer.AddChild(applicationGroupbox);
+			CloudSettingsWidget cloudGroupbox = new CloudSettingsWidget();
+			mainLayoutContainer.AddChild(cloudGroupbox);
 
-            AddChild(mainLayoutContainer);
+			ApplicationSettingsWidget applicationGroupbox = new ApplicationSettingsWidget();
+			mainLayoutContainer.AddChild(applicationGroupbox);
 
-            AddHandlers();
-            //SetVisibleControls();
-        }        
+			AddChild(mainLayoutContainer);
 
-        private void AddThemeControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {
-            DisableableWidget container = new DisableableWidget();   
-            
-            AltGroupBox themeControlsGroupBox = new AltGroupBox(LocalizedString.Get("Theme Settings"));
-            themeControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            themeControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            themeControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-		    themeControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-            themeControlsGroupBox.Height = 78;   
+			AddHandlers();
+			//SetVisibleControls();
+		}
+
+		private void AddThemeControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			DisableableWidget container = new DisableableWidget();
+
+			AltGroupBox themeControlsGroupBox = new AltGroupBox(LocalizedString.Get("Theme Settings"));
+			themeControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			themeControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			themeControlsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			themeControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			themeControlsGroupBox.Height = 78;
 
 			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -106,7 +101,7 @@ namespace MatterHackers.MatterControl
 			GuiWidget currentColorThemeBorder = new GuiWidget();
 			currentColorThemeBorder.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			currentColorThemeBorder.VAnchor = VAnchor.ParentBottomTop;
-			currentColorThemeBorder.Margin = new BorderDouble (top: 2, bottom: 2);
+			currentColorThemeBorder.Margin = new BorderDouble(top: 2, bottom: 2);
 			currentColorThemeBorder.Padding = new BorderDouble(4);
 			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.White;
 
@@ -122,141 +117,142 @@ namespace MatterHackers.MatterControl
 			colorSelectorContainer.AddChild(themeSelector);
 			colorSelectorContainer.AddChild(currentColorThemeBorder);
 			currentColorThemeBorder.AddChild(currentColorTheme);
-            container.AddChild(themeControlsGroupBox);
-            controlsTopToBottomLayout.AddChild(container);
-        }
+			container.AddChild(themeControlsGroupBox);
+			controlsTopToBottomLayout.AddChild(container);
+		}
 
-        private void RestartApplication()
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                //horrible hack - to be replaced
-                GuiWidget parent = this;
-                while (parent as MatterControlApplication == null)
-                {
-                    parent = parent.Parent;
-                }
-                MatterControlApplication app = parent as MatterControlApplication;
-                app.RestartOnClose = true;
-                app.Close();
-            });
-        }
+		private void RestartApplication()
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				//horrible hack - to be replaced
+				GuiWidget parent = this;
+				while (parent as MatterControlApplication == null)
+				{
+					parent = parent.Parent;
+				}
+				MatterControlApplication app = parent as MatterControlApplication;
+				app.RestartOnClose = true;
+				app.Close();
+			});
+		}
 
-        private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
-        {
-            string languageCode = ((DropDownList)sender).SelectedLabel;
-            if (languageCode != UserSettings.Instance.get("Language"))
-            {
-                UserSettings.Instance.set("Language", languageCode);
-            }
-        }
-			
+		private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
+		{
+			string languageCode = ((DropDownList)sender).SelectedLabel;
+			if (languageCode != UserSettings.Instance.get("Language"))
+			{
+				UserSettings.Instance.set("Language", languageCode);
+			}
+		}
+
 		public void AddReleaseOptions(FlowLayoutWidget controlsTopToBottom)
 		{
 			AltGroupBox releaseOptionsGroupBox = new AltGroupBox(LocalizedString.Get("Update Feed"));
-            
-            releaseOptionsGroupBox.Margin = new BorderDouble(0);
-            releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            releaseOptionsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            releaseOptionsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            releaseOptionsGroupBox.VAnchor = Agg.UI.VAnchor.ParentTop;
-            releaseOptionsGroupBox.Height = 68;
+
+			releaseOptionsGroupBox.Margin = new BorderDouble(0);
+			releaseOptionsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			releaseOptionsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			releaseOptionsGroupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			releaseOptionsGroupBox.VAnchor = Agg.UI.VAnchor.ParentTop;
+			releaseOptionsGroupBox.Height = 68;
 
 			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
 			controlsContainer.HAnchor |= HAnchor.ParentCenter;
 
-            AnchoredDropDownList releaseOptionsDropList = new AnchoredDropDownList("Development");			
-            releaseOptionsDropList.Margin = new BorderDouble (0, 3);
-                       
+			AnchoredDropDownList releaseOptionsDropList = new AnchoredDropDownList("Development");
+			releaseOptionsDropList.Margin = new BorderDouble(0, 3);
+
 			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Release", "release");
-            releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
-            
-            MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Pre-Release", "pre-release");
-            preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
-			
-            MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Development", "development");
-            developmentDropDownItem.Selected += new EventHandler(FixTabDot);
+			releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
 
-            releaseOptionsDropList.MinimumSize = new Vector2(releaseOptionsDropList.LocalBounds.Width, releaseOptionsDropList.LocalBounds.Height); 
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Pre-Release", "pre-release");
+			preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
 
-			List<string> acceptableUpdateFeedTypeValues = new List<string> (){ "release", "pre-release", "development" };
-			string currentUpdateFeedType = UserSettings.Instance.get ("UpdateFeedType");
+			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Development", "development");
+			developmentDropDownItem.Selected += new EventHandler(FixTabDot);
 
-			if (acceptableUpdateFeedTypeValues.IndexOf (currentUpdateFeedType) == -1) 
+			releaseOptionsDropList.MinimumSize = new Vector2(releaseOptionsDropList.LocalBounds.Width, releaseOptionsDropList.LocalBounds.Height);
+
+			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
+			string currentUpdateFeedType = UserSettings.Instance.get("UpdateFeedType");
+
+			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
 			{
-				UserSettings.Instance.set ("UpdateFeedType", "release");
+				UserSettings.Instance.set("UpdateFeedType", "release");
 			}
 
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get ("UpdateFeedType");
+			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("UpdateFeedType");
 
-			releaseOptionsDropList.SelectionChanged += new EventHandler (ReleaseOptionsDropList_SelectionChanged);
+			releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
 
 			controlsContainer.AddChild(releaseOptionsDropList);
 			releaseOptionsGroupBox.AddChild(controlsContainer);
 			controlsTopToBottom.AddChild(releaseOptionsGroupBox);
 		}
 
-        void FixTabDot(object sender, EventArgs e)
-        {
-            UpdateControlData.Instance.CheckForUpdateUserRequested();
-        }
+		private void FixTabDot(object sender, EventArgs e)
+		{
+			UpdateControlData.Instance.CheckForUpdateUserRequested();
+		}
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
 		{
-            string releaseCode = ((AnchoredDropDownList)sender).SelectedValue;
-			if(releaseCode != UserSettings.Instance.get("UpdateFeedType"))
+			string releaseCode = ((AnchoredDropDownList)sender).SelectedValue;
+			if (releaseCode != UserSettings.Instance.get("UpdateFeedType"))
 			{
-                UserSettings.Instance.set("UpdateFeedType", releaseCode);
+				UserSettings.Instance.set("UpdateFeedType", releaseCode);
 			}
 		}
 
-        private static GuiWidget CreateSeparatorLine()
-        {
-            GuiWidget topLine = new GuiWidget(10, 1);
-            topLine.Margin = new BorderDouble(0, 5);
-            topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            topLine.BackgroundColor = RGBA_Bytes.White;
-            return topLine;
-        }
+		private static GuiWidget CreateSeparatorLine()
+		{
+			GuiWidget topLine = new GuiWidget(10, 1);
+			topLine.Margin = new BorderDouble(0, 5);
+			topLine.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			topLine.BackgroundColor = RGBA_Bytes.White;
+			return topLine;
+		}
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
 
-            base.OnClosed(e);
-        }
+			base.OnClosed(e);
+		}
 
-        private void SetDisplayAttributes()
-        {
-            //this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            
-            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-            this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
+		private void SetDisplayAttributes()
+		{
+			//this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-            this.textImageButtonFactory.fontSize = 11;
+			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
+			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
 
-            this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-            this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-            this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
+			this.textImageButtonFactory.fontSize = 11;
+
+			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
+			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
+			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			this.linkButtonFactory.fontSize = 11;
-        } 
+		}
 
-        event EventHandler unregisterEvents;
-        private void AddHandlers()
-        {
-            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-            PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-        }
+		private event EventHandler unregisterEvents;
 
-        private void onPrinterStatusChanged(object sender, EventArgs e)
-        {
-            this.Invalidate();
-        }
-    }
+		private void AddHandlers()
+		{
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+		}
+
+		private void onPrinterStatusChanged(object sender, EventArgs e)
+		{
+			this.Invalidate();
+		}
+	}
 }

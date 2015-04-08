@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,135 +23,123 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.Font;
-using MatterHackers.VectorMath;
-
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintHistory;
+using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl
 {
-    public class FirstPanelTabView : TabControl
-    {
-        public static int firstPanelCurrentTab = 0;
+	public class FirstPanelTabView : TabControl
+	{
+		public static int firstPanelCurrentTab = 0;
 
-        TabPage QueueTabPage;
-        TabPage LibraryTabPage;
-        TabPage HistoryTabPage;
-        TabPage AboutTabPage;
-        SimpleTextTabWidget AboutTabView;
-        RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-        GuiWidget addedUpdateMark = null;
-        QueueDataView queueDataView;
-        event EventHandler unregisterEvents;
+		private TabPage QueueTabPage;
+		private TabPage LibraryTabPage;
+		private TabPage HistoryTabPage;
+		private TabPage AboutTabPage;
+		private SimpleTextTabWidget AboutTabView;
+		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
+		private GuiWidget addedUpdateMark = null;
+		private QueueDataView queueDataView;
 
-        public FirstPanelTabView(QueueDataView queueDataView)
-        {
-            this.queueDataView = queueDataView;
-            this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-            this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
-            this.TabBar.Margin = new BorderDouble(0, 0);
-            this.TabBar.Padding = new BorderDouble(0, 2);
+		private event EventHandler unregisterEvents;
 
-            this.Margin = new BorderDouble(top: 4);
+		public FirstPanelTabView(QueueDataView queueDataView)
+		{
+			this.queueDataView = queueDataView;
+			this.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.TabBar.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
+			this.TabBar.Margin = new BorderDouble(0, 0);
+			this.TabBar.Padding = new BorderDouble(0, 2);
 
-            QueueTabPage = new TabPage(new QueueDataWidget(queueDataView), LocalizedString.Get("Queue").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(QueueTabPage, "Queue Tab", 15,
-                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+			this.Margin = new BorderDouble(top: 4);
 
-            LibraryTabPage = new TabPage(new PrintLibraryWidget(), LocalizedString.Get("Library").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(LibraryTabPage, "Library Tab", 15,
-                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+			QueueTabPage = new TabPage(new QueueDataWidget(queueDataView), LocalizedString.Get("Queue").ToUpper());
+			this.AddTab(new SimpleTextTabWidget(QueueTabPage, "Queue Tab", 15,
+					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            HistoryTabPage = new TabPage(new PrintHistoryWidget(), LocalizedString.Get("History").ToUpper());
-            this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", 15,
-                    ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+			LibraryTabPage = new TabPage(new PrintLibraryWidget(), LocalizedString.Get("Library").ToUpper());
+			this.AddTab(new SimpleTextTabWidget(LibraryTabPage, "Library Tab", 15,
+					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
-            AboutTabView = new SimpleTextTabWidget(AboutTabPage, "About Tab", 15,
-                        ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
-            this.AddTab(AboutTabView);
+			HistoryTabPage = new TabPage(new PrintHistoryWidget(), LocalizedString.Get("History").ToUpper());
+			this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", 15,
+					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-            NumQueueItemsChanged(this, null);
-            SetUpdateNotification(this, null);
+			AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
+			AboutTabView = new SimpleTextTabWidget(AboutTabPage, "About Tab", 15,
+						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
+			this.AddTab(AboutTabView);
 
-            QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-            UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
+			NumQueueItemsChanged(this, null);
+			SetUpdateNotification(this, null);
 
-            WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
+			QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
+			QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
+			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
-            SelectedTabIndex = firstPanelCurrentTab;
-        }
+			WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
 
-        void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
-        {
-            string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
-            string queueString = string.Format("{1} ({0})", QueueData.Instance.Count, queueStringBeg);
-            QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
-        }
+			SelectedTabIndex = firstPanelCurrentTab;
+		}
 
-        void SaveCurrentTab(object sender, EventArgs e)
-        {
-            firstPanelCurrentTab = SelectedTabIndex;
-        }
+		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
+		{
+			string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
+			string queueString = string.Format("{1} ({0})", QueueData.Instance.Count, queueStringBeg);
+			QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
+		}
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-        }
+		private void SaveCurrentTab(object sender, EventArgs e)
+		{
+			firstPanelCurrentTab = SelectedTabIndex;
+		}
 
-        public void SetUpdateNotification(object sender, EventArgs widgetEvent)
-        {
-            switch (UpdateControlData.Instance.UpdateStatus)
-            {
-                case UpdateControlData.UpdateStatusStates.MayBeAvailable:
-                case UpdateControlData.UpdateStatusStates.ReadyToInstall:
-                case UpdateControlData.UpdateStatusStates.UpdateAvailable:
-                case UpdateControlData.UpdateStatusStates.UpdateDownloading:
-                    if (addedUpdateMark == null)
-                    {
-                        addedUpdateMark = new NotificationWidget();
-                        addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.Width - 25, 7);
-                        AboutTabView.AddChild(addedUpdateMark);
-                    }
-                    addedUpdateMark.Visible = true;
-                    break;
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+		}
 
-                case UpdateControlData.UpdateStatusStates.UpToDate:
-                case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
-                    if (addedUpdateMark != null)
-                    {
-                        addedUpdateMark.Visible = false;
-                    }
-                    break;
+		public void SetUpdateNotification(object sender, EventArgs widgetEvent)
+		{
+			switch (UpdateControlData.Instance.UpdateStatus)
+			{
+				case UpdateControlData.UpdateStatusStates.MayBeAvailable:
+				case UpdateControlData.UpdateStatusStates.ReadyToInstall:
+				case UpdateControlData.UpdateStatusStates.UpdateAvailable:
+				case UpdateControlData.UpdateStatusStates.UpdateDownloading:
+					if (addedUpdateMark == null)
+					{
+						addedUpdateMark = new NotificationWidget();
+						addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.Width - 25, 7);
+						AboutTabView.AddChild(addedUpdateMark);
+					}
+					addedUpdateMark.Visible = true;
+					break;
 
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-    }
+				case UpdateControlData.UpdateStatusStates.UpToDate:
+				case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
+					if (addedUpdateMark != null)
+					{
+						addedUpdateMark.Visible = false;
+					}
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+	}
 }

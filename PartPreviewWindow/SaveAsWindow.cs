@@ -1,37 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Text;
-
-using MatterHackers.Agg;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.Agg.Image;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.CustomWidgets;
+using System;
+using System.IO;
 
-namespace MatterHackers.MatterControl 
+namespace MatterHackers.MatterControl
 {
 	public class SaveAsWindow : SystemWindow
 	{
-		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory ();
-        MHTextEditWidget textToAddWidget;
-        CheckBox addToLibraryOption;
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private MHTextEditWidget textToAddWidget;
+		private CheckBox addToLibraryOption;
 
-        public delegate void SetPrintItemWrapperAndSave(SaveAsReturnInfo returnInfo);
-        SetPrintItemWrapperAndSave functionToCallOnSaveAs;
+		public delegate void SetPrintItemWrapperAndSave(SaveAsReturnInfo returnInfo);
 
-        public SaveAsWindow(SetPrintItemWrapperAndSave functionToCallOnSaveAs)
-			: base (480, 250)
+		private SetPrintItemWrapperAndSave functionToCallOnSaveAs;
+
+		public SaveAsWindow(SetPrintItemWrapperAndSave functionToCallOnSaveAs)
+			: base(480, 250)
 		{
 			Title = "MatterControl - Save As";
 
-            this.functionToCallOnSaveAs = functionToCallOnSaveAs;
+			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
@@ -44,17 +38,17 @@ namespace MatterHackers.MatterControl
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			//Creates Text and adds into header 
+			//Creates Text and adds into header
 			{
 				string saveAsLabel = "Save New Design to Queue:";
-				TextWidget elementHeader = new TextWidget (saveAsLabel, pointSize: 14);
+				TextWidget elementHeader = new TextWidget(saveAsLabel, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				elementHeader.HAnchor = HAnchor.ParentLeftRight;
 				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
 
-				headerRow.AddChild (elementHeader);
-				topToBottom.AddChild (headerRow);
-				this.AddChild (topToBottom);
+				headerRow.AddChild(elementHeader);
+				topToBottom.AddChild(headerRow);
+				this.AddChild(topToBottom);
 			}
 
 			//Creates container in the middle of window
@@ -69,13 +63,13 @@ namespace MatterHackers.MatterControl
 			string fileNameLabel = "Design Name";
 			TextWidget textBoxHeader = new TextWidget(fileNameLabel, pointSize: 12);
 			textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textBoxHeader.Margin = new BorderDouble (5);
+			textBoxHeader.Margin = new BorderDouble(5);
 			textBoxHeader.HAnchor = HAnchor.ParentLeft;
 
 			string fileNameLabelFull = "Enter the name of your design.";
 			TextWidget textBoxHeaderFull = new TextWidget(fileNameLabelFull, pointSize: 9);
 			textBoxHeaderFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textBoxHeaderFull.Margin = new BorderDouble (5);
+			textBoxHeaderFull.Margin = new BorderDouble(5);
 			textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
 
 			//Adds text box and check box to the above container
@@ -83,96 +77,95 @@ namespace MatterHackers.MatterControl
 			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
 			textToAddWidget.Margin = new BorderDouble(5);
 
-            addToLibraryOption = new CheckBox("Also save to Library", ActiveTheme.Instance.PrimaryTextColor);
-			addToLibraryOption.Margin = new BorderDouble (5);
+			addToLibraryOption = new CheckBox("Also save to Library", ActiveTheme.Instance.PrimaryTextColor);
+			addToLibraryOption.Margin = new BorderDouble(5);
 			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
 
 			middleRowContainer.AddChild(textBoxHeader);
-			middleRowContainer.AddChild (textBoxHeaderFull);
+			middleRowContainer.AddChild(textBoxHeaderFull);
 			middleRowContainer.AddChild(textToAddWidget);
 			middleRowContainer.AddChild(new HorizontalSpacer());
 			middleRowContainer.AddChild(addToLibraryOption);
 			topToBottom.AddChild(middleRowContainer);
 
-			//Creates button container on the bottom of window 
+			//Creates button container on the bottom of window
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				buttonRow.HAnchor = HAnchor.ParentLeftRight;
-				buttonRow.Padding = new BorderDouble(0,3);
+				buttonRow.Padding = new BorderDouble(0, 3);
 			}
-				
+
 			Button saveAsButton = textImageButtonFactory.Generate("Save As".Localize(), centerText: true);
 			saveAsButton.Visible = true;
 			saveAsButton.Cursor = Cursors.Hand;
-            buttonRow.AddChild(saveAsButton);
+			buttonRow.AddChild(saveAsButton);
 
-            saveAsButton.Click += new EventHandler(saveAsButton_Click);
-            textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
+			saveAsButton.Click += new EventHandler(saveAsButton_Click);
+			textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 			//Adds SaveAs and Close Button to button container
-            buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(new HorizontalSpacer());
 
-			Button cancelButton = textImageButtonFactory.Generate ("Cancel", centerText: true);
+			Button cancelButton = textImageButtonFactory.Generate("Cancel", centerText: true);
 			cancelButton.Visible = true;
 			cancelButton.Cursor = Cursors.Hand;
-            buttonRow.AddChild(cancelButton);
-            cancelButton.Click += (sender, e) =>
-            {
-                CloseOnIdle();
-            };
+			buttonRow.AddChild(cancelButton);
+			cancelButton.Click += (sender, e) =>
+			{
+				CloseOnIdle();
+			};
 
 			topToBottom.AddChild(buttonRow);
 
-			ShowAsSystemWindow ();
+			ShowAsSystemWindow();
 		}
 
-        void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)
-        {
-            SubmitForm();
-        }
+		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)
+		{
+			SubmitForm();
+		}
 
-        void saveAsButton_Click(object sender, EventArgs mouseEvent)
-        {
-            SubmitForm();
-        }
+		private void saveAsButton_Click(object sender, EventArgs mouseEvent)
+		{
+			SubmitForm();
+		}
 
-        public class SaveAsReturnInfo
-        {
-            public string fileNameAndPath;
-            public bool placeInLibrary;
-            public string newName;
-            public PrintItemWrapper printItemWrapper;
+		public class SaveAsReturnInfo
+		{
+			public string fileNameAndPath;
+			public bool placeInLibrary;
+			public string newName;
+			public PrintItemWrapper printItemWrapper;
 
-            public SaveAsReturnInfo(string newName, string fileNameAndPath, bool placeInLibrary)
-            {
-                this.newName = newName;
-                this.fileNameAndPath = fileNameAndPath;
-                this.placeInLibrary = placeInLibrary;
+			public SaveAsReturnInfo(string newName, string fileNameAndPath, bool placeInLibrary)
+			{
+				this.newName = newName;
+				this.fileNameAndPath = fileNameAndPath;
+				this.placeInLibrary = placeInLibrary;
 
-                PrintItem printItem = new PrintItem();
-                printItem.Name = newName;
-                printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
-                printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-                printItem.Commit();
+				PrintItem printItem = new PrintItem();
+				printItem.Name = newName;
+				printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
+				printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+				printItem.Commit();
 
-                printItemWrapper = new PrintItemWrapper(printItem);
-            }
-        }
+				printItemWrapper = new PrintItemWrapper(printItem);
+			}
+		}
 
-        private void SubmitForm()
-        {
-            string newName = textToAddWidget.ActualTextEditWidget.Text;
-            if (newName != "")
-            {
-                string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
-                string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+		private void SubmitForm()
+		{
+			string newName = textToAddWidget.ActualTextEditWidget.Text;
+			if (newName != "")
+			{
+				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
+				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-                SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, addToLibraryOption.Checked);
-                functionToCallOnSaveAs(returnInfo);
-                CloseOnIdle();
-            }
-        }
+				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, addToLibraryOption.Checked);
+				functionToCallOnSaveAs(returnInfo);
+				CloseOnIdle();
+			}
+		}
 	}
 }
-

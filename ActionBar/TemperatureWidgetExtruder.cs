@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,107 +23,101 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using System;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-    class TemperatureWidgetExtruder : TemperatureWidgetBase
-    {
-        int extruderNumber = 1;
+	internal class TemperatureWidgetExtruder : TemperatureWidgetBase
+	{
+		private int extruderNumber = 1;
 
-        public TemperatureWidgetExtruder()
-            : base("150.3°")
-        {
-            labelTextWidget.Text = "Extruder";
-            AddHandlers();
-            setToCurrentTemperature();
-        }
+		public TemperatureWidgetExtruder()
+			: base("150.3°")
+		{
+			labelTextWidget.Text = "Extruder";
+			AddHandlers();
+			setToCurrentTemperature();
+		}
 
-        event EventHandler unregisterEvents;
-        void AddHandlers()
-        {
-            PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-            this.MouseEnterBounds += onMouseEnterBounds;
-            this.MouseLeaveBounds += onMouseLeaveBounds;
-        }
+		private event EventHandler unregisterEvents;
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
+		private void AddHandlers()
+		{
+			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
+			this.MouseEnterBounds += onMouseEnterBounds;
+			this.MouseLeaveBounds += onMouseLeaveBounds;
+		}
 
-        void onMouseEnterBounds(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("Extruder Temperature"));
-        }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
 
-        void onMouseLeaveBounds(Object sender, EventArgs e)
-        {
-            HelpTextWidget.Instance.HideHoverText();
-        }
+		private void onMouseEnterBounds(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("Extruder Temperature"));
+		}
 
-        void setToCurrentTemperature()
-        {
-            string tempDirectionIndicator = "";
-            if (PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber-1) > 0)
-            {
-                if ((int)(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1) + 0.5) < (int)(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1) + 0.5))
-                {
-                    tempDirectionIndicator = "↓";
-                }
-                else if ((int)(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1) + 0.5) > (int)(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1) + 0.5))
-                {
-                    tempDirectionIndicator = "↑";
-                }
-            }
-            this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1), tempDirectionIndicator);
-        }
+		private void onMouseLeaveBounds(Object sender, EventArgs e)
+		{
+			HelpTextWidget.Instance.HideHoverText();
+		}
 
-        void onTemperatureRead(Object sender, EventArgs e)
-        {
-            setToCurrentTemperature();
-        }
+		private void setToCurrentTemperature()
+		{
+			string tempDirectionIndicator = "";
+			if (PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1) > 0)
+			{
+				if ((int)(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1) + 0.5) < (int)(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1) + 0.5))
+				{
+					tempDirectionIndicator = "↓";
+				}
+				else if ((int)(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1) + 0.5) > (int)(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1) + 0.5))
+				{
+					tempDirectionIndicator = "↑";
+				}
+			}
+			this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderNumber - 1), tempDirectionIndicator);
+		}
 
-        string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
-        string waitingForeExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
-        string waitingForeExtruderToHeatTitle = "Waiting For Extruder To Heat".Localize();
-        protected override void SetTargetTemperature()
-        {
-            double targetTemp;
-            if (double.TryParse(ActiveSliceSettings.Instance.GetActiveValue("temperature"), out targetTemp))
-            {
-                double goalTemp = (int)(targetTemp + .5);
-                if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-                    && PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder
-                    && goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1))
-                {
-                    string message = string.Format(waitingForeExtruderToHeatMessage, PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1), sliceSettingsNote);
-                    StyledMessageBox.ShowMessageBox(null, message, waitingForeExtruderToHeatTitle);
-                }
-                else
-                {
-                    PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderNumber - 1, (int)(targetTemp + .5));
-                }
-            }
-        }
-    }
+		private void onTemperatureRead(Object sender, EventArgs e)
+		{
+			setToCurrentTemperature();
+		}
+
+		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
+		private string waitingForeExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
+		private string waitingForeExtruderToHeatTitle = "Waiting For Extruder To Heat".Localize();
+
+		protected override void SetTargetTemperature()
+		{
+			double targetTemp;
+			if (double.TryParse(ActiveSliceSettings.Instance.GetActiveValue("temperature"), out targetTemp))
+			{
+				double goalTemp = (int)(targetTemp + .5);
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+					&& PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder
+					&& goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1))
+				{
+					string message = string.Format(waitingForeExtruderToHeatMessage, PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderNumber - 1), sliceSettingsNote);
+					StyledMessageBox.ShowMessageBox(null, message, waitingForeExtruderToHeatTitle);
+				}
+				else
+				{
+					PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderNumber - 1, (int)(targetTemp + .5));
+				}
+			}
+		}
+	}
 }

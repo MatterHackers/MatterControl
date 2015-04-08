@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,80 +23,81 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
-    public class SelectedPrintItems<T> : List<T>
-    {
-        public event EventHandler OnAdd;
-        public event EventHandler OnRemove;
+	public class SelectedPrintItems<T> : List<T>
+	{
+		public event EventHandler OnAdd;
 
-        new public void Add(T item)
-        {
-            base.Add(item);
-            if (null != OnAdd)
-            {
-                OnAdd(this, null);
-            }
-        }
+		public event EventHandler OnRemove;
 
-        new public void Remove(T item)
-        {
-            base.Remove(item);
-            if (null != OnRemove)
-            {
-                OnRemove(this, null);
-            }
-        }
-    }
+		new public void Add(T item)
+		{
+			base.Add(item);
+			if (null != OnAdd)
+			{
+				OnAdd(this, null);
+			}
+		}
 
-    public class PrintHistoryDataView : ScrollableWidget
-    {
-        public bool ShowTimestamp;
+		new public void Remove(T item)
+		{
+			base.Remove(item);
+			if (null != OnRemove)
+			{
+				OnRemove(this, null);
+			}
+		}
+	}
+
+	public class PrintHistoryDataView : ScrollableWidget
+	{
+		public bool ShowTimestamp;
+
 		public event EventHandler DoneLoading;
 
-        private void SetDisplayAttributes()
-        {
-            this.MinimumSize = new Vector2(0, 200);
-            this.AnchorAll();
-            this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-            this.AutoScroll = true;
-            this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
-        }
+		private void SetDisplayAttributes()
+		{
+			this.MinimumSize = new Vector2(0, 200);
+			this.AnchorAll();
+			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			this.AutoScroll = true;
+			this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
+		}
 
-        public void LoadHistoryItems(int NumItemsToLoad = 0)
-        {
-            if (NumItemsToLoad == 0 || NumItemsToLoad < PrintHistoryData.RecordLimit)
-            {
-                NumItemsToLoad = PrintHistoryData.RecordLimit;
-            }
-            
-            RemoveListItems();
-            IEnumerable<DataStorage.PrintTask> partFiles = PrintHistoryData.Instance.GetHistoryItems(NumItemsToLoad);
-            if (partFiles != null)
-            {
-                foreach (PrintTask part in partFiles)
-                {
-                    AddChild(new PrintHistoryListItem(part, ShowTimestamp));
-                }
-            }
+		public void LoadHistoryItems(int NumItemsToLoad = 0)
+		{
+			if (NumItemsToLoad == 0 || NumItemsToLoad < PrintHistoryData.RecordLimit)
+			{
+				NumItemsToLoad = PrintHistoryData.RecordLimit;
+			}
+
+			RemoveListItems();
+			IEnumerable<DataStorage.PrintTask> partFiles = PrintHistoryData.Instance.GetHistoryItems(NumItemsToLoad);
+			if (partFiles != null)
+			{
+				foreach (PrintTask part in partFiles)
+				{
+					AddChild(new PrintHistoryListItem(part, ShowTimestamp));
+				}
+			}
 
 			OnDoneLoading(null);
-        }
+		}
 
-		void OnDoneLoading(EventArgs e)
+		private void OnDoneLoading(EventArgs e)
 		{
 			if (DoneLoading != null)
 			{
@@ -104,127 +105,129 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 		}
 
-        protected FlowLayoutWidget topToBottomItemList;
-       
-        public int Count
-        {
-            get
-            {
-                return topToBottomItemList.Children.Count;
-            }
-        }
+		protected FlowLayoutWidget topToBottomItemList;
 
-        public PrintHistoryDataView()
-        {
+		public int Count
+		{
+			get
+			{
+				return topToBottomItemList.Children.Count;
+			}
+		}
+
+		public PrintHistoryDataView()
+		{
 			PrintHistoryData.Instance.HistoryCleared.RegisterEvent(HistoryDeleted, ref unregisterEvents);
-            ShowTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
-            
-            SetDisplayAttributes();
-            ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			ShowTimestamp = (UserSettings.Instance.get("PrintHistoryFilterShowTimestamp") == "true");
 
-            AutoScroll = true;
-            topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-            base.AddChild(topToBottomItemList);
-            AddHandlers();
+			SetDisplayAttributes();
+			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 
-            LoadHistoryItems();
-        }
+			AutoScroll = true;
+			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			base.AddChild(topToBottomItemList);
+			AddHandlers();
+
+			LoadHistoryItems();
+		}
 
 		public void HistoryDeleted(object sender, EventArgs e)
 		{
 			ReloadData(this, null);
 		}
 
-        void AddHandlers()
-        {
-            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(ReloadData, ref unregisterEvents);
-        }
+		private void AddHandlers()
+		{
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(ReloadData, ref unregisterEvents);
+		}
 
-        void ReloadData(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                LoadHistoryItems(Count);
-            });
-        }
+		private void ReloadData(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				LoadHistoryItems(Count);
+			});
+		}
 
-        event EventHandler unregisterEvents;
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
+		private event EventHandler unregisterEvents;
 
-        public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
-        {
-            FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-            itemHolder.Name = "LB item holder";
-            itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
-            itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-            itemHolder.AddChild(child);
-            itemHolder.VAnchor = VAnchor.FitToChildren;
-            topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
-        }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
 
-        bool settingLocalBounds = false;
-        public override RectangleDouble LocalBounds
-        {
-            set
-            {
-                if (!settingLocalBounds)
-                {
-                    Vector2 currentTopLeftOffset = new Vector2();
-                    if (Parent != null)
-                    {
-                        currentTopLeftOffset = TopLeftOffset;
-                    }
-                    settingLocalBounds = true;
-                    if (topToBottomItemList != null)
-                    {
-                        if (VerticalScrollBar.Visible)
-                        {
-                            topToBottomItemList.Width = Math.Max(0, value.Width - ScrollArea.Padding.Width - topToBottomItemList.Margin.Width - VerticalScrollBar.Width);
-                        }
-                        else
-                        {
-                            topToBottomItemList.Width = Math.Max(0, value.Width - ScrollArea.Padding.Width - topToBottomItemList.Margin.Width);
-                        }
-                    }
+		public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
+		{
+			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
+			itemHolder.Name = "LB item holder";
+			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
+			itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			itemHolder.AddChild(child);
+			itemHolder.VAnchor = VAnchor.FitToChildren;
+			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
+		}
 
-                    base.LocalBounds = value;
-                    if (Parent != null)
-                    {
-                        TopLeftOffset = currentTopLeftOffset;
-                    }
-                    settingLocalBounds = false;
-                }
-            }
-        }
+		private bool settingLocalBounds = false;
 
-        public override void RemoveChild(int index)
-        {
-            topToBottomItemList.RemoveChild(index);
-        }
+		public override RectangleDouble LocalBounds
+		{
+			set
+			{
+				if (!settingLocalBounds)
+				{
+					Vector2 currentTopLeftOffset = new Vector2();
+					if (Parent != null)
+					{
+						currentTopLeftOffset = TopLeftOffset;
+					}
+					settingLocalBounds = true;
+					if (topToBottomItemList != null)
+					{
+						if (VerticalScrollBar.Visible)
+						{
+							topToBottomItemList.Width = Math.Max(0, value.Width - ScrollArea.Padding.Width - topToBottomItemList.Margin.Width - VerticalScrollBar.Width);
+						}
+						else
+						{
+							topToBottomItemList.Width = Math.Max(0, value.Width - ScrollArea.Padding.Width - topToBottomItemList.Margin.Width);
+						}
+					}
 
-        public override void RemoveChild(GuiWidget childToRemove)
-        {
-            for (int i = topToBottomItemList.Children.Count - 1; i >= 0; i--)
-            {
-                GuiWidget itemHolder = topToBottomItemList.Children[i];
-                if (itemHolder == childToRemove || itemHolder.Children[0] == childToRemove)
-                {
-                    topToBottomItemList.RemoveChild(itemHolder);
-                }
-            }
-        }
+					base.LocalBounds = value;
+					if (Parent != null)
+					{
+						TopLeftOffset = currentTopLeftOffset;
+					}
+					settingLocalBounds = false;
+				}
+			}
+		}
 
-        public void RemoveListItems()
-        {
-            topToBottomItemList.RemoveAllChildren();
-        }
-    }
+		public override void RemoveChild(int index)
+		{
+			topToBottomItemList.RemoveChild(index);
+		}
+
+		public override void RemoveChild(GuiWidget childToRemove)
+		{
+			for (int i = topToBottomItemList.Children.Count - 1; i >= 0; i--)
+			{
+				GuiWidget itemHolder = topToBottomItemList.Children[i];
+				if (itemHolder == childToRemove || itemHolder.Children[0] == childToRemove)
+				{
+					topToBottomItemList.RemoveChild(itemHolder);
+				}
+			}
+		}
+
+		public void RemoveListItems()
+		{
+			topToBottomItemList.RemoveAllChildren();
+		}
+	}
 }

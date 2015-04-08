@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,72 +23,61 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections;
-using System.IO;
-using System.Diagnostics;
-using System.Threading;
 
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
 	public class ThemeColorSelectorWidget : FlowLayoutWidget
 	{
-		GuiWidget colorToChangeTo;
-        int containerHeight = 34;
-        int colorSelectSize = 32;
-		public ThemeColorSelectorWidget (GuiWidget colorToChangeTo)
+		private GuiWidget colorToChangeTo;
+		private int containerHeight = 34;
+		private int colorSelectSize = 32;
+
+		public ThemeColorSelectorWidget(GuiWidget colorToChangeTo)
 		{
-            this.Padding = new BorderDouble(2, 0);
-			this.colorToChangeTo = colorToChangeTo;            
-            int themeCount = ActiveTheme.Instance.AvailableThemes.Count;
-			
+			this.Padding = new BorderDouble(2, 0);
+			this.colorToChangeTo = colorToChangeTo;
+			int themeCount = ActiveTheme.Instance.AvailableThemes.Count;
+
 			int index = 0;
-            for (int x = 0; x < themeCount/2; x++)
+			for (int x = 0; x < themeCount / 2; x++)
 			{
-                FlowLayoutWidget columnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-                columnContainer.Width = containerHeight;
+				FlowLayoutWidget columnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
+				columnContainer.Width = containerHeight;
 
-                Button buttonOne = getThemeButton(index);
-                Button buttonTwo = getThemeButton(index + themeCount/2);
+				Button buttonOne = getThemeButton(index);
+				Button buttonTwo = getThemeButton(index + themeCount / 2);
 
-                columnContainer.AddChild(buttonTwo);
-                columnContainer.AddChild(buttonOne);
-                
-                this.AddChild(columnContainer);
-                index++;
+				columnContainer.AddChild(buttonTwo);
+				columnContainer.AddChild(buttonOne);
+
+				this.AddChild(columnContainer);
+				index++;
 			}
-            this.BackgroundColor = RGBA_Bytes.White;
-            this.Width = containerHeight * (themeCount / 2);
+			this.BackgroundColor = RGBA_Bytes.White;
+			this.Width = containerHeight * (themeCount / 2);
 		}
 
-        public Button getThemeButton(int index)
-        {
-            GuiWidget normal = new GuiWidget(colorSelectSize, colorSelectSize);
+		public Button getThemeButton(int index)
+		{
+			GuiWidget normal = new GuiWidget(colorSelectSize, colorSelectSize);
 			normal.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].primaryAccentColor;
-            GuiWidget hover = new GuiWidget(colorSelectSize, colorSelectSize);
+			GuiWidget hover = new GuiWidget(colorSelectSize, colorSelectSize);
 			hover.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].secondaryAccentColor;
 			GuiWidget pressed = new GuiWidget(colorSelectSize, colorSelectSize);
 			pressed.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].secondaryAccentColor;
 			GuiWidget disabled = new GuiWidget(colorSelectSize, colorSelectSize);
 
-            Button colorButton = new Button(0,0, new ButtonViewStates(normal, hover, pressed, disabled));
+			Button colorButton = new Button(0, 0, new ButtonViewStates(normal, hover, pressed, disabled));
 			colorButton.Name = index.ToString();
-			colorButton.Click += (sender, mouseEvent) => 
-			{                                
-				UserSettings.Instance.set("ActiveThemeIndex",((GuiWidget)sender).Name);
+			colorButton.Click += (sender, mouseEvent) =>
+			{
+				UserSettings.Instance.set("ActiveThemeIndex", ((GuiWidget)sender).Name);
 				ActiveTheme.Instance.LoadThemeSettings(int.Parse(((GuiWidget)sender).Name));
 			};
 
@@ -97,21 +86,20 @@ namespace MatterHackers.MatterControl
 				colorToChangeTo.BackgroundColor = ActiveTheme.Instance.AvailableThemes[index].primaryAccentColor;
 			};
 
-			colorButton.MouseLeaveBounds += (sender, mouseEvent) => 
+			colorButton.MouseLeaveBounds += (sender, mouseEvent) =>
 			{
 				colorToChangeTo.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			};
 
-            return colorButton;
-        }
+			return colorButton;
+		}
 
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            base.OnDraw(graphics2D);
-            RectangleDouble border = LocalBounds;
-            border.Deflate(new BorderDouble(1));
-            //graphics2D.Rectangle(border, ActiveTheme.Instance.SecondaryBackgroundColor, 4);
-        }
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
+			RectangleDouble border = LocalBounds;
+			border.Deflate(new BorderDouble(1));
+			//graphics2D.Rectangle(border, ActiveTheme.Instance.SecondaryBackgroundColor, 4);
+		}
 	}
 }
-

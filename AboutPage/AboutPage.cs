@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,38 +23,36 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.IO;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.HtmlParsing;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintQueue;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace MatterHackers.MatterControl
 {
-    public class AboutWindow : SystemWindow
-    {
-		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+	public class AboutWindow : SystemWindow
+	{
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-        public AboutWindow()
+		public AboutWindow()
 			: base(500, 640)
-        {
-            
-            GuiWidget aboutPage = new AboutPage();
-            aboutPage.AnchorAll();
-            this.AddChild(aboutPage);
+		{
+			GuiWidget aboutPage = new AboutPage();
+			aboutPage.AnchorAll();
+			this.AddChild(aboutPage);
 
 			FlowLayoutWidget buttonRowContainer = new FlowLayoutWidget();
 			buttonRowContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -62,13 +60,13 @@ namespace MatterHackers.MatterControl
 			AddChild(buttonRowContainer);
 
 			Button cancelButton = textImageButtonFactory.Generate("Close");
-			cancelButton.Click += (sender , e) => {CancelButton_Click();};
+			cancelButton.Click += (sender, e) => { CancelButton_Click(); };
 			buttonRowContainer.AddChild(new HorizontalSpacer());
 			buttonRowContainer.AddChild(cancelButton);
 
-            this.Title = LocalizedString.Get("About MatterControl");
-            this.ShowAsSystemWindow();
-        }
+			this.Title = LocalizedString.Get("About MatterControl");
+			this.ShowAsSystemWindow();
+		}
 
 		private void CancelButton_Click()
 		{
@@ -78,238 +76,239 @@ namespace MatterHackers.MatterControl
 				});
 		}
 
-        static AboutWindow aboutWindow = null;
-        public static void Show()
-        {
-            if (aboutWindow == null)
-            {
-                aboutWindow = new AboutWindow();
-                aboutWindow.Closed += (parentSender, e) =>
-                {
-                    aboutWindow = null;
-                };
-            }
-            else
-            {
-                aboutWindow.BringToFront();
-            }
-        }
-    }
-    
-    
-    public class AboutPage : GuiWidget
-    {
-        string htmlContent = null;
+		private static AboutWindow aboutWindow = null;
 
-        GuiWidget htmlWidget;
-        LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-        TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
+		public static void Show()
+		{
+			if (aboutWindow == null)
+			{
+				aboutWindow = new AboutWindow();
+				aboutWindow.Closed += (parentSender, e) =>
+				{
+					aboutWindow = null;
+				};
+			}
+			else
+			{
+				aboutWindow.BringToFront();
+			}
+		}
+	}
 
-        public AboutPage()
-        {
-            this.HAnchor = HAnchor.ParentLeftRight;
-            this.VAnchor = VAnchor.ParentTop;
-            
-            this.Padding = new BorderDouble(5);
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+	public class AboutPage : GuiWidget
+	{
+		private string htmlContent = null;
 
-            linkButtonFactory.fontSize = 12;
-            linkButtonFactory.textColor = aboutTextColor;
+		private GuiWidget htmlWidget;
+		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
+		public AboutPage()
+		{
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.VAnchor = VAnchor.ParentTop;
+
+			this.Padding = new BorderDouble(5);
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			linkButtonFactory.fontSize = 12;
+			linkButtonFactory.textColor = aboutTextColor;
+
+			textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            FlowLayoutWidget customInfoTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            customInfoTopToBottom.Name = "AboutPageCustomInfo";
-            customInfoTopToBottom.HAnchor = HAnchor.ParentLeftRight;
-            customInfoTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-            customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
+			FlowLayoutWidget customInfoTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			customInfoTopToBottom.Name = "AboutPageCustomInfo";
+			customInfoTopToBottom.HAnchor = HAnchor.ParentLeftRight;
+			customInfoTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+			customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
 
-            customInfoTopToBottom.AddChild(new UpdateControlView());
-            //AddMatterHackersInfo(customInfoTopToBottom);
-            customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
+			customInfoTopToBottom.AddChild(new UpdateControlView());
+			//AddMatterHackersInfo(customInfoTopToBottom);
+			customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
 
-            HtmlParser htmlParser = new HtmlParser();
+			HtmlParser htmlParser = new HtmlParser();
 
-            if (htmlContent == null)
-            {
-                string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
-                htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
-            }
-            
-            htmlWidget = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            htmlWidget.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-            htmlWidget.HAnchor |= HAnchor.ParentCenter;
+			if (htmlContent == null)
+			{
+				string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
+				htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
+			}
 
-            htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
+			htmlWidget = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			htmlWidget.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+			htmlWidget.HAnchor |= HAnchor.ParentCenter;
 
-            customInfoTopToBottom.AddChild(htmlWidget);
+			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
 
-            this.AddChild(customInfoTopToBottom);
-        }
+			customInfoTopToBottom.AddChild(htmlWidget);
 
-        FlowLayoutWidget currentRow;
-        private void AddContent(HtmlParser htmlParser, string htmlContent)
-        {
-            ElementState elementState = htmlParser.CurrentElementState;
-            string decodedHtml = HtmlParser.UrlDecode(htmlContent);
-            switch (elementState.TypeName)
-            {
-                case "a":
-                    {
-                        Button linkButton = linkButtonFactory.Generate(decodedHtml);
-                        StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
-                        double descentInPixels = styled.DescentInPixels;
-                        linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
-                        linkButton.Click += (sender, mouseEvent) => 
-                        {
-							MatterControlApplication.Instance.LaunchBrowser(elementState.Href); 
-                        };
-                        currentRow.AddChild(linkButton);
-                    }
-                    break;
+			this.AddChild(customInfoTopToBottom);
+		}
 
-                case "table":
-                    break;
+		private FlowLayoutWidget currentRow;
 
-                case "td":
-                case "span":
-                    GuiWidget widgetToAdd;
+		private void AddContent(HtmlParser htmlParser, string htmlContent)
+		{
+			ElementState elementState = htmlParser.CurrentElementState;
+			string decodedHtml = HtmlParser.UrlDecode(htmlContent);
+			switch (elementState.TypeName)
+			{
+				case "a":
+					{
+						Button linkButton = linkButtonFactory.Generate(decodedHtml);
+						StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
+						double descentInPixels = styled.DescentInPixels;
+						linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
+						linkButton.Click += (sender, mouseEvent) =>
+						{
+							MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
+						};
+						currentRow.AddChild(linkButton);
+					}
+					break;
 
-                    if (elementState.Classes.Contains("translate"))
-                    {
-                        decodedHtml = decodedHtml.Localize();
-                    }
-                    if (elementState.Classes.Contains("toUpper"))
-                    {
-                        decodedHtml = decodedHtml.ToUpper();
-                    }
-                    if (elementState.Classes.Contains("versionNumber"))
-                    {
-                        decodedHtml = VersionInfo.Instance.ReleaseVersion;
-                    }
-                    if (elementState.Classes.Contains("buildNumber"))
-                    {
-                        decodedHtml = VersionInfo.Instance.BuildVersion;
-                    }
+				case "table":
+					break;
 
-                    Button createdButton = null;
-                    if (elementState.Classes.Contains("centeredButton"))
-                    {
-                        createdButton = textImageButtonFactory.Generate(decodedHtml);
-                        widgetToAdd = createdButton;
-                    }
-                    else if (elementState.Classes.Contains("linkButton"))
-                    {
-                        double oldFontSize = linkButtonFactory.fontSize;
-                        linkButtonFactory.fontSize = elementState.PointSize;
-                        createdButton = linkButtonFactory.Generate(decodedHtml);
-                        StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
-                        double descentInPixels = styled.DescentInPixels;
-                        createdButton.OriginRelativeParent = new VectorMath.Vector2(createdButton.OriginRelativeParent.x, createdButton.OriginRelativeParent.y + descentInPixels);
-                        widgetToAdd = createdButton;
-                        linkButtonFactory.fontSize = oldFontSize;
-                    }
-                    else
-                    {
-                        TextWidget content = new TextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
-                        widgetToAdd = content;
-                    }
+				case "td":
+				case "span":
+					GuiWidget widgetToAdd;
 
-                    if (createdButton != null)
-                    {
-                        if (elementState.Id == "sendFeedback")
-                        {
-                            createdButton.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
-                        }
-                        else if (elementState.Id == "clearCache")
-                        {
-                            createdButton.Click += (sender, mouseEvent) => { DeleteCacheData(); };
-                        }
-                    }
+					if (elementState.Classes.Contains("translate"))
+					{
+						decodedHtml = decodedHtml.Localize();
+					}
+					if (elementState.Classes.Contains("toUpper"))
+					{
+						decodedHtml = decodedHtml.ToUpper();
+					}
+					if (elementState.Classes.Contains("versionNumber"))
+					{
+						decodedHtml = VersionInfo.Instance.ReleaseVersion;
+					}
+					if (elementState.Classes.Contains("buildNumber"))
+					{
+						decodedHtml = VersionInfo.Instance.BuildVersion;
+					}
 
-                    if (elementState.VerticalAlignment == ElementState.VerticalAlignType.top)
-                    {
-                        widgetToAdd.VAnchor = VAnchor.ParentTop;
-                    }
+					Button createdButton = null;
+					if (elementState.Classes.Contains("centeredButton"))
+					{
+						createdButton = textImageButtonFactory.Generate(decodedHtml);
+						widgetToAdd = createdButton;
+					}
+					else if (elementState.Classes.Contains("linkButton"))
+					{
+						double oldFontSize = linkButtonFactory.fontSize;
+						linkButtonFactory.fontSize = elementState.PointSize;
+						createdButton = linkButtonFactory.Generate(decodedHtml);
+						StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
+						double descentInPixels = styled.DescentInPixels;
+						createdButton.OriginRelativeParent = new VectorMath.Vector2(createdButton.OriginRelativeParent.x, createdButton.OriginRelativeParent.y + descentInPixels);
+						widgetToAdd = createdButton;
+						linkButtonFactory.fontSize = oldFontSize;
+					}
+					else
+					{
+						TextWidget content = new TextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
+						widgetToAdd = content;
+					}
 
-                    currentRow.AddChild(widgetToAdd);
-                    break;
+					if (createdButton != null)
+					{
+						if (elementState.Id == "sendFeedback")
+						{
+							createdButton.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
+						}
+						else if (elementState.Id == "clearCache")
+						{
+							createdButton.Click += (sender, mouseEvent) => { DeleteCacheData(); };
+						}
+					}
 
-                case "tr":
-                    currentRow = new FlowLayoutWidget();
-                    if (elementState.HeightPercent == 100)
-                    {
-                        currentRow.VAnchor = VAnchor.ParentBottomTop;
-                    }
-                    if (elementState.Alignment == ElementState.AlignType.center)
-                    {
-                        currentRow.HAnchor |= HAnchor.ParentCenter;
-                    }
-                    break;
+					if (elementState.VerticalAlignment == ElementState.VerticalAlignType.top)
+					{
+						widgetToAdd.VAnchor = VAnchor.ParentTop;
+					}
 
-                default:
-                    throw new NotImplementedException("Don't know what to do with {0}".FormatWith(elementState.TypeName));
-            }
-        }
-        
-        private void CloseContent(HtmlParser htmlParser, string htmlContent)
-        {
-            ElementState elementState = htmlParser.CurrentElementState;
-            switch (elementState.TypeName)
-            {
-                case "a":
-                    break;
+					currentRow.AddChild(widgetToAdd);
+					break;
 
-                case "table":
-                    break;
+				case "tr":
+					currentRow = new FlowLayoutWidget();
+					if (elementState.HeightPercent == 100)
+					{
+						currentRow.VAnchor = VAnchor.ParentBottomTop;
+					}
+					if (elementState.Alignment == ElementState.AlignType.center)
+					{
+						currentRow.HAnchor |= HAnchor.ParentCenter;
+					}
+					break;
 
-                case "span":
-                    break;
+				default:
+					throw new NotImplementedException("Don't know what to do with {0}".FormatWith(elementState.TypeName));
+			}
+		}
 
-                case "tr":
-                    htmlWidget.AddChild(currentRow);
-                    currentRow = null;
-                    break;
+		private void CloseContent(HtmlParser htmlParser, string htmlContent)
+		{
+			ElementState elementState = htmlParser.CurrentElementState;
+			switch (elementState.TypeName)
+			{
+				case "a":
+					break;
 
-                case "td":
-                    break;
+				case "table":
+					break;
 
-                default:
-                    throw new NotImplementedException();
-            }
-        }
+				case "span":
+					break;
 
-        public string DoTranslate(string content)
-        {
-            throw new NotImplementedException();
-        }
+				case "tr":
+					htmlWidget.AddChild(currentRow);
+					currentRow = null;
+					break;
 
-        public string DoToUpper(string content)
-        {
-            throw new NotImplementedException();
-        }
+				case "td":
+					break;
 
-        public string GetVersionString(string content)
-        {
-            return VersionInfo.Instance.ReleaseVersion;
-        }
+				default:
+					throw new NotImplementedException();
+			}
+		}
 
-        public string GetBuildString(string content)
-        {
-            return VersionInfo.Instance.BuildVersion;
-        }
+		public string DoTranslate(string content)
+		{
+			throw new NotImplementedException();
+		}
 
-        public string CreateLinkButton(string content)
-        {
-            throw new NotImplementedException();
-        }
+		public string DoToUpper(string content)
+		{
+			throw new NotImplementedException();
+		}
 
-        public string CreateCenteredButton(string content)
-        {
-            throw new NotImplementedException();
-        }
+		public string GetVersionString(string content)
+		{
+			return VersionInfo.Instance.ReleaseVersion;
+		}
+
+		public string GetBuildString(string content)
+		{
+			return VersionInfo.Instance.BuildVersion;
+		}
+
+		public string CreateLinkButton(string content)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string CreateCenteredButton(string content)
+		{
+			throw new NotImplementedException();
+		}
 
 		private static void RemoveDirectory(string directoryToRemove)
 		{
@@ -336,7 +335,7 @@ namespace MatterHackers.MatterControl
 			//     project-extract
 			//     stl
 			// delete all unreference models in Library
-			//   AppData\Local\MatterControl\Library 
+			//   AppData\Local\MatterControl\Library
 			// delete all old update downloads
 			//   AppData\updates
 
@@ -377,7 +376,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		static int CleanDirectory(string path, HashSet<string> referencedPrintItemsFilePaths, HashSet<string> referencedThumbnailFiles)
+		private static int CleanDirectory(string path, HashSet<string> referencedPrintItemsFilePaths, HashSet<string> referencedThumbnailFiles)
 		{
 			int contentCount = 0;
 			foreach (string directory in Directory.EnumerateDirectories(path))
@@ -480,13 +479,13 @@ namespace MatterHackers.MatterControl
         }
 
         void browser_DocumentCompleted(object sender, System.Windows.Forms.WebBrowserDocumentCompletedEventArgs e)
-        {            
+        {
             if (browser.Url == e.Url)
-            {                
+            {
                 Console.WriteLine("Navigated to {0}", e.Url);
             }
             browser.Show();
         }
 #endif
-    }
+	}
 }

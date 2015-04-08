@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,156 +23,154 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using System;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-    class TemperatureWidgetBase : GuiWidget
-    {
-        protected TextWidget indicatorTextWidget;
-        protected TextWidget labelTextWidget;
-        protected Button preheatButton;
+	internal class TemperatureWidgetBase : GuiWidget
+	{
+		protected TextWidget indicatorTextWidget;
+		protected TextWidget labelTextWidget;
+		protected Button preheatButton;
 
-        protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
+		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
 
-        RGBA_Bytes borderColor = new RGBA_Bytes(255, 255, 255);
-        int borderWidth = 2;
+		private RGBA_Bytes borderColor = new RGBA_Bytes(255, 255, 255);
+		private int borderWidth = 2;
 
-        public string IndicatorValue
-        {
-            get
-            {
-                return indicatorTextWidget.Text;
-            }
-            set
-            {
-                if (indicatorTextWidget.Text != value)
-                {
-                    indicatorTextWidget.Text = value;
-                }
-            }
-        }
+		public string IndicatorValue
+		{
+			get
+			{
+				return indicatorTextWidget.Text;
+			}
+			set
+			{
+				if (indicatorTextWidget.Text != value)
+				{
+					indicatorTextWidget.Text = value;
+				}
+			}
+		}
 
-        event EventHandler unregisterEvents;
-        public TemperatureWidgetBase(string textValue)
-            : base(52* TextWidget.GlobalPointSizeScaleRatio, 52* TextWidget.GlobalPointSizeScaleRatio)
-        {
+		private event EventHandler unregisterEvents;
 
-            whiteButtonFactory.FixedHeight = 18* TextWidget.GlobalPointSizeScaleRatio;
-            whiteButtonFactory.fontSize = 7;
-            whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
-            whiteButtonFactory.normalTextColor = RGBA_Bytes.DarkGray;
+		public TemperatureWidgetBase(string textValue)
+			: base(52 * TextWidget.GlobalPointSizeScaleRatio, 52 * TextWidget.GlobalPointSizeScaleRatio)
+		{
+			whiteButtonFactory.FixedHeight = 18 * TextWidget.GlobalPointSizeScaleRatio;
+			whiteButtonFactory.fontSize = 7;
+			whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
+			whiteButtonFactory.normalTextColor = RGBA_Bytes.DarkGray;
 
-            FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            container.AnchorAll();
+			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			container.AnchorAll();
 
-            this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
-            this.Margin = new BorderDouble(0, 2)* TextWidget.GlobalPointSizeScaleRatio;
+			this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
+			this.Margin = new BorderDouble(0, 2) * TextWidget.GlobalPointSizeScaleRatio;
 
-            GuiWidget labelContainer = new GuiWidget();
-            labelContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            labelContainer.Height = 18* TextWidget.GlobalPointSizeScaleRatio;
+			GuiWidget labelContainer = new GuiWidget();
+			labelContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			labelContainer.Height = 18 * TextWidget.GlobalPointSizeScaleRatio;
 
-            labelTextWidget = new TextWidget("", pointSize:8);
-            labelTextWidget.AutoExpandBoundsToText = true;
-            labelTextWidget.HAnchor = HAnchor.ParentCenter;
-            labelTextWidget.VAnchor = VAnchor.ParentCenter;
-            labelTextWidget.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
-            labelTextWidget.Visible = false;
+			labelTextWidget = new TextWidget("", pointSize: 8);
+			labelTextWidget.AutoExpandBoundsToText = true;
+			labelTextWidget.HAnchor = HAnchor.ParentCenter;
+			labelTextWidget.VAnchor = VAnchor.ParentCenter;
+			labelTextWidget.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
+			labelTextWidget.Visible = false;
 
-            labelContainer.AddChild(labelTextWidget);
+			labelContainer.AddChild(labelTextWidget);
 
-            GuiWidget indicatorContainer = new GuiWidget();
-            indicatorContainer.AnchorAll();
+			GuiWidget indicatorContainer = new GuiWidget();
+			indicatorContainer.AnchorAll();
 
-            indicatorTextWidget = new TextWidget(textValue, pointSize: 11);
-            indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-            indicatorTextWidget.HAnchor = HAnchor.ParentCenter;
-            indicatorTextWidget.VAnchor = VAnchor.ParentCenter;
-            indicatorTextWidget.AutoExpandBoundsToText = true;
+			indicatorTextWidget = new TextWidget(textValue, pointSize: 11);
+			indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+			indicatorTextWidget.HAnchor = HAnchor.ParentCenter;
+			indicatorTextWidget.VAnchor = VAnchor.ParentCenter;
+			indicatorTextWidget.AutoExpandBoundsToText = true;
 
-            indicatorContainer.AddChild(indicatorTextWidget);
+			indicatorContainer.AddChild(indicatorTextWidget);
 
-            GuiWidget buttonContainer = new GuiWidget();
-            buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            buttonContainer.Height = 18* TextWidget.GlobalPointSizeScaleRatio;
+			GuiWidget buttonContainer = new GuiWidget();
+			buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			buttonContainer.Height = 18 * TextWidget.GlobalPointSizeScaleRatio;
 
-            preheatButton = whiteButtonFactory.Generate("Preheat".Localize().ToUpper());
-            preheatButton.Cursor = Cursors.Hand;
-            preheatButton.Visible = false;
+			preheatButton = whiteButtonFactory.Generate("Preheat".Localize().ToUpper());
+			preheatButton.Cursor = Cursors.Hand;
+			preheatButton.Visible = false;
 
-            buttonContainer.AddChild(preheatButton);
-            
-            container.AddChild(labelContainer);
-            container.AddChild(indicatorContainer);
-            container.AddChild(buttonContainer);
+			buttonContainer.AddChild(preheatButton);
 
+			container.AddChild(labelContainer);
+			container.AddChild(indicatorContainer);
+			container.AddChild(buttonContainer);
 
-            this.AddChild(container);
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			this.AddChild(container);
+			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
-            this.MouseEnterBounds += onEnterBounds;
-            this.MouseLeaveBounds += onLeaveBounds;
-            this.preheatButton.Click += onPreheatButtonClick;
-        }
+			this.MouseEnterBounds += onEnterBounds;
+			this.MouseLeaveBounds += onLeaveBounds;
+			this.preheatButton.Click += onPreheatButtonClick;
+		}
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
 
-        public void ThemeChanged(object sender, EventArgs e)
-        {
-            this.indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-            this.Invalidate();
-        }
+		public void ThemeChanged(object sender, EventArgs e)
+		{
+			this.indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+			this.Invalidate();
+		}
 
-        void onEnterBounds(Object sender, EventArgs e)
-        {
-            labelTextWidget.Visible = true;
-            if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-            {
-                preheatButton.Visible = true;
-            }
-        }
+		private void onEnterBounds(Object sender, EventArgs e)
+		{
+			labelTextWidget.Visible = true;
+			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+			{
+				preheatButton.Visible = true;
+			}
+		}
 
-        void onLeaveBounds(Object sender, EventArgs e)
-        {
-            labelTextWidget.Visible = false;
-            preheatButton.Visible = false;
-        }
+		private void onLeaveBounds(Object sender, EventArgs e)
+		{
+			labelTextWidget.Visible = false;
+			preheatButton.Visible = false;
+		}
 
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            base.OnDraw(graphics2D);
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
 
-            RectangleDouble Bounds = LocalBounds;
-            RoundedRect borderRect = new RoundedRect(this.LocalBounds, 0);
-            Stroke strokeRect = new Stroke(borderRect, borderWidth);
-            graphics2D.Render(strokeRect, borderColor);
-        }
+			RectangleDouble Bounds = LocalBounds;
+			RoundedRect borderRect = new RoundedRect(this.LocalBounds, 0);
+			Stroke strokeRect = new Stroke(borderRect, borderWidth);
+			graphics2D.Render(strokeRect, borderColor);
+		}
 
-        void onPreheatButtonClick(object sender, EventArgs e)
-        {
-            SetTargetTemperature();
-        }
+		private void onPreheatButtonClick(object sender, EventArgs e)
+		{
+			SetTargetTemperature();
+		}
 
-        protected virtual void SetTargetTemperature()
-        {
-            
-        }
-    }
+		protected virtual void SetTargetTemperature()
+		{
+		}
+	}
 }

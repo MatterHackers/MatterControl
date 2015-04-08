@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,118 +23,121 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-    public class TextScrollWidget : GuiWidget
-    {
-        string[] StartLineStringFilters = null;
-        event EventHandler unregisterEvents;
-        List<string> allSourceLines;
-        List<string> visibleLines;
+	public class TextScrollWidget : GuiWidget
+	{
+		private string[] StartLineStringFilters = null;
 
-        TypeFacePrinter printer = new TypeFacePrinter();
-        public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
-        int forceStartLine = -1;
-        public double Position0To1
-        {
-            get
-            {
-                if (forceStartLine == -1)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return ((visibleLines.Count - (double)forceStartLine) / visibleLines.Count);
-                }
-            }
+		private event EventHandler unregisterEvents;
 
-            set
-            {
-                forceStartLine = (int)(visibleLines.Count * (1 - value)) - 1;
-                forceStartLine = Math.Max(0, forceStartLine);
-                forceStartLine = Math.Min(visibleLines.Count - 1, forceStartLine);
+		private List<string> allSourceLines;
+		private List<string> visibleLines;
 
-                // If the start would be less than one screen worth of content, allow
-                // the whole screen to have content and scroll with new material.
-                if (forceStartLine > visibleLines.Count - NumVisibleLines)
-                {
-                    forceStartLine = -1;
-                }
-                Invalidate();
-            }
-        }
+		private TypeFacePrinter printer = new TypeFacePrinter();
+		public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
+		private int forceStartLine = -1;
 
-        public int NumVisibleLines
-        {
-            get { return (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); }
-        }
+		public double Position0To1
+		{
+			get
+			{
+				if (forceStartLine == -1)
+				{
+					return 0;
+				}
+				else
+				{
+					return ((visibleLines.Count - (double)forceStartLine) / visibleLines.Count);
+				}
+			}
 
-        public TextScrollWidget(List<string> sourceLines)
-        {
-            printer.DrawFromHintedCache = true;
-            this.allSourceLines = sourceLines;
-            this.visibleLines = sourceLines;
-            PrinterOutputCache.Instance.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
-        }
+			set
+			{
+				forceStartLine = (int)(visibleLines.Count * (1 - value)) - 1;
+				forceStartLine = Math.Max(0, forceStartLine);
+				forceStartLine = Math.Min(visibleLines.Count - 1, forceStartLine);
 
-        void ConditionalyAddToVisible(string line)
-        {
-            if (StartLineStringFilters != null
-                && StartLineStringFilters.Length > 0)
-            {
-                bool lineIsVisible = true;
-                foreach (string startFilter in StartLineStringFilters)
-                {
-                    if (line == null
-                        || line.Length < 3
-                        || line.StartsWith(startFilter))
-                    {
-                        lineIsVisible = false;
-                        break;
-                    }
-                }
+				// If the start would be less than one screen worth of content, allow
+				// the whole screen to have content and scroll with new material.
+				if (forceStartLine > visibleLines.Count - NumVisibleLines)
+				{
+					forceStartLine = -1;
+				}
+				Invalidate();
+			}
+		}
 
-                if (lineIsVisible)
-                {
-                    visibleLines.Add(line);
-                }
-            }
-        }
+		public int NumVisibleLines
+		{
+			get { return (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); }
+		}
 
-        void RecievedNewLine(object sender, EventArgs e)
-        {
-            StringEventArgs stringEvent = e as StringEventArgs;
-            if (stringEvent != null)
-            {
-                ConditionalyAddToVisible(stringEvent.Data);
-                //allSourceLines.Add(stringEvent.Data);
-            }
-            else // the list changed in some big way (probably cleared)
-            {
-                if (StartLineStringFilters != null
-                    && StartLineStringFilters.Length > 0)
-                {
-                    CreateFilteredList();
-                }
-            }
+		public TextScrollWidget(List<string> sourceLines)
+		{
+			printer.DrawFromHintedCache = true;
+			this.allSourceLines = sourceLines;
+			this.visibleLines = sourceLines;
+			PrinterOutputCache.Instance.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
+		}
 
-            Invalidate();
-        }
+		private void ConditionalyAddToVisible(string line)
+		{
+			if (StartLineStringFilters != null
+				&& StartLineStringFilters.Length > 0)
+			{
+				bool lineIsVisible = true;
+				foreach (string startFilter in StartLineStringFilters)
+				{
+					if (line == null
+						|| line.Length < 3
+						|| line.StartsWith(startFilter))
+					{
+						lineIsVisible = false;
+						break;
+					}
+				}
 
-        void CreateFilteredList()
-        {
+				if (lineIsVisible)
+				{
+					visibleLines.Add(line);
+				}
+			}
+		}
+
+		private void RecievedNewLine(object sender, EventArgs e)
+		{
+			StringEventArgs stringEvent = e as StringEventArgs;
+			if (stringEvent != null)
+			{
+				ConditionalyAddToVisible(stringEvent.Data);
+				//allSourceLines.Add(stringEvent.Data);
+			}
+			else // the list changed in some big way (probably cleared)
+			{
+				if (StartLineStringFilters != null
+					&& StartLineStringFilters.Length > 0)
+				{
+					CreateFilteredList();
+				}
+			}
+
+			Invalidate();
+		}
+
+		private void CreateFilteredList()
+		{
 			using (TimedLock.Lock(this, "CreatingFilteredList"))
 			{
 				visibleLines = new List<string>();
@@ -144,43 +147,43 @@ namespace MatterHackers.MatterControl
 					ConditionalyAddToVisible(line);
 				}
 			}
-        }
+		}
 
-        public void SetLineStartFilter(string[] startLineStringsToFilter)
-        {
-            if (startLineStringsToFilter != null
-                && startLineStringsToFilter.Length > 0)
-            {
-                StartLineStringFilters = startLineStringsToFilter;
-                CreateFilteredList();
-            }
-            else
-            {
-                visibleLines = allSourceLines;
-            }
-        }
+		public void SetLineStartFilter(string[] startLineStringsToFilter)
+		{
+			if (startLineStringsToFilter != null
+				&& startLineStringsToFilter.Length > 0)
+			{
+				StartLineStringFilters = startLineStringsToFilter;
+				CreateFilteredList();
+			}
+			else
+			{
+				visibleLines = allSourceLines;
+			}
+		}
 
-        public void WriteToFile(string filePath)
-        {
-            System.IO.File.WriteAllLines(@filePath, allSourceLines);
-        }
+		public void WriteToFile(string filePath)
+		{
+			System.IO.File.WriteAllLines(@filePath, allSourceLines);
+		}
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
 
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            RectangleDouble Bounds = LocalBounds;
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			RectangleDouble Bounds = LocalBounds;
 
-            int numLinesToDraw = NumVisibleLines;
+			int numLinesToDraw = NumVisibleLines;
 
-            double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
+			double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
 			using (TimedLock.Lock(this, "DrawingLines"))
 			{
 				int startLineIndex = visibleLines.Count - numLinesToDraw;
@@ -218,7 +221,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-            base.OnDraw(graphics2D);
-        }
-    }
+			base.OnDraw(graphics2D);
+		}
+	}
 }

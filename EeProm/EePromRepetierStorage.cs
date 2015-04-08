@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,77 +23,75 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.EeProm
 {
-    public delegate void OnEePromRepetierAdded(EePromRepetierParameter param);
+	public delegate void OnEePromRepetierAdded(EePromRepetierParameter param);
 
-    public class EePromRepetierStorage
-    {
-        public Dictionary<int, EePromRepetierParameter> eePromSettingsList;
-        public event EventHandler eventAdded = null;
+	public class EePromRepetierStorage
+	{
+		public Dictionary<int, EePromRepetierParameter> eePromSettingsList;
 
-        public EePromRepetierStorage()
-        {
-            eePromSettingsList = new Dictionary<int, EePromRepetierParameter>();
-        }
+		public event EventHandler eventAdded = null;
 
-        public void Clear()
-        {
-            eePromSettingsList.Clear();
-        }
+		public EePromRepetierStorage()
+		{
+			eePromSettingsList = new Dictionary<int, EePromRepetierParameter>();
+		}
 
-        public void Save()
-        {
-            foreach (EePromRepetierParameter p in eePromSettingsList.Values)
-            {
-                p.save();
-            }
-        }
+		public void Clear()
+		{
+			eePromSettingsList.Clear();
+		}
 
-        public void Add(object sender, EventArgs e)
-        {
-            StringEventArgs lineString = e as StringEventArgs;
+		public void Save()
+		{
+			foreach (EePromRepetierParameter p in eePromSettingsList.Values)
+			{
+				p.save();
+			}
+		}
 
-            if (e == null)
-            {
-                return;
-            }
+		public void Add(object sender, EventArgs e)
+		{
+			StringEventArgs lineString = e as StringEventArgs;
 
-            string line = lineString.Data;
+			if (e == null)
+			{
+				return;
+			}
 
-            if (!line.StartsWith("EPR:"))
-            {
-                return;
-            }
+			string line = lineString.Data;
 
-            EePromRepetierParameter parameter = new EePromRepetierParameter(line);
-            if (eePromSettingsList.ContainsKey(parameter.position))
-            {
-                eePromSettingsList.Remove(parameter.position);
-            }
+			if (!line.StartsWith("EPR:"))
+			{
+				return;
+			}
 
-            eePromSettingsList.Add(parameter.position, parameter);
-            if (eventAdded != null)
-            {
-                eventAdded(this, parameter);
-            }
-        }
+			EePromRepetierParameter parameter = new EePromRepetierParameter(line);
+			if (eePromSettingsList.ContainsKey(parameter.position))
+			{
+				eePromSettingsList.Remove(parameter.position);
+			}
 
-        public void AskPrinterForSettings()
-        {
-            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M205");
-        }
-    }
+			eePromSettingsList.Add(parameter.position, parameter);
+			if (eventAdded != null)
+			{
+				eventAdded(this, parameter);
+			}
+		}
+
+		public void AskPrinterForSettings()
+		{
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M205");
+		}
+	}
 }

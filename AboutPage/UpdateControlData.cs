@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,40 +23,41 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.VersionManagement;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Threading;
 
 namespace MatterHackers.MatterControl
 {
 	public class UpdateControlData
 	{
-		WebClient webClient;
+		private WebClient webClient;
 
-		int downloadPercent;
-		int downloadSize;
+		private int downloadPercent;
+		private int downloadSize;
 
 		public int DownloadPercent { get { return downloadPercent; } }
 
 		public enum UpdateRequestType { UserRequested, Automatic, FirstTimeEver };
-		UpdateRequestType updateRequestType;
+
+		private UpdateRequestType updateRequestType;
 
 		public enum UpdateStatusStates { MayBeAvailable, CheckingForUpdate, UpdateAvailable, UpdateDownloading, ReadyToInstall, UpToDate, UnableToConnectToServer };
 
-		bool WaitingToCompleteTransaction()
+		private bool WaitingToCompleteTransaction()
 		{
 			switch (UpdateStatus)
 			{
@@ -74,11 +75,12 @@ namespace MatterHackers.MatterControl
 #if __ANDROID__
 		static string updateFileLocation = Path.Combine(DataStorage.ApplicationDataStorage.Instance.PublicDataStoragePath, "updates");
 #else
-		static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
-		static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
+		private static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
+		private static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
 #endif
 
-		UpdateStatusStates updateStatus;
+		private UpdateStatusStates updateStatus;
+
 		public UpdateStatusStates UpdateStatus
 		{
 			get
@@ -87,7 +89,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		void CheckVersionStatus()
+		private void CheckVersionStatus()
 		{
 			string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 			string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
@@ -108,7 +110,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		void SetUpdateStatus(UpdateStatusStates updateStatus)
+		private void SetUpdateStatus(UpdateStatusStates updateStatus)
 		{
 			if (this.updateStatus != updateStatus)
 			{
@@ -117,7 +119,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		string InstallerExtension
+		private string InstallerExtension
 		{
 			get
 			{
@@ -140,7 +142,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		static UpdateControlData instance;
+		private static UpdateControlData instance;
+
 		static public UpdateControlData Instance
 		{
 			get
@@ -160,7 +163,7 @@ namespace MatterHackers.MatterControl
 			CheckForUpdate();
 		}
 
-		void CheckForUpdate()
+		private void CheckForUpdate()
 		{
 			if (!WaitingToCompleteTransaction())
 			{
@@ -172,11 +175,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		string updateAvailableMessage = "There is a recommended update avalible for MatterControl. Would you like to download it now?".Localize();
-		string updateAvailableTitle = "Recommended Update Available".Localize();
-		string downloadNow = "Download Now".Localize();
-		string remindMeLater = "Remind Me Later".Localize();
-		void onVersionRequestSucceeded(object sender, EventArgs e)
+		private string updateAvailableMessage = "There is a recommended update avalible for MatterControl. Would you like to download it now?".Localize();
+		private string updateAvailableTitle = "Recommended Update Available".Localize();
+		private string downloadNow = "Download Now".Localize();
+		private string remindMeLater = "Remind Me Later".Localize();
+
+		private void onVersionRequestSucceeded(object sender, EventArgs e)
 		{
 			string currentBuildToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 			string updateFileName = Path.Combine(updateFileLocation, string.Format("{0}.{1}", currentBuildToken, InstallerExtension));
@@ -200,13 +204,12 @@ namespace MatterHackers.MatterControl
 					{
 						StyledMessageBox.ShowMessageBox(ProcessDialogResponse, updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater);
 						// show a dialog to tell the user there is an update
-
 					});
 				}
 			}
 		}
 
-		void ProcessDialogResponse(bool messageBoxResponse)
+		private void ProcessDialogResponse(bool messageBoxResponse)
 		{
 			if (messageBoxResponse)
 			{
@@ -221,7 +224,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		static GuiWidget FindNamedWidgetRecursive(GuiWidget root, string name)
+		private static GuiWidget FindNamedWidgetRecursive(GuiWidget root, string name)
 		{
 			foreach (GuiWidget child in root.Children)
 			{
@@ -240,25 +243,26 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		void onVersionRequestFailed(object sender, EventArgs e)
+		private void onVersionRequestFailed(object sender, EventArgs e)
 		{
 			SetUpdateStatus(UpdateStatusStates.UpToDate);
 		}
 
-		int downloadAttempts = 0;
-		string updateFileName;
+		private int downloadAttempts = 0;
+		private string updateFileName;
+
 		public void InitiateUpdateDownload()
 		{
 			downloadAttempts = 0;
 			DownloadUpdate();
 		}
 
-		void DownloadUpdate()
+		private void DownloadUpdate()
 		{
 			(new Thread(new ThreadStart(() => DownloadUpdateTask()))).Start();
 		}
 
-		void DownloadUpdateTask()
+		private void DownloadUpdateTask()
 		{
 			if (!WaitingToCompleteTransaction())
 			{
@@ -307,7 +311,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+		private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
 		{
 			if (downloadSize > 0)
 			{
@@ -319,7 +323,7 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
+		private void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
 		{
 			if (e.Error != null)
 			{
@@ -341,8 +345,6 @@ namespace MatterHackers.MatterControl
 						SetUpdateStatus(UpdateStatusStates.UnableToConnectToServer);
 					});
 				}
-
-
 			}
 			else
 			{
@@ -351,8 +353,6 @@ namespace MatterHackers.MatterControl
 					SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
 				});
 			}
-
-
 
 			webClient.Dispose();
 		}
@@ -422,29 +422,29 @@ namespace MatterHackers.MatterControl
 				}
 				return true;
 #else
-                int tries = 0;
-                do
-                {
-                    Thread.Sleep(10);
-                } while (tries++ < 100 && !File.Exists(friendlyFileName));
+				int tries = 0;
+				do
+				{
+					Thread.Sleep(10);
+				} while (tries++ < 100 && !File.Exists(friendlyFileName));
 
-                //Run installer file
-                Process installUpdate = new Process();
-                installUpdate.StartInfo.FileName = friendlyFileName;
-                installUpdate.Start();
+				//Run installer file
+				Process installUpdate = new Process();
+				installUpdate.StartInfo.FileName = friendlyFileName;
+				installUpdate.Start();
 
-                while (windowToClose != null && windowToClose as SystemWindow == null)
-                {
-                    windowToClose = windowToClose.Parent;
-                }
+				while (windowToClose != null && windowToClose as SystemWindow == null)
+				{
+					windowToClose = windowToClose.Parent;
+				}
 
-                //Attempt to close current application
-                SystemWindow topSystemWindow = windowToClose as SystemWindow;
-                if (topSystemWindow != null)
-                {
-                    topSystemWindow.CloseOnIdle();
-                    return true;
-                }
+				//Attempt to close current application
+				SystemWindow topSystemWindow = windowToClose as SystemWindow;
+				if (topSystemWindow != null)
+				{
+					topSystemWindow.CloseOnIdle();
+					return true;
+				}
 #endif
 			}
 			catch

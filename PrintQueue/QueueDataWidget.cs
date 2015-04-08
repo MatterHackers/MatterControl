@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,53 +23,54 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class QueueDataWidget : GuiWidget
 	{
-		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
-		PluginChooserWindow pluginChooserWindow;
-		QueueDataView queueDataView;
-		Button exportItemButton;
-		Button sendItemButton;
-		Button copyItemButton;
-		Button removeItemButton;
-		Button enterEditModeButton;
-		Button leaveEditModeButton;
-		Button addToLibraryButton;
-		Button clearAllButton;
-		GuiWidget clearAllPlaceholder;
-		QueueRowItem queueRowItem;
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
+		private PluginChooserWindow pluginChooserWindow;
+		private QueueDataView queueDataView;
+		private Button exportItemButton;
+		private Button sendItemButton;
+		private Button copyItemButton;
+		private Button removeItemButton;
+		private Button enterEditModeButton;
+		private Button leaveEditModeButton;
+		private Button addToLibraryButton;
+		private Button clearAllButton;
+		private GuiWidget clearAllPlaceholder;
+		private QueueRowItem queueRowItem;
 
-		Button addToQueueButton;
-		Button createButton;
+		private Button addToQueueButton;
+		private Button createButton;
 
-		static Button shopButton;
-		event EventHandler unregisterEvents;
+		private static Button shopButton;
+
+		private event EventHandler unregisterEvents;
 
 		public delegate void SendButtonAction(object state, List<PrintItemWrapper> sendItems);
+
 		public static SendButtonAction sendButtonFunction = null;
 
 		public QueueDataWidget(QueueDataView queueDataView)
@@ -83,7 +84,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.borderWidth = 0;
-
 
 			editButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			editButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					queueMenuContainer.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 					queueMenu = new QueueOptionsMenu();
 					queueMenuContainer.AddChild(queueMenu.MenuDropList);
-					if(!touchScreenMode)
+					if (!touchScreenMode)
 					{
 						buttonPanel1.AddChild(queueMenuContainer);
 					}
@@ -248,10 +248,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnClosed(e);
 		}
 
-		QueueOptionsMenu queueMenu;
-		FlowLayoutWidget queueMenuContainer;
+		private QueueOptionsMenu queueMenu;
+		private FlowLayoutWidget queueMenuContainer;
 
-		void AddHandlers()
+		private void AddHandlers()
 		{
 			queueDataView.SelectedItems.OnAdd += onLibraryItemsSelectChanged;
 			queueDataView.SelectedItems.OnRemove += onLibraryItemsSelectChanged;
@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			clearAllButton.Click += clearAllButtonClick;
 		}
 
-		void enterEditModeButtonClick(object sender, EventArgs mouseEvent)
+		private void enterEditModeButtonClick(object sender, EventArgs mouseEvent)
 		{
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
@@ -282,18 +282,18 @@ namespace MatterHackers.MatterControl.PrintQueue
 			SetVisibleButtons();
 		}
 
-		void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
+		private void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
 		{
 			leaveEditMode();
 		}
 
-		void clearAllButtonClick(object sender, EventArgs mouseEvent)
+		private void clearAllButtonClick(object sender, EventArgs mouseEvent)
 		{
 			QueueData.Instance.RemoveAll();
 			leaveEditMode();
 		}
 
-		void leaveEditMode()
+		private void leaveEditMode()
 		{
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
@@ -314,7 +314,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			SetVisibleButtons();
 		}
 
-
 		private void SetDisplayAttributes()
 		{
 			this.Padding = new BorderDouble(3);
@@ -322,7 +321,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.AnchorAll();
 		}
 
-		void exportButton_Click(object sender, EventArgs mouseEvent)
+		private void exportButton_Click(object sender, EventArgs mouseEvent)
 		{
 			//Open export options
 			if (queueDataView.SelectedItems.Count == 1)
@@ -332,7 +331,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		void sendButton_Click(object sender, EventArgs mouseEvent)
+		private void sendButton_Click(object sender, EventArgs mouseEvent)
 		{
 			//Open export options
 			List<PrintItemWrapper> itemList = this.queueDataView.SelectedItems.Select(item => item.PrintItemWrapper).ToList();
@@ -352,7 +351,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		void removeButton_Click(object sender, EventArgs mouseEvent)
+		private void removeButton_Click(object sender, EventArgs mouseEvent)
 		{
 			// Sort by index in the QueueData list to prevent positions shifting due to removes
 			var sortedByIndexPos = this.queueDataView.SelectedItems.OrderByDescending(rowItem => QueueData.Instance.GetIndex(rowItem.PrintItemWrapper));
@@ -366,7 +365,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.queueDataView.SelectedItems.Clear();
 		}
 
-		void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
+		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
 		{
 			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
 			{
@@ -374,8 +373,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 			queueDataView.ClearSelectedItems();
 		}
-		
-		void copy_Button_Click(object sender, EventArgs mouseEvent)
+
+		private void copy_Button_Click(object sender, EventArgs mouseEvent)
 		{
 			CreateCopyInQueue();
 		}
@@ -448,15 +447,18 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		class PartToAddToQueue
+		private class PartToAddToQueue
 		{
 			internal string Name { get; set; }
+
 			internal string FileLocation { get; set; }
+
 			internal int InsertAfterIndex { get; set; }
 		}
 
-		ExportPrintItemWindow exportingWindow;
-		bool exportingWindowIsOpen = false;
+		private ExportPrintItemWindow exportingWindow;
+		private bool exportingWindowIsOpen = false;
+
 		private void OpenExportWindow(PrintItemWrapper printItem)
 		{
 			if (exportingWindowIsOpen == false)
@@ -475,7 +477,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-
 		private void OpenPluginChooserWindow()
 		{
 			if (pluginChooserWindow == null)
@@ -492,7 +493,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		void createPartsSheetsButton_Click(object sender, EventArgs mouseEvent)
+		private void createPartsSheetsButton_Click(object sender, EventArgs mouseEvent)
 		{
 #if !__ANDROID__
 			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
@@ -555,27 +556,26 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-
-		void exportToSDProcess_UpdateRemainingItems(object sender, EventArgs e)
+		private void exportToSDProcess_UpdateRemainingItems(object sender, EventArgs e)
 		{
 			ExportToFolderProcess exportToSDProcess = (ExportToFolderProcess)sender;
 		}
 
-		void exportQueueButton_Click(object sender, EventArgs mouseEvent)
+		private void exportQueueButton_Click(object sender, EventArgs mouseEvent)
 		{
 			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
 			ProjectFileHandler project = new ProjectFileHandler(partList);
 			project.SaveAs();
 		}
 
-		void importQueueButton_Click(object sender, EventArgs mouseEvent)
+		private void importQueueButton_Click(object sender, EventArgs mouseEvent)
 		{
 			ProjectFileHandler project = new ProjectFileHandler(null);
 			throw new NotImplementedException();
 #if false
 			List<PrintItem> partFiles = project.OpenFromDialog();
 			if (partFiles != null)
-			{                
+			{
 			foreach (PrintItem part in partFiles)
 			{
 			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
@@ -584,7 +584,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 #endif
 		}
 
-		void deleteAllFromQueueButton_Click(object sender, EventArgs mouseEvent)
+		private void deleteAllFromQueueButton_Click(object sender, EventArgs mouseEvent)
 		{
 			QueueData.Instance.RemoveAll();
 		}
@@ -646,18 +646,18 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnDragDrop(fileDropEventArgs);
 		}
 
-		void addToQueueButton_Click(object sender, EventArgs mouseEvent)
+		private void addToQueueButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(AddItemsToQueue);
 		}
 
-		void AddPartCopyToQueue(object state)
+		private void AddPartCopyToQueue(object state)
 		{
 			var partInfo = state as PartToAddToQueue;
 			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(partInfo.Name, partInfo.FileLocation)), QueueData.ValidateSizeOn32BitSystems.Skip, partInfo.InsertAfterIndex);
 		}
 
-		void AddItemsToQueue(object state)
+		private void AddItemsToQueue(object state)
 		{
 			FileDialog.OpenFileDialog(
 				new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams)
@@ -691,7 +691,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 				});
-
 		}
 	}
 }

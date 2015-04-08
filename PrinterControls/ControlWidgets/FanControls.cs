@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,159 +23,148 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.CustomWidgets;
+using System;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-    public class FanControls : ControlWidgetBase
-    {
-        event EventHandler unregisterEvents;
-        EditableNumberDisplay fanSpeedDisplay;
+	public class FanControls : ControlWidgetBase
+	{
+		private event EventHandler unregisterEvents;
 
-		TextWidget fanToggleSwitchText;
-		ToggleSwitch toggleSwitch;
+		private EditableNumberDisplay fanSpeedDisplay;
 
-        protected override void AddChildElements()
-        {
-            AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan Controls".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+		private TextWidget fanToggleSwitchText;
+		private ToggleSwitch toggleSwitch;
 
-            fanControlsGroupBox.Margin = new BorderDouble(0);            
-            fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-            fanControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-            fanControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-            
-            this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            this.AddChild(fanControlsGroupBox);
+		protected override void AddChildElements()
+		{
+			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan Controls".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 
-            FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+			fanControlsGroupBox.Margin = new BorderDouble(0);
+			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			fanControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			fanControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
 
-            FlowLayoutWidget fanControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
-            {
-                fanControlsLayout.AddChild(CreateFanControls());
-            }
+			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			this.AddChild(fanControlsGroupBox);
 
-            leftToRight.AddChild(fanControlsLayout);
-            SetDisplayAttributes();
+			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 
-            fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, "{0}%".FormatWith(PrinterConnectionAndCommunication.Instance.FanSpeed0To255.ToString()), "100%");
-            fanSpeedDisplay.EditComplete += (sender, e) =>
-            {
-                PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
-            };
-            leftToRight.AddChild(fanSpeedDisplay);
+			FlowLayoutWidget fanControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
+			{
+				fanControlsLayout.AddChild(CreateFanControls());
+			}
 
-            fanControlsGroupBox.AddChild(leftToRight);
-        }
+			leftToRight.AddChild(fanControlsLayout);
+			SetDisplayAttributes();
 
-        void SetDisplayAttributes()
-        {
-            this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
+			fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, "{0}%".FormatWith(PrinterConnectionAndCommunication.Instance.FanSpeed0To255.ToString()), "100%");
+			fanSpeedDisplay.EditComplete += (sender, e) =>
+			{
+				PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
+			};
+			leftToRight.AddChild(fanSpeedDisplay);
 
-            this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
-            this.textImageButtonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
-            this.textImageButtonFactory.fontSize = 10;
-            this.textImageButtonFactory.borderWidth = 1;
-            this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-            this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			fanControlsGroupBox.AddChild(leftToRight);
+		}
 
-            this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-            this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
-            this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+		private void SetDisplayAttributes()
+		{
+			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
 
-            this.HAnchor = HAnchor.ParentLeftRight;
-        }
+			this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
+			this.textImageButtonFactory.fontSize = 10;
+			this.textImageButtonFactory.borderWidth = 1;
+			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-        
-        private GuiWidget CreateFanControls()
-        {
-            PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
+			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
+			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-            leftToRight.Padding = new BorderDouble(3, 0, 0, 5) * TextWidget.GlobalPointSizeScaleRatio;
-          
+			this.HAnchor = HAnchor.ParentLeftRight;
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
+
+		private GuiWidget CreateFanControls()
+		{
+			PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
+
+			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+			leftToRight.Padding = new BorderDouble(3, 0, 0, 5) * TextWidget.GlobalPointSizeScaleRatio;
 
 			//Matt's test editing to add a on/off toggle switch
 			bool fanActive = PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0;
 
-			fanToggleSwitchText = new TextWidget (fanActive?"On":"Off", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			fanToggleSwitchText.VAnchor = Agg.UI.VAnchor.ParentCenter;		
+			fanToggleSwitchText = new TextWidget(fanActive ? "On" : "Off", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			fanToggleSwitchText.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
-			toggleSwitch = toggleSwitchFactory.GenerateGivenTextWidget (fanToggleSwitchText,"On","Off", fanActive);		
-			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;		
-			toggleSwitch.SwitchStateChanged += new EventHandler (ToggleSwitch_Click);
-            toggleSwitch.Margin = new BorderDouble(5,0);
+			toggleSwitch = toggleSwitchFactory.GenerateGivenTextWidget(fanToggleSwitchText, "On", "Off", fanActive);
+			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			toggleSwitch.SwitchStateChanged += new EventHandler(ToggleSwitch_Click);
+			toggleSwitch.Margin = new BorderDouble(5, 0);
 
-			leftToRight.AddChild (fanToggleSwitchText);
+			leftToRight.AddChild(fanToggleSwitchText);
 			leftToRight.AddChild(toggleSwitch);
 
-            return leftToRight;
-        }
-
-        bool doingDisplayUpdateFromPrinter = false;
-        void FanSpeedChanged_Event(object sender, EventArgs e)
-        {
-            int printerFanSpeed = PrinterConnectionAndCommunication.Instance.FanSpeed0To255;
-
-            fanSpeedDisplay.SetDisplayString("{0}%".FormatWith((int)(printerFanSpeed * 100.5 / 255)));
-
-            doingDisplayUpdateFromPrinter = true;
-
-            if (printerFanSpeed > 0)
-            {
-                toggleSwitch.SwitchState = true;
-            }
-            else
-            {
-                toggleSwitch.SwitchState = false;
-            }
-
-            doingDisplayUpdateFromPrinter = false;
-        }
-        
-        void ToggleSwitch_Click(object sender, EventArgs e)
-		{
-            if (!doingDisplayUpdateFromPrinter)
-            {
-                ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
-                if (toggleSwitch.SwitchState)
-                {
-                    PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 255;
-                }
-                else
-                {
-                    PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 0;
-                }
-            }
+			return leftToRight;
 		}
-    }
+
+		private bool doingDisplayUpdateFromPrinter = false;
+
+		private void FanSpeedChanged_Event(object sender, EventArgs e)
+		{
+			int printerFanSpeed = PrinterConnectionAndCommunication.Instance.FanSpeed0To255;
+
+			fanSpeedDisplay.SetDisplayString("{0}%".FormatWith((int)(printerFanSpeed * 100.5 / 255)));
+
+			doingDisplayUpdateFromPrinter = true;
+
+			if (printerFanSpeed > 0)
+			{
+				toggleSwitch.SwitchState = true;
+			}
+			else
+			{
+				toggleSwitch.SwitchState = false;
+			}
+
+			doingDisplayUpdateFromPrinter = false;
+		}
+
+		private void ToggleSwitch_Click(object sender, EventArgs e)
+		{
+			if (!doingDisplayUpdateFromPrinter)
+			{
+				ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
+				if (toggleSwitch.SwitchState)
+				{
+					PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 255;
+				}
+				else
+				{
+					PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 0;
+				}
+			}
+		}
+	}
 }

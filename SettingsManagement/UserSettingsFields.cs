@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,98 +23,94 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MatterHackers.MatterControl.SettingsManagement;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-    public class UserSettingsFields
-    {
-        List<string> acceptableTrueFalseValues = new List<string>() { "true", "false" };
+	public class UserSettingsFields
+	{
+		private List<string> acceptableTrueFalseValues = new List<string>() { "true", "false" };
 
-        string StartCountKey = "StartCount";
-        string StartCountDurringExitKey = "StartCountDurringExit";
+		private string StartCountKey = "StartCount";
+		private string StartCountDurringExitKey = "StartCountDurringExit";
 
-        string IsSimpleModeKey = "IsSimpleMode";
+		private string IsSimpleModeKey = "IsSimpleMode";
 
-        public bool IsSimpleMode
-        {
-            get
-            {
-                return GetBool(IsSimpleModeKey, OemSettings.Instance.UseSimpleModeByDefault);
-            }
+		public bool IsSimpleMode
+		{
+			get
+			{
+				return GetBool(IsSimpleModeKey, OemSettings.Instance.UseSimpleModeByDefault);
+			}
 
-            set
-            {
-                SetBool(IsSimpleModeKey, value);
-            }
-        }
+			set
+			{
+				SetBool(IsSimpleModeKey, value);
+			}
+		}
 
-        public int StartCount
-        {
-            get { return GetInt(StartCountKey); }
-            set { SetInt(StartCountKey, value); }
-        }
+		public int StartCount
+		{
+			get { return GetInt(StartCountKey); }
+			set { SetInt(StartCountKey, value); }
+		}
 
-        public int StartCountDurringExit
-        {
-            get { return GetInt(StartCountDurringExitKey); }
-            set { SetInt(StartCountDurringExitKey, value); }
-        }
+		public int StartCountDurringExit
+		{
+			get { return GetInt(StartCountDurringExitKey); }
+			set { SetInt(StartCountDurringExitKey, value); }
+		}
 
-        public void SetBool(string keyToSet, bool value)
-        {
-            if (value)
-            {
-                UserSettings.Instance.set(keyToSet, "true");
-            }
-            else
-            {
-                UserSettings.Instance.set(keyToSet, "false");
-            }
-        }
+		public void SetBool(string keyToSet, bool value)
+		{
+			if (value)
+			{
+				UserSettings.Instance.set(keyToSet, "true");
+			}
+			else
+			{
+				UserSettings.Instance.set(keyToSet, "false");
+			}
+		}
 
-        public bool GetBool(string keyToRead, bool defaultValue)
-        {
-            string currentValue = UserSettings.Instance.get(keyToRead);
-            if (acceptableTrueFalseValues.IndexOf(currentValue) == -1)
-            {
-                if (defaultValue)
-                {
-                    currentValue = "true";
-                }
-                else
-                {
-                    currentValue = "false";
-                }
-                UserSettings.Instance.set(keyToRead, currentValue);
-            }
-            return currentValue == "true";
-        }
+		public bool GetBool(string keyToRead, bool defaultValue)
+		{
+			string currentValue = UserSettings.Instance.get(keyToRead);
+			if (acceptableTrueFalseValues.IndexOf(currentValue) == -1)
+			{
+				if (defaultValue)
+				{
+					currentValue = "true";
+				}
+				else
+				{
+					currentValue = "false";
+				}
+				UserSettings.Instance.set(keyToRead, currentValue);
+			}
+			return currentValue == "true";
+		}
 
-        public void SetInt(string keyToSet, int value)
-        {
-            UserSettings.Instance.set(keyToSet, value.ToString());
-        }
+		public void SetInt(string keyToSet, int value)
+		{
+			UserSettings.Instance.set(keyToSet, value.ToString());
+		}
 
-        public int GetInt(string keyToRead)
-        {
-            string currentValue = UserSettings.Instance.get(keyToRead);
-            int result = 0;
-            if(int.TryParse(currentValue, out result))
-            {
-                return result;
-            }
+		public int GetInt(string keyToRead)
+		{
+			string currentValue = UserSettings.Instance.get(keyToRead);
+			int result = 0;
+			if (int.TryParse(currentValue, out result))
+			{
+				return result;
+			}
 
-            return 0;
-        }
-    }
+			return 0;
+		}
+	}
 }
