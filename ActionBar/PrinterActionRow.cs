@@ -26,7 +26,9 @@ namespace MatterHackers.MatterControl.ActionBar
         Button connectPrinterButton;
         Button disconnectPrinterButton;
         Button selectActivePrinterButton;
-        Button resetConnectionButton; 
+        Button resetConnectionButton;
+        Button powerOnButton;
+        Button powerOffButton;
 
         ConnectionWindow connectionWindow;
         bool connectionWindowIsOpen = false;
@@ -88,6 +90,28 @@ namespace MatterHackers.MatterControl.ActionBar
             disconnectPrinterButton.VAnchor = VAnchor.ParentTop;
             disconnectPrinterButton.Cursor = Cursors.Hand;
 
+            string powerOnString = "On".Localize().ToUpper();
+            powerOnButton = actionBarButtonFactory.Generate(powerOnString, "icon_power_32x32.png");
+            if (ApplicationController.Instance.WidescreenMode) {
+                powerOnButton.Margin = new BorderDouble(0, 0, 3, 3);
+            }
+            else {
+                powerOnButton.Margin = new BorderDouble(6, 0, 3, 3);
+            }
+            connectPrinterButton.VAnchor = VAnchor.ParentTop;
+            connectPrinterButton.Cursor = Cursors.Hand;
+
+            string powerOffString = "Off".Localize().ToUpper();
+            powerOffButton = actionBarButtonFactory.Generate(powerOffString, "icon_power_32x32.png");
+            if (ApplicationController.Instance.WidescreenMode) {
+                powerOffButton.Margin = new BorderDouble(0, 0, 3, 3);
+            }
+            else {
+                powerOffButton.Margin = new BorderDouble(6, 0, 3, 3);
+            }
+            connectPrinterButton.VAnchor = VAnchor.ParentTop;
+            connectPrinterButton.Cursor = Cursors.Hand;
+
             selectActivePrinterButton = new PrinterSelectButton();
             selectActivePrinterButton.HAnchor = HAnchor.ParentLeftRight;
             selectActivePrinterButton.Cursor = Cursors.Hand;
@@ -118,6 +142,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
             this.AddChild(connectPrinterButton);
             this.AddChild(disconnectPrinterButton);
+            this.AddChild(powerOnButton);
+            this.AddChild(powerOffButton);
             this.AddChild(selectActivePrinterButton);
             this.AddChild(resetConnectionButton);
             //this.AddChild(CreateOptionsMenu());
@@ -130,11 +156,14 @@ namespace MatterHackers.MatterControl.ActionBar
             ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
             PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+            PrinterConnectionAndCommunication.Instance.PowerStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
             selectActivePrinterButton.Click += new EventHandler(onSelectActivePrinterButton_Click);
             connectPrinterButton.Click += new EventHandler(onConnectButton_Click);
             disconnectPrinterButton.Click += new EventHandler(onDisconnectButtonClick);
             resetConnectionButton.Click += new EventHandler(resetConnectionButton_Click);
+            powerOnButton.Click += new EventHandler(onPowerOnButton_Click);
+            powerOffButton.Click += new EventHandler(onPowerOffButton_Click);
 
             base.AddHandlers();
         }
@@ -146,6 +175,22 @@ namespace MatterHackers.MatterControl.ActionBar
                 unregisterEvents(this, null);
             }
             base.OnClosed(e);
+        }
+
+        void onPowerOnButton_Click(object sender, EventArgs mouseEvent) {
+            Button buttonClicked = ((Button)sender);
+            if (buttonClicked.Enabled) {
+                PrinterConnectionAndCommunication.Instance.PowerisOn = true;
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M80");
+            }
+        }
+
+        void onPowerOffButton_Click(object sender, EventArgs mouseEvent) {
+            Button buttonClicked = ((Button)sender);
+            if (buttonClicked.Enabled) {
+                PrinterConnectionAndCommunication.Instance.PowerisOn = false;
+                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M81");
+            }
         }
 
         void onConnectButton_Click(object sender, EventArgs mouseEvent)
@@ -161,6 +206,7 @@ namespace MatterHackers.MatterControl.ActionBar
                 {
                     ConnectToActivePrinter();
                 }
+
             }
         }
 
@@ -222,6 +268,15 @@ namespace MatterHackers.MatterControl.ActionBar
                 functionToCallOnSelect();
                 functionToCallOnSelect = null;
             }
+            if (PrinterConnectionAndCommunication.Instance.HasPower) {
+                powerOnButton.Visible = true;
+                powerOnButton.Enabled  = false;
+                powerOffButton.Visible = false;
+            }
+            else {
+                powerOnButton.Visible = false;
+                powerOffButton.Visible = false;
+            }
         }
 
         void onDisconnectButtonClick(object sender, EventArgs e)
@@ -262,11 +317,42 @@ namespace MatterHackers.MatterControl.ActionBar
             {
                 disconnectPrinterButton.Visible = true;
                 connectPrinterButton.Visible = false;
+
+                if (PrinterConnectionAndCommunication.Instance.HasPower) {
+                    if (PrinterConnectionAndCommunication.Instance.PowerisOn) {
+                        powerOnButton.Visible = false;
+                        powerOnButton.Enabled = false;
+                        powerOffButton.Visible = true;
+                        powerOffButton.Enabled = true;
+                    }
+                    else {
+                        powerOnButton.Visible = true;
+                        powerOnButton.Enabled = true;
+                        powerOffButton.Visible = false;
+                        powerOffButton.Enabled = false;
+                    }
+                }
+                else {
+                    powerOnButton.Visible = false;
+                    powerOffButton.Visible = false;
+                }
+
             }
             else
             {
                 disconnectPrinterButton.Visible = false;
                 connectPrinterButton.Visible = true;
+
+                if (PrinterConnectionAndCommunication.Instance.HasPower) {
+                    powerOnButton.Visible = true;
+                    powerOnButton.Enabled = false;
+                    powerOffButton.Visible = false;
+                }
+                else {
+                    powerOnButton.Visible = false;
+                    powerOffButton.Visible = false;
+                }
+
             }
 
             var communicationState = PrinterConnectionAndCommunication.Instance.CommunicationState;
