@@ -2348,8 +2348,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					throw new Exception("We are not preparing to print so we should not be starting to print");
 					//#else
 					CommunicationState = CommunicationStates.Connected;
-					break;
 					#endif
+					break;
 			}
 		}
 
