@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl
 				this.ActivePrinter.Name = "Default Printer ({0})".FormatWith(ExistingPrinterCount() + 1);
 				this.ActivePrinter.BaudRate = null;
 				this.ActivePrinter.ComPort = null;
+                this.ActivePrinter.HasPower = false;
 			}
 			else
 			{

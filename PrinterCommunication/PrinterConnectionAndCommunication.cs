@@ -151,6 +151,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         public RootedObjectEventHandler ReadLine = new RootedObjectEventHandler();
         public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
         public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
+        public RootedObjectEventHandler PowerStateChanged = new RootedObjectEventHandler();
 
         FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
         FoundStringContainsCallbacks ReadLineContainsCallBacks = new FoundStringContainsCallbacks();
@@ -158,6 +159,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         FoundStringStartsWithCallbacks WriteLineStartCallBacks = new FoundStringStartsWithCallbacks();
         FoundStringContainsCallbacks WriteLineContainsCallBacks = new FoundStringContainsCallbacks();
 
+        bool thePowerIsOn = false;
         bool printWasCanceled = false;
 		public bool PrintWasCanceled { get { return printWasCanceled; } }
         int firstLineToResendIndex = 0;
@@ -1498,6 +1500,29 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
         }
 
+        public bool HasPower {
+            get {
+                bool hasPower = false;
+                if (this.ActivePrinter != null) {
+                    hasPower = this.ActivePrinter.HasPower;
+
+                }
+                return hasPower;
+            }
+        }
+
+        public bool PowerisOn 
+        {
+            get 
+            {
+                return thePowerIsOn;
+            }
+            set {
+                thePowerIsOn = value;
+                PowerStateChanged.CallEvents(this, null);
+            }
+        }
+
         public int BaudRate
         {
             get
@@ -1689,6 +1714,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             FirmwareVersionRead.CallEvents(this, e);
         }
 
+        void OnPowerStateChanged(EventArgs e) {
+            PowerStateChanged.CallEvents(this, e);
+        }
+        
         void OnExtruderTemperatureRead(EventArgs e)
         {
             ExtruderTemperatureRead.CallEvents(this, e);

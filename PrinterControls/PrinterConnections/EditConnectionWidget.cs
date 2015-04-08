@@ -28,6 +28,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
         GuiWidget baudRateWidget;
 		RadioButton otherBaudRateRadioButton;
         CheckBox enableAutoconnect;
+        CheckBox enableHasPower;
         bool printerComPortIsAvailable = false;
         TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -212,6 +213,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     enableAutoconnect.Checked = ((StateBeforeRefresh)state).autoConnect;
                 }
 
+                enableHasPower = new CheckBox(LocalizedString.Get("Has Power"));
+                enableHasPower.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+                enableHasPower.Margin = new BorderDouble(top: 10);
+                enableHasPower.HAnchor = HAnchor.ParentLeft;
+                if (this.ActivePrinter.HasPower) {
+                    enableHasPower.Checked = true;
+                }
+
+
                 SerialPortControl serialPortScroll = new SerialPortControl();
 
                 if (comPortContainer != null) 
@@ -230,6 +240,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 ConnectionControlContainer.AddChild(baudRateWidget);
 #if !__ANDROID__ 
                 ConnectionControlContainer.AddChild(enableAutoconnect);
+                ConnectionControlContainer.AddChild(enableHasPower);
 #endif
             }
 
@@ -488,6 +499,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                 this.ActivePrinter.Make = printerMakeInput.Text;
                 this.ActivePrinter.Model = printerModelInput.Text;
                 this.ActivePrinter.AutoConnectFlag = enableAutoconnect.Checked;
+                this.ActivePrinter.HasPower  = enableHasPower.Checked;
             }
             catch
             {

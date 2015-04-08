@@ -3158,3 +3158,12 @@ Translated:Interface Mode
 English:Standard
 Translated:Standard
 
+English:Has Power
+Translated:Has Power
+
+English:On
+Translated:On
+
+English:Off
+Translated:Off
+
