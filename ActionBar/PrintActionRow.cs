@@ -14,47 +14,42 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	internal class PrintActionRow : ActionRowBase
 	{
-		private Stopwatch timeSincePrintStarted = new Stopwatch();
-
-		private MatterHackers.MatterControl.TextImageButtonFactory textImageButtonFactory = new MatterHackers.MatterControl.TextImageButtonFactory();
 		private List<TooltipButton> activePrintButtons = new List<TooltipButton>();
-		private List<TooltipButton> allPrintButtons = new List<TooltipButton>();
-
-		private TooltipButton cancelConnectButton;
-
 		private TooltipButton addButton;
-
-		private TooltipButton startButton;
-		private TooltipButton skipButton;
-		private TooltipButton removeButton;
-
-		private TooltipButton pauseButton;
-
-		private TooltipButton resumeButton;
+		private List<TooltipButton> allPrintButtons = new List<TooltipButton>();
 		private TooltipButton cancelButton;
-
-		private TooltipButton reprintButton;
+		private TooltipButton cancelConnectButton;
+		private string cancelCurrentPrintMessage = "Cancel the current print?".Localize();
+		private string cancelCurrentPrintTitle = "Cancel Print?".Localize();
 		private TooltipButton doneWithCurrentPartButton;
-
+		private TooltipButton pauseButton;
 		private QueueDataView queueDataView;
-
+		private TooltipButton removeButton;
+		private TooltipButton reprintButton;
+		private TooltipButton resumeButton;
+		private TooltipButton skipButton;
+		private TooltipButton startButton;
+		private MatterHackers.MatterControl.TextImageButtonFactory textImageButtonFactory = new MatterHackers.MatterControl.TextImageButtonFactory();
+		private Stopwatch timeSincePrintStarted = new Stopwatch();
 		public PrintActionRow(QueueDataView queueDataView)
 		{
 			this.queueDataView = queueDataView;
 		}
 
-		protected override void Initialize()
-		{
-			textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
-			textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
-			textImageButtonFactory.AllowThemeToAdjustImage = false;
+		private event EventHandler unregisterEvents;
 
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
-			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
-			textImageButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryAccentColor;
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
+
+		public void ThemeChanged(object sender, EventArgs e)
+		{
+			this.Invalidate();
 		}
 
 		protected override void AddChildElements()
@@ -132,8 +127,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			SetButtonStates();
 		}
 
-		private event EventHandler unregisterEvents;
-
 		protected override void AddHandlers()
 		{
 			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
@@ -152,149 +145,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
-		public override void OnClosed(EventArgs e)
+		protected void DisableActiveButtons()
 		{
-			if (unregisterEvents != null)
+			foreach (TooltipButton button in this.activePrintButtons)
 			{
-				unregisterEvents(this, null);
+				button.Enabled = false;
 			}
-			base.OnClosed(e);
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.Invalidate();
-		}
-
-		private void onAddButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(AddButtonOnIdle);
-		}
-
-		private void AddButtonOnIdle(object state)
-		{
-			FileDialog.OpenFileDialog(
-				new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
-				(openParams) =>
-				{
-					if (openParams.FileNames != null)
-					{
-						foreach (string loadedFileName in openParams.FileNames)
-						{
-							QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
-						}
-					}
-				});
-		}
-
-		private void onStartButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle((state) =>
-			{
-				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-			});
-		}
-
-		private void onSkipButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (QueueData.Instance.Count > 1)
-			{
-				queueDataView.MoveToNext();
-			}
-		}
-
-		private void onResumeButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
-			{
-				PrinterConnectionAndCommunication.Instance.Resume();
-			}
-		}
-
-		private void onRemoveButton_Click(object sender, EventArgs mouseEvent)
-		{
-			QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
-		}
-
-		private void onPauseButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.RequestPause();
-		}
-
-		private string cancelCurrentPrintMessage = "Cancel the current print?".Localize();
-		private string cancelCurrentPrintTitle = "Cancel Print?".Localize();
-
-		private void CancelButton_Click(object state)
-		{
-			if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
-			{
-				StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO);
-			}
-			else
-			{
-				CancelPrinting();
-			}
-		}
-
-		private void ResetConnectionButton_Click(object state)
-		{
-			PrinterConnectionAndCommunication.Instance.RebootBoard();
-		}
-
-		private void onConfirmCancelPrint(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				UiThread.RunOnIdle((state) =>
-				{
-					CancelPrinting();
-				});
-			}
-		}
-
-		private void CancelConnectionButton_Click(object state)
-		{
-			CancelPrinting();
-		}
-
-		private void CancelPrinting()
-		{
-			if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint)
-			{
-				SlicingQueue.Instance.CancelCurrentSlicing();
-			}
-			PrinterConnectionAndCommunication.Instance.Stop();
-			timeSincePrintStarted.Reset();
-			UiThread.RunOnIdle((state2) => { SetButtonStates(); });
-		}
-
-		private void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.ResetToReadyState();
-			QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
-			// We don't have to change the selected index because we should be on the next one as we deleted the one
-			// we were on.
-		}
-
-		private void onReprintButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle((state) =>
-			{
-				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-			});
-		}
-
-		private void onStateChanged(object sender, EventArgs e)
-		{
-			SetButtonStates();
-		}
-
-		protected TooltipButton makeButton(string buttonText, string buttonToolTip = "")
-		{
-			TooltipButton button = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(buttonText);
-			button.tooltipText = buttonToolTip;
-			button.Margin = new BorderDouble(0, 6, 6, 3);
-			return button;
 		}
 
 		protected void EnableActiveButtons()
@@ -305,27 +161,25 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		protected void ShowActiveButtons()
+		protected override void Initialize()
 		{
-			foreach (TooltipButton button in this.allPrintButtons)
-			{
-				if (activePrintButtons.IndexOf(button) >= 0)
-				{
-					button.Visible = true;
-				}
-				else
-				{
-					button.Visible = false;
-				}
-			}
-		}
+			textImageButtonFactory.normalTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
+			textImageButtonFactory.hoverTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.pressedTextColor = RGBA_Bytes.White;
+			textImageButtonFactory.AllowThemeToAdjustImage = false;
 
-		protected void DisableActiveButtons()
+			textImageButtonFactory.borderWidth = 1;
+			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
+			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
+			textImageButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryAccentColor;
+		}
+		protected TooltipButton makeButton(string buttonText, string buttonToolTip = "")
 		{
-			foreach (TooltipButton button in this.activePrintButtons)
-			{
-				button.Enabled = false;
-			}
+			TooltipButton button = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(buttonText);
+			button.tooltipText = buttonToolTip;
+			button.Margin = new BorderDouble(0, 6, 6, 3);
+			return button;
 		}
 
 		//Set the states of the buttons based on the status of PrinterCommunication
@@ -398,6 +252,139 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			}
 			ShowActiveButtons();
+		}
+
+		protected void ShowActiveButtons()
+		{
+			foreach (TooltipButton button in this.allPrintButtons)
+			{
+				if (activePrintButtons.IndexOf(button) >= 0)
+				{
+					button.Visible = true;
+				}
+				else
+				{
+					button.Visible = false;
+				}
+			}
+		}
+
+		private void AddButtonOnIdle(object state)
+		{
+			FileDialog.OpenFileDialog(
+				new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
+				(openParams) =>
+				{
+					if (openParams.FileNames != null)
+					{
+						foreach (string loadedFileName in openParams.FileNames)
+						{
+							QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
+						}
+					}
+				});
+		}
+
+		private void CancelButton_Click(object state)
+		{
+			if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
+			{
+				StyledMessageBox.ShowMessageBox(onConfirmCancelPrint, cancelCurrentPrintMessage, cancelCurrentPrintTitle, StyledMessageBox.MessageType.YES_NO);
+			}
+			else
+			{
+				CancelPrinting();
+			}
+		}
+
+		private void CancelConnectionButton_Click(object state)
+		{
+			CancelPrinting();
+		}
+
+		private void CancelPrinting()
+		{
+			if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint)
+			{
+				SlicingQueue.Instance.CancelCurrentSlicing();
+			}
+			PrinterConnectionAndCommunication.Instance.Stop();
+			timeSincePrintStarted.Reset();
+			UiThread.RunOnIdle((state2) => { SetButtonStates(); });
+		}
+
+		private void onAddButton_Click(object sender, EventArgs mouseEvent)
+		{
+			UiThread.RunOnIdle(AddButtonOnIdle);
+		}
+		private void onConfirmCancelPrint(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
+				UiThread.RunOnIdle((state) =>
+				{
+					CancelPrinting();
+				});
+			}
+		}
+
+		private void onDoneWithCurrentPartButton_Click(object sender, EventArgs mouseEvent)
+		{
+			PrinterConnectionAndCommunication.Instance.ResetToReadyState();
+			QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
+			// We don't have to change the selected index because we should be on the next one as we deleted the one
+			// we were on.
+		}
+
+		private void onPauseButton_Click(object sender, EventArgs mouseEvent)
+		{
+			PrinterConnectionAndCommunication.Instance.RequestPause();
+		}
+
+		private void onRemoveButton_Click(object sender, EventArgs mouseEvent)
+		{
+			QueueData.Instance.RemoveAt(queueDataView.SelectedIndex);
+		}
+
+		private void onReprintButton_Click(object sender, EventArgs mouseEvent)
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+			});
+		}
+
+		private void onResumeButton_Click(object sender, EventArgs mouseEvent)
+		{
+			if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			{
+				PrinterConnectionAndCommunication.Instance.Resume();
+			}
+		}
+
+		private void onSkipButton_Click(object sender, EventArgs mouseEvent)
+		{
+			if (QueueData.Instance.Count > 1)
+			{
+				queueDataView.MoveToNext();
+			}
+		}
+
+		private void onStartButton_Click(object sender, EventArgs mouseEvent)
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+			});
+		}
+		private void onStateChanged(object sender, EventArgs e)
+		{
+			SetButtonStates();
+		}
+
+		private void ResetConnectionButton_Click(object state)
+		{
+			PrinterConnectionAndCommunication.Instance.RebootBoard();
 		}
 	}
 }
