@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,8 @@ namespace MatterHackers.MatterControl
 			this.commandLineArgs = Environment.GetCommandLineArgs();
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
+			bool forceSofwareRendering = false;
+
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
 			{
 				string command = commandLineArgs[currentCommandIndex];
@@ -100,6 +103,11 @@ namespace MatterHackers.MatterControl
 						Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
 						testDispatch.RunTests();
 						return;
+
+					case "FORCE_SOFTWARE_RENDERING":
+						forceSofwareRendering = true;
+						GL.ForceSoftwareRendering();
+						break;
 
 					case "MHSERIAL_TO_ANDROID":
 						{
@@ -262,7 +270,10 @@ namespace MatterHackers.MatterControl
 #endif
 			this.AnchorAll();
 
-			UseOpenGL = true;
+			if (!forceSofwareRendering)
+			{
+				UseOpenGL = true;
+			}
 			string version = "1.2";
 
 			Title = "MatterControl {0}".FormatWith(version);
