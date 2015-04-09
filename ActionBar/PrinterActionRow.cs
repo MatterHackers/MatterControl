@@ -8,32 +8,49 @@ using System;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	internal class PrinterActionRow : ActionRowBase
+	public class PrinterActionRow : ActionRowBase
 	{
+		static private ConnectionWindow connectionWindow;
 		private TextImageButtonFactory actionBarButtonFactory = new TextImageButtonFactory();
 		private Button connectPrinterButton;
+		private string disconnectAndCancelMessage = "Disconnect and cancel the current print?".Localize();
+		private string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print.".Localize();
 		private Button disconnectPrinterButton;
-		private Button selectActivePrinterButton;
 		private Button resetConnectionButton;
+		private Button selectActivePrinterButton;
 
-		private ConnectionWindow connectionWindow;
-		private bool connectionWindowIsOpen = false;
+		private event EventHandler unregisterEvents;
+		static EventHandler staticUnregisterEvents;
 
-		protected override void Initialize()
+		public static void OpenConnectionWindow(bool connectAfterSelection = false)
 		{
-			actionBarButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			actionBarButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			actionBarButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			if (connectAfterSelection)
+			{
+				ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(ConnectToActivePrinter, ref staticUnregisterEvents);
+			}
 
-			actionBarButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
-			actionBarButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			if (connectionWindow == null)
+			{
+				connectionWindow = new ConnectionWindow();
 
-			actionBarButtonFactory.hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				connectionWindow.Closed += new EventHandler(ConnectionWindow_Closed);
+			}
+			else
+			{
+				if (connectionWindow != null)
+				{
+					connectionWindow.BringToFront();
+				}
+			}
+		}
 
-			actionBarButtonFactory.invertImageLocation = true;
-			actionBarButtonFactory.borderWidth = 0;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
 		}
 
 		protected override void AddChildElements()
@@ -111,11 +128,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			//this.AddChild(CreateOptionsMenu());
 		}
 
-		private event EventHandler unregisterEvents;
-
 		protected override void AddHandlers()
 		{
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(ReloadPrinterSelectionWidget, ref unregisterEvents);
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent(onActivePrinterChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
@@ -128,13 +142,51 @@ namespace MatterHackers.MatterControl.ActionBar
 			base.AddHandlers();
 		}
 
-		public override void OnClosed(EventArgs e)
+		protected override void Initialize()
 		{
-			if (unregisterEvents != null)
+			actionBarButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			actionBarButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			actionBarButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+			actionBarButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
+			actionBarButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			actionBarButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			actionBarButtonFactory.hoverFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
+			actionBarButtonFactory.invertImageLocation = true;
+			actionBarButtonFactory.borderWidth = 0;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+		}
+		static private void ConnectionWindow_Closed(object sender, EventArgs e)
+		{
+			connectionWindow = null;
+		}
+
+		static public void ConnectToActivePrinter(object sender, EventArgs e)
+		{
+			if (staticUnregisterEvents != null)
 			{
-				unregisterEvents(this, null);
+				staticUnregisterEvents(null, e);
+				staticUnregisterEvents = null;
 			}
-			base.OnClosed(e);
+			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+		}
+
+		private void onActivePrinterChanged(object sender, EventArgs e)
+		{
+			connectPrinterButton.Enabled = true;
+		}
+
+		private void onConfirmStopPrint(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
+				PrinterConnectionAndCommunication.Instance.Stop();
+				PrinterConnectionAndCommunication.Instance.Disable();
+				selectActivePrinterButton.Invalidate();
+			}
 		}
 
 		private void onConnectButton_Click(object sender, EventArgs mouseEvent)
@@ -144,73 +196,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (ActivePrinterProfile.Instance.ActivePrinter == null)
 				{
-					OpenConnectionWindow(ConnectToActivePrinter);
+					OpenConnectionWindow(true);
 				}
 				else
 				{
-					ConnectToActivePrinter();
+					ConnectToActivePrinter(null, null);
 				}
-			}
-		}
-
-		private void resetConnectionButton_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterConnectionAndCommunication.Instance.RebootBoard();
-		}
-
-		private void ConnectToActivePrinter()
-		{
-			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
-		}
-
-		private void onSelectActivePrinterButton_Click(object sender, EventArgs mouseEvent)
-		{
-			OpenConnectionWindow();
-		}
-
-		public delegate void ConnectOnSelectFunction();
-
-		private ConnectOnSelectFunction functionToCallOnSelect;
-
-		private void OpenConnectionWindow(ConnectOnSelectFunction functionToCallOnSelect = null)
-		{
-			if (this.connectionWindowIsOpen == false)
-			{
-				connectionWindow = new ConnectionWindow();
-				this.connectionWindowIsOpen = true;
-
-				//This function gets called on printer selection (see onActivePrinterChanged)
-				this.functionToCallOnSelect = functionToCallOnSelect;
-
-				connectionWindow.Closed += new EventHandler(ConnectionWindow_Closed);
-			}
-			else
-			{
-				if (connectionWindow != null)
-				{
-					connectionWindow.BringToFront();
-				}
-			}
-		}
-
-		private void ConnectionWindow_Closed(object sender, EventArgs e)
-		{
-			this.connectionWindowIsOpen = false;
-		}
-
-		private void ReloadPrinterSelectionWidget(object sender, EventArgs e)
-		{
-			//selectActivePrinterButton.Invalidate();
-		}
-
-		private void onActivePrinterChanged(object sender, EventArgs e)
-		{
-			connectPrinterButton.Enabled = true;
-			if (functionToCallOnSelect != null)
-			{
-				functionToCallOnSelect();
-				functionToCallOnSelect = null;
 			}
 		}
 
@@ -218,9 +209,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			UiThread.RunOnIdle(OnIdleDisconnect);
 		}
-
-		private string disconnectAndCancelMessage = "Disconnect and cancel the current print?".Localize();
-		private string disconnectAndCancelTitle = "WARNING: Disconnecting will cancel the print.".Localize();
 
 		private void OnIdleDisconnect(object state)
 		{
@@ -235,16 +223,20 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		private void onConfirmStopPrint(bool messageBoxResponse)
+		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (messageBoxResponse)
-			{
-				PrinterConnectionAndCommunication.Instance.Stop();
-				PrinterConnectionAndCommunication.Instance.Disable();
-				selectActivePrinterButton.Invalidate();
-			}
+			UiThread.RunOnIdle(SetConnectionButtonVisibleState);
 		}
 
+		private void onSelectActivePrinterButton_Click(object sender, EventArgs mouseEvent)
+		{
+			OpenConnectionWindow();
+		}
+
+		private void resetConnectionButton_Click(object sender, EventArgs mouseEvent)
+		{
+			PrinterConnectionAndCommunication.Instance.RebootBoard();
+		}
 		private void SetConnectionButtonVisibleState(object state)
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
@@ -264,11 +256,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			connectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
 			disconnectPrinterButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
 			resetConnectionButton.Visible = ActiveSliceSettings.Instance.ShowResetConnection();
-		}
-
-		private void onPrinterStatusChanged(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(SetConnectionButtonVisibleState);
 		}
 	}
 }

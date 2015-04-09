@@ -9,7 +9,7 @@ using System;
 namespace MatterHackers.MatterControl.ActionBar
 {
 	//Base widget for ActionBarRows
-	internal abstract class ActionRowBase : FlowLayoutWidget
+	public abstract class ActionRowBase : FlowLayoutWidget
 	{
 		public ActionRowBase()
 			: base(FlowDirection.LeftToRight)

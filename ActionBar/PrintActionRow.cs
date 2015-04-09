@@ -5,6 +5,11 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+
+#if __ANDROID__
+using MatterHackers.SerialPortCommunication.FrostedSerial;
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,6 +26,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TooltipButton cancelConnectButton;
 		private string cancelCurrentPrintMessage = "Cancel the current print?".Localize();
 		private string cancelCurrentPrintTitle = "Cancel Print?".Localize();
+		private TooltipButton connectButton;
+		private TooltipButton resetConnectionButton;
 		private TooltipButton doneWithCurrentPartButton;
 		private TooltipButton pauseButton;
 		private QueueDataView queueDataView;
@@ -31,6 +38,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TooltipButton startButton;
 		private MatterHackers.MatterControl.TextImageButtonFactory textImageButtonFactory = new MatterHackers.MatterControl.TextImageButtonFactory();
 		private Stopwatch timeSincePrintStarted = new Stopwatch();
+
 		public PrintActionRow(QueueDataView queueDataView)
 		{
 			this.queueDataView = queueDataView;
@@ -56,11 +64,23 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			addButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Add"), "icon_circle_plus.png");
 			addButton.tooltipText = LocalizedString.Get("Add a file to be printed");
-			addButton.Margin = new BorderDouble(0, 6, 6, 3);
+			addButton.Margin = new BorderDouble(6, 6, 6, 3);
 
 			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Print"), "icon_play_32x32.png");
 			startButton.tooltipText = LocalizedString.Get("Begin printing the selected item.");
-			startButton.Margin = new BorderDouble(0, 6, 6, 3);
+			startButton.Margin = new BorderDouble(6, 6, 6, 3);
+
+			string connectButtonText = LocalizedString.Get("Connect");
+			string connectButtonMessage = LocalizedString.Get("Connect to the printer");
+			connectButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(connectButtonText, "icon_power_32x32.png");
+			connectButton.tooltipText = connectButtonMessage;
+			connectButton.Margin = new BorderDouble(6, 6, 6, 3);
+
+			string resetConnectionButtontText = "Reset".Localize();
+			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
+			resetConnectionButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(resetConnectionButtontText, "e_stop4.png");
+			resetConnectionButton.tooltipText = resetConnectionButtonMessage;
+			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);
 
 			string skipButtonText = LocalizedString.Get("Skip");
 			string skipButtonMessage = LocalizedString.Get("Skip the current item and move to the next in queue");
@@ -82,17 +102,23 @@ namespace MatterHackers.MatterControl.ActionBar
 			string cancelButtonMessage = LocalizedString.Get("Stop the current print");
 			cancelButton = makeButton(cancelButtonText, cancelButtonMessage);
 
-			string resumeButtonText = LocalizedString.Get("Resume");
-			string resumeButtonMessage = LocalizedString.Get("Resume the current print");
+			string resumeButtonText = "Resume".Localize();
+			string resumeButtonMessage = "Resume the current print".Localize();
 			resumeButton = makeButton(resumeButtonText, resumeButtonMessage);
 
-			string reprintButtonText = LocalizedString.Get("Reprint");
+			string reprintButtonText = "Print Again".Localize();
 			string reprintButtonMessage = LocalizedString.Get("Print current item again");
 			reprintButton = makeButton(reprintButtonText, reprintButtonMessage);
 
 			string doneCurrentPartButtonText = LocalizedString.Get("Done");
 			string doenCurrentPartButtonMessage = LocalizedString.Get("Move to next print in queue");
 			doneWithCurrentPartButton = makeButton(doneCurrentPartButtonText, doenCurrentPartButtonMessage);
+
+			this.Margin = new BorderDouble(0, 0, 10, 0);
+			this.HAnchor = HAnchor.FitToChildren;
+
+			this.AddChild(connectButton);
+			allPrintButtons.Add(connectButton);
 
 			this.AddChild(addButton);
 			allPrintButtons.Add(addButton);
@@ -124,6 +150,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(removeButton);
 			allPrintButtons.Add(removeButton);
 
+			this.AddChild(resetConnectionButton);
+			allPrintButtons.Add(resetConnectionButton);
+
 			SetButtonStates();
 		}
 
@@ -137,6 +166,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			removeButton.Click += new EventHandler(onRemoveButton_Click);
 			resumeButton.Click += new EventHandler(onResumeButton_Click);
 			pauseButton.Click += new EventHandler(onPauseButton_Click);
+			connectButton.Click += new EventHandler(onConnectButton_Click);
+			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(ResetConnectionButton_Click); };
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
 			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };
@@ -170,10 +201,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			textImageButtonFactory.AllowThemeToAdjustImage = false;
 
 			textImageButtonFactory.borderWidth = 1;
+			textImageButtonFactory.FixedHeight = 52 * TextWidget.GlobalPointSizeScaleRatio;
+			textImageButtonFactory.fontSize = 14;
 			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(255, 255, 255, 100);
 			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
-			textImageButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryAccentColor;
 		}
+
 		protected TooltipButton makeButton(string buttonText, string buttonToolTip = "")
 		{
 			TooltipButton button = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(buttonText);
@@ -186,7 +219,17 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected void SetButtonStates()
 		{
 			this.activePrintButtons.Clear();
-			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
+			if (!PrinterConnectionAndCommunication.Instance.PrinterIsConnected
+				&& PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
+			{
+				if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+				{
+					this.activePrintButtons.Add(connectButton);
+				}
+				ShowActiveButtons();
+				EnableActiveButtons();
+			}
+			else if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
 			{
 				this.activePrintButtons.Add(addButton);
 				ShowActiveButtons();
@@ -231,6 +274,11 @@ namespace MatterHackers.MatterControl.ActionBar
 							this.activePrintButtons.Add(pauseButton);
 							this.activePrintButtons.Add(cancelButton);
 						}
+						else if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+						{
+							this.activePrintButtons.Add(resetConnectionButton);
+						}
+
 						EnableActiveButtons();
 						break;
 
@@ -250,6 +298,15 @@ namespace MatterHackers.MatterControl.ActionBar
 						DisableActiveButtons();
 						break;
 				}
+			}
+
+			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
+				&& ActiveSliceSettings.Instance.ShowResetConnection()
+				&& UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+			{
+				this.activePrintButtons.Add(resetConnectionButton);
+				ShowActiveButtons();
+				EnableActiveButtons();
 			}
 			ShowActiveButtons();
 		}
@@ -294,6 +351,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			else
 			{
 				CancelPrinting();
+				UiThread.RunOnIdle((state2) => { SetButtonStates(); });
 			}
 		}
 
@@ -317,6 +375,44 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			UiThread.RunOnIdle(AddButtonOnIdle);
 		}
+
+		private void ResetConnectionButton_Click(object state)
+		{
+			PrinterConnectionAndCommunication.Instance.RebootBoard();
+		}
+
+		private void onConnectButton_Click(object sender, EventArgs mouseEvent)
+		{
+			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			{
+#if __ANDROID__
+				SetupWizardWindow.Show();
+#else
+				PrinterActionRow.OpenConnectionWindow(true);
+#endif
+			}
+			else
+			{
+#if __ANDROID__
+				if (!FrostedSerialPort.HasPermissionToDevice())
+				{
+					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
+					FrostedSerialPort.RequestPermissionToDevice();
+				}
+				else
+#endif
+				{
+					ConnectToActivePrinter();
+				}
+			}
+		}
+
+		private void ConnectToActivePrinter()
+		{
+			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+		}
+
 		private void onConfirmCancelPrint(bool messageBoxResponse)
 		{
 			if (messageBoxResponse)
@@ -377,14 +473,10 @@ namespace MatterHackers.MatterControl.ActionBar
 				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
 			});
 		}
+
 		private void onStateChanged(object sender, EventArgs e)
 		{
 			SetButtonStates();
-		}
-
-		private void ResetConnectionButton_Click(object state)
-		{
-			PrinterConnectionAndCommunication.Instance.RebootBoard();
 		}
 	}
 }

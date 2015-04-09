@@ -3158,3 +3158,9 @@ Translated:Interface Mode
 English:Standard
 Translated:Standard
 
+English:Connect to the printer
+Translated:Connect to the printer
+
+English:Reset
+Translated:Reset
+
