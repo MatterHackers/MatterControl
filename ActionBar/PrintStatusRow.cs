@@ -337,12 +337,20 @@ namespace MatterHackers.MatterControl.ActionBar
 							totalMinutesInPrint,
 							totalSecondsInPrint,
 							totalTimeLabel);
-					}
-				}
-				else
-				{
-					totalPrintTimeText = string.Format("{0}: {1}", totalTimeLabel, calculatingLabel);
-				}
+                    }
+                }
+                else
+                {
+                    if(totalSecondsInPrint < 0)
+                    {
+                        totalPrintTimeText = string.Format("{0}", LocalizedString.Get("Streaming GCode..."));
+                    }
+                    else
+                    {
+                        totalPrintTimeText = string.Format("{0}: {1}", totalTimeLabel, calculatingLabel);
+                    }
+                    
+                }
 
 				//GC.WaitForFullGCComplete();
 
