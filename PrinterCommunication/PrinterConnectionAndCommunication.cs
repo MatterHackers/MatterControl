@@ -887,6 +887,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
         {
             if (CommunicationState == CommunicationStates.Connected || CommunicationState == CommunicationStates.FinishedPrint)
             {
+                if (ActivePrinter.HasPower) {
+                    PrinterConnectionAndCommunication.Instance.PowerisOn = true;
+                }
                 PrintActivePart();
             }
         }
@@ -1507,6 +1510,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
             }
             set {
                 thePowerIsOn = value;
+                if (thePowerIsOn) {
+                    PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M80");
+                }
+                else {
+                    PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M81");
+                }
+            
                 PowerStateChanged.CallEvents(this, null);
             }
         }

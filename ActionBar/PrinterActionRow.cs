@@ -181,7 +181,6 @@ namespace MatterHackers.MatterControl.ActionBar
             Button buttonClicked = ((Button)sender);
             if (buttonClicked.Enabled) {
                 PrinterConnectionAndCommunication.Instance.PowerisOn = true;
-                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M80");
             }
         }
 
@@ -189,7 +188,6 @@ namespace MatterHackers.MatterControl.ActionBar
             Button buttonClicked = ((Button)sender);
             if (buttonClicked.Enabled) {
                 PrinterConnectionAndCommunication.Instance.PowerisOn = false;
-                PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M81");
             }
         }
 

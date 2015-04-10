@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
                     enableAutoconnect.Checked = ((StateBeforeRefresh)state).autoConnect;
                 }
 
-                enableHasPower = new CheckBox(LocalizedString.Get("Has Power"));
+                enableHasPower = new CheckBox(LocalizedString.Get("Has Firmware Power"));
                 enableHasPower.TextColor = ActiveTheme.Instance.PrimaryTextColor;
                 enableHasPower.Margin = new BorderDouble(top: 10);
                 enableHasPower.HAnchor = HAnchor.ParentLeft;
