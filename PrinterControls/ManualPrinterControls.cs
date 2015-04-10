@@ -39,17 +39,21 @@ namespace MatterHackers.MatterControl
 {
 	public class ManualPrinterControls : GuiWidget
 	{
-		private event EventHandler unregisterEvents;
+		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
+
+		private static bool pluginsQueuedToAdd = false;
+
+		private DisableableWidget fanControlsContainer;
+
+		private DisableableWidget macroControls;
+
+		private DisableableWidget movementControlsContainer;
 
 		private TemperatureControls temperatureControlsContainer;
-		private DisableableWidget movementControlsContainer;
-		private DisableableWidget fanControlsContainer;
-		private DisableableWidget tuningAdjustmentControlsContainer;
-		private DisableableWidget macroControls;
 
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
+		private DisableableWidget tuningAdjustmentControlsContainer;
 
 		public ManualPrinterControls()
 		{
@@ -78,12 +82,27 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static bool pluginsQueuedToAdd = false;
-
+		private event EventHandler unregisterEvents;
 		public void AddPlugins(object state)
 		{
 			AddPluginControls.CallEvents(this, null);
 			pluginsQueuedToAdd = false;
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+
+			base.OnClosed(e);
+		}
+
+		private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			tuningAdjustmentControlsContainer = new AdjustmentControls();
+			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
 		}
 
 		private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -93,6 +112,12 @@ namespace MatterHackers.MatterControl
 			{
 				controlsTopToBottomLayout.AddChild(fanControlsContainer);
 			}
+		}
+
+		private void AddHandlers()
+		{
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 		}
 
 		private void AddMacroControls(FlowLayoutWidget controlsTopToBottomLayout)
@@ -112,21 +137,15 @@ namespace MatterHackers.MatterControl
 			temperatureControlsContainer = new TemperatureControls();
 			controlsTopToBottomLayout.AddChild(temperatureControlsContainer);
 		}
-
-		private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
+		private void invalidateWidget(object state)
 		{
-			tuningAdjustmentControlsContainer = new AdjustmentControls();
-			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
+			this.Invalidate();
 		}
 
-		public override void OnClosed(EventArgs e)
+		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
-			base.OnClosed(e);
+			SetVisibleControls();
+			UiThread.RunOnIdle(invalidateWidget);
 		}
 
 		private void SetDisplayAttributes()
@@ -236,23 +255,6 @@ namespace MatterHackers.MatterControl
 						throw new NotImplementedException();
 				}
 			}
-		}
-
-		private void AddHandlers()
-		{
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-		}
-
-		private void onPrinterStatusChanged(object sender, EventArgs e)
-		{
-			SetVisibleControls();
-			UiThread.RunOnIdle(invalidateWidget);
-		}
-
-		private void invalidateWidget(object state)
-		{
-			this.Invalidate();
 		}
 	}
 }
