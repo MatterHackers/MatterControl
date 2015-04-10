@@ -12,10 +12,9 @@ namespace MatterHackers.MatterControl.DataStorage
 		//Describes the location for storing all local application data
 		private static ApplicationDataStorage globalInstance;
 
-		private string applicationPath;
-		private readonly string datastoreName = "MatterControl.db";
 		private readonly string applicationDataFolderName = "MatterControl";
-
+		private readonly string datastoreName = "MatterControl.db";
+		private string applicationPath;
 		public ApplicationDataStorage()
 		//Constructor - validates that local storage folder exists, creates if necessary
 		{
@@ -38,30 +37,6 @@ namespace MatterHackers.MatterControl.DataStorage
 					globalInstance = new ApplicationDataStorage();
 				}
 				return globalInstance;
-			}
-		}
-
-		/// <summary>
-		/// Returns the application user data folder
-		/// </summary>
-		/// <returns></returns>
-		public string ApplicationUserDataPath
-		{
-			get
-			{
-				return Path.Combine(Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
-			}
-		}
-
-		/// <summary>
-		/// Returns the application temp data folder
-		/// </summary>
-		/// <returns></returns>
-		public string ApplicationTempDataPath
-		{
-			get
-			{
-				return Path.Combine(Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName, "data", "temp");
 			}
 		}
 
@@ -94,6 +69,38 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 
 		/// <summary>
+		/// Returns the application temp data folder
+		/// </summary>
+		/// <returns></returns>
+		public string ApplicationTempDataPath
+		{
+			get
+			{
+				return Path.Combine(Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName, "data", "temp");
+			}
+		}
+
+		/// <summary>
+		/// Returns the application user data folder
+		/// </summary>
+		/// <returns></returns>
+		public string ApplicationUserDataPath
+		{
+			get
+			{
+				return Path.Combine(Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
+			}
+		}
+		/// <summary>
+		/// Returns the path to the sqlite database
+		/// </summary>
+		/// <returns></returns>
+		public string DatastorePath
+		{
+			get { return Path.Combine(ApplicationUserDataPath, datastoreName); }
+		}
+
+		/// <summary>
 		/// Returns the gcode output folder
 		/// </summary>
 		/// <returns></returns>
@@ -109,16 +116,6 @@ namespace MatterHackers.MatterControl.DataStorage
 				return gcodeOutputPath;
 			}
 		}
-
-		/// <summary>
-		/// Returns the path to the sqlite database
-		/// </summary>
-		/// <returns></returns>
-		public string DatastorePath
-		{
-			get { return Path.Combine(ApplicationUserDataPath, datastoreName); }
-		}
-
 		public override string ToString()
 		{
 			return base.ToString();
@@ -127,26 +124,13 @@ namespace MatterHackers.MatterControl.DataStorage
 
 	internal class Datastore
 	{
-		private bool TEST_FLAG = false;
-		private static Datastore globalInstance;
-		private static string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
 		public bool ConnectionError = false;
-		private List<Type> dataStoreTables = new List<Type> { typeof(PrintItemCollection), typeof(PrinterSetting), typeof(CustomCommands), typeof(SystemSetting), typeof(UserSetting), typeof(ApplicationSession), typeof(PrintItem), typeof(PrintTask), typeof(Printer), typeof(SliceSetting), typeof(SliceSettingsCollection) };
-		private ApplicationSession activeSession;
 		public ISQLite dbSQLite;
-
-		public static Datastore Instance
-		{
-			get
-			{
-				if (globalInstance == null)
-				{
-					globalInstance = new Datastore();
-				}
-				return globalInstance;
-			}
-		}
-
+		private static string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
+		private static Datastore globalInstance;
+		private ApplicationSession activeSession;
+		private List<Type> dataStoreTables = new List<Type> { typeof(PrintItemCollection), typeof(PrinterSetting), typeof(CustomCommands), typeof(SystemSetting), typeof(UserSetting), typeof(ApplicationSession), typeof(PrintItem), typeof(PrintTask), typeof(Printer), typeof(SliceSetting), typeof(SliceSettingsCollection) };
+		private bool TEST_FLAG = false;
 		public Datastore()
 		{
 			if (TEST_FLAG)
@@ -205,44 +189,17 @@ namespace MatterHackers.MatterControl.DataStorage
 			Debug.WriteLine(datastoreLocation);
 		}
 
-		public int RecordCount(string tableName)
+		public static Datastore Instance
 		{
-			string query = string.Format("SELECT COUNT(*) FROM {0};", tableName);
-			string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
-			return Convert.ToInt32(result);
-		}
-
-		public void Initialize()
-		//Run initial checks and operations on sqlite datastore
-		{
-			if (TEST_FLAG)
+			get
 			{
-				ValidateSchema();
-				GenerateSampleData sampleData = new GenerateSampleData();
-			}
-			else
-			{
-				ValidateSchema();
-			}
-			StartSession();
-		}
-
-		private void StartSession()
-		//Begins new application session record
-		{
-			activeSession = new ApplicationSession();
-			dbSQLite.Insert(activeSession);
-		}
-
-		private void ValidateSchema()
-		// Checks if the datastore contains the appropriate tables - adds them if necessary
-		{
-			foreach (Type table in dataStoreTables)
-			{
-				dbSQLite.CreateTable(table);
+				if (globalInstance == null)
+				{
+					globalInstance = new Datastore();
+				}
+				return globalInstance;
 			}
 		}
-
 		public void Exit()
 		{
 			this.activeSession.SessionEnd = DateTime.Now;
@@ -264,6 +221,43 @@ namespace MatterHackers.MatterControl.DataStorage
 				catch (Exception)
 				{
 				}
+			}
+		}
+
+		public void Initialize()
+		//Run initial checks and operations on sqlite datastore
+		{
+			if (TEST_FLAG)
+			{
+				ValidateSchema();
+				GenerateSampleData sampleData = new GenerateSampleData();
+			}
+			else
+			{
+				ValidateSchema();
+			}
+			StartSession();
+		}
+
+		public int RecordCount(string tableName)
+		{
+			string query = string.Format("SELECT COUNT(*) FROM {0};", tableName);
+			string result = Datastore.Instance.dbSQLite.ExecuteScalar<string>(query);
+			return Convert.ToInt32(result);
+		}
+		private void StartSession()
+		//Begins new application session record
+		{
+			activeSession = new ApplicationSession();
+			dbSQLite.Insert(activeSession);
+		}
+
+		private void ValidateSchema()
+		// Checks if the datastore contains the appropriate tables - adds them if necessary
+		{
+			foreach (Type table in dataStoreTables)
+			{
+				dbSQLite.CreateTable(table);
 			}
 		}
 	}
