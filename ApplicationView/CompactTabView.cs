@@ -46,29 +46,24 @@ namespace MatterHackers.MatterControl
 		public static int firstPanelCurrentTab = 0;
 		private static int lastAdvanceControlsIndex = 0;
 
-		private TabPage QueueTabPage;
-		private TabPage LibraryTabPage;
-		private TabPage HistoryTabPage;
+		private static SliceSettingsWidgetUiState sliceSettingsUiState = new SliceSettingsWidgetUiState();
 		private TabPage AboutTabPage;
-		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-		private GuiWidget addedUpdateMark = null;
-		private QueueDataView queueDataView;
-
-		private event EventHandler unregisterEvents;
-
-		private GuiWidget part3DViewContainer;
-		private View3DWidget part3DView;
-		private GuiWidget partGcodeViewContainer;
-		private ViewGcodeBasic partGcodeView;
 		private SimpleTextTabWidget aboutTabWidget;
-		private SliceSettingsWidget sliceSettingsWidget;
-
-		private TabPage sliceTabPage;
-		private TabPage manualControlsPage;
+		private GuiWidget addedUpdateMark = null;
 		private TabPage configurationPage;
-
+		private TabPage HistoryTabPage;
+		private TabPage LibraryTabPage;
+		private TabPage manualControlsPage;
+		private View3DWidget part3DView;
+		private GuiWidget part3DViewContainer;
+		private ViewGcodeBasic partGcodeView;
+		private GuiWidget partGcodeViewContainer;
+		private QueueDataView queueDataView;
+		private TabPage QueueTabPage;
+		private SliceSettingsWidget sliceSettingsWidget;
+		private TabPage sliceTabPage;
 		private int TabTextSize;
-
+		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 		public CompactTabView(QueueDataView queueDataView)
 			: base(Orientation.Vertical)
 		{
@@ -154,93 +149,11 @@ namespace MatterHackers.MatterControl
 			SelectedTabIndex = firstPanelCurrentTab;
 		}
 
-		private void onActivePrintItemChanged(object sender, EventArgs e)
+		private event EventHandler unregisterEvents;
+		public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle(GeneratePartViews);
-		}
-
-		public void ReloadAdvancedControlsPanelTrigger(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
-		}
-
-		private void reloadSliceSettingsWidget()
-		{
-			//Store the UI state from the current display
-			sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
-
-			sliceTabPage.RemoveAllChildren();
-			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
-			sliceSettingsWidget.AnchorAll();
-			sliceTabPage.AddChild(sliceSettingsWidget);
-		}
-
-		private void reloadControlsWidget()
-		{
-			GuiWidget manualPrinterControls = new ManualPrinterControls();
-
-			//ScrollableWidget manualPrinterControlsWidget = new ScrollableWidget(true);
-			//manualPrinterControlsWidget.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			//manualPrinterControlsWidget.AnchorAll();
-			//manualPrinterControlsWidget.AddChild(manualPrinterControls);
-
-			manualControlsPage.RemoveAllChildren();
-			manualControlsPage.AddChild(manualPrinterControls);
-		}
-
-		private void reloadConfigurationWidget()
-		{
-			configurationPage.RemoveAllChildren();
-			configurationPage.AddChild(new PrinterConfigurationScrollWidget());
-		}
-
-		private void GeneratePartViews(object state = null)
-		{
-			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
-			part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
-				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-				ActiveSliceSettings.Instance.BedCenter,
-				ActiveSliceSettings.Instance.BedShape,
-				View3DWidget.WindowMode.Embeded,
-				View3DWidget.AutoRotate.Enabled);
-			part3DView.Margin = new BorderDouble(bottom: 4);
-			part3DView.AnchorAll();
-
-			part3DViewContainer.RemoveAllChildren();
-			part3DViewContainer.AddChild(part3DView);
-
-			partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
-				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
-				ActiveSliceSettings.Instance.BedCenter,
-				ActiveSliceSettings.Instance.BedShape, ViewGcodeBasic.WindowMode.Embeded);
-			partGcodeView.AnchorAll();
-
-			partGcodeViewContainer.RemoveAllChildren();
-			partGcodeViewContainer.AddChild(partGcodeView);
-		}
-
-		private static SliceSettingsWidgetUiState sliceSettingsUiState = new SliceSettingsWidgetUiState();
-
-		private void SaveCurrentPanelIndex(object sender, EventArgs e)
-		{
-			sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
-
-			if (this.Children.Count > 0)
-			{
-				lastAdvanceControlsIndex = this.SelectedTabIndex;
-			}
-		}
-
-		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
-		{
-			string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
-			string queueString = string.Format("{1} ({0})", QueueData.Instance.Count, queueStringBeg);
-			QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
-		}
-
-		private void SaveCurrentTab(object sender, EventArgs e)
-		{
-			firstPanelCurrentTab = SelectedTabIndex;
+			ActiveSliceSettings.Instance.LoadAllSettings();
+			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -256,18 +169,9 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(LoadAdvancedControls);
 		}
 
-		private void LoadAdvancedControls(object state = null)
+		public void ReloadAdvancedControlsPanelTrigger(object sender, EventArgs e)
 		{
-			reloadControlsWidget();
-			reloadConfigurationWidget();
-			reloadSliceSettingsWidget();
-			this.Invalidate();
-		}
-
-		public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
-		{
-			ActiveSliceSettings.Instance.LoadAllSettings();
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+			UiThread.RunOnIdle(ReloadAdvancedControlsPanel);
 		}
 
 		public void SetUpdateNotification(object sender, EventArgs widgetEvent)
@@ -298,6 +202,93 @@ namespace MatterHackers.MatterControl
 				default:
 					throw new NotImplementedException();
 			}
+		}
+
+		private void GeneratePartViews(object state = null)
+		{
+			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
+			part3DView = new View3DWidget(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+				ActiveSliceSettings.Instance.BedCenter,
+				ActiveSliceSettings.Instance.BedShape,
+				View3DWidget.WindowMode.Embeded,
+				View3DWidget.AutoRotate.Enabled);
+			part3DView.Margin = new BorderDouble(bottom: 4);
+			part3DView.AnchorAll();
+
+			part3DViewContainer.RemoveAllChildren();
+			part3DViewContainer.AddChild(part3DView);
+
+			partGcodeView = new ViewGcodeBasic(PrinterConnectionAndCommunication.Instance.ActivePrintItem,
+				new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),
+				ActiveSliceSettings.Instance.BedCenter,
+				ActiveSliceSettings.Instance.BedShape, ViewGcodeBasic.WindowMode.Embeded);
+			partGcodeView.AnchorAll();
+
+			partGcodeViewContainer.RemoveAllChildren();
+			partGcodeViewContainer.AddChild(partGcodeView);
+		}
+
+		private void LoadAdvancedControls(object state = null)
+		{
+			reloadControlsWidget();
+			reloadConfigurationWidget();
+			reloadSliceSettingsWidget();
+			this.Invalidate();
+		}
+
+		private void NumQueueItemsChanged(object sender, EventArgs widgetEvent)
+		{
+			string queueStringBeg = LocalizedString.Get("Queue").ToUpper();
+			string queueString = string.Format("{1} ({0})", QueueData.Instance.Count, queueStringBeg);
+			QueueTabPage.Text = string.Format(queueString, QueueData.Instance.Count);
+		}
+
+		private void onActivePrintItemChanged(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(GeneratePartViews);
+		}
+		private void reloadConfigurationWidget()
+		{
+			configurationPage.RemoveAllChildren();
+			configurationPage.AddChild(new PrinterConfigurationScrollWidget());
+		}
+
+		private void reloadControlsWidget()
+		{
+			GuiWidget manualPrinterControls = new ManualPrinterControls();
+
+			//ScrollableWidget manualPrinterControlsWidget = new ScrollableWidget(true);
+			//manualPrinterControlsWidget.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			//manualPrinterControlsWidget.AnchorAll();
+			//manualPrinterControlsWidget.AddChild(manualPrinterControls);
+
+			manualControlsPage.RemoveAllChildren();
+			manualControlsPage.AddChild(manualPrinterControls);
+		}
+
+		private void reloadSliceSettingsWidget()
+		{
+			//Store the UI state from the current display
+			sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
+
+			sliceTabPage.RemoveAllChildren();
+			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+			sliceSettingsWidget.AnchorAll();
+			sliceTabPage.AddChild(sliceSettingsWidget);
+		}
+		private void SaveCurrentPanelIndex(object sender, EventArgs e)
+		{
+			sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
+
+			if (this.Children.Count > 0)
+			{
+				lastAdvanceControlsIndex = this.SelectedTabIndex;
+			}
+		}
+		private void SaveCurrentTab(object sender, EventArgs e)
+		{
+			firstPanelCurrentTab = SelectedTabIndex;
 		}
 	}
 }
