@@ -45,14 +45,18 @@ using System.Net;
 
 namespace MatterHackers.MatterControl
 {
-	public class AboutPage : GuiWidget
+	public class HtmlWidget : GuiWidget
+	{
+	}
+
+	public class AboutPage : HtmlWidget
 	{
 		private RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		private FlowLayoutWidget currentRowUnderConstruction;
-		private FlowLayoutWidget currentATagUnderConstruction = null;
+
+		private Stack<GuiWidget> elementsUnderConstruction = new Stack<GuiWidget>();
+
 		private string htmlContent = null;
 
-		private GuiWidget htmlWidget;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
@@ -86,17 +90,21 @@ namespace MatterHackers.MatterControl
 			{
 				string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
 				htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
+
+				string aboutHtmlFile2 = Path.Combine("OEMSettings", "AboutPage2.html");
+				//htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile2);
 			}
 
 			//htmlContent = File.ReadAllText("C:/Users/LarsBrubaker/Downloads/test.html");
 
-			htmlWidget = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			htmlWidget.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-			htmlWidget.HAnchor |= HAnchor.ParentCenter;
+			elementsUnderConstruction.Push(new FlowLayoutWidget(FlowDirection.TopToBottom));
+			elementsUnderConstruction.Peek().Name = "container widget";
+			elementsUnderConstruction.Peek().VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+			elementsUnderConstruction.Peek().HAnchor |= HAnchor.ParentCenter;
 
 			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
 
-			customInfoTopToBottom.AddChild(htmlWidget);
+			customInfoTopToBottom.AddChild(elementsUnderConstruction.Peek());
 
 			this.AddChild(customInfoTopToBottom);
 		}
@@ -276,53 +284,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public class ImageWidgetDelayedLoad : ImageWidget
-		{
-			bool startedLoad = false;
-			string uriToLoad;
-
-			public ImageWidgetDelayedLoad(ImageBuffer image, string uriToLoad)
-				: base(image)
-			{
-				this.uriToLoad = uriToLoad;
-			}
-
-			public override void OnDraw(Graphics2D graphics2D)
-			{
-				if (!startedLoad)
-				{
-					try
-					{
-						startedLoad = true;
-						WebClient client = new WebClient();
-						client.DownloadDataCompleted += client_DownloadDataCompleted;
-						client.DownloadDataAsync(new Uri(uriToLoad));
-					}
-					catch (Exception)
-					{
-					}
-				}
-
-				base.OnDraw(graphics2D);
-			}
-
-			void client_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
-			{
-				byte[] raw = e.Result;
-				Stream stream = new MemoryStream(raw);
-				ImageBuffer unScaledImage = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-				ImageIO.LoadImageData(stream, unScaledImage);
-				while (unScaledImage.Width > Image.Width * 2)
-				{
-					ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, new BlenderBGRA());
-					halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
-					unScaledImage = halfImage;
-				}
-				Image.NewGraphics2D().Render(unScaledImage, 0, 0, 0, Image.Width / (double)unScaledImage.Width, Image.Height / (double)unScaledImage.Height);
-				Image.MarkImageChanged();
-			}
-		}
-
 		private void AddContent(HtmlParser htmlParser, string htmlContent)
 		{
 			ElementState elementState = htmlParser.CurrentElementState;
@@ -344,10 +305,10 @@ namespace MatterHackers.MatterControl
 				case "img":
 					{
 						ImageBuffer image = new ImageBuffer(elementState.SizeFixed.x, elementState.SizeFixed.y, 32, new BlenderBGRA());
-						ImageWidgetDelayedLoad imageWidget = new ImageWidgetDelayedLoad(image, elementState.src);
+						ImageWidget_AsyncLoadOnDraw imageWidget = new ImageWidget_AsyncLoadOnDraw(image, elementState.src);
 						// put the image into the widget when it is done downloading.
 						
-						if (currentATagUnderConstruction != null)
+						if (elementsUnderConstruction.Peek().Name == "a")
 						{
 							Button linkButton = new Button(0, 0, imageWidget);
 							linkButton.Cursor = Cursors.Hand;
@@ -355,21 +316,19 @@ namespace MatterHackers.MatterControl
 							{
 								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
 							};
-							currentATagUnderConstruction.AddChild(linkButton);
+							elementsUnderConstruction.Peek().AddChild(linkButton);
 						}
 						else
 						{
-							currentRowUnderConstruction.AddChild(imageWidget);
+							elementsUnderConstruction.Peek().AddChild(imageWidget);
 						}
 					}
 					break;
 
 				case "a":
 					{
-						if (currentATagUnderConstruction == null)
-						{
-							currentATagUnderConstruction = new FlowLayoutWidget();
-						}
+						elementsUnderConstruction.Push(new FlowLayoutWidget());
+						elementsUnderConstruction.Peek().Name = "a";
 
 						if (decodedHtml != null && decodedHtml != "")
 						{
@@ -381,7 +340,7 @@ namespace MatterHackers.MatterControl
 							{
 								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
 							};
-							currentATagUnderConstruction.AddChild(linkButton);
+							elementsUnderConstruction.Peek().AddChild(linkButton);
 						}
 					}
 					break;
@@ -450,18 +409,20 @@ namespace MatterHackers.MatterControl
 						widgetToAdd.VAnchor = VAnchor.ParentTop;
 					}
 
-					currentRowUnderConstruction.AddChild(widgetToAdd);
+
+					elementsUnderConstruction.Peek().AddChild(widgetToAdd);
 					break;
 
 				case "tr":
-					currentRowUnderConstruction = new FlowLayoutWidget();
+					elementsUnderConstruction.Push(new FlowLayoutWidget());
+					elementsUnderConstruction.Peek().Name = "tr";
 					if (elementState.SizePercent.y == 100)
 					{
-						currentRowUnderConstruction.VAnchor = VAnchor.ParentBottomTop;
+						elementsUnderConstruction.Peek().VAnchor = VAnchor.ParentBottomTop;
 					}
 					if (elementState.Alignment == ElementState.AlignType.center)
 					{
-						currentRowUnderConstruction.HAnchor |= HAnchor.ParentCenter;
+						elementsUnderConstruction.Peek().HAnchor |= HAnchor.ParentCenter;
 					}
 					break;
 
@@ -476,8 +437,12 @@ namespace MatterHackers.MatterControl
 			switch (elementState.TypeName)
 			{
 				case "a":
-					currentRowUnderConstruction.AddChild(currentATagUnderConstruction);
-					currentATagUnderConstruction = null;
+					GuiWidget aWidget = elementsUnderConstruction.Pop();
+					if (aWidget.Name != "a")
+					{
+						throw new Exception("Should have been 'a'.");
+					}
+					elementsUnderConstruction.Peek().AddChild(aWidget);
 					break;
 
 				case "table":
@@ -487,8 +452,12 @@ namespace MatterHackers.MatterControl
 					break;
 
 				case "tr":
-					htmlWidget.AddChild(currentRowUnderConstruction);
-					currentRowUnderConstruction = null;
+					GuiWidget trWidget = elementsUnderConstruction.Pop();
+					if (trWidget.Name != "tr")
+					{
+						throw new Exception("Should have been 'tr'.");
+					}
+					elementsUnderConstruction.Peek().AddChild(trWidget);
 					break;
 
 				case "td":
