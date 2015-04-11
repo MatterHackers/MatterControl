@@ -69,6 +69,48 @@ namespace MatterHackers.MatterControl
 			HAnchor |= HAnchor.ParentLeftRight;
 		}
 
+		public class WrappingTextWidget : GuiWidget
+		{
+			private String unwrappedMessage;
+			private TextWidget messageContainer;
+
+			public WrappingTextWidget(string text, double pointSize = 12, Justification justification = Justification.Left, RGBA_Bytes textColor = new RGBA_Bytes(), bool ellipsisIfClipped = true, bool underline = false, RGBA_Bytes backgroundColor = new RGBA_Bytes())
+			{
+				unwrappedMessage = text;
+				messageContainer = new TextWidget(text, 0, 0, pointSize, justification, textColor, ellipsisIfClipped, underline);
+				this.BackgroundColor = backgroundColor;
+				messageContainer.AutoExpandBoundsToText = true;
+				messageContainer.HAnchor = HAnchor.ParentLeft;
+				messageContainer.VAnchor = VAnchor.ParentBottom;
+				this.HAnchor = HAnchor.ParentLeftRight;
+				this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
+
+				AddChild(messageContainer);
+
+				this.DebugShowBounds = true;
+			}
+
+			public override void OnBoundsChanged(EventArgs e)
+			{
+				AdjustTextWrap();
+				base.OnBoundsChanged(e);
+			}
+
+			private void AdjustTextWrap()
+			{
+				if (messageContainer != null)
+				{
+					double wrappingSize = this.Width - this.Padding.Width;
+					if (wrappingSize > 0)
+					{
+						EnglishTextWrapping wrapper = new EnglishTextWrapping(messageContainer.Printer.TypeFaceStyle.EmSizeInPoints);
+						string wrappedMessage = wrapper.InsertCRs(unwrappedMessage, wrappingSize);
+						messageContainer.Text = wrappedMessage;
+					}
+				}
+			}
+		}
+
 		private void AddContent(HtmlParser htmlParser, string htmlContent)
 		{
 			ElementState elementState = htmlParser.CurrentElementState;
@@ -76,9 +118,31 @@ namespace MatterHackers.MatterControl
 			switch (elementState.TypeName)
 			{
 				case "p":
+					{
+						elementsUnderConstruction.Push(new FlowLayoutWidget());
+						elementsUnderConstruction.Peek().Name = "p";
+						elementsUnderConstruction.Peek().HAnchor = HAnchor.ParentLeftRight;
+
+						if (decodedHtml != null && decodedHtml != "")
+						{
+							WrappingTextWidget content = new WrappingTextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
+							//content.VAnchor = VAnchor.ParentTop;
+							elementsUnderConstruction.Peek().AddChild(content);
+						}
+					}
 					break;
 
 				case "div":
+					{
+						elementsUnderConstruction.Push(new FlowLayoutWidget());
+						elementsUnderConstruction.Peek().Name = "div";
+
+						if (decodedHtml != null && decodedHtml != "")
+						{
+							TextWidget content = new TextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
+							elementsUnderConstruction.Peek().AddChild(content);
+						}
+					}
 					break;
 
 				case "!DOCTYPE":
@@ -194,7 +258,6 @@ namespace MatterHackers.MatterControl
 						widgetToAdd.VAnchor = VAnchor.ParentTop;
 					}
 
-
 					elementsUnderConstruction.Peek().AddChild(widgetToAdd);
 					break;
 
@@ -228,6 +291,24 @@ namespace MatterHackers.MatterControl
 						throw new Exception("Should have been 'a'.");
 					}
 					elementsUnderConstruction.Peek().AddChild(aWidget);
+					break;
+
+				case "p":
+					GuiWidget pWidget = elementsUnderConstruction.Pop();
+					if (pWidget.Name != "p")
+					{
+						throw new Exception("Should have been 'p'.");
+					}
+					elementsUnderConstruction.Peek().AddChild(pWidget);
+					break;
+
+				case "div":
+					GuiWidget divWidget = elementsUnderConstruction.Pop();
+					if (divWidget.Name != "div")
+					{
+						throw new Exception("Should have been 'div'.");
+					}
+					elementsUnderConstruction.Peek().AddChild(divWidget);
 					break;
 
 				case "table":

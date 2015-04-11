@@ -68,10 +68,22 @@ namespace MatterHackers.MatterControl
 			string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
 			string htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
 
-			string aboutHtmlFile2 = Path.Combine("OEMSettings", "AboutPage2.html");
-			//htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile2);
-
-			//htmlContent = File.ReadAllText("C:/Users/LarsBrubaker/Downloads/test.html");
+#if false // test
+			{
+				SystemWindow releaseNotes = new SystemWindow(640, 480);
+				string releaseNotesFile = Path.Combine("OEMSettings", "ReleaseNotesMini.html");
+				string releaseNotesContent = StaticData.Instance.ReadAllText(releaseNotesFile);
+				HtmlWidget content = new HtmlWidget(releaseNotesContent, RGBA_Bytes.Black);
+				content.DebugShowBounds = true;
+				content.BackgroundColor = RGBA_Bytes.White;
+				releaseNotes.AddChild(content);
+				releaseNotes.BackgroundColor = RGBA_Bytes.Cyan;
+				UiThread.RunOnIdle((state) =>
+				{
+					releaseNotes.ShowAsSystemWindow();
+				}, 1);
+			}
+#endif
 
 			HtmlWidget htmlWidget = new HtmlWidget(htmlContent, ActiveTheme.Instance.PrimaryTextColor);
 
