@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -40,69 +41,20 @@ using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 
 namespace MatterHackers.MatterControl
 {
-	public class AboutWindow : SystemWindow
-	{
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public AboutWindow()
-			: base(500, 640)
-		{
-			GuiWidget aboutPage = new AboutPage();
-			aboutPage.AnchorAll();
-			this.AddChild(aboutPage);
-
-			FlowLayoutWidget buttonRowContainer = new FlowLayoutWidget();
-			buttonRowContainer.HAnchor = HAnchor.ParentLeftRight;
-			buttonRowContainer.Padding = new BorderDouble(0, 3);
-			AddChild(buttonRowContainer);
-
-			Button cancelButton = textImageButtonFactory.Generate("Close");
-			cancelButton.Click += (sender, e) => { CancelButton_Click(); };
-			buttonRowContainer.AddChild(new HorizontalSpacer());
-			buttonRowContainer.AddChild(cancelButton);
-
-			this.Title = LocalizedString.Get("About MatterControl");
-			this.ShowAsSystemWindow();
-		}
-
-		private void CancelButton_Click()
-		{
-			UiThread.RunOnIdle((state) =>
-				{
-					aboutWindow.Close();
-				});
-		}
-
-		private static AboutWindow aboutWindow = null;
-
-		public static void Show()
-		{
-			if (aboutWindow == null)
-			{
-				aboutWindow = new AboutWindow();
-				aboutWindow.Closed += (parentSender, e) =>
-				{
-					aboutWindow = null;
-				};
-			}
-			else
-			{
-				aboutWindow.BringToFront();
-			}
-		}
-	}
-
 	public class AboutPage : GuiWidget
 	{
+		private RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
+		private FlowLayoutWidget currentRowUnderConstruction;
+		private FlowLayoutWidget currentATagUnderConstruction = null;
 		private string htmlContent = null;
 
 		private GuiWidget htmlWidget;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		private RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 		public AboutPage()
 		{
@@ -136,6 +88,8 @@ namespace MatterHackers.MatterControl
 				htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
 			}
 
+			//htmlContent = File.ReadAllText("C:/Users/LarsBrubaker/Downloads/test.html");
+
 			htmlWidget = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			htmlWidget.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
 			htmlWidget.HAnchor |= HAnchor.ParentCenter;
@@ -145,183 +99,6 @@ namespace MatterHackers.MatterControl
 			customInfoTopToBottom.AddChild(htmlWidget);
 
 			this.AddChild(customInfoTopToBottom);
-		}
-
-		private FlowLayoutWidget currentRow;
-
-		private void AddContent(HtmlParser htmlParser, string htmlContent)
-		{
-			ElementState elementState = htmlParser.CurrentElementState;
-			string decodedHtml = HtmlParser.UrlDecode(htmlContent);
-			switch (elementState.TypeName)
-			{
-				case "a":
-					{
-						Button linkButton = linkButtonFactory.Generate(decodedHtml);
-						StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
-						double descentInPixels = styled.DescentInPixels;
-						linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
-						linkButton.Click += (sender, mouseEvent) =>
-						{
-							MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
-						};
-						currentRow.AddChild(linkButton);
-					}
-					break;
-
-				case "table":
-					break;
-
-				case "td":
-				case "span":
-					GuiWidget widgetToAdd;
-
-					if (elementState.Classes.Contains("translate"))
-					{
-						decodedHtml = decodedHtml.Localize();
-					}
-					if (elementState.Classes.Contains("toUpper"))
-					{
-						decodedHtml = decodedHtml.ToUpper();
-					}
-					if (elementState.Classes.Contains("versionNumber"))
-					{
-						decodedHtml = VersionInfo.Instance.ReleaseVersion;
-					}
-					if (elementState.Classes.Contains("buildNumber"))
-					{
-						decodedHtml = VersionInfo.Instance.BuildVersion;
-					}
-
-					Button createdButton = null;
-					if (elementState.Classes.Contains("centeredButton"))
-					{
-						createdButton = textImageButtonFactory.Generate(decodedHtml);
-						widgetToAdd = createdButton;
-					}
-					else if (elementState.Classes.Contains("linkButton"))
-					{
-						double oldFontSize = linkButtonFactory.fontSize;
-						linkButtonFactory.fontSize = elementState.PointSize;
-						createdButton = linkButtonFactory.Generate(decodedHtml);
-						StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
-						double descentInPixels = styled.DescentInPixels;
-						createdButton.OriginRelativeParent = new VectorMath.Vector2(createdButton.OriginRelativeParent.x, createdButton.OriginRelativeParent.y + descentInPixels);
-						widgetToAdd = createdButton;
-						linkButtonFactory.fontSize = oldFontSize;
-					}
-					else
-					{
-						TextWidget content = new TextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
-						widgetToAdd = content;
-					}
-
-					if (createdButton != null)
-					{
-						if (elementState.Id == "sendFeedback")
-						{
-							createdButton.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
-						}
-						else if (elementState.Id == "clearCache")
-						{
-							createdButton.Click += (sender, mouseEvent) => { DeleteCacheData(); };
-						}
-					}
-
-					if (elementState.VerticalAlignment == ElementState.VerticalAlignType.top)
-					{
-						widgetToAdd.VAnchor = VAnchor.ParentTop;
-					}
-
-					currentRow.AddChild(widgetToAdd);
-					break;
-
-				case "tr":
-					currentRow = new FlowLayoutWidget();
-					if (elementState.HeightPercent == 100)
-					{
-						currentRow.VAnchor = VAnchor.ParentBottomTop;
-					}
-					if (elementState.Alignment == ElementState.AlignType.center)
-					{
-						currentRow.HAnchor |= HAnchor.ParentCenter;
-					}
-					break;
-
-				default:
-					throw new NotImplementedException("Don't know what to do with {0}".FormatWith(elementState.TypeName));
-			}
-		}
-
-		private void CloseContent(HtmlParser htmlParser, string htmlContent)
-		{
-			ElementState elementState = htmlParser.CurrentElementState;
-			switch (elementState.TypeName)
-			{
-				case "a":
-					break;
-
-				case "table":
-					break;
-
-				case "span":
-					break;
-
-				case "tr":
-					htmlWidget.AddChild(currentRow);
-					currentRow = null;
-					break;
-
-				case "td":
-					break;
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		public string DoTranslate(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string DoToUpper(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string GetVersionString(string content)
-		{
-			return VersionInfo.Instance.ReleaseVersion;
-		}
-
-		public string GetBuildString(string content)
-		{
-			return VersionInfo.Instance.BuildVersion;
-		}
-
-		public string CreateLinkButton(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string CreateCenteredButton(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		private static void RemoveDirectory(string directoryToRemove)
-		{
-			try
-			{
-				if (Directory.Exists(directoryToRemove))
-				{
-					Directory.Delete(directoryToRemove, true);
-				}
-			}
-			catch (Exception)
-			{
-			}
 		}
 
 		public static void DeleteCacheData()
@@ -374,6 +151,36 @@ namespace MatterHackers.MatterControl
 			{
 				CleanDirectory(userDataPath, referencedPrintItemsFilePaths, referencedThumbnailFiles);
 			}
+		}
+
+		public string CreateCenteredButton(string content)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string CreateLinkButton(string content)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string DoToUpper(string content)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string DoTranslate(string content)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string GetBuildString(string content)
+		{
+			return VersionInfo.Instance.BuildVersion;
+		}
+
+		public string GetVersionString(string content)
+		{
+			return VersionInfo.Instance.ReleaseVersion;
 		}
 
 		private static int CleanDirectory(string path, HashSet<string> referencedPrintItemsFilePaths, HashSet<string> referencedThumbnailFiles)
@@ -455,37 +262,261 @@ namespace MatterHackers.MatterControl
 			return contentCount;
 		}
 
-#if false // kevin code 2014 04 22
-        System.Windows.Forms.WebBrowser browser;
-        private void openBrowser(Uri url)
-        {
-            //SystemWindow browser = new SystemWindow(600,600);
+		private static void RemoveDirectory(string directoryToRemove)
+		{
+			try
+			{
+				if (Directory.Exists(directoryToRemove))
+				{
+					Directory.Delete(directoryToRemove, true);
+				}
+			}
+			catch (Exception)
+			{
+			}
+		}
 
-            System.Windows.Forms.Form test = new System.Windows.Forms.Form();
-            test.Icon = new System.Drawing.Icon(Path.Combine(ApplicationDataStorage.Instance.ApplicationStaticDataPath, "application.ico"));
-            test.Height = 480;
-            test.Width = 640;
-            test.Text = "MatterControl";
+		private void AddContent(HtmlParser htmlParser, string htmlContent)
+		{
+			ElementState elementState = htmlParser.CurrentElementState;
+			string decodedHtml = HtmlParser.UrlDecode(htmlContent);
+			switch (elementState.TypeName)
+			{
+				case "!DOCTYPE":
+					break;
 
-            browser = new System.Windows.Forms.WebBrowser();
-            browser.DocumentCompleted += browser_DocumentCompleted;
-            browser.Navigate(url);
-            browser.Dock = System.Windows.Forms.DockStyle.Fill;
+				case "body":
+					break;
 
-            test.Controls.Add(browser);
-            test.Show();
-            //browser.AddChild(br);
-            //browser.ShowAsSystemWindow();
-        }
+				case "img":
+					{
+						ImageBuffer image = new ImageBuffer(elementState.SizeFixed.x, elementState.SizeFixed.y, 32, new BlenderBGRA());
+						ImageWidget imageWidget = new ImageWidget(image);
+						imageWidget.BackgroundColor = RGBA_Bytes.Cyan;
+						// put the image into the widget when it is done downloading.
+						
+						WebClient client = new WebClient();
+						client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
+						{
+							ImageBuffer imageInternal = image;
+							byte[] raw = e.Result;
+							Stream stream = new MemoryStream(raw);
+							ImageBuffer unScaledImage = new ImageBuffer(10, 10, 32, new BlenderBGRA());
+							ImageIO.LoadImageData(stream, unScaledImage);
+							imageInternal.NewGraphics2D().Render(unScaledImage, 0, 0, 0, imageInternal.Width / (double)unScaledImage.Width, imageInternal.Height / (double)unScaledImage.Height);
+							
+						};
+						client.DownloadDataAsync(new Uri(elementState.src));
 
-        void browser_DocumentCompleted(object sender, System.Windows.Forms.WebBrowserDocumentCompletedEventArgs e)
-        {
-            if (browser.Url == e.Url)
-            {
-                Console.WriteLine("Navigated to {0}", e.Url);
-            }
-            browser.Show();
-        }
-#endif
+
+						//linkButton.Click += (sender, mouseEvent) =>
+						//{
+						//MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
+						//};
+						if (currentATagUnderConstruction != null)
+						{
+							Button linkButton = new Button(0, 0, imageWidget);
+							linkButton.Cursor = Cursors.Hand;
+							linkButton.Click += (sender, mouseEvent) =>
+							{
+								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
+							};
+							currentATagUnderConstruction.AddChild(linkButton);
+						}
+						else
+						{
+							currentRowUnderConstruction.AddChild(imageWidget);
+						}
+					}
+					break;
+
+				case "a":
+					{
+						if (currentATagUnderConstruction == null)
+						{
+							currentATagUnderConstruction = new FlowLayoutWidget();
+						}
+
+						if (decodedHtml != null && decodedHtml != "")
+						{
+							Button linkButton = linkButtonFactory.Generate(decodedHtml);
+							StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
+							double descentInPixels = styled.DescentInPixels;
+							linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
+							linkButton.Click += (sender, mouseEvent) =>
+							{
+								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
+							};
+							currentATagUnderConstruction.AddChild(linkButton);
+						}
+					}
+					break;
+
+				case "table":
+					break;
+
+				case "td":
+				case "span":
+					GuiWidget widgetToAdd;
+
+					if (elementState.Classes.Contains("translate"))
+					{
+						decodedHtml = decodedHtml.Localize();
+					}
+					if (elementState.Classes.Contains("toUpper"))
+					{
+						decodedHtml = decodedHtml.ToUpper();
+					}
+					if (elementState.Classes.Contains("versionNumber"))
+					{
+						decodedHtml = VersionInfo.Instance.ReleaseVersion;
+					}
+					if (elementState.Classes.Contains("buildNumber"))
+					{
+						decodedHtml = VersionInfo.Instance.BuildVersion;
+					}
+
+					Button createdButton = null;
+					if (elementState.Classes.Contains("centeredButton"))
+					{
+						createdButton = textImageButtonFactory.Generate(decodedHtml);
+						widgetToAdd = createdButton;
+					}
+					else if (elementState.Classes.Contains("linkButton"))
+					{
+						double oldFontSize = linkButtonFactory.fontSize;
+						linkButtonFactory.fontSize = elementState.PointSize;
+						createdButton = linkButtonFactory.Generate(decodedHtml);
+						StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
+						double descentInPixels = styled.DescentInPixels;
+						createdButton.OriginRelativeParent = new VectorMath.Vector2(createdButton.OriginRelativeParent.x, createdButton.OriginRelativeParent.y + descentInPixels);
+						widgetToAdd = createdButton;
+						linkButtonFactory.fontSize = oldFontSize;
+					}
+					else
+					{
+						TextWidget content = new TextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
+						widgetToAdd = content;
+					}
+
+					if (createdButton != null)
+					{
+						if (elementState.Id == "sendFeedback")
+						{
+							createdButton.Click += (sender, mouseEvent) => { ContactFormWindow.Open(); };
+						}
+						else if (elementState.Id == "clearCache")
+						{
+							createdButton.Click += (sender, mouseEvent) => { DeleteCacheData(); };
+						}
+					}
+
+					if (elementState.VerticalAlignment == ElementState.VerticalAlignType.top)
+					{
+						widgetToAdd.VAnchor = VAnchor.ParentTop;
+					}
+
+					currentRowUnderConstruction.AddChild(widgetToAdd);
+					break;
+
+				case "tr":
+					currentRowUnderConstruction = new FlowLayoutWidget();
+					if (elementState.SizePercent.y == 100)
+					{
+						currentRowUnderConstruction.VAnchor = VAnchor.ParentBottomTop;
+					}
+					if (elementState.Alignment == ElementState.AlignType.center)
+					{
+						currentRowUnderConstruction.HAnchor |= HAnchor.ParentCenter;
+					}
+					break;
+
+				default:
+					throw new NotImplementedException("Don't know what to do with {0}".FormatWith(elementState.TypeName));
+			}
+		}
+
+		private void CloseContent(HtmlParser htmlParser, string htmlContent)
+		{
+			ElementState elementState = htmlParser.CurrentElementState;
+			switch (elementState.TypeName)
+			{
+				case "a":
+					currentRowUnderConstruction.AddChild(currentATagUnderConstruction);
+					currentATagUnderConstruction = null;
+					break;
+
+				case "table":
+					break;
+
+				case "span":
+					break;
+
+				case "tr":
+					htmlWidget.AddChild(currentRowUnderConstruction);
+					currentRowUnderConstruction = null;
+					break;
+
+				case "td":
+					break;
+
+				case "img":
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+	}
+
+	public class AboutWindow : SystemWindow
+	{
+		private static AboutWindow aboutWindow = null;
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+
+		public AboutWindow()
+			: base(500, 640)
+		{
+			GuiWidget aboutPage = new AboutPage();
+			aboutPage.AnchorAll();
+			this.AddChild(aboutPage);
+
+			FlowLayoutWidget buttonRowContainer = new FlowLayoutWidget();
+			buttonRowContainer.HAnchor = HAnchor.ParentLeftRight;
+			buttonRowContainer.Padding = new BorderDouble(0, 3);
+			AddChild(buttonRowContainer);
+
+			Button cancelButton = textImageButtonFactory.Generate("Close");
+			cancelButton.Click += (sender, e) => { CancelButton_Click(); };
+			buttonRowContainer.AddChild(new HorizontalSpacer());
+			buttonRowContainer.AddChild(cancelButton);
+
+			this.Title = LocalizedString.Get("About MatterControl");
+			this.ShowAsSystemWindow();
+		}
+
+		public static void Show()
+		{
+			if (aboutWindow == null)
+			{
+				aboutWindow = new AboutWindow();
+				aboutWindow.Closed += (parentSender, e) =>
+				{
+					aboutWindow = null;
+				};
+			}
+			else
+			{
+				aboutWindow.BringToFront();
+			}
+		}
+
+		private void CancelButton_Click()
+		{
+			UiThread.RunOnIdle((state) =>
+				{
+					aboutWindow.Close();
+				});
+		}
 	}
 }

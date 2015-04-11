@@ -120,9 +120,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
     <Compile Include="AboutPage\UpdateControlData.cs" />
     <Compile Include="AboutPage\UpdateControlView.cs" />
-    <Compile Include="AboutPage\HtmlParser.cs" />
+    <Compile Include="AboutPage\HTMLParser\HtmlParser.cs" />
     <Compile Include="ActionBar\ActionBarBaseControls.cs" />
     <Compile Include="ActionBar\ActionBarPlus.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
