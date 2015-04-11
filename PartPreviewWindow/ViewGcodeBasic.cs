@@ -256,6 +256,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls2D = new ViewControls2D();
 			AddChild(viewControls2D);
+
+            ColorGradientWidget gradient = new ColorGradientWidget();
+            gradient.VAnchor = Agg.UI.VAnchor.ParentTop;
+            AddChild(gradient);
+   
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 			viewControls3D.PartSelectVisible = false;
 			AddChild(viewControls3D);
