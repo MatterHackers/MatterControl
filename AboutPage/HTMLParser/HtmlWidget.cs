@@ -45,243 +45,28 @@ using System.Net;
 
 namespace MatterHackers.MatterControl
 {
-	public class HtmlWidget : GuiWidget
+	public class HtmlWidget : FlowLayoutWidget
 	{
-	}
-
-	public class AboutPage : HtmlWidget
-	{
-		private RGBA_Bytes aboutTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-		private Stack<GuiWidget> elementsUnderConstruction = new Stack<GuiWidget>();
-
-		private string htmlContent = null;
-
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-		public AboutPage()
+		private Stack<GuiWidget> elementsUnderConstruction = new Stack<GuiWidget>();
+		HtmlParser htmlParser = new HtmlParser();
+
+		public HtmlWidget(string htmlContent, RGBA_Bytes aboutTextColor)
+			: base(FlowDirection.TopToBottom)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = VAnchor.ParentTop;
-
-			this.Padding = new BorderDouble(5);
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
+			elementsUnderConstruction.Push(this);
 			linkButtonFactory.fontSize = 12;
 			linkButtonFactory.textColor = aboutTextColor;
 
 			textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			FlowLayoutWidget customInfoTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			customInfoTopToBottom.Name = "AboutPageCustomInfo";
-			customInfoTopToBottom.HAnchor = HAnchor.ParentLeftRight;
-			customInfoTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-			customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
-
-			customInfoTopToBottom.AddChild(new UpdateControlView());
-			//AddMatterHackersInfo(customInfoTopToBottom);
-			customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
-
-			HtmlParser htmlParser = new HtmlParser();
-
-			if (htmlContent == null)
-			{
-				string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
-				htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
-
-				string aboutHtmlFile2 = Path.Combine("OEMSettings", "AboutPage2.html");
-				//htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile2);
-			}
-
-			//htmlContent = File.ReadAllText("C:/Users/LarsBrubaker/Downloads/test.html");
-
-			elementsUnderConstruction.Push(new FlowLayoutWidget(FlowDirection.TopToBottom));
-			elementsUnderConstruction.Peek().Name = "container widget";
-			elementsUnderConstruction.Peek().VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-			elementsUnderConstruction.Peek().HAnchor |= HAnchor.ParentCenter;
-
 			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
 
-			customInfoTopToBottom.AddChild(elementsUnderConstruction.Peek());
-
-			this.AddChild(customInfoTopToBottom);
-		}
-
-		public static void DeleteCacheData()
-		{
-			// delete everything in the GCodeOutputPath
-			//   AppData\Local\MatterControl\data\gcode
-			// delete everything in the temp data that is not in use
-			//   AppData\Local\MatterControl\data\temp
-			//     plateImages
-			//     project-assembly
-			//     project-extract
-			//     stl
-			// delete all unreference models in Library
-			//   AppData\Local\MatterControl\Library
-			// delete all old update downloads
-			//   AppData\updates
-
-			// start cleaning out unused data
-			// MatterControl\data\gcode
-			RemoveDirectory(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath);
-
-			string userDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
-			RemoveDirectory(Path.Combine(userDataPath, "updates"));
-
-			HashSet<string> referencedPrintItemsFilePaths = new HashSet<string>();
-			HashSet<string> referencedThumbnailFiles = new HashSet<string>();
-			// Get a list of all the stl and amf files referenced in the queue or library.
-			foreach (PrintItemWrapper printItem in QueueData.Instance.PrintItems)
-			{
-				string fileLocation = printItem.FileLocation;
-				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
-				{
-					referencedPrintItemsFilePaths.Add(fileLocation);
-					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItem));
-				}
-			}
-
-			foreach (PrintItemWrapper printItem in LibraryData.Instance.PrintItems)
-			{
-				string fileLocation = printItem.FileLocation;
-				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
-				{
-					referencedPrintItemsFilePaths.Add(fileLocation);
-					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItem));
-				}
-			}
-
-			// If the count is less than 0 then we have never run and we need to populate the library and queue still. So don't delete anything yet.
-			if (referencedPrintItemsFilePaths.Count > 0)
-			{
-				CleanDirectory(userDataPath, referencedPrintItemsFilePaths, referencedThumbnailFiles);
-			}
-		}
-
-		public string CreateCenteredButton(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string CreateLinkButton(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string DoToUpper(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string DoTranslate(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string GetBuildString(string content)
-		{
-			return VersionInfo.Instance.BuildVersion;
-		}
-
-		public string GetVersionString(string content)
-		{
-			return VersionInfo.Instance.ReleaseVersion;
-		}
-
-		private static int CleanDirectory(string path, HashSet<string> referencedPrintItemsFilePaths, HashSet<string> referencedThumbnailFiles)
-		{
-			int contentCount = 0;
-			foreach (string directory in Directory.EnumerateDirectories(path))
-			{
-				int directoryContentCount = CleanDirectory(directory, referencedPrintItemsFilePaths, referencedThumbnailFiles);
-				if (directoryContentCount == 0)
-				{
-					try
-					{
-						Directory.Delete(directory);
-					}
-					catch (Exception)
-					{
-					}
-				}
-				else
-				{
-					// it has a directory that has content
-					contentCount++;
-				}
-			}
-
-			foreach (string file in Directory.EnumerateFiles(path, "*.*"))
-			{
-				switch (Path.GetExtension(file).ToUpper())
-				{
-					case ".STL":
-					case ".AMF":
-					case ".GCODE":
-						if (referencedPrintItemsFilePaths.Contains(file))
-						{
-							contentCount++;
-						}
-						else
-						{
-							try
-							{
-								File.Delete(file);
-							}
-							catch (Exception)
-							{
-							}
-						}
-						break;
-
-					case ".PNG":
-					case ".TGA":
-						if (referencedThumbnailFiles.Contains(file))
-						{
-							contentCount++;
-						}
-						else
-						{
-							try
-							{
-								File.Delete(file);
-							}
-							catch (Exception)
-							{
-							}
-						}
-						break;
-
-					case ".JSON":
-						// may want to clean these up eventually
-						contentCount++; // if we delete these we should not incement this
-						break;
-
-					default:
-						// we have something in the directory that we are not going to delete
-						contentCount++;
-						break;
-				}
-			}
-
-			return contentCount;
-		}
-
-		private static void RemoveDirectory(string directoryToRemove)
-		{
-			try
-			{
-				if (Directory.Exists(directoryToRemove))
-				{
-					Directory.Delete(directoryToRemove, true);
-				}
-			}
-			catch (Exception)
-			{
-			}
+			VAnchor |= VAnchor.ParentBottomTop;
+			HAnchor |= HAnchor.ParentLeftRight;
 		}
 
 		private void AddContent(HtmlParser htmlParser, string htmlContent)
@@ -307,7 +92,7 @@ namespace MatterHackers.MatterControl
 						ImageBuffer image = new ImageBuffer(elementState.SizeFixed.x, elementState.SizeFixed.y, 32, new BlenderBGRA());
 						ImageWidget_AsyncLoadOnDraw imageWidget = new ImageWidget_AsyncLoadOnDraw(image, elementState.src);
 						// put the image into the widget when it is done downloading.
-						
+
 						if (elementsUnderConstruction.Peek().Name == "a")
 						{
 							Button linkButton = new Button(0, 0, imageWidget);
@@ -400,7 +185,7 @@ namespace MatterHackers.MatterControl
 						}
 						else if (elementState.Id == "clearCache")
 						{
-							createdButton.Click += (sender, mouseEvent) => { DeleteCacheData(); };
+							createdButton.Click += (sender, mouseEvent) => { AboutWidget.DeleteCacheData(); };
 						}
 					}
 
@@ -469,57 +254,6 @@ namespace MatterHackers.MatterControl
 				default:
 					throw new NotImplementedException();
 			}
-		}
-	}
-
-	public class AboutWindow : SystemWindow
-	{
-		private static AboutWindow aboutWindow = null;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public AboutWindow()
-			: base(500, 640)
-		{
-			GuiWidget aboutPage = new AboutPage();
-			aboutPage.AnchorAll();
-			this.AddChild(aboutPage);
-
-			FlowLayoutWidget buttonRowContainer = new FlowLayoutWidget();
-			buttonRowContainer.HAnchor = HAnchor.ParentLeftRight;
-			buttonRowContainer.Padding = new BorderDouble(0, 3);
-			AddChild(buttonRowContainer);
-
-			Button cancelButton = textImageButtonFactory.Generate("Close");
-			cancelButton.Click += (sender, e) => { CancelButton_Click(); };
-			buttonRowContainer.AddChild(new HorizontalSpacer());
-			buttonRowContainer.AddChild(cancelButton);
-
-			this.Title = LocalizedString.Get("About MatterControl");
-			this.ShowAsSystemWindow();
-		}
-
-		public static void Show()
-		{
-			if (aboutWindow == null)
-			{
-				aboutWindow = new AboutWindow();
-				aboutWindow.Closed += (parentSender, e) =>
-				{
-					aboutWindow = null;
-				};
-			}
-			else
-			{
-				aboutWindow.BringToFront();
-			}
-		}
-
-		private void CancelButton_Click()
-		{
-			UiThread.RunOnIdle((state) =>
-				{
-					aboutWindow.Close();
-				});
 		}
 	}
 }

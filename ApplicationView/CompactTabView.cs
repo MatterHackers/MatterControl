@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 			this.AddTab(new SimpleTextTabWidget(configurationPage, "Configuration Tab", TabTextSize,
 						ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
+			AboutTabPage = new TabPage(new AboutWidget(), LocalizedString.Get("About").ToUpper());
 			aboutTabWidget = new SimpleTextTabWidget(AboutTabPage, "About Tab", TabTextSize,
 						ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
 			this.AddTab(aboutTabWidget);
