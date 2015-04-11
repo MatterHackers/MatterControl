@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             : base(FlowDirection.TopToBottom)
         {
 
-            this.VAnchor = VAnchor.FitToChildren;
+            VAnchor = VAnchor.FitToChildren;
 
             BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
 
@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AddChild(orange);
             this.AddChild(lightBlue);
 
-            Margin = new BorderDouble(75);
+            Margin = new BorderDouble(top:75, left: 5, right: 530);
 
         }
 
