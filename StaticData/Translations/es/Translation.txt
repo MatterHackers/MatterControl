@@ -3151,3 +3151,18 @@ Translated:Converting image...
 English:Add To Library
 Translated:Add To Library
 
+English:Print Queue
+Translated:Print Queue
+
+English:Interface Mode
+Translated:Interface Mode
+
+English:Standard
+Translated:Standard
+
+English:Connect to the printer
+Translated:Connect to the printer
+
+English:Reset
+Translated:Reset
+
