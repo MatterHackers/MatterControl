@@ -276,12 +276,65 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public class ImageWidgetDelayedLoad : ImageWidget
+		{
+			bool startedLoad = false;
+			string uriToLoad;
+
+			public ImageWidgetDelayedLoad(ImageBuffer image, string uriToLoad)
+				: base(image)
+			{
+				this.uriToLoad = uriToLoad;
+			}
+
+			public override void OnDraw(Graphics2D graphics2D)
+			{
+				if (!startedLoad)
+				{
+					try
+					{
+						startedLoad = true;
+						WebClient client = new WebClient();
+						client.DownloadDataCompleted += client_DownloadDataCompleted;
+						client.DownloadDataAsync(new Uri(uriToLoad));
+					}
+					catch (Exception)
+					{
+					}
+				}
+
+				base.OnDraw(graphics2D);
+			}
+
+			void client_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
+			{
+				byte[] raw = e.Result;
+				Stream stream = new MemoryStream(raw);
+				ImageBuffer unScaledImage = new ImageBuffer(10, 10, 32, new BlenderBGRA());
+				ImageIO.LoadImageData(stream, unScaledImage);
+				while (unScaledImage.Width > Image.Width * 2)
+				{
+					ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, new BlenderBGRA());
+					halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
+					unScaledImage = halfImage;
+				}
+				Image.NewGraphics2D().Render(unScaledImage, 0, 0, 0, Image.Width / (double)unScaledImage.Width, Image.Height / (double)unScaledImage.Height);
+				Image.MarkImageChanged();
+			}
+		}
+
 		private void AddContent(HtmlParser htmlParser, string htmlContent)
 		{
 			ElementState elementState = htmlParser.CurrentElementState;
 			string decodedHtml = HtmlParser.UrlDecode(htmlContent);
 			switch (elementState.TypeName)
 			{
+				case "p":
+					break;
+
+				case "div":
+					break;
+
 				case "!DOCTYPE":
 					break;
 
@@ -291,28 +344,9 @@ namespace MatterHackers.MatterControl
 				case "img":
 					{
 						ImageBuffer image = new ImageBuffer(elementState.SizeFixed.x, elementState.SizeFixed.y, 32, new BlenderBGRA());
-						ImageWidget imageWidget = new ImageWidget(image);
-						imageWidget.BackgroundColor = RGBA_Bytes.Cyan;
+						ImageWidgetDelayedLoad imageWidget = new ImageWidgetDelayedLoad(image, elementState.src);
 						// put the image into the widget when it is done downloading.
 						
-						WebClient client = new WebClient();
-						client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
-						{
-							ImageBuffer imageInternal = image;
-							byte[] raw = e.Result;
-							Stream stream = new MemoryStream(raw);
-							ImageBuffer unScaledImage = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-							ImageIO.LoadImageData(stream, unScaledImage);
-							imageInternal.NewGraphics2D().Render(unScaledImage, 0, 0, 0, imageInternal.Width / (double)unScaledImage.Width, imageInternal.Height / (double)unScaledImage.Height);
-							
-						};
-						client.DownloadDataAsync(new Uri(elementState.src));
-
-
-						//linkButton.Click += (sender, mouseEvent) =>
-						//{
-						//MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
-						//};
 						if (currentATagUnderConstruction != null)
 						{
 							Button linkButton = new Button(0, 0, imageWidget);
