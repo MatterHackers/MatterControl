@@ -93,6 +93,7 @@ namespace MatterHackers.MatterControl
 			}
 			Image.NewGraphics2D().Render(unScaledImage, 0, 0, 0, Image.Width / (double)unScaledImage.Width, Image.Height / (double)unScaledImage.Height);
 			Image.MarkImageChanged();
+			Invalidate();
 		}
 	}
 }
