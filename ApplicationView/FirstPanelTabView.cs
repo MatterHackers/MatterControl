@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 			this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", 15,
 					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			AboutTabPage = new TabPage(new AboutPage(), LocalizedString.Get("About").ToUpper());
+			AboutTabPage = new TabPage(new AboutWidget(), LocalizedString.Get("About").ToUpper());
 			AboutTabView = new SimpleTextTabWidget(AboutTabPage, "About Tab", 15,
 						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
 			this.AddTab(AboutTabView);

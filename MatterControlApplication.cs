@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 						return;
 
 					case "CLEAR_CACHE":
-						AboutPage.DeleteCacheData();
+						AboutWidget.DeleteCacheData();
 						break;
 
 					case "SHOW_MEMORY":

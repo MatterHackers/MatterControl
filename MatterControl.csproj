@@ -120,9 +120,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="AboutPage\AboutWindow.cs" />
+    <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
+    <Compile Include="AboutPage\HTMLParser\ImageWidget_AsyncLoadOnDraw.cs" />
+    <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
     <Compile Include="AboutPage\UpdateControlData.cs" />
     <Compile Include="AboutPage\UpdateControlView.cs" />
-    <Compile Include="AboutPage\HtmlParser.cs" />
+    <Compile Include="AboutPage\HTMLParser\HtmlParser.cs" />
     <Compile Include="ActionBar\ActionBarBaseControls.cs" />
     <Compile Include="ActionBar\ActionBarPlus.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
@@ -320,7 +324,7 @@
     <Compile Include="Utilities\TupleList.cs" />
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
     <Compile Include="VersionManagement\VersionFileHandler.cs" />
-    <Compile Include="AboutPage\AboutPage.cs" />
+    <Compile Include="AboutPage\AboutWidget.cs" />
     <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
     <Compile Include="ControlElements\TextImageButtonFactory.cs" />
     <Compile Include="EeProm\EePromMarlinWindow.cs" />
