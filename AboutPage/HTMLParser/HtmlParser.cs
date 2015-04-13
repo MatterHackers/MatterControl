@@ -260,6 +260,12 @@ namespace MatterHackers.MatterControl.HtmlParsing
 				{
 					string[] splitOnEquals = new Regex("=").Split(splitOnSpace[i]);
 					string elementString = splitOnEquals[0];
+					string elementValue = "";
+					if (splitOnEquals.Length > 1)
+					{
+						elementValue = RemoveOuterQuotes(splitOnEquals[1]);
+					}
+
 					switch (elementString)
 					{
 						case "title":
@@ -268,7 +274,7 @@ namespace MatterHackers.MatterControl.HtmlParsing
 							break;
 
 						case "style":
-							currentElementState.ParseStyleContent(RemoveOuterQuotes(splitOnEquals[1]));
+							currentElementState.ParseStyleContent(elementValue);
 							break;
 
 						case "align":
@@ -276,7 +282,7 @@ namespace MatterHackers.MatterControl.HtmlParsing
 
 						case "class":
 							{
-								string[] classes = RemoveOuterQuotes(splitOnEquals[1]).Split(' ');
+								string[] classes = elementValue.Split(' ');
 								foreach (string className in classes)
 								{
 									currentElementState.classes.Add(className);
@@ -285,15 +291,15 @@ namespace MatterHackers.MatterControl.HtmlParsing
 							break;
 
 						case "href":
-							currentElementState.href = RemoveOuterQuotes(splitOnEquals[1]);
+							currentElementState.href = elementValue;
 							break;
 
 						case "src":
-							currentElementState.src = RemoveOuterQuotes(splitOnEquals[1]);
+							currentElementState.src = elementValue;
 							break;
 
 						case "id":
-							currentElementState.id = splitOnEquals[1];
+							currentElementState.id = elementValue;
 							break;
 
 						default:
