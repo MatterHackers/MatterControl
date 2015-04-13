@@ -1898,56 +1898,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			switch (CommunicationState)
 			{
 				case CommunicationStates.PrintingFromSd:
-					using (TimedLock.Lock(this, "CancelingPrint"))
-					{
-						// get rid of all the gcode we have left to print
-						ClearQueuedGCode();
-						// let the process know we canceled not ended normaly.
-						CommunicationState = CommunicationStates.Connected;
-						SendLineToPrinterNow("M25"); // : Pause SD print
-						SendLineToPrinterNow("M26"); // : Set SD position
-						// never leave the extruder and the bed hot
-						DonePrintingSdFile(this, null);
-					}
+					CancelSDCardPrint();
 					break;
 
 				case CommunicationStates.Printing:
 					{
-						using (TimedLock.Lock(this, "CancelingPrint"))
-						{
-							// get rid of all the gcode we have left to print
-							ClearQueuedGCode();
-							string cancelGCode = ActiveSliceSettings.Instance.GetActiveValue("cancel_gcode");
-							if (cancelGCode.Trim() != "")
-							{
-								// add any gcode we want to print while canceling
-								InjectGCode(cancelGCode, printerCommandQueueLineIndex);
-							}
-							// let the process know we canceled not ended normaly.
-							printWasCanceled = true;
-						}
-						if (activePrintTask != null)
-						{
-							TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
-
-							activePrintTask.PrintEnd = DateTime.Now;
-							activePrintTask.PrintComplete = false;
-							activePrintTask.Commit();
-						}
+						CancelPrint();
+						MarkActivePrintCanceled();
 					}
 
 					break;
 
 				case CommunicationStates.Paused:
 					{
-						CommunicationState = CommunicationStates.Connected;
-						if (activePrintTask != null)
+						if (prePauseCommunicationState == CommunicationStates.PrintingFromSd)
 						{
-							TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
-
-							activePrintTask.PrintEnd = DateTime.Now;
-							activePrintTask.PrintComplete = false;
-							activePrintTask.Commit();
+							CancelSDCardPrint();
+							CommunicationState = CommunicationStates.Connected;
+						}
+						else
+						{
+							CancelPrint();
+							MarkActivePrintCanceled();
 						}
 					}
 					break;
@@ -1970,6 +1942,50 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					SlicingQueue.Instance.CancelCurrentSlicing();
 					CommunicationState = CommunicationStates.Connected;
 					break;
+			}
+		}
+
+		private void MarkActivePrintCanceled()
+		{
+			if (activePrintTask != null)
+			{
+				TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+
+				activePrintTask.PrintEnd = DateTime.Now;
+				activePrintTask.PrintComplete = false;
+				activePrintTask.Commit();
+			}
+		}
+
+		private void CancelPrint()
+		{
+			using (TimedLock.Lock(this, "CancelingPrint"))
+			{
+				// get rid of all the gcode we have left to print
+				ClearQueuedGCode();
+				string cancelGCode = ActiveSliceSettings.Instance.GetActiveValue("cancel_gcode");
+				if (cancelGCode.Trim() != "")
+				{
+					// add any gcode we want to print while canceling
+					InjectGCode(cancelGCode, printerCommandQueueLineIndex);
+				}
+				// let the process know we canceled not ended normaly.
+				printWasCanceled = true;
+			}
+		}
+
+		private void CancelSDCardPrint()
+		{
+			using (TimedLock.Lock(this, "CancelingPrint"))
+			{
+				// get rid of all the gcode we have left to print
+				ClearQueuedGCode();
+				// let the process know we canceled not ended normaly.
+				CommunicationState = CommunicationStates.Connected;
+				SendLineToPrinterNow("M25"); // : Pause SD print
+				SendLineToPrinterNow("M26"); // : Set SD position
+				// never leave the extruder and the bed hot
+				DonePrintingSdFile(this, null);
 			}
 		}
 
