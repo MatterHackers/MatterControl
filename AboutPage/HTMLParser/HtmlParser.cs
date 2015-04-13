@@ -276,10 +276,10 @@ namespace MatterHackers.MatterControl.HtmlParsing
 
 						case "class":
 							{
-								string[] classes = splitOnEquals[1].Split(' ');
+								string[] classes = RemoveOuterQuotes(splitOnEquals[1]).Split(' ');
 								foreach (string className in classes)
 								{
-									currentElementState.classes.Add(new Regex("[^']*").Match(className).Value);
+									currentElementState.classes.Add(className);
 								}
 							}
 							break;
