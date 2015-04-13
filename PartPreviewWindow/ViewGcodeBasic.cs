@@ -70,6 +70,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget gcodeDisplayWidget;
 
+        private ColorGradientWidget gradient;
+
 		private EventHandler unregisterEvents;
 		private WindowMode windowMode;
 
@@ -257,7 +259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls2D = new ViewControls2D();
 			AddChild(viewControls2D);
 
-            ColorGradientWidget gradient = new ColorGradientWidget();
+            gradient = new ColorGradientWidget();
             gradient.VAnchor = Agg.UI.VAnchor.ParentTop;
             gradient.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
             AddChild(gradient);
@@ -570,12 +572,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show speed checkbox
 			{
-				CheckBox showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                CheckBox showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showSpeeds.Checked = gcodeViewWidget.RenderSpeeds;
 				showSpeeds.CheckedStateChanged += (sender, e) =>
 				{
+
+                    if (showSpeeds.Checked)
+                    {
+                        gradient.Visible = true;
+                    }
+                    else
+                    {
+                        gradient.Visible = false;
+                    }
+
 					gcodeViewWidget.RenderSpeeds = showSpeeds.Checked;
+                   
 				};
+
 				layerInfoContainer.AddChild(showSpeeds);
 			}
 

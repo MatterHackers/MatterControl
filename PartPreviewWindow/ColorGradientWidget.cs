@@ -16,7 +16,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class ColorGradientWidget : FlowLayoutWidget 
     {
         
-        List<ColorToSpeedWidget> allColorToSpeedWidgets;
+        private List<ColorToSpeedWidget> allColorToSpeedWidgets;
+       
         
         public ColorGradientWidget()
             : base(FlowDirection.TopToBottom)
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             this.AddChild(orange);
             this.AddChild(lightBlue);
 
-            Margin = new BorderDouble(top:75, left: 5, right: 530);
+            Margin = new BorderDouble(top:50, left: 5, right: 530);
 
         }
 
