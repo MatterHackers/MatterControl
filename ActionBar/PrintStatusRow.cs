@@ -43,38 +43,25 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class PrintStatusRow : FlowLayoutWidget
 	{
-		private event EventHandler unregisterEvents;
+		private static FlowLayoutWidget iconContainer;
+
+		private TextWidget activePrintInfo;
+
+		private TextWidget activePrintLabel;
 
 		private TextWidget activePrintName;
-		private TextWidget activePrintLabel;
-		private TextWidget activePrintInfo;
-		private TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+		private PartThumbnailWidget activePrintPreviewImage;
 
 		private TextWidget activePrintStatus;
 
+		private TemperatureWidgetBase bedTemperatureWidget;
+
+		private TemperatureWidgetBase extruderTemperatureWidget;
+
 		private QueueDataView queueDataView;
-		private PartThumbnailWidget activePrintPreviewImage;
 
-		private static FlowLayoutWidget iconContainer;
-
-		public delegate void AddIconToPrintStatusRowDelegate(GuiWidget iconContainer);
-
-		private static event AddIconToPrintStatusRowDelegate privateAddIconToPrintStatusRow;
-
-		public static event AddIconToPrintStatusRowDelegate AddIconToPrintStatusRow
-		{
-			add
-			{
-				privateAddIconToPrintStatusRow += value;
-				// and call it right away
-				value(iconContainer);
-			}
-
-			remove
-			{
-				privateAddIconToPrintStatusRow -= value;
-			}
-		}
+		private TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
 		public PrintStatusRow(QueueDataView queueDataView)
 		{
@@ -95,6 +82,26 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
+		public delegate void AddIconToPrintStatusRowDelegate(GuiWidget iconContainer);
+
+		public static event AddIconToPrintStatusRowDelegate AddIconToPrintStatusRow
+		{
+			add
+			{
+				privateAddIconToPrintStatusRow += value;
+				// and call it right away
+				value(iconContainer);
+			}
+
+			remove
+			{
+				privateAddIconToPrintStatusRow -= value;
+			}
+		}
+
+		private static event AddIconToPrintStatusRowDelegate privateAddIconToPrintStatusRow;
+
+		private event EventHandler unregisterEvents;
 		private string ActivePrintStatusText
 		{
 			set
@@ -106,39 +113,39 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
+		}
+
+		protected void AddHandlers()
+		{
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onPrintItemChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(Instance_WroteLine, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+		}
+
 		protected void Initialize()
 		{
 			UiThread.RunOnIdle(OnIdle);
 			this.Margin = new BorderDouble(6, 3, 6, 6);
 		}
 
-		private void onActivePrintItemChanged(object sender, EventArgs e)
+		protected void onPrintItemChanged(object sender, EventArgs e)
 		{
-			// first we have to remove any link to an old part (the part currently in the view)
-			if (activePrintPreviewImage.PrintItem != null)
-			{
-				activePrintPreviewImage.PrintItem.SlicingOutputMessage.UnregisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
-			}
-
-			activePrintPreviewImage.PrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-
-			// then hook up our new part
-			if (activePrintPreviewImage.PrintItem != null)
-			{
-				activePrintPreviewImage.PrintItem.SlicingOutputMessage.RegisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
-			}
-
-			activePrintPreviewImage.Invalidate();
+			UpdatePrintItemName();
+			UpdatePrintStatus();
 		}
-
-		private void PrintItem_SlicingOutputMessage(object sender, EventArgs e)
-		{
-			StringEventArgs message = e as StringEventArgs;
-			ActivePrintStatusText = message.Data;
-		}
-
-		private TemperatureWidgetBase extruderTemperatureWidget;
-		private TemperatureWidgetBase bedTemperatureWidget;
 
 		private void AddChildElements()
 		{
@@ -178,47 +185,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			UpdatePrintStatus();
 			UpdatePrintItemName();
-		}
-
-		private void SetVisibleStatus()
-		{
-			if (ActivePrinterProfile.Instance.ActivePrinter != null)
-			{
-				if (ActiveSliceSettings.Instance.HasHeatedBed())
-				{
-					bedTemperatureWidget.Visible = true;
-				}
-				else
-				{
-					bedTemperatureWidget.Visible = false;
-				}
-			}
-		}
-
-		private Button GetAutoLevelIndicator()
-		{
-			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
-			imageButtonFactory.invertImageColor = false;
-			string notifyIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
-			string notifyHoverIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
-			Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
-			autoLevelButton.Cursor = Cursors.Hand;
-			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
-			autoLevelButton.MouseEnterBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.ShowHoverText("Print leveling is enabled."); };
-			autoLevelButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
-			autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
-
-			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, e) =>
-			{
-				autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
-			}, ref unregisterEvents);
-
-			ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
-			{
-				autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
-			}, ref unregisterEvents);
-
-			return autoLevelButton;
 		}
 
 		private FlowLayoutWidget CreateActivePrinterInfoWidget()
@@ -262,26 +228,91 @@ namespace MatterHackers.MatterControl.ActionBar
 			return container;
 		}
 
-		protected void AddHandlers()
+		private Button GetAutoLevelIndicator()
 		{
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onPrintItemChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(Instance_WroteLine, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
-		}
+			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
+			imageButtonFactory.invertImageColor = false;
+			string notifyIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
+			string notifyHoverIconPath = Path.Combine("PrintStatusControls", "leveling-16x16.png");
+			Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
+			autoLevelButton.Cursor = Cursors.Hand;
+			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
+			autoLevelButton.MouseEnterBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.ShowHoverText("Print leveling is enabled."); };
+			autoLevelButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
+			autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
 
-		public override void OnClosed(EventArgs e)
-		{
-			if (unregisterEvents != null)
+			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, e) =>
 			{
-				unregisterEvents(this, null);
-			}
-			base.OnClosed(e);
+				autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+			}, ref unregisterEvents);
+
+			ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
+			{
+				autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
+			}, ref unregisterEvents);
+
+			return autoLevelButton;
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
+		private string getConnectionMessage()
 		{
-			base.OnDraw(graphics2D);
+			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			{
+				return LocalizedString.Get("Press 'Connect' to select a printer.");
+			}
+			else
+			{
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				{
+					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
+						return LocalizedString.Get("Not connected. Press 'Connect' to enable printing.");
+
+					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
+						string attemptToConnect = LocalizedString.Get("Attempting to Connect");
+						string attemptToConnectFull = string.Format("{0}...", attemptToConnect);
+						return attemptToConnectFull;
+
+					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
+					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
+						return LocalizedString.Get("Unable to communicate with printer.");
+
+					default:
+						return "";
+				}
+			}
+		}
+
+		private TextWidget getPrintStatusLabel(string text, int pointSize)
+		{
+			TextWidget widget = new TextWidget(text, pointSize: pointSize);
+			widget.TextColor = RGBA_Bytes.White;
+			widget.AutoExpandBoundsToText = true;
+			widget.MinimumSize = new Vector2(widget.Width, widget.Height);
+			return widget;
+		}
+
+		private void Instance_WroteLine(object sender, EventArgs e)
+		{
+			UpdatePrintStatus();
+		}
+
+		private void onActivePrintItemChanged(object sender, EventArgs e)
+		{
+			// first we have to remove any link to an old part (the part currently in the view)
+			if (activePrintPreviewImage.PrintItem != null)
+			{
+				activePrintPreviewImage.PrintItem.SlicingOutputMessage.UnregisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
+			}
+
+			activePrintPreviewImage.PrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+
+			// then hook up our new part
+			if (activePrintPreviewImage.PrintItem != null)
+			{
+				activePrintPreviewImage.PrintItem.SlicingOutputMessage.RegisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
+			}
+
+			activePrintPreviewImage.Invalidate();
 		}
 
 		private void OnIdle(object state)
@@ -297,14 +328,42 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		private void Instance_WroteLine(object sender, EventArgs e)
+		private void onStateChanged(object sender, EventArgs e)
 		{
 			UpdatePrintStatus();
 		}
 
-		private void onStateChanged(object sender, EventArgs e)
+		private void PrintItem_SlicingOutputMessage(object sender, EventArgs e)
 		{
-			UpdatePrintStatus();
+			StringEventArgs message = e as StringEventArgs;
+			ActivePrintStatusText = message.Data;
+		}
+		private void SetVisibleStatus()
+		{
+			if (ActivePrinterProfile.Instance.ActivePrinter != null)
+			{
+				if (ActiveSliceSettings.Instance.HasHeatedBed())
+				{
+					bedTemperatureWidget.Visible = true;
+				}
+				else
+				{
+					bedTemperatureWidget.Visible = false;
+				}
+			}
+		}
+		private void UpdatePrintItemName()
+		{
+			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
+			{
+				string labelName = textInfo.ToTitleCase(PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name);
+				labelName = labelName.Replace('_', ' ');
+				this.activePrintName.Text = labelName;
+			}
+			else
+			{
+				this.activePrintName.Text = LocalizedString.Get("No items in the print queue");
+			}
 		}
 
 		private void UpdatePrintStatus()
@@ -337,20 +396,19 @@ namespace MatterHackers.MatterControl.ActionBar
 							totalMinutesInPrint,
 							totalSecondsInPrint,
 							totalTimeLabel);
-                    }
-                }
-                else
-                {
-                    if(totalSecondsInPrint < 0)
-                    {
-                        totalPrintTimeText = string.Format("{0}", LocalizedString.Get("Streaming GCode..."));
-                    }
-                    else
-                    {
-                        totalPrintTimeText = string.Format("{0}: {1}", totalTimeLabel, calculatingLabel);
-                    }
-                    
-                }
+					}
+				}
+				else
+				{
+					if (totalSecondsInPrint < 0)
+					{
+						totalPrintTimeText = string.Format("{0}", LocalizedString.Get("Streaming GCode..."));
+					}
+					else
+					{
+						totalPrintTimeText = string.Format("{0}: {1}", totalTimeLabel, calculatingLabel);
+					}
+				}
 
 				//GC.WaitForFullGCComplete();
 
@@ -408,63 +466,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				activePrintLabel.Text = nextPrintLabelFull;
 				ActivePrintStatusText = string.Format(LocalizedString.Get("Press 'Add' to choose an item to print"));
 			}
-		}
-
-		private string getConnectionMessage()
-		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
-			{
-				return LocalizedString.Get("Press 'Connect' to select a printer.");
-			}
-			else
-			{
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-						return LocalizedString.Get("Not connected. Press 'Connect' to enable printing.");
-
-					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-						string attemptToConnect = LocalizedString.Get("Attempting to Connect");
-						string attemptToConnectFull = string.Format("{0}...", attemptToConnect);
-						return attemptToConnectFull;
-
-					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-						return LocalizedString.Get("Unable to communicate with printer.");
-
-					default:
-						return "";
-				}
-			}
-		}
-
-		protected void onPrintItemChanged(object sender, EventArgs e)
-		{
-			UpdatePrintItemName();
-			UpdatePrintStatus();
-		}
-
-		private void UpdatePrintItemName()
-		{
-			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
-			{
-				string labelName = textInfo.ToTitleCase(PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name);
-				labelName = labelName.Replace('_', ' ');
-				this.activePrintName.Text = labelName;
-			}
-			else
-			{
-				this.activePrintName.Text = LocalizedString.Get("No items in the print queue");
-			}
-		}
-
-		private TextWidget getPrintStatusLabel(string text, int pointSize)
-		{
-			TextWidget widget = new TextWidget(text, pointSize: pointSize);
-			widget.TextColor = RGBA_Bytes.White;
-			widget.AutoExpandBoundsToText = true;
-			widget.MinimumSize = new Vector2(widget.Width, widget.Height);
-			return widget;
 		}
 	}
 }
