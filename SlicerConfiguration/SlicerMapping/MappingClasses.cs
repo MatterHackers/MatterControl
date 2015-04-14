@@ -7,27 +7,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class GCodeProcessing
 	{
-		private static string[] replaceWithSettingsStrings = new string[]
+		private static Dictionary<string, string> replaceWithSettingsStrings = new Dictionary<string, string>()
         {
-            "first_layer_temperature",
-            "temperature",
-            "first_layer_bed_temperature",
-            "bed_temperature",
-        };
+			// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
+			{"first_layer_temperature", "temperature"},
+			{"temperature","temperature"},
+			{"first_layer_bed_temperature","bed_temperature"},
+			{"bed_temperature","bed_temperature"}
+		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)
 		{
-			foreach (string name in replaceWithSettingsStrings)
+			foreach (KeyValuePair<string, string> keyValue in replaceWithSettingsStrings)
 			{
 				// do the replacement with {} (curly brackets)
 				{
-					string thingToReplace = "{" + "{0}".FormatWith(name) + "}";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
+					string thingToReplace = "{" + "{0}".FormatWith(keyValue.Key) + "}";
+					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(keyValue.Value));
 				}
 				// do the replacement with [] (square brackets) Slic3r uses only square brackets
 				{
-					string thingToReplace = "[" + "{0}".FormatWith(name) + "]";
-					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(name));
+					string thingToReplace = "[" + "{0}".FormatWith(keyValue.Key) + "]";
+					gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, ActiveSliceSettings.Instance.GetActiveValue(keyValue.Value));
 				}
 			}
 

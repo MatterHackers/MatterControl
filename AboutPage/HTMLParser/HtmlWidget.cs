@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl
 		public HtmlWidget(string htmlContent, RGBA_Bytes aboutTextColor)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.Name = "HtmlWidget";
 			elementsUnderConstruction.Push(this);
 			linkButtonFactory.fontSize = 12;
 			linkButtonFactory.textColor = aboutTextColor;
@@ -83,11 +84,9 @@ namespace MatterHackers.MatterControl
 				messageContainer.HAnchor = HAnchor.ParentLeft;
 				messageContainer.VAnchor = VAnchor.ParentBottom;
 				this.HAnchor = HAnchor.ParentLeftRight;
-				this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
+				this.VAnchor = VAnchor.FitToChildren;
 
 				AddChild(messageContainer);
-
-				this.DebugShowBounds = true;
 			}
 
 			public override void OnBoundsChanged(EventArgs e)
