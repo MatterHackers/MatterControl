@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 
 namespace MatterHackers.MatterControl
 {
@@ -61,6 +62,13 @@ namespace MatterHackers.MatterControl
 				InvertLightness.DoInvertLightness(pressedImage);
 				InvertLightness.DoInvertLightness(hoverImage);
 				InvertLightness.DoInvertLightness(disabledImage);
+			}
+
+			if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+			{
+				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
+				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);
+				pressedImage.NewGraphics2D().Render(new Stroke(rect, 3), ActiveTheme.Instance.PrimaryTextColor);
 			}
 
 			ButtonViewStates buttonViewWidget = new ButtonViewStates(
