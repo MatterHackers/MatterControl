@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl
 		private TabPage sliceTabPage;
 		private int TabTextSize;
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
+
 		public CompactTabView(QueueDataView queueDataView)
 			: base(Orientation.Vertical)
 		{
@@ -150,6 +151,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private event EventHandler unregisterEvents;
+
 		public void LoadSettingsOnPrinterChanged(object sender, EventArgs e)
 		{
 			ActiveSliceSettings.Instance.LoadAllSettings();
@@ -248,6 +250,7 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(GeneratePartViews);
 		}
+
 		private void reloadConfigurationWidget()
 		{
 			configurationPage.RemoveAllChildren();
@@ -277,6 +280,7 @@ namespace MatterHackers.MatterControl
 			sliceSettingsWidget.AnchorAll();
 			sliceTabPage.AddChild(sliceSettingsWidget);
 		}
+
 		private void SaveCurrentPanelIndex(object sender, EventArgs e)
 		{
 			sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
@@ -286,6 +290,7 @@ namespace MatterHackers.MatterControl
 				lastAdvanceControlsIndex = this.SelectedTabIndex;
 			}
 		}
+
 		private void SaveCurrentTab(object sender, EventArgs e)
 		{
 			firstPanelCurrentTab = SelectedTabIndex;
