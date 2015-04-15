@@ -365,11 +365,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.printItemWrapper = printItemWrapper;
 
+			printItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
 
 			FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			centerPartPreviewAndControls.Name = "centerPartPreviewAndControls";
 			centerPartPreviewAndControls.AnchorAll();
 
 			GuiWidget viewArea = new GuiWidget();
@@ -392,6 +395,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			buttonRightPanel = CreateRightButtonPanel(viewerVolume.y);
+			buttonRightPanel.Name = "buttonRightPanel";
 			buttonRightPanel.Visible = false;
 
 			CreateOptionsContent();
@@ -521,26 +525,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					Button leaveEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
 					leaveEditModeButton.Click += (sender, e) =>
+					{
+						UiThread.RunOnIdle((state) =>
 						{
-							UiThread.RunOnIdle((state) =>
+							if (saveButtons.Visible)
+							{
+								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
+							}
+							else
+							{
+								if (partHasBeenEdited)
 								{
-									if (saveButtons.Visible)
-									{
-										StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
-									}
-									else
-									{
-										if (partHasBeenEdited)
-										{
-											ExitEditingAndSaveIfRequired(false);
-										}
-										else
-										{
-											SwitchStateToNotEditing();
-										}
-									}
-								});
-						};
+									ExitEditingAndSaveIfRequired(false);
+								}
+								else
+								{
+									SwitchStateToNotEditing();
+								}
+							}
+						});
+					};
 					doEdittingButtonsContainer.AddChild(leaveEditModeButton);
 
 					// put in the save button
@@ -578,6 +582,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			GuiWidget buttonRightPanelHolder = new GuiWidget(HAnchor.FitToChildren, VAnchor.ParentBottomTop);
+			buttonRightPanelHolder.Name = "buttonRightPanelHolder";
 			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
 			buttonRightPanelHolder.AddChild(buttonRightPanel);
 
@@ -651,6 +656,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				partHasBeenEdited = true;
 			};
+		}
+
+		void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
+		{
+			if(!partHasBeenEdited)
+			{
+				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+			}
 		}
 
 		private void ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
