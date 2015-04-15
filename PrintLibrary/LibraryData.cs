@@ -373,7 +373,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			else // it is not a mesh so just add it
 			{
 				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-				LibraryData.Instance.AddItem(printItemWrapper);
+				if (false)
+				{
+					LibraryData.Instance.AddItem(printItemWrapper);
+				}
+				else // save a copy to the library and update this to point at it
+				{
+					string sourceFileName = printItem.FileLocation;
+					string newFileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItem.FileLocation));
+					string destFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, newFileName);
+
+					File.Copy(sourceFileName, destFileName, true);
+
+					printItemWrapper.FileLocation = destFileName;
+					printItemWrapper.PrintItem.Commit();
+
+					// let the queue know that the item has changed so it load the correct part
+					LibraryData.Instance.AddItem(printItemWrapper);
+				}
 			}
 		}
 

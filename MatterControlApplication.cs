@@ -299,6 +299,13 @@ namespace MatterHackers.MatterControl
 			showWindow = true;
 		}
 
+		public enum ReportSeverity2 { Warning, Error }
+
+		public void ReportException(Exception e, string key, string value, ReportSeverity2 warningLevel = ReportSeverity2.Warning)
+		{
+			// do nothing
+		}
+
 		private event EventHandler unregisterEvent;
 
 		public static MatterControlApplication Instance
