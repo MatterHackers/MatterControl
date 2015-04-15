@@ -70,6 +70,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OpenMode openMode;
 
+		private bool editorThatRequestedSave = false;
+
 		private readonly int EditButtonHeight = 44;
 
 		public WindowMode windowType { get; set; }
@@ -660,14 +662,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
 		{
-			if(!partHasBeenEdited)
+			if (!editorThatRequestedSave)
 			{
 				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
 			}
+
+			editorThatRequestedSave = false;
 		}
 
 		private void ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
 		{
+			SwitchStateToNotEditing();
+
 			MeshGroups.Clear();
 			MeshGroupExtraData.Clear();
 			MeshGroupTransforms.Clear();
@@ -741,17 +747,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SwitchStateToNotEditing()
 		{
-			enterEditButtonsContainer.Visible = true;
-			autoArrangeButton.Visible = false;
-			processingProgressControl.Visible = false;
-			buttonRightPanel.Visible = false;
-			doEdittingButtonsContainer.Visible = false;
-			viewControls3D.PartSelectVisible = false;
-			if (viewControls3D.partSelectButton.Checked)
+			if (!enterEditButtonsContainer.Visible)
 			{
-				viewControls3D.rotateButton.ClickButton(null);
+				enterEditButtonsContainer.Visible = true;
+				autoArrangeButton.Visible = false;
+				processingProgressControl.Visible = false;
+				buttonRightPanel.Visible = false;
+				doEdittingButtonsContainer.Visible = false;
+				viewControls3D.PartSelectVisible = false;
+				if (viewControls3D.partSelectButton.Checked)
+				{
+					viewControls3D.rotateButton.ClickButton(null);
+				}
+				SelectedMeshGroupIndex = -1;
 			}
-			SelectedMeshGroupIndex = -1;
 		}
 
 		private void OpenExportWindow()
@@ -2068,6 +2077,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
+			editorThatRequestedSave = true;
 			if (MeshGroups.Count > 0)
 			{
 				string progressSavingPartsLabel = "Saving".Localize();
