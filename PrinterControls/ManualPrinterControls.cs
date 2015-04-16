@@ -37,6 +37,17 @@ using System;
 
 namespace MatterHackers.MatterControl
 {
+	public class ManualControlsWidget : GuiWidget
+	{
+		public ManualControlsWidget()
+			: base()
+		{
+			this.AnchorAll();
+			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			this.AddChild(new ManualPrinterControls());
+		}
+	}
+
 	public class ManualPrinterControls : GuiWidget
 	{
 		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
