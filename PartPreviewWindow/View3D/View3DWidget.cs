@@ -367,8 +367,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.printItemWrapper = printItemWrapper;
 
-			printItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
@@ -679,6 +677,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			MeshGroupTransforms.Clear();
 			if (printItemWrapper != null)
 			{
+				// remove it first to make sure we don't double add it
+				printItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+				printItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+
 				// Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
 				// not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
 				// parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
@@ -2102,6 +2104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MergeAndSavePartsToCurrentMeshFile(AfterSaveCallback eventToCallAfterSave = null)
 		{
+			editorThatRequestedSave = true;
 			afterSaveCallback = eventToCallAfterSave;
 
 			if (MeshGroups.Count > 0)
