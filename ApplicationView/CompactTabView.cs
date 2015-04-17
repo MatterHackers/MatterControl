@@ -46,10 +46,9 @@ namespace MatterHackers.MatterControl
 	{
 		public static int firstPanelCurrentTab = 0;
 		private static readonly string CompactTabView_CurrentTab = "CompactTabView_CurrentTab";
-		private static readonly string CompactTabView_Options_ScrollPosition = "CompactTabView_Options_ScrollPosition2";
+		private static readonly string CompactTabView_Options_ScrollPosition = "CompactTabView_Options_ScrollPosition";
 		private static int lastAdvanceControlsIndex = 0;
 
-		private static SliceSettingsWidgetUiState sliceSettingsUiState = new SliceSettingsWidgetUiState();
 		private TabPage AboutTabPage;
 		private SimpleTextTabWidget aboutTabWidget;
 		private GuiWidget addedUpdateMark = null;
@@ -107,7 +106,7 @@ namespace MatterHackers.MatterControl
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
 			string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
-			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+			sliceSettingsWidget = new SliceSettingsWidget();
 			sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
 
 			this.AddTab(new SimpleTextTabWidget(sliceTabPage, "Slice Settings Tab", TabTextSize,
@@ -152,6 +151,9 @@ namespace MatterHackers.MatterControl
 			PrinterConfigurationScrollWidget printerConfigurationWidget = new PrinterConfigurationScrollWidget();
 
 			// Make sure we have the right scroll position when we create this view
+			// This is not working well enough. So, I disabled it until it can be fixed.
+			// Specifically, it has the wronge position on the app restarting.
+			if(false) 
 			{
 				UiThread.RunOnIdle((state) => 
 				{
@@ -296,11 +298,8 @@ namespace MatterHackers.MatterControl
 
 		private void ReloadSliceSettingsWidget()
 		{
-			//Store the UI state from the current display
-			sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
-
 			sliceTabPage.RemoveAllChildren();
-			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+			sliceSettingsWidget = new SliceSettingsWidget();
 			sliceSettingsWidget.AnchorAll();
 			sliceTabPage.AddChild(sliceSettingsWidget);
 		}
