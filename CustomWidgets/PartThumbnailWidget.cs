@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+//#define RENDER_RAYTRACED
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
@@ -37,10 +39,12 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 
 namespace MatterHackers.MatterControl
@@ -234,7 +238,11 @@ namespace MatterHackers.MatterControl
 
 				string stlHashCode = thumbnailWidget.PrintItem.FileHashCode.ToString();
 
+#if RENDER_RAYTRACED
+				Point2D bigRenderSize = new Point2D(115, 115);
+#else
 				Point2D bigRenderSize = new Point2D(460, 460);
+#endif
 				ImageBuffer bigRender = LoadImageFromDisk(thumbnailWidget, stlHashCode, bigRenderSize);
 				if (bigRender == null)
 				{
@@ -242,7 +250,14 @@ namespace MatterHackers.MatterControl
 					{
 						return;
 					}
+
 					List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(thumbnailWidget.PrintItem.FileLocation);
+#if RENDER_RAYTRACED
+					ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, bigRenderSize.x, bigRenderSize.y);
+					tracer.DoTrace();
+
+					bigRender = tracer.destImage;
+#else
 
 					thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
 					thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
@@ -251,41 +266,36 @@ namespace MatterHackers.MatterControl
 					{
 						bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
 					}
+#endif
+					// and save it to disk
+					string imageFileName = GetImageFileName(stlHashCode, bigRenderSize);
+
+					if (partExtension == ".png")
+					{
+						ImageIO.SaveImageData(imageFileName, bigRender);
+					}
+					else
+					{
+						ImageTgaIO.SaveImageData(imageFileName, bigRender);
+					}
 				}
 
-				switch (thumbnailWidget.Size)
+				ImageBuffer unScaledImage = new ImageBuffer(bigRender.Width, bigRender.Height, 32, new BlenderBGRA());
+				unScaledImage.NewGraphics2D().Render(bigRender, 0, 0);
+				// If the source image (the one we downloaded) is more than twice as big as our dest image.
+				while (unScaledImage.Width > Width * 2)
 				{
-					case ImageSizes.Size50x50:
-						{
-							ImageBuffer halfWay1 = new ImageBuffer(200, 200, 32, new BlenderBGRA());
-							halfWay1.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-							halfWay1.NewGraphics2D().Render(bigRender, 0, 0, 0, (double)halfWay1.Width / bigRender.Width, (double)halfWay1.Height / bigRender.Height);
-
-							ImageBuffer halfWay2 = new ImageBuffer(100, 100, 32, new BlenderBGRA());
-							halfWay2.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-							halfWay2.NewGraphics2D().Render(halfWay1, 0, 0, 0, (double)halfWay2.Width / halfWay1.Width, (double)halfWay2.Height / halfWay1.Height);
-
-							thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
-							thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-							thumbnailWidget.thumbnailImage.NewGraphics2D().Render(halfWay2, 0, 0, 0, (double)thumbnailWidget.thumbnailImage.Width / halfWay2.Width, (double)thumbnailWidget.thumbnailImage.Height / halfWay2.Height);
-						}
-						break;
-
-					case ImageSizes.Size115x115:
-						{
-							ImageBuffer halfWay1 = new ImageBuffer(230, 230, 32, new BlenderBGRA());
-							halfWay1.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-							halfWay1.NewGraphics2D().Render(bigRender, 0, 0, 0, (double)halfWay1.Width / bigRender.Width, (double)halfWay1.Height / bigRender.Height);
-
-							thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
-							thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-							thumbnailWidget.thumbnailImage.NewGraphics2D().Render(halfWay1, 0, 0, 0, (double)thumbnailWidget.thumbnailImage.Width / halfWay1.Width, (double)thumbnailWidget.thumbnailImage.Height / halfWay1.Height);
-						}
-						break;
-
-					default:
-						throw new NotImplementedException();
+					// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
+					// So we scale as many times as we need to to get the Image to be the right size.
+					// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
+					ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, new BlenderBGRA());
+					halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
+					unScaledImage = halfImage;
 				}
+
+				thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
+				thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+				thumbnailWidget.thumbnailImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, (double)thumbnailWidget.thumbnailImage.Width / unScaledImage.Width, (double)thumbnailWidget.thumbnailImage.Height / unScaledImage.Height);
 
 				UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
 			}
@@ -397,28 +407,24 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				// and save it to disk
-				string imageFileName = GetFilenameForSize(stlHashCode, size);
-				string folderToSavePrintsTo = Path.GetDirectoryName(imageFileName);
-
-				if (!Directory.Exists(folderToSavePrintsTo))
-				{
-					Directory.CreateDirectory(folderToSavePrintsTo);
-				}
-				if (partExtension == ".png")
-				{
-					ImageIO.SaveImageData(imageFileName, tempImage);
-				}
-				else
-				{
-					ImageTgaIO.SaveImageData(imageFileName, tempImage);
-				}
-
 				// and give it back
 				return tempImage;
 			}
 
 			return null;
+		}
+
+		private static string GetImageFileName(string stlHashCode, Point2D size)
+		{
+			string imageFileName = GetFilenameForSize(stlHashCode, size);
+			string folderToSavePrintsTo = Path.GetDirectoryName(imageFileName);
+
+			if (!Directory.Exists(folderToSavePrintsTo))
+			{
+				Directory.CreateDirectory(folderToSavePrintsTo);
+			}
+
+			return imageFileName;
 		}
 
 		private void createThumbnailWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
