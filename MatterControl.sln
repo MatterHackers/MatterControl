@@ -118,7 +118,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{32E5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextCreator", "TextCreator\TextCreator.csproj", "{F49EC1DD-D645-4709-8667-B57318AF67B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataConverters3D", "..\agg-sharp\DataConverters3D\DataConverters3D.csproj", "{04667764-DC7B-4B95-AEF6-B4E6C87A54E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataConverters3D", "SubModules\agg-sharp\DataConverters3D\DataConverters3D.csproj", "{04667764-DC7B-4B95-AEF6-B4E6C87A54E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
