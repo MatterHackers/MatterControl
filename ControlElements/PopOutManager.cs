@@ -67,7 +67,10 @@ namespace MatterHackers.MatterControl
 			this.dataBaseKeyPrefix = dataBaseKeyPrefix;
 			this.widgetWhosContentsPopOut = widgetWhosContentsPopOut;
 
-			ApplicationController.Instance.MainView.DrawAfter += ShowOnFirstSystemWindowDraw;
+			UiThread.RunOnIdle((state) =>
+			{
+				ApplicationController.Instance.MainView.DrawAfter += ShowOnFirstSystemWindowDraw;
+			});
 
 			widgetWhosContentsPopOut.Closed += (sender, e) =>
 			{

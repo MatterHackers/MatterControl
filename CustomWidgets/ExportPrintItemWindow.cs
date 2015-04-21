@@ -216,28 +216,41 @@ namespace MatterHackers.MatterControl
 
 		private void onExportGcodeFileSelected(SaveFileDialogParams saveParams)
 		{
+
 			if (saveParams.FileName != null)
 			{
-				gcodePathAndFilenameToSave = saveParams.FileName;
-				string extension = Path.GetExtension(gcodePathAndFilenameToSave);
-				if (extension == "")
-				{
-					File.Delete(gcodePathAndFilenameToSave);
-					gcodePathAndFilenameToSave += ".gcode";
-				}
 
-				string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
-				{
-					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-					printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
-				}
-				else if (partIsGCode)
-				{
-					SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
-				}
+                ExportGcodeCommandLineUtility(saveParams.FileName);
+         
 			}
 		}
+
+        public void ExportGcodeCommandLineUtility(String nameOfFile)
+        {
+            if(!string.IsNullOrEmpty(nameOfFile))
+            {
+                gcodePathAndFilenameToSave = nameOfFile;
+                string extension = Path.GetExtension(gcodePathAndFilenameToSave);
+                if(extension == "")
+                {
+                    File.Delete(gcodePathAndFilenameToSave);
+                    gcodePathAndFilenameToSave += ".gcode";
+                }
+
+                string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+                if(MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
+                {
+
+                    SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+                    printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+
+                }
+                else if (partIsGCode)
+                {
+                    SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
+                }
+            }
+        }
 
 		private void ExportX3G_Click(object state)
 		{

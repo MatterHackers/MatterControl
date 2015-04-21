@@ -70,6 +70,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OpenMode openMode;
 
+		private bool editorThatRequestedSave = false;
+
 		private readonly int EditButtonHeight = 44;
 
 		public WindowMode windowType { get; set; }
@@ -370,6 +372,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
 
 			FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			centerPartPreviewAndControls.Name = "centerPartPreviewAndControls";
 			centerPartPreviewAndControls.AnchorAll();
 
 			GuiWidget viewArea = new GuiWidget();
@@ -392,6 +395,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			buttonRightPanel = CreateRightButtonPanel(viewerVolume.y);
+			buttonRightPanel.Name = "buttonRightPanel";
 			buttonRightPanel.Visible = false;
 
 			CreateOptionsContent();
@@ -521,26 +525,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					Button leaveEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
 					leaveEditModeButton.Click += (sender, e) =>
+					{
+						UiThread.RunOnIdle((state) =>
 						{
-							UiThread.RunOnIdle((state) =>
+							if (saveButtons.Visible)
+							{
+								StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
+							}
+							else
+							{
+								if (partHasBeenEdited)
 								{
-									if (saveButtons.Visible)
-									{
-										StyledMessageBox.ShowMessageBox(ExitEditingAndSaveIfRequired, "Would you like to save your changes before exiting the editor?", "Save Changes", StyledMessageBox.MessageType.YES_NO);
-									}
-									else
-									{
-										if (partHasBeenEdited)
-										{
-											ExitEditingAndSaveIfRequired(false);
-										}
-										else
-										{
-											SwitchStateToNotEditing();
-										}
-									}
-								});
-						};
+									ExitEditingAndSaveIfRequired(false);
+								}
+								else
+								{
+									SwitchStateToNotEditing();
+								}
+							}
+						});
+					};
 					doEdittingButtonsContainer.AddChild(leaveEditModeButton);
 
 					// put in the save button
@@ -578,6 +582,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			GuiWidget buttonRightPanelHolder = new GuiWidget(HAnchor.FitToChildren, VAnchor.ParentBottomTop);
+			buttonRightPanelHolder.Name = "buttonRightPanelHolder";
 			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
 			buttonRightPanelHolder.AddChild(buttonRightPanel);
 
@@ -653,13 +658,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
+		void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
+		{
+			if (!editorThatRequestedSave)
+			{
+				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+			}
+
+			editorThatRequestedSave = false;
+		}
+
 		private void ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
 		{
+			SwitchStateToNotEditing();
+
 			MeshGroups.Clear();
 			MeshGroupExtraData.Clear();
 			MeshGroupTransforms.Clear();
 			if (printItemWrapper != null)
 			{
+				// remove it first to make sure we don't double add it
+				printItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+				printItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+
 				// Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
 				// not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
 				// parts themselves. For now, simply mock that determination to allow testing of the proposed change and convey
@@ -728,17 +749,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SwitchStateToNotEditing()
 		{
-			enterEditButtonsContainer.Visible = true;
-			autoArrangeButton.Visible = false;
-			processingProgressControl.Visible = false;
-			buttonRightPanel.Visible = false;
-			doEdittingButtonsContainer.Visible = false;
-			viewControls3D.PartSelectVisible = false;
-			if (viewControls3D.partSelectButton.Checked)
+			if (!enterEditButtonsContainer.Visible)
 			{
-				viewControls3D.rotateButton.ClickButton(null);
+				enterEditButtonsContainer.Visible = true;
+				autoArrangeButton.Visible = false;
+				processingProgressControl.Visible = false;
+				buttonRightPanel.Visible = false;
+				doEdittingButtonsContainer.Visible = false;
+				viewControls3D.PartSelectVisible = false;
+				if (viewControls3D.partSelectButton.Checked)
+				{
+					viewControls3D.rotateButton.ClickButton(null);
+				}
+				SelectedMeshGroupIndex = -1;
 			}
-			SelectedMeshGroupIndex = -1;
 		}
 
 		private void OpenExportWindow()
@@ -1388,7 +1412,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				scaleRatioContainer.AddChild(new HorizontalSpacer());
 
-				scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50, allowDecimals: true, increment: .05);
+				scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50 * TextWidget.GlobalPointSizeScaleRatio, allowDecimals: true, increment: .05);
 				scaleRatioControl.SelectAllOnFocus = true;
 				scaleRatioControl.VAnchor = VAnchor.ParentCenter;
 				scaleRatioContainer.AddChild(scaleRatioControl);
@@ -2055,6 +2079,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
+			editorThatRequestedSave = true;
 			if (MeshGroups.Count > 0)
 			{
 				string progressSavingPartsLabel = "Saving".Localize();
@@ -2079,6 +2104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MergeAndSavePartsToCurrentMeshFile(AfterSaveCallback eventToCallAfterSave = null)
 		{
+			editorThatRequestedSave = true;
 			afterSaveCallback = eventToCallAfterSave;
 
 			if (MeshGroups.Count > 0)

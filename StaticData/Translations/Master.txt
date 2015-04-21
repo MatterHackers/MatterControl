@@ -3164,3 +3164,6 @@ Translated:Connect to the printer
 English:Reset
 Translated:Reset
 
+English:Console
+Translated:Console
+

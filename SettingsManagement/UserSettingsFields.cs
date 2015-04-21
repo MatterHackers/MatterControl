@@ -101,16 +101,17 @@ namespace MatterHackers.MatterControl
 			UserSettings.Instance.set(keyToSet, value.ToString());
 		}
 
-		public int GetInt(string keyToRead)
+		public int GetInt(string keyToRead, int defaultValue = 0)
 		{
 			string currentValue = UserSettings.Instance.get(keyToRead);
 			int result = 0;
-			if (int.TryParse(currentValue, out result))
+			if (!int.TryParse(currentValue, out result))
 			{
-				return result;
+				result = defaultValue;
+				UserSettings.Instance.set(keyToRead, currentValue);
 			}
 
-			return 0;
+			return result;
 		}
 	}
 }

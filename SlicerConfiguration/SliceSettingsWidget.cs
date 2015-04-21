@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private FlowLayoutWidget settingsControlBar;
 		private FlowLayoutWidget settingsSaveBar;
 
-		public SliceSettingsWidget(SliceSettingsWidgetUiState uiState)
+		public SliceSettingsWidget()
 		{
 			int minSettingNameWidth = (int)(190 * TextWidget.GlobalPointSizeScaleRatio + .5);
 			buttonFactory.FixedHeight = 20 * TextWidget.GlobalPointSizeScaleRatio;
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				categoryPage.AnchorAll();
 				categoryTabs.AddTab(textTabWidget);
 
-				TabControl sideTabs = CreateSideTabsAndPages(minSettingNameWidth, category, uiState);
+				TabControl sideTabs = CreateSideTabsAndPages(minSettingNameWidth, category);
 				sideTabBarsListForLayout.Add(sideTabs.TabBar);
 
 				categoryPage.AddChild(sideTabs);
@@ -370,10 +370,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			AddHandlers();
 			SetVisibleControls();
 
-			if (!categoryTabs.SelectTab(uiState.selectedCategory.name))
+			// Make sure we are on the right tab when we create this view
 			{
-				categoryTabs.SelectTab(uiState.selectedCategory.index);
+				string settingsName = "SliceSettingsWidget_CurrentTab";
+				string selectedTab = UserSettings.Instance.get(settingsName);
+				categoryTabs.SelectTab(selectedTab);
+
+				categoryTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+				{
+					UserSettings.Instance.set(settingsName, categoryTabs.TabBar.SelectedTabName);
+				};
 			}
+
+
 			this.AnchorAll();
 			SetStatusDisplay();
 		}
@@ -494,7 +503,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private int tabIndexForItem = 0;
 
-		private TabControl CreateSideTabsAndPages(int minSettingNameWidth, OrganizerCategory category, SliceSettingsWidgetUiState uiState)
+		private TabControl CreateSideTabsAndPages(int minSettingNameWidth, OrganizerCategory category)
 		{
 			TabControl groupTabs = new TabControl(Orientation.Vertical);
 			groupTabs.Margin = new BorderDouble(0, 0, 0, 5);
@@ -575,13 +584,47 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 					groupTabPage.AddChild(scrollOnGroupTab);
 					groupTabs.AddTab(groupTabWidget);
+
+
+					// Make sure we have the right scroll position when we create this view
+					// This code is not working yet. Scroll widgets get a scroll event when the tab becomes visible that is always reseting them.
+					// So it is not usefull to enable this and in fact makes the tabs inconsistently scrolled. It is just here for reference. // 2015 04 16, LBB
+					if(false) 
+					{
+						string settingsScrollPosition = "SliceSettingsWidget_{0}_{1}_ScrollPosition".FormatWith(category.Name, group.Name);
+
+						UiThread.RunOnIdle((state) =>
+						{
+							int scrollPosition = UserSettings.Instance.Fields.GetInt(settingsScrollPosition, -100000);
+							if (scrollPosition != -100000)
+							{
+								scrollOnGroupTab.ScrollPosition = new Vector2(0, scrollPosition);
+							}
+						});
+
+						scrollOnGroupTab.ScrollPositionChanged += (object sender, EventArgs e) =>
+						{
+							if (scrollOnGroupTab.CanSelect)
+							{
+								UserSettings.Instance.Fields.SetInt(settingsScrollPosition, (int)scrollOnGroupTab.ScrollPosition.y);
+							}
+						};
+					}
 				}
 			}
 
-			if (!groupTabs.SelectTab(uiState.selectedGroup.name))
+			// Make sure we are on the right tab when we create this view
 			{
-				groupTabs.SelectTab(uiState.selectedGroup.index);
+				string settingsTypeName = "SliceSettingsWidget_{0}_CurrentTab".FormatWith(category.Name);
+				string selectedTab = UserSettings.Instance.get(settingsTypeName);
+				groupTabs.SelectTab(selectedTab);
+
+				groupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+				{
+					UserSettings.Instance.set(settingsTypeName, groupTabs.TabBar.SelectedTabName);
+				};
 			}
+
 			return groupTabs;
 		}
 

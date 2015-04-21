@@ -4,6 +4,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -199,7 +200,30 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				SetElementState();
 				if (usingDefaultName)
 				{
-					printerNameInput.Text = String.Format("{0} {1} ({2})", this.ActivePrinter.Make, this.ActivePrinter.Model, ExistingPrinterCount() + 1);
+                    string printerInputName = String.Format("{0} {1}", this.ActivePrinter.Make, this.ActivePrinter.Model);
+                    string query = string.Format("SELECT Name FROM Printer WHERE Name LIKE \'{0}%\';", printerInputName);
+                    var names = Datastore.Instance.dbSQLite.Query<sqlName>(query).Select(item => item.Name).ToList();
+
+                    if (!names.Contains(printerInputName))
+                    {
+                        printerNameInput.Text = printerInputName;
+                    }
+                    else
+                    {
+                        
+                        int printerModelCount = 0; //Used to keep track of how many of the printer models we run into before and empty one
+                        string possiblePrinterName;
+
+                        do
+                        {
+                            printerModelCount++;
+                            possiblePrinterName = String.Format("{0} ({1})", printerInputName, printerModelCount);            
+                        } while (names.Contains(possiblePrinterName));
+
+
+                        printerNameInput.Text = possiblePrinterName;
+                    }
+
 				}
 			});
 		}
@@ -247,6 +271,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return Convert.ToInt32(result);
 		}
 
+        private class sqlName
+        {
+            public string Name { get; set; } 
+        }
+
+        
 		private bool OnSave()
 		{
 			if (printerNameInput.Text != "")

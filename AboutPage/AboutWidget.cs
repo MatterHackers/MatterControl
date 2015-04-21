@@ -74,7 +74,8 @@ namespace MatterHackers.MatterControl
 				string releaseNotesFile = Path.Combine("OEMSettings", "ReleaseNotesMini.html");
 				string releaseNotesContent = StaticData.Instance.ReadAllText(releaseNotesFile);
 				HtmlWidget content = new HtmlWidget(releaseNotesContent, RGBA_Bytes.Black);
-				content.DebugShowBounds = true;
+				content.AddChild(new GuiWidget(HAnchor.None, VAnchor.ParentBottomTop));
+				content.VAnchor |= VAnchor.ParentTop;
 				content.BackgroundColor = RGBA_Bytes.White;
 				releaseNotes.AddChild(content);
 				releaseNotes.BackgroundColor = RGBA_Bytes.Cyan;

@@ -82,12 +82,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.MouseEnter += new EventHandler(onMouse_Enter);
 			this.MouseLeave += new EventHandler(onMouse_Leave);
-			this.MouseUp += new MouseEventHandler(onMouse_Up);
+			this.MouseUp += (sender, e) =>
+			{
+				UiThread.RunOnIdle(onMouse_Up, e);
+			};
 		}
 
-		private void onMouse_Up(object sender, EventArgs e)
+		private void onMouse_Up(object state)
 		{
-			MouseEventArgs mouseEvent = e as MouseEventArgs;
+			MouseEventArgs mouseEvent = state as MouseEventArgs;
 			//Turns this into a standard 'click' event
 			if (this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{

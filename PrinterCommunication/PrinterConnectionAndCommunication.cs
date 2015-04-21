@@ -47,6 +47,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -1236,63 +1237,75 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void PrintActivePart()
 		{
-			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-			if (levelingData.needsPrintLeveling
-				&& levelingData.sampledPosition0.z == 0
-				&& levelingData.sampledPosition1.z == 0
-				&& levelingData.sampledPosition2.z == 0)
+			try
 			{
-				LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
-				return;
-			}
-
-			string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
-			if (ActiveSliceSettings.Instance.HasSdCardReader()
-				&& pathAndFile == QueueData.SdCardFileName)
-			{
-				PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
-			}
-			else if (ActiveSliceSettings.Instance.IsValid())
-			{
-				if (File.Exists(pathAndFile))
+				PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+				if (levelingData != null
+					&& levelingData.needsPrintLeveling
+					&& levelingData.sampledPosition0.z == 0
+					&& levelingData.sampledPosition1.z == 0
+					&& levelingData.sampledPosition2.z == 0)
 				{
-					// clear the output cache prior to starting a print
-					PrinterOutputCache.Instance.Clear();
+					LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+					return;
+				}
 
-					string hideGCodeWarning = ApplicationSettings.Instance.get("HideGCodeWarning");
-
-					if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
+				if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
+				{
+					string pathAndFile = PrinterConnectionAndCommunication.Instance.ActivePrintItem.FileLocation;
+					if (ActiveSliceSettings.Instance.HasSdCardReader()
+						&& pathAndFile == QueueData.SdCardFileName)
 					{
-						CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotShowAgainMessage);
-						hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-						hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6, left: 6);
-						hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.ParentLeft;
-						hideGCodeWarningCheckBox.Click += (sender, e) =>
+						PrinterConnectionAndCommunication.Instance.StartSdCardPrint();
+					}
+					else if (ActiveSliceSettings.Instance.IsValid())
+					{
+						if (File.Exists(pathAndFile))
 						{
-							if (hideGCodeWarningCheckBox.Checked)
+							// clear the output cache prior to starting a print
+							PrinterOutputCache.Instance.Clear();
+
+							string hideGCodeWarning = ApplicationSettings.Instance.get("HideGCodeWarning");
+
+							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE" && hideGCodeWarning == null)
 							{
-								ApplicationSettings.Instance.set("HideGCodeWarning", "true");
+								CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotShowAgainMessage);
+								hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+								hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6, left: 6);
+								hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.ParentLeft;
+								hideGCodeWarningCheckBox.Click += (sender, e) =>
+								{
+									if (hideGCodeWarningCheckBox.Checked)
+									{
+										ApplicationSettings.Instance.set("HideGCodeWarning", "true");
+									}
+									else
+									{
+										ApplicationSettings.Instance.set("HideGCodeWarning", null);
+									}
+								};
+								StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO);
 							}
 							else
 							{
-								ApplicationSettings.Instance.set("HideGCodeWarning", null);
+								PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+								PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
+								partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
 							}
-						};
-						StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO);
-					}
-					else
-					{
-						PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-						PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
-						SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-						partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
+						}
+						else
+						{
+							string message = String.Format(removeFromQueueMessage, pathAndFile);
+							StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO);
+						}
 					}
 				}
-				else
-				{
-					string message = String.Format(removeFromQueueMessage, pathAndFile);
-					StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO);
-				}
+			}
+			catch (Exception e)
+			{
+				// Let's track this issue if possible.
+				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
 		}
 
@@ -1898,56 +1911,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			switch (CommunicationState)
 			{
 				case CommunicationStates.PrintingFromSd:
-					using (TimedLock.Lock(this, "CancelingPrint"))
-					{
-						// get rid of all the gcode we have left to print
-						ClearQueuedGCode();
-						// let the process know we canceled not ended normaly.
-						CommunicationState = CommunicationStates.Connected;
-						SendLineToPrinterNow("M25"); // : Pause SD print
-						SendLineToPrinterNow("M26"); // : Set SD position
-						// never leave the extruder and the bed hot
-						DonePrintingSdFile(this, null);
-					}
+					CancelSDCardPrint();
 					break;
 
 				case CommunicationStates.Printing:
 					{
-						using (TimedLock.Lock(this, "CancelingPrint"))
-						{
-							// get rid of all the gcode we have left to print
-							ClearQueuedGCode();
-							string cancelGCode = ActiveSliceSettings.Instance.GetActiveValue("cancel_gcode");
-							if (cancelGCode.Trim() != "")
-							{
-								// add any gcode we want to print while canceling
-								InjectGCode(cancelGCode, printerCommandQueueLineIndex);
-							}
-							// let the process know we canceled not ended normaly.
-							printWasCanceled = true;
-						}
-						if (activePrintTask != null)
-						{
-							TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
-
-							activePrintTask.PrintEnd = DateTime.Now;
-							activePrintTask.PrintComplete = false;
-							activePrintTask.Commit();
-						}
+						CancelPrint();
+						MarkActivePrintCanceled();
 					}
 
 					break;
 
 				case CommunicationStates.Paused:
 					{
-						CommunicationState = CommunicationStates.Connected;
-						if (activePrintTask != null)
+						if (prePauseCommunicationState == CommunicationStates.PrintingFromSd)
 						{
-							TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
-
-							activePrintTask.PrintEnd = DateTime.Now;
-							activePrintTask.PrintComplete = false;
-							activePrintTask.Commit();
+							CancelSDCardPrint();
+							CommunicationState = CommunicationStates.Connected;
+						}
+						else
+						{
+							CancelPrint();
+							MarkActivePrintCanceled();
 						}
 					}
 					break;
@@ -1970,6 +1955,50 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					SlicingQueue.Instance.CancelCurrentSlicing();
 					CommunicationState = CommunicationStates.Connected;
 					break;
+			}
+		}
+
+		private void MarkActivePrintCanceled()
+		{
+			if (activePrintTask != null)
+			{
+				TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+
+				activePrintTask.PrintEnd = DateTime.Now;
+				activePrintTask.PrintComplete = false;
+				activePrintTask.Commit();
+			}
+		}
+
+		private void CancelPrint()
+		{
+			using (TimedLock.Lock(this, "CancelingPrint"))
+			{
+				// get rid of all the gcode we have left to print
+				ClearQueuedGCode();
+				string cancelGCode = ActiveSliceSettings.Instance.GetActiveValue("cancel_gcode");
+				if (cancelGCode.Trim() != "")
+				{
+					// add any gcode we want to print while canceling
+					InjectGCode(cancelGCode, printerCommandQueueLineIndex);
+				}
+				// let the process know we canceled not ended normaly.
+				printWasCanceled = true;
+			}
+		}
+
+		private void CancelSDCardPrint()
+		{
+			using (TimedLock.Lock(this, "CancelingPrint"))
+			{
+				// get rid of all the gcode we have left to print
+				ClearQueuedGCode();
+				// let the process know we canceled not ended normaly.
+				CommunicationState = CommunicationStates.Connected;
+				SendLineToPrinterNow("M25"); // : Pause SD print
+				SendLineToPrinterNow("M26"); // : Set SD position
+				// never leave the extruder and the bed hot
+				DonePrintingSdFile(this, null);
 			}
 		}
 

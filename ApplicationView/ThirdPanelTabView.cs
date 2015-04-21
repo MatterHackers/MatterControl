@@ -40,8 +40,6 @@ namespace MatterHackers.MatterControl
 	{
 		private event EventHandler unregisterEvents;
 
-		private static int lastAdvanceControlsIndex = 0;
-
 		private Button advancedControlsLinkButton;
 		private SliceSettingsWidget sliceSettingsWidget;
 		private EventHandler AdvancedControlsButton_Click;
@@ -62,7 +60,6 @@ namespace MatterHackers.MatterControl
 
 			AddChild(advancedControls2);
 
-			WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentPanelIndex, ref unregisterEvents);
 			ApplicationController.Instance.ReloadAdvancedControlsPanelTrigger.RegisterEvent(ReloadAdvancedControlsPanelTrigger, ref unregisterEvents);
 
 			AnchorAll();
@@ -82,17 +79,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(ReloadSliceSettings);
 		}
 
-		private static SliceSettingsWidgetUiState sliceSettingsUiState = new SliceSettingsWidgetUiState();
-
-		private void SaveCurrentPanelIndex(object sender, EventArgs e)
-		{
-			sliceSettingsUiState = new SliceSettingsWidgetUiState(sliceSettingsWidget);
-
-			if (advancedControls2.Children.Count > 0)
-			{
-				lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
-			}
-		}
+		private static readonly string ThirdPanelTabView_AdvancedControls_CurrentTab = "ThirdPanelTabView_AdvancedControls_CurrentTab";
 
 		private TabControl CreateNewAdvancedControls(EventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
 		{
@@ -138,7 +125,7 @@ namespace MatterHackers.MatterControl
 			//Add the tab contents for 'Advanced Controls'
 			string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-			sliceSettingsWidget = new SliceSettingsWidget(sliceSettingsUiState);
+			sliceSettingsWidget = new SliceSettingsWidget();
 
 			advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), SliceSettingsTabName, new Vector2(590, 400), textSize));
 			advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), ControlsTabName, new Vector2(400, 300), textSize));
@@ -148,7 +135,16 @@ namespace MatterHackers.MatterControl
 			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", textSize,
 						ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			advancedControls.SelectedTabIndex = lastAdvanceControlsIndex;
+			// Make sure we are on the right tab when we create this view
+			{
+				string selectedTab = UserSettings.Instance.get(ThirdPanelTabView_AdvancedControls_CurrentTab);
+				advancedControls.SelectTab(selectedTab);
+
+				advancedControls.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+				{
+					UserSettings.Instance.set(ThirdPanelTabView_AdvancedControls_CurrentTab, advancedControls.TabBar.SelectedTabName);
+				};
+			}
 
 			return advancedControls;
 		}
@@ -165,8 +161,6 @@ namespace MatterHackers.MatterControl
 
 		public void ReloadSliceSettings(object state)
 		{
-			lastAdvanceControlsIndex = advancedControls2.SelectedTabIndex;
-
 			WidescreenPanel.PreChangePanels.CallEvents(null, null);
 
 			// remove the advance control and replace it with new ones built for the selected printer
