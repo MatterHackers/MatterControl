@@ -115,9 +115,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget levelingIcon = new ImageWidget(levelingImage);
 			levelingIcon.Margin = new BorderDouble(right: 6);
 
-			CheckBox printLevelingSwitch = new CheckBox(new ToggleSwitchView(60, 24, ActiveTheme.Instance.PrimaryBackgroundColor, new RGBA_Bytes(220, 220, 220), ActiveTheme.Instance.PrimaryAccentColor, ActiveTheme.Instance.PrimaryTextColor));
-
-			printLevelingSwitch.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
+			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActivePrinterProfile.Instance.DoPrintLeveling);
 			printLevelingSwitch.VAnchor = VAnchor.ParentCenter;
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
@@ -193,11 +191,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
 			publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
 
-			ToggleSwitch toggleSwitch = GenerateToggleSwitch(publishImageSwitchContainer, PrinterSettings.Instance.get("PublishBedImage") == "true");
-			toggleSwitch.SwitchStateChanged += (sender, e) =>
+			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(PrinterSettings.Instance.get("PublishBedImage") == "true");
+			toggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				ToggleSwitch thisControl = sender as ToggleSwitch;
-				PrinterSettings.Instance.set("PublishBedImage", thisControl.SwitchState ? "true" : "false");
+				CheckBox thisControl = sender as CheckBox;
+				PrinterSettings.Instance.set("PublishBedImage", thisControl.Checked ? "true" : "false");
 			};
 
 			publishImageSwitchContainer.SetBoundsToEncloseChildren();

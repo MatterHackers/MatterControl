@@ -114,8 +114,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			//Matt's test editing to add a on/off toggle switch
 			bool fanActive = PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0;
 
-			toggleSwitch = new CheckBox(new ToggleSwitchView(60, 24, ActiveTheme.Instance.PrimaryBackgroundColor, new RGBA_Bytes(220, 220, 220), ActiveTheme.Instance.PrimaryAccentColor, ActiveTheme.Instance.PrimaryTextColor));
-			toggleSwitch.Checked = fanActive;
+			toggleSwitch = ImageButtonFactory.CreateToggleSwitch(fanActive);
 			toggleSwitch.VAnchor = VAnchor.ParentCenter;
 			toggleSwitch.CheckedStateChanged += new EventHandler(ToggleSwitch_Click);
 			toggleSwitch.Margin = new BorderDouble(5, 0);
