@@ -962,8 +962,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddHandlers()
 		{
-			expandModelOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandModelOptions_CheckedStateChanged);
-			expandDisplayOptions.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(expandDisplayOptions_CheckedStateChanged);
+			expandModelOptions.CheckedStateChanged += expandModelOptions_CheckedStateChanged;
+			expandDisplayOptions.CheckedStateChanged += expandDisplayOptions_CheckedStateChanged;
 		}
 
 		private void expandModelOptions_CheckedStateChanged(object sender, EventArgs e)
