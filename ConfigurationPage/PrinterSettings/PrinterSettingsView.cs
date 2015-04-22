@@ -135,6 +135,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
+				printLevelingSwitch.SwitchState = ActivePrinterProfile.Instance.DoPrintLeveling;
 				SetPrintLevelButtonVisiblity();
 				printLevelingSwitch.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
 			}, ref unregisterEvents);
