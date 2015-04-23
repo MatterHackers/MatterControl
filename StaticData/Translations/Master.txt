@@ -3167,3 +3167,9 @@ Translated:Reset
 English:Console
 Translated:Console
 
+English:On
+Translated:On
+
+English:Off
+Translated:Off
+

@@ -42,7 +42,13 @@ namespace MatterHackers.MatterControl
 
 		public static CheckBox CreateToggleSwitch(bool initialState)
 		{
-			CheckBox toggleBox = new CheckBox(new ToggleSwitchView("On".Localize(), "Off".Localize(), 60, 24, ActiveTheme.Instance.PrimaryBackgroundColor, new RGBA_Bytes(220, 220, 220), ActiveTheme.Instance.PrimaryAccentColor, ActiveTheme.Instance.PrimaryTextColor));
+			ToggleSwitchView toggleView = new ToggleSwitchView("On".Localize(), "Off".Localize(),
+				60, 24,
+				ActiveTheme.Instance.PrimaryBackgroundColor,
+				new RGBA_Bytes(220, 220, 220),
+				ActiveTheme.Instance.PrimaryAccentColor,
+				ActiveTheme.Instance.PrimaryTextColor);
+			CheckBox toggleBox = new CheckBox(toggleView);
 			toggleBox.Checked = initialState;
 			return toggleBox;
 		}
