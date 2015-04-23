@@ -335,7 +335,6 @@
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
-    <Compile Include="ControlElements\ToggleSwitchFactory.cs" />
     <Compile Include="CustomWidgets\SplitButton.cs" />
     <Compile Include="CustomWidgets\DynamicDropDownMenu.cs" />
     <Compile Include="ControlElements\DropDownMenuFactory.cs" />

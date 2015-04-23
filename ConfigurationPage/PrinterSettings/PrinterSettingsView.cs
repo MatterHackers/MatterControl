@@ -69,11 +69,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 4);
 
-			Button configureAutoLevelButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
-			configureAutoLevelButton.Margin = new BorderDouble(left: 6);
-			configureAutoLevelButton.VAnchor = VAnchor.ParentCenter;
-			configureAutoLevelButton.Click += new EventHandler(configureAutoLevelButton_Click);
-
 			TextWidget notificationSettingsLabel = new TextWidget("Automatic Print Leveling");
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -120,17 +115,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget levelingIcon = new ImageWidget(levelingImage);
 			levelingIcon.Margin = new BorderDouble(right: 6);
 
-			GuiWidget levelingSwitchContainer = new FlowLayoutWidget();
-			levelingSwitchContainer.VAnchor = VAnchor.ParentCenter;
-			levelingSwitchContainer.Margin = new BorderDouble(left: 16);
-
-			ToggleSwitch printLevelingSwitch = GenerateToggleSwitch(levelingSwitchContainer, PrinterSettings.Instance.get("PublishBedImage") == "true");
-			printLevelingSwitch.SwitchState = ActivePrinterProfile.Instance.DoPrintLeveling;
-			printLevelingSwitch.SwitchStateChanged += (sender, e) =>
+			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActivePrinterProfile.Instance.DoPrintLeveling);
+			printLevelingSwitch.VAnchor = VAnchor.ParentCenter;
+			printLevelingSwitch.Margin = new BorderDouble(left: 16);
+			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				ActivePrinterProfile.Instance.DoPrintLeveling = printLevelingSwitch.SwitchState;
+				ActivePrinterProfile.Instance.DoPrintLeveling = printLevelingSwitch.Checked;
 			};
-			levelingSwitchContainer.SetBoundsToEncloseChildren();
 
 			printLevelingStatusLabel = new TextWidget("");
 			printLevelingStatusLabel.AutoExpandBoundsToText = true;
@@ -143,6 +134,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ActivePrinterProfile.Instance.DoPrintLevelingChanged.RegisterEvent((sender, e) =>
 			{
 				SetPrintLevelButtonVisiblity();
+				printLevelingSwitch.Checked = ActivePrinterProfile.Instance.DoPrintLeveling;
 			}, ref unregisterEvents);
 
 			buttonRow.AddChild(levelingIcon);
@@ -150,7 +142,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(editButton);
 			buttonRow.AddChild(new HorizontalSpacer());
 			buttonRow.AddChild(runPrintLevelingButton);
-			buttonRow.AddChild(levelingSwitchContainer);
+			buttonRow.AddChild(printLevelingSwitch);
 
 			SetPrintLevelButtonVisiblity();
 			return buttonRow;
@@ -199,11 +191,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			publishImageSwitchContainer.VAnchor = VAnchor.ParentCenter;
 			publishImageSwitchContainer.Margin = new BorderDouble(left: 16);
 
-			ToggleSwitch toggleSwitch = GenerateToggleSwitch(publishImageSwitchContainer, PrinterSettings.Instance.get("PublishBedImage") == "true");
-			toggleSwitch.SwitchStateChanged += (sender, e) =>
+			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(PrinterSettings.Instance.get("PublishBedImage") == "true");
+			toggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				ToggleSwitch thisControl = sender as ToggleSwitch;
-				PrinterSettings.Instance.set("PublishBedImage", thisControl.SwitchState ? "true" : "false");
+				CheckBox thisControl = sender as CheckBox;
+				PrinterSettings.Instance.set("PublishBedImage", thisControl.Checked ? "true" : "false");
 			};
 
 			publishImageSwitchContainer.SetBoundsToEncloseChildren();
@@ -335,14 +327,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						break;
 				}
 #endif
-			});
-		}
-
-		private void configureAutoLevelButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle((state) =>
-			{
-				//Do stuff
 			});
 		}
 

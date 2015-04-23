@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				showHelpBox.Margin = new BorderDouble(right: 3);
 				showHelpBox.VAnchor = VAnchor.ParentCenter;
 				showHelpBox.Cursor = Cursors.Hand;
-				showHelpBox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(RebuildSlicerSettings);
+				showHelpBox.CheckedStateChanged += RebuildSlicerSettings;
 
 				this.AddChild(showHelpBox);
 			}

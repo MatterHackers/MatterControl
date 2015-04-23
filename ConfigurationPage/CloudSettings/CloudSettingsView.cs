@@ -217,11 +217,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			levelingSwitchContainer.VAnchor = VAnchor.ParentCenter;
 			levelingSwitchContainer.Margin = new BorderDouble(left: 16);
 
-			ToggleSwitch enablePrintNotificationsSwitch = GenerateToggleSwitch(levelingSwitchContainer, UserSettings.Instance.get("PrintNotificationsEnabled") == "true");
-			enablePrintNotificationsSwitch.SwitchStateChanged += (sender, e) =>
+			CheckBox enablePrintNotificationsSwitch = ImageButtonFactory.CreateToggleSwitch(UserSettings.Instance.get("PrintNotificationsEnabled") == "true");
+			enablePrintNotificationsSwitch.VAnchor = VAnchor.ParentCenter;
+			enablePrintNotificationsSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				UserSettings.Instance.set("PrintNotificationsEnabled", enablePrintNotificationsSwitch.SwitchState ? "true" : "false");
+				UserSettings.Instance.set("PrintNotificationsEnabled", enablePrintNotificationsSwitch.Checked ? "true" : "false");
 			};
+			levelingSwitchContainer.AddChild(enablePrintNotificationsSwitch);
 			levelingSwitchContainer.SetBoundsToEncloseChildren();
 
 			buttonRow.AddChild(levelingIcon);

@@ -132,8 +132,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		private void AddHandlers()
 		{
-			showOnlyCompletedCheckbox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(UpdateHistoryFilterShowCompleted);
-			showTimestampCheckbox.CheckedStateChanged += new CheckBox.CheckedStateChangedEventHandler(UpdateHistoryFilterShowTimestamp);
+			showOnlyCompletedCheckbox.CheckedStateChanged += UpdateHistoryFilterShowCompleted;
+			showTimestampCheckbox.CheckedStateChanged += UpdateHistoryFilterShowTimestamp;
 		}
 
 		private void UpdateHistoryFilterShowCompleted(object sender, EventArgs e)

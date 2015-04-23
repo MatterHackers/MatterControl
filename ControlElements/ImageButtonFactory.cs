@@ -32,12 +32,26 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
 	public class ImageButtonFactory
 	{
 		public bool invertImageColor = true;
+
+		public static CheckBox CreateToggleSwitch(bool initialState)
+		{
+			ToggleSwitchView toggleView = new ToggleSwitchView("On".Localize(), "Off".Localize(),
+				60, 24,
+				ActiveTheme.Instance.PrimaryBackgroundColor,
+				new RGBA_Bytes(220, 220, 220),
+				ActiveTheme.Instance.PrimaryAccentColor,
+				ActiveTheme.Instance.PrimaryTextColor);
+			CheckBox toggleBox = new CheckBox(toggleView);
+			toggleBox.Checked = initialState;
+			return toggleBox;
+		}
 
 		public Button Generate(string normalImageName, string hoverImageName, string pressedImageName = null, string disabledImageName = null)
 		{

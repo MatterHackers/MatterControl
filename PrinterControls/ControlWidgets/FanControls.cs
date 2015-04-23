@@ -41,8 +41,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EditableNumberDisplay fanSpeedDisplay;
 
-		private TextWidget fanToggleSwitchText;
-		private ToggleSwitch toggleSwitch;
+		private CheckBox toggleSwitch;
 
 		protected override void AddChildElements()
 		{
@@ -115,15 +114,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 			//Matt's test editing to add a on/off toggle switch
 			bool fanActive = PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0;
 
-			fanToggleSwitchText = new TextWidget(fanActive ? "On" : "Off", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			fanToggleSwitchText.VAnchor = Agg.UI.VAnchor.ParentCenter;
-
-			toggleSwitch = toggleSwitchFactory.GenerateGivenTextWidget(fanToggleSwitchText, "On", "Off", fanActive);
-			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			toggleSwitch.SwitchStateChanged += new EventHandler(ToggleSwitch_Click);
+			toggleSwitch = ImageButtonFactory.CreateToggleSwitch(fanActive);
+			toggleSwitch.VAnchor = VAnchor.ParentCenter;
+			toggleSwitch.CheckedStateChanged += new EventHandler(ToggleSwitch_Click);
 			toggleSwitch.Margin = new BorderDouble(5, 0);
 
-			leftToRight.AddChild(fanToggleSwitchText);
 			leftToRight.AddChild(toggleSwitch);
 
 			return leftToRight;
@@ -141,11 +136,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (printerFanSpeed > 0)
 			{
-				toggleSwitch.SwitchState = true;
+				toggleSwitch.Checked = true;
 			}
 			else
 			{
-				toggleSwitch.SwitchState = false;
+				toggleSwitch.Checked = false;
 			}
 
 			doingDisplayUpdateFromPrinter = false;
@@ -155,8 +150,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			if (!doingDisplayUpdateFromPrinter)
 			{
-				ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
-				if (toggleSwitch.SwitchState)
+				CheckBox toggleSwitch = (CheckBox)sender;
+				if (toggleSwitch.Checked)
 				{
 					PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 255;
 				}
