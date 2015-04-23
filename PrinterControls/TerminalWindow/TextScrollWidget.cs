@@ -122,7 +122,6 @@ namespace MatterHackers.MatterControl
 			if (stringEvent != null)
 			{
 				ConditionalyAddToVisible(stringEvent.Data);
-				//allSourceLines.Add(stringEvent.Data);
 			}
 			else // the list changed in some big way (probably cleared)
 			{
@@ -141,7 +140,7 @@ namespace MatterHackers.MatterControl
 			using (TimedLock.Lock(this, "CreatingFilteredList"))
 			{
 				visibleLines = new List<string>();
-				List<string> allSourceLinesTemp = new List<string>(allSourceLines);
+				string[] allSourceLinesTemp = allSourceLines.ToArray();
 				foreach (string line in allSourceLinesTemp)
 				{
 					ConditionalyAddToVisible(line);
@@ -165,7 +164,9 @@ namespace MatterHackers.MatterControl
 
 		public void WriteToFile(string filePath)
 		{
-			System.IO.File.WriteAllLines(@filePath, allSourceLines);
+			// Make a copy so we don't have it change while writing.
+			string[] allSourceLinesTemp = allSourceLines.ToArray();
+			System.IO.File.WriteAllLines(filePath, allSourceLinesTemp);
 		}
 
 		public override void OnClosed(EventArgs e)
