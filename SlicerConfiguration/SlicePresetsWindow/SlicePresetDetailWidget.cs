@@ -614,7 +614,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								textEditWidget.Text = text;
 								SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
-								CallEventsOnSettingsChange(settingData);
 							};
 							stringEdit.SelectAllOnFocus = true;
 
@@ -632,14 +631,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							content.AddChild(stringEdit);
 							content.AddChild(getSettingInfoData(settingData));
 
-							if (settingData.QuickMenuSettings.Count > 0)
-							{
-								leftToRightLayout.AddChild(CreateQuickMenu(settingData, content, stringEdit.ActualTextEditWidget.InternalTextEditWidget));
-							}
-							else
-							{
-								leftToRightLayout.AddChild(content);
-							}
+							container.AddChild(content);
 						}
 						break;
 
@@ -672,7 +664,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								textEditWidget.Text = text;
 								SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
-								CallEventsOnSettingsChange(settingData);
 							};
 							stringEdit.SelectAllOnFocus = true;
 
@@ -690,14 +681,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							content.AddChild(stringEdit);
 							content.AddChild(getSettingInfoData(settingData));
 
-							if (settingData.QuickMenuSettings.Count > 0)
-							{
-								leftToRightLayout.AddChild(CreateQuickMenu(settingData, content, stringEdit.ActualTextEditWidget.InternalTextEditWidget));
-							}
-							else
-							{
-								leftToRightLayout.AddChild(content);
-							}
+							container.AddChild(content);
 						}
 						break;
 
