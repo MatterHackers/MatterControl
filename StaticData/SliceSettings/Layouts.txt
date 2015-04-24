@@ -1,7 +1,7 @@
 Simple
   Print
     Single
-      Print
+      Layers
         layer_height
         fill_density
       Support Material
@@ -182,16 +182,6 @@ Advanced
         ooze_prevention
         standby_temperature_delta
     Advanced
-      Extrusion Width
-        extrusion_width
-        first_layer_extrusion_width
-        perimeter_extrusion_width
-        infill_extrusion_width
-        solid_infill_extrusion_width
-        top_infill_extrusion_width
-        support_material_extrusion_width
-      Flow
-        bridge_flow_ratio
       Other
         threads
         resolution
@@ -221,6 +211,17 @@ Advanced
       Retraction On Tool Change
         retract_restart_extra_toolchange
         retract_restart_extra
+    Extrusion
+      Extrusion Width
+        extrusion_width
+        first_layer_extrusion_width
+        perimeter_extrusion_width
+        infill_extrusion_width
+        solid_infill_extrusion_width
+        top_infill_extrusion_width
+        support_material_extrusion_width
+      Flow
+        bridge_flow_ratio
     Cooling
       Enable
         fan_always_on

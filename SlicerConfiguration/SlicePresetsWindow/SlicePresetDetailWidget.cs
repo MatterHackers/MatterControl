@@ -592,7 +592,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case OrganizerSettingsData.DataEditTypes.DOUBLE_OR_PERCENT:
 						{
-							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 60, tabIndex: tabIndexForItem++);
+							FlowLayoutWidget content = new FlowLayoutWidget();
+
+							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								TextEditWidget textEditWidget = (TextEditWidget)sender;
@@ -612,10 +614,90 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								textEditWidget.Text = text;
 								SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
+								CallEventsOnSettingsChange(settingData);
+							};
+							stringEdit.SelectAllOnFocus = true;
+
+							stringEdit.ActualTextEditWidget.InternalTextEditWidget.AllSelected += (sender, e) =>
+							{
+								// select evrything up to the % (if present)
+								InternalTextEditWidget textEditWidget = (InternalTextEditWidget)sender;
+								int percentIndex = textEditWidget.Text.IndexOf("%");
+								if (percentIndex != -1)
+								{
+									textEditWidget.SetSelection(0, percentIndex - 1);
+								}
 							};
 
-							container.AddChild(stringEdit);
-							container.AddChild(getSettingInfoData(settingData));
+							content.AddChild(stringEdit);
+							content.AddChild(getSettingInfoData(settingData));
+
+							if (settingData.QuickMenuSettings.Count > 0)
+							{
+								leftToRightLayout.AddChild(CreateQuickMenu(settingData, content, stringEdit.ActualTextEditWidget.InternalTextEditWidget));
+							}
+							else
+							{
+								leftToRightLayout.AddChild(content);
+							}
+						}
+						break;
+
+					case OrganizerSettingsData.DataEditTypes.INT_OR_MM:
+						{
+							FlowLayoutWidget content = new FlowLayoutWidget();
+
+							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
+							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
+							{
+								TextEditWidget textEditWidget = (TextEditWidget)sender;
+								string text = textEditWidget.Text;
+								text = text.Trim();
+								bool isMm = text.Contains("mm");
+								if (isMm)
+								{
+									text = text.Substring(0, text.IndexOf("mm"));
+								}
+								double result;
+								double.TryParse(text, out result);
+								text = result.ToString();
+								if (isMm)
+								{
+									text += "mm";
+								}
+								else
+								{
+									result = (int)result;
+									text = result.ToString();
+								}
+								textEditWidget.Text = text;
+								SaveSetting(settingData.SlicerConfigName, textEditWidget.Text);
+								CallEventsOnSettingsChange(settingData);
+							};
+							stringEdit.SelectAllOnFocus = true;
+
+							stringEdit.ActualTextEditWidget.InternalTextEditWidget.AllSelected += (sender, e) =>
+							{
+								// select evrything up to the mm (if present)
+								InternalTextEditWidget textEditWidget = (InternalTextEditWidget)sender;
+								int mMIndex = textEditWidget.Text.IndexOf("mm");
+								if (mMIndex != -1)
+								{
+									textEditWidget.SetSelection(0, mMIndex - 1);
+								}
+							};
+
+							content.AddChild(stringEdit);
+							content.AddChild(getSettingInfoData(settingData));
+
+							if (settingData.QuickMenuSettings.Count > 0)
+							{
+								leftToRightLayout.AddChild(CreateQuickMenu(settingData, content, stringEdit.ActualTextEditWidget.InternalTextEditWidget));
+							}
+							else
+							{
+								leftToRightLayout.AddChild(content);
+							}
 						}
 						break;
 
