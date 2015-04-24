@@ -3185,3 +3185,15 @@ Translated:The number of layers, or the distance, to skip between the support an
 English:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
 Translated:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
 
+English:The temperature the extruder will be when extruder wipes.
+Translated:The temperature the extruder will be when extruder wipes.
+
+English:The temperature the bed temperature will be set to when part is to be removed.
+Translated:The temperature the bed temperature will be set to when part is to be removed.
+
+English:Extruder Wipe Temperature
+Translated:Extruder Wipe Temperature
+
+English:Bed Remove Part Temperature
+Translated:Bed Remove Part Temperature
+
