@@ -37,6 +37,8 @@ Intermediate
         temperature
         first_layer_bed_temperature
         bed_temperature
+        extruder_wipe_temperature
+        bed_remove_part_temperature
     Cooling
       Enable
         cooling
@@ -199,6 +201,8 @@ Advanced
         temperature
         first_layer_bed_temperature
         bed_temperature
+        extruder_wipe_temperature
+        bed_remove_part_temperature
       Retraction
         retract_length
         retract_length_tool_change

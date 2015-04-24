@@ -3173,3 +3173,21 @@ Translated:On
 English:Off
 Translated:Off
 
+English:The temperature the extruder will be when extruder wipes.
+Translated:The temperature the extruder will be when extruder wipes.
+
+English:Wipe Extruder Temperature
+Translated:Wipe Extruder Temperature
+
+English:The temperature the bed temperature will be set to when part is to be removed.
+Translated:The temperature the bed temperature will be set to when part is to be removed.
+
+English:Remove Part Temperature
+Translated:Remove Part Temperature
+
+English:Extruder Wipe Temperature
+Translated:Extruder Wipe Temperature
+
+English:Bed Remove Part Temperature
+Translated:Bed Remove Part Temperature
+
