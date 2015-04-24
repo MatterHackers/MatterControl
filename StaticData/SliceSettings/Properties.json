@@ -37,9 +37,9 @@
   {
     "SlicerConfigName": "bottom_solid_layers",
     "PresentationName": "Number of Solid Layers\\n on the Bottom:",
-    "HelpText": "How many layers will be solid filled on the bottom surfaces of the object.",
-    "DataEditType": "INT",
-    "ExtraSettings": ""
+    "HelpText": "How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.",
+    "DataEditType": "INT_OR_MM",
+    "ExtraSettings": "count or mm"
   },
   {
     "SlicerConfigName": "bridge_acceleration",
@@ -291,7 +291,7 @@
     "PresentationName": "Fill Density",
     "HelpText": "The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.",
     "DataEditType": "DOUBLE_OR_PERCENT",
-    "ExtraSettings": "Ratio\n(0 to 1)",
+    "ExtraSettings": "% or Ratio",
     "QuickMenuSettings": [{"MenuName" : "Light", "Value": "10%"},{"MenuName" : "Standard", "Value": "30%"},{"MenuName" : "Heavy", "Value": "90%"}]
   },
   {
@@ -901,9 +901,9 @@
   {
     "SlicerConfigName": "support_material_interface_layers",
     "PresentationName": "Interface Layers",
-    "HelpText": "The number of layers to print between the supports and the part.",
-    "DataEditType": "INT",
-    "ExtraSettings": "layers"
+    "HelpText": "The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.",
+    "DataEditType": "INT_OR_MM",
+    "ExtraSettings": "layers or mm"
   },
   {
     "SlicerConfigName": "support_material_interface_spacing",
@@ -958,9 +958,9 @@
   {
     "SlicerConfigName": "support_material_z_gap_layers",
     "PresentationName": "Z Gap",
-    "HelpText": "The number of layers to skip in z. The gap between the support and the model.",
-    "DataEditType": "INT",
-    "ExtraSettings": "layers"
+    "HelpText": "The number of layers, or the distance, to skip between the support and the model. Add mm to the end of the number to specify distance.",
+    "DataEditType": "INT_OR_MM",
+    "ExtraSettings": "layers or mm"
   },
   {
     "SlicerConfigName": "support_material",
@@ -1035,9 +1035,9 @@
   {
     "SlicerConfigName": "top_solid_layers",
     "PresentationName": "Number of Solid Layers\\n on the Top:",
-    "HelpText": "How many layers will be solid filled on the top surfaces of the object.",
-    "DataEditType": "INT",
-    "ExtraSettings": ""
+    "HelpText": "How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.",
+    "DataEditType": "INT_OR_MM",
+    "ExtraSettings": "count or mm"
   },
   {
     "SlicerConfigName": "travel_speed",

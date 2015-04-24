@@ -3173,21 +3173,15 @@ Translated:On
 English:Off
 Translated:Off
 
-English:The temperature the extruder will be when extruder wipes.
-Translated:The temperature the extruder will be when extruder wipes.
+English:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
 
-English:Wipe Extruder Temperature
-Translated:Wipe Extruder Temperature
+English:The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.
+Translated:The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.
 
-English:The temperature the bed temperature will be set to when part is to be removed.
-Translated:The temperature the bed temperature will be set to when part is to be removed.
+English:The number of layers, or the distance, to skip between the support and the model. Add mm to the end of the number to specify distance.
+Translated:The number of layers, or the distance, to skip between the support and the model. Add mm to the end of the number to specify distance.
 
-English:Remove Part Temperature
-Translated:Remove Part Temperature
-
-English:Extruder Wipe Temperature
-Translated:Extruder Wipe Temperature
-
-English:Bed Remove Part Temperature
-Translated:Bed Remove Part Temperature
+English:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
+Translated:How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.
 
