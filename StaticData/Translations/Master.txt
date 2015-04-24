@@ -3196,4 +3196,11 @@ Translated:This will cause the extruder to try to wipe itself after retracting t
 
 English:Calculating Positions...
 Translated:Calculating Positions...
+English:ATX Power Control
+Translated:ATX Power Control
 
+English:Specify if your printer can control the power supply
+Translated:Specify if your printer can control the power supply
+
+English:Has Power Control
+Translated:Has Power Control

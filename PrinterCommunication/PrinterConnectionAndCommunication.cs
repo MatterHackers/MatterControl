@@ -102,6 +102,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
 
+		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
+
+		private bool atxPowerIsOn = false;
+
 		private const int MAX_EXTRUDERS = 16;
 
 		private const int MAX_INVALID_CONNECTION_CHARS = 3;
@@ -274,6 +278,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			WriteLineStartCallBacks.AddCallBackToKey("G90", MovementWasSetToAbsoluteMode);
 			WriteLineStartCallBacks.AddCallBackToKey("G91", MovementWasSetToRelativeMode);
+
+			WriteLineStartCallBacks.AddCallBackToKey("M80", AtxPowerUpWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallBackToKey("M81", AtxPowerDownWasWritenToPrinter);
+
 		}
 
 		private event EventHandler unregisterEvents;
@@ -479,6 +487,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					comPort = this.ActivePrinter.ComPort;
 				}
 				return comPort;
+			}
+		}
+
+		public bool AtxPowerEnabled
+		{
+			get
+			{
+				return atxPowerIsOn;
+			}
+			set
+			{
+				if (value)
+				{
+					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M80");
+				}
+				else
+				{
+					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M81");
+				}
 			}
 		}
 
@@ -2428,6 +2455,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			movementMode = PrinterMachineInstruction.MovementTypes.Relative;
 		}
 
+		private void AtxPowerUpWasWritenToPrinter(object sender, EventArgs e)
+		{
+			OnAtxPowerStateChanged(true);
+		}
+
+		private void AtxPowerDownWasWritenToPrinter(object sender, EventArgs e)
+		{
+			OnAtxPowerStateChanged(false);
+		}
+
 		private void OnActivePrintItemChanged(EventArgs e)
 		{
 			ActivePrintItemChanged.CallEvents(this, e);
@@ -2485,6 +2522,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
 			}
+		}
+
+		private void OnAtxPowerStateChanged(bool enableAtxPower)
+		{
+			atxPowerIsOn = enableAtxPower;
+			AtxPowerStateChanged.CallEvents(this, null);
 		}
 
 		private void partToPrint_SliceDone(object sender, EventArgs e)

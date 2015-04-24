@@ -209,6 +209,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             new VisibleButNotMappedToEngine("", "has_fan"),
             new VisibleButNotMappedToEngine("", "has_hardware_leveling"),
+            new VisibleButNotMappedToEngine("", "has_power_control"),
             new VisibleButNotMappedToEngine("", "has_heated_bed"),
             new VisibleButNotMappedToEngine("", "has_sd_card_reader"),
             new VisibleButNotMappedToEngine("", "z_can_be_negative"),

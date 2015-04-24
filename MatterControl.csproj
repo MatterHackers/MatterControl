@@ -194,6 +194,7 @@
     <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\PowerControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
       <SubType>Code</SubType>
     </Compile>
