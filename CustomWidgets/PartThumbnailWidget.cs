@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-//#define RENDER_RAYTRACED
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
@@ -51,16 +49,35 @@ namespace MatterHackers.MatterControl
 {
 	public class PartThumbnailWidget : ClickWidget
 	{
+		enum RenderType { NONE, ORTHOGROPHIC, RAY_TRACE };
+
+		static RenderType GetRenderType(string pathToMeshFile)
+		{
+			return RenderType.ORTHOGROPHIC;
+		}
+
 		private static BackgroundWorker createThumbnailWorker = null;
 
 		private PrintItemWrapper printItem;
 		private PartPreviewMainWindow partPreviewWindow;
 
-#if RENDER_RAYTRACED
-		Point2D bigRenderSize = new Point2D(115, 115);
-#else
-		Point2D bigRenderSize = new Point2D(460, 460);
-#endif
+		Point2D bigRenderSize
+		{
+			get
+			{
+				switch (GetRenderType(printItem.FileLocation))
+				{
+					case RenderType.RAY_TRACE:
+						return new Point2D(115, 115);
+
+					case RenderType.ORTHOGROPHIC:
+						return new Point2D(460, 460);
+
+					default:
+						return new Point2D(460, 460);
+				}
+			}
+		}
 
 		public PrintItemWrapper PrintItem
 		{
@@ -284,13 +301,16 @@ namespace MatterHackers.MatterControl
 				}
 
 				List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(thumbnailWidget.PrintItem.FileLocation);
-#if RENDER_RAYTRACED
-				ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, bigRenderSize.x, bigRenderSize.y);
-				tracer.DoTrace();
 
-				bigRender = tracer.destImage;
-#else
+				if(GetRenderType(thumbnailWidget.PrintItem.FileLocation) == RenderType.RAY_TRACE)
+				{
+					ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, bigRenderSize.x, bigRenderSize.y);
+					tracer.DoTrace();
 
+					bigRender = tracer.destImage;
+				}
+				else
+				{
 					thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
 					thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
 					bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, bigRenderSize);
@@ -298,7 +318,8 @@ namespace MatterHackers.MatterControl
 					{
 						bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
 					}
-#endif
+				}
+
 				// and save it to disk
 				string imageFileName = GetImageFileName(stlHashCode, bigRenderSize);
 
