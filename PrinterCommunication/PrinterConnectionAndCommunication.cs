@@ -1410,17 +1410,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					Thread.Sleep(100);
 				}
-				catch
+				catch(Exception e)
 				{
+					// Let's track this issue if possible.
+					MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 				}
 				serialPort.RtsEnable = true;
 				serialPort.Close();
 			}
 		}
 
-		public void ReadFromPrinter(object sender, DoWorkEventArgs e)
+		public void ReadFromPrinter(object sender, DoWorkEventArgs args)
 		{
-			ReadThreadHolder readThreadHolder = e.Argument as ReadThreadHolder;
+			ReadThreadHolder readThreadHolder = args.Argument as ReadThreadHolder;
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			timeSinceLastReadAnything.Restart();
@@ -1524,6 +1526,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				catch (UnauthorizedAccessException)
 				{
 					OnConnectionFailed(null);
+				}
+				catch (Exception e)
+				{
+					// Let's track this issue if possible.
+					MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 				}
 			}
 		}
@@ -2799,7 +2806,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						timeSinceLastWrite.Restart();
 						timeHaveBeenWaitingForOK.Restart();
-						serialPort.Write(lineToWrite);
+						using (TimedLock.Lock(this, "serialPort.Write"))
+						{
+							serialPort.Write(lineToWrite);
+						}
 						//Debug.Write("w: " + lineToWrite);
 					}
 					catch (IOException ex)
@@ -2811,6 +2821,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (TimeoutException ex)
 					{
+					}
+					catch (Exception e)
+					{
+						// Let's track this issue if possible.
+						MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 					}
 				}
 				else
