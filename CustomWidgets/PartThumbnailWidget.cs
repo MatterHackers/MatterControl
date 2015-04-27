@@ -305,9 +305,29 @@ namespace MatterHackers.MatterControl
 				if(GetRenderType(thumbnailWidget.PrintItem.FileLocation) == RenderType.RAY_TRACE)
 				{
 					ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, bigRenderSize.x, bigRenderSize.y);
+#if false
+					thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
+					thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+
+					bigRender = new ImageBuffer(bigRenderSize.x, bigRenderSize.y, 32, new BlenderBGRA());
+
+					foreach (MeshGroup meshGroup in loadedMeshGroups)
+					{
+						foreach (Mesh loadedMesh in meshGroup.Meshes)
+						{
+							tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White);
+						}
+					}
+
+					if (bigRender == null)
+					{
+						bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
+					}
+#else
 					tracer.DoTrace();
 
 					bigRender = tracer.destImage;
+#endif
 				}
 				else
 				{

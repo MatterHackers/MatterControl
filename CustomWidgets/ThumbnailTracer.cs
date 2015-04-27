@@ -40,6 +40,7 @@ using System.Diagnostics;
 
 namespace MatterHackers.RayTracer
 {
+	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.RayTracer.Light;
 
 	public class ThumbnailTracer
@@ -62,7 +63,7 @@ namespace MatterHackers.RayTracer
 		private bool SavedTimes = false;
 		private Scene scene;
 		private Point2D size;
-		private TrackballTumbleWidget trackballTumbleWidget;
+		public TrackballTumbleWidget trackballTumbleWidget;
 		public ThumbnailTracer(List<MeshGroup> meshGroups, int width, int height)
 		{
 			size = new Point2D(width, height);
@@ -70,15 +71,15 @@ namespace MatterHackers.RayTracer
 			trackballTumbleWidget.DoOpenGlDrawing = false;
 			trackballTumbleWidget.LocalBounds = new RectangleDouble(0, 0, width, height);
 
-			SetRenderPosition(0);
+			loadedMeshGroup = meshGroups[0];
+			SetRenderPosition(loadedMeshGroup);
 
 			trackballTumbleWidget.AnchorCenter();
-
-			CreateScene(meshGroups);
 		}
 
 		public void DoTrace()
 		{
+			CreateScene();
 			RectangleInt rect = new RectangleInt(0, 0, size.x, size.y);
 			if (destImage == null || destImage.Width != rect.Width || destImage.Height != rect.Height)
 			{
@@ -89,7 +90,7 @@ namespace MatterHackers.RayTracer
 			raytracer.CopyColorBufferToImage(destImage, rect);
 		}
 
-		public void SetRenderPosition(int index)
+		public void SetRenderPosition(MeshGroup loadedMeshGroup)
 		{
 			trackballTumbleWidget.TrackBallController.Reset();
 			trackballTumbleWidget.TrackBallController.Scale = .03;
@@ -97,7 +98,7 @@ namespace MatterHackers.RayTracer
 			trackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
 			trackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 
-			ScaleMeshToView();
+			ScaleMeshToView(loadedMeshGroup);
 		}
 
 		private void AddAFloor()
@@ -114,14 +115,44 @@ namespace MatterHackers.RayTracer
 			//scene.shapes.Add(new PlaneShape(new Vector3(0, 0, 1), 0, new ChessboardMaterial(new RGBA_Floats(1, 1, 1), new RGBA_Floats(0, 0, 0), 0, 0, 1, 0.7)));
 		}
 
-		private void AddTestMesh(List<MeshGroup> meshGroups)
+		public void DrawTo(Graphics2D graphics2D, Mesh meshToDraw, RGBA_Bytes silhouetteColor)
 		{
-			loadedMeshGroup = meshGroups[0];
+			graphics2D.Rasterizer.gamma(new gamma_power(.3));
+			PathStorage polygonProjected = new PathStorage();
+			foreach (Face face in meshToDraw.Faces)
+			{
+				Vector3 normal = Vector3.TransformVector(face.normal, trackballTumbleWidget.ModelviewMatrix);
+				if (normal.z > 0)
+				{
+					polygonProjected.remove_all();
+					bool first = true;
+					foreach (FaceEdge faceEdge in face.FaceEdges())
+					{
+						Vector2 screenPosition = trackballTumbleWidget.GetScreenPosition(faceEdge.firstVertex.Position);
+						if (first)
+						{
+							polygonProjected.MoveTo(screenPosition.x, screenPosition.y);
+							first = false;
+						}
+						else
+						{
+							polygonProjected.LineTo(screenPosition.x, screenPosition.y);
+						}
+					}
+					graphics2D.Render(polygonProjected, silhouetteColor);
+				}
+			}
+			graphics2D.Rasterizer.gamma(new gamma_none());
+		}
+
+		private void AddTestMesh(MeshGroup meshGroup)
+		{
+			loadedMeshGroup = meshGroup;
 			AxisAlignedBoundingBox meshBounds = loadedMeshGroup.GetAxisAlignedBoundingBox();
 			Vector3 meshCenter = meshBounds.Center;
 			loadedMeshGroup.Translate(-meshCenter);
 
-			ScaleMeshToView();
+			ScaleMeshToView(loadedMeshGroup);
 
 			RGBA_Bytes partColor = new RGBA_Bytes(0, 130, 153);
 			partColor = RGBA_Bytes.White;
@@ -130,14 +161,14 @@ namespace MatterHackers.RayTracer
 			renderCollection.Add(bvhCollection);
 		}
 
-		private void CreateScene(List<MeshGroup> meshGroups)
+		private void CreateScene()
 		{
 			scene = new Scene();
 			scene.camera = new TrackBallCamera(trackballTumbleWidget);
 			//scene.background = new Background(new RGBA_Floats(0.5, .5, .5), 0.4);
 			scene.background = new Background(new RGBA_Floats(0, 0, 0, 0), 0.4);
 
-			AddTestMesh(meshGroups);
+			AddTestMesh(loadedMeshGroup);
 
 			allObjects = BoundingVolumeHierarchy.CreateNewHierachy(renderCollection);
 			allObjectsHolder = new Transform(allObjects);
@@ -151,7 +182,7 @@ namespace MatterHackers.RayTracer
 			scene.lights.Add(new PointLight(new Vector3(-5000, -5000, 3000), new RGBA_Floats(0.5, 0.5, 0.5)));
 		}
 
-		private RectangleDouble GetScreenBounds(AxisAlignedBoundingBox meshBounds)
+		private RectangleDouble GetScreenBounds(AxisAlignedBoundingBox meshBounds, MeshGroup loadedMeshGroup)
 		{
 			RectangleDouble screenBounds = RectangleDouble.ZeroIntersection;
 
@@ -180,7 +211,7 @@ namespace MatterHackers.RayTracer
 			return false;
 		}
 
-		private void ScaleMeshToView()
+		private void ScaleMeshToView(MeshGroup loadedMeshGroup)
 		{
 			if (loadedMeshGroup != null)
 			{
@@ -192,12 +223,12 @@ namespace MatterHackers.RayTracer
 				goalBounds.Inflate(-10);
 				while (!done)
 				{
-					RectangleDouble partScreenBounds = GetScreenBounds(meshBounds);
+					RectangleDouble partScreenBounds = GetScreenBounds(meshBounds, loadedMeshGroup);
 
 					if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
 					{
 						trackballTumbleWidget.TrackBallController.Scale *= (1 + scallFraction);
-						partScreenBounds = GetScreenBounds(meshBounds);
+						partScreenBounds = GetScreenBounds(meshBounds, loadedMeshGroup);
 
 						// If it crossed over the goal reduct the amount we are adjusting by.
 						if (NeedsToBeSmaller(partScreenBounds, goalBounds))
@@ -208,7 +239,7 @@ namespace MatterHackers.RayTracer
 					else
 					{
 						trackballTumbleWidget.TrackBallController.Scale *= (1 - scallFraction);
-						partScreenBounds = GetScreenBounds(meshBounds);
+						partScreenBounds = GetScreenBounds(meshBounds, loadedMeshGroup);
 
 						// If it crossed over the goal reduct the amount we are adjusting by.
 						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
