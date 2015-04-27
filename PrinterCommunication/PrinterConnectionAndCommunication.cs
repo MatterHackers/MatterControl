@@ -389,10 +389,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 						#endif
 						break;
+
+					case CommunicationStates.Connected:
+						timeWaitingForTemperature.Stop(); // make sure we try again to send temps
+						break;
 				}
 
 				if (communicationState != value)
 				{
+					CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("Communication State: {0}\n".FormatWith(value.ToString())));
+
 					switch (communicationState)
 					{
 						// if it was printing
@@ -1197,6 +1203,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnIdle()
 		{
+			if (PrinterIsConnected && ReadThreadHolder.NumRunning == 0)
+			{
+				ReadThreadHolder.Start(ReadFromPrinter);
+			}
+
 			if (!temperatureRequestTimer.IsRunning)
 			{
 				temperatureRequestTimer.Start();
@@ -2838,18 +2849,35 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		internal class ReadThreadHolder
 		{
 			private static int currentReadThreadIndex = 0;
-			private readonly int JoinThreadTimeoutMs = 5000;
 			private int creationIndex;
+
+			static int numRunning = 0;
+			public static int NumRunning
+			{
+				get
+				{
+					return numRunning;
+				}
+			}
+
 
 			private ReadThreadHolder(DoWorkEventHandler readFromPrinterFunction)
 			{
+				numRunning++;
 				currentReadThreadIndex++;
 				creationIndex = currentReadThreadIndex;
 
 				BackgroundWorker readFromPrinterWorker = new BackgroundWorker();
 				readFromPrinterWorker.DoWork += readFromPrinterFunction;
+				readFromPrinterWorker.RunWorkerCompleted += readFromPrinterWorker_RunWorkerCompleted;
 
 				readFromPrinterWorker.RunWorkerAsync(this);
+			}
+
+			void readFromPrinterWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+			{
+				PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("Read Thread Has Exited.\n"));
+				numRunning--;
 			}
 
 			internal static void Join()

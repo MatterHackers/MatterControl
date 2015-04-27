@@ -36,7 +36,7 @@
   },
   {
     "SlicerConfigName": "bottom_solid_layers",
-    "PresentationName": "Number of Solid Layers\\n on the Bottom:",
+    "PresentationName": "Bottom Solid Layers:",
     "HelpText": "How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.",
     "DataEditType": "INT_OR_MM",
     "ExtraSettings": "count or mm"
@@ -1020,7 +1020,7 @@
   },
   {
     "SlicerConfigName": "top_solid_layers",
-    "PresentationName": "Number of Solid Layers\\n on the Top:",
+    "PresentationName": "Top Solid Layers:",
     "HelpText": "How many layers, or the distance, that will be solid filled on the top surfaces of the object. Add mm to the end of the number to specify distance.",
     "DataEditType": "INT_OR_MM",
     "ExtraSettings": "count or mm"
