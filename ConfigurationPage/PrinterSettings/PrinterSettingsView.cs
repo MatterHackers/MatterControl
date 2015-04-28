@@ -197,6 +197,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				CheckBox thisControl = sender as CheckBox;
 				PrinterSettings.Instance.set("PublishBedImage", thisControl.Checked ? "true" : "false");
 			};
+			publishImageSwitchContainer.AddChild(toggleSwitch);
 
 			publishImageSwitchContainer.SetBoundsToEncloseChildren();
 
