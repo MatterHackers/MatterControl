@@ -1334,7 +1334,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			string[] splitOnColon = foundStringEventArgs.LineToCheck.Split(':');
 
-			firstLineToResendIndex = int.Parse(splitOnColon[1]) - 1;
+			if(splitOnColon.Length > 1)
+			{
+				int result = 0;
+				if (int.TryParse(splitOnColon[1], out result))
+				{
+					firstLineToResendIndex = result - 1;
+				}
+			}
 		}
 
 		public void PrinterStatesExtensions(object sender, EventArgs e)

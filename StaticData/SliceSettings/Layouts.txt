@@ -35,6 +35,8 @@ Intermediate
         support_material_interface_layers
         support_material_z_gap_layers
         support_material_create_internal_support
+      Support Options
+        support_material_spacing
       Extruders
         support_material_extruder
   Filament
