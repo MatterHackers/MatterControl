@@ -702,13 +702,6 @@
     "ExtraSettings": "mm"
   },
   {
-    "SlicerConfigName": "retract_restart_extra",
-    "PresentationName": "Extra Length On Restart",
-    "HelpText": "The amount of extra extrusion that will occur when an extruder is selected.",
-    "DataEditType": "POSITIVE_DOUBLE",
-    "ExtraSettings": "mm"
-  },
-  {
     "SlicerConfigName": "retract_speed",
     "PresentationName": "Speed",
     "HelpText": "The speed that the filament will be retracted (and re-extruded).",
@@ -1056,7 +1049,7 @@
   {
     "SlicerConfigName": "wipe",
     "PresentationName": "Wipe Before Retract",
-    "HelpText": "This will cause the extruder to move while retracting to minimize blobs.",
+    "HelpText": "This will cause the extruder to try to wipe itself after retracting to minimize strings.",
     "DataEditType": "CHECK_BOX",
     "ExtraSettings": ""
   },

@@ -3191,3 +3191,6 @@ Translated:Top Solid Layers:
 English:Bottom Solid Layers:
 Translated:Bottom Solid Layers:
 
+English:This will cause the extruder to try to wipe itself after retracting to minimize strings.
+Translated:This will cause the extruder to try to wipe itself after retracting to minimize strings.
+

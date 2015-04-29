@@ -52,9 +52,9 @@ Intermediate
         retract_length
         retract_speed
         retract_lift
+        wipe
       Retraction On Tool Change
         retract_restart_extra_toolchange
-        retract_restart_extra
     Cooling
       Fan Speed
         min_fan_speed
@@ -212,7 +212,6 @@ Advanced
         wipe
       Retraction On Tool Change
         retract_restart_extra_toolchange
-        retract_restart_extra
     Extrusion
       Extrusion Width
         extrusion_width
