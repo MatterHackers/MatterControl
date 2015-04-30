@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				xSteps-=3;
+				xSteps-=4;
 				ySteps++;
 			}
 
