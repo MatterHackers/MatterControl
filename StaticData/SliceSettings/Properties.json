@@ -977,6 +977,20 @@
     "ExtraSettings": "degrees"
   },
   {
+    "SlicerConfigName": "extruder_wipe_temperature",
+    "PresentationName": "Extruder Wipe Temperature",
+    "HelpText": "The temperature the extruder will be when extruder wipes.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "bed_remove_part_temperature",
+    "PresentationName": "Bed Remove Part Temperature",
+    "HelpText": "The temperature the bed temperature will be set to when part is to be removed.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
     "SlicerConfigName": "thin_walls",
     "PresentationName": "Thin Walls",
     "HelpText": "Detect when walls are too close together and need to be extruded as just one wall.",

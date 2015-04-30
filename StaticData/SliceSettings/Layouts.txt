@@ -43,11 +43,14 @@ Intermediate
     Filament
       Filament
         filament_diameter
-      Temperature (°C)
+      Extruder Temperature (°C)
         first_layer_temperature
         temperature
+        extruder_wipe_temperature
+      Bed Temperature (°C)
         first_layer_bed_temperature
         bed_temperature
+        bed_remove_part_temperature
       Retraction
         retract_length
         retract_speed
@@ -197,9 +200,11 @@ Advanced
       Extruder Temperature (°C)
         first_layer_temperature
         temperature
+        extruder_wipe_temperature
       Bed Temperature (°C)
         first_layer_bed_temperature
         bed_temperature
+        bed_remove_part_temperature
       Retraction
         retract_length
         retract_length_tool_change

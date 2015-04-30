@@ -213,6 +213,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new VisibleButNotMappedToEngine("", "has_sd_card_reader"),
             new VisibleButNotMappedToEngine("", "z_can_be_negative"),
             new VisibleButNotMappedToEngine("", "show_reset_connection"),
+            new VisibleButNotMappedToEngine("", "extruder_wipe_temperature"),
+            new VisibleButNotMappedToEngine("", "bed_remove_part_temperature"),
 
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
