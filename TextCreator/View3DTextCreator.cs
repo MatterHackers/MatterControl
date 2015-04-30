@@ -365,12 +365,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				{
 					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
 
-					Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
-					totalTransfrom *= Matrix4X4.CreateTranslation(new Vector3(delta));
+					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
+					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
 					meshSelectInfo.lastMoveDelta = delta;
 
 					ScaleRotateTranslate translated = SelectedMeshTransform;
-					translated.translation *= totalTransfrom;
+					translated.translation *= totalTransform;
 					SelectedMeshTransform = translated;
 
 					Invalidate();

@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 
 		public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
 		{
-			AxisAlignedBoundingBox bounds = meshesGroupList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBoxQuick(meshesGroupList[index], meshTransforms[index].TotalTransform);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 			ScaleRotateTranslate moved = meshTransforms[index];
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 
 		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
 		{
-			AxisAlignedBoundingBox bounds = meshesGroupList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBoxQuick(meshesGroupList[index], meshTransforms[index].TotalTransform);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 			ScaleRotateTranslate moved = meshTransforms[index];
@@ -131,6 +131,14 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
+			// first find the bounds of what is already here.
+			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBoxQuick(meshesGroupsToAvoid[0], meshTransforms[0].TotalTransform);
+			for (int i = 1; i < meshesGroupsToAvoid.Count; i++)
+			{
+				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBoxQuick(meshesGroupsToAvoid[i], meshTransforms[i].TotalTransform);
+				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
+			}
+
 			meshesGroupsToAvoid.Add(meshGroupToAdd);
 
 			PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
@@ -140,63 +148,128 @@ namespace MatterHackers.MatterControl
 
 			int meshGroupIndex = meshesGroupsToAvoid.Count - 1;
 
-			// now actually center the part we are going to finde a position for
-			CenterMeshGroupXY(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
+			// move the part to the total bounds lower left side
+			MeshGroup meshGroup = meshesGroupsToAvoid[meshGroupIndex];
+			Vector3 meshLowerLeft = GetAxisAlignedBoundingBoxQuick(meshGroup, meshTransforms[meshGroupIndex].TotalTransform).minXYZ;
+			ScaleRotateTranslate atLowerLeft = meshTransforms[meshGroupIndex];
+			atLowerLeft.translation *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
+			meshTransforms[meshGroupIndex] = atLowerLeft;
 
 			MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
 
 			PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
 		}
 
+		internal class TransformCacheData
+		{
+			internal Matrix4X4 transform;
+			internal AxisAlignedBoundingBox boundingBox;
+		}
+		static Dictionary<MeshGroup, TransformCacheData> transformCache = new Dictionary<MeshGroup, TransformCacheData>();
+		static AxisAlignedBoundingBox GetAxisAlignedBoundingBoxQuick(MeshGroup meshGroup, Matrix4X4 transform)
+		{
+			AxisAlignedBoundingBox boundingBox;
+			if (transformCache.ContainsKey(meshGroup))
+			{
+				if (transformCache[meshGroup].transform == transform)
+				{
+					boundingBox = transformCache[meshGroup].boundingBox;
+				}
+				else
+				{
+					boundingBox = meshGroup.GetAxisAlignedBoundingBox(transform);
+					TransformCacheData data = new TransformCacheData();
+					data.transform = transform;
+					data.boundingBox = boundingBox;
+					transformCache[meshGroup] = data;
+				}
+			}
+			else
+			{
+				boundingBox = meshGroup.GetAxisAlignedBoundingBox(transform);
+				TransformCacheData data = new TransformCacheData();
+				data.transform = transform;
+				data.boundingBox = boundingBox;
+				transformCache.Add(meshGroup, data);
+			}
+
+			 return boundingBox;
+		}
+
 		public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms)
 		{
+			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBoxQuick(allMeshGroups[0], meshTransforms[0].TotalTransform);
+			for (int i = 1; i < meshGroupToMoveIndex; i++)
+			{
+				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBoxQuick(allMeshGroups[i], meshTransforms[i].TotalTransform);
+				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
+			}
+
+			double xStepAmount = 5;
+			double yStepAmount = 5;
+			double xStart = allPlacedMeshBounds.minXYZ.x;
+			double yStart = allPlacedMeshBounds.minXYZ.y;
+
 			MeshGroup meshGroupToMove = allMeshGroups[meshGroupToMoveIndex];
 			// find a place to put it that doesn't hit anything
-			AxisAlignedBoundingBox meshToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(meshTransforms[meshGroupToMoveIndex].TotalTransform);
+			AxisAlignedBoundingBox meshToMoveBounds = GetAxisAlignedBoundingBoxQuick(meshGroupToMove, meshTransforms[meshGroupToMoveIndex].TotalTransform);
 			// add in a few mm so that it will not be touching
 			meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
 			meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
-			double ringDist = Math.Min(meshToMoveBounds.XSize, meshToMoveBounds.YSize);
-			double currentDist = 0;
-			double angle = 0;
-			double angleIncrement = MathHelper.Tau / 64;
-			Matrix4X4 transform;
-			while (true)
+
+			int xSteps = (int)(allPlacedMeshBounds.XSize / xStepAmount) + 2;
+			int ySteps = (int)(allPlacedMeshBounds.YSize / yStepAmount) + 2;
+
+			// If we have to expand the size of the total box should we do it in x or y?
+			if (allPlacedMeshBounds.XSize + meshToMoveBounds.XSize < allPlacedMeshBounds.YSize + meshToMoveBounds.YSize)
 			{
-				Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(currentDist, 0, 0);
-				positionTransform *= Matrix4X4.CreateRotationZ(angle);
-				Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
-				transform = Matrix4X4.CreateTranslation(newPosition);
-				AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
-				bool foundHit = false;
-				for (int i = 0; i < allMeshGroups.Count; i++)
-				{
-					MeshGroup meshToTest = allMeshGroups[i];
-					if (meshToTest != meshGroupToMove)
-					{
-						AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform);
-						AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
-						if (intersection.XSize > 0 && intersection.YSize > 0)
-						{
-							foundHit = true;
-							break;
-						}
-					}
-				}
-
-				if (!foundHit)
-				{
-					break;
-				}
-
-				angle += angleIncrement;
-				if (angle >= MathHelper.Tau)
-				{
-					angle = 0;
-					currentDist += ringDist;
-				}
+				xSteps++;
+			}
+			else
+			{
+				xSteps-=4;
+				ySteps++;
 			}
 
+			Matrix4X4 transform = Matrix4X4.Identity;
+
+			for (int yStep = 0; yStep < ySteps; yStep++)
+			{
+				for (int xStep = 0; xStep < xSteps; xStep++)
+				{
+					Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
+					Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
+					transform = Matrix4X4.CreateTranslation(newPosition);
+					AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
+					bool foundHit = false;
+					for (int i = 0; i < meshGroupToMoveIndex; i++)
+					{
+						MeshGroup meshToTest = allMeshGroups[i];
+						if (meshToTest != meshGroupToMove)
+						{
+							AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBoxQuick(meshToTest, meshTransforms[i].TotalTransform);
+							AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
+							if (intersection.XSize > 0 && intersection.YSize > 0)
+							{
+								foundHit = true;
+								// and move our x-step up past the thing we hit
+								while (xStep * xStepAmount < existingMeshBounds.maxXYZ.x)
+								{
+									xStep++;
+								}
+								break;
+							}
+						}
+					}
+
+					if (!foundHit)
+					{
+						xStep = xSteps;
+						yStep = ySteps;
+					}
+				}
+			}
+	
 			ScaleRotateTranslate moved = meshTransforms[meshGroupToMoveIndex];
 			moved.translation *= transform;
 			meshTransforms[meshGroupToMoveIndex] = moved;
