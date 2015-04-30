@@ -78,7 +78,14 @@ namespace MatterHackers.MatterControl
 
 			AddTemperatureControls(controlsTopToBottomLayout);
 			AddMovementControls(controlsTopToBottomLayout);
-			AddFanControls(controlsTopToBottomLayout);
+
+			FlowLayoutWidget linearPanel = new FlowLayoutWidget();
+			linearPanel.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			controlsTopToBottomLayout.AddChild(linearPanel);
+
+			AddFanControls(linearPanel);
+			AddAtxPowerControls(linearPanel);
+
 			AddMacroControls(controlsTopToBottomLayout);
 			AddAdjustmentControls(controlsTopToBottomLayout);
 
@@ -123,6 +130,11 @@ namespace MatterHackers.MatterControl
 			{
 				controlsTopToBottomLayout.AddChild(fanControlsContainer);
 			}
+		}
+
+		private void AddAtxPowerControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			controlsTopToBottomLayout.AddChild(new PowerControls());
 		}
 
 		private void AddHandlers()

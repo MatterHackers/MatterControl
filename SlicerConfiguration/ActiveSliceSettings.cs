@@ -263,6 +263,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		/// <summary>
+		/// Control the PS_ON pin via M80/81 if enabled in firmware and printer settings, allowing the printer board to toggle off the ATX power supply
+		/// </summary>
+		public bool HasPowerControl
+		{
+			get
+			{
+				return GetActiveValue("has_power_control") == "1";
+			}
+		}
+
 		public bool HasHeatedBed()
 		{
 			return GetActiveValue("has_heated_bed") == "1";
