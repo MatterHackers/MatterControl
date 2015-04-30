@@ -153,6 +153,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),
 
+			new MapItemToBool("wipeAfterRetraction", "wipe"),
+
             new MapItem("supportInfillStartingAngle", "support_material_infill_angle"),
 
             //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
@@ -170,6 +172,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //minimumLayerTimeSeconds=5
             new MapItem("minimumLayerTimeSeconds", "slowdown_below_layer_time"),
 
+			new MapItem("unretractExtraExtrusion", "retract_restart_extra"),
+
             //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
             new MapItem("minimumTravelToCauseRetraction", "retract_before_travel"),
 
@@ -177,13 +181,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //multiVolumeOverlapPercent=0
 
             //numberOfBottomLayers=6
-            new MapItem("numberOfBottomLayers", "bottom_solid_layers"),
+            new AsLayerCountOrDistance("numberOfBottomLayers", "bottom_solid_layers"),
 
             //numberOfSkirtLoops=1 # The number of loops to draw around objects. Can be used to help hold them down.
             new MapItem("numberOfSkirtLoops", "skirts"),
 
             //numberOfTopLayers=6
-            new MapItem("numberOfTopLayers", "top_solid_layers"),
+            new AsLayerCountOrDistance("numberOfTopLayers", "top_solid_layers"),
 
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
             new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
@@ -262,9 +266,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
 
             //supportZDistanceFromObject=1 # The number of layers to skip in z. The gap between the support and the model.
-            new MapItem("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers"),
+            new AsLayerCountOrDistance("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers"),
 
-            new MapItem("supportInterfaceLayers", "support_material_interface_layers"),
+            new AsLayerCountOrDistance("supportInterfaceLayers", "support_material_interface_layers"),
 
             //travelSpeed=200 # The speed to move when not extruding material. mm/s.
             new MapItem("travelSpeed", "travel_speed"),

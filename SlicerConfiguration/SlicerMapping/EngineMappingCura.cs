@@ -75,8 +75,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //layer0extrusionWidth
             new ScaledSingleNumber("extrusionWidth", "nozzle_diameter", 1000),
             new MapItem("insetCount", "perimeters"),
-            new MapItem("downSkinCount", "bottom_solid_layers"),
-            new MapItem("upSkinCount", "top_solid_layers"),
+            new AsLayerCountOrDistance("downSkinCount", "bottom_solid_layers"),
+            new AsLayerCountOrDistance("upSkinCount", "top_solid_layers"),
             new ScaledSingleNumber("skirtDistance", "skirt_distance", 1000),
             new MapItem("skirtLineCount", "skirts"),
             new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),

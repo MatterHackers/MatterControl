@@ -339,6 +339,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
+	public class AsLayerCountOrDistance : MapItem
+	{
+		public AsLayerCountOrDistance(string mappedKey, string originalKey)
+			: base(mappedKey, originalKey)
+		{
+		}
+
+		public override string MappedValue
+		{
+			get
+			{
+				if (OriginalValue.Contains("mm"))
+				{
+					string withoutMm = OriginalValue.Replace("mm", "");
+					int layers = (int)(MapItem.ParseValueString(withoutMm) / ActiveSliceSettings.Instance.LayerHeight + .5);
+					return layers.ToString();
+				}
+
+				return base.MappedValue;
+			}
+		}
+	}
+
 	public class AsPercentOfReferenceOrDirect : ScaledSingleNumber
 	{
 		internal string originalReference;
