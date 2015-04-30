@@ -153,6 +153,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),
 
+			new MapItemToBool("wipeAfterRetraction", "wipe"),
+
             new MapItem("supportInfillStartingAngle", "support_material_infill_angle"),
 
             //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
@@ -169,6 +171,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //minimumLayerTimeSeconds=5
             new MapItem("minimumLayerTimeSeconds", "slowdown_below_layer_time"),
+
+			new MapItem("unretractExtraExtrusion", "retract_restart_extra"),
 
             //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
             new MapItem("minimumTravelToCauseRetraction", "retract_before_travel"),

@@ -80,13 +80,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			iconTextImageButtonFactory.FixedHeight = buttonHeight;
 			iconTextImageButtonFactory.FixedWidth = buttonHeight;
 
-			string translateIconPath = Path.Combine("ViewTransformControls", "2d.png");
-			twoDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", translateIconPath);
+			string select2dIconPath = Path.Combine("ViewTransformControls", "2d.png");
+			twoDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", select2dIconPath);
 			twoDimensionButton.Margin = new BorderDouble(3);
 			AddChild(twoDimensionButton);
 
-			string scaleIconPath = Path.Combine("ViewTransformControls", "3d.png");
-			threeDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", scaleIconPath);
+			string select3dIconPath = Path.Combine("ViewTransformControls", "3d.png");
+			threeDimensionButton = iconTextImageButtonFactory.GenerateRadioButton("", select3dIconPath);
 			threeDimensionButton.Margin = new BorderDouble(3);
 
 			if (ActiveTheme.Instance.DisplayMode != ActiveTheme.ApplicationDisplayType.Touchscreen)
