@@ -402,7 +402,7 @@
       <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
       <Name>Csg</Name>
     </ProjectReference>
-    <ProjectReference Include="SubModules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
       <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
       <Name>DataConverters3D</Name>
     </ProjectReference>
