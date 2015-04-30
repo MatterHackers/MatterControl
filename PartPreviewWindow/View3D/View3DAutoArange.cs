@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			for (int i = 0; i < asynchMeshGroups.Count; i++)
 			{
 				ScaleRotateTranslate translate = asynchMeshGroupTransforms[i];
-				translate.translation *= Matrix4X4.CreateTranslation(1000, 1000, 0);
+				translate.translation *= Matrix4X4.CreateTranslation(10000, 10000, 0);
 				asynchMeshGroupTransforms[i] = translate;
 			}
 
@@ -111,18 +111,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// put them onto the plate (try the center) starting with the biggest and moving down
 			for (int meshGroupIndex = 0; meshGroupIndex < asynchMeshGroups.Count; meshGroupIndex++)
 			{
+				bool continueProcessing2 = true;
+				BackgroundWorker_ProgressChanged(currentRatioDone, "Calculating Positions...".Localize(), out continueProcessing2);
+
 				MeshGroup meshGroup = asynchMeshGroups[meshGroupIndex];
-				Vector3 meshCenter = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[meshGroupIndex].translation).Center;
+				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[meshGroupIndex].TotalTransform).minXYZ;
 				ScaleRotateTranslate atZero = asynchMeshGroupTransforms[meshGroupIndex];
-				atZero.translation = Matrix4X4.Identity;
+				atZero.translation *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 				asynchMeshGroupTransforms[meshGroupIndex] = atZero;
+
 				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, asynchPlatingDatas, asynchMeshGroups, asynchMeshGroupTransforms);
 
 				// and create the trace info so we can select it
-				PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, meshGroupIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
+				if (asynchPlatingDatas[meshGroupIndex].meshTraceableData.Count == 0)
 				{
-					BackgroundWorker_ProgressChanged(progress0To1, processingState, out continueProcessing);
-				});
+					PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, meshGroupIndex, null);
+				}
 
 				currentRatioDone += ratioPerMeshGroup;
 
