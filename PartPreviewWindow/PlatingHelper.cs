@@ -186,62 +186,80 @@ namespace MatterHackers.MatterControl
 			meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
 			meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
 
-			int xSteps = (int)(allPlacedMeshBounds.XSize / xStepAmount) + 2;
-			int ySteps = (int)(allPlacedMeshBounds.YSize / yStepAmount) + 2;
-
-			// If we have to expand the size of the total box should we do it in x or y?
-			if (allPlacedMeshBounds.XSize + meshToMoveBounds.XSize < allPlacedMeshBounds.YSize + meshToMoveBounds.YSize)
-			{
-				xSteps++;
-			}
-			else
-			{
-				xSteps-=4;
-				ySteps++;
-			}
-
 			Matrix4X4 transform = Matrix4X4.Identity;
-
-			for (int yStep = 0; yStep < ySteps; yStep++)
+			int currentSize = 1;
+			bool partPlaced = false;
+			while (!partPlaced && meshGroupToMoveIndex > 0)
 			{
-				for (int xStep = 0; xStep < xSteps; xStep++)
+				int yStep = 0;
+				int xStep = currentSize;
+				// check far right edge
+				for (yStep = 0; yStep < currentSize; yStep++)
 				{
-					Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
-					Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
-					transform = Matrix4X4.CreateTranslation(newPosition);
-					AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
-					bool foundHit = false;
-					for (int i = 0; i < meshGroupToMoveIndex; i++)
+					CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, xStepAmount, yStepAmount, meshGroupToMove, meshToMoveBounds, ref transform, ref partPlaced, yStep, xStep);
+
+					if (partPlaced)
 					{
-						MeshGroup meshToTest = allMeshGroups[i];
-						if (meshToTest != meshGroupToMove)
+						break;
+					}
+				}
+
+				if (!partPlaced)
+				{
+					yStep = currentSize;
+					// check top edeg 
+					for (xStep = 0; xStep < currentSize; xStep++)
+					{
+						CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, xStepAmount, yStepAmount, meshGroupToMove, meshToMoveBounds, ref transform, ref partPlaced, yStep, xStep);
+
+						if (partPlaced)
 						{
-							AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBox(meshToTest, meshTransforms[i].TotalTransform);
-							AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
-							if (intersection.XSize > 0 && intersection.YSize > 0)
-							{
-								foundHit = true;
-								// and move our x-step up past the thing we hit
-								while (xStep * xStepAmount < existingMeshBounds.maxXYZ.x)
-								{
-									xStep++;
-								}
-								break;
-							}
+							break;
 						}
 					}
 
-					if (!foundHit)
+					if (!partPlaced)
 					{
-						xStep = xSteps;
-						yStep = ySteps;
+						xStep = currentSize;
+						// check top right point
+						CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, xStepAmount, yStepAmount, meshGroupToMove, meshToMoveBounds, ref transform, ref partPlaced, yStep, xStep);
 					}
 				}
+
+				currentSize++;
 			}
-	
+
 			ScaleRotateTranslate moved = meshTransforms[meshGroupToMoveIndex];
 			moved.translation *= transform;
 			meshTransforms[meshGroupToMoveIndex] = moved;
+		}
+
+		private static void CheckPosition(int meshGroupToMoveIndex, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms, double xStepAmount, double yStepAmount, MeshGroup meshGroupToMove, AxisAlignedBoundingBox meshToMoveBounds, ref Matrix4X4 transform, ref bool partPlaced, int yStep, int xStep)
+		{
+			Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
+			Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
+			transform = Matrix4X4.CreateTranslation(newPosition);
+			AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
+			bool foundHit = false;
+			for (int i = 0; i < meshGroupToMoveIndex; i++)
+			{
+				MeshGroup meshToTest = allMeshGroups[i];
+				if (meshToTest != meshGroupToMove)
+				{
+					AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBox(meshToTest, meshTransforms[i].TotalTransform);
+					AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
+					if (intersection.XSize > 0 && intersection.YSize > 0)
+					{
+						foundHit = true;
+						break;
+					}
+				}
+			}
+
+			if (!foundHit)
+			{
+				partPlaced = true;
+			}
 		}
 
 		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio reportProgress)
