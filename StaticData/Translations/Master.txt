@@ -3203,4 +3203,20 @@ English:Specify if your printer can control the power supply
 Translated:Specify if your printer can control the power supply
 
 English:Has Power Control
-Translated:Has Power Control
+Translated:Has Power ControlEnglish:The temperature the extruder will be when extruder wipes.
+
+English:The temperature the bed temperature will be set to when part is to be removed.
+Translated:The temperature the bed temperature will be set to when part is to be removed.
+
+English:Extruder Wipe Temperature
+Translated:Extruder Wipe Temperature
+
+English:Bed Remove Part Temperature
+Translated:Bed Remove Part Temperature
+
+	English:The temperature the extruder will be when extruder wipes.
+Translated:The temperature the extruder will be when extruder wipes.
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:The temperature the extruder will be when extruder wipes.
+

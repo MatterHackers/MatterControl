@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 
 		public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
 		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBoxQuick(meshesGroupList[index], meshTransforms[index].TotalTransform);
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index].TotalTransform);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 			ScaleRotateTranslate moved = meshTransforms[index];
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 
 		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
 		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBoxQuick(meshesGroupList[index], meshTransforms[index].TotalTransform);
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index].TotalTransform);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 			ScaleRotateTranslate moved = meshTransforms[index];
@@ -132,10 +132,10 @@ namespace MatterHackers.MatterControl
 			}
 
 			// first find the bounds of what is already here.
-			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBoxQuick(meshesGroupsToAvoid[0], meshTransforms[0].TotalTransform);
+			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[0], meshTransforms[0].TotalTransform);
 			for (int i = 1; i < meshesGroupsToAvoid.Count; i++)
 			{
-				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBoxQuick(meshesGroupsToAvoid[i], meshTransforms[i].TotalTransform);
+				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[i], meshTransforms[i].TotalTransform);
 				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
 			}
 
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 
 			// move the part to the total bounds lower left side
 			MeshGroup meshGroup = meshesGroupsToAvoid[meshGroupIndex];
-			Vector3 meshLowerLeft = GetAxisAlignedBoundingBoxQuick(meshGroup, meshTransforms[meshGroupIndex].TotalTransform).minXYZ;
+			Vector3 meshLowerLeft = GetAxisAlignedBoundingBox(meshGroup, meshTransforms[meshGroupIndex].TotalTransform).minXYZ;
 			ScaleRotateTranslate atLowerLeft = meshTransforms[meshGroupIndex];
 			atLowerLeft.translation *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 			meshTransforms[meshGroupIndex] = atLowerLeft;
@@ -160,48 +160,17 @@ namespace MatterHackers.MatterControl
 			PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
 		}
 
-		internal class TransformCacheData
+		static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(MeshGroup meshGroup, Matrix4X4 transform)
 		{
-			internal Matrix4X4 transform;
-			internal AxisAlignedBoundingBox boundingBox;
-		}
-		static Dictionary<MeshGroup, TransformCacheData> transformCache = new Dictionary<MeshGroup, TransformCacheData>();
-		static AxisAlignedBoundingBox GetAxisAlignedBoundingBoxQuick(MeshGroup meshGroup, Matrix4X4 transform)
-		{
-			AxisAlignedBoundingBox boundingBox;
-			if (transformCache.ContainsKey(meshGroup))
-			{
-				if (transformCache[meshGroup].transform == transform)
-				{
-					boundingBox = transformCache[meshGroup].boundingBox;
-				}
-				else
-				{
-					boundingBox = meshGroup.GetAxisAlignedBoundingBox(transform);
-					TransformCacheData data = new TransformCacheData();
-					data.transform = transform;
-					data.boundingBox = boundingBox;
-					transformCache[meshGroup] = data;
-				}
-			}
-			else
-			{
-				boundingBox = meshGroup.GetAxisAlignedBoundingBox(transform);
-				TransformCacheData data = new TransformCacheData();
-				data.transform = transform;
-				data.boundingBox = boundingBox;
-				transformCache.Add(meshGroup, data);
-			}
-
-			 return boundingBox;
+			return meshGroup.GetAxisAlignedBoundingBox(transform);
 		}
 
 		public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms)
 		{
-			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBoxQuick(allMeshGroups[0], meshTransforms[0].TotalTransform);
+			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[0], meshTransforms[0].TotalTransform);
 			for (int i = 1; i < meshGroupToMoveIndex; i++)
 			{
-				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBoxQuick(allMeshGroups[i], meshTransforms[i].TotalTransform);
+				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[i], meshTransforms[i].TotalTransform);
 				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
 			}
 
@@ -212,7 +181,7 @@ namespace MatterHackers.MatterControl
 
 			MeshGroup meshGroupToMove = allMeshGroups[meshGroupToMoveIndex];
 			// find a place to put it that doesn't hit anything
-			AxisAlignedBoundingBox meshToMoveBounds = GetAxisAlignedBoundingBoxQuick(meshGroupToMove, meshTransforms[meshGroupToMoveIndex].TotalTransform);
+			AxisAlignedBoundingBox meshToMoveBounds = GetAxisAlignedBoundingBox(meshGroupToMove, meshTransforms[meshGroupToMoveIndex].TotalTransform);
 			// add in a few mm so that it will not be touching
 			meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
 			meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
@@ -247,7 +216,7 @@ namespace MatterHackers.MatterControl
 						MeshGroup meshToTest = allMeshGroups[i];
 						if (meshToTest != meshGroupToMove)
 						{
-							AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBoxQuick(meshToTest, meshTransforms[i].TotalTransform);
+							AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBox(meshToTest, meshTransforms[i].TotalTransform);
 							AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
 							if (intersection.XSize > 0 && intersection.YSize > 0)
 							{
