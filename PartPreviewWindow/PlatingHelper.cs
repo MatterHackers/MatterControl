@@ -174,8 +174,6 @@ namespace MatterHackers.MatterControl
 				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
 			}
 
-			double xStepAmount = 5;
-			double yStepAmount = 5;
 			double xStart = allPlacedMeshBounds.minXYZ.x;
 			double yStart = allPlacedMeshBounds.minXYZ.y;
 
@@ -196,7 +194,7 @@ namespace MatterHackers.MatterControl
 				// check far right edge
 				for (yStep = 0; yStep < currentSize; yStep++)
 				{
-					CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, xStepAmount, yStepAmount, meshGroupToMove, meshToMoveBounds, ref transform, ref partPlaced, yStep, xStep);
+					partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
 
 					if (partPlaced)
 					{
@@ -210,7 +208,7 @@ namespace MatterHackers.MatterControl
 					// check top edeg 
 					for (xStep = 0; xStep < currentSize; xStep++)
 					{
-						CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, xStepAmount, yStepAmount, meshGroupToMove, meshToMoveBounds, ref transform, ref partPlaced, yStep, xStep);
+						partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
 
 						if (partPlaced)
 						{
@@ -222,7 +220,7 @@ namespace MatterHackers.MatterControl
 					{
 						xStep = currentSize;
 						// check top right point
-						CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, xStepAmount, yStepAmount, meshGroupToMove, meshToMoveBounds, ref transform, ref partPlaced, yStep, xStep);
+						partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
 					}
 				}
 
@@ -234,8 +232,11 @@ namespace MatterHackers.MatterControl
 			meshTransforms[meshGroupToMoveIndex] = moved;
 		}
 
-		private static void CheckPosition(int meshGroupToMoveIndex, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms, double xStepAmount, double yStepAmount, MeshGroup meshGroupToMove, AxisAlignedBoundingBox meshToMoveBounds, ref Matrix4X4 transform, ref bool partPlaced, int yStep, int xStep)
+		private static bool CheckPosition(int meshGroupToMoveIndex, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms, MeshGroup meshGroupToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
 		{
+			double xStepAmount = 5;
+			double yStepAmount = 5;
+
 			Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
 			Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
 			transform = Matrix4X4.CreateTranslation(newPosition);
@@ -258,8 +259,10 @@ namespace MatterHackers.MatterControl
 
 			if (!foundHit)
 			{
-				partPlaced = true;
+				return true;
 			}
+
+			return false;
 		}
 
 		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio reportProgress)
