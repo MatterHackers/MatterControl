@@ -887,12 +887,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case OrganizerSettingsData.DataEditTypes.POSITIVE_DOUBLE:
 						{
+							const string multiValuesAreDiffernt = "-";
 							FlowLayoutWidget content = new FlowLayoutWidget();
 
 							MHNumberEdit doubleEditWidget = new MHNumberEdit(0, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
 
 							double currentValue = 0;
-							if (settingData.SetSettingsOnChange.Count > 0)
+							bool ChangesMultipleOtherSettings = settingData.SetSettingsOnChange.Count > 0;
+							if (ChangesMultipleOtherSettings)
 							{
 								bool allTheSame = true;
 								string setting = ActiveSliceSettings.Instance.GetActiveValue(settingData.SetSettingsOnChange[0]);								
@@ -910,10 +912,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									double.TryParse(setting.Substring(0, setting.Length-2), out currentValue);
 									doubleEditWidget.ActuallNumberEdit.Value = currentValue;
+									SaveSetting(settingData.SlicerConfigName, currentValue.ToString());
 								}
 								else
 								{
-									doubleEditWidget.ActuallNumberEdit.InternalNumberEdit.Text = "-";
+									doubleEditWidget.ActuallNumberEdit.InternalNumberEdit.Text = multiValuesAreDiffernt;
+									SaveSetting(settingData.SlicerConfigName, multiValuesAreDiffernt);
 								}
 							}
 							else // just set the setting nomrmaly
@@ -927,19 +931,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								NumberEdit numberEdit = (NumberEdit)sender;
 								// If this setting sets other settings, then do that.
-								if (settingData.SetSettingsOnChange.Count > 0 && numberEdit.Text != "-")
+								if (ChangesMultipleOtherSettings
+									&& numberEdit.Text != multiValuesAreDiffernt)
 								{
 									foreach (string setting in settingData.SetSettingsOnChange)
 									{
 										SaveSetting(setting, numberEdit.Value.ToString() + "mm");
-										CallEventsOnSettingsChange(settingData);
 									}
 								}
-								else // just set the setting nomrmaly
-								{
-									SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
-									CallEventsOnSettingsChange(settingData);
-								}
+
+								// also always save to the local setting
+								SaveSetting(settingData.SlicerConfigName, numberEdit.Value.ToString());
+								CallEventsOnSettingsChange(settingData);
 							};
 							doubleEditWidget.SelectAllOnFocus = true;
 
@@ -1369,6 +1372,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SaveSetting(settingData.SlicerConfigName, valueLocal);
 					CallEventsOnSettingsChange(settingData);
 					internalTextWidget.Text = valueLocal;
+					internalTextWidget.OnEditComplete(null);
 				};
 			}
 

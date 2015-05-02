@@ -507,7 +507,7 @@
   },
   {
     "SlicerConfigName": "solid_shell",
-    "PresentationName": "Outer Shell",
+    "PresentationName": "Width",
     "HelpText": "Sets the size of the outer solid surface for the entire print.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm",

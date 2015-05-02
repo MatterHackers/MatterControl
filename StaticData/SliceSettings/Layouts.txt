@@ -9,11 +9,11 @@ Simple
         create_raft
 Intermediate
   Print
-    Layers/Perimeters
+    Layers/Surface
       Layer Height
         layer_height
         first_layer_height
-      Top, Bottom & Perimeters
+      Outer Surface
         solid_shell
     Infill
       Infill
@@ -61,18 +61,18 @@ Intermediate
         max_fan_speed
 Advanced
   Print
-    Layers/Perimeters
+    Layers/Surface
       Layer Height
         layer_height
         first_layer_height
         bottom_clip_amount
-      Perimeters
+      Perimeters Surface
         perimeters
         avoid_crossing_perimeters
         spiral_vase
         randomize_start
         external_perimeters_first
-      Top & Bottom Layers
+      Top & Bottom Surface
         top_solid_layers
         bottom_solid_layers
       Quality
