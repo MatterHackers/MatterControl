@@ -85,8 +85,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public VisibleButNotMappedToEngine(string mappedKey, string originalKey)
-			: base(mappedKey, originalKey)
+		public VisibleButNotMappedToEngine(string originalKey)
+			: base("", originalKey)
 		{
 		}
 	}
@@ -339,11 +339,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class AsLayerCountOrDistance : MapItem
+	public class AsCountOrDistance : MapItem
 	{
-		public AsLayerCountOrDistance(string mappedKey, string originalKey)
+		string keyToUseAsDenominatorForCount;
+		public AsCountOrDistance(string mappedKey, string originalKey, string keyToUseAsDenominatorForCount)
 			: base(mappedKey, originalKey)
 		{
+			this.keyToUseAsDenominatorForCount = keyToUseAsDenominatorForCount;
 		}
 
 		public override string MappedValue
@@ -353,7 +355,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (OriginalValue.Contains("mm"))
 				{
 					string withoutMm = OriginalValue.Replace("mm", "");
-					int layers = (int)(MapItem.ParseValueString(withoutMm) / ActiveSliceSettings.Instance.LayerHeight + .5);
+					string distanceString = ActiveSliceSettings.Instance.GetActiveValue(keyToUseAsDenominatorForCount);
+					double denominator = MapItem.ParseValueString(distanceString, 1);
+					int layers = (int)(MapItem.ParseValueString(withoutMm) / denominator + .5);
 					return layers.ToString();
 				}
 

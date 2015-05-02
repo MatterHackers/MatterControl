@@ -506,6 +506,15 @@
     "QuickMenuSettings": [{"MenuName" : "Fine", "Value": "0.1"},{"MenuName" : "Standard", "Value": "0.2"},{"MenuName" : "Coarse", "Value": "0.3"}]
   },
   {
+    "SlicerConfigName": "solid_shell",
+    "PresentationName": "Outer Shell",
+    "HelpText": "Sets the size of the outer solid surface for the entire print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm",
+    "SetSettingsOnChange": ["bottom_solid_layers", "top_solid_layers", "perimeters"],
+    "QuickMenuSettings": [{"MenuName" : "Minimum", "Value": "0.3"},{"MenuName" : "Standard", "Value": "0.6"},{"MenuName" : "Full", "Value": "1"}]
+  },
+  {
     "SlicerConfigName": "max_fan_speed",
     "PresentationName": "Max Fan Speed",
     "HelpText": "This is the maximum speed that your fan can run at.",
@@ -619,10 +628,10 @@
   },
   {
     "SlicerConfigName": "perimeters",
-    "PresentationName": "Perimeters (minimum)",
-    "HelpText": "The number of external layers or shells to create.",
-    "DataEditType": "INT",
-    "ExtraSettings": ""
+    "PresentationName": "Perimeters",
+    "HelpText": "The number, or total width, of external shells to create. Add mm to the end of the number to specify width.",
+    "DataEditType": "INT_OR_MM",
+    "ExtraSettings": "count or mm"
   },
   {
     "SlicerConfigName": "post_process",

@@ -137,8 +137,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			settingsDetailSelector = new StyledDropDownList("Simple", maxHeight: 200);
-			settingsDetailSelector.AddItem(LocalizedString.Get("Simple"), "Simple");
-			settingsDetailSelector.AddItem(LocalizedString.Get("Intermediate"), "Intermediate");
+			settingsDetailSelector.AddItem(LocalizedString.Get("Basic"), "Simple");
+			settingsDetailSelector.AddItem(LocalizedString.Get("Standard"), "Intermediate");
 			settingsDetailSelector.AddItem(LocalizedString.Get("Advanced"), "Advanced");
 			if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
 				&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
@@ -889,13 +889,57 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							FlowLayoutWidget content = new FlowLayoutWidget();
 
+							MHNumberEdit doubleEditWidget = new MHNumberEdit(0, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
+
 							double currentValue = 0;
-							double.TryParse(sliceSettingValue, out currentValue);
-							MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
+							if (settingData.SetSettingsOnChange.Count > 0)
+							{
+								bool allTheSame = true;
+								string setting = ActiveSliceSettings.Instance.GetActiveValue(settingData.SetSettingsOnChange[0]);								
+								for (int i = 1; i < settingData.SetSettingsOnChange.Count; i++)
+								{
+									string nextSetting = ActiveSliceSettings.Instance.GetActiveValue(settingData.SetSettingsOnChange[i]);
+									if (setting != nextSetting)
+									{
+										allTheSame = false;
+										break;
+									}
+								}
+
+								if (allTheSame && setting.EndsWith("mm"))
+								{
+									double.TryParse(setting.Substring(0, setting.Length-2), out currentValue);
+									doubleEditWidget.ActuallNumberEdit.Value = currentValue;
+								}
+								else
+								{
+									doubleEditWidget.ActuallNumberEdit.InternalNumberEdit.Text = "-";
+								}
+							}
+							else // just set the setting nomrmaly
+							{
+								double.TryParse(sliceSettingValue, out currentValue);
+								doubleEditWidget.ActuallNumberEdit.Value = currentValue;
+							}
+							doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget.MarkAsStartingState();
+
 							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
-								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
-								CallEventsOnSettingsChange(settingData);
+								NumberEdit numberEdit = (NumberEdit)sender;
+								// If this setting sets other settings, then do that.
+								if (settingData.SetSettingsOnChange.Count > 0 && numberEdit.Text != "-")
+								{
+									foreach (string setting in settingData.SetSettingsOnChange)
+									{
+										SaveSetting(setting, numberEdit.Value.ToString() + "mm");
+										CallEventsOnSettingsChange(settingData);
+									}
+								}
+								else // just set the setting nomrmaly
+								{
+									SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
+									CallEventsOnSettingsChange(settingData);
+								}
 							};
 							doubleEditWidget.SelectAllOnFocus = true;
 

@@ -13,11 +13,8 @@ Intermediate
       Layer Height
         layer_height
         first_layer_height
-      Perimeters
-        perimeters
-      Top & Bottom Layers
-        top_solid_layers
-        bottom_solid_layers
+      Top, Bottom & Perimeters
+        solid_shell
     Infill
       Infill
         fill_density
