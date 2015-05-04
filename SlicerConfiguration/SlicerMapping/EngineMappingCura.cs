@@ -74,9 +74,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //filamentFlow
             //layer0extrusionWidth
             new ScaledSingleNumber("extrusionWidth", "nozzle_diameter", 1000),
-            new MapItem("insetCount", "perimeters"),
-            new AsLayerCountOrDistance("downSkinCount", "bottom_solid_layers"),
-            new AsLayerCountOrDistance("upSkinCount", "top_solid_layers"),
+            new AsCountOrDistance("insetCount", "perimeters", "nozzle_diameter"),
+            new AsCountOrDistance("downSkinCount", "bottom_solid_layers", "layer_height"),
+            new AsCountOrDistance("upSkinCount", "top_solid_layers", "layer_height"),
             new ScaledSingleNumber("skirtDistance", "skirt_distance", 1000),
             new MapItem("skirtLineCount", "skirts"),
             new SkirtLengthMaping("skirtMinLength", "min_skirt_length"),
@@ -89,15 +89,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("insetXSpeed", "perimeter_speed"),
             new AsPercentOfReferenceOrDirect("inset0Speed", "external_perimeter_speed", "perimeter_speed"),
 
-            new VisibleButNotMappedToEngine("", "temperature"),
-            new VisibleButNotMappedToEngine("", "bed_temperature"),
-            new VisibleButNotMappedToEngine("", "bed_shape"),
+            new VisibleButNotMappedToEngine("temperature"),
+            new VisibleButNotMappedToEngine("bed_temperature"),
+            new VisibleButNotMappedToEngine("bed_shape"),
 
-            new VisibleButNotMappedToEngine("", "has_fan"),
-            new VisibleButNotMappedToEngine("", "has_heated_bed"),
-            new VisibleButNotMappedToEngine("", "has_hardware_leveling"),
-            new VisibleButNotMappedToEngine("", "has_sd_card_reader"),
-            new VisibleButNotMappedToEngine("", "z_can_be_negative"),
+            new VisibleButNotMappedToEngine("has_fan"),
+            new VisibleButNotMappedToEngine("has_power_control"),
+            new VisibleButNotMappedToEngine("has_heated_bed"),
+            new VisibleButNotMappedToEngine("has_hardware_leveling"),
+            new VisibleButNotMappedToEngine("has_sd_card_reader"),
+            new VisibleButNotMappedToEngine("z_can_be_negative"),
 
             new ScaledSingleNumber("objectSink", "bottom_clip_amount", 1000),
 
@@ -116,17 +117,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             new MapItem("spiralizeMode", "spiral_vase"),
 
-            new VisibleButNotMappedToEngine("", "bed_size"),
+            new VisibleButNotMappedToEngine("bed_size"),
 
             new PrintCenterX("posx", "print_center"),
             new PrintCenterY("posy", "print_center"),
 
-            new VisibleButNotMappedToEngine("", "build_height"),
+            new VisibleButNotMappedToEngine("build_height"),
 
             // needs testing, not working
             new ScaledSingleNumber("supportLineDistance", "support_material_spacing", 1000),
             new SupportMatterial("supportAngle", "support_material"),
-            new VisibleButNotMappedToEngine("", "support_material_threshold"),
+            new VisibleButNotMappedToEngine("support_material_threshold"),
             new MapItem("supportEverywhere", "support_material_create_internal_support"),
             new ScaledSingleNumber("supportXYDistance", "support_material_xy_distance", 1000),
             new ScaledSingleNumber("supportZDistance", "support_material_z_distance", 1000),
@@ -140,9 +141,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapStartGCode("startCode", "start_gcode", false),
             new MapEndGCode("endCode", "end_gcode"),
 
-            new VisibleButNotMappedToEngine("", "pause_gcode"),
-            new VisibleButNotMappedToEngine("", "resume_gcode"),
-            new VisibleButNotMappedToEngine("", "cancel_gcode"),
+            new VisibleButNotMappedToEngine("pause_gcode"),
+            new VisibleButNotMappedToEngine("resume_gcode"),
+            new VisibleButNotMappedToEngine("cancel_gcode"),
 
 #if false
             SETTING(filamentFlow);

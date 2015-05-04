@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 
 		public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
 		{
-			AxisAlignedBoundingBox bounds = meshesGroupList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index].TotalTransform);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 			ScaleRotateTranslate moved = meshTransforms[index];
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 
 		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<ScaleRotateTranslate> meshTransforms, int index)
 		{
-			AxisAlignedBoundingBox bounds = meshesGroupList[index].GetAxisAlignedBoundingBox(meshTransforms[index].TotalTransform);
+			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index].TotalTransform);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 			ScaleRotateTranslate moved = meshTransforms[index];
@@ -131,6 +131,14 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
+			// first find the bounds of what is already here.
+			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[0], meshTransforms[0].TotalTransform);
+			for (int i = 1; i < meshesGroupsToAvoid.Count; i++)
+			{
+				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(meshesGroupsToAvoid[i], meshTransforms[i].TotalTransform);
+				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
+			}
+
 			meshesGroupsToAvoid.Add(meshGroupToAdd);
 
 			PlatingMeshGroupData newMeshInfo = new PlatingMeshGroupData();
@@ -140,66 +148,121 @@ namespace MatterHackers.MatterControl
 
 			int meshGroupIndex = meshesGroupsToAvoid.Count - 1;
 
-			// now actually center the part we are going to finde a position for
-			CenterMeshGroupXY(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
+			// move the part to the total bounds lower left side
+			MeshGroup meshGroup = meshesGroupsToAvoid[meshGroupIndex];
+			Vector3 meshLowerLeft = GetAxisAlignedBoundingBox(meshGroup, meshTransforms[meshGroupIndex].TotalTransform).minXYZ;
+			ScaleRotateTranslate atLowerLeft = meshTransforms[meshGroupIndex];
+			atLowerLeft.translation *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
+			meshTransforms[meshGroupIndex] = atLowerLeft;
 
 			MoveMeshGroupToOpenPosition(meshGroupIndex, perMeshInfo, meshesGroupsToAvoid, meshTransforms);
 
 			PlaceMeshGroupOnBed(meshesGroupsToAvoid, meshTransforms, meshGroupIndex);
 		}
 
+		static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(MeshGroup meshGroup, Matrix4X4 transform)
+		{
+			return meshGroup.GetAxisAlignedBoundingBox(transform);
+		}
+
 		public static void MoveMeshGroupToOpenPosition(int meshGroupToMoveIndex, List<PlatingMeshGroupData> perMeshInfo, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms)
 		{
+			AxisAlignedBoundingBox allPlacedMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[0], meshTransforms[0].TotalTransform);
+			for (int i = 1; i < meshGroupToMoveIndex; i++)
+			{
+				AxisAlignedBoundingBox nextMeshBounds = GetAxisAlignedBoundingBox(allMeshGroups[i], meshTransforms[i].TotalTransform);
+				allPlacedMeshBounds = AxisAlignedBoundingBox.Union(allPlacedMeshBounds, nextMeshBounds);
+			}
+
+			double xStart = allPlacedMeshBounds.minXYZ.x;
+			double yStart = allPlacedMeshBounds.minXYZ.y;
+
 			MeshGroup meshGroupToMove = allMeshGroups[meshGroupToMoveIndex];
 			// find a place to put it that doesn't hit anything
-			AxisAlignedBoundingBox meshToMoveBounds = meshGroupToMove.GetAxisAlignedBoundingBox(meshTransforms[meshGroupToMoveIndex].TotalTransform);
+			AxisAlignedBoundingBox meshToMoveBounds = GetAxisAlignedBoundingBox(meshGroupToMove, meshTransforms[meshGroupToMoveIndex].TotalTransform);
 			// add in a few mm so that it will not be touching
 			meshToMoveBounds.minXYZ -= new Vector3(2, 2, 0);
 			meshToMoveBounds.maxXYZ += new Vector3(2, 2, 0);
-			double ringDist = Math.Min(meshToMoveBounds.XSize, meshToMoveBounds.YSize);
-			double currentDist = 0;
-			double angle = 0;
-			double angleIncrement = MathHelper.Tau / 64;
-			Matrix4X4 transform;
-			while (true)
+
+			Matrix4X4 transform = Matrix4X4.Identity;
+			int currentSize = 1;
+			bool partPlaced = false;
+			while (!partPlaced && meshGroupToMoveIndex > 0)
 			{
-				Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(currentDist, 0, 0);
-				positionTransform *= Matrix4X4.CreateRotationZ(angle);
-				Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
-				transform = Matrix4X4.CreateTranslation(newPosition);
-				AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
-				bool foundHit = false;
-				for (int i = 0; i < allMeshGroups.Count; i++)
+				int yStep = 0;
+				int xStep = currentSize;
+				// check far right edge
+				for (yStep = 0; yStep < currentSize; yStep++)
 				{
-					MeshGroup meshToTest = allMeshGroups[i];
-					if (meshToTest != meshGroupToMove)
+					partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
+
+					if (partPlaced)
 					{
-						AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(meshTransforms[i].TotalTransform);
-						AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
-						if (intersection.XSize > 0 && intersection.YSize > 0)
-						{
-							foundHit = true;
-							break;
-						}
+						break;
 					}
 				}
 
-				if (!foundHit)
+				if (!partPlaced)
 				{
-					break;
+					yStep = currentSize;
+					// check top edeg 
+					for (xStep = 0; xStep < currentSize; xStep++)
+					{
+						partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
+
+						if (partPlaced)
+						{
+							break;
+						}
+					}
+
+					if (!partPlaced)
+					{
+						xStep = currentSize;
+						// check top right point
+						partPlaced = CheckPosition(meshGroupToMoveIndex, allMeshGroups, meshTransforms, meshGroupToMove, meshToMoveBounds, yStep, xStep, ref transform);
+					}
 				}
 
-				angle += angleIncrement;
-				if (angle >= MathHelper.Tau)
-				{
-					angle = 0;
-					currentDist += ringDist;
-				}
+				currentSize++;
 			}
 
 			ScaleRotateTranslate moved = meshTransforms[meshGroupToMoveIndex];
 			moved.translation *= transform;
 			meshTransforms[meshGroupToMoveIndex] = moved;
+		}
+
+		private static bool CheckPosition(int meshGroupToMoveIndex, List<MeshGroup> allMeshGroups, List<ScaleRotateTranslate> meshTransforms, MeshGroup meshGroupToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
+		{
+			double xStepAmount = 5;
+			double yStepAmount = 5;
+
+			Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
+			Vector3 newPosition = Vector3.Transform(Vector3.Zero, positionTransform);
+			transform = Matrix4X4.CreateTranslation(newPosition);
+			AxisAlignedBoundingBox testBounds = meshToMoveBounds.NewTransformed(transform);
+			bool foundHit = false;
+			for (int i = 0; i < meshGroupToMoveIndex; i++)
+			{
+				MeshGroup meshToTest = allMeshGroups[i];
+				if (meshToTest != meshGroupToMove)
+				{
+					AxisAlignedBoundingBox existingMeshBounds = GetAxisAlignedBoundingBox(meshToTest, meshTransforms[i].TotalTransform);
+					AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
+					if (intersection.XSize > 0 && intersection.YSize > 0)
+					{
+						foundHit = true;
+						break;
+					}
+				}
+			}
+
+			if (!foundHit)
+			{
+				return true;
+			}
+
+			return false;
 		}
 
 		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio reportProgress)

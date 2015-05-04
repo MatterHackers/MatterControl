@@ -407,6 +407,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "has_power_control",
+    "PresentationName": "Has Power Control",
+    "HelpText": "Specify if your printer can control the power supply",
+    "DataEditType": "HARDWARE_PRESENT",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "has_sd_card_reader",
     "PresentationName": "Has SD Card Reader",
     "HelpText": "Specify if your printer has the ability to plug in an SD card.",
@@ -497,6 +504,15 @@
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "mm",
     "QuickMenuSettings": [{"MenuName" : "Fine", "Value": "0.1"},{"MenuName" : "Standard", "Value": "0.2"},{"MenuName" : "Coarse", "Value": "0.3"}]
+  },
+  {
+    "SlicerConfigName": "solid_shell",
+    "PresentationName": "Width",
+    "HelpText": "Sets the size of the outer solid surface for the entire print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "mm",
+    "SetSettingsOnChange": ["bottom_solid_layers", "top_solid_layers", "perimeters"],
+    "QuickMenuSettings": [{"MenuName" : "Minimum", "Value": "0.3"},{"MenuName" : "Standard", "Value": "0.6"},{"MenuName" : "Full", "Value": "1"}]
   },
   {
     "SlicerConfigName": "max_fan_speed",
@@ -612,10 +628,10 @@
   },
   {
     "SlicerConfigName": "perimeters",
-    "PresentationName": "Perimeters (minimum)",
-    "HelpText": "The number of external layers or shells to create.",
-    "DataEditType": "INT",
-    "ExtraSettings": ""
+    "PresentationName": "Perimeters",
+    "HelpText": "The number, or total width, of external shells to create. Add mm to the end of the number to specify width.",
+    "DataEditType": "INT_OR_MM",
+    "ExtraSettings": "count or mm"
   },
   {
     "SlicerConfigName": "post_process",
@@ -973,6 +989,20 @@
     "SlicerConfigName": "temperature",
     "PresentationName": "Extruder Temperature",
     "HelpText": "The default temperature to set the extruder to. Can sometimes be overridden on the first layer.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "extruder_wipe_temperature",
+    "PresentationName": "Extruder Wipe Temperature",
+    "HelpText": "The temperature the extruder will be when extruder wipes.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ExtraSettings": "degrees"
+  },
+  {
+    "SlicerConfigName": "bed_remove_part_temperature",
+    "PresentationName": "Bed Remove Part Temperature",
+    "HelpText": "The temperature the bed temperature will be set to when part is to be removed.",
     "DataEditType": "POSITIVE_DOUBLE",
     "ExtraSettings": "degrees"
   },

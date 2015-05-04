@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (actuallTextEditWidget.InternalTextEditWidget.TextHasChanged())
 					{
-						actuallTextEditWidget.InternalTextEditWidget.OnEditComplete();
+						actuallTextEditWidget.InternalTextEditWidget.OnEditComplete(null);
 					}
 					timeSinceLastTextChanged.Stop();
 				}
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (actuallNumberEdit.InternalTextEditWidget.TextHasChanged())
 					{
-						actuallNumberEdit.InternalTextEditWidget.OnEditComplete();
+						actuallNumberEdit.InternalTextEditWidget.OnEditComplete(null);
 					}
 					timeSinceLastTextChanged.Stop();
 				}

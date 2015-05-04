@@ -87,8 +87,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
             new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
 
-            new VisibleButNotMappedToEngine("", "extruder_count"),
-            new VisibleButNotMappedToEngine("", "extruders_share_temperature"),
+            new VisibleButNotMappedToEngine("extruder_count"),
+            new VisibleButNotMappedToEngine("extruders_share_temperature"),
 
             //endCode=M104 S0
             new GCodeForSlicer("endCode", "end_gcode"),
@@ -181,19 +181,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //multiVolumeOverlapPercent=0
 
             //numberOfBottomLayers=6
-            new AsLayerCountOrDistance("numberOfBottomLayers", "bottom_solid_layers"),
+            new AsCountOrDistance("numberOfBottomLayers", "bottom_solid_layers", "layer_height"),
+
+			new VisibleButNotMappedToEngine("solid_shell"),
 
             //numberOfSkirtLoops=1 # The number of loops to draw around objects. Can be used to help hold them down.
             new MapItem("numberOfSkirtLoops", "skirts"),
 
             //numberOfTopLayers=6
-            new AsLayerCountOrDistance("numberOfTopLayers", "top_solid_layers"),
+            new AsCountOrDistance("numberOfTopLayers", "top_solid_layers", "layer_height"),
 
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
             new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
 
             //numberOfPerimeters=2
-            new MapItem("numberOfPerimeters", "perimeters"),
+            new AsCountOrDistance("numberOfPerimeters", "perimeters", "nozzle_diameter"),
 
             //positionToPlaceObjectCenter=[102.5,102.5]
             new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", "print_center"),
@@ -205,14 +207,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
             new MapRepairOutlines("repairOutlines", "repair_outlines_extensive_stitching"),
-            new VisibleButNotMappedToEngine("", "repair_outlines_keep_open"),
+            new VisibleButNotMappedToEngine("repair_outlines_keep_open"),
 
-            new VisibleButNotMappedToEngine("", "has_fan"),
-            new VisibleButNotMappedToEngine("", "has_hardware_leveling"),
-            new VisibleButNotMappedToEngine("", "has_heated_bed"),
-            new VisibleButNotMappedToEngine("", "has_sd_card_reader"),
-            new VisibleButNotMappedToEngine("", "z_can_be_negative"),
-            new VisibleButNotMappedToEngine("", "show_reset_connection"),
+            new VisibleButNotMappedToEngine("has_fan"),
+            new VisibleButNotMappedToEngine("has_hardware_leveling"),
+            new VisibleButNotMappedToEngine("has_power_control"),
+            new VisibleButNotMappedToEngine("has_heated_bed"),
+            new VisibleButNotMappedToEngine("has_sd_card_reader"),
+            new VisibleButNotMappedToEngine("z_can_be_negative"),
+            new VisibleButNotMappedToEngine("show_reset_connection"),
+            new VisibleButNotMappedToEngine("extruder_wipe_temperature"),
+            new VisibleButNotMappedToEngine("bed_remove_part_temperature"),
 
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
@@ -238,7 +243,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			new GCodeForSlicer("toolChangeCode", "toolchange_gcode"),
 
-			new VisibleButNotMappedToEngine("", "heat_extruder_before_homing"),
+			new VisibleButNotMappedToEngine("heat_extruder_before_homing"),
 
             //supportExtruder=1
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
@@ -257,7 +262,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             // get the check box on the screen
             new SupportMatterial("supportEndAngle", "support_material"),
-            new VisibleButNotMappedToEngine("", "support_material_threshold"),
+            new VisibleButNotMappedToEngine("support_material_threshold"),
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
             new MapItem("supportType", "support_type"),
@@ -266,9 +271,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
 
             //supportZDistanceFromObject=1 # The number of layers to skip in z. The gap between the support and the model.
-            new AsLayerCountOrDistance("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers"),
+            new AsCountOrDistance("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers", "layer_height"),
 
-            new AsLayerCountOrDistance("supportInterfaceLayers", "support_material_interface_layers"),
+            new AsCountOrDistance("supportInterfaceLayers", "support_material_interface_layers", "layer_height"),
 
             //travelSpeed=200 # The speed to move when not extruding material. mm/s.
             new MapItem("travelSpeed", "travel_speed"),
@@ -280,16 +285,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
             new MapItem("wipeTowerSize", "wipe_tower_size"),
 
-            new VisibleButNotMappedToEngine("", "pause_gcode"),
-            new VisibleButNotMappedToEngine("", "resume_gcode"),
-            new VisibleButNotMappedToEngine("", "cancel_gcode"),
+            new VisibleButNotMappedToEngine("pause_gcode"),
+            new VisibleButNotMappedToEngine("resume_gcode"),
+            new VisibleButNotMappedToEngine("cancel_gcode"),
 
-            new VisibleButNotMappedToEngine("", "bed_size"),
-            new VisibleButNotMappedToEngine("", "build_height"),
+            new VisibleButNotMappedToEngine("bed_size"),
+            new VisibleButNotMappedToEngine("build_height"),
 
-            new VisibleButNotMappedToEngine("", "temperature"),
-            new VisibleButNotMappedToEngine("", "bed_temperature"),
-            new VisibleButNotMappedToEngine("", "bed_shape"),
+            new VisibleButNotMappedToEngine("temperature"),
+            new VisibleButNotMappedToEngine("bed_temperature"),
+            new VisibleButNotMappedToEngine("bed_shape"),
         };
 
 		public static void WriteMatterSliceSettingsFile(string outputFilename)

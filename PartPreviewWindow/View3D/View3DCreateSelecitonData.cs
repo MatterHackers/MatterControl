@@ -45,8 +45,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				enterEditButtonsContainer.Visible = false;
 			}
 
-			autoArrangeButton.Visible = true;
-
 			if (MeshGroups.Count > 0)
 			{
 				processingProgressControl.Visible = true;
