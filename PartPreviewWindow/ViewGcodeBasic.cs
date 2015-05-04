@@ -259,11 +259,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls2D = new ViewControls2D();
 			AddChild(viewControls2D);
 
-            gradient = new ColorGradientWidget();
-            gradient.VAnchor = Agg.UI.VAnchor.ParentTop;
-            gradient.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-            AddChild(gradient);
-
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 			viewControls3D.PartSelectVisible = false;
 			AddChild(viewControls3D);
@@ -926,6 +921,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerRenderRatioSlider.SecondValue = 1;
 				layerRenderRatioSlider.SecondValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
 				AddChild(layerRenderRatioSlider);
+
+                CloseIfNotNull(gradient);
+                gradient = new ColorGradientWidget(gcodeViewWidget.LoadedGCode);
+                AddChild(gradient);
 
 				SetSliderSizes();
 
