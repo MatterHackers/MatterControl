@@ -3220,3 +3220,21 @@ Translated:The temperature the extruder will be when extruder wipes.
 English:The temperature the extruder will be when extruder wipes.
 Translated:The temperature the extruder will be when extruder wipes.
 
+English:Basic
+Translated:Basic
+
+English:Sets the size of the outer solid surface for the entire print.
+Translated:Sets the size of the outer solid surface for the entire print.
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+Translated:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+
+English:Layers/Surface
+Translated:Layers/Surface
+
+English:Width
+Translated:Width
+
+English:Arrange
+Translated:Arrange
+
