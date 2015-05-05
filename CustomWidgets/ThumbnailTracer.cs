@@ -115,13 +115,18 @@ namespace MatterHackers.RayTracer
 			//scene.shapes.Add(new PlaneShape(new Vector3(0, 0, 1), 0, new ChessboardMaterial(new RGBA_Floats(1, 1, 1), new RGBA_Floats(0, 0, 0), 0, 0, 1, 0.7)));
 		}
 
-		public void DrawTo(Graphics2D graphics2D, Mesh meshToDraw, RGBA_Bytes silhouetteColor)
+		static Vector3 lightNormal = (new Vector3(-1, 1, 1)).GetNormal();
+		static RGBA_Floats lightIllumination = new RGBA_Floats(1, 1, 1);
+		static RGBA_Floats ambiantIllumination = new RGBA_Floats(.4, .4, .4);
+
+		public void DrawTo(Graphics2D graphics2D, Mesh meshToDraw, RGBA_Bytes partColorIn)
 		{
+			RGBA_Floats partColor = partColorIn.GetAsRGBA_Floats();
 			graphics2D.Rasterizer.gamma(new gamma_power(.3));
 			PathStorage polygonProjected = new PathStorage();
 			foreach (Face face in meshToDraw.Faces)
 			{
-				Vector3 normal = Vector3.TransformVector(face.normal, trackballTumbleWidget.ModelviewMatrix);
+				Vector3 normal = Vector3.TransformVector(face.normal, trackballTumbleWidget.ModelviewMatrix).GetNormal();
 				if (normal.z > 0)
 				{
 					polygonProjected.remove_all();
@@ -139,7 +144,18 @@ namespace MatterHackers.RayTracer
 							polygonProjected.LineTo(screenPosition.x, screenPosition.y);
 						}
 					}
-					graphics2D.Render(polygonProjected, silhouetteColor);
+
+					RGBA_Floats polyDrawColor = new RGBA_Floats();
+					double L = Vector3.Dot(lightNormal, normal);
+					if (L > 0.0f)
+					{
+						polyDrawColor = partColor * lightIllumination * L;
+					}
+
+					polyDrawColor = RGBA_Floats.ComponentMax(polyDrawColor, partColor * ambiantIllumination);
+
+					polyDrawColor.Alpha0To1 = 1;
+					graphics2D.Render(polygonProjected, polyDrawColor.GetAsRGBA_Bytes());
 				}
 			}
 			graphics2D.Rasterizer.gamma(new gamma_none());
