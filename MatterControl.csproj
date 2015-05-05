@@ -226,8 +226,6 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayer.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayers.cs" />
-    <Compile Include="SlicerConfiguration\Slicing\Tests\SliceLayersTests.cs" />
-    <Compile Include="SlicerConfiguration\Slicing\Tests\UnitTests.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
@@ -245,8 +243,6 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMapingBase.cs" />
-    <Compile Include="Testing\ReleaseTests.cs" />
-    <Compile Include="Testing\TestingDispatch.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelPages.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />
@@ -358,9 +354,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Posix" />
-    <Reference Include="nunit.framework">
-      <HintPath>Submodules\agg-sharp\AggTests\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK">
       <HintPath>Submodules\agg-sharp\PlatformWin32\OpenTK.dll</HintPath>
     </Reference>
