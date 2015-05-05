@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private CheckBox expandModelOptions;
 		private CheckBox expandDisplayOptions;
 		private CheckBox syncToPrint;
+        private CheckBox showSpeeds;
 
 		private GuiWidget gcodeDisplayWidget;
 
@@ -567,19 +568,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show speed checkbox
 			{
-                CheckBox showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showSpeeds.Checked = gcodeViewWidget.RenderSpeeds;
+                //showSpeeds.Checked = gradient.Visible;
 				showSpeeds.CheckedStateChanged += (sender, e) =>
 				{
-
-                    if (showSpeeds.Checked)
-                    {
-                        gradient.Visible = true;
-                    }
-                    else
+                    
+                   /* if (!showSpeeds.Checked)
                     {
                         gradient.Visible = false;
                     }
+                    else
+                    {
+                        gradient.Visible = true;
+                    }*/
+                     
+                    gradient.Visible = showSpeeds.Checked;
 
 					gcodeViewWidget.RenderSpeeds = showSpeeds.Checked;
                    
@@ -894,7 +898,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& gcodeViewWidget.LoadedGCode != null
 				&& gcodeViewWidget.LoadedGCode.LineCount > 0)
 			{
+
+                CloseIfNotNull(gradient);
+                gradient = new ColorGradientWidget(gcodeViewWidget.LoadedGCode);
+                AddChild(gradient);
+                gradient.Visible = false;
+
+                
+
 				CreateOptionsContent();
+                setGradientVisibility();
 				buttonRightPanel.Visible = true;
 				viewControlsToggle.Visible = true;
 
@@ -922,9 +935,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerRenderRatioSlider.SecondValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
 				AddChild(layerRenderRatioSlider);
 
-                CloseIfNotNull(gradient);
-                gradient = new ColorGradientWidget(gcodeViewWidget.LoadedGCode);
-                AddChild(gradient);
+                
+              
 
 				SetSliderSizes();
 
@@ -937,6 +949,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.partProcessingInfo.Visible = false;
 			}
 		}
+
+        private void setGradientVisibility()
+        {
+            if (showSpeeds.Checked)
+            {
+                gradient.Visible = true;
+            }
+            else
+            {
+                gradient.Visible = false;
+            }
+
+            
+
+        }
 
 		private void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
 		{

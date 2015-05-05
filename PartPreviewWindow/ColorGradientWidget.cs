@@ -64,8 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
                 colorWidget.BackgroundColor = color;
                 colorWidget.Margin = new BorderDouble(2);
 
-                ColorToSpeedWidget test = new ColorToSpeedWidget(colorWidget, speed.ToString());
-                this.AddChild(test);
+                ColorToSpeedWidget colorToSpeedWidget = new ColorToSpeedWidget(colorWidget, speed.ToString());
+                this.AddChild(colorToSpeedWidget);
                 
             }
 
