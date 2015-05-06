@@ -99,6 +99,10 @@ namespace MatterHackers.MatterControl
 				string commandUpper = command.ToUpper();
 				switch (commandUpper)
 				{
+					case "TEST":
+						CheckKnownAssemblyConditionalCompSymbols();
+						return;
+
 					case "FORCE_SOFTWARE_RENDERING":
 						forceSofwareRendering = true;
 						GL.ForceSoftwareRendering();
