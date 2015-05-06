@@ -311,16 +311,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				if (File.Exists(item.FileLocation)
 					&& checkSize == ValidateSizeOn32BitSystems.Required)
 				{
-					switch (Path.GetExtension(item.FileLocation).ToUpper())
-					{
-						case ".STL":
-							estimatedMemoryUse = StlProcessing.GetEstimatedMemoryUse(item.FileLocation);
-							break;
-
-						case ".AMF":
-							estimatedMemoryUse = AmfProcessing.GetEstimatedMemoryUse(item.FileLocation);
-							break;
-					}
+					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(item.FileLocation);
 
 					if (OsInformation.OperatingSystem == OSType.Android)
 					{
