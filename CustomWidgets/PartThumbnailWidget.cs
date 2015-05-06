@@ -48,6 +48,12 @@ namespace MatterHackers.MatterControl
 {
 	public class PartThumbnailWidget : ClickWidget
 	{
+		const int tooBigAndroid = 50000000;
+		const int tooBigDesktop = 250000000;
+
+		const int renderOrthoAndroid = 20000000;
+		const int renderOrthoDesktop = 100000000;
+
 		// all the color stuff
 		new public double BorderWidth = 0;
 
@@ -318,10 +324,37 @@ namespace MatterHackers.MatterControl
 			return imageFileName;
 		}
 
-		private static RenderType GetRenderType(string pathToMeshFile)
+		private static RenderType GetRenderType(string fileLocation)
 		{
 			return RenderType.ORTHOGROPHIC;
+
+			if (Is32Bit())
+			{
+				long estimatedMemoryUse = 0;
+				if (File.Exists(fileLocation))
+				{
+					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(fileLocation);
+
+					if (OsInformation.OperatingSystem == OSType.Android)
+					{
+						if (estimatedMemoryUse > renderOrthoAndroid)
+						{
+							return RenderType.ORTHOGROPHIC;
+						}
+					}
+					else
+					{
+						if (estimatedMemoryUse > renderOrthoDesktop)
+						{
+							return RenderType.ORTHOGROPHIC;
+						}
+					}
+				}
+			}
+
+			return RenderType.RAY_TRACE;
 		}
+
 		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)
 		{
 			ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
@@ -393,9 +426,16 @@ namespace MatterHackers.MatterControl
 
 							foreach (MeshGroup meshGroup in loadedMeshGroups)
 							{
+								double minZ = double.MaxValue;
+								double maxZ = double.MinValue;
 								foreach (Mesh loadedMesh in meshGroup.Meshes)
 								{
-									tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White);
+									tracer.GetMinMaxZ(loadedMesh, ref minZ, ref maxZ);
+								}
+
+								foreach (Mesh loadedMesh in meshGroup.Meshes)
+								{
+									tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White, minZ, maxZ);
 								}
 							}
 
@@ -406,6 +446,7 @@ namespace MatterHackers.MatterControl
 						}
 						break;
 
+					case RenderType.NONE:
 					case RenderType.ORTHOGROPHIC:
 
 						thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
@@ -586,6 +627,19 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(this.EnsureImageUpdated);
 				return true;
 			}
+			else if (MeshIsTooBigToLoad(this.PrintItem.FileLocation))
+			{
+				CreateImage(this, Width, Height);
+				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
+				Graphics2D graphics = this.thumbnailImage.NewGraphics2D();
+				Vector2 center = new Vector2(Width / 2.0, Height / 2.0);
+				double yOffset = 8 * Width / 50 * TextWidget.GlobalPointSizeScaleRatio * 1.5;
+				graphics.DrawString("Too Big\nto\nRender", center.x, center.y + yOffset, 8 * Width / 50, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter, color: RGBA_Bytes.White);
+
+				UiThread.RunOnIdle(this.EnsureImageUpdated);
+				return true;
+				//GetRenderType(thumbnailWidget.PrintItem.FileLocation);
+			}
 
 			string stlHashCode = this.PrintItem.FileHashCode.ToString();
 
@@ -617,6 +671,46 @@ namespace MatterHackers.MatterControl
 
 			return true;
 		}
+
+		private static bool Is32Bit()
+		{
+			if (IntPtr.Size == 4)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool MeshIsTooBigToLoad(string fileLocation)
+		{
+			if (Is32Bit())
+			{
+				long estimatedMemoryUse = 0;
+				if (File.Exists(fileLocation))
+				{
+					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(fileLocation);
+
+					if (OsInformation.OperatingSystem == OSType.Android)
+					{
+						if (estimatedMemoryUse > tooBigAndroid)
+						{
+							return true;
+						}
+					}
+					else
+					{
+						if (estimatedMemoryUse > tooBigDesktop)
+						{
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
 		private void TryLoad(object sender, DoWorkEventArgs e)
 		{
 			using (TimedLock.Lock(this, "TryLoad"))

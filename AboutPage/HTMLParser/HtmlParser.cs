@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -44,75 +43,6 @@ namespace MatterHackers.MatterControl.HtmlParsing
 		public delegate void ProcessContent(HtmlParser htmlParser, string content);
 
 		public ElementState CurrentElementState { get { return elementQueue.Peek(); } }
-
-		[Test]
-		public static void TestSplitOnSpacesNotInQuotes()
-		{
-			{
-				string test1 = "one two three";
-				string[] results = SplitOnSpacesNotInQuotes(test1);
-				Assert.IsTrue(results.Length == 3);
-				Assert.IsTrue(results[0] == "one");
-				Assert.IsTrue(results[1] == "two");
-				Assert.IsTrue(results[2] == "three");
-			}
-
-			{
-				string test1 = "one 'two three' four";
-				string[] results = SplitOnSpacesNotInQuotes(test1);
-				Assert.IsTrue(results.Length == 3);
-				Assert.IsTrue(results[0] == "one");
-				Assert.IsTrue(results[1] == "'two three'");
-				Assert.IsTrue(results[2] == "four");
-			}
-
-			{
-				string test1 = "one 'two three''four' five";
-				string[] results = SplitOnSpacesNotInQuotes(test1);
-				Assert.IsTrue(results.Length == 3);
-				Assert.IsTrue(results[0] == "one");
-				Assert.IsTrue(results[1] == "'two three''four'");
-				Assert.IsTrue(results[2] == "five");
-			}
-
-			{
-				string test1 = "one \"two three\" four";
-				string[] results = SplitOnSpacesNotInQuotes(test1);
-				Assert.IsTrue(results.Length == 3);
-				Assert.IsTrue(results[0] == "one");
-				Assert.IsTrue(results[1] == "\"two three\"");
-				Assert.IsTrue(results[2] == "four");
-			}
-
-			{
-				string test1 = "one \"'two' three\" four";
-				string[] results = SplitOnSpacesNotInQuotes(test1);
-				Assert.IsTrue(results.Length == 3);
-				Assert.IsTrue(results[0] == "one");
-				Assert.IsTrue(results[1] == "\"'two' three\"");
-				Assert.IsTrue(results[2] == "four");
-			}
-
-			{
-				string test1 = "one '\"two\" three' four";
-				string[] results = SplitOnSpacesNotInQuotes(test1);
-				Assert.IsTrue(results.Length == 3);
-				Assert.IsTrue(results[0] == "one");
-				Assert.IsTrue(results[1] == "'\"two\" three'");
-				Assert.IsTrue(results[2] == "four");
-			}
-
-			{
-				string test1 = "<img src=\"https://lh6.ggpht.com/FMF8JYN2rGgceXpkG1GTUlmS4Z7qfron0Fm9NDi1Oqxg_TmDLMIThQuvnBXHhJD38_GK3RSnxFCX28Cp5ekxRhzx6g=s243\" alt=\"White PLA Filament - 1.75mm\" title=\"White PLA Filament - 1.75mm\" style=\"width:243px;height:183px;\">";
-				string[] results = SplitOnSpacesNotInQuotes(test1);
-				Assert.IsTrue(results.Length == 5);
-				Assert.IsTrue(results[0] == "<img");
-				Assert.IsTrue(results[1] == "src=\"https://lh6.ggpht.com/FMF8JYN2rGgceXpkG1GTUlmS4Z7qfron0Fm9NDi1Oqxg_TmDLMIThQuvnBXHhJD38_GK3RSnxFCX28Cp5ekxRhzx6g=s243\"");
-				Assert.IsTrue(results[2] == "alt=\"White PLA Filament - 1.75mm\"");
-				Assert.IsTrue(results[3] == "title=\"White PLA Filament - 1.75mm\"");
-				Assert.IsTrue(results[4] == "style=\"width:243px;height:183px;\">");
-			}
-		}
 
 		public static string UrlDecode(string htmlContent)
 		{
@@ -247,8 +177,6 @@ namespace MatterHackers.MatterControl.HtmlParsing
 
 		private void ParseTypeContent(int openPosition, int closePosition, string htmlContent)
 		{
-			TestSplitOnSpacesNotInQuotes();
-
 			string text = htmlContent.Substring(openPosition, closePosition - openPosition);
 			ElementState currentElementState = new ElementState(elementQueue.Peek());
 			int afterTypeName = typeNameEndRegex.Match(htmlContent, openPosition).Index;
