@@ -426,9 +426,16 @@ namespace MatterHackers.MatterControl
 
 							foreach (MeshGroup meshGroup in loadedMeshGroups)
 							{
+								double minZ = double.MaxValue;
+								double maxZ = double.MinValue;
 								foreach (Mesh loadedMesh in meshGroup.Meshes)
 								{
-									tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White);
+									tracer.GetMinMaxZ(loadedMesh, ref minZ, ref maxZ);
+								}
+
+								foreach (Mesh loadedMesh in meshGroup.Meshes)
+								{
+									tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White, minZ, maxZ);
 								}
 							}
 
