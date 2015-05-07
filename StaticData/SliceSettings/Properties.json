@@ -332,7 +332,7 @@
   {
     "SlicerConfigName": "first_layer_speed",
     "PresentationName": "First Layer Speed",
-    "HelpText": "The speed to move while printing the first layer.  If expressed as a percentage it will modify the corresponding speed set above.",
+    "HelpText": "The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "mm/s or %"
   },

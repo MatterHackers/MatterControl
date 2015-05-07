@@ -13,7 +13,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{"first_layer_temperature", "temperature"},
 			{"temperature","temperature"},
 			{"first_layer_bed_temperature","bed_temperature"},
-			{"bed_temperature","bed_temperature"}
+			{"bed_temperature","bed_temperature"},
+			{"bed_remove_part_temperature","bed_remove_part_temperature"},
+			{"extruder_wipe_temperature","extruder_wipe_temperature"},
+			{"z_offset","z_offset"},
+			{"retract_length","retract_length"},
+			{"filament_diameter","filament_diameter"},
+			{"first_layer_speed","first_layer_speed"},
+			{"infill_speed","infill_speed"},
+			{"max_fan_speed","max_fan_speed"},
+			{"min_fan_speed","min_fan_speed"},
+			{"min_print_speed","min_print_speed"},
+			{"perimeter_speed","perimeter_speed"},
+			{"retract_speed","retract_speed"},
+			{"support_material_speed","support_material_speed"},
+			{"travel_speed","travel_speed"},
+			{"bridge_fan_speed","bridge_fan_speed"},
+			{"bridge_speed","bridge_speed"},
+			{"raft_print_speed","raft_print_speed"},
+			{"external_perimeter_speed","external_perimeter_speed"},
 		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)
@@ -341,7 +359,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class AsCountOrDistance : MapItem
 	{
-		string keyToUseAsDenominatorForCount;
+		private string keyToUseAsDenominatorForCount;
+
 		public AsCountOrDistance(string mappedKey, string originalKey, string keyToUseAsDenominatorForCount)
 			: base(mappedKey, originalKey)
 		{
