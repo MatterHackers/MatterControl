@@ -1,9 +1,0 @@
-layer_height = 0.3
-first_layer_height = 0.3
-bottom_clip_amount = 0
-perimeters = 2
-top_solid_layers = 3
-fill_density = 0.2
-fill_pattern = rectilinear
-solid_infill_below_area = 40
-infill_speed = 60
