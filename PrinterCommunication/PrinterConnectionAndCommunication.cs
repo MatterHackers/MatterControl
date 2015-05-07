@@ -2826,6 +2826,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						timeHaveBeenWaitingForOK.Restart();
 						using (TimedLock.Lock(this, "serialPort.Write"))
 						{
+                            lineToWrite = X3GConverter.translate(lineToWrite);
 							serialPort.Write(lineToWrite);
 						}
 						//Debug.Write("w: " + lineToWrite);
