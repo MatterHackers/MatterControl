@@ -3238,3 +3238,6 @@ Translated:Width
 English:Arrange
 Translated:Arrange
 
+English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+Translated:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+
