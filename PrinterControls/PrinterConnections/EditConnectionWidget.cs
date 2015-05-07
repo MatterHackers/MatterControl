@@ -14,7 +14,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class EditConnectionWidget : ConnectionWidgetBase
 	{
-		private List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
 		private List<BaudRateRadioButton> BaudRateButtonsList = new List<BaudRateRadioButton>();
 		private FlowLayoutWidget ConnectionControlContainer;
 		private Printer ActivePrinter;
