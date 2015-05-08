@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	public class ConnectionWidgetBase : GuiWidget
 	{
 		private static Regex linuxDefaultUIFilter = new Regex("/dev/ttyS*\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
-		private List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
+		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
 		private bool printerComPortIsAvailable = false;
 
 		protected GuiWidget containerWindowToClose;
