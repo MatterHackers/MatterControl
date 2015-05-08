@@ -55,6 +55,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatterControl\MatterControl.UI.cs" />
     <Compile Include="MatterControl\HtmlParser.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
     <Compile Include="MatterControl\SliceLayersTests.cs" />
