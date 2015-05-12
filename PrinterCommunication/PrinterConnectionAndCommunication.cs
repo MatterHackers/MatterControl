@@ -1218,7 +1218,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					&& (!timeWaitingForTemperature.IsRunning || timeWaitingForTemperature.Elapsed.TotalSeconds > 60))
 				{
 					timeWaitingForTemperature.Restart();
-					SendLineToPrinterNow("M105");
+				//	SendLineToPrinterNow("M105");
 				}
 
 				if (CommunicationState == CommunicationStates.PrintingFromSd
@@ -1463,7 +1463,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						using (TimedLock.Lock(this, "ReadFromPrinter"))
 						{
-							string allDataRead = serialPort.ReadExisting();
+                            byte[] response = new byte[serialPort.BytesToRead];
+                            serialPort.Read(response, 0, serialPort.BytesToRead);
+                            string allDataRead = X3GReader.translate(response);
+//							string allDataRead = serialPort.ReadExisting();
 							//Debug.Write("r: " + allDataRead);
 							//Console.Write(indata);
 							dataLastRead += allDataRead.Replace('\r', '\n');
@@ -2826,8 +2829,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						timeHaveBeenWaitingForOK.Restart();
 						using (TimedLock.Lock(this, "serialPort.Write"))
 						{
-                            lineToWrite = X3GConverter.translate(lineToWrite);
-							serialPort.Write(lineToWrite);
+                            byte[] x3gCommand = X3GWriter.translate(lineToWrite);
+                            serialPort.Write(x3gCommand, 0, x3gCommand.Length);
 						}
 						//Debug.Write("w: " + lineToWrite);
 					}
