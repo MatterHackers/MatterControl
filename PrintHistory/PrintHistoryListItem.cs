@@ -53,7 +53,16 @@ namespace MatterHackers.MatterControl.PrintHistory
 		private bool showTimestamp;
 		private TextWidget partLabel;
 		public CheckBox selectionCheckBox;
+#if(__ANDROID__)
+		private float pointSizeFactor = 0.85f;
+		private static int rightOverlayWidth  = 240;
 
+#else
+		private float pointSizeFactor = 1f;
+		private static int rightOverlayWidth  = 200;
+
+#endif
+		private int actionButtonSize = rightOverlayWidth/2;
 		private SlideWidget rightButtonOverlay;
 
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
@@ -96,7 +105,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 					string labelName = textInfo.ToTitleCase(printTask.PrintName);
 					labelName = labelName.Replace('_', ' ');
-					partLabel = new TextWidget(labelName, pointSize: 15);
+					partLabel = new TextWidget(labelName, pointSize: 15 * pointSizeFactor);
 					partLabel.TextColor = WidgetTextColor;
 
 					labelContainer.AddChild(partLabel);
@@ -110,13 +119,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 				buttonContainer.Margin = new BorderDouble(0);
 				buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 				{
-					TextWidget statusIndicator = new TextWidget("Status: Completed".Localize(), pointSize: 8);
+					TextWidget statusIndicator = new TextWidget("Status: Completed".Localize(), pointSize: 8 * pointSizeFactor);
 					statusIndicator.Margin = new BorderDouble(right: 3);
 					//buttonContainer.AddChild(statusIndicator);
 
 					string printTimeLabel = "Time".Localize().ToUpper();
 					string printTimeLabelFull = string.Format("{0}: ", printTimeLabel);
-					TextWidget timeLabel = new TextWidget(printTimeLabelFull, pointSize: 8);
+					TextWidget timeLabel = new TextWidget(printTimeLabelFull, pointSize: 8 * pointSizeFactor);
 					timeLabel.TextColor = timeTextColor;
 
 					TextWidget timeIndicator;
@@ -127,11 +136,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 					}
 					else if (minutes > 60)
 					{
-						timeIndicator = new TextWidget("{0}hrs {1}min".FormatWith(printTask.PrintTimeMinutes / 60, printTask.PrintTimeMinutes % 60), pointSize: 12);
+						timeIndicator = new TextWidget("{0}hrs {1}min".FormatWith(printTask.PrintTimeMinutes / 60, printTask.PrintTimeMinutes % 60), pointSize: 12 * pointSizeFactor);
 					}
 					else
 					{
-						timeIndicator = new TextWidget(string.Format("{0}min", printTask.PrintTimeMinutes), pointSize: 12);
+						timeIndicator = new TextWidget(string.Format("{0}min", printTask.PrintTimeMinutes), pointSize: 12 * pointSizeFactor);
 					}
 
 					timeIndicator.Margin = new BorderDouble(right: 6);
@@ -159,7 +168,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				rightButtonOverlay = new SlideWidget();
 				rightButtonOverlay.VAnchor = VAnchor.ParentBottomTop;
 				rightButtonOverlay.HAnchor = Agg.UI.HAnchor.ParentRight;
-				rightButtonOverlay.Width = 200;
+				rightButtonOverlay.Width = rightOverlayWidth;
 				rightButtonOverlay.Visible = false;
 
 				FlowLayoutWidget rightMiddleColumnContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
@@ -173,7 +182,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					FatFlatClickWidget viewButton = new FatFlatClickWidget(viewLabel);
 					viewButton.VAnchor = VAnchor.ParentBottomTop;
 					viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-					viewButton.Width = 100;
+					viewButton.Width = actionButtonSize;
 					viewButton.Click += ViewButton_Click;
 					rightMiddleColumnContainer.AddChild(viewButton);
 
@@ -185,7 +194,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					FatFlatClickWidget printButton = new FatFlatClickWidget(printLabel);
 					printButton.VAnchor = VAnchor.ParentBottomTop;
 					printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-					printButton.Width = 100;
+					printButton.Width = actionButtonSize;
 					printButton.Click += (sender, e) =>
 					{
 						UiThread.RunOnIdle((state) =>
@@ -219,11 +228,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 					startTimeContainer.Padding = new BorderDouble(0, 3);
 
 					string startLabelFull = "{0}:".FormatWith("Start".Localize().ToUpper());
-					TextWidget startLabel = new TextWidget(startLabelFull, pointSize: 8);
+					TextWidget startLabel = new TextWidget(startLabelFull, pointSize: 8 * pointSizeFactor);
 					startLabel.TextColor = timeTextColor;
 
 					string startTimeString = printTask.PrintStart.ToString("MMM d yyyy h:mm ") + printTask.PrintStart.ToString("tt").ToLower();
-					TextWidget startDate = new TextWidget(startTimeString, pointSize: 12);
+					TextWidget startDate = new TextWidget(startTimeString, pointSize: 12 * pointSizeFactor);
 					startDate.TextColor = timeTextColor;
 
 					startTimeContainer.AddChild(startLabel);
@@ -235,7 +244,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					endTimeContainer.Padding = new BorderDouble(0, 3);
 
 					string endLabelFull = "{0}:".FormatWith("End".Localize().ToUpper());
-					TextWidget endLabel = new TextWidget(endLabelFull, pointSize: 8);
+					TextWidget endLabel = new TextWidget(endLabelFull, pointSize: 8 * pointSizeFactor);
 					endLabel.TextColor = timeTextColor;
 
 					string endTimeString;
@@ -248,7 +257,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 						endTimeString = "Unknown".Localize();
 					}
 
-					TextWidget endDate = new TextWidget(endTimeString, pointSize: 12);
+					TextWidget endDate = new TextWidget(endTimeString, pointSize: 12 * pointSizeFactor);
 					endDate.TextColor = timeTextColor;
 
 					endTimeContainer.AddChild(endLabel);
@@ -262,7 +271,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					timestampColumn.AddChild(horizontalLine);
 					timestampColumn.AddChild(startTimeContainer);
 
-					timestampColumn.Width = 200;
+					timestampColumn.Width = rightOverlayWidth;
 
 					primaryFlow.AddChild(timestampColumn);
 				}
