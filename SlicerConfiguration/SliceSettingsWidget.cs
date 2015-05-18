@@ -912,12 +912,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									double.TryParse(setting.Substring(0, setting.Length-2), out currentValue);
 									doubleEditWidget.ActuallNumberEdit.Value = currentValue;
-									SaveSetting(settingData.SlicerConfigName, currentValue.ToString());
 								}
 								else
 								{
 									doubleEditWidget.ActuallNumberEdit.InternalNumberEdit.Text = multiValuesAreDiffernt;
-									SaveSetting(settingData.SlicerConfigName, multiValuesAreDiffernt);
 								}
 							}
 							else // just set the setting nomrmaly
