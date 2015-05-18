@@ -1,5 +1,5 @@
 Simple
-  Print
+  Settings
     Single
       Layers
         layer_height
@@ -8,7 +8,7 @@ Simple
         support_material
         create_raft
 Intermediate
-  Print
+  Settings
     Layers/Surface
       Layer Height
         layer_height
@@ -60,7 +60,7 @@ Intermediate
         min_fan_speed
         max_fan_speed
 Advanced
-  Print
+  Settings
     Layers/Surface
       Layer Height
         layer_height
