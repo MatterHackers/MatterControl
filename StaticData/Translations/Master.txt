@@ -3241,3 +3241,6 @@ Translated:Arrange
 English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
 Translated:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
 
+English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+Translated:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+

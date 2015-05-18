@@ -1541,6 +1541,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
 										{
 											CommunicationState = CommunicationStates.Connected;
+											// new send any command that initialize this printer
+											string connectGCode = ActiveSliceSettings.Instance.GetActiveValue("connect_gcode");
+											SendLineToPrinterNow(connectGCode);
 										}
 										else
 										{
@@ -1832,6 +1835,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			using (TimedLock.Lock(this, "QueueLineToPrinter"))
 			{
+				if (lineToWrite.Contains("\\n"))
+				{
+					lineToWrite = lineToWrite.Replace("\\n", "\n");
+				}
+
 				//Check line for linebreaks, split and process separate if necessary
 				if (lineToWrite.Contains("\n"))
 				{

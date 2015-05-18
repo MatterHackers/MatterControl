@@ -283,6 +283,8 @@ Advanced
         resume_gcode
       Cancel G-Code
         cancel_gcode
+      On Connect G-Code
+        connect_gcode
     Extruder
       Extruder X
         nozzle_diameter

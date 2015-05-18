@@ -105,6 +105,13 @@
     "ExtraSettings": ""
   },
   {
+    "SlicerConfigName": "connect_gcode",
+    "PresentationName": "On Connect G-Code",
+    "HelpText": "This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
     "SlicerConfigName": "cool_extruder_lift",
     "PresentationName": "Enable Extruder Lift",
     "HelpText": "Moves the extruder up off the part to allow cooling.",

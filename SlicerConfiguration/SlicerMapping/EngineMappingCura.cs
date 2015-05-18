@@ -144,6 +144,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new VisibleButNotMappedToEngine("pause_gcode"),
             new VisibleButNotMappedToEngine("resume_gcode"),
             new VisibleButNotMappedToEngine("cancel_gcode"),
+			new VisibleButNotMappedToEngine("connect_gcode"),
 
 #if false
             SETTING(filamentFlow);
