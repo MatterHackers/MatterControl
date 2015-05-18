@@ -62,6 +62,8 @@ namespace MatterHackers.MatterControl.UI
 			outerContainer.AddChild(topToBottomContainer);
 
 			CheckBox toggleBox = CreateCheckboxFromToggleSwitchView();
+			toggleBox.HAnchor = HAnchor.ParentLeftRight;
+			toggleBox.VAnchor = VAnchor.ParentBottomTop;
 			toggleBox.Margin = new BorderDouble(marginSize);
 			toggleBox.BackgroundColor = RGBA_Bytes.Red;
 			toggleBox.DebugShowBounds = true;
@@ -75,7 +77,7 @@ namespace MatterHackers.MatterControl.UI
 			outerContainer.OnDraw(outerContainer.NewGraphics2D());
 
 			// For troubleshooting or visual validation
-			//OutputImages(outerContainer, outerContainer);
+			OutputImages(outerContainer, outerContainer);
 
 			var bounds = toggleBox.BoundsRelativeToParent;
 			Assert.IsTrue(bounds.Left == marginSize, "Left margin is incorrect");

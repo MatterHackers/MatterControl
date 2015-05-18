@@ -563,6 +563,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				get
 				{
 					string gCode = base.MappedValue.Replace("\n", "\\n");
+
+					gCode = GCodeProcessing.ReplaceMacroValues(gCode);
+
 					return gCode;
 				}
 			}
