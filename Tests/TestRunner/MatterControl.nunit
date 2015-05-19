@@ -1,0 +1,8 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Default" processModel="Multiple" domainUsage="Single" />
+  <Config name="Default" binpathtype="Auto" runtimeFramework="v4.0.21006">
+    <assembly path="..\MatterControl.Tests\bin\Debug\MatterControl.Tests.dll" />
+    <assembly path="..\..\Submodules\agg-sharp\Tests\Agg.Tests\bin\Debug\Agg.Tests.dll" />
+    <assembly path="..\..\Submodules\MatterSlice\Tests\MatterSlice.Tests\bin\Debug\MatterSlice.Tests.dll" />
+  </Config>
+</NUnitProject>

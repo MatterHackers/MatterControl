@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,57 +23,46 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using MatterHackers.Agg;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.Font;
-using MatterHackers.VectorMath;
-
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.Localizations;
+using MatterHackers.VectorMath;
+using System;
 using System.Diagnostics;
-using System.IO;
 
 namespace MatterHackers.MatterControl
 {
-    public abstract class ApplicationView : GuiWidget
-    {
+	public abstract class ApplicationView : GuiWidget
+	{
 		public TopContainerWidget TopContainer;
 
 		public abstract void AddElements();
+
 		public abstract void HideTopContainer();
-		public abstract void ToggleTopContainer();        
-    }
 
-    public class CompactApplicationView : ApplicationView
-    {
-        CompactTabView compactTabView;
-        QueueDataView queueDataView;
-		GuiWidget menuSeparator;
-		PrintProgressBar progressBar; 
-        public CompactApplicationView()
-        {
-            AddElements();
-            Initialize();
-        }
+		public abstract void ToggleTopContainer();
+	}
 
-		bool topIsHidden = false;
+	public class CompactApplicationView : ApplicationView
+	{
+		private CompactTabView compactTabView;
+		private QueueDataView queueDataView;
+		private GuiWidget menuSeparator;
+		private PrintProgressBar progressBar;
+
+		public CompactApplicationView()
+		{
+			AddElements();
+			Initialize();
+		}
+
+		private bool topIsHidden = false;
+
 		public override void HideTopContainer()
 		{
 			if (!topIsHidden)
@@ -87,7 +76,7 @@ namespace MatterHackers.MatterControl
 				topIsHidden = true;
 			}
 		}
-        
+
 		public override void ToggleTopContainer()
 		{
 			topIsHidden = !topIsHidden;
@@ -98,29 +87,29 @@ namespace MatterHackers.MatterControl
 			this.TopContainer.Visible = !this.TopContainer.Visible;
 		}
 
-        public override void AddElements()
-        {
+		public override void AddElements()
+		{
 			topIsHidden = false;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            container.AnchorAll();
+			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			container.AnchorAll();
 
-			TopContainer = new TopContainerWidget(); 
+			TopContainer = new TopContainerWidget();
 			TopContainer.HAnchor = HAnchor.ParentLeftRight;
 
-            ApplicationMenuRow menuRow = new ApplicationMenuRow();
-			#if !__ANDROID__
+			ApplicationMenuRow menuRow = new ApplicationMenuRow();
+#if !__ANDROID__
 			TopContainer.AddChild(menuRow);
-			#endif
+#endif
 
-            menuSeparator = new GuiWidget();
-            menuSeparator.Height = 12;
-            menuSeparator.HAnchor = HAnchor.ParentLeftRight;
+			menuSeparator = new GuiWidget();
+			menuSeparator.Height = 12;
+			menuSeparator.HAnchor = HAnchor.ParentLeftRight;
 			menuSeparator.MinimumSize = new Vector2(0, 12);
-			menuSeparator.Visible = false;            
+			menuSeparator.Visible = false;
 
-            queueDataView = new QueueDataView();
+			queueDataView = new QueueDataView();
 			TopContainer.AddChild(new ActionBarPlus(queueDataView));
 			TopContainer.SetOriginalHeight();
 
@@ -128,27 +117,28 @@ namespace MatterHackers.MatterControl
 
 			progressBar = new PrintProgressBar();
 
-            container.AddChild(progressBar);
+			container.AddChild(progressBar);
 			container.AddChild(menuSeparator);
-            compactTabView = new CompactTabView(queueDataView);
+			compactTabView = new CompactTabView(queueDataView);
 
 			BottomOverlay bottomOverlay = new BottomOverlay();
 			bottomOverlay.AddChild(compactTabView);
 
 			container.AddChild(bottomOverlay);
 
-            this.AddChild(container);
-        }
+			this.AddChild(container);
+		}
 
-        void Initialize()
-        {
-            this.AnchorAll();
-        }
-    }
+		private void Initialize()
+		{
+			this.AnchorAll();
+		}
+	}
 
 	public class TopContainerWidget : FlowLayoutWidget
 	{
-		double originalHeight;
+		private double originalHeight;
+
 		public TopContainerWidget()
 			: base(FlowDirection.TopToBottom)
 		{
@@ -160,13 +150,12 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	class BottomOverlay : GuiWidget
+	internal class BottomOverlay : GuiWidget
 	{
 		public BottomOverlay()
-			:base()
+			: base()
 		{
 			this.AnchorAll();
-
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -176,93 +165,97 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-    public class ResponsiveApplicationView : ApplicationView
-    {
-        WidescreenPanel widescreenPanel;
-        public ResponsiveApplicationView()
-        {
-            AddElements();
-            Initialize();
-        }
+	public class ResponsiveApplicationView : ApplicationView
+	{
+		private WidescreenPanel widescreenPanel;
+
+		public ResponsiveApplicationView()
+		{
+			AddElements();
+			Initialize();
+		}
 
 		public override void ToggleTopContainer()
 		{
-
 		}
 
 		public override void HideTopContainer()
 		{
-
 		}
-        
-        public override void AddElements()
-        {
+
+		public override void AddElements()
+		{
 			Stopwatch timer = Stopwatch.StartNew();
 			timer.Start();
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            container.AnchorAll();
+			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			container.AnchorAll();
 
-            ApplicationMenuRow menuRow = new ApplicationMenuRow();
-            container.AddChild(menuRow);
+			ApplicationMenuRow menuRow = new ApplicationMenuRow();
+			container.AddChild(menuRow);
 
-            GuiWidget menuSeparator = new GuiWidget();
-            menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
-            menuSeparator.Height = 2;
-            menuSeparator.HAnchor = HAnchor.ParentLeftRight;
-            menuSeparator.Margin = new BorderDouble(3, 6, 3, 3);
+			GuiWidget menuSeparator = new GuiWidget();
+			menuSeparator.BackgroundColor = new RGBA_Bytes(200, 200, 200);
+			menuSeparator.Height = 2;
+			menuSeparator.HAnchor = HAnchor.ParentLeftRight;
+			menuSeparator.Margin = new BorderDouble(3, 6, 3, 3);
 
-            container.AddChild(menuSeparator);
+			container.AddChild(menuSeparator);
 			Console.WriteLine("{0} ms 1".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 
-            widescreenPanel = new WidescreenPanel();
-            container.AddChild(widescreenPanel);
+			widescreenPanel = new WidescreenPanel();
+			container.AddChild(widescreenPanel);
 			Console.WriteLine("{0} ms 2".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 
 			Console.WriteLine("{0} ms 3".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 			this.AddChild(container);
-			Console.WriteLine("{0} ms 3".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
+			Console.WriteLine("{0} ms 4".FormatWith(timer.ElapsedMilliseconds)); timer.Restart();
 		}
 
-        void Initialize()
-        {
-            this.AnchorAll();
-        }
-    }
-    
-    
-    public class ApplicationController 
-    {
-        static ApplicationController globalInstance;
-        public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
-        public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+		private void Initialize()
+		{
+			this.AnchorAll();
+		}
+	}
+
+	public class ApplicationController
+	{
+		private static ApplicationController globalInstance;
+		public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
+		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 
 		public delegate string GetSessionInfoDelegate();
+
 		public static event GetSessionInfoDelegate privateGetSessionInfo;
+
 		public static event EventHandler privateStartLogin;
+
 		public static event EventHandler privateStartLogout;
 
-		public SlicePresetsWindow EditMaterialPresetsWindow{ get; set;}
-		public SlicePresetsWindow EditQualityPresetsWindow{ get; set;}
-        public ApplicationView MainView;
+		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
-        public event EventHandler ApplicationClosed;
-        event EventHandler unregisterEvents;
+		public SlicePresetsWindow EditQualityPresetsWindow { get; set; }
 
-        public bool WidescreenMode { get; set; }
+		public ApplicationView MainView;
 
-        public ApplicationController()
-        {
-            //Name = "MainSlidePanel";
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-        }
+		public event EventHandler ApplicationClosed;
 
-        public void ThemeChanged(object sender, EventArgs e)
-        {
-            ReloadAll(null, null);
-        }   
+		private event EventHandler unregisterEvents;
+
+		public bool WidescreenMode { get; set; }
+
+		public ApplicationController()
+		{
+			//Name = "MainSlidePanel";
+			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+		}
+
+		public void ThemeChanged(object sender, EventArgs e)
+		{
+			ReloadAll(null, null);
+		}
 
 		public void StartLogin()
 		{
@@ -291,60 +284,58 @@ namespace MatterHackers.MatterControl
 				return null;
 			}
 		}
-        
 
-        public void ReloadAll(object sender, EventArgs e)
-        {
-            UiThread.RunOnIdle((state) =>
-            {
-                // give the widget a chance to hear about the close before they are actually colsed. 
-                WidescreenPanel.PreChangePanels.CallEvents(this, null);
-                MainView.CloseAndRemoveAllChildren();
-                MainView.AddElements();
+		public void ReloadAll(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				// give the widget a chance to hear about the close before they are actually colsed.
+				WidescreenPanel.PreChangePanels.CallEvents(this, null);
+				MainView.CloseAndRemoveAllChildren();
+				MainView.AddElements();
 				if (DoneReloadingAll != null)
 				{
 					DoneReloadingAll.CallEvents(null, null);
 				}
-            });
-        }
+			});
+		}
 
+		public void OnApplicationClosed()
+		{
+			if (ApplicationClosed != null)
+			{
+				ApplicationClosed(null, null);
+			}
+		}
 
-        public void OnApplicationClosed()
-        {
-            if (ApplicationClosed != null)
-            {
-                ApplicationClosed(null, null);
-            }
-        }
+		public static ApplicationController Instance
+		{
+			get
+			{
+				if (globalInstance == null)
+				{
+					globalInstance = new ApplicationController();
+					if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+					{
+						globalInstance.MainView = new CompactApplicationView();
+					}
+					else
+					{
+						globalInstance.MainView = new ResponsiveApplicationView();
+					}
+				}
+				return globalInstance;
+			}
+		}
 
-        public static ApplicationController Instance
-        {
-            get
-            {
-                if (globalInstance == null)
-                {
-                    globalInstance = new ApplicationController();
-                    if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
-                    {
-                        globalInstance.MainView = new CompactApplicationView();
-                    }
-                    else
-                    {
-                        globalInstance.MainView = new ResponsiveApplicationView();
-                    }
-                }
-                return globalInstance;
-            }
-        }
+		public void ReloadAdvancedControlsPanel()
+		{
+			ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
+		}
 
-        public void ReloadAdvancedControlsPanel()
-        {
-            ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
-        }
-
-        public void ChangeCloudSyncStatus()
-        {
-            CloudSyncStatusChanged.CallEvents(this, null);            
-        }
-    }
+		public void ChangeCloudSyncStatus()
+		{
+			CloudSyncStatusChanged.CallEvents(this, null);
+		}
+	}
 }

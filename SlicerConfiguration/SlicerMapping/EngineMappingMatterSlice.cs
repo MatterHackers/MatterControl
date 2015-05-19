@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,78 +23,75 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using MatterHackers.VectorMath;
 using MatterHackers.Agg;
+using MatterHackers.VectorMath;
+using System.IO;
+using System.Text;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class EngineMappingsMatterSlice : SliceEngineMaping
-    {
-        // private so that this class is a sigleton
-        EngineMappingsMatterSlice()
-        {
-        }
+	public class EngineMappingsMatterSlice : SliceEngineMaping
+	{
+		// private so that this class is a sigleton
+		private EngineMappingsMatterSlice()
+		{
+		}
 
-        static EngineMappingsMatterSlice instance = null;
-        public static EngineMappingsMatterSlice Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new EngineMappingsMatterSlice();
-                }
-                return instance;
-            }
-        }
+		private static EngineMappingsMatterSlice instance = null;
 
-        public override bool MapContains(string originalKey)
-        {
-            foreach (MapItem mapItem in matterSliceToDefaultMapping)
-            {
-                if (mapItem.OriginalKey == originalKey)
-                {
-                    return true;
-                }
-            }
+		public static EngineMappingsMatterSlice Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new EngineMappingsMatterSlice();
+				}
+				return instance;
+			}
+		}
 
-            return false;
-        }
+		public override bool MapContains(string originalKey)
+		{
+			foreach (MapItem mapItem in matterSliceToDefaultMapping)
+			{
+				if (mapItem.OriginalKey == originalKey)
+				{
+					return true;
+				}
+			}
 
-        static MapItem[] matterSliceToDefaultMapping = 
+			return false;
+		}
+
+		private static MapItem[] matterSliceToDefaultMapping =
         {
             //avoidCrossingPerimeters=True # Avoid crossing any of the perimeters of a shape while printing its parts.
             new MapItemToBool("avoidCrossingPerimeters", "avoid_crossing_perimeters"),
 
 			new MapItemToBool("outsidePerimetersFirst", "external_perimeters_first"),
-             
+
             //bottomClipAmount=0 # The amount to clip off the bottom of the part, in millimeters.
             new MapItem("bottomClipAmount", "bottom_clip_amount"),
 
             //centerObjectInXy=True # Describes if 'positionToPlaceObjectCenter' should be used.
             new MapItemToBool("centerObjectInXy", "center_part_on_bed"),
-            
+
             //continuousSpiralOuterPerimeter=False # This will cause the z height to raise continuously while on the outer perimeter.
             new MapItemToBool("continuousSpiralOuterPerimeter", "spiral_vase"),
-            
+
             //doCoolHeadLift=False # Will cause the head to be raised in z until the min layer time is reached.
             new MapItemToBool("doCoolHeadLift", "cool_extruder_lift"),
-            
-            new VisibleButNotMappedToEngine("", "extruder_count"),
-            new VisibleButNotMappedToEngine("", "extruders_share_temperature"),
+
+            new VisibleButNotMappedToEngine("extruder_count"),
+            new VisibleButNotMappedToEngine("extruders_share_temperature"),
 
             //endCode=M104 S0
-            new MapEndGCode("endCode", "end_gcode"),
+            new GCodeForSlicer("endCode", "end_gcode"),
 
             new MapItem("zOffset", "z_offset"),
 
@@ -103,7 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //extrusionWidth=0.4 # The width of the line to extrude.
             new MapItem("extrusionWidth", "nozzle_diameter"),
-            
+
             //fanSpeedMaxPercent=100
             new MapItem("fanSpeedMaxPercent", "max_fan_speed"),
 
@@ -112,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //filamentDiameter=2.89 # The width of the filament being fed into the extruder, in millimeters.
             new MapItem("filamentDiameter", "filament_diameter"),
-            
+
             //extrusionMultiplier=1 # Lets you adjust how much material to extrude.
             new MapItem("extrusionMultiplier", "extrusion_multiplier"),
 
@@ -130,13 +127,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //outputType=REPRAP # Available Values: REPRAP, ULTIGCODE, MAKERBOT, BFB, MACH3
             new MapItem("outputType", "gcode_output_type"),
-            
+
             //generateInternalSupport=True # If True, support will be generated within the part as well as from the bed.
             new MapItemToBool("generateInternalSupport", "support_material_create_internal_support"),
-            
+
             //infillExtendIntoPerimeter=0.06 # The amount the infill extends into the perimeter in millimeters.
             new MapItem("infillExtendIntoPerimeter", "infill_overlap_perimeter"),
-            
+
             //infillPercent=20 # The percent of filled space to open space while infilling.
             new ScaledSingleNumber("infillPercent", "fill_density", 100),
             //infillType=GRID # Available Values: GRID, LINES
@@ -152,11 +149,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("raftFanSpeedPercent", "raft_fan_speed_percent"),
 
             new AsPercentOfReferenceOrDirect("raftPrintSpeed", "raft_print_speed", "infill_speed"),
-            
+
             //infillStartingAngle=45
             new MapItem("infillStartingAngle", "fill_angle"),
 
-            new MapItem("supportInfillStartingAngle", "support_material_infill_angle"),            
+			new MapItemToBool("wipeAfterRetraction", "wipe"),
+
+            new MapItem("supportInfillStartingAngle", "support_material_infill_angle"),
 
             //insidePerimetersSpeed=50 # The speed of all perimeters but the outside one. mm/s.
             new MapItem("insidePerimetersSpeed", "perimeter_speed"),
@@ -168,31 +167,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("minimumExtrusionBeforeRetraction", "min_extrusion_before_retract"),
 
             //minimumPrintingSpeed=10 # The minimum speed that the extruder is allowed to move while printing. mm/s.
-            new MapItem("minimumPrintingSpeed", "min_print_speed"),            
-            
+            new MapItem("minimumPrintingSpeed", "min_print_speed"),
+
             //minimumLayerTimeSeconds=5
             new MapItem("minimumLayerTimeSeconds", "slowdown_below_layer_time"),
 
+			new MapItem("unretractExtraExtrusion", "retract_restart_extra"),
+
             //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
-            new MapItem("minimumTravelToCauseRetraction", "retract_before_travel"),            
+            new MapItem("minimumTravelToCauseRetraction", "retract_before_travel"),
 
             //modelRotationMatrix=[[1,0,0],[0,1,0],[0,0,1]]
             //multiVolumeOverlapPercent=0
 
             //numberOfBottomLayers=6
-            new MapItem("numberOfBottomLayers", "bottom_solid_layers"),
-            
+            new AsCountOrDistance("numberOfBottomLayers", "bottom_solid_layers", "layer_height"),
+
+			new VisibleButNotMappedToEngine("solid_shell"),
+
             //numberOfSkirtLoops=1 # The number of loops to draw around objects. Can be used to help hold them down.
             new MapItem("numberOfSkirtLoops", "skirts"),
 
             //numberOfTopLayers=6
-            new MapItem("numberOfTopLayers", "top_solid_layers"),
+            new AsCountOrDistance("numberOfTopLayers", "top_solid_layers", "layer_height"),
 
             //outsidePerimeterSpeed=50 # The speed of the first perimeter. mm/s.
             new AsPercentOfReferenceOrDirect("outsidePerimeterSpeed", "external_perimeter_speed", "perimeter_speed"),
-            
+
             //numberOfPerimeters=2
-            new MapItem("numberOfPerimeters", "perimeters"),
+            new AsCountOrDistance("numberOfPerimeters", "perimeters", "nozzle_diameter"),
 
             //positionToPlaceObjectCenter=[102.5,102.5]
             new MapPositionToPlaceObjectCenter("positionToPlaceObjectCenter", "print_center"),
@@ -204,28 +207,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
             new MapRepairOutlines("repairOutlines", "repair_outlines_extensive_stitching"),
-            new VisibleButNotMappedToEngine("", "repair_outlines_keep_open"),
+            new VisibleButNotMappedToEngine("repair_outlines_keep_open"),
 
-            new VisibleButNotMappedToEngine("", "has_fan"),
-            new VisibleButNotMappedToEngine("", "has_hardware_leveling"),
-            new VisibleButNotMappedToEngine("", "has_heated_bed"),
-            new VisibleButNotMappedToEngine("", "has_sd_card_reader"),
-            new VisibleButNotMappedToEngine("", "z_can_be_negative"),
-            new VisibleButNotMappedToEngine("", "show_reset_connection"),
+            new VisibleButNotMappedToEngine("has_fan"),
+            new VisibleButNotMappedToEngine("has_hardware_leveling"),
+            new VisibleButNotMappedToEngine("has_power_control"),
+            new VisibleButNotMappedToEngine("has_heated_bed"),
+            new VisibleButNotMappedToEngine("has_sd_card_reader"),
+            new VisibleButNotMappedToEngine("z_can_be_negative"),
+            new VisibleButNotMappedToEngine("show_reset_connection"),
+            new VisibleButNotMappedToEngine("extruder_wipe_temperature"),
+            new VisibleButNotMappedToEngine("bed_remove_part_temperature"),
 
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
-            
+
             new MapItem("retractionOnTravel", "retract_length"),
             //retractionOnTravel=4.5
             //new MapItem("retractionOnTravel", "retract_before_travel"),
 
             //retractionSpeed=45 # mm/s.
             new MapItem("retractionSpeed", "retract_speed"),
-            
+
             //retractionZHop=0 # The amount to move the extruder up in z after retracting (before a move). mm.
             new MapItem("retractionZHop", "retract_lift"),
-            
+
             //skirtDistanceFromObject=6 # How far from objects the first skirt loop should be, in millimeters.
             new MapItem("skirtDistanceFromObject", "skirt_distance"),
 
@@ -235,7 +241,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //startCode=M109 S210
             new MapStartGCode("startCode", "start_gcode", true),
 
-			new VisibleButNotMappedToEngine("", "heat_extruder_before_homing"),
+			new GCodeForSlicer("toolChangeCode", "toolchange_gcode"),
+
+			new VisibleButNotMappedToEngine("heat_extruder_before_homing"),
 
             //supportExtruder=1
             new ValuePlusConstant("supportExtruder", "support_material_extruder", -1),
@@ -251,25 +259,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
             //supportMaterialSpeed=50 # mm/s.
             new MapItem("supportMaterialSpeed", "support_material_speed"),
-            
+
             // get the check box on the screen
             new SupportMatterial("supportEndAngle", "support_material"),
-            new VisibleButNotMappedToEngine("", "support_material_threshold"),
+            new VisibleButNotMappedToEngine("support_material_threshold"),
 
             //supportType=NONE # Available Values: NONE, GRID, LINES
             new MapItem("supportType", "support_type"),
-            
+
             //supportXYDistanceFromObject=0.7 # The closest xy distance that support will be to the object. mm/s.
             new MapItem("supportXYDistanceFromObject", "support_material_xy_distance"),
-            
-            //supportZDistanceFromObject=1 # The number of layers to skip in z. The gap between the support and the model.
-            new MapItem("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers"),
 
-            new MapItem("supportInterfaceLayers", "support_material_interface_layers"),
+            //supportZDistanceFromObject=1 # The number of layers to skip in z. The gap between the support and the model.
+            new AsCountOrDistance("supportNumberOfLayersToSkipInZ", "support_material_z_gap_layers", "layer_height"),
+
+            new AsCountOrDistance("supportInterfaceLayers", "support_material_interface_layers", "layer_height"),
 
             //travelSpeed=200 # The speed to move when not extruding material. mm/s.
             new MapItem("travelSpeed", "travel_speed"),
-            
+
             //wipeShieldDistanceFromObject=0 # If greater than 0 this creates an outline around shapes so the extrude will be wiped when entering.
             new MapItem("wipeShieldDistanceFromObject", "wipe_shield_distance"),
 
@@ -277,331 +285,336 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
             new MapItem("wipeTowerSize", "wipe_tower_size"),
 
-            new VisibleButNotMappedToEngine("", "pause_gcode"),
-            new VisibleButNotMappedToEngine("", "resume_gcode"),
-            new VisibleButNotMappedToEngine("", "cancel_gcode"),
+            new VisibleButNotMappedToEngine("pause_gcode"),
+            new VisibleButNotMappedToEngine("resume_gcode"),
+            new VisibleButNotMappedToEngine("cancel_gcode"),
+			new VisibleButNotMappedToEngine("connect_gcode"),
 
-            new VisibleButNotMappedToEngine("", "bed_size"),
-            new VisibleButNotMappedToEngine("", "build_height"),
+            new VisibleButNotMappedToEngine("bed_size"),
+            new VisibleButNotMappedToEngine("build_height"),
 
-            new VisibleButNotMappedToEngine("", "temperature"),
-            new VisibleButNotMappedToEngine("", "bed_temperature"),
-            new VisibleButNotMappedToEngine("", "bed_shape"),
+            new VisibleButNotMappedToEngine("temperature"),
+            new VisibleButNotMappedToEngine("bed_temperature"),
+            new VisibleButNotMappedToEngine("bed_shape"),
         };
 
-        public static void WriteMatterSliceSettingsFile(string outputFilename)
-        {
-            using (StreamWriter sliceSettingsFile = new StreamWriter(outputFilename))
-            {
-                for (int i = 0; i < matterSliceToDefaultMapping.Length; i++)
-                {
-                    string matterSliceValue = matterSliceToDefaultMapping[i].MappedValue;
-                    if (matterSliceValue != null && matterSliceValue != "")
-                    {
-                        sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(matterSliceToDefaultMapping[i].MappedKey, matterSliceValue));
-                    }
-                }
-            }
-        }
+		public static void WriteMatterSliceSettingsFile(string outputFilename)
+		{
+			using (StreamWriter sliceSettingsFile = new StreamWriter(outputFilename))
+			{
+				for (int i = 0; i < matterSliceToDefaultMapping.Length; i++)
+				{
+					string matterSliceValue = matterSliceToDefaultMapping[i].MappedValue;
+					if (matterSliceValue != null && matterSliceValue != "")
+					{
+						sliceSettingsFile.WriteLine("{0} = {1}".FormatWith(matterSliceToDefaultMapping[i].MappedKey, matterSliceValue));
+					}
+				}
+			}
+		}
 
-        public class FirstLayerHeight : ScaledSingleNumber
-        {
-            internal string originalReference;
-            public override string MappedValue
-            {
-                get
-                {
-                    string finalValueString = base.MappedValue;
+		public class FirstLayerHeight : ScaledSingleNumber
+		{
+			internal string originalReference;
 
-                    if (OriginalValue.Contains("%"))
-                    {
-                        string withoutPercent = OriginalValue.Replace("%", "");
-                        double ratio = MapItem.ParseValueString(withoutPercent, 100) / 100.0;
-                        double valueToModify = MapItem.GetValueForKey(originalReference);
-                        double finalValue = valueToModify * ratio * scale;
-                        finalValueString = finalValue.ToString();
-                    }
+			public override string MappedValue
+			{
+				get
+				{
+					string finalValueString = base.MappedValue;
 
-                    if (finalValueString.Trim() == "0")
-                    {
-                        return ActiveSliceSettings.Instance.GetActiveValue(originalReference);
-                    }
-                    return finalValueString;
-                }
-            }
+					if (OriginalValue.Contains("%"))
+					{
+						string withoutPercent = OriginalValue.Replace("%", "");
+						double ratio = MapItem.ParseValueString(withoutPercent, 100) / 100.0;
+						double valueToModify = MapItem.GetValueForKey(originalReference);
+						double finalValue = valueToModify * ratio * scale;
+						finalValueString = finalValue.ToString();
+					}
 
-            public FirstLayerHeight(string mappedKey, string originalKey, string originalReference, double scale = 1)
-                : base(mappedKey, originalKey, scale)
-            {
-                this.originalReference = originalReference;
-            }
-        }
+					if (finalValueString.Trim() == "0")
+					{
+						return ActiveSliceSettings.Instance.GetActiveValue(originalReference);
+					}
+					return finalValueString;
+				}
+			}
 
-        public class ExtruderOffsets : MapItem
-        {
-            public override string MappedValue
-            {
-                get
-                {
-                    // map from 0x0,0x0,0x0
-                    // to [[0,0],[0,0]]
-                    StringBuilder final = new StringBuilder("[");
-                    string[] offsets = base.MappedValue.Split(',');
-                    bool first = true;
-                    int count = 0;
-                    foreach (string offset in offsets)
-                    {
-                        if(!first)
-                        {
-                            final.Append(",");
-                        }
-                        string[] xy = offset.Split('x');
-                        final.Append("[{0},{1}]".FormatWith(double.Parse(xy[0]), double.Parse(xy[1])));
-                        first = false;
-                        count++;
-                    }
-                    while (count < 16)
-                    {
-                        final.Append(",[0,0]");
-                        count++;
-                    }
-                    final.Append("]");
+			public FirstLayerHeight(string mappedKey, string originalKey, string originalReference, double scale = 1)
+				: base(mappedKey, originalKey, scale)
+			{
+				this.originalReference = originalReference;
+			}
+		}
 
-                    return final.ToString();
-                }
-            }
+		public class ExtruderOffsets : MapItem
+		{
+			public override string MappedValue
+			{
+				get
+				{
+					// map from 0x0,0x0,0x0
+					// to [[0,0],[0,0]]
+					StringBuilder final = new StringBuilder("[");
+					string[] offsets = base.MappedValue.Split(',');
+					bool first = true;
+					int count = 0;
+					foreach (string offset in offsets)
+					{
+						if (!first)
+						{
+							final.Append(",");
+						}
+						string[] xy = offset.Split('x');
+						final.Append("[{0},{1}]".FormatWith(double.Parse(xy[0]), double.Parse(xy[1])));
+						first = false;
+						count++;
+					}
+					while (count < 16)
+					{
+						final.Append(",[0,0]");
+						count++;
+					}
+					final.Append("]");
 
-            public ExtruderOffsets(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
-        }
+					return final.ToString();
+				}
+			}
 
-        //repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
-        public class MapRepairOutlines : MapItem
-        {
-            public override string MappedValue
-            {
-                get
-                {
-                    if(ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_extensive_stitching") == "1")
-                    {
-                        if (ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_keep_open") == "1")
-                        {
-                            return "EXTENSIVE_STITCHING|KEEP_OPEN";
-                        }
-                        else
-                        {
-                            return "EXTENSIVE_STITCHING";
-                        }
-                    }
-                    else if(ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_keep_open") == "1")
-                    {
-                        return "KEEP_OPEN";
-                    }
+			public ExtruderOffsets(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
+		}
 
-                    return "NONE";
-                }
-            }
+		//repairOutlines=NONE # Available Values: NONE, EXTENSIVE_STITCHING, KEEP_OPEN # You can or them together using '|'.
+		public class MapRepairOutlines : MapItem
+		{
+			public override string MappedValue
+			{
+				get
+				{
+					if (ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_extensive_stitching") == "1")
+					{
+						if (ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_keep_open") == "1")
+						{
+							return "EXTENSIVE_STITCHING|KEEP_OPEN";
+						}
+						else
+						{
+							return "EXTENSIVE_STITCHING";
+						}
+					}
+					else if (ActiveSliceSettings.Instance.GetActiveValue("repair_outlines_keep_open") == "1")
+					{
+						return "KEEP_OPEN";
+					}
 
-            public MapRepairOutlines(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
-        }
+					return "NONE";
+				}
+			}
 
-        public class FanTranslator : MapItem
-        {
-            public override string MappedValue
-            {
-                get
-                {
-                    int numLayersFanIsDisabledOn = int.Parse(base.MappedValue);
-                    int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
-                    return layerToEnableFanOn.ToString();
-                }
-            }
+			public MapRepairOutlines(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
+		}
 
-            public FanTranslator(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
-        }
+		public class FanTranslator : MapItem
+		{
+			public override string MappedValue
+			{
+				get
+				{
+					int numLayersFanIsDisabledOn = int.Parse(base.MappedValue);
+					int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
+					return layerToEnableFanOn.ToString();
+				}
+			}
 
-        public class SupportExtrusionWidth : MapItem
-        {
-            public SupportExtrusionWidth(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
+			public FanTranslator(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
+		}
 
-            public override string MappedValue
-            {
-                get
-                {
-                    double nozzleDiameter = ActiveSliceSettings.Instance.NozzleDiameter;
-                    if (OriginalValue == "0")
-                    {
-                        return "100";
-                    }
+		public class SupportExtrusionWidth : MapItem
+		{
+			public SupportExtrusionWidth(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
 
-                    if (OriginalValue.Contains("%"))
-                    {
-                        string withoutPercent = OriginalValue.Replace("%", "");
-                        return withoutPercent;
-                    }
+			public override string MappedValue
+			{
+				get
+				{
+					double nozzleDiameter = ActiveSliceSettings.Instance.NozzleDiameter;
+					if (OriginalValue == "0")
+					{
+						return "100";
+					}
 
-                    double originalValue;
-                    if (!double.TryParse(OriginalValue, out originalValue))
-                    {
-                        originalValue = nozzleDiameter;
-                    }
+					if (OriginalValue.Contains("%"))
+					{
+						string withoutPercent = OriginalValue.Replace("%", "");
+						return withoutPercent;
+					}
 
-                    return (originalValue / nozzleDiameter * 100).ToString();
-                }
-            }
-        }
+					double originalValue;
+					if (!double.TryParse(OriginalValue, out originalValue))
+					{
+						originalValue = nozzleDiameter;
+					}
 
-        public class SupportMatterial : MapItem
-        {
-            public SupportMatterial(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
+					return (originalValue / nozzleDiameter * 100).ToString();
+				}
+			}
+		}
 
-            public override string MappedValue
-            {
-                get
-                {
-                    string supportMaterial = ActiveSliceSettings.Instance.GetActiveValue("support_material");
-                    if (supportMaterial == "0")
-                    {
-                        return "-1";
-                    }
+		public class SupportMatterial : MapItem
+		{
+			public SupportMatterial(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
 
-                    return (MapItem.GetValueForKey("support_material_threshold")).ToString();
-                }
-            }
-        }
+			public override string MappedValue
+			{
+				get
+				{
+					string supportMaterial = ActiveSliceSettings.Instance.GetActiveValue("support_material");
+					if (supportMaterial == "0")
+					{
+						return "-1";
+					}
 
-        public class ConstantMinusValue : MapItem
-        {
-            double constant;
+					return (MapItem.GetValueForKey("support_material_threshold")).ToString();
+				}
+			}
+		}
 
-            public ConstantMinusValue(string mappedKey, string originalKey, double constant)
-                : base(mappedKey, originalKey)
-            {
-                this.constant = constant;
-            }
+		public class ConstantMinusValue : MapItem
+		{
+			private double constant;
 
-            public override string MappedValue
-            {
-                get
-                {
-                    return (90 - MapItem.ParseValueString(OriginalValue)).ToString();
-                }
-            }
-        }
+			public ConstantMinusValue(string mappedKey, string originalKey, double constant)
+				: base(mappedKey, originalKey)
+			{
+				this.constant = constant;
+			}
 
-        public class ValuePlusConstant : MapItem
-        {
-            double constant;
+			public override string MappedValue
+			{
+				get
+				{
+					return (90 - MapItem.ParseValueString(OriginalValue)).ToString();
+				}
+			}
+		}
 
-            public ValuePlusConstant(string mappedKey, string originalKey, double constant)
-                : base(mappedKey, originalKey)
-            {
-                this.constant = constant;
-            }
+		public class ValuePlusConstant : MapItem
+		{
+			private double constant;
 
-            public override string MappedValue
-            {
-                get
-                {
-                    return (MapItem.ParseValueString(OriginalValue) + constant).ToString();
-                }
-            }
-        }
+			public ValuePlusConstant(string mappedKey, string originalKey, double constant)
+				: base(mappedKey, originalKey)
+			{
+				this.constant = constant;
+			}
 
-        public class InfillTranslator : MapItem
-        {
-            public override string MappedValue
-            {
-                get
-                {
-                    double infillRatio0To1 = MapItem.ParseValueString(base.MappedValue);
-                    // 400 = solid (extruder width)
-                    double nozzle_diameter = MapItem.GetValueForKey("nozzle_diameter");
-                    double linespacing = 1000;
-                    if (infillRatio0To1 > .01)
-                    {
-                        linespacing = nozzle_diameter / infillRatio0To1;
-                    }
+			public override string MappedValue
+			{
+				get
+				{
+					return (MapItem.ParseValueString(OriginalValue) + constant).ToString();
+				}
+			}
+		}
 
-                    return ((int)(linespacing * 1000)).ToString();
-                }
-            }
+		public class InfillTranslator : MapItem
+		{
+			public override string MappedValue
+			{
+				get
+				{
+					double infillRatio0To1 = MapItem.ParseValueString(base.MappedValue);
+					// 400 = solid (extruder width)
+					double nozzle_diameter = MapItem.GetValueForKey("nozzle_diameter");
+					double linespacing = 1000;
+					if (infillRatio0To1 > .01)
+					{
+						linespacing = nozzle_diameter / infillRatio0To1;
+					}
 
-            public InfillTranslator(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
-        }
+					return ((int)(linespacing * 1000)).ToString();
+				}
+			}
 
-        public class MapEndGCode : InjectGCodeCommands
-        {
-            public override string MappedValue
-            {
-                get
-                {
-                    string endGCode = base.MappedValue.Replace("\n", "\\n");
-                    return endGCode;
-                }
-            }
+			public InfillTranslator(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
+		}
 
-            public MapEndGCode(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
-        }
+		public class GCodeForSlicer : InjectGCodeCommands
+		{
+			public override string MappedValue
+			{
+				get
+				{
+					string gCode = base.MappedValue.Replace("\n", "\\n");
 
-        public class MapPositionToPlaceObjectCenter : MapItem
-        {
-            public MapPositionToPlaceObjectCenter(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
+					gCode = GCodeProcessing.ReplaceMacroValues(gCode);
 
-            public override string MappedValue
-            {
-                get
-                {
-                    Vector2 PrinteCenter = ActiveSliceSettings.Instance.PrintCenter;
+					return gCode;
+				}
+			}
 
-                    return "[{0},{1}]".FormatWith(PrinteCenter.x, PrinteCenter.y);
-                }
-            }
-        }
+			public GCodeForSlicer(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
+		}
 
-        public class SkirtLengthMaping : MapItem
-        {
-            public SkirtLengthMaping(string mappedKey, string originalKey)
-                : base(mappedKey, originalKey)
-            {
-            }
+		public class MapPositionToPlaceObjectCenter : MapItem
+		{
+			public MapPositionToPlaceObjectCenter(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
 
-            public override string MappedValue
-            {
-                get
-                {
-                    double lengthToExtrudeMm = MapItem.ParseValueString(base.MappedValue);
-                    // we need to convert mm of filament to mm of extrusion path
-                    double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
-                    double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
-                    double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
+			public override string MappedValue
+			{
+				get
+				{
+					Vector2 PrinteCenter = ActiveSliceSettings.Instance.PrintCenter;
 
-                    return lineLength.ToString();
-                }
-            }
-        }
-    }
+					return "[{0},{1}]".FormatWith(PrinteCenter.x, PrinteCenter.y);
+				}
+			}
+		}
+
+		public class SkirtLengthMaping : MapItem
+		{
+			public SkirtLengthMaping(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
+
+			public override string MappedValue
+			{
+				get
+				{
+					double lengthToExtrudeMm = MapItem.ParseValueString(base.MappedValue);
+					// we need to convert mm of filament to mm of extrusion path
+					double amountOfFilamentCubicMms = ActiveSliceSettings.Instance.FilamentDiameter * MathHelper.Tau * lengthToExtrudeMm;
+					double extrusionSquareSize = ActiveSliceSettings.Instance.FirstLayerHeight * ActiveSliceSettings.Instance.NozzleDiameter;
+					double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
+
+					return lineLength.ToString();
+				}
+			}
+		}
+	}
 }

@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-using MatterHackers.Agg;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -21,10 +18,10 @@ namespace MatterHackers.MatterControl
 		public List<string> DriversToInstall = new List<string>();
 		public Type PreviousSetupWidget;
 		public Type NextSetupWidget;
-		List<CustomCommands> printerCustomCommands;
-		string defaultMaterialPreset;
-		string defaultQualityPreset;
-		string defaultMovementSpeeds;
+		private List<CustomCommands> printerCustomCommands;
+		private string defaultMaterialPreset;
+		private string defaultQualityPreset;
+		private string defaultMovementSpeeds;
 
 		public PrinterSetupStatus(Printer printer = null)
 		{
@@ -52,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 		public void LoadCalibrationPrints()
 		{
-			if (this.ActivePrinter.Make != null && this.ActivePrinter.Model != null)    
+			if (this.ActivePrinter.Make != null && this.ActivePrinter.Model != null)
 			{
 				// Load the calibration file names
 				List<string> calibrationPrintFileNames = LoadCalibrationPartNamesForPrinter(this.ActivePrinter.Make, this.ActivePrinter.Model);
@@ -114,7 +111,6 @@ namespace MatterHackers.MatterControl
 				}
 				catch
 				{
-
 				}
 			}
 			return calibrationFiles;
@@ -126,6 +122,11 @@ namespace MatterHackers.MatterControl
 			Dictionary<string, string> macroDict = new Dictionary<string, string>();
 			macroDict["Lights On"] = "M42 P6 S255";
 			macroDict["Lights Off"] = "M42 P6 S0";
+            macroDict["Offset 0.8"] = "M565 Z0.8";
+            macroDict["Offset 0.9"] = "M565 Z0.9";
+            macroDict["Offset 1"] = "M565 Z1";
+            macroDict["Offset 1.1"] = "M565 Z1.1";
+            macroDict["Offset 1.2"] = "M565 Z1.2";
 
 			//Determine if baud rate is needed and show controls if required
 			string baudRate;
@@ -176,7 +177,6 @@ namespace MatterHackers.MatterControl
 						customMacro.Value = macroValue;
 
 						printerCustomCommands.Add(customMacro);
-
 					}
 				}
 			}
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl
 							// to happen when the infinstaller is run (More specifically - move this to *after* the user clicks Install Driver)
 
 							string infPath = Path.Combine("Drivers", pathForInf);
-							string infPathAndFileToInstall =  Path.Combine(infPath, fileName);
+							string infPathAndFileToInstall = Path.Combine(infPath, fileName);
 
 							if (StaticData.Instance.FileExists(infPathAndFileToInstall))
 							{
@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl
 								// Sync each file from StaticData to the location on disk for serial drivers
 								foreach (string file in StaticData.Instance.GetFiles(infPath))
 								{
-									using(Stream outstream = File.OpenWrite(Path.Combine(destTempPath, Path.GetFileName(file))))
+									using (Stream outstream = File.OpenWrite(Path.Combine(destTempPath, Path.GetFileName(file))))
 									using (Stream instream = StaticData.Instance.OpenSteam(file))
 									{
 										instream.CopyTo(outstream);
@@ -243,25 +243,24 @@ namespace MatterHackers.MatterControl
 				{
 					foreach (string lineIn in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
 					{
-                        string line = lineIn.Trim();
+						string line = lineIn.Trim();
 						//Ignore commented lines
 						if (line.Length > 0
-                            && !line.StartsWith("#"))
+							&& !line.StartsWith("#"))
 						{
 							string[] settingLine = line.Split('=');
-                            if (settingLine.Length > 1)
-                            {
-                                string keyName = settingLine[0].Trim();
-                                string settingDefaultValue = settingLine[1].Trim();
+							if (settingLine.Length > 1)
+							{
+								string keyName = settingLine[0].Trim();
+								string settingDefaultValue = settingLine[1].Trim();
 
-                                settingsDict.Add(keyName, settingDefaultValue);
-                            }
+								settingsDict.Add(keyName, settingDefaultValue);
+							}
 						}
 					}
 				}
 				catch
 				{
-
 				}
 			}
 			return settingsDict;
@@ -305,7 +304,7 @@ namespace MatterHackers.MatterControl
 						ActivePrinter.MaterialCollectionIds = collection.Id.ToString();
 						ActivePrinter.Commit();
 					}
-					else if (tag == "quality"  && defaultQualityPreset != null && collection.Name == defaultQualityPreset)
+					else if (tag == "quality" && defaultQualityPreset != null && collection.Name == defaultQualityPreset)
 					{
 						ActivePrinter.QualityCollectionId = collection.Id;
 						ActivePrinter.Commit();
@@ -329,7 +328,7 @@ namespace MatterHackers.MatterControl
 
 		private string[] GetSlicePresets(string make, string model, string tag)
 		{
-			string[] presetPaths = new string[]{};
+			string[] presetPaths = new string[] { };
 			string folderPath = Path.Combine("PrinterSettings", make, model, tag);
 			if (StaticData.Instance.DirectoryExists(folderPath))
 			{
@@ -339,7 +338,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private Dictionary<string, string> LoadSliceSettingsFromFile(string setupSettingsPathAndFile)
-		{            
+		{
 			Dictionary<string, string> settingsDict = new Dictionary<string, string>();
 			if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
 			{
@@ -363,7 +362,6 @@ namespace MatterHackers.MatterControl
 				}
 				catch
 				{
-
 				}
 			}
 			return settingsDict;
@@ -394,4 +392,3 @@ namespace MatterHackers.MatterControl
 		}
 	}
 }
-

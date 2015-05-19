@@ -1,15 +1,20 @@
-﻿/*
+﻿using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Localizations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+/*
 Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,208 +28,216 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-    public class QuickMenuNameValue
-    {
-        public string MenuName;
-        public string Value;
-    }
+	public class QuickMenuNameValue
+	{
+		public string MenuName;
+		public string Value;
+	}
 
-    public class OrganizerSettingsData
-    {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum DataEditTypes { STRING, INT, DOUBLE, POSITIVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, OFFSET2, CHECK_BOX, LIST, MULTI_LINE_TEXT, HARDWARE_PRESENT };
+	public class OrganizerSettingsData
+	{
+		[JsonConverter(typeof(StringEnumConverter))]
+		public enum DataEditTypes { STRING, INT, INT_OR_MM, DOUBLE, POSITIVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, OFFSET2, CHECK_BOX, LIST, MULTI_LINE_TEXT, HARDWARE_PRESENT };
 
-        public string SlicerConfigName { get; set; }
+		public string SlicerConfigName { get; set; }
 
-        public string PresentationName { get; set; }
+		public string PresentationName { get; set; }
 
-        public string HelpText { get; set; }
+		public string HelpText { get; set; }
 
-        public DataEditTypes DataEditType { get; set; }
+		public DataEditTypes DataEditType { get; set; }
 
-        public string ExtraSettings { get; set; }
+		public string ExtraSettings { get; set; }
 
-        public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
+		public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
 
-        static public OrganizerSettingsData NewOrganizerSettingData(string slicerConfigName, string presentationName, OrganizerSettingsData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
-        {
-            return new OrganizerSettingsData(slicerConfigName, presentationName, dataEditType, extraSettings, helpText);
-        }
+		public List<string> SetSettingsOnChange = new List<string>();
 
-        static public OrganizerSettingsData NewOrganizerSettingData(string lineFromSettingsFile)
-        {
-            string[] parameters = lineFromSettingsFile.Split('|');
-            OrganizerSettingsData.DataEditTypes valueType = (OrganizerSettingsData.DataEditTypes)Enum.Parse(typeof(OrganizerSettingsData.DataEditTypes), parameters[2].Trim());
-            switch (parameters.Length)
-            {
-                case 3:
-                    return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType);
+		static public OrganizerSettingsData NewOrganizerSettingData(string slicerConfigName, string presentationName, OrganizerSettingsData.DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
+		{
+			return new OrganizerSettingsData(slicerConfigName, presentationName, dataEditType, extraSettings, helpText);
+		}
 
-                case 4:
-                    return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType, parameters[3].Trim());
+		static public OrganizerSettingsData NewOrganizerSettingData(string lineFromSettingsFile)
+		{
+			string[] parameters = lineFromSettingsFile.Split('|');
+			OrganizerSettingsData.DataEditTypes valueType = (OrganizerSettingsData.DataEditTypes)Enum.Parse(typeof(OrganizerSettingsData.DataEditTypes), parameters[2].Trim());
+			switch (parameters.Length)
+			{
+				case 3:
+					return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType);
 
-                case 5:
-                    return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType, parameters[3].Trim(), parameters[4].Trim());
+				case 4:
+					return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType, parameters[3].Trim());
 
-                default:
-                    throw new Exception("Bad number of paramenters.");
-            }
-        }
+				case 5:
+					return NewOrganizerSettingData(parameters[0].Trim(), parameters[1].Trim(), valueType, parameters[3].Trim(), parameters[4].Trim());
 
-        public OrganizerSettingsData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
-        {
+				default:
+					throw new Exception("Bad number of paramenters.");
+			}
+		}
+
+		public OrganizerSettingsData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
+		{
 			this.ExtraSettings = extraSettings;
-            this.SlicerConfigName = slicerConfigName;
-            this.PresentationName = presentationName;
-            this.DataEditType = dataEditType;
+			this.SlicerConfigName = slicerConfigName;
+			this.PresentationName = presentationName;
+			this.DataEditType = dataEditType;
 			this.HelpText = LocalizedString.Get(helpText);
-        }
-    }
+		}
+	}
 
-    public class OrganizerSubGroup
-    {
-        string name;
+	public class OrganizerSubGroup
+	{
+		private string name;
 
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+		public string Name
+		{
+			get { return name; }
+			set { name = value; }
+		}
 
-        List<OrganizerSettingsData> settingDataList = new List<OrganizerSettingsData>();
-        public List<OrganizerSettingsData> SettingDataList
-        {
-            get { return settingDataList; }
-            set { settingDataList = value; }
-        }
+		private List<OrganizerSettingsData> settingDataList = new List<OrganizerSettingsData>();
 
-        public OrganizerSubGroup(string groupName)
-        {
+		public List<OrganizerSettingsData> SettingDataList
+		{
+			get { return settingDataList; }
+			set { settingDataList = value; }
+		}
+
+		public OrganizerSubGroup(string groupName)
+		{
 			this.name = groupName;
-        }
-    }
+		}
+	}
 
-    public class OrganizerGroup
-    {
-        private string groupName;
-        public string Name
-        {
-            get { return groupName; }
-        }
+	public class OrganizerGroup
+	{
+		private string groupName;
 
-        List<OrganizerSubGroup> subGroupsList = new List<OrganizerSubGroup>();
-        public List<OrganizerSubGroup> SubGroupsList
-        {
-            get { return subGroupsList; }
-            set { subGroupsList = value; }
-        }
+		public string Name
+		{
+			get { return groupName; }
+		}
 
-        public OrganizerGroup(string displayName)
-        {
-            this.groupName = displayName;
-        }
+		private List<OrganizerSubGroup> subGroupsList = new List<OrganizerSubGroup>();
 
-        internal OrganizerSubGroup NewAndAddSettingsSubGroup(string subGroupName)
-        {
-            OrganizerSubGroup newSettingsSubGroup = new OrganizerSubGroup(subGroupName);
-            SubGroupsList.Add(newSettingsSubGroup);
-            return newSettingsSubGroup;
-        }
-    }
+		public List<OrganizerSubGroup> SubGroupsList
+		{
+			get { return subGroupsList; }
+			set { subGroupsList = value; }
+		}
 
-    public class OrganizerCategory
-    {
-        public string Name { get; set; }
-        List<OrganizerGroup> groupsList = new List<OrganizerGroup>();
-        public List<OrganizerGroup> GroupsList
-        {
-            get { return groupsList; }
-            set { groupsList = value; }
-        }
+		public OrganizerGroup(string displayName)
+		{
+			this.groupName = displayName;
+		}
 
-        public OrganizerCategory(string categoryName)
-        {
-            Name = categoryName;
-        }
+		internal OrganizerSubGroup NewAndAddSettingsSubGroup(string subGroupName)
+		{
+			OrganizerSubGroup newSettingsSubGroup = new OrganizerSubGroup(subGroupName);
+			SubGroupsList.Add(newSettingsSubGroup);
+			return newSettingsSubGroup;
+		}
+	}
 
-        public OrganizerGroup NewAndAddSettingsGroup(string settingsGroupName)
-        {
-            OrganizerGroup newSettingsGroup = new OrganizerGroup(settingsGroupName);
-            GroupsList.Add(newSettingsGroup);
-            return newSettingsGroup;
-        }
-    }
+	public class OrganizerCategory
+	{
+		public string Name { get; set; }
 
-    public class OrganizerUserLevel
-    {
-        public string Name { get; set; }
-        List<OrganizerCategory> categoriesList = new List<OrganizerCategory>();
-        public List<OrganizerCategory> CategoriesList
-        {
-            get { return categoriesList; }
-            set { categoriesList = value; }
-        }
+		private List<OrganizerGroup> groupsList = new List<OrganizerGroup>();
 
-        public OrganizerUserLevel(string userLevelName)
-        {
-            Name = userLevelName;
-        }
+		public List<OrganizerGroup> GroupsList
+		{
+			get { return groupsList; }
+			set { groupsList = value; }
+		}
 
-        public OrganizerCategory NewAndAddSettingsGroup(string settingsGroupName)
-        {
-            OrganizerCategory newCategoriesGroup = new OrganizerCategory(settingsGroupName);
-            CategoriesList.Add(newCategoriesGroup);
-            return newCategoriesGroup;
-        }
-    }
+		public OrganizerCategory(string categoryName)
+		{
+			Name = categoryName;
+		}
 
-    public class SliceSettingsOrganizer
-    {
-        Dictionary<string, OrganizerUserLevel> userLevels = new Dictionary<string, OrganizerUserLevel>();
-        public Dictionary<string, OrganizerUserLevel> UserLevels
-        {
-            get { return userLevels; }
-            set { userLevels = value; }
-        }
+		public OrganizerGroup NewAndAddSettingsGroup(string settingsGroupName)
+		{
+			OrganizerGroup newSettingsGroup = new OrganizerGroup(settingsGroupName);
+			GroupsList.Add(newSettingsGroup);
+			return newSettingsGroup;
+		}
+	}
 
-        List<OrganizerSettingsData> settingsData = new List<OrganizerSettingsData>();
-        public List<OrganizerSettingsData> SettingsData
-        {
-            get { return settingsData; }
-            set { settingsData = value; }
-        }
+	public class OrganizerUserLevel
+	{
+		public string Name { get; set; }
 
-        static SliceSettingsOrganizer instance = null;
-        public static SliceSettingsOrganizer Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new SliceSettingsOrganizer();
-                }
+		private List<OrganizerCategory> categoriesList = new List<OrganizerCategory>();
 
-                return instance;
-            }
-        }
-		   
-        SliceSettingsOrganizer()
-        {
-            LoadAndParseSettingsFiles();
+		public List<OrganizerCategory> CategoriesList
+		{
+			get { return categoriesList; }
+			set { categoriesList = value; }
+		}
+
+		public OrganizerUserLevel(string userLevelName)
+		{
+			Name = userLevelName;
+		}
+
+		public OrganizerCategory NewAndAddSettingsGroup(string settingsGroupName)
+		{
+			OrganizerCategory newCategoriesGroup = new OrganizerCategory(settingsGroupName);
+			CategoriesList.Add(newCategoriesGroup);
+			return newCategoriesGroup;
+		}
+	}
+
+	public class SliceSettingsOrganizer
+	{
+		private Dictionary<string, OrganizerUserLevel> userLevels = new Dictionary<string, OrganizerUserLevel>();
+
+		public Dictionary<string, OrganizerUserLevel> UserLevels
+		{
+			get { return userLevels; }
+			set { userLevels = value; }
+		}
+
+		private List<OrganizerSettingsData> settingsData = new List<OrganizerSettingsData>();
+
+		public List<OrganizerSettingsData> SettingsData
+		{
+			get { return settingsData; }
+			set { settingsData = value; }
+		}
+
+		private static SliceSettingsOrganizer instance = null;
+
+		public static SliceSettingsOrganizer Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new SliceSettingsOrganizer();
+				}
+
+				return instance;
+			}
+		}
+
+		private SliceSettingsOrganizer()
+		{
+			LoadAndParseSettingsFiles();
 
 #if false
             Categories.Add(CreatePrintSettings());
@@ -235,105 +248,105 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             SettingsCategory printerSettingsCategory = new SettingsCategory("Printer Settings");
             Categories.Add(printerSettingsCategory);
 #endif
-        }
+		}
 
-        public bool Contains(string userLevel, string slicerConfigName)
-        {
-            foreach (OrganizerCategory category in UserLevels[userLevel].CategoriesList)
-            {
-                foreach (OrganizerGroup group in category.GroupsList)
-                {
-                    foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
-                    {
-                        foreach (OrganizerSettingsData settingData in subGroup.SettingDataList)
-                        {
-                            if (settingData.SlicerConfigName == slicerConfigName)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
+		public bool Contains(string userLevel, string slicerConfigName)
+		{
+			foreach (OrganizerCategory category in UserLevels[userLevel].CategoriesList)
+			{
+				foreach (OrganizerGroup group in category.GroupsList)
+				{
+					foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
+					{
+						foreach (OrganizerSettingsData settingData in subGroup.SettingDataList)
+						{
+							if (settingData.SlicerConfigName == slicerConfigName)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public OrganizerSettingsData GetSettingsData(string slicerConfigName)
-        {
-            foreach (OrganizerSettingsData settingData in SettingsData)
-            {
-                if (settingData.SlicerConfigName == slicerConfigName)
-                {
-                    return settingData;
-                }
-            }
-            return null;
-            //GD-Turning into non-fatal exception 12/12/14
-            //throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
-        }
+		public OrganizerSettingsData GetSettingsData(string slicerConfigName)
+		{
+			foreach (OrganizerSettingsData settingData in SettingsData)
+			{
+				if (settingData.SlicerConfigName == slicerConfigName)
+				{
+					return settingData;
+				}
+			}
+			return null;
+			//GD-Turning into non-fatal exception 12/12/14
+			//throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
+		}
 
-        void LoadAndParseSettingsFiles()
-        {
-            string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-            settingsData = JsonConvert.DeserializeObject<List<OrganizerSettingsData>>(propertiesFileContents) as List<OrganizerSettingsData>;
+		private void LoadAndParseSettingsFiles()
+		{
+			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			settingsData = JsonConvert.DeserializeObject<List<OrganizerSettingsData>>(propertiesFileContents) as List<OrganizerSettingsData>;
 
-            OrganizerUserLevel userLevelToAddTo = null;
-            OrganizerCategory categoryToAddTo = null;
-            OrganizerGroup groupToAddTo = null;
-            OrganizerSubGroup subGroupToAddTo = null;
+			OrganizerUserLevel userLevelToAddTo = null;
+			OrganizerCategory categoryToAddTo = null;
+			OrganizerGroup groupToAddTo = null;
+			OrganizerSubGroup subGroupToAddTo = null;
 
-            foreach (string line in StaticData.Instance.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
-            {
-                if (line.Length > 0)
-                {
-                    switch (CountLeadingSpaces(line))
-                    {
-                        case 0:
-                            string userLevelText = line.Replace('"', ' ').Trim();
-                            userLevelToAddTo = new OrganizerUserLevel(userLevelText);
-                            UserLevels.Add(userLevelText, userLevelToAddTo);
-                            break;
+			foreach (string line in StaticData.Instance.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
+			{
+				if (line.Length > 0)
+				{
+					switch (CountLeadingSpaces(line))
+					{
+						case 0:
+							string userLevelText = line.Replace('"', ' ').Trim();
+							userLevelToAddTo = new OrganizerUserLevel(userLevelText);
+							UserLevels.Add(userLevelText, userLevelToAddTo);
+							break;
 
-                        case 2:
-                            categoryToAddTo = new OrganizerCategory(line.Replace('"', ' ').Trim());
-                            userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
-                            break;
+						case 2:
+							categoryToAddTo = new OrganizerCategory(line.Replace('"', ' ').Trim());
+							userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
+							break;
 
-                        case 4:
-                            groupToAddTo = new OrganizerGroup(line.Replace('"', ' ').Trim());
-                            categoryToAddTo.GroupsList.Add(groupToAddTo);
-                            break;
+						case 4:
+							groupToAddTo = new OrganizerGroup(line.Replace('"', ' ').Trim());
+							categoryToAddTo.GroupsList.Add(groupToAddTo);
+							break;
 
-                        case 6:
-                            subGroupToAddTo = new OrganizerSubGroup(line.Replace('"', ' ').Trim());
-                            groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
-                            break;
+						case 6:
+							subGroupToAddTo = new OrganizerSubGroup(line.Replace('"', ' ').Trim());
+							groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
+							break;
 
-                        case 8:
-                            OrganizerSettingsData data = GetSettingsData(line.Replace('"', ' ').Trim());
-                            if (data != null)
-                            {
-                                subGroupToAddTo.SettingDataList.Add(data);
-                            }
+						case 8:
+							OrganizerSettingsData data = GetSettingsData(line.Replace('"', ' ').Trim());
+							if (data != null)
+							{
+								subGroupToAddTo.SettingDataList.Add(data);
+							}
 
-                            break;
+							break;
 
-                        default:
-                            throw new Exception("Bad file, too many spaces (must be 0, 2, 4 or 6).");
-                    }
-                }
-            }
-        }
+						default:
+							throw new Exception("Bad file, too many spaces (must be 0, 2, 4 or 6).");
+					}
+				}
+			}
+		}
 
-        private static int CountLeadingSpaces(string line)
-        {
-            int numSpaces = 0;
-            while (line[numSpaces] == ' ' && numSpaces < line.Length)
-            {
-                numSpaces++;
-            }
-            return numSpaces;
-        }
-    }
+		private static int CountLeadingSpaces(string line)
+		{
+			int numSpaces = 0;
+			while (line[numSpaces] == ' ' && numSpaces < line.Length)
+			{
+				numSpaces++;
+			}
+			return numSpaces;
+		}
+	}
 }

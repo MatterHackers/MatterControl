@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,7 +23,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
@@ -41,23 +41,23 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-    public class UpArrow3D : InteractionVolume
-    {
-        Mesh upArrow;
-        double zHitHeight;
-        Vector3 lastMoveDelta;
-        PlaneShape hitPlane;
-        View3DWidget view3DWidget;
+	public class UpArrow3D : InteractionVolume
+	{
+		private Mesh upArrow;
+		private double zHitHeight;
+		private Vector3 lastMoveDelta;
+		private PlaneShape hitPlane;
+		private View3DWidget view3DWidget;
 
-        public UpArrow3D(View3DWidget view3DWidget)
-            : base(null, view3DWidget.meshViewerWidget)
-        {
-            this.view3DWidget = view3DWidget;
-            string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
-            if (StaticData.Instance.FileExists(arrowFile))
-            {
-                using(Stream staticDataStream = StaticData.Instance.OpenSteam(arrowFile))
-                {
+		public UpArrow3D(View3DWidget view3DWidget)
+			: base(null, view3DWidget.meshViewerWidget)
+		{
+			this.view3DWidget = view3DWidget;
+			string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
+			if (StaticData.Instance.FileExists(arrowFile))
+			{
+				using (Stream staticDataStream = StaticData.Instance.OpenSteam(arrowFile))
+				{
 					using (MemoryStream arrowStream = new MemoryStream())
 					{
 						staticDataStream.CopyTo(arrowStream, 1 << 16);
@@ -69,106 +69,105 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						//CollisionVolume = new CylinderShape(arrowBounds.XSize / 2, arrowBounds.ZSize, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
 						//CollisionVolume = new CylinderShape(arrowBounds.XSize / 2 * 4, arrowBounds.ZSize * 4, new SolidMaterial(RGBA_Floats.Red, .5, 0, .4));
 					}
-                }
-            }
-        }
+				}
+			}
+		}
 
-        public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
-        {
-            zHitHeight = mouseEvent3D.info.hitPosition.z;
-            lastMoveDelta= new Vector3();
-            double distanceToHit = Vector3.Dot(mouseEvent3D.info.hitPosition, mouseEvent3D.MouseRay.directionNormal);
-            hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
+		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
+		{
+			zHitHeight = mouseEvent3D.info.hitPosition.z;
+			lastMoveDelta = new Vector3();
+			double distanceToHit = Vector3.Dot(mouseEvent3D.info.hitPosition, mouseEvent3D.MouseRay.directionNormal);
+			hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
 
-            IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
-            zHitHeight = info.hitPosition.z;
+			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+			zHitHeight = info.hitPosition.z;
 
-            base.OnMouseDown(mouseEvent3D);
-        }
+			base.OnMouseDown(mouseEvent3D);
+		}
 
-        public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
-        {
-            IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
+		{
+			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
-            if (info != null && MeshViewerToDrawWith.SelectedMeshGroupIndex != -1)
-            {
-                Vector3 delta = new Vector3(0, 0, info.hitPosition.z - zHitHeight);
+			if (info != null && MeshViewerToDrawWith.SelectedMeshGroupIndex != -1)
+			{
+				Vector3 delta = new Vector3(0, 0, info.hitPosition.z - zHitHeight);
 
-                // move it back to where it started
-                ScaleRotateTranslate translated = MeshViewerToDrawWith.SelectedMeshGroupTransform;
-                translated.translation *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));;
-                MeshViewerToDrawWith.SelectedMeshGroupTransform = translated;
+				// move it back to where it started
+				ScaleRotateTranslate translated = MeshViewerToDrawWith.SelectedMeshGroupTransform;
+				translated.translation *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta)); ;
+				MeshViewerToDrawWith.SelectedMeshGroupTransform = translated;
 
-                // now snap this position to the grid
-                {
-                    double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
-                    AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
-                    double bottom = selectedBounds.minXYZ.z + delta.z;
+				// now snap this position to the grid
+				{
+					double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
+					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+					double bottom = selectedBounds.minXYZ.z + delta.z;
 
-                    double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
-                    delta.z = snappedBottom - selectedBounds.minXYZ.z;
-                }
+					double snappedBottom = ((int)((bottom / snapGridDistance) + .5)) * snapGridDistance;
+					delta.z = snappedBottom - selectedBounds.minXYZ.z;
+				}
 
-                // and move it from there to where we are now
-                translated.translation *= Matrix4X4.CreateTranslation(new Vector3(delta));
-                MeshViewerToDrawWith.SelectedMeshGroupTransform = translated;
+				// and move it from there to where we are now
+				translated.translation *= Matrix4X4.CreateTranslation(new Vector3(delta));
+				MeshViewerToDrawWith.SelectedMeshGroupTransform = translated;
 
-                lastMoveDelta = delta;
+				lastMoveDelta = delta;
 
-                view3DWidget.PartHasBeenChanged();
-                Invalidate();
-            }
+				view3DWidget.PartHasBeenChanged();
+				Invalidate();
+			}
 
-            base.OnMouseMove(mouseEvent3D);
-        }
+			base.OnMouseMove(mouseEvent3D);
+		}
 
-        public void  SetPosition()
-        {
-            AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
-            Vector3 boundsCenter = selectedBounds.Center;
-            Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+		public void SetPosition()
+		{
+			AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+			Vector3 boundsCenter = selectedBounds.Center;
+			Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
-            Vector2 centerTopScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
+			Vector2 centerTopScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(centerTop);
 
-            double distBetweenPixelsWorldSpace = MeshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
+			double distBetweenPixelsWorldSpace = MeshViewerToDrawWith.TrackballTumbleWidget.GetWorldUnitsPerScreenPixelAtPosition(centerTop);
 
-            Matrix4X4 arrowTransform = Matrix4X4.CreateTranslation(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * distBetweenPixelsWorldSpace));
-            arrowTransform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * arrowTransform;
+			Matrix4X4 arrowTransform = Matrix4X4.CreateTranslation(new Vector3(centerTop.x, centerTop.y, centerTop.z + 20 * distBetweenPixelsWorldSpace));
+			arrowTransform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * arrowTransform;
 
-            TotalTransform = arrowTransform;
+			TotalTransform = arrowTransform;
 
-            if (MouseOver || MouseDownOnControl)
-            {
-                view3DWidget.heightDisplay.Visible = true;
-            }
-            else if (!view3DWidget.DisplayAllValueData)
-            {
-                view3DWidget.heightDisplay.Visible = false;
-            }
+			if (MouseOver || MouseDownOnControl)
+			{
+				view3DWidget.heightDisplay.Visible = true;
+			}
+			else if (!view3DWidget.DisplayAllValueData)
+			{
+				view3DWidget.heightDisplay.Visible = false;
+			}
+		}
 
-        }
+		public override void DrawGlContent(EventArgs e)
+		{
+			if (MeshViewerToDrawWith.SelectedMeshGroup != null)
+			{
+				if (MouseOver)
+				{
+					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
 
-        public override void DrawGlContent(EventArgs e)
-        {
-            if (MeshViewerToDrawWith.SelectedMeshGroup != null)
-            {
-                if (MouseOver)
-                {
-                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
+					// draw the hight from the bottom to the bed
+					AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
 
-                    // draw the hight from the bottom to the bed
-                    AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.GetBoundsForSelection();
+					Vector3 bottomRight = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
+					Vector2 bottomRightScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomRight);
+				}
+				else
+				{
+					RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
+				}
+			}
 
-                    Vector3 bottomRight = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, selectedBounds.minXYZ.z);
-                    Vector2 bottomRightScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomRight);
-                }
-                else
-                {
-                    RenderMeshToGl.Render(upArrow, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
-                }
-            }
-
-            base.DrawGlContent(e);
-        }
-    }
+			base.DrawGlContent(e);
+		}
+	}
 }

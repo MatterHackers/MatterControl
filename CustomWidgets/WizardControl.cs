@@ -1,207 +1,206 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using MatterHackers.Agg;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-    public class WizardPage : GuiWidget
-    {
-        string stepDescription = "";
-        public string StepDescription { get { return stepDescription; } set { stepDescription = value; } }
-        public WizardPage(string stepDescription)
-        {
-            StepDescription = stepDescription;
-        }
+	public class WizardPage : GuiWidget
+	{
+		private string stepDescription = "";
 
-        public virtual void PageIsBecomingActive()
-        {
-        }
+		public string StepDescription { get { return stepDescription; } set { stepDescription = value; } }
 
-        public virtual void PageIsBecomingInactive()
-        {
-        }
-    }
+		public WizardPage(string stepDescription)
+		{
+			StepDescription = stepDescription;
+		}
 
-    public class WizardControl : GuiWidget
-    {
-        protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		public virtual void PageIsBecomingActive()
+		{
+		}
 
-        FlowLayoutWidget bottomToTopLayout;
-        List<WizardPage> pages = new List<WizardPage>();
-        int pageIndex = 0;
-        public Button backButton;
-        public Button nextButton;
-        Button doneButton;
-        Button cancelButton;
+		public virtual void PageIsBecomingInactive()
+		{
+		}
+	}
 
-        TextWidget stepDescriptionWidget;
+	public class WizardControl : GuiWidget
+	{
+		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-        public string StepDescription
-        {
-            get { return stepDescriptionWidget.Text; }
-            set { stepDescriptionWidget.Text = value; }
-        }
+		private FlowLayoutWidget bottomToTopLayout;
+		private List<WizardPage> pages = new List<WizardPage>();
+		private int pageIndex = 0;
+		public Button backButton;
+		public Button nextButton;
+		private Button doneButton;
+		private Button cancelButton;
 
-        public WizardControl()
-        {
-            FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            topToBottom.AnchorAll();
-            topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+		private TextWidget stepDescriptionWidget;
 
-            FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-            headerRow.HAnchor = HAnchor.ParentLeftRight;
-            headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-            headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+		public string StepDescription
+		{
+			get { return stepDescriptionWidget.Text; }
+			set { stepDescriptionWidget.Text = value; }
+		}
 
-            {
-                string titleString = LocalizedString.Get("Title Stuff".Localize());
-                stepDescriptionWidget = new TextWidget(titleString, pointSize: 14);
-                stepDescriptionWidget.AutoExpandBoundsToText = true;
-                stepDescriptionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                stepDescriptionWidget.HAnchor = HAnchor.ParentLeftRight;
-                stepDescriptionWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+		public WizardControl()
+		{
+			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			topToBottom.AnchorAll();
+			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
-                headerRow.AddChild(stepDescriptionWidget);
-            }
+			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
+			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
-            topToBottom.AddChild(headerRow);
+			{
+				string titleString = LocalizedString.Get("Title Stuff".Localize());
+				stepDescriptionWidget = new TextWidget(titleString, pointSize: 14);
+				stepDescriptionWidget.AutoExpandBoundsToText = true;
+				stepDescriptionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				stepDescriptionWidget.HAnchor = HAnchor.ParentLeftRight;
+				stepDescriptionWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
 
-            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-            textImageButtonFactory.disabledTextColor = new RGBA_Bytes(200, 200, 200);
-            textImageButtonFactory.disabledFillColor = new RGBA_Bytes(0, 0, 0, 0);
-            textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+				headerRow.AddChild(stepDescriptionWidget);
+			}
 
-            AnchorAll();
-            BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			topToBottom.AddChild(headerRow);
 
-            bottomToTopLayout = new FlowLayoutWidget(FlowDirection.BottomToTop);
-            bottomToTopLayout.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-            bottomToTopLayout.Padding = new BorderDouble(3);
+			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.disabledTextColor = new RGBA_Bytes(200, 200, 200);
+			textImageButtonFactory.disabledFillColor = new RGBA_Bytes(0, 0, 0, 0);
+			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-            topToBottom.AddChild(bottomToTopLayout);
+			AnchorAll();
+			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            {
-                FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-                buttonBar.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-                buttonBar.Padding = new BorderDouble(0, 3);
+			bottomToTopLayout = new FlowLayoutWidget(FlowDirection.BottomToTop);
+			bottomToTopLayout.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			bottomToTopLayout.Padding = new BorderDouble(3);
 
-                textImageButtonFactory.FixedWidth = 60 * TextWidget.GlobalPointSizeScaleRatio;
-                backButton = textImageButtonFactory.Generate(LocalizedString.Get("Back"), centerText: true);
-                backButton.Click += new EventHandler(back_Click);
+			topToBottom.AddChild(bottomToTopLayout);
 
-                nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Next"), centerText: true);
-                nextButton.Click += new EventHandler(next_Click);
+			{
+				FlowLayoutWidget buttonBar = new FlowLayoutWidget();
+				buttonBar.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				buttonBar.Padding = new BorderDouble(0, 3);
 
-                doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"), centerText: true);
-                doneButton.Click += done_Click;
+				textImageButtonFactory.FixedWidth = 60 * TextWidget.GlobalPointSizeScaleRatio;
+				backButton = textImageButtonFactory.Generate(LocalizedString.Get("Back"), centerText: true);
+				backButton.Click += new EventHandler(back_Click);
 
-                cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
-                cancelButton.Click += done_Click;
+				nextButton = textImageButtonFactory.Generate(LocalizedString.Get("Next"), centerText: true);
+				nextButton.Click += new EventHandler(next_Click);
 
-                buttonBar.AddChild(backButton);
-                buttonBar.AddChild(nextButton);
-                buttonBar.AddChild(new HorizontalSpacer());
-                buttonBar.AddChild(doneButton);
-                buttonBar.AddChild(cancelButton);
+				doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"), centerText: true);
+				doneButton.Click += done_Click;
 
-                topToBottom.AddChild(buttonBar);
-            }
+				cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+				cancelButton.Click += done_Click;
 
-            bottomToTopLayout.AnchorAll();
+				buttonBar.AddChild(backButton);
+				buttonBar.AddChild(nextButton);
+				buttonBar.AddChild(new HorizontalSpacer());
+				buttonBar.AddChild(doneButton);
+				buttonBar.AddChild(cancelButton);
 
-            AddChild(topToBottom);
-        }
+				topToBottom.AddChild(buttonBar);
+			}
 
-        void done_Click(object sender, EventArgs mouseEvent)
-        {
-            GuiWidget windowToClose = this;
-            while (windowToClose != null && windowToClose as SystemWindow == null)
-            {
-                windowToClose = windowToClose.Parent;
-            }
+			bottomToTopLayout.AnchorAll();
 
-            SystemWindow topSystemWindow = windowToClose as SystemWindow;
-            if (topSystemWindow != null)
-            {
-                topSystemWindow.CloseOnIdle();
-            }
-        }
+			AddChild(topToBottom);
+		}
 
-        void next_Click(object sender, EventArgs mouseEvent)
-        {
-            pageIndex = Math.Min(pages.Count - 1, pageIndex + 1);
-            SetPageVisibility();
-        }
+		private void done_Click(object sender, EventArgs mouseEvent)
+		{
+			GuiWidget windowToClose = this;
+			while (windowToClose != null && windowToClose as SystemWindow == null)
+			{
+				windowToClose = windowToClose.Parent;
+			}
 
-        void back_Click(object sender, EventArgs mouseEvent)
-        {
-            pageIndex = Math.Max(0, pageIndex - 1);
-            SetPageVisibility();
-        }
+			SystemWindow topSystemWindow = windowToClose as SystemWindow;
+			if (topSystemWindow != null)
+			{
+				topSystemWindow.CloseOnIdle();
+			}
+		}
 
-        void SetPageVisibility()
-        {
-            // we set these before we call becoming active or inactive so that they can override these if needed.
-            {
-                // if the first page
-                if (pageIndex == 0)
-                {
-                    backButton.Enabled = false;
-                    nextButton.Enabled = true;
+		private void next_Click(object sender, EventArgs mouseEvent)
+		{
+			pageIndex = Math.Min(pages.Count - 1, pageIndex + 1);
+			SetPageVisibility();
+		}
 
-                    doneButton.Visible = false;
-                    cancelButton.Visible = true;
-                }
-                // if the last page
-                else if (pageIndex >= pages.Count - 1)
-                {
-                    backButton.Enabled = true;
-                    nextButton.Enabled = false;
+		private void back_Click(object sender, EventArgs mouseEvent)
+		{
+			pageIndex = Math.Max(0, pageIndex - 1);
+			SetPageVisibility();
+		}
 
-                    doneButton.Visible = true;
-                    cancelButton.Visible = false;
-                }
-                else // in the middle
-                {
-                    backButton.Enabled = true;
-                    nextButton.Enabled = true;
+		private void SetPageVisibility()
+		{
+			// we set these before we call becoming active or inactive so that they can override these if needed.
+			{
+				// if the first page
+				if (pageIndex == 0)
+				{
+					backButton.Enabled = false;
+					nextButton.Enabled = true;
 
-                    doneButton.Visible = false;
-                    cancelButton.Visible = true;
-                }
-            }
+					doneButton.Visible = false;
+					cancelButton.Visible = true;
+				}
+				// if the last page
+				else if (pageIndex >= pages.Count - 1)
+				{
+					backButton.Enabled = true;
+					nextButton.Enabled = false;
 
-            for (int i = 0; i < pages.Count; i++)
-            {
-                if (i == pageIndex)
-                {
-                    pages[i].Visible = true;
-                    pages[i].PageIsBecomingActive();
-                    StepDescription = pages[i].StepDescription;
-                }
-                else
-                {
-                    if (pages[i].Visible)
-                    {
-                        pages[i].Visible = false;
-                        pages[i].PageIsBecomingInactive();
-                    }
-                }
-            }
-        }
+					doneButton.Visible = true;
+					cancelButton.Visible = false;
+				}
+				else // in the middle
+				{
+					backButton.Enabled = true;
+					nextButton.Enabled = true;
 
-        public void AddPage(WizardPage widgetForPage)
-        {
-            pages.Add(widgetForPage);
-            bottomToTopLayout.AddChild(widgetForPage);
-            SetPageVisibility();
-        }
-    }
+					doneButton.Visible = false;
+					cancelButton.Visible = true;
+				}
+			}
+
+			for (int i = 0; i < pages.Count; i++)
+			{
+				if (i == pageIndex)
+				{
+					pages[i].Visible = true;
+					pages[i].PageIsBecomingActive();
+					StepDescription = pages[i].StepDescription;
+				}
+				else
+				{
+					if (pages[i].Visible)
+					{
+						pages[i].Visible = false;
+						pages[i].PageIsBecomingInactive();
+					}
+				}
+			}
+		}
+
+		public void AddPage(WizardPage widgetForPage)
+		{
+			pages.Add(widgetForPage);
+			bottomToTopLayout.AddChild(widgetForPage);
+			SetPageVisibility();
+		}
+	}
 }

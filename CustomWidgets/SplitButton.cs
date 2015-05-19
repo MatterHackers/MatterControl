@@ -1,50 +1,48 @@
-﻿using System;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg;
+using System;
 
 namespace MatterHackers.MatterControl
 {
 	public class SplitButton : FlowLayoutWidget
 	{
-		Button defaultButton;
-		DynamicDropDownMenu altChoices;
+		private Button defaultButton;
+		private DynamicDropDownMenu altChoices;
 
-		Button DefaultButton { get{return defaultButton;}}
+		private Button DefaultButton { get { return defaultButton; } }
 
-		public SplitButton (string buttonText, Direction direction = Direction.Down)
-			:base(FlowDirection.LeftToRight, HAnchor.FitToChildren, VAnchor.FitToChildren)			
+		public SplitButton(string buttonText, Direction direction = Direction.Down)
+			: base(FlowDirection.LeftToRight, HAnchor.FitToChildren, VAnchor.FitToChildren)
 		{
-
-			defaultButton = CreateDefaultButton (buttonText);
-			altChoices = CreateDropDown (direction);
+			defaultButton = CreateDefaultButton(buttonText);
+			altChoices = CreateDropDown(direction);
 
 			defaultButton.VAnchor = VAnchor.ParentCenter;
 
-
-			AddChild (defaultButton);
-			AddChild (altChoices);
+			AddChild(defaultButton);
+			AddChild(altChoices);
 		}
 
 		public SplitButton(Button button, DynamicDropDownMenu menu)
-			:base(FlowDirection.LeftToRight,HAnchor.FitToChildren,VAnchor.FitToChildren)
+			: base(FlowDirection.LeftToRight, HAnchor.FitToChildren, VAnchor.FitToChildren)
 		{
 			defaultButton = button;
 			altChoices = menu;
 
 			defaultButton.VAnchor = VAnchor.ParentCenter;
 
-			AddChild (defaultButton);
-			AddChild (altChoices);
+			AddChild(defaultButton);
+			AddChild(altChoices);
 		}
 
 		public void addItem(string name, Func<bool> clickFunction)
 		{
-			altChoices.addItem( name, clickFunction);
+			altChoices.addItem(name, clickFunction);
 		}
 
 		private DynamicDropDownMenu CreateDropDown(Direction direction)
 		{
-			DynamicDropDownMenu menu = new DynamicDropDownMenu ("", direction);
+			DynamicDropDownMenu menu = new DynamicDropDownMenu("", direction);
 			menu.VAnchor = VAnchor.ParentCenter;
 			menu.MenuAsWideAsItems = false;
 			menu.AlignToRightEdge = true;
@@ -55,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 		private Button CreateDefaultButton(string buttonText)
 		{
-			TextImageButtonFactory buttonFactory = new TextImageButtonFactory ();
+			TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 			buttonFactory.FixedHeight = 30 * TextWidget.GlobalPointSizeScaleRatio;
 			buttonFactory.normalFillColor = RGBA_Bytes.White;
 			buttonFactory.normalTextColor = RGBA_Bytes.Black;
@@ -65,9 +63,7 @@ namespace MatterHackers.MatterControl
 			buttonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 			buttonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-
-			return buttonFactory.Generate (buttonText, centerText: true);
+			return buttonFactory.Generate(buttonText, centerText: true);
 		}
 	}
 }
-

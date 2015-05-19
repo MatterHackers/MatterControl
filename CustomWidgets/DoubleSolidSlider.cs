@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,493 +23,501 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.ComponentModel;
-using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl
 {
-    public class DoubleSolidSlideView
-    {
-        DoubleSolidSlider sliderAttachedTo;
+	public class DoubleSolidSlideView
+	{
+		private DoubleSolidSlider sliderAttachedTo;
 
-        public RGBA_Bytes BackgroundColor { get; set; }
-        public RGBA_Bytes FillColor { get; set; }
-        public RGBA_Bytes TrackColor { get; set; }
-        public double TrackHeight { get; set; }
+		public RGBA_Bytes BackgroundColor { get; set; }
 
-        public TickPlacement TextPlacement { get; set; }
-        public RGBA_Bytes TextColor { get; set; }
-        public StyledTypeFace TextStyle { get; set; }
+		public RGBA_Bytes FillColor { get; set; }
 
-        public RGBA_Bytes ThumbColor { get; set; }
+		public RGBA_Bytes TrackColor { get; set; }
 
-        public TickPlacement TickPlacement { get; set; }
-        public RGBA_Bytes TickColor { get; set; }
+		public double TrackHeight { get; set; }
 
-        public DoubleSolidSlideView(DoubleSolidSlider sliderWidget)
-        {
-            sliderAttachedTo = sliderWidget;
+		public TickPlacement TextPlacement { get; set; }
 
-            TrackHeight = 10;
+		public RGBA_Bytes TextColor { get; set; }
 
-            TextColor = RGBA_Bytes.Black;
-            TrackColor = new RGBA_Bytes(220, 220, 220);
-            ThumbColor = ActiveTheme.Instance.SecondaryAccentColor;
+		public StyledTypeFace TextStyle { get; set; }
 
-            sliderWidget.FirstValueChanged += new EventHandler(sliderWidget_ValueChanged);
-            sliderWidget.SecondValueChanged += new EventHandler(sliderWidget_ValueChanged);
-        }
+		public RGBA_Bytes ThumbColor { get; set; }
 
-        void sliderWidget_ValueChanged(object sender, EventArgs e)
-        {
+		public TickPlacement TickPlacement { get; set; }
 
-        }
+		public RGBA_Bytes TickColor { get; set; }
 
-        RectangleDouble GetTrackBounds()
-        {
-            RectangleDouble trackBounds;
-            if (sliderAttachedTo.Orientation == Orientation.Horizontal)
-            {
-                trackBounds = new RectangleDouble(0, -TrackHeight / 2, sliderAttachedTo.TotalWidthInPixels, TrackHeight / 2);
-            }
-            else
-            {
-                trackBounds = new RectangleDouble(-TrackHeight / 2, 0, TrackHeight / 2, sliderAttachedTo.TotalWidthInPixels);
-            }
-            return trackBounds;
-        }
+		public DoubleSolidSlideView(DoubleSolidSlider sliderWidget)
+		{
+			sliderAttachedTo = sliderWidget;
 
-        RectangleDouble GetThumbBounds()
-        {
-            RectangleDouble thumbBounds = sliderAttachedTo.GetFirstThumbHitBounds();
-            return thumbBounds;
-        }
+			TrackHeight = 10;
 
-        public RectangleDouble GetTotalBounds()
-        {
-            RectangleDouble totalBounds = GetTrackBounds();
-            totalBounds.ExpandToInclude(GetThumbBounds());
-            return totalBounds;
-        }
+			TextColor = RGBA_Bytes.Black;
+			TrackColor = new RGBA_Bytes(220, 220, 220);
+			ThumbColor = ActiveTheme.Instance.SecondaryAccentColor;
 
-        public void DoDrawBeforeChildren(Graphics2D graphics2D)
-        {
-            // erase to the background color
-            graphics2D.FillRectangle(GetTotalBounds(), BackgroundColor);
-        }
+			sliderWidget.FirstValueChanged += new EventHandler(sliderWidget_ValueChanged);
+			sliderWidget.SecondValueChanged += new EventHandler(sliderWidget_ValueChanged);
+		}
 
-        public void DoDrawAfterChildren(Graphics2D graphics2D)
-        {
-            RoundedRect track = new RoundedRect(GetTrackBounds(), 0);
-            Vector2 ValuePrintPosition;
-            if (sliderAttachedTo.Orientation == Orientation.Horizontal)
-            {
-                ValuePrintPosition = new Vector2(sliderAttachedTo.TotalWidthInPixels / 2, -TrackHeight - 12);
-            }
-            else
-            {
-                ValuePrintPosition = new Vector2(0, -TrackHeight - 12);
-            }
+		private void sliderWidget_ValueChanged(object sender, EventArgs e)
+		{
+		}
 
-            // draw the track
-            graphics2D.Render(track, TrackColor);
+		private RectangleDouble GetTrackBounds()
+		{
+			RectangleDouble trackBounds;
+			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
+			{
+				trackBounds = new RectangleDouble(0, -TrackHeight / 2, sliderAttachedTo.TotalWidthInPixels, TrackHeight / 2);
+			}
+			else
+			{
+				trackBounds = new RectangleDouble(-TrackHeight / 2, 0, TrackHeight / 2, sliderAttachedTo.TotalWidthInPixels);
+			}
+			return trackBounds;
+		}
 
-            // draw the first thumb
-            RectangleDouble firstThumbBounds = sliderAttachedTo.GetFirstThumbHitBounds();
-            RoundedRect firstThumbOutside = new RoundedRect(firstThumbBounds, 0);
-            graphics2D.Render(firstThumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+		private RectangleDouble GetThumbBounds()
+		{
+			RectangleDouble thumbBounds = sliderAttachedTo.GetFirstThumbHitBounds();
+			return thumbBounds;
+		}
 
-            // draw the second thumb
-            RectangleDouble secondThumbBounds = sliderAttachedTo.GetSecondThumbHitBounds();
-            RoundedRect secondThumbOutside = new RoundedRect(secondThumbBounds, 0);
-            graphics2D.Render(secondThumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+		public RectangleDouble GetTotalBounds()
+		{
+			RectangleDouble totalBounds = GetTrackBounds();
+			totalBounds.ExpandToInclude(GetThumbBounds());
+			return totalBounds;
+		}
 
-        }
-    }
+		public void DoDrawBeforeChildren(Graphics2D graphics2D)
+		{
+			// erase to the background color
+			graphics2D.FillRectangle(GetTotalBounds(), BackgroundColor);
+		}
 
-    public class DoubleSolidSlider : GuiWidget
-    {
-        public event EventHandler FirstValueChanged;
-        public event EventHandler SecondValueChanged;
-        public event EventHandler FirstSliderReleased;
-        public event EventHandler SecondSliderReleased;
+		public void DoDrawAfterChildren(Graphics2D graphics2D)
+		{
+			RoundedRect track = new RoundedRect(GetTrackBounds(), 0);
+			Vector2 ValuePrintPosition;
+			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
+			{
+				ValuePrintPosition = new Vector2(sliderAttachedTo.TotalWidthInPixels / 2, -TrackHeight - 12);
+			}
+			else
+			{
+				ValuePrintPosition = new Vector2(0, -TrackHeight - 12);
+			}
 
-        public DoubleSolidSlideView View { get; set; }
+			// draw the track
+			graphics2D.Render(track, TrackColor);
 
-        double mouseDownOffsetFromFirstThumbCenter;
-        double mouseDownOffsetFromSecondThumbCenter;
-        bool downOnFirstThumb = false;
-        bool downOnSecondThumb = false;
+			// draw the first thumb
+			RectangleDouble firstThumbBounds = sliderAttachedTo.GetFirstThumbHitBounds();
+			RoundedRect firstThumbOutside = new RoundedRect(firstThumbBounds, 0);
+			graphics2D.Render(firstThumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
 
-        double firstPosition0To1;
-        double secondPosition0To1;
-        double thumbHeight;
-        int numTicks = 0;
+			// draw the second thumb
+			RectangleDouble secondThumbBounds = sliderAttachedTo.GetSecondThumbHitBounds();
+			RoundedRect secondThumbOutside = new RoundedRect(secondThumbBounds, 0);
+			graphics2D.Render(secondThumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+		}
+	}
 
-        public double SecondPosition0To1
-        {
-            get
-            {
-                return secondPosition0To1;
-            }
+	public class DoubleSolidSlider : GuiWidget
+	{
+		public event EventHandler FirstValueChanged;
 
-            set
-            {
-                secondPosition0To1 = Math.Max(0, Math.Min(value, 1));
-            }
-        }
+		public event EventHandler SecondValueChanged;
 
+		public event EventHandler FirstSliderReleased;
 
-        public double FirstPosition0To1
-        {
-            get
-            {
-                return firstPosition0To1;
-            }
+		public event EventHandler SecondSliderReleased;
 
-            set
-            {
-                firstPosition0To1 = Math.Max(0, Math.Min(value, 1));
-            }
-        }
+		public DoubleSolidSlideView View { get; set; }
 
-        public double FirstValue
-        {
-            get
-            {
-                return Minimum + (Maximum - Minimum) * FirstPosition0To1;
-            }
-            set
-            {
-                double newPosition0To1 = Math.Max(0, Math.Min((value - Minimum) / (Maximum - Minimum), 1));
-                if (newPosition0To1 != FirstPosition0To1)
-                {
-                    FirstPosition0To1 = newPosition0To1;
-                    if (FirstValueChanged != null)
-                    {
-                        FirstValueChanged(this, null);
-                    }
-                    Invalidate();
-                }
-            }
-        }
+		private double mouseDownOffsetFromFirstThumbCenter;
+		private double mouseDownOffsetFromSecondThumbCenter;
+		private bool downOnFirstThumb = false;
+		private bool downOnSecondThumb = false;
 
-        public double SecondValue
-        {
-            get
-            {
-                return Minimum + (Maximum - Minimum) * SecondPosition0To1;
-            }
-            set
-            {
-                double newPosition0To1 = Math.Max(0, Math.Min((value - Minimum) / (Maximum - Minimum), 1));
-                if (newPosition0To1 != SecondPosition0To1)
-                {
-                    SecondPosition0To1 = newPosition0To1;
-                    if (SecondValueChanged != null)
-                    {
-                        SecondValueChanged(this, null);
-                    }
-                    Invalidate();
-                }
-            }
-        }
+		private double firstPosition0To1;
+		private double secondPosition0To1;
+		private double thumbHeight;
+		private int numTicks = 0;
 
-        public double PositionPixelsFromSecondValue
-        {
-            get
-            {
-                return ThumbWidth / 2 + TrackWidth * SecondPosition0To1;
-            }
-            set
-            {
-                SecondPosition0To1 = (value - ThumbWidth / 2) / TrackWidth;
-            }
-        }
+		public double SecondPosition0To1
+		{
+			get
+			{
+				return secondPosition0To1;
+			}
 
-        public double PositionPixelsFromFirstValue
-        {
-            get
-            {
-                return ThumbWidth / 2 + TrackWidth * FirstPosition0To1;
-            }
-            set
-            {
-                FirstPosition0To1 = (value - ThumbWidth / 2) / TrackWidth;
-            }
-        }
+			set
+			{
+				secondPosition0To1 = Math.Max(0, Math.Min(value, 1));
+			}
+		}
 
-        public Orientation Orientation { get; set; }
+		public double FirstPosition0To1
+		{
+			get
+			{
+				return firstPosition0To1;
+			}
 
-        public double ThumbWidth { get; set; }
-        public double ThumbHeight
-        {
-            get
-            {
-                return Math.Max(thumbHeight, ThumbWidth);
-            }
-            set
-            {
-                thumbHeight = value;
-            }
-        }
+			set
+			{
+				firstPosition0To1 = Math.Max(0, Math.Min(value, 1));
+			}
+		}
 
-        public double TotalWidthInPixels { get; set; }
-        public double TrackWidth
-        {
-            get
-            {
-                return TotalWidthInPixels - ThumbWidth;
-            }
-        }
+		public double FirstValue
+		{
+			get
+			{
+				return Minimum + (Maximum - Minimum) * FirstPosition0To1;
+			}
+			set
+			{
+				double newPosition0To1 = Math.Max(0, Math.Min((value - Minimum) / (Maximum - Minimum), 1));
+				if (newPosition0To1 != FirstPosition0To1)
+				{
+					FirstPosition0To1 = newPosition0To1;
+					if (FirstValueChanged != null)
+					{
+						FirstValueChanged(this, null);
+					}
+					Invalidate();
+				}
+			}
+		}
 
-        /// <summary>
-        /// There will always be 0 or at least two ticks, one at the start and one at the end.
-        /// </summary>
-        public int NumTicks
-        {
-            get
-            {
-                return numTicks;
-            }
+		public double SecondValue
+		{
+			get
+			{
+				return Minimum + (Maximum - Minimum) * SecondPosition0To1;
+			}
+			set
+			{
+				double newPosition0To1 = Math.Max(0, Math.Min((value - Minimum) / (Maximum - Minimum), 1));
+				if (newPosition0To1 != SecondPosition0To1)
+				{
+					SecondPosition0To1 = newPosition0To1;
+					if (SecondValueChanged != null)
+					{
+						SecondValueChanged(this, null);
+					}
+					Invalidate();
+				}
+			}
+		}
 
-            set
-            {
-                numTicks = value;
-                if (numTicks == 1)
-                {
-                    numTicks = 2;
-                }
-            }
-        }
+		public double PositionPixelsFromSecondValue
+		{
+			get
+			{
+				return ThumbWidth / 2 + TrackWidth * SecondPosition0To1;
+			}
+			set
+			{
+				SecondPosition0To1 = (value - ThumbWidth / 2) / TrackWidth;
+			}
+		}
 
-        public bool SnapToTicks { get; set; }
+		public double PositionPixelsFromFirstValue
+		{
+			get
+			{
+				return ThumbWidth / 2 + TrackWidth * FirstPosition0To1;
+			}
+			set
+			{
+				FirstPosition0To1 = (value - ThumbWidth / 2) / TrackWidth;
+			}
+		}
 
-        public double Minimum { get; set; }
-        public double Maximum { get; set; }
-        public bool SmallChange { get; set; }
-        public bool LargeChange { get; set; }
+		public Orientation Orientation { get; set; }
 
-        public DoubleSolidSlider(Vector2 positionOfTrackFirstValue, double widthInPixels, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
-        {
-            View = new DoubleSolidSlideView(this);
-            View.TrackHeight = widthInPixels;
-            OriginRelativeParent = positionOfTrackFirstValue;
-            TotalWidthInPixels = widthInPixels;
-            Orientation = orientation;
-            Minimum = minimum;
-            Maximum = maximum;
-            ThumbWidth = widthInPixels;
-            ThumbHeight = widthInPixels * 1.4;
+		public double ThumbWidth { get; set; }
 
-            MinimumSize = new Vector2(Width, Height);
-        }
+		public double ThumbHeight
+		{
+			get
+			{
+				return Math.Max(thumbHeight, ThumbWidth);
+			}
+			set
+			{
+				thumbHeight = value;
+			}
+		}
 
-        public DoubleSolidSlider(Vector2 lowerLeft, Vector2 upperRight)
-            : this(new Vector2(lowerLeft.x, lowerLeft.y + (upperRight.y - lowerLeft.y) / 2), upperRight.x - lowerLeft.x)
-        {
-        }
+		public double TotalWidthInPixels { get; set; }
 
-        public DoubleSolidSlider(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY)
-            : this(new Vector2(lowerLeftX, lowerLeftY + (upperRightY - lowerLeftY) / 2), upperRightX - lowerLeftX)
-        {
-        }
+		public double TrackWidth
+		{
+			get
+			{
+				return TotalWidthInPixels - ThumbWidth;
+			}
+		}
 
-        public override RectangleDouble LocalBounds
-        {
-            get
-            {
-                return View.GetTotalBounds();
-            }
-            set
-            {
-                //OriginRelativeParent = new Vector2(value.Left, value.Bottom - View.GetTotalBounds().Bottom);
-                //throw new Exception("Figure out what this should do.");
-            }
-        }
+		/// <summary>
+		/// There will always be 0 or at least two ticks, one at the start and one at the end.
+		/// </summary>
+		public int NumTicks
+		{
+			get
+			{
+				return numTicks;
+			}
 
-        public void SetRange(double minimum, double maximum)
-        {
-            Minimum = minimum;
-            Maximum = maximum;
-        }
+			set
+			{
+				numTicks = value;
+				if (numTicks == 1)
+				{
+					numTicks = 2;
+				}
+			}
+		}
 
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            View.DoDrawBeforeChildren(graphics2D);
-            base.OnDraw(graphics2D);
-            View.DoDrawAfterChildren(graphics2D);
-        }
+		public bool SnapToTicks { get; set; }
 
-        public RectangleDouble GetSecondThumbHitBounds()
-        {
-            if (Orientation == Orientation.Horizontal)
-            {
-                return new RectangleDouble(-ThumbWidth / 2 + PositionPixelsFromSecondValue, -ThumbHeight / 2,
-                    ThumbWidth / 2 + PositionPixelsFromSecondValue, ThumbHeight / 2);
-            }
-            else
-            {
-                return new RectangleDouble(-ThumbHeight / 2, -ThumbWidth / 2 + PositionPixelsFromSecondValue,
-                    ThumbHeight / 2, ThumbWidth / 2 + PositionPixelsFromSecondValue);
-            }
-        }
+		public double Minimum { get; set; }
 
-        public RectangleDouble GetFirstThumbHitBounds()
-        {
-            if (Orientation == Orientation.Horizontal)
-            {
-                return new RectangleDouble(-ThumbWidth / 2 + PositionPixelsFromFirstValue, -ThumbHeight / 2,
-                    ThumbWidth / 2 + PositionPixelsFromFirstValue, ThumbHeight / 2);
-            }
-            else
-            {
-                return new RectangleDouble(-ThumbHeight / 2, -ThumbWidth / 2 + PositionPixelsFromFirstValue,
-                    ThumbHeight / 2, ThumbWidth / 2 + PositionPixelsFromFirstValue);
-            }
-        }
+		public double Maximum { get; set; }
 
-        public double GetPosition0To1FromFirstValue(double value)
-        {
-            return (value - Minimum) / (Maximum - Minimum);
-        }
+		public bool SmallChange { get; set; }
 
-        public double GetPositionPixelsFromFirstValue(double value)
-        {
-            return ThumbWidth / 2 + TrackWidth * GetPosition0To1FromFirstValue(value);
-        }
+		public bool LargeChange { get; set; }
 
-        public RectangleDouble GetTrackHitBounds()
-        {
-            if (Orientation == Orientation.Horizontal)
-            {
-                return new RectangleDouble(0, -ThumbHeight / 2,
-                    TotalWidthInPixels, ThumbHeight / 2);
-            }
-            else
-            {
-                return new RectangleDouble(-ThumbHeight / 2, 0, ThumbHeight / 2, TotalWidthInPixels);
-            }
-        }
+		public DoubleSolidSlider(Vector2 positionOfTrackFirstValue, double widthInPixels, double minimum = 0, double maximum = 1, Orientation orientation = Orientation.Horizontal)
+		{
+			View = new DoubleSolidSlideView(this);
+			View.TrackHeight = widthInPixels;
+			OriginRelativeParent = positionOfTrackFirstValue;
+			TotalWidthInPixels = widthInPixels;
+			Orientation = orientation;
+			Minimum = minimum;
+			Maximum = maximum;
+			ThumbWidth = widthInPixels;
+			ThumbHeight = widthInPixels * 1.4;
 
-        double firstValueOnMouseDown;
-        double secondValueOnMouseDown;
-        public override void OnMouseDown(MouseEventArgs mouseEvent)
-        {
-            firstValueOnMouseDown = FirstValue;
-            secondValueOnMouseDown = SecondValue;
-            Vector2 mousePos = mouseEvent.Position;
-            RectangleDouble firstThumbBounds = GetFirstThumbHitBounds();
-            RectangleDouble secondThumbBounds = GetSecondThumbHitBounds();
-            if (firstThumbBounds.Contains(mousePos))
-            {
-                if (Orientation == Orientation.Horizontal)
-                {
-                    mouseDownOffsetFromFirstThumbCenter = mousePos.x - PositionPixelsFromFirstValue;
-                }
-                else
-                {
-                    mouseDownOffsetFromFirstThumbCenter = mousePos.y - PositionPixelsFromFirstValue;
-                }
-                downOnFirstThumb = true;
-            }
-            else if (secondThumbBounds.Contains(mousePos))
-            {
-                if (Orientation == Orientation.Horizontal)
-                {
-                    mouseDownOffsetFromSecondThumbCenter = mousePos.x - PositionPixelsFromSecondValue;
-                }
-                else
-                {
-                    mouseDownOffsetFromSecondThumbCenter = mousePos.y - PositionPixelsFromSecondValue;
-                }
-                downOnSecondThumb = true;
-            }
-            else // let's check if we are on the track
-            {
-                //Ignore track hits
-            }
+			MinimumSize = new Vector2(Width, Height);
+		}
 
+		public DoubleSolidSlider(Vector2 lowerLeft, Vector2 upperRight)
+			: this(new Vector2(lowerLeft.x, lowerLeft.y + (upperRight.y - lowerLeft.y) / 2), upperRight.x - lowerLeft.x)
+		{
+		}
 
-            base.OnMouseDown(mouseEvent);
-        }
+		public DoubleSolidSlider(double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY)
+			: this(new Vector2(lowerLeftX, lowerLeftY + (upperRightY - lowerLeftY) / 2), upperRightX - lowerLeftX)
+		{
+		}
 
-        public override void OnMouseMove(MouseEventArgs mouseEvent)
-        {
-            Vector2 mousePos = mouseEvent.Position;
-            if (downOnFirstThumb)
-            {
-                double oldValue = FirstValue;
-                if (Orientation == Orientation.Horizontal)
-                {
-                    PositionPixelsFromFirstValue = Math.Min(mousePos.x - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
-                }
-                else
-                {
-                    PositionPixelsFromFirstValue = Math.Min(mousePos.y - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
-                }
-                if (oldValue != FirstValue)
-                {
-                    if (FirstValueChanged != null)
-                    {
-                        FirstValueChanged(this, mouseEvent);
-                    }
-                    Invalidate();
-                }
-            }
-            else if (downOnSecondThumb)
-            {
-                double oldValue = SecondValue;
-                if (Orientation == Orientation.Horizontal)
-                {
-                    PositionPixelsFromSecondValue = Math.Max(mousePos.x - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth+2);
-                }
-                else
-                {
-                    PositionPixelsFromSecondValue = Math.Max(mousePos.y - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
-                }
-                if (oldValue != SecondValue)
-                {
-                    if (SecondValueChanged != null)
-                    {
-                        SecondValueChanged(this, mouseEvent);
-                    }
-                    Invalidate();
-                }
-            }
-            base.OnMouseMove(mouseEvent);
-        }        
-        
-        public override void OnMouseUp(MouseEventArgs mouseEvent)
-        {
-            downOnFirstThumb = false;
-            downOnSecondThumb = false;
-            base.OnMouseUp(mouseEvent);
-            if (downOnFirstThumb)
-            {
-                if (firstValueOnMouseDown != FirstValue && FirstSliderReleased != null)
-                {
-                    FirstSliderReleased(this, mouseEvent);
-                }
-            }
-            else if (downOnSecondThumb)
-            {
-                if (secondValueOnMouseDown != SecondValue && SecondSliderReleased != null)
-                {
-                    SecondSliderReleased(this, mouseEvent);
-                }
-            }
-        }
-    }
+		public override RectangleDouble LocalBounds
+		{
+			get
+			{
+				return View.GetTotalBounds();
+			}
+			set
+			{
+				//OriginRelativeParent = new Vector2(value.Left, value.Bottom - View.GetTotalBounds().Bottom);
+				//throw new Exception("Figure out what this should do.");
+			}
+		}
+
+		public void SetRange(double minimum, double maximum)
+		{
+			Minimum = minimum;
+			Maximum = maximum;
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			View.DoDrawBeforeChildren(graphics2D);
+			base.OnDraw(graphics2D);
+			View.DoDrawAfterChildren(graphics2D);
+		}
+
+		public RectangleDouble GetSecondThumbHitBounds()
+		{
+			if (Orientation == Orientation.Horizontal)
+			{
+				return new RectangleDouble(-ThumbWidth / 2 + PositionPixelsFromSecondValue, -ThumbHeight / 2,
+					ThumbWidth / 2 + PositionPixelsFromSecondValue, ThumbHeight / 2);
+			}
+			else
+			{
+				return new RectangleDouble(-ThumbHeight / 2, -ThumbWidth / 2 + PositionPixelsFromSecondValue,
+					ThumbHeight / 2, ThumbWidth / 2 + PositionPixelsFromSecondValue);
+			}
+		}
+
+		public RectangleDouble GetFirstThumbHitBounds()
+		{
+			if (Orientation == Orientation.Horizontal)
+			{
+				return new RectangleDouble(-ThumbWidth / 2 + PositionPixelsFromFirstValue, -ThumbHeight / 2,
+					ThumbWidth / 2 + PositionPixelsFromFirstValue, ThumbHeight / 2);
+			}
+			else
+			{
+				return new RectangleDouble(-ThumbHeight / 2, -ThumbWidth / 2 + PositionPixelsFromFirstValue,
+					ThumbHeight / 2, ThumbWidth / 2 + PositionPixelsFromFirstValue);
+			}
+		}
+
+		public double GetPosition0To1FromFirstValue(double value)
+		{
+			return (value - Minimum) / (Maximum - Minimum);
+		}
+
+		public double GetPositionPixelsFromFirstValue(double value)
+		{
+			return ThumbWidth / 2 + TrackWidth * GetPosition0To1FromFirstValue(value);
+		}
+
+		public RectangleDouble GetTrackHitBounds()
+		{
+			if (Orientation == Orientation.Horizontal)
+			{
+				return new RectangleDouble(0, -ThumbHeight / 2,
+					TotalWidthInPixels, ThumbHeight / 2);
+			}
+			else
+			{
+				return new RectangleDouble(-ThumbHeight / 2, 0, ThumbHeight / 2, TotalWidthInPixels);
+			}
+		}
+
+		private double firstValueOnMouseDown;
+		private double secondValueOnMouseDown;
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			firstValueOnMouseDown = FirstValue;
+			secondValueOnMouseDown = SecondValue;
+			Vector2 mousePos = mouseEvent.Position;
+			RectangleDouble firstThumbBounds = GetFirstThumbHitBounds();
+			RectangleDouble secondThumbBounds = GetSecondThumbHitBounds();
+			if (firstThumbBounds.Contains(mousePos))
+			{
+				if (Orientation == Orientation.Horizontal)
+				{
+					mouseDownOffsetFromFirstThumbCenter = mousePos.x - PositionPixelsFromFirstValue;
+				}
+				else
+				{
+					mouseDownOffsetFromFirstThumbCenter = mousePos.y - PositionPixelsFromFirstValue;
+				}
+				downOnFirstThumb = true;
+			}
+			else if (secondThumbBounds.Contains(mousePos))
+			{
+				if (Orientation == Orientation.Horizontal)
+				{
+					mouseDownOffsetFromSecondThumbCenter = mousePos.x - PositionPixelsFromSecondValue;
+				}
+				else
+				{
+					mouseDownOffsetFromSecondThumbCenter = mousePos.y - PositionPixelsFromSecondValue;
+				}
+				downOnSecondThumb = true;
+			}
+			else // let's check if we are on the track
+			{
+				//Ignore track hits
+			}
+
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			Vector2 mousePos = mouseEvent.Position;
+			if (downOnFirstThumb)
+			{
+				double oldValue = FirstValue;
+				if (Orientation == Orientation.Horizontal)
+				{
+					PositionPixelsFromFirstValue = Math.Min(mousePos.x - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
+				}
+				else
+				{
+					PositionPixelsFromFirstValue = Math.Min(mousePos.y - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
+				}
+				if (oldValue != FirstValue)
+				{
+					if (FirstValueChanged != null)
+					{
+						FirstValueChanged(this, mouseEvent);
+					}
+					Invalidate();
+				}
+			}
+			else if (downOnSecondThumb)
+			{
+				double oldValue = SecondValue;
+				if (Orientation == Orientation.Horizontal)
+				{
+					PositionPixelsFromSecondValue = Math.Max(mousePos.x - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
+				}
+				else
+				{
+					PositionPixelsFromSecondValue = Math.Max(mousePos.y - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
+				}
+				if (oldValue != SecondValue)
+				{
+					if (SecondValueChanged != null)
+					{
+						SecondValueChanged(this, mouseEvent);
+					}
+					Invalidate();
+				}
+			}
+			base.OnMouseMove(mouseEvent);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
+		{
+			downOnFirstThumb = false;
+			downOnSecondThumb = false;
+			base.OnMouseUp(mouseEvent);
+			if (downOnFirstThumb)
+			{
+				if (firstValueOnMouseDown != FirstValue && FirstSliderReleased != null)
+				{
+					FirstSliderReleased(this, mouseEvent);
+				}
+			}
+			else if (downOnSecondThumb)
+			{
+				if (secondValueOnMouseDown != SecondValue && SecondSliderReleased != null)
+				{
+					SecondSliderReleased(this, mouseEvent);
+				}
+			}
+		}
+	}
 }

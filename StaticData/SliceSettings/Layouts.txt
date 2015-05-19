@@ -1,68 +1,78 @@
 Simple
   Settings
     Single
-      Print
+      Layers
         layer_height
         fill_density
       Support Material
         support_material
         create_raft
 Intermediate
-  Print
-    Layers/Perimeters
+  Settings
+    Layers/Surface
       Layer Height
         layer_height
-      Perimeters
-        perimeters
+        first_layer_height
+      Outer Surface
+        solid_shell
     Infill
       Infill
         fill_density
         fill_pattern
         infill_type
-    Skirt and Brim
+    Skirt and Raft
       Skirt
         skirt_distance
+      Raft
+        create_raft
     Support Material
       Support Material
         support_material
         support_type
-      Raft
-        create_raft
+        support_material_interface_layers
+        support_material_z_gap_layers
+        support_material_create_internal_support
+      Support Options
+        support_material_spacing
+      Extruders
+        support_material_extruder
   Filament
     Filament
       Filament
         filament_diameter
-      Temperature (°C)
+      Extruder Temperature (°C)
         first_layer_temperature
         temperature
+        extruder_wipe_temperature
+      Bed Temperature (°C)
         first_layer_bed_temperature
         bed_temperature
+        bed_remove_part_temperature
+      Retraction
+        retract_length
+        retract_speed
+        retract_lift
+        wipe
+      Retraction On Tool Change
+        retract_restart_extra_toolchange
     Cooling
-      Enable
-        cooling
-  Printer
-    General
-      Size and Coordinates
-        bed_size
-        print_center
-        build_height
-    Extruder
-      Extruder X
-        nozzle_diameter
+      Fan Speed
+        min_fan_speed
+        max_fan_speed
 Advanced
-  Print
-    Layers/Perimeters
+  Settings
+    Layers/Surface
       Layer Height
         layer_height
         first_layer_height
         bottom_clip_amount
-      Perimeters
+      Perimeters Surface
         perimeters
         avoid_crossing_perimeters
         spiral_vase
         randomize_start
         external_perimeters_first
-      Top & Bottom Layers
+      Top & Bottom Surface
         top_solid_layers
         bottom_solid_layers
       Quality
@@ -174,16 +184,6 @@ Advanced
         ooze_prevention
         standby_temperature_delta
     Advanced
-      Extrusion Width
-        extrusion_width
-        first_layer_extrusion_width
-        perimeter_extrusion_width
-        infill_extrusion_width
-        solid_infill_extrusion_width
-        top_infill_extrusion_width
-        support_material_extrusion_width
-      Flow
-        bridge_flow_ratio
       Other
         threads
         resolution
@@ -194,11 +194,14 @@ Advanced
       Filament
         filament_diameter
         extrusion_multiplier
-      Temperature (°C)
+      Extruder Temperature (°C)
         first_layer_temperature
         temperature
+        extruder_wipe_temperature
+      Bed Temperature (°C)
         first_layer_bed_temperature
         bed_temperature
+        bed_remove_part_temperature
       Retraction
         retract_length
         retract_length_tool_change
@@ -211,12 +214,21 @@ Advanced
         wipe
       Retraction On Tool Change
         retract_restart_extra_toolchange
-        retract_restart_extra
+    Extrusion
+      Extrusion Width
+        extrusion_width
+        first_layer_extrusion_width
+        perimeter_extrusion_width
+        infill_extrusion_width
+        solid_infill_extrusion_width
+        top_infill_extrusion_width
+        support_material_extrusion_width
+      Flow
+        bridge_flow_ratio
     Cooling
       Enable
         fan_always_on
         cooling
-        cool_extruder_lift
       Fan Speed
         min_fan_speed
         max_fan_speed
@@ -226,6 +238,8 @@ Advanced
         fan_below_layer_time
         slowdown_below_layer_time
         min_print_speed
+      Enable
+        cool_extruder_lift
   Printer
     General
       Size and Coordinates
@@ -239,6 +253,7 @@ Advanced
         has_hardware_leveling
         has_heated_bed
         has_sd_card_reader
+        has_power_control
         show_reset_connection
         extruder_count
         heat_extruder_before_homing
@@ -268,6 +283,8 @@ Advanced
         resume_gcode
       Cancel G-Code
         cancel_gcode
+      On Connect G-Code
+        connect_gcode
     Extruder
       Extruder X
         nozzle_diameter

@@ -1,135 +1,131 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using MatterHackers.VectorMath;
-using MatterHackers.RayTracer;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.SlicerConfiguration;
+﻿using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.VectorMath;
+using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
-    public class PrintLevelingPlane
-    {
-        Matrix4X4 bedLevelMatrix = Matrix4X4.Identity;
+	public class PrintLevelingPlane
+	{
+		private Matrix4X4 bedLevelMatrix = Matrix4X4.Identity;
 
-        // private constructor
-        private PrintLevelingPlane()
-        {
-        }
+		// private constructor
+		private PrintLevelingPlane()
+		{
+		}
 
-        static private PrintLevelingPlane instance;
-        static public PrintLevelingPlane Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new PrintLevelingPlane();
-                }
+		static private PrintLevelingPlane instance;
 
-                return instance;
-            }
-        }
+		static public PrintLevelingPlane Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new PrintLevelingPlane();
+				}
 
-        public void SetPrintLevelingEquation(Vector3 position0, Vector3 position1, Vector3 position2, Vector2 bedCenter)
-        {
-            if (position0 == position1 || position1 == position2 || position2 == position0)
-            {
-                return;
-            }
+				return instance;
+			}
+		}
 
-            Plane planeOfPoints = new Plane(position0, position1, position2);
+		public void SetPrintLevelingEquation(Vector3 position0, Vector3 position1, Vector3 position2, Vector2 bedCenter)
+		{
+			if (position0 == position1 || position1 == position2 || position2 == position0)
+			{
+				return;
+			}
 
-            Ray ray = new Ray(new Vector3(bedCenter, 0), Vector3.UnitZ);
-            bool inFront;
-            double distanceToPlaneAtBedCenter = planeOfPoints.GetDistanceToIntersection(ray, out inFront);
+			Plane planeOfPoints = new Plane(position0, position1, position2);
 
-            Matrix4X4 makePointsFlatMatrix = Matrix4X4.CreateTranslation(-bedCenter.x, -bedCenter.y, -distanceToPlaneAtBedCenter);
-            makePointsFlatMatrix *= Matrix4X4.CreateRotation(planeOfPoints.planeNormal, Vector3.UnitZ);
-            makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.x, bedCenter.y, 0);//distanceToPlaneAtBedCenter);
+			Ray ray = new Ray(new Vector3(bedCenter, 0), Vector3.UnitZ);
+			bool inFront;
+			double distanceToPlaneAtBedCenter = planeOfPoints.GetDistanceToIntersection(ray, out inFront);
 
-            bedLevelMatrix = Matrix4X4.Invert(makePointsFlatMatrix);
+			Matrix4X4 makePointsFlatMatrix = Matrix4X4.CreateTranslation(-bedCenter.x, -bedCenter.y, -distanceToPlaneAtBedCenter);
+			makePointsFlatMatrix *= Matrix4X4.CreateRotation(planeOfPoints.planeNormal, Vector3.UnitZ);
+			makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.x, bedCenter.y, 0);//distanceToPlaneAtBedCenter);
 
-            {
-                // test that the points come back as 0 zs
-                Vector3 outPosition0 = Vector3.TransformPosition(position0, makePointsFlatMatrix);
-                Vector3 outPosition1 = Vector3.TransformPosition(position1, makePointsFlatMatrix);
-                Vector3 outPosition2 = Vector3.TransformPosition(position2, makePointsFlatMatrix);
+			bedLevelMatrix = Matrix4X4.Invert(makePointsFlatMatrix);
 
-                Vector3 printPosition0 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(0), 0);
-                Vector3 printPosition1 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(1), 0);
-                Vector3 printPosition2 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(2), 0);
+			{
+				// test that the points come back as 0 zs
+				Vector3 outPosition0 = Vector3.TransformPosition(position0, makePointsFlatMatrix);
+				Vector3 outPosition1 = Vector3.TransformPosition(position1, makePointsFlatMatrix);
+				Vector3 outPosition2 = Vector3.TransformPosition(position2, makePointsFlatMatrix);
 
-                Vector3 leveledPositon0 = Vector3.TransformPosition(printPosition0, bedLevelMatrix);
-                Vector3 leveledPositon1 = Vector3.TransformPosition(printPosition1, bedLevelMatrix);
-                Vector3 leveledPositon2 = Vector3.TransformPosition(printPosition2, bedLevelMatrix);
-            }
-        }
+				Vector3 printPosition0 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(0), 0);
+				Vector3 printPosition1 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(1), 0);
+				Vector3 printPosition2 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(2), 0);
 
-        public Vector3 ApplyLeveling(Vector3 inPosition)
-        {
-            return Vector3.TransformPosition(inPosition, bedLevelMatrix);
-        }
+				Vector3 leveledPositon0 = Vector3.TransformPosition(printPosition0, bedLevelMatrix);
+				Vector3 leveledPositon1 = Vector3.TransformPosition(printPosition1, bedLevelMatrix);
+				Vector3 leveledPositon2 = Vector3.TransformPosition(printPosition2, bedLevelMatrix);
+			}
+		}
 
-        public Vector3 ApplyLevelingRotation(Vector3 inPosition)
-        {
-            return Vector3.TransformVector(inPosition, bedLevelMatrix);
-        }
+		public Vector3 ApplyLeveling(Vector3 inPosition)
+		{
+			return Vector3.TransformPosition(inPosition, bedLevelMatrix);
+		}
 
-        public string ApplyLeveling(Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode, string lineBeingSent)
-        {
-            if ((lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
-                && lineBeingSent.Length > 2 
-                && lineBeingSent[2] == ' ')
-            {
-                double extruderDelta = 0;
-                GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
-                double feedRate = 0;
-                GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
+		public Vector3 ApplyLevelingRotation(Vector3 inPosition)
+		{
+			return Vector3.TransformVector(inPosition, bedLevelMatrix);
+		}
 
-                string newLine = "G1 ";
+		public string ApplyLeveling(Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode, string lineBeingSent)
+		{
+			if ((lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
+				&& lineBeingSent.Length > 2
+				&& lineBeingSent[2] == ' ')
+			{
+				double extruderDelta = 0;
+				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
+				double feedRate = 0;
+				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
 
-                if (lineBeingSent.Contains('X') || lineBeingSent.Contains('Y') || lineBeingSent.Contains('Z'))
-                {
-                    Vector3 outPosition = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination);
-                    if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
-                    {
-                        Vector3 relativeMove = Vector3.Zero;
-                        GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
-                        GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
-                        GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref relativeMove.z);
-                        outPosition = PrintLevelingPlane.Instance.ApplyLevelingRotation(relativeMove);
-                    }
+				string newLine = "G1 ";
 
-                    newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z);
-                }
+				if (lineBeingSent.Contains('X') || lineBeingSent.Contains('Y') || lineBeingSent.Contains('Z'))
+				{
+					Vector3 outPosition = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination);
+					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
+					{
+						Vector3 relativeMove = Vector3.Zero;
+						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
+						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
+						GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref relativeMove.z);
+						outPosition = PrintLevelingPlane.Instance.ApplyLevelingRotation(relativeMove);
+					}
 
-                if (extruderDelta != 0)
-                {
-                    newLine = newLine + String.Format(" E{0:0.###}", extruderDelta);
-                }
-                if (feedRate != 0)
-                {
-                    newLine = newLine + String.Format(" F{0:0.##}", feedRate);
-                }
+					newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z);
+				}
 
-                lineBeingSent = newLine;
-            }
+				if (extruderDelta != 0)
+				{
+					newLine = newLine + String.Format(" E{0:0.###}", extruderDelta);
+				}
+				if (feedRate != 0)
+				{
+					newLine = newLine + String.Format(" F{0:0.##}", feedRate);
+				}
 
-            return lineBeingSent;
-        }
+				lineBeingSent = newLine;
+			}
 
-        public void ApplyLeveling(GCodeFile unleveledGCode)
-        {
-            for(int i=0; i<unleveledGCode.Count; i++)
-            {
-                PrinterMachineInstruction instruction = unleveledGCode.Instruction(i);
-                Vector3 currentDestination = instruction.Position;
-                instruction.Line = ApplyLeveling(currentDestination, instruction.movementType, instruction.Line);
-            }
-        }
-    }
+			return lineBeingSent;
+		}
+
+		public void ApplyLeveling(GCodeFile unleveledGCode)
+		{
+			for (int i = 0; i < unleveledGCode.LineCount; i++)
+			{
+				PrinterMachineInstruction instruction = unleveledGCode.Instruction(i);
+				Vector3 currentDestination = instruction.Position;
+				instruction.Line = ApplyLeveling(currentDestination, instruction.movementType, instruction.Line);
+			}
+		}
+	}
 }

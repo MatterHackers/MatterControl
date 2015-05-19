@@ -1,34 +1,32 @@
-using System.Diagnostics;
-
 namespace Community.CsharpSqlite
 {
-  public partial class Sqlite3
-  {
-/*
-** 2007 August 27
-**
-** The author disclaims copyright to this source code.  In place of
-** a legal notice, here is a blessing:
-**
-**    May you do good and not evil.
-**    May you find forgiveness for yourself and forgive others.
-**    May you share freely, never taking more than you give.
-**
-*************************************************************************
-**
-** This file contains code used to implement mutexes on Btree objects.
-** This code really belongs in btree.c.  But btree.c is getting too
-** big and we want to break it down some.  This packaged seemed like
-** a good breakout.
- *************************************************************************
-**  Included in SQLite3 port to C#-SQLite;  2008 Noah B Hart
-**  C#-SQLite is an independent reimplementation of the SQLite software library
-**
-**  SQLITE_SOURCE_ID: 2011-05-19 13:26:54 ed1da510a239ea767a01dc332b667119fa3c908e
-**
-*************************************************************************
-*/
-//#include "btreeInt.h"
+	public partial class Sqlite3
+	{
+		/*
+		** 2007 August 27
+		**
+		** The author disclaims copyright to this source code.  In place of
+		** a legal notice, here is a blessing:
+		**
+		**    May you do good and not evil.
+		**    May you find forgiveness for yourself and forgive others.
+		**    May you share freely, never taking more than you give.
+		**
+		*************************************************************************
+		**
+		** This file contains code used to implement mutexes on Btree objects.
+		** This code really belongs in btree.c.  But btree.c is getting too
+		** big and we want to break it down some.  This packaged seemed like
+		** a good breakout.
+		 *************************************************************************
+		**  Included in SQLite3 port to C#-SQLite;  2008 Noah B Hart
+		**  C#-SQLite is an independent reimplementation of the SQLite software library
+		**
+		**  SQLITE_SOURCE_ID: 2011-05-19 13:26:54 ed1da510a239ea767a01dc332b667119fa3c908e
+		**
+		*************************************************************************
+		*/
+		//#include "btreeInt.h"
 #if !SQLITE_OMIT_SHARED_CACHE
 #if SQLITE_THREADSAFE
 
@@ -167,7 +165,6 @@ int sqlite3BtreeHoldsMutex(Btree *p){
 }
 #endif
 
-
 #if SQLITE_OMIT_INCRBLOB
 /*
 ** Enter and leave a mutex on a Btree given a cursor owned by that
@@ -181,7 +178,6 @@ void sqlite3BtreeLeaveCursor(BtCursor *pCur){
   sqlite3BtreeLeave(pCur->pBtree);
 }
 #endif //* SQLITE_OMIT_INCRBLOB */
-
 
 /*
 ** Enter the mutex on every Btree associated with a database
@@ -298,6 +294,5 @@ if( p ){
 }
 #endif //* if SQLITE_THREADSAFE */
 #endif //* ifndef SQLITE_OMIT_SHARED_CACHE */
-
-  }
+	}
 }

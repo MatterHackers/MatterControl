@@ -1,16 +1,16 @@
 ﻿//
 // Copyright (c) 2009-2012 Krueger Systems, Inc.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,11 +28,14 @@
 
 using System;
 using System.Diagnostics;
+
 #if !USE_SQLITEPCL_RAW
+
 using System.Runtime.InteropServices;
+
 #endif
+
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Reflection;
 using System.Linq;
 using System.Linq.Expressions;
@@ -51,10 +54,11 @@ using Sqlite3DatabaseHandle = SQLitePCL.sqlite3;
 using Sqlite3Statement = SQLitePCL.sqlite3_stmt;
 using Sqlite3 = SQLitePCL.raw;
 #else
+
 using Sqlite3DatabaseHandle = System.IntPtr;
+
 using Sqlite3Statement = System.IntPtr;
 #endif
-
 
 using MatterHackers.MatterControl.DataStorage;
 
@@ -104,11 +108,12 @@ namespace SQLiteAndroid
 		private Random _rand = new Random();
 
 		public Sqlite3DatabaseHandle Handle { get; private set; }
-		#if USE_CSHARP_SQLITE
+
+#if USE_CSHARP_SQLITE
 		internal static readonly Sqlite3DatabaseHandle NullHandle = null;
-		#else
+#else
 		internal static readonly Sqlite3DatabaseHandle NullHandle = IntPtr.Zero;
-		#endif
+#endif
 
 		public string DatabasePath { get; private set; }
 
@@ -151,21 +156,21 @@ namespace SQLiteAndroid
 		{
 			DatabasePath = databasePath;
 
-			#if NETFX_CORE
+#if NETFX_CORE
 			SQLite3.SetDirectory(/*temp directory type*/2, Windows.Storage.ApplicationData.Current.TemporaryFolder.Path);
-			#endif
+#endif
 
 			Sqlite3DatabaseHandle handle;
 
-			#if SILVERLIGHT || USE_CSHARP_SQLITE
+#if SILVERLIGHT || USE_CSHARP_SQLITE
 			var r = SQLite3.Open (databasePath, out handle, (int)openFlags, IntPtr.Zero);
-			#else
+#else
 			// open using the byte[]
 			// in the case where the path may include Unicode
 			// force open to using UTF-8 using sqlite3_open_v2
 			var databasePathAsBytes = GetNullTerminatedUtf8(DatabasePath);
 			var r = SQLite3.Open(databasePathAsBytes, out handle, (int)openFlags, IntPtr.Zero);
-			#endif
+#endif
 
 			Handle = handle;
 			if (r != SQLite3.Result.OK)
@@ -188,7 +193,7 @@ namespace SQLiteAndroid
 			}
 		}
 
-		static byte[] GetNullTerminatedUtf8(string s)
+		private static byte[] GetNullTerminatedUtf8(string s)
 		{
 			var utf8Length = System.Text.Encoding.UTF8.GetByteCount(s);
 			var bytes = new byte[utf8Length + 1];
@@ -200,7 +205,7 @@ namespace SQLiteAndroid
 		/// Used to list some code that we want the MonoTouch linker
 		/// to see, but that we never want to actually execute.
 		/// </summary>
-		static bool _preserveDuringLinkMagic = false;
+		private static bool _preserveDuringLinkMagic = false;
 
 		/// <summary>
 		/// Sets a busy handler to sleep the specified amount of time when a table is locked.
@@ -245,7 +250,7 @@ namespace SQLiteAndroid
 		/// The type whose mapping to the database is returned.
 		/// </param>
 		/// <returns>
-		/// The mapping represents the schema of the columns of the database and contains 
+		/// The mapping represents the schema of the columns of the database and contains
 		/// methods to set and get properties of objects.
 		/// </returns>
 		public TableMapping GetMapping(Type type)
@@ -267,7 +272,7 @@ namespace SQLiteAndroid
 		/// Retrieves the mapping that is automatically generated for the given type.
 		/// </summary>
 		/// <returns>
-		/// The mapping represents the schema of the columns of the database and contains 
+		/// The mapping represents the schema of the columns of the database and contains
 		/// methods to set and get properties of objects.
 		/// </returns>
 		public TableMapping GetMapping<T>()
@@ -430,7 +435,7 @@ namespace SQLiteAndroid
 			return Query<ColumnInfo>(query);
 		}
 
-		void MigrateTable(TableMapping map)
+		private void MigrateTable(TableMapping map)
 		{
 			var existingCols = GetTableInfo(map.TableName);
 
@@ -697,7 +702,7 @@ namespace SQLiteAndroid
 
 		/// <summary>
 		/// Attempts to retrieve the first object that matches the predicate from the table
-		/// associated with the specified type. 
+		/// associated with the specified type.
 		/// </summary>
 		/// <param name="predicate">
 		/// A predicate for which object to find.
@@ -751,7 +756,7 @@ namespace SQLiteAndroid
 
 		/// <summary>
 		/// Attempts to retrieve the first object that matches the predicate from the table
-		/// associated with the specified type. 
+		/// associated with the specified type.
 		/// </summary>
 		/// <param name="predicate">
 		/// A predicate for which object to find.
@@ -779,9 +784,9 @@ namespace SQLiteAndroid
 		/// <example cref="System.InvalidOperationException">Throws if a transaction has already begun.</example>
 		public void BeginTransaction()
 		{
-			// The BEGIN command only works if the transaction stack is empty, 
-			//    or in other words if there are no pending transactions. 
-			// If the transaction stack is not empty when the BEGIN command is invoked, 
+			// The BEGIN command only works if the transaction stack is empty,
+			//    or in other words if there are no pending transactions.
+			// If the transaction stack is not empty when the BEGIN command is invoked,
 			//    then the command fails with an error.
 			// Rather than crash with an error, we will just ignore calls to BeginTransaction
 			//    that would result in an error.
@@ -796,23 +801,23 @@ namespace SQLiteAndroid
 					var sqlExp = ex as SQLiteException;
 					if (sqlExp != null)
 					{
-						// It is recommended that applications respond to the errors listed below 
+						// It is recommended that applications respond to the errors listed below
 						//    by explicitly issuing a ROLLBACK command.
 						// TODO: This rollback failsafe should be localized to all throw sites.
 						switch (sqlExp.Result)
 						{
-						case SQLite3.Result.IOError:
-						case SQLite3.Result.Full:
-						case SQLite3.Result.Busy:
-						case SQLite3.Result.NoMem:
-						case SQLite3.Result.Interrupt:
-							RollbackTo(null, true);
-							break;
+							case SQLite3.Result.IOError:
+							case SQLite3.Result.Full:
+							case SQLite3.Result.Busy:
+							case SQLite3.Result.NoMem:
+							case SQLite3.Result.Interrupt:
+								RollbackTo(null, true);
+								break;
 						}
 					}
 					else
 					{
-						// Call decrement and not VolatileWrite in case we've already 
+						// Call decrement and not VolatileWrite in case we've already
 						//    created a transaction point in SaveTransactionPoint since the catch.
 						Interlocked.Decrement(ref _trasactionDepth);
 					}
@@ -830,7 +835,7 @@ namespace SQLiteAndroid
 		/// <summary>
 		/// Creates a savepoint in the database at the current point in the transaction timeline.
 		/// Begins a new transaction if one is not in progress.
-		/// 
+		///
 		/// Call <see cref="RollbackTo"/> to undo transactions since the returned savepoint.
 		/// Call <see cref="Release"/> to commit transactions after the savepoint returned here.
 		/// Call <see cref="Commit"/> to end the transaction, committing all changes.
@@ -850,18 +855,18 @@ namespace SQLiteAndroid
 				var sqlExp = ex as SQLiteException;
 				if (sqlExp != null)
 				{
-					// It is recommended that applications respond to the errors listed below 
+					// It is recommended that applications respond to the errors listed below
 					//    by explicitly issuing a ROLLBACK command.
 					// TODO: This rollback failsafe should be localized to all throw sites.
 					switch (sqlExp.Result)
 					{
-					case SQLite3.Result.IOError:
-					case SQLite3.Result.Full:
-					case SQLite3.Result.Busy:
-					case SQLite3.Result.NoMem:
-					case SQLite3.Result.Interrupt:
-						RollbackTo(null, true);
-						break;
+						case SQLite3.Result.IOError:
+						case SQLite3.Result.Full:
+						case SQLite3.Result.Busy:
+						case SQLite3.Result.NoMem:
+						case SQLite3.Result.Interrupt:
+							RollbackTo(null, true);
+							break;
 					}
 				}
 				else
@@ -898,8 +903,8 @@ namespace SQLiteAndroid
 		/// <param name="noThrow">true to avoid throwing exceptions, false otherwise</param>
 		private void RollbackTo(string savepoint, bool noThrow)
 		{
-			// Rolling back without a TO clause rolls backs all transactions 
-			//    and leaves the transaction stack empty.   
+			// Rolling back without a TO clause rolls backs all transactions
+			//    and leaves the transaction stack empty.
 			try
 			{
 				if (String.IsNullOrEmpty(savepoint))
@@ -918,16 +923,15 @@ namespace SQLiteAndroid
 			{
 				if (!noThrow)
 					throw;
-
 			}
 			// No need to rollback if there are no transactions open.
 		}
 
 		/// <summary>
-		/// Releases a savepoint returned from <see cref="SaveTransactionPoint"/>.  Releasing a savepoint 
+		/// Releases a savepoint returned from <see cref="SaveTransactionPoint"/>.  Releasing a savepoint
 		///    makes changes since that savepoint permanent if the savepoint began the transaction,
 		///    or otherwise the changes are permanent pending a call to <see cref="Commit"/>.
-		/// 
+		///
 		/// The RELEASE command is like a COMMIT for a SAVEPOINT.
 		/// </summary>
 		/// <param name="savepoint">The name of the savepoint to release.  The string should be the result of a call to <see cref="SaveTransactionPoint"/></param>
@@ -948,13 +952,13 @@ namespace SQLiteAndroid
 					// TODO: Mild race here, but inescapable without locking almost everywhere.
 					if (0 <= depth && depth < _trasactionDepth)
 					{
-						#if NETFX_CORE
+#if NETFX_CORE
 						Volatile.Write (ref _trasactionDepth, depth);
-						#elif SILVERLIGHT
+#elif SILVERLIGHT
 						_trasactionDepth = depth;
-						#else
+#else
 						Thread.VolatileWrite(ref _trasactionDepth, depth);
-						#endif
+#endif
 						Execute(cmd + savepoint);
 						return;
 					}
@@ -1272,14 +1276,14 @@ namespace SQLiteAndroid
 			}
 
 			var cols = from p in map.Columns
-					where p != pk
-				select p;
+					   where p != pk
+					   select p;
 			var vals = from c in cols
-				select c.GetValue(obj);
+					   select c.GetValue(obj);
 			var ps = new List<object>(vals);
 			ps.Add(pk.GetValue(obj));
 			var q = string.Format("update \"{0}\" set {1} where {2} = ? ", map.TableName, string.Join(",", (from c in cols
-				select "\"" + c.Name + "\" = ? ").ToArray()), pk.Name);
+																											select "\"" + c.Name + "\" = ? ").ToArray()), pk.Name);
 			return Execute(q, ps.ToArray());
 		}
 
@@ -1416,26 +1420,28 @@ namespace SQLiteAndroid
 	/// <summary>
 	/// Represents a parsed connection string.
 	/// </summary>
-	class SQLiteConnectionString
+	internal class SQLiteConnectionString
 	{
 		public string ConnectionString { get; private set; }
+
 		public string DatabasePath { get; private set; }
+
 		public bool StoreDateTimeAsTicks { get; private set; }
 
-		#if NETFX_CORE
+#if NETFX_CORE
 		static readonly string MetroStyleDataPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
-		#endif
+#endif
 
 		public SQLiteConnectionString(string databasePath, bool storeDateTimeAsTicks)
 		{
 			ConnectionString = databasePath;
 			StoreDateTimeAsTicks = storeDateTimeAsTicks;
 
-			#if NETFX_CORE
+#if NETFX_CORE
 			DatabasePath = System.IO.Path.Combine (MetroStyleDataPath, databasePath);
-			#else
+#else
 			DatabasePath = databasePath;
-			#endif
+#endif
 		}
 	}
 
@@ -1510,38 +1516,38 @@ namespace SQLiteAndroid
 
 		public string GetByPrimaryKeySql { get; private set; }
 
-		Column _autoPk = null;
-		Column[] _insertColumns = null;
-		Column[] _insertOrReplaceColumns = null;
+		private Column _autoPk = null;
+		private Column[] _insertColumns = null;
+		private Column[] _insertOrReplaceColumns = null;
 
 		public TableMapping(Type type)
 		{
 			MappedType = type;
 
-			#if NETFX_CORE
+#if NETFX_CORE
 			var tableAttr = (TableAttribute)System.Reflection.CustomAttributeExtensions
 			.GetCustomAttribute(type.GetTypeInfo(), typeof(TableAttribute), true);
-			#else
+#else
 			var tableAttr = (TableAttribute)type.GetCustomAttributes(typeof(TableAttribute), true).FirstOrDefault();
-			#endif
+#endif
 
 			TableName = tableAttr != null ? tableAttr.Name : MappedType.Name;
 
-			#if !NETFX_CORE
+#if !NETFX_CORE
 			var props = MappedType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty);
-			#else
+#else
 			var props = from p in MappedType.GetRuntimeProperties()
 			where ((p.GetMethod != null && p.GetMethod.IsPublic) || (p.SetMethod != null && p.SetMethod.IsPublic) || (p.GetMethod != null && p.GetMethod.IsStatic) || (p.SetMethod != null && p.SetMethod.IsStatic))
 			select p;
-			#endif
+#endif
 			var cols = new List<Column>();
 			foreach (var p in props)
 			{
-				#if !NETFX_CORE
+#if !NETFX_CORE
 				var ignore = p.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0;
-				#else
+#else
 				var ignore = p.GetCustomAttributes (typeof(IgnoreAttribute), true).Count() > 0;
-				#endif
+#endif
 				if (p.CanWrite && !ignore)
 				{
 					cols.Add(new Column(p));
@@ -1619,8 +1625,8 @@ namespace SQLiteAndroid
 			return exact;
 		}
 
-		PreparedSqlLiteInsertCommand _insertCommand;
-		string _insertCommandExtra = null;
+		private PreparedSqlLiteInsertCommand _insertCommand;
+		private string _insertCommandExtra = null;
 
 		public PreparedSqlLiteInsertCommand GetInsertCommand(SQLiteConnection conn, string extra)
 		{
@@ -1657,10 +1663,9 @@ namespace SQLiteAndroid
 
 				insertSql = string.Format("insert {3} into \"{0}\"({1}) values ({2})", TableName,
 					string.Join(",", (from c in cols
-						select "\"" + c.Name + "\"").ToArray()),
+									  select "\"" + c.Name + "\"").ToArray()),
 					string.Join(",", (from c in cols
-						select "?").ToArray()), extra);
-
+									  select "?").ToArray()), extra);
 			}
 
 			var insertCommand = new PreparedSqlLiteInsertCommand(conn);
@@ -1679,7 +1684,7 @@ namespace SQLiteAndroid
 
 		public class Column
 		{
-			PropertyInfo _prop;
+			private PropertyInfo _prop;
 
 			public string Name { get; private set; }
 
@@ -1778,22 +1783,22 @@ namespace SQLiteAndroid
 			else if (clrType == typeof(DateTime))
 			{
 				return storeDateTimeAsTicks ? "bigint" : "datetime";
-				#if !NETFX_CORE
+#if !NETFX_CORE
 			}
 			else if (clrType.IsEnum)
 			{
-				#else
+#else
 				} else if (clrType.GetTypeInfo().IsEnum) {
-				#endif
+#endif
 				return "integer";
 			}
 			else if (clrType == typeof(byte[]))
 			{
 				return "blob";
-				#if SQLITE_SUPPORT_GUID
+#if SQLITE_SUPPORT_GUID
 				} else if (clrType == typeof(Guid)) {
 				return "varchar(36)";
-				#endif
+#endif
 			}
 			else
 			{
@@ -1804,24 +1809,24 @@ namespace SQLiteAndroid
 		public static bool IsPK(MemberInfo p)
 		{
 			var attrs = p.GetCustomAttributes(typeof(PrimaryKeyAttribute), true);
-			#if !NETFX_CORE
+#if !NETFX_CORE
 			return attrs.Length > 0;
-			#else
+#else
 			return attrs.Count() > 0;
-			#endif
+#endif
 		}
 
 		public static string Collation(MemberInfo p)
 		{
 			var attrs = p.GetCustomAttributes(typeof(CollationAttribute), true);
-			#if !NETFX_CORE
+#if !NETFX_CORE
 			if (attrs.Length > 0)
 			{
 				return ((CollationAttribute)attrs[0]).Value;
-			#else
+#else
 			if (attrs.Count() > 0) {
 			return ((CollationAttribute)attrs.First()).Value;
-			#endif
+#endif
 			}
 			else
 			{
@@ -1832,11 +1837,11 @@ namespace SQLiteAndroid
 		public static bool IsAutoInc(MemberInfo p)
 		{
 			var attrs = p.GetCustomAttributes(typeof(AutoIncrementAttribute), true);
-			#if !NETFX_CORE
+#if !NETFX_CORE
 			return attrs.Length > 0;
-			#else
+#else
 			return attrs.Count() > 0;
-			#endif
+#endif
 		}
 
 		public static IEnumerable<IndexedAttribute> GetIndices(MemberInfo p)
@@ -1848,14 +1853,14 @@ namespace SQLiteAndroid
 		public static int MaxStringLength(PropertyInfo p)
 		{
 			var attrs = p.GetCustomAttributes(typeof(MaxLengthAttribute), true);
-			#if !NETFX_CORE
+#if !NETFX_CORE
 			if (attrs.Length > 0)
 			{
 				return ((MaxLengthAttribute)attrs[0]).Value;
-			#else
+#else
 			if (attrs.Count() > 0) {
 			return ((MaxLengthAttribute)attrs.First()).Value;
-			#endif
+#endif
 			}
 			else
 			{
@@ -1866,7 +1871,7 @@ namespace SQLiteAndroid
 
 	public partial class SQLiteCommand
 	{
-		SQLiteConnection _conn;
+		private SQLiteConnection _conn;
 		private List<Binding> _bindings;
 
 		public string CommandText { get; set; }
@@ -2027,19 +2032,19 @@ namespace SQLiteAndroid
 			return string.Join(Environment.NewLine, parts);
 		}
 
-		Sqlite3Statement Prepare()
+		private Sqlite3Statement Prepare()
 		{
 			var stmt = SQLite3.Prepare2(_conn.Handle, CommandText);
 			BindAll(stmt);
 			return stmt;
 		}
 
-		void Finalize(Sqlite3Statement stmt)
+		private void Finalize(Sqlite3Statement stmt)
 		{
 			SQLite3.Finalize(stmt);
 		}
 
-		void BindAll(Sqlite3Statement stmt)
+		private void BindAll(Sqlite3Statement stmt)
 		{
 			int nextIdx = 1;
 			foreach (var b in _bindings)
@@ -2101,22 +2106,22 @@ namespace SQLiteAndroid
 					{
 						SQLite3.BindText(stmt, index, ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss"), -1, NegativePointer);
 					}
-					#if !NETFX_CORE
+#if !NETFX_CORE
 				}
 				else if (value.GetType().IsEnum)
 				{
-					#else
+#else
 					} else if (value.GetType().GetTypeInfo().IsEnum) {
-					#endif
+#endif
 					SQLite3.BindInt(stmt, index, Convert.ToInt32(value));
 				}
 				else if (value is byte[])
 				{
 					SQLite3.BindBlob(stmt, index, (byte[])value, ((byte[])value).Length, NegativePointer);
-					#if SQLITE_SUPPORT_GUID
+#if SQLITE_SUPPORT_GUID
 					} else if (value is Guid) {
 					SQLite3.BindText(stmt, index, ((Guid)value).ToString(), 72, NegativePointer);
-					#endif
+#endif
 				}
 				else
 				{
@@ -2125,7 +2130,7 @@ namespace SQLiteAndroid
 			}
 		}
 
-		class Binding
+		private class Binding
 		{
 			public string Name { get; set; }
 
@@ -2134,7 +2139,7 @@ namespace SQLiteAndroid
 			public int Index { get; set; }
 		}
 
-		object ReadCol(Sqlite3Statement stmt, int index, SQLite3.ColType type, Type clrType)
+		private object ReadCol(Sqlite3Statement stmt, int index, SQLite3.ColType type, Type clrType)
 		{
 			if (type == SQLite3.ColType.Null)
 			{
@@ -2173,13 +2178,13 @@ namespace SQLiteAndroid
 						var text = SQLite3.ColumnString(stmt, index);
 						return DateTime.Parse(text);
 					}
-					#if !NETFX_CORE
+#if !NETFX_CORE
 				}
 				else if (clrType.IsEnum)
 				{
-					#else
+#else
 					} else if (clrType.GetTypeInfo().IsEnum) {
-					#endif
+#endif
 					return SQLite3.ColumnInt(stmt, index);
 				}
 				else if (clrType == typeof(Int64))
@@ -2213,11 +2218,11 @@ namespace SQLiteAndroid
 				else if (clrType == typeof(byte[]))
 				{
 					return SQLite3.ColumnByteArray(stmt, index);
-					#if SQLITE_SUPPORT_GUID
+#if SQLITE_SUPPORT_GUID
 					} else if (clrType == typeof(Guid)) {
 					var text = SQLite3.ColumnString(stmt, index);
 					return new Guid(text);
-					#endif
+#endif
 				}
 				else
 				{
@@ -2239,11 +2244,12 @@ namespace SQLiteAndroid
 		public string CommandText { get; set; }
 
 		protected Sqlite3Statement Statement { get; set; }
-		#if USE_CSHARP_SQLITE
+
+#if USE_CSHARP_SQLITE
 		internal static readonly Sqlite3Statement NullStatement = null;
-		#else
+#else
 		internal static readonly Sqlite3Statement NullStatement = IntPtr.Zero;
-		#endif
+#endif
 
 		internal PreparedSqlLiteInsertCommand(SQLiteConnection conn)
 		{
@@ -2333,6 +2339,7 @@ namespace SQLiteAndroid
 		protected class Ordering
 		{
 			public string ColumnName { get; set; }
+
 			public bool Ascending { get; set; }
 		}
 	}
@@ -2343,20 +2350,20 @@ namespace SQLiteAndroid
 
 		public TableMapping Table { get; private set; }
 
-		Expression _where;
-		List<Ordering> _orderBys;
-		int? _limit;
-		int? _offset;
+		private Expression _where;
+		private List<Ordering> _orderBys;
+		private int? _limit;
+		private int? _offset;
 
-		BaseTableQuery _joinInner;
-		Expression _joinInnerKeySelector;
-		BaseTableQuery _joinOuter;
-		Expression _joinOuterKeySelector;
-		Expression _joinSelector;
+		private BaseTableQuery _joinInner;
+		private Expression _joinInnerKeySelector;
+		private BaseTableQuery _joinOuter;
+		private Expression _joinOuterKeySelector;
+		private Expression _joinSelector;
 
-		Expression _selector;
+		private Expression _selector;
 
-		TableQuery(SQLiteConnection conn, TableMapping table)
+		private TableQuery(SQLiteConnection conn, TableMapping table)
 		{
 			Connection = conn;
 			Table = table;
@@ -2423,7 +2430,8 @@ namespace SQLiteAndroid
 			return Skip(index).Take(1).First();
 		}
 
-		bool _deferred = false;
+		private bool _deferred = false;
+
 		public ITableQuery<T> Deferred()
 		{
 			var q = Clone<T>();
@@ -2556,7 +2564,7 @@ namespace SQLiteAndroid
 			}
 		}
 
-		class CompileResult
+		private class CompileResult
 		{
 			public string CommandText { get; set; }
 
@@ -2588,7 +2596,6 @@ namespace SQLiteAndroid
 			}
 			else if (expr.NodeType == ExpressionType.Call)
 			{
-
 				var call = (MethodCallExpression)expr;
 				var args = new CompileResult[call.Arguments.Count];
 				var obj = call.Object != null ? CompileExpr(call.Object, queryArgs) : null;
@@ -2632,7 +2639,6 @@ namespace SQLiteAndroid
 					sqlCall = call.Method.Name.ToLower() + "(" + string.Join(",", args.Select(a => a.CommandText).ToArray()) + ")";
 				}
 				return new CompileResult { CommandText = sqlCall };
-
 			}
 			else if (expr.NodeType == ExpressionType.Constant)
 			{
@@ -2690,35 +2696,35 @@ namespace SQLiteAndroid
 					//
 					object val = null;
 
-					#if !NETFX_CORE
+#if !NETFX_CORE
 					if (mem.Member.MemberType == MemberTypes.Property)
 					{
-					#else
+#else
 					if (mem.Member is PropertyInfo) {
-					#endif
+#endif
 						var m = (PropertyInfo)mem.Member;
 						val = m.GetValue(obj, null);
-						#if !NETFX_CORE
+#if !NETFX_CORE
 					}
 					else if (mem.Member.MemberType == MemberTypes.Field)
 					{
-						#else
+#else
 						} else if (mem.Member is FieldInfo) {
-						#endif
-						#if SILVERLIGHT
+#endif
+#if SILVERLIGHT
 						val = Expression.Lambda (expr).Compile ().DynamicInvoke ();
-						#else
+#else
 						var m = (FieldInfo)mem.Member;
 						val = m.GetValue(obj);
-						#endif
+#endif
 					}
 					else
 					{
-						#if !NETFX_CORE
+#if !NETFX_CORE
 						throw new NotSupportedException("MemberExpr: " + mem.Member.MemberType.ToString());
-						#else
+#else
 						throw new NotSupportedException ("MemberExpr: " + mem.Member.DeclaringType.ToString ());
-						#endif
+#endif
 					}
 
 					//
@@ -2757,7 +2763,7 @@ namespace SQLiteAndroid
 			throw new NotSupportedException("Cannot compile: " + expr.NodeType.ToString());
 		}
 
-		static object ConvertTo(object obj, Type t)
+		private static object ConvertTo(object obj, Type t)
 		{
 			Type nut = Nullable.GetUnderlyingType(t);
 
@@ -2786,7 +2792,7 @@ namespace SQLiteAndroid
 				throw new NotSupportedException("Cannot compile Null-BinaryExpression with type " + expression.NodeType.ToString());
 		}
 
-		string GetSqlName(Expression expr)
+		private string GetSqlName(Expression expr)
 		{
 			var n = expr.NodeType;
 			if (n == ExpressionType.GreaterThan)
@@ -2906,7 +2912,8 @@ namespace SQLiteAndroid
 			Serialized = 3
 		}
 
-		#if !USE_CSHARP_SQLITE
+#if !USE_CSHARP_SQLITE
+
 		[DllImport("sqlite3", EntryPoint = "sqlite3_open", CallingConvention = CallingConvention.Cdecl)]
 		public static extern Result Open([MarshalAs(UnmanagedType.LPStr)] string filename, out IntPtr db);
 
@@ -2997,6 +3004,7 @@ namespace SQLiteAndroid
 
 		[DllImport("sqlite3", EntryPoint = "sqlite3_column_name16", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr ColumnName16Internal(IntPtr stmt, int index);
+
 		public static string ColumnName16(IntPtr stmt, int index)
 		{
 			return Marshal.PtrToStringUni(ColumnName16Internal(stmt, index));
@@ -3039,7 +3047,8 @@ namespace SQLiteAndroid
 				Marshal.Copy(ColumnBlob(stmt, index), result, 0, length);
 			return result;
 		}
-		#else
+
+#else
 
 		public static Result Open(string filename, out Sqlite3.sqlite3 db)
 		{
@@ -3201,7 +3210,7 @@ namespace SQLiteAndroid
 		{
 		return ColumnBlob(stmt, index);
 		}
-		#endif
+#endif
 
 		public enum ColType : int
 		{

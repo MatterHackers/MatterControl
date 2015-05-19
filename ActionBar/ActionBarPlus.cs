@@ -1,83 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using System.Globalization;
-
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.ActionBar;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.PrintQueue;
+using System;
 
 namespace MatterHackers.MatterControl
 {
-    public class ActionBarPlus : FlowLayoutWidget
-    {
-        QueueDataView queueDataView;
+	public class ActionBarPlus : FlowLayoutWidget
+	{
+		private QueueDataView queueDataView;
 
-        public ActionBarPlus(QueueDataView queueDataView)
-            : base(FlowDirection.TopToBottom)
-        {
-            this.queueDataView = queueDataView;
-            this.Create();
-        }
+		public ActionBarPlus(QueueDataView queueDataView)
+			: base(FlowDirection.TopToBottom)
+		{
+			this.queueDataView = queueDataView;
+			this.Create();
+		}
 
-        event EventHandler unregisterEvents;
-        public void Create()
-        {
-            // Set Display Attributes
-            this.HAnchor = HAnchor.ParentLeftRight;
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+		private event EventHandler unregisterEvents;
 
-            // Add Child Elements
-            if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Responsive)
-            {
-                this.AddChild(new ActionBar.PrinterActionRow());
-            }
-            this.AddChild(new PrintStatusRow(queueDataView));
-            this.Padding = new BorderDouble(bottom: 6);
+		public void Create()
+		{
+			// Set Display Attributes
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
-            // Add Handlers
-            ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-        }
+			// Add Child Elements
+			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Responsive)
+			{
+				this.AddChild(new ActionBar.PrinterActionRow());
+			}
+			this.AddChild(new PrintStatusRow(queueDataView));
+			this.Padding = new BorderDouble(bottom: 6);
 
-        public void ThemeChanged(object sender, EventArgs e)
-        {
-            this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-            this.Invalidate();
-        }
+			// Add Handlers
+			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+		}
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
-            base.OnClosed(e);
-        }
-    }
+		public void ThemeChanged(object sender, EventArgs e)
+		{
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+			this.Invalidate();
+		}
 
-    class MessageActionRow : ActionRowBase
-    {
-        protected override void AddChildElements()
-        {
-            if (HelpTextWidget.Instance.Parent != null)
-            {
-                HelpTextWidget.Instance.Parent.RemoveChild(HelpTextWidget.Instance);
-            }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
+	}
 
-            this.AddChild(HelpTextWidget.Instance);
-        }
+	internal class MessageActionRow : ActionRowBase
+	{
+		protected override void AddChildElements()
+		{
+			if (HelpTextWidget.Instance.Parent != null)
+			{
+				HelpTextWidget.Instance.Parent.RemoveChild(HelpTextWidget.Instance);
+			}
 
-        protected override void Initialize()
-        {
-            this.Margin = new BorderDouble(0,3,0,0);
-        }
-    }
+			this.AddChild(HelpTextWidget.Instance);
+		}
+
+		protected override void Initialize()
+		{
+			this.Margin = new BorderDouble(0, 3, 0, 0);
+		}
+	}
 }

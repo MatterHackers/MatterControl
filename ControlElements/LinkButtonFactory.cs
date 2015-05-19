@@ -1,158 +1,153 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
+﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
 using MatterHackers.Agg.VertexSource;
+using System;
 
 namespace MatterHackers.MatterControl
 {
-    public class ChangeTextColorEventArgs : EventArgs
-    {
-        public RGBA_Bytes color;
-        public ChangeTextColorEventArgs(RGBA_Bytes color)
-        {
-            this.color = color;
-        }
-    }
+	public class ChangeTextColorEventArgs : EventArgs
+	{
+		public RGBA_Bytes color;
 
-    //Base widget for use in ButtonStatesViewWidget
-    public class LinkButtonViewBase : GuiWidget
-    {
-        protected RGBA_Bytes fillColor = new RGBA_Bytes(0, 0, 0, 0);
-        protected RGBA_Bytes borderColor = new RGBA_Bytes(0, 0, 0, 0);
-        protected double borderWidth = 0;
-        protected double borderRadius;
-        protected double padding;
-        protected bool isUnderlined = false;
+		public ChangeTextColorEventArgs(RGBA_Bytes color)
+		{
+			this.color = color;
+		}
+	}
 
-        public RGBA_Bytes TextColor { get; set; }
-        TextWidget buttonText;
+	//Base widget for use in ButtonStatesViewWidget
+	public class LinkButtonViewBase : GuiWidget
+	{
+		protected RGBA_Bytes fillColor = new RGBA_Bytes(0, 0, 0, 0);
+		protected RGBA_Bytes borderColor = new RGBA_Bytes(0, 0, 0, 0);
+		protected double borderWidth = 0;
+		protected double borderRadius;
+		protected double padding;
+		protected bool isUnderlined = false;
 
-        public LinkButtonViewBase(string label,
-                                     double textHeight,
-                                     double padding,
-                                     RGBA_Bytes textColor,
-                                     bool isUnderlined = false)
-            : base()
-        {
-            this.padding = padding;
-            this.TextColor = textColor;
-            this.isUnderlined = isUnderlined;
+		public RGBA_Bytes TextColor { get; set; }
 
-            buttonText = new TextWidget(label,pointSize:textHeight);
-            buttonText.VAnchor = VAnchor.ParentCenter;
-            buttonText.HAnchor = HAnchor.ParentCenter;
-            buttonText.TextColor = this.TextColor;
+		private TextWidget buttonText;
 
-            //this.AnchorAll();			
-            this.AddChild(buttonText);
-            HAnchor = HAnchor.FitToChildren;
-            VAnchor = VAnchor.FitToChildren;
-        }
+		public LinkButtonViewBase(string label,
+									 double textHeight,
+									 double padding,
+									 RGBA_Bytes textColor,
+									 bool isUnderlined = false)
+			: base()
+		{
+			this.padding = padding;
+			this.TextColor = textColor;
+			this.isUnderlined = isUnderlined;
 
-        public override void SendToChildren(object objectToRout)
-        {
-            ChangeTextColorEventArgs changeColorEvent = objectToRout as ChangeTextColorEventArgs;
-            if (changeColorEvent != null)
-            {
-                buttonText.TextColor = changeColorEvent.color;
-            }
-            base.SendToChildren(objectToRout);
-        }
+			buttonText = new TextWidget(label, pointSize: textHeight);
+			buttonText.VAnchor = VAnchor.ParentCenter;
+			buttonText.HAnchor = HAnchor.ParentCenter;
+			buttonText.TextColor = this.TextColor;
 
-        public override void OnDraw(Agg.Graphics2D graphics2D)
-        {
-            RectangleDouble Bounds = LocalBounds;
-            RoundedRect rectBorder = new RoundedRect(Bounds, this.borderRadius);
+			//this.AnchorAll();
+			this.AddChild(buttonText);
+			HAnchor = HAnchor.FitToChildren;
+			VAnchor = VAnchor.FitToChildren;
+		}
 
-            graphics2D.Render(rectBorder, borderColor);
+		public override void SendToChildren(object objectToRout)
+		{
+			ChangeTextColorEventArgs changeColorEvent = objectToRout as ChangeTextColorEventArgs;
+			if (changeColorEvent != null)
+			{
+				buttonText.TextColor = changeColorEvent.color;
+			}
+			base.SendToChildren(objectToRout);
+		}
 
-            RectangleDouble insideBounds = Bounds;
-            insideBounds.Inflate(-this.borderWidth);
-            RoundedRect rectInside = new RoundedRect(insideBounds, Math.Max(this.borderRadius - this.borderWidth, 0));
+		public override void OnDraw(Agg.Graphics2D graphics2D)
+		{
+			RectangleDouble Bounds = LocalBounds;
+			RoundedRect rectBorder = new RoundedRect(Bounds, this.borderRadius);
 
-            graphics2D.Render(rectInside, this.fillColor);
+			graphics2D.Render(rectBorder, borderColor);
 
-            if (this.isUnderlined)
-            {
-                //Printer.TypeFaceStyle.DoUnderline = true;
-                RectangleDouble underline = new RectangleDouble(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Right, LocalBounds.Bottom);
-                graphics2D.Rectangle(underline, buttonText.TextColor);
-            }
-            
-            base.OnDraw(graphics2D);
-        }
-    }
+			RectangleDouble insideBounds = Bounds;
+			insideBounds.Inflate(-this.borderWidth);
+			RoundedRect rectInside = new RoundedRect(insideBounds, Math.Max(this.borderRadius - this.borderWidth, 0));
 
-    public class LinkButtonFactory
-    {
-        public double fontSize = 14;
-        public double padding = 3;
-        public RGBA_Bytes fillColor = new RGBA_Bytes(63, 63, 70, 0);
-        public RGBA_Bytes borderColor = new RGBA_Bytes(37, 37, 38, 0);
-        public RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryAccentColor;
-        public BorderDouble margin = new BorderDouble(0, 3);
+			graphics2D.Render(rectInside, this.fillColor);
 
-        public Button Generate(string buttonText)
-        {
-            //Widgets to show during the four button states
-            LinkButtonViewBase buttonWidgetPressed = getButtonWidgetPressed(buttonText);
-            LinkButtonViewBase buttonWidgetHover = getButtonWidgetHover(buttonText);
-            LinkButtonViewBase buttonWidgetNormal = getButtonWidgetNormal(buttonText);
-            LinkButtonViewBase buttonWidgetDisabled = getButtonWidgetDisabled(buttonText);
+			if (this.isUnderlined)
+			{
+				//Printer.TypeFaceStyle.DoUnderline = true;
+				RectangleDouble underline = new RectangleDouble(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Right, LocalBounds.Bottom);
+				graphics2D.Rectangle(underline, buttonText.TextColor);
+			}
 
-            //Create container for the three state widgets for the button
-            ButtonViewStates buttonViewWidget = new ButtonViewStates(buttonWidgetNormal, buttonWidgetHover, buttonWidgetPressed, buttonWidgetDisabled);
+			base.OnDraw(graphics2D);
+		}
+	}
 
-            //Create button based on view container widget
-            Button controlButton = new Button(0, 0, buttonViewWidget);
-            controlButton.Margin = margin;
-            controlButton.Cursor = Cursors.Hand;
+	public class LinkButtonFactory
+	{
+		public double fontSize = 14;
+		public double padding = 3;
+		public RGBA_Bytes fillColor = new RGBA_Bytes(63, 63, 70, 0);
+		public RGBA_Bytes borderColor = new RGBA_Bytes(37, 37, 38, 0);
+		public RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryAccentColor;
+		public BorderDouble margin = new BorderDouble(0, 3);
 
-            return controlButton;
-        }
+		public Button Generate(string buttonText)
+		{
+			//Widgets to show during the four button states
+			LinkButtonViewBase buttonWidgetPressed = getButtonWidgetPressed(buttonText);
+			LinkButtonViewBase buttonWidgetHover = getButtonWidgetHover(buttonText);
+			LinkButtonViewBase buttonWidgetNormal = getButtonWidgetNormal(buttonText);
+			LinkButtonViewBase buttonWidgetDisabled = getButtonWidgetDisabled(buttonText);
 
-        private LinkButtonViewBase getButtonWidgetPressed(string buttonText)
-        {
-            LinkButtonViewBase widget = new LinkButtonViewBase(buttonText,
-                                                               this.fontSize,
-                                                               this.padding,
-                                                               this.textColor);
-            return widget;
-        }
+			//Create container for the three state widgets for the button
+			ButtonViewStates buttonViewWidget = new ButtonViewStates(buttonWidgetNormal, buttonWidgetHover, buttonWidgetPressed, buttonWidgetDisabled);
 
-        private LinkButtonViewBase getButtonWidgetHover(string buttonText)
-        {
-            LinkButtonViewBase widget = new LinkButtonViewBase(buttonText,
-                                                               this.fontSize,
-                                                               this.padding,
-                                                               this.textColor);
-            return widget;
-        }
+			//Create button based on view container widget
+			Button controlButton = new Button(0, 0, buttonViewWidget);
+			controlButton.Margin = margin;
+			controlButton.Cursor = Cursors.Hand;
 
-        public LinkButtonViewBase getButtonWidgetNormal(string buttonText)
-        {
-            LinkButtonViewBase widget = new LinkButtonViewBase(buttonText,
-                                                               this.fontSize,
-                                                               this.padding,
-                                                               this.textColor,
-                                                               true);
-            return widget;
-        }
+			return controlButton;
+		}
 
-        private LinkButtonViewBase getButtonWidgetDisabled(string buttonText)
-        {
-            LinkButtonViewBase widget = new LinkButtonViewBase(buttonText,
-                                                               this.fontSize,
-                                                               this.padding,
-                                                               this.textColor);
-            return widget;
-        }
-    }
+		private LinkButtonViewBase getButtonWidgetPressed(string buttonText)
+		{
+			LinkButtonViewBase widget = new LinkButtonViewBase(buttonText,
+															   this.fontSize,
+															   this.padding,
+															   this.textColor);
+			return widget;
+		}
+
+		private LinkButtonViewBase getButtonWidgetHover(string buttonText)
+		{
+			LinkButtonViewBase widget = new LinkButtonViewBase(buttonText,
+															   this.fontSize,
+															   this.padding,
+															   this.textColor);
+			return widget;
+		}
+
+		public LinkButtonViewBase getButtonWidgetNormal(string buttonText)
+		{
+			LinkButtonViewBase widget = new LinkButtonViewBase(buttonText,
+															   this.fontSize,
+															   this.padding,
+															   this.textColor,
+															   true);
+			return widget;
+		}
+
+		private LinkButtonViewBase getButtonWidgetDisabled(string buttonText)
+		{
+			LinkButtonViewBase widget = new LinkButtonViewBase(buttonText,
+															   this.fontSize,
+															   this.padding,
+															   this.textColor);
+			return widget;
+		}
+	}
 }

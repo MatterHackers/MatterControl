@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,250 +23,261 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl
 {
+	public class ManualControlsWidget : GuiWidget
+	{
+		public ManualControlsWidget()
+			: base()
+		{
+			this.AnchorAll();
+			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			this.AddChild(new ManualPrinterControls());
+		}
+	}
 
+	public class ManualPrinterControls : GuiWidget
+	{
+		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
 
-    public class ManualPrinterControls : GuiWidget
-    {
-        event EventHandler unregisterEvents;
+		private static bool pluginsQueuedToAdd = false;
 
-        TemperatureControls temperatureControlsContainer;
-        DisableableWidget movementControlsContainer;
-        DisableableWidget fanControlsContainer;
-        DisableableWidget tuningAdjustmentControlsContainer;
-        DisableableWidget macroControls;
+		private DisableableWidget fanControlsContainer;
 
-        TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private DisableableWidget macroControls;
 
-        static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
-        
-        public ManualPrinterControls()
-        {
-            SetDisplayAttributes();
-            
-            FlowLayoutWidget controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            controlsTopToBottomLayout.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-            controlsTopToBottomLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
-            controlsTopToBottomLayout.Name = "ManualPrinterControls.ControlsContainer";
-            controlsTopToBottomLayout.Margin = new BorderDouble(0);
+		private DisableableWidget movementControlsContainer;
 
-            AddTemperatureControls(controlsTopToBottomLayout);
-            AddMovementControls(controlsTopToBottomLayout);
-            AddFanControls(controlsTopToBottomLayout);
-            AddMacroControls(controlsTopToBottomLayout);
-            AddAdjustmentControls(controlsTopToBottomLayout);
+		private TemperatureControls temperatureControlsContainer;
 
-            AddChild(controlsTopToBottomLayout);
-            AddHandlers();
-            SetVisibleControls();
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-            if (!pluginsQueuedToAdd)
-            {
-                UiThread.RunOnIdle(AddPlugins);
-                pluginsQueuedToAdd = true;
-            }
-        }
+		private DisableableWidget tuningAdjustmentControlsContainer;
 
-        static bool pluginsQueuedToAdd = false;
-        public void AddPlugins(object state)
-        {
-            AddPluginControls.CallEvents(this, null);
-            pluginsQueuedToAdd = false;
-        }
+		public ManualPrinterControls()
+		{
+			SetDisplayAttributes();
 
-        private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {
-            fanControlsContainer = new FanControls();
-            if (ActiveSliceSettings.Instance.HasFan())
-            {                
-                controlsTopToBottomLayout.AddChild(fanControlsContainer);
-            }
-        }
+			FlowLayoutWidget controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			controlsTopToBottomLayout.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			controlsTopToBottomLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			controlsTopToBottomLayout.Name = "ManualPrinterControls.ControlsContainer";
+			controlsTopToBottomLayout.Margin = new BorderDouble(0);
 
-        private void AddMacroControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {
-            macroControls = new MacroControls();
-            controlsTopToBottomLayout.AddChild(macroControls);
-        }
+			AddTemperatureControls(controlsTopToBottomLayout);
+			AddMovementControls(controlsTopToBottomLayout);
 
-        private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {
-            movementControlsContainer = new MovementControls();
-            controlsTopToBottomLayout.AddChild(movementControlsContainer);
-        }
+			FlowLayoutWidget linearPanel = new FlowLayoutWidget();
+			linearPanel.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			controlsTopToBottomLayout.AddChild(linearPanel);
 
-        private void AddTemperatureControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {
-            temperatureControlsContainer = new TemperatureControls();
-            controlsTopToBottomLayout.AddChild(temperatureControlsContainer);
-        }
+			AddFanControls(linearPanel);
+			AddAtxPowerControls(linearPanel);
 
-        private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
-        {		
-            tuningAdjustmentControlsContainer = new AdjustmentControls();
-            controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
-        }
+			AddMacroControls(controlsTopToBottomLayout);
+			AddAdjustmentControls(controlsTopToBottomLayout);
 
-        public override void OnClosed(EventArgs e)
-        {
-            if (unregisterEvents != null)
-            {
-                unregisterEvents(this, null);
-            }
+			AddChild(controlsTopToBottomLayout);
+			AddHandlers();
+			SetVisibleControls();
 
-            base.OnClosed(e);
-        }
+			if (!pluginsQueuedToAdd)
+			{
+				UiThread.RunOnIdle(AddPlugins);
+				pluginsQueuedToAdd = true;
+			}
+		}
 
+		private event EventHandler unregisterEvents;
+		public void AddPlugins(object state)
+		{
+			AddPluginControls.CallEvents(this, null);
+			pluginsQueuedToAdd = false;
+		}
 
-        private void SetDisplayAttributes()
-        {
-            HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-            VAnchor = Agg.UI.VAnchor.FitToChildren;
-        }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
 
-        private void SetVisibleControls()
-        {
-            if (ActivePrinterProfile.Instance.ActivePrinter == null)
-            {
-                // no printer selected
-                foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
-                {
-                    extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                }
-                temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				
-                macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-            }
-            else // we at least have a printer selected
-            {
-                switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-                {
-                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
-                    case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-                    case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-                    case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-                        foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
-                        {
-                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                        }
-                        temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);                        
-                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                        break;
+			base.OnClosed(e);
+		}
 
-                    case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Connected:
-                        foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
-                        {
-                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        }
-                        temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                        
-                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        break;
+		private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			tuningAdjustmentControlsContainer = new AdjustmentControls();
+			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
+		}
 
-                    case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-                        foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
-                        {
-                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        }
-                        temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-                        break;
+		private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			fanControlsContainer = new FanControls();
+			if (ActiveSliceSettings.Instance.HasFan())
+			{
+				controlsTopToBottomLayout.AddChild(fanControlsContainer);
+			}
+		}
 
-                    case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-                    case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-                        switch (PrinterConnectionAndCommunication.Instance.PrintingState)
-                        {
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
-                            case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
-                                foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
-                                {
-                                    extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                }
-                                temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                                fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                                tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                                
-                                macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-                                break;
+		private void AddAtxPowerControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			controlsTopToBottomLayout.AddChild(new PowerControls());
+		}
 
-                            default:
-                                throw new NotImplementedException();
-                        }
-                        break;
+		private void AddHandlers()
+		{
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+		}
 
-                    case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-                        foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
-                        {
-                            extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        }
-                        temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);                        
-                        macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-                        break;
+		private void AddMacroControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			macroControls = new MacroControls();
+			controlsTopToBottomLayout.AddChild(macroControls);
+		}
 
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-        }        
-        
-        private void AddHandlers()
-        {
-            PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-            PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-        }
+		private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			movementControlsContainer = new MovementControls();
+			controlsTopToBottomLayout.AddChild(movementControlsContainer);
+		}
 
-        private void onPrinterStatusChanged(object sender, EventArgs e)
-        {
-            SetVisibleControls();
-			UiThread.RunOnIdle(invalidateWidget);
-            
-        }
-			
+		private void AddTemperatureControls(FlowLayoutWidget controlsTopToBottomLayout)
+		{
+			temperatureControlsContainer = new TemperatureControls();
+			controlsTopToBottomLayout.AddChild(temperatureControlsContainer);
+		}
 		private void invalidateWidget(object state)
 		{
 			this.Invalidate();
 		}
 
-       
-    }
+		private void onPrinterStatusChanged(object sender, EventArgs e)
+		{
+			SetVisibleControls();
+			UiThread.RunOnIdle(invalidateWidget);
+		}
+
+		private void SetDisplayAttributes()
+		{
+			HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			VAnchor = Agg.UI.VAnchor.FitToChildren;
+		}
+
+		private void SetVisibleControls()
+		{
+			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			{
+				// no printer selected
+				foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
+				{
+					extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				}
+				temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+
+				macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+			}
+			else // we at least have a printer selected
+			{
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				{
+					case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
+					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
+					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
+					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
+					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
+						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
+						{
+							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						}
+						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						break;
+
+					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
+					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
+						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
+						{
+							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						}
+						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						break;
+
+					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
+						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
+						{
+							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						}
+						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						break;
+
+					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+						switch (PrinterConnectionAndCommunication.Instance.PrintingState)
+						{
+							case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:
+							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
+							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
+							case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
+								foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
+								{
+									extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								}
+								temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+								fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								macroControls.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
+								break;
+
+							default:
+								throw new NotImplementedException();
+						}
+						break;
+
+					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
+						{
+							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						}
+						temperatureControlsContainer.BedTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						fanControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						tuningAdjustmentControlsContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						macroControls.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						break;
+
+					default:
+						throw new NotImplementedException();
+				}
+			}
+		}
+	}
 }

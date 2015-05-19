@@ -7,16 +7,18 @@
 **
 *************************************************************************
 */
+
 namespace Community.CsharpSqlite
 {
-  public partial class Sqlite3
-  {
-    /* Automatically generated.  Do not edit */
-    /* See the mkopcodec.awk script for details. */
+	public partial class Sqlite3
+	{
+		/* Automatically generated.  Do not edit */
+		/* See the mkopcodec.awk script for details. */
 #if !SQLITE_OMIT_EXPLAIN || !NDEBUG || VDBE_PROFILE || SQLITE_DEBUG
-    static string sqlite3OpcodeName( int i )
-    {
-      string[] azName =  { "?",
+
+		private static string sqlite3OpcodeName(int i)
+		{
+			string[] azName =  { "?",
      /*   1 */ "Goto",
      /*   2 */ "Gosub",
      /*   3 */ "Return",
@@ -163,8 +165,9 @@ namespace Community.CsharpSqlite
      /* 144 */ "ToInt",
      /* 145 */ "ToReal",
 };
-      return azName[i];
-    }
+			return azName[i];
+		}
+
 #endif
-  }
+	}
 }

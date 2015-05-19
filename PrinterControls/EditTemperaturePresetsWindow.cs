@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,228 +23,221 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 using System.Text;
-
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.Agg.Image;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
-    public class EditTemperaturePresetsWindow : SystemWindow
-    {
-        protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-        EventHandler functionToCallOnSave;
-        List<GuiWidget> listWithValues = new List<GuiWidget>();
+	public class EditTemperaturePresetsWindow : SystemWindow
+	{
+		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private EventHandler functionToCallOnSave;
+		private List<GuiWidget> listWithValues = new List<GuiWidget>();
 
-        public EditTemperaturePresetsWindow(string windowTitle, string temperatureSettings, EventHandler functionToCallOnSave)
-            : base(360, 300)
-        {
-            AlwaysOnTopOfMain = true;
-            Title = LocalizedString.Get(windowTitle);
+		public EditTemperaturePresetsWindow(string windowTitle, string temperatureSettings, EventHandler functionToCallOnSave)
+			: base(360, 300)
+		{
+			AlwaysOnTopOfMain = true;
+			Title = LocalizedString.Get(windowTitle);
 
-            FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            topToBottom.AnchorAll();
-            topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			topToBottom.AnchorAll();
+			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
-            FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-            headerRow.HAnchor = HAnchor.ParentLeftRight;
-            headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-            headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
+			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
-            {
-                string tempShortcutPresetLabel = LocalizedString.Get("Temperature Shortcut Presets");
-                string tempShortcutPresetLabelFull = string.Format("{0}:", tempShortcutPresetLabel);
-                TextWidget elementHeader = new TextWidget(tempShortcutPresetLabelFull, pointSize: 14);
-                elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-                elementHeader.HAnchor = HAnchor.ParentLeftRight;
-                elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+			{
+				string tempShortcutPresetLabel = LocalizedString.Get("Temperature Shortcut Presets");
+				string tempShortcutPresetLabelFull = string.Format("{0}:", tempShortcutPresetLabel);
+				TextWidget elementHeader = new TextWidget(tempShortcutPresetLabelFull, pointSize: 14);
+				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				elementHeader.HAnchor = HAnchor.ParentLeftRight;
+				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
 
+				headerRow.AddChild(elementHeader);
+			}
 
-                headerRow.AddChild(elementHeader);
-            }
+			topToBottom.AddChild(headerRow);
 
+			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			//ListBox printerListContainer = new ListBox();
+			{
+				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
+				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
+				presetsFormContainer.Padding = new BorderDouble(3);
+				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			}
 
-            topToBottom.AddChild(headerRow);
+			topToBottom.AddChild(presetsFormContainer);
 
-            FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-            //ListBox printerListContainer = new ListBox();
-            {
-                presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
-                presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
-                presetsFormContainer.Padding = new BorderDouble(3);
-                presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-            }
+			this.functionToCallOnSave = functionToCallOnSave;
+			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-            topToBottom.AddChild(presetsFormContainer);
-
-            this.functionToCallOnSave = functionToCallOnSave;
-            BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-            double oldHeight = textImageButtonFactory.FixedHeight;
+			double oldHeight = textImageButtonFactory.FixedHeight;
 			textImageButtonFactory.FixedHeight = 30 * TextWidget.GlobalPointSizeScaleRatio;
 
-            TextWidget tempTypeLabel = new TextWidget(windowTitle, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
-            tempTypeLabel.Margin = new BorderDouble(3);
-            tempTypeLabel.HAnchor = HAnchor.ParentLeft;
-            presetsFormContainer.AddChild(tempTypeLabel);
+			TextWidget tempTypeLabel = new TextWidget(windowTitle, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
+			tempTypeLabel.Margin = new BorderDouble(3);
+			tempTypeLabel.HAnchor = HAnchor.ParentLeft;
+			presetsFormContainer.AddChild(tempTypeLabel);
 
-            FlowLayoutWidget leftRightLabels = new FlowLayoutWidget();
-            leftRightLabels.Padding = new BorderDouble(3, 6);
-            leftRightLabels.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			FlowLayoutWidget leftRightLabels = new FlowLayoutWidget();
+			leftRightLabels.Padding = new BorderDouble(3, 6);
+			leftRightLabels.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 
-            GuiWidget hLabelSpacer = new GuiWidget();
-            hLabelSpacer.HAnchor = HAnchor.ParentLeftRight;
+			GuiWidget hLabelSpacer = new GuiWidget();
+			hLabelSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-            GuiWidget labelLabelContainer = new GuiWidget();
-            labelLabelContainer.Width = 66;
-            labelLabelContainer.Height = 16;
-            labelLabelContainer.Margin = new BorderDouble(3, 0);
+			GuiWidget labelLabelContainer = new GuiWidget();
+			labelLabelContainer.Width = 66;
+			labelLabelContainer.Height = 16;
+			labelLabelContainer.Margin = new BorderDouble(3, 0);
 
-            string labelLabelTxt = LocalizedString.Get("Label");
+			string labelLabelTxt = LocalizedString.Get("Label");
 			TextWidget labelLabel = new TextWidget(string.Format(labelLabelTxt), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
-            labelLabel.HAnchor = HAnchor.ParentLeft;
-            labelLabel.VAnchor = VAnchor.ParentCenter;
+			labelLabel.HAnchor = HAnchor.ParentLeft;
+			labelLabel.VAnchor = VAnchor.ParentCenter;
 
+			labelLabelContainer.AddChild(labelLabel);
 
-            labelLabelContainer.AddChild(labelLabel);
-
-            GuiWidget tempLabelContainer = new GuiWidget();
-            tempLabelContainer.Width = 66;
-            tempLabelContainer.Height = 16;
-            tempLabelContainer.Margin = new BorderDouble(3, 0);
+			GuiWidget tempLabelContainer = new GuiWidget();
+			tempLabelContainer.Width = 66;
+			tempLabelContainer.Height = 16;
+			tempLabelContainer.Margin = new BorderDouble(3, 0);
 
 			TextWidget tempLabel = new TextWidget(string.Format("Temp (C)"), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
-            tempLabel.HAnchor = HAnchor.ParentLeft;
-            tempLabel.VAnchor = VAnchor.ParentCenter;
+			tempLabel.HAnchor = HAnchor.ParentLeft;
+			tempLabel.VAnchor = VAnchor.ParentCenter;
 
-            tempLabelContainer.AddChild(tempLabel);
+			tempLabelContainer.AddChild(tempLabel);
 
-				leftRightLabels.AddChild(hLabelSpacer);
-            leftRightLabels.AddChild(labelLabelContainer);
-            leftRightLabels.AddChild(tempLabelContainer);
+			leftRightLabels.AddChild(hLabelSpacer);
+			leftRightLabels.AddChild(labelLabelContainer);
+			leftRightLabels.AddChild(tempLabelContainer);
 
-            presetsFormContainer.AddChild(leftRightLabels);
+			presetsFormContainer.AddChild(leftRightLabels);
 
-            // put in the temperature edit controls
-            string[] settingsArray = temperatureSettings.Split(',');
-            int preset_count = 1;
-            int tab_index = 0;
-            for (int i = 0; i < settingsArray.Count() - 1; i += 2)
-            {
-                FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
-                leftRightEdit.Padding = new BorderDouble(3);
-                leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-                string presetLabelTxt = LocalizedString.Get("Preset");
-				TextWidget label = new TextWidget(string.Format("{1} {0}.", preset_count,presetLabelTxt ), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                label.VAnchor = VAnchor.ParentCenter;
-                leftRightEdit.AddChild(label);
+			// put in the temperature edit controls
+			string[] settingsArray = temperatureSettings.Split(',');
+			int preset_count = 1;
+			int tab_index = 0;
+			for (int i = 0; i < settingsArray.Count() - 1; i += 2)
+			{
+				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
+				leftRightEdit.Padding = new BorderDouble(3);
+				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+				string presetLabelTxt = LocalizedString.Get("Preset");
+				TextWidget label = new TextWidget(string.Format("{1} {0}.", preset_count, presetLabelTxt), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				label.VAnchor = VAnchor.ParentCenter;
+				leftRightEdit.AddChild(label);
 
-                GuiWidget hSpacer = new GuiWidget();
-                hSpacer.HAnchor = HAnchor.ParentLeftRight;
+				GuiWidget hSpacer = new GuiWidget();
+				hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-                leftRightEdit.AddChild(hSpacer);
+				leftRightEdit.AddChild(hSpacer);
 
-                MHTextEditWidget typeEdit = new MHTextEditWidget(settingsArray[i], pixelWidth: 60, tabIndex: tab_index++);
+				MHTextEditWidget typeEdit = new MHTextEditWidget(settingsArray[i], pixelWidth: 60, tabIndex: tab_index++);
 
-                typeEdit.Margin = new BorderDouble(3);
-                leftRightEdit.AddChild(typeEdit);
-                listWithValues.Add(typeEdit);
+				typeEdit.Margin = new BorderDouble(3);
+				leftRightEdit.AddChild(typeEdit);
+				listWithValues.Add(typeEdit);
 
-                double temperatureValue = 0;
-                double.TryParse(settingsArray[i + 1], out temperatureValue);
-                MHNumberEdit valueEdit = new MHNumberEdit(temperatureValue, minValue: 0, pixelWidth: 60, tabIndex: tab_index++);
-                valueEdit.Margin = new BorderDouble(3);
-                leftRightEdit.AddChild(valueEdit);
-                listWithValues.Add(valueEdit);
+				double temperatureValue = 0;
+				double.TryParse(settingsArray[i + 1], out temperatureValue);
+				MHNumberEdit valueEdit = new MHNumberEdit(temperatureValue, minValue: 0, pixelWidth: 60, tabIndex: tab_index++);
+				valueEdit.Margin = new BorderDouble(3);
+				leftRightEdit.AddChild(valueEdit);
+				listWithValues.Add(valueEdit);
 
-                //leftRightEdit.AddChild(textImageButtonFactory.Generate("Delete"));
-                presetsFormContainer.AddChild(leftRightEdit);
-                preset_count += 1;
-            }
+				//leftRightEdit.AddChild(textImageButtonFactory.Generate("Delete"));
+				presetsFormContainer.AddChild(leftRightEdit);
+				preset_count += 1;
+			}
 
-            {
-                FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
-                leftRightEdit.Padding = new BorderDouble(3);
-                leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			{
+				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
+				leftRightEdit.Padding = new BorderDouble(3);
+				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 
-                GuiWidget hSpacer = new GuiWidget();
-                hSpacer.HAnchor = HAnchor.ParentLeftRight;
+				GuiWidget hSpacer = new GuiWidget();
+				hSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-                TextWidget maxWidgetLabel = new TextWidget(LocalizedString.Get("Max Temp."), textColor: ActiveTheme.Instance.PrimaryTextColor);
-                maxWidgetLabel.VAnchor = VAnchor.ParentCenter;
-                leftRightEdit.AddChild(maxWidgetLabel);
-                leftRightEdit.AddChild(hSpacer);
+				TextWidget maxWidgetLabel = new TextWidget(LocalizedString.Get("Max Temp."), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				maxWidgetLabel.VAnchor = VAnchor.ParentCenter;
+				leftRightEdit.AddChild(maxWidgetLabel);
+				leftRightEdit.AddChild(hSpacer);
 
-                double maxTemperature = 0;
-                double.TryParse(settingsArray[settingsArray.Count() - 1], out maxTemperature);
-                MHNumberEdit valueEdit = new MHNumberEdit(maxTemperature, minValue: 0, pixelWidth: 60, tabIndex: tab_index);
-                valueEdit.Margin = new BorderDouble(3);
-                leftRightEdit.AddChild(valueEdit);
-                listWithValues.Add(valueEdit);
+				double maxTemperature = 0;
+				double.TryParse(settingsArray[settingsArray.Count() - 1], out maxTemperature);
+				MHNumberEdit valueEdit = new MHNumberEdit(maxTemperature, minValue: 0, pixelWidth: 60, tabIndex: tab_index);
+				valueEdit.Margin = new BorderDouble(3);
+				leftRightEdit.AddChild(valueEdit);
+				listWithValues.Add(valueEdit);
 
-                presetsFormContainer.AddChild(leftRightEdit);
-            }
+				presetsFormContainer.AddChild(leftRightEdit);
+			}
 
-            textImageButtonFactory.FixedHeight = oldHeight;
+			textImageButtonFactory.FixedHeight = oldHeight;
 
-            ShowAsSystemWindow();
+			ShowAsSystemWindow();
 			MinimumSize = new Vector2(360, 300);
 
-            Button savePresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
-            savePresetsButton.Click += new EventHandler(save_Click);
+			Button savePresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Save"));
+			savePresetsButton.Click += new EventHandler(save_Click);
 
-            Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
-            cancelPresetsButton.Click += (sender, e) => { CloseOnIdle(); };
+			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			cancelPresetsButton.Click += (sender, e) => { CloseOnIdle(); };
 
-            FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-            buttonRow.HAnchor = HAnchor.ParentLeftRight;
-            buttonRow.Padding = new BorderDouble(0, 3);
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Padding = new BorderDouble(0, 3);
 
-            GuiWidget hButtonSpacer = new GuiWidget();
-            hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
+			GuiWidget hButtonSpacer = new GuiWidget();
+			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
 
-            buttonRow.AddChild(savePresetsButton);
-            buttonRow.AddChild(hButtonSpacer);
-            buttonRow.AddChild(cancelPresetsButton);
+			buttonRow.AddChild(savePresetsButton);
+			buttonRow.AddChild(hButtonSpacer);
+			buttonRow.AddChild(cancelPresetsButton);
 
-            topToBottom.AddChild(buttonRow);
+			topToBottom.AddChild(buttonRow);
 
-            AddChild(topToBottom);
-        }
+			AddChild(topToBottom);
+		}
 
-        void save_Click(object sender, EventArgs mouseEvent)
-        {
-            UiThread.RunOnIdle(save_OnIdle);
-        }
+		private void save_Click(object sender, EventArgs mouseEvent)
+		{
+			UiThread.RunOnIdle(save_OnIdle);
+		}
 
-        void save_OnIdle(object state)
-        {
-            bool first = true;
-            StringBuilder settingString = new StringBuilder();
-            foreach (GuiWidget valueToAdd in listWithValues)
-            {
-                if (!first)
-                {
-                    settingString.Append(",");
-                }
+		private void save_OnIdle(object state)
+		{
+			bool first = true;
+			StringBuilder settingString = new StringBuilder();
+			foreach (GuiWidget valueToAdd in listWithValues)
+			{
+				if (!first)
+				{
+					settingString.Append(",");
+				}
 
-                settingString.Append(valueToAdd.Text);
-                first = false;
-            }
-            functionToCallOnSave(this, new StringEventArgs(settingString.ToString()));
-            CloseOnIdle();
-        }
-    }
+				settingString.Append(valueToAdd.Text);
+				first = false;
+			}
+			functionToCallOnSave(this, new StringEventArgs(settingString.ToString()));
+			CloseOnIdle();
+		}
+	}
 }

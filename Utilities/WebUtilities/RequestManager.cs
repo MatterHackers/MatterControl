@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,31 +23,29 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
 using System.IO;
+using System.Net;
+using System.Text;
 
 namespace MatterHackers.MatterControl
 {
 	public class RequestManager
 	{
 		public string LastResponse { protected set; get; }
-		
-		CookieContainer cookies = new CookieContainer();
-		
-		internal string GetCookieValue(Uri SiteUri,string name)
+
+		private CookieContainer cookies = new CookieContainer();
+
+		internal string GetCookieValue(Uri SiteUri, string name)
 		{
 			Cookie cookie = cookies.GetCookies(SiteUri)[name];
 			return (cookie == null) ? null : cookie.Value;
 		}
-		
+
 		public string GetResponseContent(HttpWebResponse response)
 		{
 			if (response == null)
@@ -55,69 +53,69 @@ namespace MatterHackers.MatterControl
 				throw new ArgumentNullException("response");
 			}
 
-            string responseFromServer = null;
-			
+			string responseFromServer = null;
+
 			try
 			{
 				// Get the stream containing content returned by the server.
-                using (Stream dataStream = response.GetResponseStream())
-                {
-                    // Open the stream using a StreamReader for easy access.
-                    using (StreamReader reader = new StreamReader(dataStream))
-                    {
-                        // Read the content.
-                        responseFromServer = reader.ReadToEnd();
-                        // Cleanup the streams and the response.
-                    }
-                }
+				using (Stream dataStream = response.GetResponseStream())
+				{
+					// Open the stream using a StreamReader for easy access.
+					using (StreamReader reader = new StreamReader(dataStream))
+					{
+						// Read the content.
+						responseFromServer = reader.ReadToEnd();
+						// Cleanup the streams and the response.
+					}
+				}
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
 			}
 			finally
-			{                
+			{
 				response.Close();
 			}
 			LastResponse = responseFromServer;
 			return responseFromServer;
 		}
-		
+
 		public HttpWebResponse SendPOSTRequest(string uri, string content, string login, string password, bool allowAutoRedirect)
 		{
 			HttpWebRequest request = GeneratePOSTRequest(uri, content, login, password, allowAutoRedirect);
 			return GetResponse(request);
 		}
-		
+
 		public HttpWebResponse SendGETRequest(string uri, string login, string password, bool allowAutoRedirect)
 		{
 			HttpWebRequest request = GenerateGETRequest(uri, login, password, allowAutoRedirect);
 			return GetResponse(request);
 		}
-		
+
 		public HttpWebResponse SendRequest(string uri, string content, string method, string login, string password, bool allowAutoRedirect)
 		{
 			HttpWebRequest request = GenerateRequest(uri, content, method, login, password, allowAutoRedirect);
 			return GetResponse(request);
 		}
-		
+
 		public HttpWebRequest GenerateGETRequest(string uri, string login, string password, bool allowAutoRedirect)
 		{
 			return GenerateRequest(uri, null, "GET", null, null, allowAutoRedirect);
 		}
-		
+
 		public HttpWebRequest GeneratePOSTRequest(string uri, string content, string login, string password, bool allowAutoRedirect)
 		{
 			return GenerateRequest(uri, content, "POST", null, null, allowAutoRedirect);
 		}
-		
+
 		internal HttpWebRequest GenerateRequest(string uri, string content, string method, string login, string password, bool allowAutoRedirect)
 		{
 			if (uri == null)
 			{
 				throw new ArgumentNullException("uri");
 			}
-			// Create a request using a URL that can receive a post. 
+			// Create a request using a URL that can receive a post.
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
 			// Set the Method property of the request to POST.
 			request.Method = method;
@@ -142,23 +140,23 @@ namespace MatterHackers.MatterControl
 				// Set the ContentLength property of the WebRequest.
 				request.ContentLength = byteArray.Length;
 				// Get the request stream.
-                Stream dataStream = null;
-                try
-                {
-                    dataStream = request.GetRequestStream();
-                    // Write the data to the request stream.
-                    dataStream.Write(byteArray, 0, byteArray.Length);
-                    // Close the Stream object.
-                    dataStream.Close();
-                }
-                catch (WebException ex)
-                {
-                    Console.WriteLine("Web exception occurred. Status code: {0}", ex.Status);
-                }
-            }
+				Stream dataStream = null;
+				try
+				{
+					dataStream = request.GetRequestStream();
+					// Write the data to the request stream.
+					dataStream.Write(byteArray, 0, byteArray.Length);
+					// Close the Stream object.
+					dataStream.Close();
+				}
+				catch (WebException ex)
+				{
+					Console.WriteLine("Web exception occurred. Status code: {0}", ex.Status);
+				}
+			}
 			return request;
 		}
-		
+
 		internal HttpWebResponse GetResponse(HttpWebRequest request)
 		{
 			if (request == null)
@@ -168,8 +166,8 @@ namespace MatterHackers.MatterControl
 			HttpWebResponse response = null;
 			try
 			{
-				response = (HttpWebResponse)request.GetResponse();                
-				cookies.Add(response.Cookies);                
+				response = (HttpWebResponse)request.GetResponse();
+				cookies.Add(response.Cookies);
 				// Print the properties of each cookie.
 				Console.WriteLine("\nCookies: ");
 				foreach (Cookie cook in cookies.GetCookies(request.RequestUri))
@@ -189,6 +187,5 @@ namespace MatterHackers.MatterControl
 			}
 			return response;
 		}
-		
 	}
 }

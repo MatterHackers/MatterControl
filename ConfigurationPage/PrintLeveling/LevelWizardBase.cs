@@ -3,13 +3,13 @@ Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,146 +23,146 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.Agg.Font;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-    // this class is so that it is not passed by value
-    public class ProbePosition
-    {
-        public Vector3 position;
-    }
+	// this class is so that it is not passed by value
+	public class ProbePosition
+	{
+		public Vector3 position;
+	}
 
-    public class LevelWizardBase : SystemWindow
-    {
-        public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
+	public class LevelWizardBase : SystemWindow
+	{
+		public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
 
-        protected static readonly string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
-        protected static readonly string requiredPageInstructions1 = "Congratulations on setting up your new printer. Before starting your first print we need to run a simple calibration procedure.";
-        protected static readonly string requiredPageInstructions2 = "The next few screens will walk your through the print leveling wizard.";
+		protected static readonly string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
+		protected static readonly string requiredPageInstructions1 = "Congratulations on setting up your new printer. Before starting your first print we need to run a simple calibration procedure.";
+		protected static readonly string requiredPageInstructions2 = "The next few screens will walk your through the print leveling wizard.";
 
-        protected static readonly string homingPageStepText = "Homing The Printer".Localize();
-        protected static readonly string homingPageInstructionsTextOne = LocalizedString.Get("The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need");
-        protected static readonly string homingPageInstructionsTextTwo = LocalizedString.Get("A standard sheet of paper");
-        protected static readonly string homingPageInstructionsTextThree = LocalizedString.Get("We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.");
+		protected static readonly string homingPageStepText = "Homing The Printer".Localize();
+		protected static readonly string homingPageInstructionsTextOne = LocalizedString.Get("The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.\n\nTo complete the next few steps you will need");
+		protected static readonly string homingPageInstructionsTextTwo = LocalizedString.Get("A standard sheet of paper");
+		protected static readonly string homingPageInstructionsTextThree = LocalizedString.Get("We will use this paper to measure the distance between the extruder and the bed.\n\nClick 'Next' to continue.");
 
-        protected static readonly string doneInstructionsText = LocalizedString.Get("Congratulations!\n\nAuto Print Leveling is now configured and enabled.");
-        protected static readonly string doneInstructionsTextTwo = LocalizedString.Get("Remove the paper");
-        protected static readonly string doneInstructionsTextThree = LocalizedString.Get("If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.");
-        protected static readonly string stepTextBeg = LocalizedString.Get("Step");
-        protected static readonly string stepTextEnd = LocalizedString.Get("of");
+		protected static readonly string doneInstructionsText = LocalizedString.Get("Congratulations!\n\nAuto Print Leveling is now configured and enabled.");
+		protected static readonly string doneInstructionsTextTwo = LocalizedString.Get("Remove the paper");
+		protected static readonly string doneInstructionsTextThree = LocalizedString.Get("If in the future you need to re-calibrate your printer, or you wish to turn Auto Print Leveling off, you can find the print leveling controls in 'Advanced Settings'->'Configuration'.\n\nClick 'Done' to close this window.");
+		protected static readonly string stepTextBeg = LocalizedString.Get("Step");
+		protected static readonly string stepTextEnd = LocalizedString.Get("of");
 
-        protected WizardControl printLevelWizard;
+		protected WizardControl printLevelWizard;
 
-        int totalSteps;
-        protected int stepNumber = 1;
+		private int totalSteps;
+		protected int stepNumber = 1;
 
-        protected string GetStepString()
-        {
-            return string.Format("{0} {1} {2} {3}:", stepTextBeg, stepNumber++, stepTextEnd, totalSteps);
-        }
+		protected string GetStepString()
+		{
+			return string.Format("{0} {1} {2} {3}:", stepTextBeg, stepNumber++, stepTextEnd, totalSteps);
+		}
 
-        public LevelWizardBase(int width, int height, int totalSteps)
-            : base(width, height)
-        {
-            AlwaysOnTopOfMain = true;
-            this.totalSteps = totalSteps;
-        }
+		public LevelWizardBase(int width, int height, int totalSteps)
+			: base(width, height)
+		{
+			AlwaysOnTopOfMain = true;
+			this.totalSteps = totalSteps;
+		}
 
-        public static Vector2 GetPrintLevelPositionToSample(int index)
-        {
-            Vector2 bedSize = ActiveSliceSettings.Instance.BedSize;
-            Vector2 printCenter = ActiveSliceSettings.Instance.PrintCenter;
+		public static Vector2 GetPrintLevelPositionToSample(int index)
+		{
+			Vector2 bedSize = ActiveSliceSettings.Instance.BedSize;
+			Vector2 printCenter = ActiveSliceSettings.Instance.PrintCenter;
 
-            switch (ActiveSliceSettings.Instance.BedShape)
-            {
-                case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
-                    Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
-                    switch (index)
-                    {
-                        case 0:
-                            return firstPosition;
-                        case 1:
-                            return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
-                        case 2:
-                            return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
-                        default:
-                            throw new IndexOutOfRangeException();
-                    }
+			switch (ActiveSliceSettings.Instance.BedShape)
+			{
+				case MeshVisualizer.MeshViewerWidget.BedShape.Circular:
+					Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
+					switch (index)
+					{
+						case 0:
+							return firstPosition;
 
-                case MeshVisualizer.MeshViewerWidget.BedShape.Rectangular:
-                default:
-                    switch (index)
-                    {
-                        case 0:
-                            return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
-                        case 1:
-                            return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
-                        case 2:
-                            return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
-                        default:
-                            throw new IndexOutOfRangeException();
-                    }
-            }
-        }
+						case 1:
+							return Vector2.Rotate(firstPosition, MathHelper.Tau / 3);
 
-        static SystemWindow printLevelWizardWindow;
-        public static void ShowPrintLevelWizard(LevelWizardBase.RuningState runningState)
-        {
-            if (printLevelWizardWindow == null)
-            {
-                printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(runningState);
-                printLevelWizardWindow.Closed += (sender, e) =>
-                {
-                    printLevelWizardWindow = null;
-                };
-            }
-            else
-            {
-                printLevelWizardWindow.BringToFront();
-            }
-        }
+						case 2:
+							return Vector2.Rotate(firstPosition, MathHelper.Tau * 2 / 3);
 
-        static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
-        {
-            PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+						default:
+							throw new IndexOutOfRangeException();
+					}
 
-            LevelWizardBase printLevelWizardWindow;
-            switch(levelingData.levelingSystem)
-            {
-                case PrintLevelingData.LevelingSystem.Probe2Points:
-                    printLevelWizardWindow = new LevelWizard2Point(runningState);
-                    break;
+				case MeshVisualizer.MeshViewerWidget.BedShape.Rectangular:
+				default:
+					switch (index)
+					{
+						case 0:
+							return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
 
-                case PrintLevelingData.LevelingSystem.Probe3Points:
-                    printLevelWizardWindow = new LevelWizard3Point(runningState);
-                    break;
+						case 1:
+							return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
 
-                default:
-                    throw new NotImplementedException();
-            }
+						case 2:
+							return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
 
-            printLevelWizardWindow.ShowAsSystemWindow();
-            return printLevelWizardWindow;
-        }
-    }
+						default:
+							throw new IndexOutOfRangeException();
+					}
+			}
+		}
 
-    public class PrintLevelingInfo
-    {
-    }
+		private static SystemWindow printLevelWizardWindow;
+
+		public static void ShowPrintLevelWizard(LevelWizardBase.RuningState runningState)
+		{
+			if (printLevelWizardWindow == null)
+			{
+				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(runningState);
+				printLevelWizardWindow.Closed += (sender, e) =>
+				{
+					printLevelWizardWindow = null;
+				};
+			}
+			else
+			{
+				printLevelWizardWindow.BringToFront();
+			}
+		}
+
+		private static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
+		{
+			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+
+			LevelWizardBase printLevelWizardWindow;
+			switch (levelingData.levelingSystem)
+			{
+				case PrintLevelingData.LevelingSystem.Probe2Points:
+					printLevelWizardWindow = new LevelWizard2Point(runningState);
+					break;
+
+				case PrintLevelingData.LevelingSystem.Probe3Points:
+					printLevelWizardWindow = new LevelWizard3Point(runningState);
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+
+			printLevelWizardWindow.ShowAsSystemWindow();
+			return printLevelWizardWindow;
+		}
+	}
+
+	public class PrintLevelingInfo
+	{
+	}
 }

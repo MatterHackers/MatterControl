@@ -1,123 +1,122 @@
-﻿using System;
+﻿using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-
 namespace MatterHackers.MatterControl
 {
-    public class SlidePanel : GuiWidget
-    {
-        public List<GuiWidget> panels = new List<GuiWidget>();
+	public class SlidePanel : GuiWidget
+	{
+		public List<GuiWidget> panels = new List<GuiWidget>();
 
-        int currentPanelIndex = -1;
-        int desiredPanelIndex = 0;
-        Stopwatch timeHasBeenChanging = new Stopwatch();
+		private int currentPanelIndex = -1;
+		private int desiredPanelIndex = 0;
+		private Stopwatch timeHasBeenChanging = new Stopwatch();
 
-        public SlidePanel(int count)
-        {
-            this.AnchorAll();
+		public SlidePanel(int count)
+		{
+			this.AnchorAll();
 
-            for (int i = 0; i < count; i++)
-            {
-                GuiWidget newPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
-                panels.Add(newPanel);
-                AddChild(newPanel);
-            }
-        }
+			for (int i = 0; i < count; i++)
+			{
+				GuiWidget newPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				panels.Add(newPanel);
+				AddChild(newPanel);
+			}
+		}
 
-        public int PanelIndex
-        {
-            get
-            {
-                return currentPanelIndex;
-            }
+		public int PanelIndex
+		{
+			get
+			{
+				return currentPanelIndex;
+			}
 
-            set
-            {
-                if (currentPanelIndex != value)
-                {
-                    desiredPanelIndex = value;
-                    timeHasBeenChanging.Restart();
-                    SetSlidePosition();
-                }
-            }
-        }
+			set
+			{
+				if (currentPanelIndex != value)
+				{
+					desiredPanelIndex = value;
+					timeHasBeenChanging.Restart();
+					SetSlidePosition();
+				}
+			}
+		}
 
-        public void SetPanelIndexImediate(int index)
-        {
-            desiredPanelIndex = index;
-            SetSlidePosition();
-        }
+		public void SetPanelIndexImediate(int index)
+		{
+			desiredPanelIndex = index;
+			SetSlidePosition();
+		}
 
-        public GuiWidget GetPanel(int index)
-        {
-            return panels[index];
-        }
+		public GuiWidget GetPanel(int index)
+		{
+			return panels[index];
+		}
 
-        public override void OnBoundsChanged(EventArgs e)
-        {
-            for (int i = 0; i < panels.Count; i++)
-            {
-                panels[i].LocalBounds = LocalBounds;
-            }
-            SetSlidePosition();
-            base.OnBoundsChanged(e);
-        }
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			for (int i = 0; i < panels.Count; i++)
+			{
+				panels[i].LocalBounds = LocalBounds;
+			}
+			SetSlidePosition();
+			base.OnBoundsChanged(e);
+		}
 
-        public override void OnDraw(Graphics2D graphics2D)
-        {
-            base.OnDraw(graphics2D);
-            if (currentPanelIndex != desiredPanelIndex)
-            {
-                SetSlidePosition();
-                Invalidate();
-            }
-        }
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
+			if (currentPanelIndex != desiredPanelIndex)
+			{
+				SetSlidePosition();
+				Invalidate();
+			}
+		}
 
-        void SetSlidePosition()
-        {
-            if (currentPanelIndex != desiredPanelIndex)
-            {
-                // set this based on the time that has elapsed and it should give us a nice result (we can even ease in ease out)
-                double maxOffsetPerDraw = timeHasBeenChanging.ElapsedMilliseconds;
+		private void SetSlidePosition()
+		{
+			if (currentPanelIndex != desiredPanelIndex)
+			{
+				// set this based on the time that has elapsed and it should give us a nice result (we can even ease in ease out)
+				double maxOffsetPerDraw = timeHasBeenChanging.ElapsedMilliseconds;
 
-                double desiredOffset = desiredPanelIndex * -Width;
-                double currentOffset = panels[0].OriginRelativeParent.x;
-                double delta = desiredOffset - currentOffset;
-                if (delta < 0)
-                {
-                    delta = Math.Max(-maxOffsetPerDraw, delta);
-                }
-                else
-                {
-                    delta = Math.Min(maxOffsetPerDraw, delta);
-                }
+				double desiredOffset = desiredPanelIndex * -Width;
+				double currentOffset = panels[0].OriginRelativeParent.x;
+				double delta = desiredOffset - currentOffset;
+				if (delta < 0)
+				{
+					delta = Math.Max(-maxOffsetPerDraw, delta);
+				}
+				else
+				{
+					delta = Math.Min(maxOffsetPerDraw, delta);
+				}
 
-                double offsetThisDraw = currentOffset + delta;
+				double offsetThisDraw = currentOffset + delta;
 
-                for (int i = 0; i < panels.Count; i++)
-                {
-                    panels[i].OriginRelativeParent = new Vector2(offsetThisDraw, 0);
-                    offsetThisDraw += Width;
-                }
+				for (int i = 0; i < panels.Count; i++)
+				{
+					panels[i].OriginRelativeParent = new Vector2(offsetThisDraw, 0);
+					offsetThisDraw += Width;
+				}
 
-                if (currentOffset + delta == desiredOffset)
-                {
-                    currentPanelIndex = desiredPanelIndex;
-                }
-            }
-            else
-            {
-                double desiredOffset = desiredPanelIndex * -Width;
-                for (int i = 0; i < panels.Count; i++)
-                {
-                    panels[i].OriginRelativeParent = new Vector2(desiredOffset, 0);
-                    desiredOffset += Width;
-                }
-            }
-        }
-    }
+				if (currentOffset + delta == desiredOffset)
+				{
+					currentPanelIndex = desiredPanelIndex;
+				}
+			}
+			else
+			{
+				double desiredOffset = desiredPanelIndex * -Width;
+				for (int i = 0; i < panels.Count; i++)
+				{
+					panels[i].OriginRelativeParent = new Vector2(desiredOffset, 0);
+					desiredOffset += Width;
+				}
+			}
+		}
+	}
 }

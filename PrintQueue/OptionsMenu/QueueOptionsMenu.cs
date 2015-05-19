@@ -3,13 +3,13 @@ Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,179 +23,169 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections;
-using System.IO;
-using System.Diagnostics;
-using System.Threading;
-
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.Agg;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
-    public class QueueOptionsMenu : GuiWidget
-    {
-        public DropDownMenu MenuDropList;
-        private TupleList<string, Func<bool>> menuItems;
+	public class QueueOptionsMenu : GuiWidget
+	{
+		public DropDownMenu MenuDropList;
+		private TupleList<string, Func<bool>> menuItems;
 
-		ExportToFolderFeedbackWindow exportingWindow = null;
+		private ExportToFolderFeedbackWindow exportingWindow = null;
 
-        public QueueOptionsMenu()
-        {
+		public QueueOptionsMenu()
+		{
 			MenuDropList = new DropDownMenu("Options   ".Localize(), Direction.Up);
-            MenuDropList.VAnchor = VAnchor.ParentBottomTop;
-            MenuDropList.BorderWidth = 1;
-            MenuDropList.MenuAsWideAsItems = false;
-            MenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
-            MenuDropList.Margin = new BorderDouble(4, 0, 1, 0);
+			MenuDropList.VAnchor = VAnchor.ParentBottomTop;
+			MenuDropList.BorderWidth = 1;
+			MenuDropList.MenuAsWideAsItems = false;
+			MenuDropList.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
+			MenuDropList.Margin = new BorderDouble(4, 0, 1, 0);
 			MenuDropList.AlignToRightEdge = true;
-            
+
 			SetMenuItems();
-            this.MenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
-        }
+			this.MenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
+		}
 
-        void MenuDropList_SelectionChanged(object sender, EventArgs e)
-        {
-            string menuSelection = ((DropDownMenu)sender).SelectedValue;
-            foreach (Tuple<string, Func<bool>> item in menuItems)
-            {
-                if (item.Item1 == menuSelection)
-                {
-                    if (item.Item2 != null)
-                    {
-                        item.Item2();
-                    }
-                }
-            }
-        }
+		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
+		{
+			string menuSelection = ((DropDownMenu)sender).SelectedValue;
+			foreach (Tuple<string, Func<bool>> item in menuItems)
+			{
+				if (item.Item1 == menuSelection)
+				{
+					if (item.Item2 != null)
+					{
+						item.Item2();
+					}
+				}
+			}
+		}
 
-        void SetMenuItems()
-        {
-            menuItems = new TupleList<string, Func<bool>>();
-			menuItems.Add(new Tuple<string,Func<bool>>("Design".Localize(), null));
-            menuItems.Add(new Tuple<string,Func<bool>>(" Export to Zip".Localize(), exportQueueToZipMenu_Click));
-            menuItems.Add(new Tuple<string,Func<bool>>("GCode", null));
+		private void SetMenuItems()
+		{
+			menuItems = new TupleList<string, Func<bool>>();
+			menuItems.Add(new Tuple<string, Func<bool>>("Design".Localize(), null));
+			menuItems.Add(new Tuple<string, Func<bool>>(" Export to Zip".Localize(), exportQueueToZipMenu_Click));
+			menuItems.Add(new Tuple<string, Func<bool>>("GCode", null));
 			menuItems.Add(new Tuple<string, Func<bool>>(" Export to Folder or SD Card".Localize(), exportGCodeToFolderButton_Click));
-            //menuItems.Add(new Tuple<string, Func<bool>>("X3G", null));
+			//menuItems.Add(new Tuple<string, Func<bool>>("X3G", null));
 			//menuItems.Add(new Tuple<string, Func<bool>>("Export to Folder".Localize(), exportX3GButton_Click));
 
-            if (ActiveSliceSettings.Instance.HasSdCardReader())
-            {
-                menuItems.Add(new Tuple<string, Func<bool>>("SD Card", null));
+			if (ActiveSliceSettings.Instance.HasSdCardReader())
+			{
+				menuItems.Add(new Tuple<string, Func<bool>>("SD Card", null));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Load Files".Localize(), loadFilesFromSDButton_Click));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Eject SD Card".Localize(), ejectSDCardButton_Click));
-            }
-            
-            // The pdf export library is not working on the mac at the moment so we don't include the 
-            // part sheet export option on mac.
+			}
+
+			// The pdf export library is not working on the mac at the moment so we don't include the
+			// part sheet export option on mac.
 			if (OsInformation.OperatingSystem == OSType.Windows)
-            {
-                // mac cannot export to pdf
+			{
+				// mac cannot export to pdf
 				menuItems.Add(new Tuple<string, Func<bool>>("Other".Localize(), null));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Create Part Sheet".Localize(), createPartsSheetsButton_Click));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Remove All".Localize(), removeAllFromQueueButton_Click));
-            }
-            else
-            {
+			}
+			else
+			{
 				menuItems.Add(new Tuple<string, Func<bool>>("Other".Localize(), null));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Remove All".Localize(), removeAllFromQueueButton_Click));
-            }
+			}
 
-            BorderDouble padding = MenuDropList.MenuItemsPadding;
-            //Add the menu items to the menu itself
-				foreach (Tuple<string, Func<bool>> item in menuItems)
+			BorderDouble padding = MenuDropList.MenuItemsPadding;
+			//Add the menu items to the menu itself
+			foreach (Tuple<string, Func<bool>> item in menuItems)
+			{
+				if (item.Item2 == null)
 				{
-					if (item.Item2 == null)
-					{
-						MenuDropList.MenuItemsPadding = new BorderDouble(5, 0, padding.Right, 3);
-					}
-					else
-					{
-						MenuDropList.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
-					}
-
-					MenuDropList.AddItem(item.Item1);
+					MenuDropList.MenuItemsPadding = new BorderDouble(5, 0, padding.Right, 3);
+				}
+				else
+				{
+					MenuDropList.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
 				}
 
-				MenuDropList.Padding = padding;
-        }
+				MenuDropList.AddItem(item.Item1);
+			}
 
-        bool createPartsSheetsButton_Click()
-        {
-            UiThread.RunOnIdle(PartSheetClickOnIdle);
-            return true;
-        }
+			MenuDropList.Padding = padding;
+		}
 
-        void PartSheetClickOnIdle(object state)
-        {
-			#if !__ANDROID__
+		private bool createPartsSheetsButton_Click()
+		{
+			UiThread.RunOnIdle(PartSheetClickOnIdle);
+			return true;
+		}
+
+		private void PartSheetClickOnIdle(object state)
+		{
+#if !__ANDROID__
 			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
-            if (parts.Count > 0)
-            {
-                FileDialog.SaveFileDialog(
-                    new SaveFileDialogParams("Save Parts Sheet|*.pdf")
-                    {
-                        ActionButtonLabel = "Save Parts Sheet".Localize(),
-                        Title = string.Format("{0}: {1}", "MatterControl".Localize(), "Save".Localize())
-                    },
-                    (saveParams) =>
-                    {
-                        if (saveParams.FileName != null)
-                        {
-                            PartsSheet currentPartsInQueue = new PartsSheet(parts, saveParams.FileName);
+			if (parts.Count > 0)
+			{
+				FileDialog.SaveFileDialog(
+					new SaveFileDialogParams("Save Parts Sheet|*.pdf")
+					{
+						ActionButtonLabel = "Save Parts Sheet".Localize(),
+						Title = string.Format("{0}: {1}", "MatterControl".Localize(), "Save".Localize())
+					},
+					(saveParams) =>
+					{
+						if (saveParams.FileName != null)
+						{
+							PartsSheet currentPartsInQueue = new PartsSheet(parts, saveParams.FileName);
 
-                            currentPartsInQueue.SaveSheets();
+							currentPartsInQueue.SaveSheets();
 
-                            SavePartsSheetFeedbackWindow feedbackWindow = new SavePartsSheetFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-                            currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;
-                            currentPartsInQueue.DoneSaving += feedbackWindow.DoneSaving;
+							SavePartsSheetFeedbackWindow feedbackWindow = new SavePartsSheetFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
+							currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;
+							currentPartsInQueue.DoneSaving += feedbackWindow.DoneSaving;
 
-                            feedbackWindow.ShowAsSystemWindow();
-                        }
-                    });
+							feedbackWindow.ShowAsSystemWindow();
+						}
+					});
+			}
+#endif
+		}
 
-            }
-			#endif
-        }
+		private string pleaseSelectPrinterMessage = "Before you can export printable files, you must select a printer.";
+		private string pleaseSelectPrinterTitle = "Please select a printer";
 
-        string pleaseSelectPrinterMessage = "Before you can export printable files, you must select a printer.";
-        string pleaseSelectPrinterTitle = "Please select a printer";
-        void MustSelectPrinterMessage(object state)
-        {
-            StyledMessageBox.ShowMessageBox(null, pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
-        }
+		private void MustSelectPrinterMessage(object state)
+		{
+			StyledMessageBox.ShowMessageBox(null, pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
+		}
 
-        bool exportGCodeToFolderButton_Click()
-        {
-            if (ActivePrinterProfile.Instance.ActivePrinter == null)
-            {
-                UiThread.RunOnIdle(MustSelectPrinterMessage);
-            }
-            else
-            {
-                UiThread.RunOnIdle(SelectLocationToExportGCode);
-            }
+		private bool exportGCodeToFolderButton_Click()
+		{
+			if (ActivePrinterProfile.Instance.ActivePrinter == null)
+			{
+				UiThread.RunOnIdle(MustSelectPrinterMessage);
+			}
+			else
+			{
+				UiThread.RunOnIdle(SelectLocationToExportGCode);
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-		bool exportX3GButton_Click()
+		private bool exportX3GButton_Click()
 		{
 			if (ActivePrinterProfile.Instance.ActivePrinter == null)
 			{
@@ -206,87 +196,86 @@ namespace MatterHackers.MatterControl.PrintQueue
 				UiThread.RunOnIdle(SelectLocationToExportGCode);
 			}
 			return true;
-
 		}
 
-		void ExportToFolderFeedbackWindow_Closed(object sender, EventArgs e)
+		private void ExportToFolderFeedbackWindow_Closed(object sender, EventArgs e)
 		{
 			this.exportingWindow = null;
 		}
 
 		private void SelectLocationToExportGCode(object state)
-        {
-            SelectFolderDialogParams selectParams = new SelectFolderDialogParams("Select Location To Save Files");
-			selectParams.ActionButtonLabel = "Export".Localize();
-            selectParams.Title = "MatterControl: Select A Folder";
-
-            FileDialog.SelectFolderDialog(selectParams, onSelectFolderDialog);
-        }
-
-        private void onSelectFolderDialog(SelectFolderDialogParams openParams)
-        {
-            string path = openParams.FolderPath;
-            if (path != null && path != "")
-            {
-                List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
-                if (parts.Count > 0)
-                {
-                    if (exportingWindow == null)
-                    {
-                        exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-                        exportingWindow.Closed += new EventHandler(ExportToFolderFeedbackWindow_Closed);
-                        exportingWindow.ShowAsSystemWindow();
-                    }
-                    else
-                    {
-                        exportingWindow.BringToFront();
-                    }
-
-                    ExportToFolderProcess exportToFolderProcess = new ExportToFolderProcess(parts, path);
-                    exportToFolderProcess.StartingNextPart += exportingWindow.StartingNextPart;
-                    exportToFolderProcess.UpdatePartStatus += exportingWindow.UpdatePartStatus;
-                    exportToFolderProcess.DoneSaving += exportingWindow.DoneSaving;
-                    exportToFolderProcess.Start();
-                }
-            }
-        }
-
-        bool exportQueueToZipMenu_Click()
-        {
-            UiThread.RunOnIdle(ExportQueueToZipOnIdle);
-            return true;
-        }
-
-        void ExportQueueToZipOnIdle(object state)
-        {
-            List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
-            ProjectFileHandler project = new ProjectFileHandler(partList);
-            project.SaveAs();
-        }
-
-        bool loadFilesFromSDButton_Click()
-        {
-            QueueData.Instance.LoadFilesFromSD();
-            return true;
-        }
-
-        bool ejectSDCardButton_Click()
-        {
-            // Remove all the QueueData.SdCardFileName parts from the queue
-            QueueData.Instance.RemoveAllSdCardFiles();
-            PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M22"); // (Release SD card)
-            return true;
-        }
-
-		bool removeAllFromQueueButton_Click()
 		{
-			UiThread.RunOnIdle (removeAllPrintsFromQueue);
+			SelectFolderDialogParams selectParams = new SelectFolderDialogParams("Select Location To Save Files");
+			selectParams.ActionButtonLabel = "Export".Localize();
+			selectParams.Title = "MatterControl: Select A Folder";
+
+			FileDialog.SelectFolderDialog(selectParams, onSelectFolderDialog);
+		}
+
+		private void onSelectFolderDialog(SelectFolderDialogParams openParams)
+		{
+			string path = openParams.FolderPath;
+			if (path != null && path != "")
+			{
+				List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
+				if (parts.Count > 0)
+				{
+					if (exportingWindow == null)
+					{
+						exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
+						exportingWindow.Closed += new EventHandler(ExportToFolderFeedbackWindow_Closed);
+						exportingWindow.ShowAsSystemWindow();
+					}
+					else
+					{
+						exportingWindow.BringToFront();
+					}
+
+					ExportToFolderProcess exportToFolderProcess = new ExportToFolderProcess(parts, path);
+					exportToFolderProcess.StartingNextPart += exportingWindow.StartingNextPart;
+					exportToFolderProcess.UpdatePartStatus += exportingWindow.UpdatePartStatus;
+					exportToFolderProcess.DoneSaving += exportingWindow.DoneSaving;
+					exportToFolderProcess.Start();
+				}
+			}
+		}
+
+		private bool exportQueueToZipMenu_Click()
+		{
+			UiThread.RunOnIdle(ExportQueueToZipOnIdle);
 			return true;
 		}
 
-		void removeAllPrintsFromQueue (object state)
+		private void ExportQueueToZipOnIdle(object state)
+		{
+			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
+			ProjectFileHandler project = new ProjectFileHandler(partList);
+			project.SaveAs();
+		}
+
+		private bool loadFilesFromSDButton_Click()
+		{
+			QueueData.Instance.LoadFilesFromSD();
+			return true;
+		}
+
+		private bool ejectSDCardButton_Click()
+		{
+			// Remove all the QueueData.SdCardFileName parts from the queue
+			QueueData.Instance.RemoveAllSdCardFiles();
+			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M22"); // (Release SD card)
+			return true;
+		}
+
+		private bool removeAllFromQueueButton_Click()
+		{
+			UiThread.RunOnIdle(removeAllPrintsFromQueue);
+			return true;
+		}
+
+		private void removeAllPrintsFromQueue(object state)
 		{
 			QueueData.Instance.RemoveAll();
 		}
-    }
+	}
 }

@@ -120,9 +120,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="AboutPage\AboutWindow.cs" />
+    <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
+    <Compile Include="AboutPage\HTMLParser\ImageWidget_AsyncLoadOnDraw.cs" />
+    <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
     <Compile Include="AboutPage\UpdateControlData.cs" />
     <Compile Include="AboutPage\UpdateControlView.cs" />
-    <Compile Include="AboutPage\HtmlParser.cs" />
+    <Compile Include="AboutPage\HTMLParser\HtmlParser.cs" />
     <Compile Include="ActionBar\ActionBarBaseControls.cs" />
     <Compile Include="ActionBar\ActionBarPlus.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
@@ -160,6 +164,7 @@
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidProgressControl.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
+    <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
@@ -189,6 +194,7 @@
     <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
+    <Compile Include="PrinterControls\ControlWidgets\PowerControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -213,7 +219,6 @@
     <Compile Include="SlicerConfiguration\MatterSliceInfo.cs" />
     <Compile Include="SlicerConfiguration\Slic3rInfo.cs" />
     <Compile Include="SlicerConfiguration\SliceEngineInfo.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsWidgetUiState.cs" />
     <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetDetailWidget.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetListWidget.cs" />
@@ -221,8 +226,6 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayer.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayers.cs" />
-    <Compile Include="SlicerConfiguration\Slicing\Tests\SliceLayersTests.cs" />
-    <Compile Include="SlicerConfiguration\Slicing\Tests\UnitTests.cs" />
     <Compile Include="Utilities\FieldValidation.cs" />
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
@@ -240,8 +243,6 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMapingBase.cs" />
-    <Compile Include="Testing\ReleaseTests.cs" />
-    <Compile Include="Testing\TestingDispatch.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelPages.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />
@@ -319,7 +320,7 @@
     <Compile Include="Utilities\TupleList.cs" />
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
     <Compile Include="VersionManagement\VersionFileHandler.cs" />
-    <Compile Include="AboutPage\AboutPage.cs" />
+    <Compile Include="AboutPage\AboutWidget.cs" />
     <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
     <Compile Include="ControlElements\TextImageButtonFactory.cs" />
     <Compile Include="EeProm\EePromMarlinWindow.cs" />
@@ -330,7 +331,6 @@
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
-    <Compile Include="ControlElements\ToggleSwitchFactory.cs" />
     <Compile Include="CustomWidgets\SplitButton.cs" />
     <Compile Include="CustomWidgets\DynamicDropDownMenu.cs" />
     <Compile Include="ControlElements\DropDownMenuFactory.cs" />
@@ -354,9 +354,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Posix" />
-    <Reference Include="nunit.framework">
-      <HintPath>Submodules\agg-sharp\AggTests\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK">
       <HintPath>Submodules\agg-sharp\PlatformWin32\OpenTK.dll</HintPath>
     </Reference>
@@ -391,22 +388,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\MatterControlPrintServer\PrintServer_Client\PrintServer_Client.csproj">
-      <Project>{275568a0-7e5e-4151-8960-e54665ff5df7}</Project>
-      <Name>PrintServer_Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MatterControlPrintServer\PrintServer_Interface\PrintServer_Interface.csproj">
-      <Project>{04b850f0-5a39-4157-a227-a574064110d2}</Project>
-      <Name>PrintServer_Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MatterControlPrintServer\PrintServer_Server\PrintServer_Server.csproj">
-      <Project>{002b1d12-4dbb-4ecf-b481-5ebecbc1666e}</Project>
-      <Name>PrintServer_Server</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MatterControlPrintServer\RemotingLite\src\RemotingLite.csproj">
-      <Project>{0affa4eb-edea-43cc-8045-c7d1fe557803}</Project>
-      <Name>RemotingLite</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
@@ -414,6 +395,10 @@
     <ProjectReference Include="Submodules\agg-sharp\Csg\Csg.csproj">
       <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
       <Name>Csg</Name>
+    </ProjectReference>
+    <ProjectReference Include="Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
+      <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
+      <Name>DataConverters3D</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj">
       <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
