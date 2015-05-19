@@ -107,7 +107,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private CheckBox expandMirrorOptions;
 		private CheckBox expandMaterialOptions;
 
-		private Button autoArrangeButton;
 		private SplitButton saveButtons;
 		private Button applyScaleButton;
 
@@ -317,12 +316,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
 
-					Matrix4X4 totalTransfrom = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
-					totalTransfrom *= Matrix4X4.CreateTranslation(new Vector3(delta));
+					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
+					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
 					meshSelectInfo.lastMoveDelta = delta;
 
 					ScaleRotateTranslate translated = SelectedMeshGroupTransform;
-					translated.translation *= totalTransfrom;
+					translated.translation *= totalTransform;
 					SelectedMeshGroupTransform = translated;
 
 					Invalidate();
@@ -495,6 +494,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					alignButton.Click += (sender, e) =>
 					{
 						AlignToSelectedMeshGroup();
+					};
+
+					Button arrangeButton = textImageButtonFactory.Generate("Arrange".Localize());
+					doEdittingButtonsContainer.AddChild(arrangeButton);
+					arrangeButton.Click += (sender, e) =>
+					{
+						AutoArrangePartsInBackground();
 					};
 
 					GuiWidget separatorTwo = new GuiWidget(1, 2);
@@ -752,7 +758,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!enterEditButtonsContainer.Visible)
 			{
 				enterEditButtonsContainer.Visible = true;
-				autoArrangeButton.Visible = false;
 				processingProgressControl.Visible = false;
 				buttonRightPanel.Visible = false;
 				doEdittingButtonsContainer.Visible = false;
@@ -986,6 +991,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
+				string progressMessage = "Loading Parts...".Localize();
 				double ratioPerFile = 1.0 / filesToLoad.Count;
 				double currentRatioDone = 0;
 				for (int i = 0; i < filesToLoad.Count; i++)
@@ -996,7 +1002,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						continueProcessing = !this.WidgetHasBeenClosed;
 						double ratioAvailable = (ratioPerFile * .5);
 						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
-						BackgroundWorker_ProgressChanged(currentRatio, processingState, out continueProcessing);
+						BackgroundWorker_ProgressChanged(currentRatio, progressMessage, out continueProcessing);
 					});
 
 					if (WidgetHasBeenClosed)
@@ -1005,8 +1011,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					if (loadedMeshGroups != null)
 					{
-						double ratioPerSubMesh = 1.0 / loadedMeshGroups.Count;
-						double currentPlatingRatioDone = 0;
+						double ratioPerSubMesh = ratioPerFile / loadedMeshGroups.Count;
+						double subMeshRatioDone = 0;
 
 						for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++)
 						{
@@ -1021,16 +1027,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								continueProcessing = !this.WidgetHasBeenClosed;
 								double ratioAvailable = (ratioPerFile * .5);
-								double currentRatio = currentRatioDone + currentPlatingRatioDone + ratioAvailable + progress0To1 * ratioAvailable;
-								BackgroundWorker_ProgressChanged(currentRatio, processingState, out continueProcessing);
+								//                    done outer loop  +  done this loop  +first 1/2 (load)+  this part * ratioAvailable
+								double currentRatio = currentRatioDone + subMeshRatioDone + ratioAvailable + progress0To1 * ratioPerSubMesh;
+								BackgroundWorker_ProgressChanged(currentRatio, progressMessage, out continueProcessing);
 							});
 
-							currentPlatingRatioDone += ratioPerSubMesh;
+							subMeshRatioDone += ratioPerSubMesh;
 						}
 					}
-				}
 
-				currentRatioDone += ratioPerFile;
+					currentRatioDone += ratioPerFile;
+				}
 			}
 		}
 
@@ -1280,15 +1287,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					buttonRightPanel.AddChild(viewOptionContainer);
 				}
-
-				autoArrangeButton = whiteButtonFactory.Generate(LocalizedString.Get("Auto-Arrange"), centerText: true);
-				autoArrangeButton.Cursor = Cursors.Hand;
-				buttonRightPanel.AddChild(autoArrangeButton);
-				autoArrangeButton.Visible = false;
-				autoArrangeButton.Click += (sender, e) =>
-				{
-					AutoArrangePartsInBackground();
-				};
 
 				GuiWidget verticalSpacer = new GuiWidget();
 				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
@@ -1573,8 +1571,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			presetScaleMenu.MenuAsWideAsItems = false;
 			presetScaleMenu.AlignToRightEdge = true;
 			//presetScaleMenu.OpenOffset = new Vector2(-50, 0);
-			presetScaleMenu.HAnchor = HAnchor.None;
-			presetScaleMenu.VAnchor = VAnchor.None;
+			presetScaleMenu.HAnchor = HAnchor.AbsolutePosition;
+			presetScaleMenu.VAnchor = VAnchor.AbsolutePosition;
 			presetScaleMenu.Width = 25;
 			presetScaleMenu.Height = scaleRatioControl.Height + 2;
 

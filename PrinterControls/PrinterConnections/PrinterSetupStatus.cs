@@ -122,6 +122,11 @@ namespace MatterHackers.MatterControl
 			Dictionary<string, string> macroDict = new Dictionary<string, string>();
 			macroDict["Lights On"] = "M42 P6 S255";
 			macroDict["Lights Off"] = "M42 P6 S0";
+            macroDict["Offset 0.8"] = "M565 Z0.8";
+            macroDict["Offset 0.9"] = "M565 Z0.9";
+            macroDict["Offset 1"] = "M565 Z1";
+            macroDict["Offset 1.1"] = "M565 Z1.1";
+            macroDict["Offset 1.2"] = "M565 Z1.2";
 
 			//Determine if baud rate is needed and show controls if required
 			string baudRate;

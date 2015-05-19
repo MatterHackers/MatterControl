@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
 			//Add the tab contents for 'Advanced Controls'
-			string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
+			string sliceSettingsLabel = LocalizedString.Get("Printing").ToUpper();
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
 			sliceSettingsWidget = new SliceSettingsWidget();
 

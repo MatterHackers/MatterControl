@@ -3194,3 +3194,53 @@ Translated:Bottom Solid Layers:
 English:This will cause the extruder to try to wipe itself after retracting to minimize strings.
 Translated:This will cause the extruder to try to wipe itself after retracting to minimize strings.
 
+English:Calculating Positions...
+Translated:Calculating Positions...
+English:ATX Power Control
+Translated:ATX Power Control
+
+English:Specify if your printer can control the power supply
+Translated:Specify if your printer can control the power supply
+
+English:Has Power Control
+Translated:Has Power ControlEnglish:The temperature the extruder will be when extruder wipes.
+
+English:The temperature the bed temperature will be set to when part is to be removed.
+Translated:The temperature the bed temperature will be set to when part is to be removed.
+
+English:Extruder Wipe Temperature
+Translated:Extruder Wipe Temperature
+
+English:Bed Remove Part Temperature
+Translated:Bed Remove Part Temperature
+
+	English:The temperature the extruder will be when extruder wipes.
+Translated:The temperature the extruder will be when extruder wipes.
+
+English:The temperature the extruder will be when extruder wipes.
+Translated:The temperature the extruder will be when extruder wipes.
+
+English:Basic
+Translated:Basic
+
+English:Sets the size of the outer solid surface for the entire print.
+Translated:Sets the size of the outer solid surface for the entire print.
+
+English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+Translated:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
+
+English:Layers/Surface
+Translated:Layers/Surface
+
+English:Width
+Translated:Width
+
+English:Arrange
+Translated:Arrange
+
+English:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+Translated:The speed to move while printing the first layer. If expressed as a percentage it will modify the corresponding speed set above.
+
+English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+Translated:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
+

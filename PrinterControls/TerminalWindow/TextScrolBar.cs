@@ -77,5 +77,20 @@ namespace MatterHackers.MatterControl
 			downOnBar = false;
 			base.OnMouseUp(mouseEvent);
 		}
+
+        public override void OnMouseWheel(MouseEventArgs mouseEvent)
+        {
+            double scrolledPos = mouseEvent.WheelDelta / Height + textScrollWidget.Position0To1;
+            if (scrolledPos > 1)
+            {
+                scrolledPos = 1;
+            }
+            else if (scrolledPos < 0)
+            {
+                scrolledPos = 0;
+            }
+            textScrollWidget.Position0To1 = scrolledPos;
+            base.OnMouseWheel(mouseEvent);
+        }
 	}
 }

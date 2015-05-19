@@ -103,6 +103,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
 
+		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
+
+		private bool atxPowerIsOn = false;
+
 		private const int MAX_EXTRUDERS = 16;
 
 		private const int MAX_INVALID_CONNECTION_CHARS = 3;
@@ -275,6 +279,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			WriteLineStartCallBacks.AddCallBackToKey("G90", MovementWasSetToAbsoluteMode);
 			WriteLineStartCallBacks.AddCallBackToKey("G91", MovementWasSetToRelativeMode);
+
+			WriteLineStartCallBacks.AddCallBackToKey("M80", AtxPowerUpWasWritenToPrinter);
+			WriteLineStartCallBacks.AddCallBackToKey("M81", AtxPowerDownWasWritenToPrinter);
+
 		}
 
 		private event EventHandler unregisterEvents;
@@ -480,6 +488,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					comPort = this.ActivePrinter.ComPort;
 				}
 				return comPort;
+			}
+		}
+
+		public bool AtxPowerEnabled
+		{
+			get
+			{
+				return atxPowerIsOn;
+			}
+			set
+			{
+				if (value)
+				{
+					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M80");
+				}
+				else
+				{
+					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M81");
+				}
 			}
 		}
 
@@ -1415,7 +1442,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (serialPort == null && this.ActivePrinter != null)
 			{
-				serialPort = FrostedSerialPortFactory.Instance.Create(this.ActivePrinter.ComPort);
+				serialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
 				serialPort.BaudRate = this.BaudRate;
 
 				// Set the read/write timeouts
@@ -1518,6 +1545,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
 										{
 											CommunicationState = CommunicationStates.Connected;
+											// new send any command that initialize this printer
+											string connectGCode = ActiveSliceSettings.Instance.GetActiveValue("connect_gcode");
+											SendLineToPrinterNow(connectGCode);
 										}
 										else
 										{
@@ -1809,6 +1839,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			using (TimedLock.Lock(this, "QueueLineToPrinter"))
 			{
+				if (lineToWrite.Contains("\\n"))
+				{
+					lineToWrite = lineToWrite.Replace("\\n", "\n");
+				}
+
 				//Check line for linebreaks, split and process separate if necessary
 				if (lineToWrite.Contains("\n"))
 				{
@@ -2096,7 +2131,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.Instance.SerialPortAlreadyOpen(serialPortName);
+			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 			{
@@ -2104,7 +2139,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						serialPort = FrostedSerialPortFactory.Instance.CreateAndOpen(serialPortName, baudRate, true);
+						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).CreateAndOpen(serialPortName, baudRate, true);
 						// wait a bit of time to let the firmware start up
 						Thread.Sleep(500);
 						CommunicationState = CommunicationStates.AttemptingToConnect;
@@ -2432,6 +2467,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			movementMode = PrinterMachineInstruction.MovementTypes.Relative;
 		}
 
+		private void AtxPowerUpWasWritenToPrinter(object sender, EventArgs e)
+		{
+			OnAtxPowerStateChanged(true);
+		}
+
+		private void AtxPowerDownWasWritenToPrinter(object sender, EventArgs e)
+		{
+			OnAtxPowerStateChanged(false);
+		}
+
 		private void OnActivePrintItemChanged(EventArgs e)
 		{
 			ActivePrintItemChanged.CallEvents(this, e);
@@ -2489,6 +2534,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
 			}
+		}
+
+		private void OnAtxPowerStateChanged(bool enableAtxPower)
+		{
+			atxPowerIsOn = enableAtxPower;
+			AtxPowerStateChanged.CallEvents(this, null);
 		}
 
 		private void partToPrint_SliceDone(object sender, EventArgs e)

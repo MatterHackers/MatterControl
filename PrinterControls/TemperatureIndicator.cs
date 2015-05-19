@@ -253,8 +253,11 @@ namespace MatterHackers.MatterControl
 				double temp = keyValue.Key;
 				tempButton.Click += (sender, e) =>
 				{
-					SetTargetTemperature(temp);
-					tempSliderContainer.Visible = false;
+					UiThread.RunOnIdle((state) =>
+					{
+						SetTargetTemperature(temp);
+						tempSliderContainer.Visible = false;
+					});
 				};
 			}
 
@@ -268,8 +271,12 @@ namespace MatterHackers.MatterControl
 				double temp = GetPreheatTemperature();
 				tempButton.Click += (sender, e) =>
 				{
-					SetTargetTemperature(temp);
-					tempSliderContainer.Visible = false;
+					UiThread.RunOnIdle((state) =>
+					{
+
+						SetTargetTemperature(temp);
+						tempSliderContainer.Visible = false;
+					});
 				};
 			}
 			this.textImageButtonFactory.FixedWidth = 38 * TextWidget.GlobalPointSizeScaleRatio;
@@ -520,21 +527,24 @@ namespace MatterHackers.MatterControl
 
 		protected override void SetTargetTemperature(double targetTemp)
 		{
-			double goalTemp = (int)(targetTemp + .5);
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-				&& PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder
-				&& goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based))
+			UiThread.RunOnIdle((state) =>
 			{
-				string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
-				string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based), sliceSettingsNote);
-				StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat");
-			}
-			else
-			{
-				PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderIndex0Based, (int)(targetTemp + .5));
-				string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based));
-				targetTemperatureDisplay.SetDisplayString(displayString);
-			}
+				double goalTemp = (int)(targetTemp + .5);
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
+					&& PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder
+					&& goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based))
+				{
+					string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
+					string message = string.Format("The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based), sliceSettingsNote);
+					StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat");
+				}
+				else
+				{
+					PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderIndex0Based, (int)(targetTemp + .5));
+					string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex0Based));
+					targetTemperatureDisplay.SetDisplayString(displayString);
+				}
+			});
 		}
 	}
 

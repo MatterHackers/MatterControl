@@ -51,7 +51,7 @@ namespace MatterHackers.RayTracer
 
 		private Transform allObjectsHolder;
 
-		private MeshGroup loadedMeshGroup;
+		private List<MeshGroup> loadedMeshGroups;
 
 		//RayTracer raytracer = new RayTracer(AntiAliasing.None, true, true, true, true, true);
 		//RayTracer raytracer = new RayTracer(AntiAliasing.Low, true, true, true, true, true);
@@ -71,8 +71,8 @@ namespace MatterHackers.RayTracer
 			trackballTumbleWidget.DoOpenGlDrawing = false;
 			trackballTumbleWidget.LocalBounds = new RectangleDouble(0, 0, width, height);
 
-			loadedMeshGroup = meshGroups[0];
-			SetRenderPosition(loadedMeshGroup);
+			loadedMeshGroups = meshGroups;
+			SetRenderPosition(loadedMeshGroups);
 
 			trackballTumbleWidget.AnchorCenter();
 		}
@@ -90,7 +90,7 @@ namespace MatterHackers.RayTracer
 			raytracer.CopyColorBufferToImage(destImage, rect);
 		}
 
-		public void SetRenderPosition(MeshGroup loadedMeshGroup)
+		public void SetRenderPosition(List<MeshGroup> loadedMeshGroups)
 		{
 			trackballTumbleWidget.TrackBallController.Reset();
 			trackballTumbleWidget.TrackBallController.Scale = .03;
@@ -98,7 +98,7 @@ namespace MatterHackers.RayTracer
 			trackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
 			trackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 
-			ScaleMeshToView(loadedMeshGroup);
+			ScaleMeshToView(loadedMeshGroups);
 		}
 
 		private void AddAFloor()
@@ -115,13 +115,20 @@ namespace MatterHackers.RayTracer
 			//scene.shapes.Add(new PlaneShape(new Vector3(0, 0, 1), 0, new ChessboardMaterial(new RGBA_Floats(1, 1, 1), new RGBA_Floats(0, 0, 0), 0, 0, 1, 0.7)));
 		}
 
-		public void DrawTo(Graphics2D graphics2D, Mesh meshToDraw, RGBA_Bytes silhouetteColor)
+		static Vector3 lightNormal = (new Vector3(-1, 1, 1)).GetNormal();
+		static RGBA_Floats lightIllumination = new RGBA_Floats(1, 1, 1);
+		static RGBA_Floats ambiantIllumination = new RGBA_Floats(.4, .4, .4);
+
+		public void DrawTo(Graphics2D graphics2D, Mesh meshToDraw, RGBA_Bytes partColorIn, double minZ, double maxZ)
 		{
+			RGBA_Floats partColor = partColorIn.GetAsRGBA_Floats();
 			graphics2D.Rasterizer.gamma(new gamma_power(.3));
 			PathStorage polygonProjected = new PathStorage();
+
 			foreach (Face face in meshToDraw.Faces)
 			{
-				Vector3 normal = Vector3.TransformVector(face.normal, trackballTumbleWidget.ModelviewMatrix);
+				double averageZ = 0;
+				Vector3 normal = Vector3.TransformVector(face.normal, trackballTumbleWidget.ModelviewMatrix).GetNormal();
 				if (normal.z > 0)
 				{
 					polygonProjected.remove_all();
@@ -138,27 +145,190 @@ namespace MatterHackers.RayTracer
 						{
 							polygonProjected.LineTo(screenPosition.x, screenPosition.y);
 						}
+
+						Vector3 transsformedPosition = Vector3.TransformPosition(faceEdge.firstVertex.Position, trackballTumbleWidget.ModelviewMatrix);
+						averageZ += transsformedPosition.z;
 					}
-					graphics2D.Render(polygonProjected, silhouetteColor);
+
+					averageZ /= 3;
+
+					RGBA_Floats polyDrawColor = new RGBA_Floats();
+					double L = Vector3.Dot(lightNormal, normal);
+					if (L > 0.0f)
+					{
+						polyDrawColor = partColor * lightIllumination * L;
+					}
+
+					polyDrawColor = RGBA_Floats.ComponentMax(polyDrawColor, partColor * ambiantIllumination);
+					double ratio = (averageZ - minZ) / (maxZ - minZ);
+					int ratioInt16 = (int)(ratio * 65536);
+
+					//RGBA_Bytes renderColor = new RGBA_Bytes(polyDrawColor.Red0To255, ratioInt16 >> 8, ratioInt16 & 256);
+					RGBA_Bytes renderColor = new RGBA_Bytes(ratioInt16 >> 8, ratioInt16 >> 8, ratioInt16 >> 8);
+
+					//IRecieveBlenderByte oldBlender = graphics2D.DestImage.GetRecieveBlender();
+					//graphics2D.DestImage.SetRecieveBlender(new BlenderZBuffer());
+					graphics2D.Render(polygonProjected, renderColor);
+					//graphics2D.DestImage.SetRecieveBlender(oldBlender);
+
+					byte[] buffer = graphics2D.DestImage.GetBuffer();
+					int pixels = graphics2D.DestImage.Width * graphics2D.DestImage.Height;
+					for (int i = 0; i < pixels; i++)
+					{
+						//buffer[i * 4 + 0] = buffer[i * 4 + 2];
+						//buffer[i * 4 + 1] = buffer[i * 4 + 2];
+					}
 				}
 			}
-			graphics2D.Rasterizer.gamma(new gamma_none());
 		}
 
-		private void AddTestMesh(MeshGroup meshGroup)
+		public sealed class BlenderZBuffer : BlenderBase8888, IRecieveBlenderByte
 		{
-			loadedMeshGroup = meshGroup;
-			AxisAlignedBoundingBox meshBounds = loadedMeshGroup.GetAxisAlignedBoundingBox();
-			Vector3 meshCenter = meshBounds.Center;
-			loadedMeshGroup.Translate(-meshCenter);
+			public RGBA_Bytes PixelToColorRGBA_Bytes(byte[] buffer, int bufferOffset)
+			{
+				return new RGBA_Bytes(buffer[bufferOffset + ImageBuffer.OrderR], buffer[bufferOffset + ImageBuffer.OrderG], buffer[bufferOffset + ImageBuffer.OrderB], buffer[bufferOffset + ImageBuffer.OrderA]);
+			}
 
-			ScaleMeshToView(loadedMeshGroup);
+			public void CopyPixels(byte[] buffer, int bufferOffset, RGBA_Bytes sourceColor, int count)
+			{
+				do
+				{
+					if (sourceColor.green > buffer[bufferOffset + ImageBuffer.OrderG])
+					{
+						buffer[bufferOffset + ImageBuffer.OrderR] = sourceColor.red;
+						buffer[bufferOffset + ImageBuffer.OrderG] = sourceColor.green;
+						buffer[bufferOffset + ImageBuffer.OrderB] = sourceColor.blue;
+						buffer[bufferOffset + ImageBuffer.OrderA] = sourceColor.alpha;
+					}
+					bufferOffset += 4;
+				}
+				while (--count != 0);
+			}
 
-			RGBA_Bytes partColor = new RGBA_Bytes(0, 130, 153);
-			partColor = RGBA_Bytes.White;
-			IPrimitive bvhCollection = MeshToBVH.Convert(loadedMeshGroup, new SolidMaterial(partColor.GetAsRGBA_Floats(), .01, 0.0, 2.0));
+			public void BlendPixel(byte[] buffer, int bufferOffset, RGBA_Bytes sourceColor)
+			{
+				//unsafe
+				{
+					unchecked
+					{
+						if (sourceColor.alpha == 255)
+						{
+							buffer[bufferOffset + ImageBuffer.OrderR] = (byte)(sourceColor.red);
+							buffer[bufferOffset + ImageBuffer.OrderG] = (byte)(sourceColor.green);
+							buffer[bufferOffset + ImageBuffer.OrderB] = (byte)(sourceColor.blue);
+							buffer[bufferOffset + ImageBuffer.OrderA] = (byte)(sourceColor.alpha);
+						}
+						else
+						{
+							int r = buffer[bufferOffset + ImageBuffer.OrderR];
+							int g = buffer[bufferOffset + ImageBuffer.OrderG];
+							int b = buffer[bufferOffset + ImageBuffer.OrderB];
+							int a = buffer[bufferOffset + ImageBuffer.OrderA];
+							if (sourceColor.green > g)
+							{
+								buffer[bufferOffset + ImageBuffer.OrderR] = (byte)(((sourceColor.red - r) * sourceColor.alpha + (r << (int)RGBA_Bytes.base_shift)) >> (int)RGBA_Bytes.base_shift);
+								buffer[bufferOffset + ImageBuffer.OrderG] = (byte)(((sourceColor.green - g) * sourceColor.alpha + (g << (int)RGBA_Bytes.base_shift)) >> (int)RGBA_Bytes.base_shift);
+								buffer[bufferOffset + ImageBuffer.OrderB] = (byte)(((sourceColor.blue - b) * sourceColor.alpha + (b << (int)RGBA_Bytes.base_shift)) >> (int)RGBA_Bytes.base_shift);
+								buffer[bufferOffset + ImageBuffer.OrderA] = (byte)((sourceColor.alpha + a) - ((sourceColor.alpha * a + base_mask) >> (int)RGBA_Bytes.base_shift));
+							}
+						}
+					}
+				}
+			}
 
-			renderCollection.Add(bvhCollection);
+			public void BlendPixels(byte[] destBuffer, int bufferOffset,
+				RGBA_Bytes[] sourceColors, int sourceColorsOffset,
+				byte[] covers, int coversIndex, bool firstCoverForAll, int count)
+			{
+				if (firstCoverForAll)
+				{
+					int cover = covers[coversIndex];
+					if (cover == 255)
+					{
+						do
+						{
+							BlendPixel(destBuffer, bufferOffset, sourceColors[sourceColorsOffset++]);
+							bufferOffset += 4;
+						}
+						while (--count != 0);
+					}
+					else
+					{
+						do
+						{
+							sourceColors[sourceColorsOffset].alpha = (byte)((sourceColors[sourceColorsOffset].alpha * cover + 255) >> 8);
+							BlendPixel(destBuffer, bufferOffset, sourceColors[sourceColorsOffset]);
+							bufferOffset += 4;
+							++sourceColorsOffset;
+						}
+						while (--count != 0);
+					}
+				}
+				else
+				{
+					do
+					{
+						int cover = covers[coversIndex++];
+						if (cover == 255)
+						{
+							BlendPixel(destBuffer, bufferOffset, sourceColors[sourceColorsOffset]);
+						}
+						else
+						{
+							RGBA_Bytes color = sourceColors[sourceColorsOffset];
+							color.alpha = (byte)((color.alpha * (cover) + 255) >> 8);
+							BlendPixel(destBuffer, bufferOffset, color);
+						}
+						bufferOffset += 4;
+						++sourceColorsOffset;
+					}
+					while (--count != 0);
+				}
+			}
+		}
+		
+		AxisAlignedBoundingBox GetAxisAlignedBoundingBox(List<MeshGroup> meshGroups)
+		{
+			AxisAlignedBoundingBox totalMeshBounds = new AxisAlignedBoundingBox(Vector3.NegativeInfinity, Vector3.NegativeInfinity);
+			bool first = true;
+			foreach (MeshGroup meshGroup in meshGroups)
+			{
+				AxisAlignedBoundingBox meshBounds = meshGroup.GetAxisAlignedBoundingBox();
+				if (first)
+				{
+					totalMeshBounds = meshBounds;
+					first = false;
+				}
+				else
+				{
+					totalMeshBounds = AxisAlignedBoundingBox.Union(totalMeshBounds, meshBounds);
+				}
+			}
+
+			return totalMeshBounds;
+		}
+
+
+		private void AddTestMesh(List<MeshGroup> meshGroups)
+		{
+			if (meshGroups != null)
+			{
+				AxisAlignedBoundingBox totalMeshBounds = GetAxisAlignedBoundingBox(meshGroups);
+				loadedMeshGroups = meshGroups;
+				Vector3 meshCenter = totalMeshBounds.Center;
+				foreach (MeshGroup meshGroup in meshGroups)
+				{
+					meshGroup.Translate(-meshCenter);
+				}
+
+				ScaleMeshToView(loadedMeshGroups);
+
+				RGBA_Bytes partColor = new RGBA_Bytes(0, 130, 153);
+				partColor = RGBA_Bytes.White;
+				IPrimitive bvhCollection = MeshToBVH.Convert(loadedMeshGroups, new SolidMaterial(partColor.GetAsRGBA_Floats(), .01, 0.0, 2.0));
+
+				renderCollection.Add(bvhCollection);
+			}
 		}
 
 		private void CreateScene()
@@ -168,7 +338,7 @@ namespace MatterHackers.RayTracer
 			//scene.background = new Background(new RGBA_Floats(0.5, .5, .5), 0.4);
 			scene.background = new Background(new RGBA_Floats(0, 0, 0, 0), 0.4);
 
-			AddTestMesh(loadedMeshGroup);
+			AddTestMesh(loadedMeshGroups);
 
 			allObjects = BoundingVolumeHierarchy.CreateNewHierachy(renderCollection);
 			allObjectsHolder = new Transform(allObjects);
@@ -182,7 +352,7 @@ namespace MatterHackers.RayTracer
 			scene.lights.Add(new PointLight(new Vector3(-5000, -5000, 3000), new RGBA_Floats(0.5, 0.5, 0.5)));
 		}
 
-		private RectangleDouble GetScreenBounds(AxisAlignedBoundingBox meshBounds, MeshGroup loadedMeshGroup)
+		private RectangleDouble GetScreenBounds(AxisAlignedBoundingBox meshBounds)
 		{
 			RectangleDouble screenBounds = RectangleDouble.ZeroIntersection;
 
@@ -198,6 +368,14 @@ namespace MatterHackers.RayTracer
 			return screenBounds;
 		}
 
+		public void GetMinMaxZ(Mesh mesh, ref double minZ, ref double maxZ)
+		{
+			AxisAlignedBoundingBox meshBounds = mesh.GetAxisAlignedBoundingBox(trackballTumbleWidget.ModelviewMatrix);
+
+			minZ = Math.Min(meshBounds.minXYZ.z, minZ);
+			maxZ = Math.Max(meshBounds.maxXYZ.z, maxZ);
+		}
+
 		private bool NeedsToBeSmaller(RectangleDouble partScreenBounds, RectangleDouble goalBounds)
 		{
 			if (partScreenBounds.Bottom < goalBounds.Bottom
@@ -211,11 +389,11 @@ namespace MatterHackers.RayTracer
 			return false;
 		}
 
-		private void ScaleMeshToView(MeshGroup loadedMeshGroup)
+		private void ScaleMeshToView(List<MeshGroup> loadedMeshGroups)
 		{
-			if (loadedMeshGroup != null)
+			if (loadedMeshGroups != null)
 			{
-				AxisAlignedBoundingBox meshBounds = loadedMeshGroup.GetAxisAlignedBoundingBox(); // get it now that we moved it.
+				AxisAlignedBoundingBox meshBounds = GetAxisAlignedBoundingBox(loadedMeshGroups);
 
 				bool done = false;
 				double scallFraction = .1;
@@ -223,12 +401,12 @@ namespace MatterHackers.RayTracer
 				goalBounds.Inflate(-10);
 				while (!done)
 				{
-					RectangleDouble partScreenBounds = GetScreenBounds(meshBounds, loadedMeshGroup);
+					RectangleDouble partScreenBounds = GetScreenBounds(meshBounds);
 
 					if (!NeedsToBeSmaller(partScreenBounds, goalBounds))
 					{
 						trackballTumbleWidget.TrackBallController.Scale *= (1 + scallFraction);
-						partScreenBounds = GetScreenBounds(meshBounds, loadedMeshGroup);
+						partScreenBounds = GetScreenBounds(meshBounds);
 
 						// If it crossed over the goal reduct the amount we are adjusting by.
 						if (NeedsToBeSmaller(partScreenBounds, goalBounds))
@@ -239,7 +417,7 @@ namespace MatterHackers.RayTracer
 					else
 					{
 						trackballTumbleWidget.TrackBallController.Scale *= (1 - scallFraction);
-						partScreenBounds = GetScreenBounds(meshBounds, loadedMeshGroup);
+						partScreenBounds = GetScreenBounds(meshBounds);
 
 						// If it crossed over the goal reduct the amount we are adjusting by.
 						if (!NeedsToBeSmaller(partScreenBounds, goalBounds))

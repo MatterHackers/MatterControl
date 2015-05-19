@@ -36,7 +36,7 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.Slicing.Tests
 {
-	[TestFixture]
+	[TestFixture, Category("MatterControl.Slicing")]
 	public class SliceLayersTests
 	{
 		[Test]
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Slicing.Tests
 				return;
 			}
 
-			string pathToMesh = Path.Combine("..", "..", "TestMeshes", "SliceLayers");
+			string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "SliceLayers");
 			string meshFileName = Path.Combine(pathToMesh, "Box20x20x10.stl");
 			Mesh cubeMesh = StlProcessing.Load(meshFileName);
 

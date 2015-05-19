@@ -5,6 +5,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class EditConnectionWidget : ConnectionWidgetBase
 	{
-		private List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
 		private List<BaudRateRadioButton> BaudRateButtonsList = new List<BaudRateRadioButton>();
 		private FlowLayoutWidget ConnectionControlContainer;
 		private Printer ActivePrinter;
@@ -28,7 +28,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private GuiWidget baudRateWidget;
 		private RadioButton otherBaudRateRadioButton;
 		private CheckBox enableAutoconnect;
-		private bool printerComPortIsAvailable = false;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		private bool addNewPrinterFlag = false;
@@ -141,47 +140,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				comPortContainer.Margin = new BorderDouble(0);
 				comPortContainer.HAnchor = HAnchor.ParentLeftRight;
 
-				int portIndex = 0;
-				foreach (string serialPort in FrostedSerialPort.GetPortNames())
-				{
-					//Filter com port list based on usb type (applies to Mac mostly)
-					bool looks_like_mac = serialPort.StartsWith("/dev/tty.");
-					bool looks_like_pc = serialPort.StartsWith("COM");
-					if (looks_like_mac || looks_like_pc)
-					{
-						SerialPortIndexRadioButton comPortOption = createComPortOption(serialPort);
-						comPortContainer.AddChild(comPortOption);
-						portIndex++;
-					}
-				}
-
-				//If there are no com ports in the filtered list assume we are missing something and show the unfiltered list
-				if (portIndex == 0)
-				{
-					foreach (string serialPort in FrostedSerialPort.GetPortNames())
-					{
-						SerialPortIndexRadioButton comPortOption = createComPortOption(serialPort);
-						comPortContainer.AddChild(comPortOption);
-						portIndex++;
-					}
-				}
-
-				if (!printerComPortIsAvailable && this.ActivePrinter.ComPort != null)
-				{
-					SerialPortIndexRadioButton comPortOption = createComPortOption(this.ActivePrinter.ComPort);
-					comPortOption.Enabled = false;
-					comPortContainer.AddChild(comPortOption);
-					portIndex++;
-				}
-
-				//If there are still no com ports show a message to that effect
-				if (portIndex == 0)
-				{
-					TextWidget comPortOption = new TextWidget(LocalizedString.Get("No COM ports available"));
-					comPortOption.Margin = new BorderDouble(3, 6, 5, 6);
-					comPortOption.TextColor = this.subContainerTextColor;
-					comPortContainer.AddChild(comPortOption);
-				}
+				CreateSerialPortControls(comPortContainer, this.ActivePrinter.ComPort);
 #endif
 
 				TextWidget baudRateLabel = new TextWidget(LocalizedString.Get("Baud Rate"), 0, 0, 10);
@@ -385,26 +344,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				otherBaudRateInput.Visible = false;
 			}
-		}
-
-		public SerialPortIndexRadioButton createComPortOption(string serialPort)
-		{
-			//Add formatting here to make port names prettier
-			string portName = serialPort;
-
-			SerialPortIndexRadioButton comPortOption = new SerialPortIndexRadioButton(portName, serialPort);
-			SerialPortButtonsList.Add(comPortOption);
-
-			comPortOption.HAnchor = HAnchor.ParentLeft;
-			comPortOption.Margin = new BorderDouble(3, 3, 5, 3);
-			comPortOption.TextColor = this.subContainerTextColor;
-
-			if (this.ActivePrinter.ComPort == serialPort)
-			{
-				comPortOption.Checked = true;
-				printerComPortIsAvailable = true;
-			}
-			return comPortOption;
 		}
 
 		internal class StateBeforeRefresh

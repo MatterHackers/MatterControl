@@ -100,8 +100,7 @@ namespace MatterHackers.MatterControl
 				switch (commandUpper)
 				{
 					case "TEST":
-						Testing.TestingDispatch testDispatch = new Testing.TestingDispatch();
-						testDispatch.RunTests();
+						CheckKnownAssemblyConditionalCompSymbols();
 						return;
 
 					case "FORCE_SOFTWARE_RENDERING":
@@ -258,13 +257,6 @@ namespace MatterHackers.MatterControl
 					Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
 				}
 #endif
-
-				MatterHackers.PolygonMesh.UnitTests.UnitTests.Run();
-				MatterHackers.RayTracer.UnitTests.Run();
-				MatterHackers.Agg.Tests.UnitTests.Run();
-				MatterHackers.VectorMath.Tests.UnitTests.Run();
-				MatterHackers.Agg.UI.Tests.UnitTests.Run();
-				MatterHackers.MatterControl.Slicing.Tests.UnitTests.Run();
 
 				// you can turn this on to debug some bounds issues
 				//GuiWidget.DebugBoundsUnderMouse = true;
@@ -637,5 +629,33 @@ namespace MatterHackers.MatterControl
 				base.OnClosing(out CancelClose);
 			}
 		}
+
+		private static void AssertDebugNotDefined()
+		{
+#if DEBUG
+			throw new Exception("DEBUG is defined and should not be!");
+#endif
+		}
+
+		public static void CheckKnownAssemblyConditionalCompSymbols()
+		{
+			MatterControlApplication.AssertDebugNotDefined();
+			MatterHackers.GCodeVisualizer.GCodeFile.AssertDebugNotDefined();
+			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
+			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();
+			ClipperLib.Clipper.AssertDebugNotDefined();
+			MatterHackers.Csg.Utilities.AssertDebugNotDefined();
+			MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined();
+			MatterHackers.Localizations.TranslationMap.AssertDebugNotDefined();
+			MatterHackers.MarchingSquares.MarchingSquaresByte.AssertDebugNotDefined();
+			MatterHackers.MatterControl.PluginSystem.MatterControlPlugin.AssertDebugNotDefined();
+			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
+			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
+			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
+		}
+
+
+
 	}
+
 }

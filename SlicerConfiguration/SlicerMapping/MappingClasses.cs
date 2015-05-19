@@ -13,7 +13,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{"first_layer_temperature", "temperature"},
 			{"temperature","temperature"},
 			{"first_layer_bed_temperature","bed_temperature"},
-			{"bed_temperature","bed_temperature"}
+			{"bed_temperature","bed_temperature"},
+			{"bed_remove_part_temperature","bed_remove_part_temperature"},
+			{"extruder_wipe_temperature","extruder_wipe_temperature"},
+			{"z_offset","z_offset"},
+			{"retract_length","retract_length"},
+			{"filament_diameter","filament_diameter"},
+			{"first_layer_speed","first_layer_speed"},
+			{"infill_speed","infill_speed"},
+			{"max_fan_speed","max_fan_speed"},
+			{"min_fan_speed","min_fan_speed"},
+			{"min_print_speed","min_print_speed"},
+			{"perimeter_speed","perimeter_speed"},
+			{"retract_speed","retract_speed"},
+			{"support_material_speed","support_material_speed"},
+			{"travel_speed","travel_speed"},
+			{"bridge_fan_speed","bridge_fan_speed"},
+			{"bridge_speed","bridge_speed"},
+			{"raft_print_speed","raft_print_speed"},
+			{"external_perimeter_speed","external_perimeter_speed"},
 		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)
@@ -85,8 +103,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public VisibleButNotMappedToEngine(string mappedKey, string originalKey)
-			: base(mappedKey, originalKey)
+		public VisibleButNotMappedToEngine(string originalKey)
+			: base("", originalKey)
 		{
 		}
 	}
@@ -339,11 +357,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class AsLayerCountOrDistance : MapItem
+	public class AsCountOrDistance : MapItem
 	{
-		public AsLayerCountOrDistance(string mappedKey, string originalKey)
+		private string keyToUseAsDenominatorForCount;
+
+		public AsCountOrDistance(string mappedKey, string originalKey, string keyToUseAsDenominatorForCount)
 			: base(mappedKey, originalKey)
 		{
+			this.keyToUseAsDenominatorForCount = keyToUseAsDenominatorForCount;
 		}
 
 		public override string MappedValue
@@ -353,7 +374,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (OriginalValue.Contains("mm"))
 				{
 					string withoutMm = OriginalValue.Replace("mm", "");
-					int layers = (int)(MapItem.ParseValueString(withoutMm) / ActiveSliceSettings.Instance.LayerHeight + .5);
+					string distanceString = ActiveSliceSettings.Instance.GetActiveValue(keyToUseAsDenominatorForCount);
+					double denominator = MapItem.ParseValueString(distanceString, 1);
+					int layers = (int)(MapItem.ParseValueString(withoutMm) / denominator + .5);
 					return layers.ToString();
 				}
 
