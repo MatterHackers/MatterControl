@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class Cover : GuiWidget
 	{
-		public Cover(HAnchor hAnchor = HAnchor.None, VAnchor vAnchor = VAnchor.None)
+		public Cover(HAnchor hAnchor = HAnchor.AbsolutePosition, VAnchor vAnchor = VAnchor.AbsolutePosition)
 			: base(hAnchor, vAnchor)
 		{
 		}

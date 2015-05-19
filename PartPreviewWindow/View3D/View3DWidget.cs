@@ -1571,8 +1571,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			presetScaleMenu.MenuAsWideAsItems = false;
 			presetScaleMenu.AlignToRightEdge = true;
 			//presetScaleMenu.OpenOffset = new Vector2(-50, 0);
-			presetScaleMenu.HAnchor = HAnchor.None;
-			presetScaleMenu.VAnchor = VAnchor.None;
+			presetScaleMenu.HAnchor = HAnchor.AbsolutePosition;
+			presetScaleMenu.VAnchor = VAnchor.AbsolutePosition;
 			presetScaleMenu.Width = 25;
 			presetScaleMenu.Height = scaleRatioControl.Height + 2;
 
