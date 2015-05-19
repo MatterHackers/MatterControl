@@ -64,6 +64,11 @@ namespace MatterHackers.Agg.UI
 			popOutManager = new PopOutManager(TabPageControlledByTab, minSize, tabPageControledByTab.Text, internalTabName);
 		}
 
+		public void ShowInWindow()
+		{
+			popOutManager.ShowContentInWindow();
+		}
+
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			if (leftToRight.FirstWidgetUnderMouse)

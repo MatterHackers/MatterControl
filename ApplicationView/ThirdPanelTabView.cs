@@ -127,8 +127,18 @@ namespace MatterHackers.MatterControl
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
 			sliceSettingsWidget = new SliceSettingsWidget();
 
-			advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), SliceSettingsTabName, new Vector2(590, 400), textSize));
-			advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), ControlsTabName, new Vector2(400, 300), textSize));
+			TabPage sliceSettingsTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
+			PopOutTextTabWidget sliceSettingPopOut = new PopOutTextTabWidget(sliceSettingsTabPage, SliceSettingsTabName, new Vector2(590, 400), textSize);
+			advancedControls.AddTab(sliceSettingPopOut);
+			
+			TabPage controlsTabPage = new TabPage(manualPrinterControlsScrollArea, printerControlsLabel);
+			PopOutTextTabWidget controlsPopOut = new PopOutTextTabWidget(controlsTabPage, ControlsTabName, new Vector2(400, 300), textSize);
+			advancedControls.AddTab(controlsPopOut);
+
+#if !__ANDROID__
+			MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
+			MenuOptionSettings.controlsPopOut = controlsPopOut;
+#endif
 
 			string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
 			ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();

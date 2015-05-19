@@ -339,6 +339,8 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string ComPort { get; set; }
 
+		public string DriverType { get; set; }
+
 		public string BaudRate { get; set; }
 
 		public bool AutoConnectFlag { get; set; } //Auto connect to printer (if available)
