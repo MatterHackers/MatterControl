@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.Plugins.X3GDriver;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
@@ -2825,12 +2826,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					try
 					{
-						timeSinceLastWrite.Restart();
-						timeHaveBeenWaitingForOK.Restart();
 						using (TimedLock.Lock(this, "serialPort.Write"))
 						{
-                            byte[] x3gCommand = X3GWriter.translate(lineToWrite);
-                            serialPort.Write(x3gCommand, 0, x3gCommand.Length);
+                            bool sendToPrinter;
+                            byte[] x3gCommand = X3GWriter.translate(lineToWrite, out sendToPrinter);
+                            if (sendToPrinter)
+                            {
+                                serialPort.Write(x3gCommand, 0, x3gCommand.Length);
+                                timeSinceLastWrite.Restart();
+                                timeHaveBeenWaitingForOK.Restart();
+                            }
 						}
 						//Debug.Write("w: " + lineToWrite);
 					}

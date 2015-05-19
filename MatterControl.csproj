@@ -394,6 +394,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\X3GDriver\X3GDriver\X3GDriver.csproj">
+      <Project>{26164cc3-29ad-4384-861c-181440934b00}</Project>
+      <Name>X3GDriver</Name>
+    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
