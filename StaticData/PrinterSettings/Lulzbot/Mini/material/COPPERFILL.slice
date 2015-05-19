@@ -12,6 +12,5 @@ retract_length = 1.5
 retract_lift = 0.1
 retract_speed = 10
 skirt_distance = 3.0
-temperature = 205
-
+temperature = 230
 
