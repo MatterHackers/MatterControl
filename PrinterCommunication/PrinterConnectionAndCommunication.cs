@@ -1441,7 +1441,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (serialPort == null && this.ActivePrinter != null)
 			{
-				serialPort = FrostedSerialPortFactory.Instance.Create(this.ActivePrinter.ComPort);
+				serialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
 				serialPort.BaudRate = this.BaudRate;
 
 				// Set the read/write timeouts
@@ -2127,7 +2127,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			bool serialPortIsAvailable = SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.Instance.SerialPortAlreadyOpen(serialPortName);
+			bool serialPortIsAlreadyOpen = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 			{
@@ -2135,7 +2135,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						serialPort = FrostedSerialPortFactory.Instance.CreateAndOpen(serialPortName, baudRate, true);
+						serialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).CreateAndOpen(serialPortName, baudRate, true);
 						// wait a bit of time to let the firmware start up
 						Thread.Sleep(500);
 						CommunicationState = CommunicationStates.AttemptingToConnect;
