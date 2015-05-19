@@ -31,6 +31,8 @@ namespace MatterHackers.MatterControl
 			MenuOptionView menuOptionView = new MenuOptionView();
 			this.AddChild(menuOptionView);
 #endif
+			MenuOptionSettings menuOptionSettings = new MenuOptionSettings();
+			this.AddChild(menuOptionSettings);
 
 			// put in the help menu
 			MenuOptionHelp menuOptionHelp = new MenuOptionHelp();
