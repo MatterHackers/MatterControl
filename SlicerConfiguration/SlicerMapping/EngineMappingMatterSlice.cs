@@ -288,6 +288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new VisibleButNotMappedToEngine("pause_gcode"),
             new VisibleButNotMappedToEngine("resume_gcode"),
             new VisibleButNotMappedToEngine("cancel_gcode"),
+			new VisibleButNotMappedToEngine("connect_gcode"),
 
             new VisibleButNotMappedToEngine("bed_size"),
             new VisibleButNotMappedToEngine("build_height"),
@@ -563,6 +564,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				get
 				{
 					string gCode = base.MappedValue.Replace("\n", "\\n");
+
+					gCode = GCodeProcessing.ReplaceMacroValues(gCode);
+
 					return gCode;
 				}
 			}

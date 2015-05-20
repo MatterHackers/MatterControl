@@ -144,6 +144,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new VisibleButNotMappedToEngine("pause_gcode"),
             new VisibleButNotMappedToEngine("resume_gcode"),
             new VisibleButNotMappedToEngine("cancel_gcode"),
+			new VisibleButNotMappedToEngine("connect_gcode"),
 
 #if false
             SETTING(filamentFlow);
@@ -326,7 +327,7 @@ enableOozeShield = 0;
 				{
 					StringBuilder curaEndGCode = new StringBuilder();
 
-					curaEndGCode.Append(base.MappedValue);
+					curaEndGCode.Append(GCodeProcessing.ReplaceMacroValues(base.MappedValue));
 
 					curaEndGCode.Append("\n; filament used = filament_used_replace_mm (filament_used_replace_cm3)");
 

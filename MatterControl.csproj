@@ -136,6 +136,7 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionView.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />

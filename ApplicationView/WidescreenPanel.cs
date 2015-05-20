@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl
 					Padding = new BorderDouble(4);
 					ColumnOne.Visible = true;
 					ColumnTwo.Visible = true;
-					ColumnOne.HAnchor = Agg.UI.HAnchor.None;
+					ColumnOne.HAnchor = HAnchor.AbsolutePosition;
 					ColumnOne.Width = ColumnOneFixedWidth; // it can hold the slice settings so it needs to be bigger.
 					ColumnOne.MinimumSize = new Vector2(Math.Max(compactSlidePanel.TabBarWidth, ColumnOneFixedWidth), 0); //Ordering here matters - must go after children are added
 					break;
