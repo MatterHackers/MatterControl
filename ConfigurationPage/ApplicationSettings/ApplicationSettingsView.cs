@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
 #endif
-			if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+			if (ActiveTheme.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(GetModeControl());
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -201,9 +201,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			MenuItem touchscreenOptionsDropDownItem = interfaceOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
-			string currentUpdateFeedType = UserSettings.Instance.get("ApplicationDisplayMode");
+			string currentDisplayModeType = UserSettings.Instance.get("ApplicationDisplayMode");
 
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
+			if (acceptableUpdateFeedTypeValues.IndexOf(currentDisplayModeType) == -1)
 			{
 				UserSettings.Instance.set("ApplicationDisplayMode", "responsive");
 			}

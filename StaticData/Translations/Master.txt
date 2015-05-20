@@ -3244,3 +3244,12 @@ Translated:The speed to move while printing the first layer. If expressed as a p
 English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
 Translated:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
 
+English:Features
+Translated:Features
+
+English:Update Available
+Translated:Update Available
+
+English:Check For Update
+Translated:Check For Update
+
