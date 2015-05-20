@@ -795,6 +795,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (KeyValuePair<String, DataStorage.SliceSetting> setting in this.DefaultSettings)
 			{
 				string activeValue = GetActiveValue(setting.Key);
+				activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
 				string settingString = string.Format("{0} = {1}", setting.Key, activeValue);
 				configFileAsList.Add(settingString);
 			}
