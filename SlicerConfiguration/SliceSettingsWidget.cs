@@ -835,19 +835,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         }
                     }
 #endif
-
-					if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
-					{
-						addMaterialOverlay = true;
-					}
-					else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
-					{
-						addQualityOverlay = true;
-					}
-
 					settingName.Width = minSettingNameWidth;
 					//settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
 					leftToRightLayout.AddChild(settingName);
+				}
+
+				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+				{
+					addMaterialOverlay = true;
+				}
+				else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
+				{
+					addQualityOverlay = true;
 				}
 
 				switch (settingData.DataEditType)
