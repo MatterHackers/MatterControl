@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					removeItemButton.Visible = false;
 					buttonPanel1.AddChild(removeItemButton);
 
-					bool touchScreenMode = UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen";
+					bool touchScreenMode = ActiveTheme.Instance.IsTouchScreen;
 
 					if (!touchScreenMode)
 					{

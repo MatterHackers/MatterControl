@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 
 			AddChild(container);
 
-			if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+			if (ActiveTheme.Instance.IsTouchScreen)
 			{
 				upImageBuffer = StaticData.Instance.LoadIcon("TouchScreen/arrow_up_32x24.png");
 				downImageBuffer = StaticData.Instance.LoadIcon("TouchScreen/arrow_down_32x24.png");

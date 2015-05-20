@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl
 				InvertLightness.DoInvertLightness(disabledImage);
 			}
 
-			if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+			if (ActiveTheme.Instance.IsTouchScreen)
 			{
 				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
 				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);
