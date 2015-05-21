@@ -126,6 +126,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 			PrintItems.Insert(indexToInsert, item);
 			OnItemAdded(new IndexArgs(indexToInsert));
+            item.PrintItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+            item.PrintItem.Commit();
+           
 		}
 
 		public void RemoveItem(PrintItemWrapper printItemWrapper)
