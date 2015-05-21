@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
 		private static string pressGenerateMessage = "Press 'generate' to view layers".Localize();
 		private static string fileNotFoundMessage = "File not found on disk.".Localize();
-		private static string fileTooBigToLoad = "GCode file too big to load for '{0}'.".Localize();
+		private static string fileTooBigToLoad = "GCode file too big to preview ({0}).".Localize();
 
 		private Vector2 bedCenter;
 		private Vector3 viewerVolume;
