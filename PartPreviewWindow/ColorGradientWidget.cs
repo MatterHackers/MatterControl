@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             for (int i = 1; i < gcodeFileTest.LineCount; i++)
             {
                 PrinterMachineInstruction instruction = gcodeFileTest.Instruction(i);
-                if(instruction.EPosition > previousInstruction.EPosition && regex.Match(instruction.Line).Success)
+                if(instruction.EPosition > previousInstruction.EPosition )
                 {
                     speeds.Add((float)instruction.FeedRate);
                 }
