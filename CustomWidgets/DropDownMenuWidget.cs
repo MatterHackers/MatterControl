@@ -12,9 +12,35 @@ namespace MatterHackers.Agg.UI
 
 		private TextWidget mainControlText;
 
-		public bool MenuAsWideAsItems { get; set; }
+		bool menuAsWideAsItems = true;
+		public bool MenuAsWideAsItems 
+		{
+			get
+			{
+				return menuAsWideAsItems;
+			}
+
+			set
+			{
+				menuAsWideAsItems = value;
+			}
+		}
 
 		private int borderWidth = 1;
+
+		bool drawDirectionalArrow = true;
+		public bool DrawDirectionalArrow 
+		{
+			get
+			{
+				return drawDirectionalArrow;
+			}
+
+			set
+			{
+				drawDirectionalArrow = value;
+			}
+		}
 
 		public int BorderWidth
 		{
@@ -74,7 +100,6 @@ namespace MatterHackers.Agg.UI
 
 		private void SetStates(string topMenuText, double pointSize)
 		{
-			MenuAsWideAsItems = true;
 			SetDisplayAttributes();
 
 			MenuItems.CollectionChanged += new NotifyCollectionChangedEventHandler(MenuItems_CollectionChanged);
@@ -197,10 +222,13 @@ namespace MatterHackers.Agg.UI
 		{
 			base.OnDraw(graphics2D);
 			this.DrawBorder(graphics2D);
-			this.DrawDirectionalArrow(graphics2D);
+			if (DrawDirectionalArrow)
+			{
+				this.DoDrawDirectionalArrow(graphics2D);
+			}
 		}
 
-		protected virtual void DrawDirectionalArrow(Graphics2D graphics2D)
+		protected virtual void DoDrawDirectionalArrow(Graphics2D graphics2D)
 		{
 			PathStorage littleArrow = new PathStorage();
 			if (this.MenuDirection == Direction.Down)
