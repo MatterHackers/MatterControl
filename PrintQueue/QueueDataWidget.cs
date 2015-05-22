@@ -102,10 +102,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 				clearAllPlaceholder = new GuiWidget(clearAllButton.Width, clearAllButton.Height);
 
-				TextWidget textWidget = new TextWidget("Print Queue".Localize().ToUpper(), pointSize: 14);
-				textWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-				textWidget.VAnchor = VAnchor.ParentCenter;
-
 				FlowLayoutWidget searchPanel = new FlowLayoutWidget();
 				searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 				searchPanel.HAnchor = HAnchor.ParentLeftRight;
@@ -115,11 +111,17 @@ namespace MatterHackers.MatterControl.PrintQueue
 				searchPanel.AddChild(leaveEditModeButton);
 				searchPanel.AddChild(new HorizontalSpacer());
 
-				searchPanel.AddChild(textWidget);
+				if (ActiveTheme.Instance.IsTouchScreen)
+				{
+					TextWidget textWidget = new TextWidget("Print Queue".Localize().ToUpper(), pointSize: 14);
+					textWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+					textWidget.VAnchor = VAnchor.ParentCenter;
+					searchPanel.AddChild(textWidget);
 
-				searchPanel.AddChild(new HorizontalSpacer());
-				searchPanel.AddChild(clearAllButton);
-				searchPanel.AddChild(clearAllPlaceholder);
+					searchPanel.AddChild(new HorizontalSpacer());
+					searchPanel.AddChild(clearAllButton);
+					searchPanel.AddChild(clearAllPlaceholder);
+				}
 
 				allControls.AddChild(searchPanel);
 
@@ -181,7 +183,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					removeItemButton.Visible = false;
 					buttonPanel1.AddChild(removeItemButton);
 
-					bool touchScreenMode = UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen";
+					bool touchScreenMode = ActiveTheme.Instance.IsTouchScreen;
 
 					if (!touchScreenMode)
 					{

@@ -300,7 +300,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GCodeRenderer gCodeRenderer = (GCodeRenderer)doWorkEventArgs.Argument;
 			try
 			{
-				gCodeRenderer.GCodeFileToDraw.GetFilamentUsedMm(ActiveSliceSettings.Instance.NozzleDiameter);
+				if (gCodeRenderer.GCodeFileToDraw != null)
+				{
+					gCodeRenderer.GCodeFileToDraw.GetFilamentUsedMm(ActiveSliceSettings.Instance.NozzleDiameter);
+				}
 			}
 			catch (Exception)
 			{

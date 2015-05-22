@@ -136,9 +136,10 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionView.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
     <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="ApplicationView\CompactTabView.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
+    <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
@@ -359,6 +361,10 @@
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="Xamarin.Insights, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Xamarin.Insights.1.10.2.110\lib\portable-win+net40\Xamarin.Insights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

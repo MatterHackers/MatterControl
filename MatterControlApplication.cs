@@ -47,6 +47,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Xamarin;
 
 namespace MatterHackers.MatterControl
 {
@@ -357,10 +358,22 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main()
 		{
-			// Make sure we have the right woring directory as we assume everything relative to the executable.
+			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
 			Datastore.Instance.Initialize();
+
+#if !DEBUG
+			// Conditionally spin up Insights reporting if not on the Stable channel
+			string channel = UserSettings.Instance.get("UpdateFeedType");
+			if (string.IsNullOrEmpty(channel) || channel != "release")
+#endif
+			{
+				Insights.Initialize(
+					"2b84bf883521ee8deca1b633b7d33818c20b87cc",
+					string.Format("{0} ({1})", VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion),
+					"MatterControl Desktop");
+			}
 
 			MatterControlApplication app = MatterControlApplication.Instance;
 		}

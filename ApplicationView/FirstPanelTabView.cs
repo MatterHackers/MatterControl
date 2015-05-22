@@ -45,10 +45,7 @@ namespace MatterHackers.MatterControl
 		private TabPage QueueTabPage;
 		private TabPage LibraryTabPage;
 		private TabPage HistoryTabPage;
-		private TabPage AboutTabPage;
-		private SimpleTextTabWidget AboutTabView;
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-		private GuiWidget addedUpdateMark = null;
 		private QueueDataView queueDataView;
 
 		private event EventHandler unregisterEvents;
@@ -75,17 +72,10 @@ namespace MatterHackers.MatterControl
 			this.AddTab(new SimpleTextTabWidget(HistoryTabPage, "History Tab", 15,
 					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			AboutTabPage = new TabPage(new AboutWidget(), LocalizedString.Get("About").ToUpper());
-			AboutTabView = new SimpleTextTabWidget(AboutTabPage, "About Tab", 15,
-						ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes());
-			this.AddTab(AboutTabView);
-
 			NumQueueItemsChanged(this, null);
-			SetUpdateNotification(this, null);
 
 			QueueData.Instance.ItemAdded.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
 			QueueData.Instance.ItemRemoved.RegisterEvent(NumQueueItemsChanged, ref unregisterEvents);
-			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
 
 			WidescreenPanel.PreChangePanels.RegisterEvent(SaveCurrentTab, ref unregisterEvents);
 
@@ -109,36 +99,6 @@ namespace MatterHackers.MatterControl
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
-			}
-		}
-
-		public void SetUpdateNotification(object sender, EventArgs widgetEvent)
-		{
-			switch (UpdateControlData.Instance.UpdateStatus)
-			{
-				case UpdateControlData.UpdateStatusStates.MayBeAvailable:
-				case UpdateControlData.UpdateStatusStates.ReadyToInstall:
-				case UpdateControlData.UpdateStatusStates.UpdateAvailable:
-				case UpdateControlData.UpdateStatusStates.UpdateDownloading:
-					if (addedUpdateMark == null)
-					{
-						addedUpdateMark = new NotificationWidget();
-						addedUpdateMark.OriginRelativeParent = new Vector2(AboutTabView.Width - 25, 7);
-						AboutTabView.AddChild(addedUpdateMark);
-					}
-					addedUpdateMark.Visible = true;
-					break;
-
-				case UpdateControlData.UpdateStatusStates.UpToDate:
-				case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
-					if (addedUpdateMark != null)
-					{
-						addedUpdateMark.Visible = false;
-					}
-					break;
-
-				default:
-					throw new NotImplementedException();
 			}
 		}
 	}

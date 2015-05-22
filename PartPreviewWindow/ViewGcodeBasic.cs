@@ -67,8 +67,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private CheckBox expandModelOptions;
 		private CheckBox expandDisplayOptions;
 		private CheckBox syncToPrint;
+        private CheckBox showSpeeds;
 
 		private GuiWidget gcodeDisplayWidget;
+
+        private ColorGradientWidget gradient;
 
 		private EventHandler unregisterEvents;
 		private WindowMode windowMode;
@@ -78,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
 		private static string pressGenerateMessage = "Press 'generate' to view layers".Localize();
 		private static string fileNotFoundMessage = "File not found on disk.".Localize();
-		private static string fileTooBigToLoad = "GCode file too big to load for '{0}'.".Localize();
+		private static string fileTooBigToLoad = "GCode file too big to preview ({0}).".Localize();
 
 		private Vector2 bedCenter;
 		private Vector3 viewerVolume;
@@ -256,6 +259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls2D = new ViewControls2D();
 			AddChild(viewControls2D);
+
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 			viewControls3D.PartSelectVisible = false;
 			AddChild(viewControls3D);
@@ -564,12 +568,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show speed checkbox
 			{
-				CheckBox showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+                showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showSpeeds.Checked = gcodeViewWidget.RenderSpeeds;
+                //showSpeeds.Checked = gradient.Visible;
 				showSpeeds.CheckedStateChanged += (sender, e) =>
 				{
+                    
+                   /* if (!showSpeeds.Checked)
+                    {
+                        gradient.Visible = false;
+                    }
+                    else
+                    {
+                        gradient.Visible = true;
+                    }*/
+                     
+                    gradient.Visible = showSpeeds.Checked;
+
 					gcodeViewWidget.RenderSpeeds = showSpeeds.Checked;
+                   
 				};
+
 				layerInfoContainer.AddChild(showSpeeds);
 			}
 
@@ -865,7 +884,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (gcodeViewWidget != null
 				&& gcodeViewWidget.LoadedGCode == null)
 			{
-				if (GCodeFile.FileTooBigToLoad(printItem.FileLocation))
+				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loaded decided to not load it.
+				if (File.Exists(printItem.FileLocation))
 				{
 					SetProcessingMessage(string.Format(fileTooBigToLoad, printItem.Name));
 				}
@@ -879,7 +899,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& gcodeViewWidget.LoadedGCode != null
 				&& gcodeViewWidget.LoadedGCode.LineCount > 0)
 			{
+
+                CloseIfNotNull(gradient);
+                gradient = new ColorGradientWidget(gcodeViewWidget.LoadedGCode);
+                AddChild(gradient);
+                gradient.Visible = false;
+
+                
+
 				CreateOptionsContent();
+                setGradientVisibility();
 				buttonRightPanel.Visible = true;
 				viewControlsToggle.Visible = true;
 
@@ -907,6 +936,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerRenderRatioSlider.SecondValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
 				AddChild(layerRenderRatioSlider);
 
+                
+              
+
 				SetSliderSizes();
 
 				// let's change the active layer so that it is set to the first layer with data
@@ -918,6 +950,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.partProcessingInfo.Visible = false;
 			}
 		}
+
+        private void setGradientVisibility()
+        {
+            if (showSpeeds.Checked)
+            {
+                gradient.Visible = true;
+            }
+            else
+            {
+                gradient.Visible = false;
+            }
+
+            
+
+        }
 
 		private void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
 		{

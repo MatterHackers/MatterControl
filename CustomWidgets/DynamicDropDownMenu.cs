@@ -74,7 +74,7 @@ namespace MatterHackers.Agg.UI
 			base.OnDraw(graphics2D);
 		}
 
-		protected override void DrawDirectionalArrow(Graphics2D graphics2D)
+		protected override void DoDrawDirectionalArrow(Graphics2D graphics2D)
 		{
 			PathStorage littleArrow = new PathStorage();
 			if (this.MenuDirection == Direction.Down)
@@ -107,7 +107,7 @@ namespace MatterHackers.Agg.UI
 			}
 			else
 			{
-				base.DrawDirectionalArrow(graphics2D);
+				base.DoDrawDirectionalArrow(graphics2D);
 			}
 		}
 
