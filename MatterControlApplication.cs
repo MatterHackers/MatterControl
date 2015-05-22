@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using Mindscape.Raygun4Net;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,7 +48,6 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Xamarin;
 
 namespace MatterHackers.MatterControl
 {
@@ -70,6 +70,8 @@ namespace MatterHackers.MatterControl
 		private string unableToExitMessage = "Oops! You cannot exit while a print is active.".Localize();
 
 		private string unableToExitTitle = "Unable to Exit".Localize();
+
+		private static RaygunClient _raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==");
 
 		static MatterControlApplication()
 		{
@@ -361,22 +363,36 @@ namespace MatterHackers.MatterControl
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
+			System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
+			//throw new Exception("Forced exception thrown manually!");
+
 			Datastore.Instance.Initialize();
 
 #if !DEBUG
-			// Conditionally spin up Insights reporting if not on the Stable channel
+			// Conditionally spin up error reporting if not on the Stable channel
 			string channel = UserSettings.Instance.get("UpdateFeedType");
-			if (string.IsNullOrEmpty(channel) || channel != "release")
+			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
 #endif
 			{
-				Insights.Initialize(
-					"2b84bf883521ee8deca1b633b7d33818c20b87cc",
-					string.Format("{0} ({1})", VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion),
-					"MatterControl Desktop");
+				System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+				AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 			}
 
 			MatterControlApplication app = MatterControlApplication.Instance;
 		}
+
+		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+		{
+		  _raygunClient.Send(e.Exception);
+		}
+
+		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+		  _raygunClient.Send(e.ExceptionObject as Exception);
+		}
+
 
 		public static void WriteTestGCodeFile()
 		{
