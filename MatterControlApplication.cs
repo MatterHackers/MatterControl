@@ -47,7 +47,6 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Xamarin;
 
 namespace MatterHackers.MatterControl
 {
@@ -364,17 +363,12 @@ namespace MatterHackers.MatterControl
 			Datastore.Instance.Initialize();
 
 #if !DEBUG
-			// Conditionally spin up Insights reporting if not on the Stable channel
+			// Conditionally spin up error reporting if not on the Stable channel
 			string channel = UserSettings.Instance.get("UpdateFeedType");
 			if (string.IsNullOrEmpty(channel) || channel != "release")
 #endif
 			{
-				Insights.Initialize(
-					"87e66d36da8787a463e492e85b934043ee8be552",
-					string.Format("{0} ({1})", VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion),
-					"MatterControl Desktop");
-
-				Insights.Report(new Exception("Forced exception via manual report"), Insights.Severity.Error);
+				
 			}
 
 			MatterControlApplication app = MatterControlApplication.Instance;
