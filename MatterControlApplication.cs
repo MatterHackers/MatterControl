@@ -370,9 +370,11 @@ namespace MatterHackers.MatterControl
 #endif
 			{
 				Insights.Initialize(
-					"2b84bf883521ee8deca1b633b7d33818c20b87cc",
+					"87e66d36da8787a463e492e85b934043ee8be552",
 					string.Format("{0} ({1})", VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion),
 					"MatterControl Desktop");
+
+				Insights.Report(new Exception("Forced exception via manual report"), Insights.Severity.Error);
 			}
 
 			MatterControlApplication app = MatterControlApplication.Instance;
