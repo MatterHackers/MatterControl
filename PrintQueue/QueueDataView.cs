@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					if (this.editMode == false)
 					{
 						this.ClearSelectedItems();
+						this.EnsureSelection();
 					}
 				}
 			}
