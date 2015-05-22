@@ -1473,7 +1473,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			timeSinceLastReadAnything.Restart();
 			// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
 			while (CommunicationState == CommunicationStates.AttemptingToConnect
-				|| (PrinterIsConnected && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
+				|| (PrinterIsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
 				if (PrinterIsPrinting
 					&& PrinterIsConnected
@@ -1993,6 +1993,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						{
 							CancelPrint();
 							MarkActivePrintCanceled();
+							CommunicationState = CommunicationStates.Printing;
 						}
 					}
 					break;
