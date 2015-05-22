@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 			MenuOptionHelp menuOptionHelp = new MenuOptionHelp();
 			this.AddChild(menuOptionHelp);
 
-			linkButtonFactory.textColor = RGBA_Bytes.Red;
+			//linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
 			linkButtonFactory.fontSize = 10;
 
 			Button updateStatusMessage = linkButtonFactory.Generate("Update Available");
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 					if (AlwaysShowUpdateStatus)
 					{
 						popUpAboutPage.RemoveAllChildren();
-						TextWidget updateStatusMessage = new TextWidget("Up to Date".Localize(), textColor: ActiveTheme.Instance.PrimaryAccentColor, pointSize: linkButtonFactory.fontSize);
+						TextWidget updateStatusMessage = new TextWidget("Up to Date".Localize(), textColor: linkButtonFactory.textColor, pointSize: linkButtonFactory.fontSize);
 						updateStatusMessage.VAnchor = VAnchor.ParentCenter;
 						popUpAboutPage.AddChild(updateStatusMessage);
 						popUpAboutPage.Visible = true;
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
 					if (AlwaysShowUpdateStatus)
 					{
 						popUpAboutPage.RemoveAllChildren();
-						TextWidget updateStatusMessage = new TextWidget("Checking For Update".Localize(), textColor: ActiveTheme.Instance.PrimaryAccentColor, pointSize: linkButtonFactory.fontSize);
+						TextWidget updateStatusMessage = new TextWidget("Checking For Update".Localize(), textColor: linkButtonFactory.textColor, pointSize: linkButtonFactory.fontSize);
 						updateStatusMessage.VAnchor = VAnchor.ParentCenter;
 						popUpAboutPage.AddChild(updateStatusMessage);
 						popUpAboutPage.Visible = true;
