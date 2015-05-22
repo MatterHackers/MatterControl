@@ -1,7 +1,5 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.VectorMath;
 using System;
 
@@ -32,7 +30,6 @@ namespace MatterHackers.MatterControl
 			}
 			MenuDropList.Padding = padding;
 
-
 			AddChild(MenuDropList);
 			this.Width = GetChildrenBoundsIncludingMargins().Width;
 			this.Height = 22 * TextWidget.GlobalPointSizeScaleRatio;
@@ -42,6 +39,8 @@ namespace MatterHackers.MatterControl
 			this.MenuDropList.SelectionChanged += new EventHandler(MenuDropList_SelectionChanged);
 			this.MenuDropList.OpenOffset = new Vector2(0, 0);
 		}
+
+		abstract protected TupleList<string, Func<bool>> GetMenuItems();
 
 		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
 		{
@@ -57,7 +56,5 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
-
-		abstract protected TupleList<string, Func<bool>> GetMenuItems();
 	}
 }

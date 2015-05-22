@@ -18,14 +18,14 @@ namespace MatterHackers.MatterControl
 		{
 			return new TupleList<string, Func<bool>>
             {
-                {LocalizedString.Get("Getting Started"), gettingStarted_Click},
-                {LocalizedString.Get("View Help"), help_Click},
-				{LocalizedString.Get("Release Notes"), notes_Click},
-				{LocalizedString.Get("------------------------"), nothing_Click},
-                {LocalizedString.Get("Report a Bug"), bug_Click},
-                {LocalizedString.Get("Check For Update"), checkForUpdate_Click},
-				{LocalizedString.Get("------------------------"), nothing_Click},
-                {LocalizedString.Get("About MatterControl"), about_Click},
+                {"Getting Started".Localize(), gettingStarted_Click},
+                {"View Help".Localize(), help_Click},
+				{"Release Notes".Localize(), notes_Click},
+				{"------------------------", nothing_Click},
+                {"Report a Bug".Localize(), bug_Click},
+                {"Check For Update".Localize(), checkForUpdate_Click},
+				{"------------------------", nothing_Click},
+                {"About MatterControl".Localize(), about_Click},
             };
 		}
 
