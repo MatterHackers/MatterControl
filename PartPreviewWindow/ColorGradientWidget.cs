@@ -20,8 +20,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
     public class ColorGradientWidget : FlowLayoutWidget 
     {
 
-        Regex regex = new Regex("[XY]\\d+");
-
         public ColorGradientWidget(GCodeFile gcodeFileTest)
             : base(FlowDirection.TopToBottom)
         {
@@ -33,7 +31,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
             for (int i = 1; i < gcodeFileTest.LineCount; i++)
             {
                 PrinterMachineInstruction instruction = gcodeFileTest.Instruction(i);
-                if(instruction.EPosition > previousInstruction.EPosition )
+                if(instruction.EPosition > previousInstruction.EPosition && (instruction.Line.IndexOf('X') != -1 || instruction.Line.IndexOf('Y') != -1))
                 {
                     speeds.Add((float)instruction.FeedRate);
                 }
