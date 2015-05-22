@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl
 
 		public static EventHandler InstallUpdateFromMainActivity = null;
 
-		public bool InstallUpdate(GuiWidget windowToClose)
+		public bool InstallUpdate()
 		{
 			string downloadToken = ApplicationSettings.Instance.get("CurrentBuildToken");
 
@@ -432,13 +432,8 @@ namespace MatterHackers.MatterControl
 				installUpdate.StartInfo.FileName = friendlyFileName;
 				installUpdate.Start();
 
-				while (windowToClose != null && windowToClose as SystemWindow == null)
-				{
-					windowToClose = windowToClose.Parent;
-				}
-
 				//Attempt to close current application
-				SystemWindow topSystemWindow = windowToClose as SystemWindow;
+				SystemWindow topSystemWindow = MatterControlApplication.Instance as SystemWindow;
 				if (topSystemWindow != null)
 				{
 					topSystemWindow.CloseOnIdle();
