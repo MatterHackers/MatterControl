@@ -3259,3 +3259,9 @@ Translated:solid_shell
 English:GCode file too big to preview ({0}).
 Translated:GCode file too big to preview ({0}).
 
+English:Up to Date
+Translated:Up to Date
+
+English:Checking For Update
+Translated:Checking For Update
+

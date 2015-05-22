@@ -20,8 +20,11 @@ namespace MatterHackers.MatterControl
             {
                 {LocalizedString.Get("Getting Started"), gettingStarted_Click},
                 {LocalizedString.Get("View Help"), help_Click},
-                {LocalizedString.Get("Report a Bug"), bug_Click},
 				{LocalizedString.Get("Release Notes"), notes_Click},
+				{LocalizedString.Get("------------------------"), nothing_Click},
+                {LocalizedString.Get("Report a Bug"), bug_Click},
+                {LocalizedString.Get("Check For Update"), checkForUpdate_Click},
+				{LocalizedString.Get("------------------------"), nothing_Click},
                 {LocalizedString.Get("About MatterControl"), about_Click},
             };
 		}
@@ -44,12 +47,27 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
+		private bool checkForUpdate_Click()
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				ApplicationMenuRow.AlwaysShowUpdateStatus = true;
+				UpdateControlData.Instance.CheckForUpdateUserRequested();
+			});
+			return true;
+		}
+
 		private bool about_Click()
 		{
 			UiThread.RunOnIdle((state) =>
 			{
 				AboutWindow.Show();
 			});
+			return true;
+		}
+
+		private bool nothing_Click()
+		{
 			return true;
 		}
 

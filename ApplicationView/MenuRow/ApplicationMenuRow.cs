@@ -38,8 +38,9 @@ namespace MatterHackers.MatterControl
 	public class ApplicationMenuRow : FlowLayoutWidget
 	{
 		private static FlowLayoutWidget rightElement;
-		private event EventHandler unregisterEvents;
 		LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+
+		public static bool AlwaysShowUpdateStatus { get; set; }
 
 		GuiWidget popUpAboutPage;
 
@@ -60,11 +61,6 @@ namespace MatterHackers.MatterControl
 			MenuOptionFile menuOptionFile = new MenuOptionFile();
 			this.AddChild(menuOptionFile);
 
-#if false
-			// put in the view menu
-			MenuOptionView menuOptionView = new MenuOptionView();
-			this.AddChild(menuOptionView);
-#endif
 			MenuOptionSettings menuOptionSettings = new MenuOptionSettings();
 			this.AddChild(menuOptionSettings);
 
@@ -109,6 +105,26 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public delegate void AddRightElementDelegate(GuiWidget iconContainer);
+
+		public static event AddRightElementDelegate AddRightElement
+		{
+			add
+			{
+				privateAddRightElement += value;
+				// and call it right away
+				value(rightElement);
+			}
+
+			remove
+			{
+				privateAddRightElement -= value;
+			}
+		}
+
+		private static event AddRightElementDelegate privateAddRightElement;
+
+		private event EventHandler unregisterEvents;
 		public override void OnClosed(EventArgs e)
 		{
 			if (unregisterEvents != null)
@@ -158,31 +174,40 @@ namespace MatterHackers.MatterControl
 					break;
 
 				case UpdateControlData.UpdateStatusStates.UpToDate:
+					if (AlwaysShowUpdateStatus)
+					{
+						popUpAboutPage.RemoveAllChildren();
+						TextWidget updateStatusMessage = new TextWidget("Up to Date".Localize(), textColor: ActiveTheme.Instance.PrimaryAccentColor, pointSize: linkButtonFactory.fontSize);
+						updateStatusMessage.VAnchor = VAnchor.ParentCenter;
+						popUpAboutPage.AddChild(updateStatusMessage);
+						popUpAboutPage.Visible = true;
+
+						UiThread.RunOnIdle((state) => popUpAboutPage.Visible = false, 3);
+						AlwaysShowUpdateStatus = false;
+					}
+					else
+					{
+						popUpAboutPage.Visible = false;
+					}
+					break;
+
 				case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
-					popUpAboutPage.Visible = false;
+					if (AlwaysShowUpdateStatus)
+					{
+						popUpAboutPage.RemoveAllChildren();
+						TextWidget updateStatusMessage = new TextWidget("Checking For Update".Localize(), textColor: ActiveTheme.Instance.PrimaryAccentColor, pointSize: linkButtonFactory.fontSize);
+						updateStatusMessage.VAnchor = VAnchor.ParentCenter;
+						popUpAboutPage.AddChild(updateStatusMessage);
+						popUpAboutPage.Visible = true;
+					}
+					else
+					{
+						popUpAboutPage.Visible = false;
+					}
 					break;
 
 				default:
 					throw new NotImplementedException();
-			}
-		}
-
-		public delegate void AddRightElementDelegate(GuiWidget iconContainer);
-
-		private static event AddRightElementDelegate privateAddRightElement;
-
-		public static event AddRightElementDelegate AddRightElement
-		{
-			add
-			{
-				privateAddRightElement += value;
-				// and call it right away
-				value(rightElement);
-			}
-
-			remove
-			{
-				privateAddRightElement -= value;
 			}
 		}
 	}
