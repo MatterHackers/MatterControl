@@ -230,6 +230,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return GetActiveValue("has_fan") == "1";
 		}
 
+		public bool CenterOnBed()
+		{
+			return GetActiveValue("center_part_on_bed") == "1";
+		}
+
 		public bool ShowResetConnection()
 		{
 			return GetActiveValue("show_reset_connection") == "1";
