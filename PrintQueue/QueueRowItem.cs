@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			conditionalClickContainer = new ConditionalClickWidget(() => queueDataView.EditMode);
 			conditionalClickContainer.HAnchor = HAnchor.ParentLeftRight;
 			conditionalClickContainer.VAnchor = VAnchor.ParentBottomTop;
-			conditionalClickContainer.Click += onLibraryItemClick;
+			conditionalClickContainer.Click += onQueueItemClick;
 
 			topToBottomLayout.AddChild(topContentsFlowLayout);
 			this.AddChild(topToBottomLayout);
@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			QueueData.Instance.RemoveIndexOnIdle(thisIndexInQueue);
 		}
 
-		private void onLibraryItemClick(object sender, EventArgs e)
+		private void onQueueItemClick(object sender, EventArgs e)
 		{
 			if (queueDataView.EditMode)
 			{

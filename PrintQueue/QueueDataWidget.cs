@@ -60,7 +60,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private Button addToLibraryButton;
 		private Button clearAllButton;
 		private GuiWidget clearAllPlaceholder;
-		private QueueRowItem queueRowItem;
 
 		private Button addToQueueButton;
 		private Button createButton;
@@ -121,6 +120,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 					searchPanel.AddChild(new HorizontalSpacer());
 					searchPanel.AddChild(clearAllButton);
 					searchPanel.AddChild(clearAllPlaceholder);
+				}
+				else
+				{
+					DropDownMenu itemMenu = new DropDownMenu("v");
+					itemMenu.NormalColor = new RGBA_Bytes();
+					itemMenu.DrawDirectionalArrow = false;
+					itemMenu.VAnchor = VAnchor.ParentCenter;
+					itemMenu.Margin = new BorderDouble(30, 0);
+					itemMenu.MenuAsWideAsItems = false;
+					itemMenu.AlignToRightEdge = true;
+
+					searchPanel.AddChild(itemMenu);
+					SetMenuItems(itemMenu);
+					itemMenu.SelectionChanged += new EventHandler(ItemMenu_SelectionChanged);
 				}
 
 				allControls.AddChild(searchPanel);
@@ -241,6 +254,51 @@ namespace MatterHackers.MatterControl.PrintQueue
 			AddHandlers();
 		}
 
+		private TupleList<string, Func<bool>> menuItems;
+		private void ItemMenu_SelectionChanged(object sender, EventArgs e)
+		{
+			string menuSelection = ((DropDownMenu)sender).SelectedValue;
+			foreach (Tuple<string, Func<bool>> item in menuItems)
+			{
+				if (item.Item1 == menuSelection)
+				{
+					if (item.Item2 != null)
+					{
+						item.Item2();
+					}
+				}
+			}
+		}
+
+		private void SetMenuItems(DropDownMenu dropDownMenu)
+		{
+			menuItems = new TupleList<string, Func<bool>>();
+
+			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Export".Localize(), exportButton_Click));
+			menuItems.Add(new Tuple<string, Func<bool>>("Copy".Localize(), copyMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Remove".Localize(), removeMenu_Selected));
+
+			BorderDouble padding = dropDownMenu.MenuItemsPadding;
+			//Add the menu items to the menu itself
+			foreach (Tuple<string, Func<bool>> item in menuItems)
+			{
+				if (item.Item2 == null)
+				{
+					dropDownMenu.MenuItemsPadding = new BorderDouble(5, 0, padding.Right, 3);
+				}
+				else
+				{
+					dropDownMenu.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
+				}
+
+				dropDownMenu.AddItem(item.Item1);
+			}
+
+			dropDownMenu.Padding = padding;
+		}
+
 		public override void OnClosed(EventArgs e)
 		{
 			if (unregisterEvents != null)
@@ -323,6 +381,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.AnchorAll();
 		}
 
+		private bool exportButton_Click()
+		{
+			CallOnSelectedItem(exportButton_Click);
+			return true;
+		}
+
 		private void exportButton_Click(object sender, EventArgs mouseEvent)
 		{
 			//Open export options
@@ -331,6 +395,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 				QueueRowItem libraryItem = queueDataView.SelectedItems[0];
 				OpenExportWindow(libraryItem.PrintItemWrapper);
 			}
+		}
+
+		private bool sendMenu_Selected()
+		{
+			CallOnSelectedItem(sendButton_Click);
+			return true;
 		}
 
 		private void sendButton_Click(object sender, EventArgs mouseEvent)
@@ -353,6 +423,23 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		private bool removeMenu_Selected()
+		{
+			CallOnSelectedItem(removeButton_Click);
+			return true;
+		}
+
+		private void CallOnSelectedItem(Action<object, EventArgs> functionToCall)
+		{
+			QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
+			if (selectedItem != null)
+			{
+				this.queueDataView.SelectedItems.Clear();
+				this.queueDataView.SelectedItems.Add(selectedItem);
+				functionToCall(null, null);
+			}
+		}
+
 		private void removeButton_Click(object sender, EventArgs mouseEvent)
 		{
 			// Sort by index in the QueueData list to prevent positions shifting due to removes
@@ -367,6 +454,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.queueDataView.SelectedItems.Clear();
 		}
 
+		private bool addToLibraryMenu_Selected()
+		{
+			CallOnSelectedItem(addToLibraryButton_Click);
+			return true;
+		}
+
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
 		{
 			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
@@ -374,6 +467,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 				LibraryData.Instance.AddItem(queueItem.PrintItemWrapper);
 			}
 			queueDataView.ClearSelectedItems();
+		}
+
+		bool copyMenu_Selected()
+		{
+			CallOnSelectedItem(copy_Button_Click);
+			return true;
 		}
 
 		private void copy_Button_Click(object sender, EventArgs mouseEvent)

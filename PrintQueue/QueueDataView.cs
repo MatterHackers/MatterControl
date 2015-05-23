@@ -587,7 +587,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (SelectedIndex != -1)
 				{
-					return Children[SelectedIndex];
+					return topToBottomItemList.Children[SelectedIndex].Children[0];
 				}
 
 				return null;
@@ -597,7 +597,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				for (int i = 0; i < Children.Count; i++)
 				{
-					if (Children[SelectedIndex] == value)
+					if (topToBottomItemList.Children[SelectedIndex].Children[0] == value)
 					{
 						SelectedIndex = i;
 					}
