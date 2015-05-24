@@ -521,6 +521,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			queueDataView.EditMode = true;
 			itemOperationButtons.Visible = true;
 			itemMenu.Visible = false;
+			this.queueDataView.SelectedItems.Clear();
 
 			SetEditButtonsStates();
 		}
