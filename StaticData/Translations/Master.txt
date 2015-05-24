@@ -3265,3 +3265,6 @@ Translated:Up to Date
 English:Checking For Update
 Translated:Checking For Update
 
+English:Loading Parts...
+Translated:Loading Parts...
+

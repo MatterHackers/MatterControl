@@ -541,15 +541,39 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		static bool WidgetOrChildIsFirstUnderMouse(GuiWidget startWidget)
+		{
+			if (startWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
+			{
+				return true;
+			}
+
+			foreach (GuiWidget child in startWidget.Children)
+			{
+				if (child != null)
+				{
+					if (WidgetOrChildIsFirstUnderMouse(child))
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
 		private void itemToAdd_MouseEnterBounds(object sender, EventArgs e)
 		{
-			GuiWidget widgetEntered = ((GuiWidget)sender);
-			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
+			if (WidgetOrChildIsFirstUnderMouse(this))
 			{
-				GuiWidget child = topToBottomItemList.Children[index];
-				if (child == widgetEntered)
+				GuiWidget widgetEntered = ((GuiWidget)sender);
+				for (int index = 0; index < topToBottomItemList.Children.Count; index++)
 				{
-					HoverIndex = index;
+					GuiWidget child = topToBottomItemList.Children[index];
+					if (child == widgetEntered)
+					{
+						HoverIndex = index;
+					}
 				}
 			}
 		}

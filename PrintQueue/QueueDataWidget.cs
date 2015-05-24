@@ -47,30 +47,23 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class QueueDataWidget : GuiWidget
 	{
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		public static SendButtonAction sendButtonFunction = null;
+		private static Button shopButton;
+		Button addToQueueButton;
+		private Button createButton;
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
+		private FlowLayoutWidget editOperationButtons;
+		private List<bool> editOperationMultiCapable = new List<bool>();
+		private Button enterEditModeButton;
+		private ExportPrintItemWindow exportingWindow;
+		private bool exportingWindowIsOpen = false;
+		private Button leaveEditModeButton;
+		private TupleList<string, Func<bool>> menuItems;
 		private PluginChooserWindow pluginChooserWindow;
 		private QueueDataView queueDataView;
-		private Button exportItemButton;
-		private Button sendItemButton;
-		private Button copyItemButton;
-		private Button removeItemButton;
-		private Button enterEditModeButton;
-		private Button leaveEditModeButton;
-		private Button addToLibraryButton;
-		private Button clearAllButton;
-		private GuiWidget clearAllPlaceholder;
-
-		private Button addToQueueButton;
-		private Button createButton;
-
-		private static Button shopButton;
-
-		private event EventHandler unregisterEvents;
-
-		public delegate void SendButtonAction(object state, List<PrintItemWrapper> sendItems);
-
-		public static SendButtonAction sendButtonFunction = null;
+		private QueueOptionsMenu queueMenu;
+		private FlowLayoutWidget queueMenuContainer;
+		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		public QueueDataWidget(QueueDataView queueDataView)
 		{
@@ -86,42 +79,35 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			editButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			editButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			editButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			editButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
+			editButtonFactory.disabledFillColor = new RGBA_Bytes();
 			editButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			editButtonFactory.borderWidth = 0;
 			editButtonFactory.FixedWidth = 70 * TextWidget.GlobalPointSizeScaleRatio;
 
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+				CreateEditBarButtons();
+
 				leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
-				clearAllButton = editButtonFactory.Generate("Clear".Localize(), centerText: true);
-				clearAllButton.Visible = false;
+				leaveEditModeButton.Click += leaveEditModeButtonClick;
 				leaveEditModeButton.Visible = false;
 
-				clearAllPlaceholder = new GuiWidget(clearAllButton.Width, clearAllButton.Height);
+				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+				enterEditModeButton.Click += enterEditModeButtonClick;
 
-				FlowLayoutWidget searchPanel = new FlowLayoutWidget();
-				searchPanel.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-				searchPanel.HAnchor = HAnchor.ParentLeftRight;
-				searchPanel.Padding = new BorderDouble(0);
+				FlowLayoutWidget topBarContainer = new FlowLayoutWidget();
+				topBarContainer.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+				topBarContainer.HAnchor = HAnchor.ParentLeftRight;
+				topBarContainer.Padding = new BorderDouble(0);
 
-				searchPanel.AddChild(enterEditModeButton);
-				searchPanel.AddChild(leaveEditModeButton);
-				searchPanel.AddChild(new HorizontalSpacer());
+				topBarContainer.AddChild(enterEditModeButton);
+				topBarContainer.AddChild(leaveEditModeButton);
+				topBarContainer.AddChild(editOperationButtons);
 
-				if (ActiveTheme.Instance.IsTouchScreen)
-				{
-					TextWidget textWidget = new TextWidget("Print Queue".Localize().ToUpper(), pointSize: 14);
-					textWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-					textWidget.VAnchor = VAnchor.ParentCenter;
-					searchPanel.AddChild(textWidget);
+				topBarContainer.AddChild(new HorizontalSpacer());
 
-					searchPanel.AddChild(new HorizontalSpacer());
-					searchPanel.AddChild(clearAllButton);
-					searchPanel.AddChild(clearAllPlaceholder);
-				}
-				else
+				// put in the itme edit menu
 				{
 					DropDownMenu itemMenu = new DropDownMenu("v");
 					itemMenu.NormalColor = new RGBA_Bytes();
@@ -131,12 +117,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 					itemMenu.MenuAsWideAsItems = false;
 					itemMenu.AlignToRightEdge = true;
 
-					searchPanel.AddChild(itemMenu);
+					topBarContainer.AddChild(itemMenu);
 					SetMenuItems(itemMenu);
 					itemMenu.SelectionChanged += new EventHandler(ItemMenu_SelectionChanged);
 				}
 
-				allControls.AddChild(searchPanel);
+				allControls.AddChild(topBarContainer);
 
 				{
 					// Ensure the form opens with no rows selected.
@@ -165,36 +151,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 							OpenPluginChooserWindow();
 						};
 					}
-
-					sendItemButton = textImageButtonFactory.Generate("Send".Localize());
-					sendItemButton.Margin = new BorderDouble(0, 0, 3, 0);
-					sendItemButton.Click += new EventHandler(sendButton_Click);
-					sendItemButton.Visible = false;
-					buttonPanel1.AddChild(sendItemButton);
-
-					addToLibraryButton = textImageButtonFactory.Generate("Add To Library".Localize());
-					addToLibraryButton.Margin = new BorderDouble(3, 0);
-					addToLibraryButton.Click += new EventHandler(addToLibraryButton_Click);
-					addToLibraryButton.Visible = false;
-					buttonPanel1.AddChild(addToLibraryButton);
-
-					exportItemButton = textImageButtonFactory.Generate("Export".Localize());
-					exportItemButton.Margin = new BorderDouble(3, 0);
-					exportItemButton.Click += new EventHandler(exportButton_Click);
-					exportItemButton.Visible = false;
-					buttonPanel1.AddChild(exportItemButton);
-
-					copyItemButton = textImageButtonFactory.Generate("Copy".Localize());
-					copyItemButton.Margin = new BorderDouble(3, 0);
-					copyItemButton.Click += new EventHandler(copy_Button_Click);
-					copyItemButton.Visible = false;
-					buttonPanel1.AddChild(copyItemButton);
-
-					removeItemButton = textImageButtonFactory.Generate("Remove".Localize());
-					removeItemButton.Margin = new BorderDouble(3, 0);
-					removeItemButton.Click += new EventHandler(removeButton_Click);
-					removeItemButton.Visible = false;
-					buttonPanel1.AddChild(removeItemButton);
 
 					bool touchScreenMode = ActiveTheme.Instance.IsTouchScreen;
 
@@ -254,231 +210,58 @@ namespace MatterHackers.MatterControl.PrintQueue
 			AddHandlers();
 		}
 
-		private TupleList<string, Func<bool>> menuItems;
-		private void ItemMenu_SelectionChanged(object sender, EventArgs e)
+		private void CreateEditBarButtons()
 		{
-			string menuSelection = ((DropDownMenu)sender).SelectedValue;
-			foreach (Tuple<string, Func<bool>> item in menuItems)
+			editOperationButtons = new FlowLayoutWidget();
+			double oldWidth = editButtonFactory.FixedWidth;
+			editButtonFactory.FixedWidth = 0;
+
+			Button sendItemButton = editButtonFactory.Generate("Send".Localize());
+			sendItemButton.Margin = new BorderDouble(0, 0, 3, 0);
+			sendItemButton.Click += new EventHandler(sendButton_Click);
+			editOperationMultiCapable.Add(true);
+			editOperationButtons.AddChild(sendItemButton);
+
+			Button addToLibraryButton = editButtonFactory.Generate("Add To Library".Localize());
+			addToLibraryButton.Margin = new BorderDouble(3, 0);
+			addToLibraryButton.Click += new EventHandler(addToLibraryButton_Click);
+			editOperationMultiCapable.Add(true);
+			editOperationButtons.AddChild(addToLibraryButton);
+
+			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
+			exportItemButton.Margin = new BorderDouble(3, 0);
+			exportItemButton.Click += new EventHandler(exportButton_Click);
+			editOperationMultiCapable.Add(false);
+			editOperationButtons.AddChild(exportItemButton);
+
+			Button copyItemButton = editButtonFactory.Generate("Copy".Localize());
+			copyItemButton.Margin = new BorderDouble(3, 0);
+			copyItemButton.Click += new EventHandler(copyButton_Click);
+			editOperationMultiCapable.Add(false);
+			editOperationButtons.AddChild(copyItemButton);
+
+			Button removeItemButton = editButtonFactory.Generate("Remove".Localize());
+			removeItemButton.Margin = new BorderDouble(3, 0);
+			removeItemButton.Click += new EventHandler(removeButton_Click);
+			editOperationMultiCapable.Add(true);
+			editOperationButtons.AddChild(removeItemButton);
+
+			if (ActiveTheme.Instance.IsTouchScreen)
 			{
-				if (item.Item1 == menuSelection)
-				{
-					if (item.Item2 != null)
-					{
-						item.Item2();
-					}
-				}
-			}
-		}
-
-		private void SetMenuItems(DropDownMenu dropDownMenu)
-		{
-			menuItems = new TupleList<string, Func<bool>>();
-
-			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
-			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
-			menuItems.Add(new Tuple<string, Func<bool>>("Export".Localize(), exportButton_Click));
-			menuItems.Add(new Tuple<string, Func<bool>>("Copy".Localize(), copyMenu_Selected));
-			menuItems.Add(new Tuple<string, Func<bool>>("Remove".Localize(), removeMenu_Selected));
-
-			BorderDouble padding = dropDownMenu.MenuItemsPadding;
-			//Add the menu items to the menu itself
-			foreach (Tuple<string, Func<bool>> item in menuItems)
-			{
-				if (item.Item2 == null)
-				{
-					dropDownMenu.MenuItemsPadding = new BorderDouble(5, 0, padding.Right, 3);
-				}
-				else
-				{
-					dropDownMenu.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
-				}
-
-				dropDownMenu.AddItem(item.Item1);
-			}
-
-			dropDownMenu.Padding = padding;
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-			base.OnClosed(e);
-		}
-
-		private QueueOptionsMenu queueMenu;
-		private FlowLayoutWidget queueMenuContainer;
-
-		private void AddHandlers()
-		{
-			queueDataView.SelectedItems.OnAdd += onLibraryItemsSelectChanged;
-			queueDataView.SelectedItems.OnRemove += onLibraryItemsSelectChanged;
-
-			enterEditModeButton.Click += enterEditModeButtonClick;
-			leaveEditModeButton.Click += leaveEditModeButtonClick;
-			clearAllButton.Click += clearAllButtonClick;
-		}
-
-		private void enterEditModeButtonClick(object sender, EventArgs mouseEvent)
-		{
-			enterEditModeButton.Visible = false;
-			leaveEditModeButton.Visible = true;
-			clearAllButton.Visible = true;
-			clearAllPlaceholder.Visible = false;
-			queueDataView.EditMode = true;
-			addToQueueButton.Visible = false;
-			createButton.Visible = false;
-
-			// Avoid setting properties on shopButton when the object is null due to app configuration
-			if (OemSettings.Instance.ShowShopButton
-				&& shopButton != null)
-			{
-				shopButton.Visible = false;
+				Button removeAllItemsButton = editButtonFactory.Generate("Remove All".Localize());
+				removeAllItemsButton.Margin = new BorderDouble(3, 0);
+				removeAllItemsButton.Click += clearAllButtonClick;
+				editOperationMultiCapable.Add(true);
+				editOperationButtons.AddChild(removeAllItemsButton);
 			}
 
-			queueMenuContainer.Visible = false;
-			SetVisibleButtons();
+			editOperationButtons.Visible = false;
+			editButtonFactory.FixedWidth = oldWidth;
 		}
 
-		private void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
-		{
-			leaveEditMode();
-		}
+		public delegate void SendButtonAction(object state, List<PrintItemWrapper> sendItems);
 
-		private void clearAllButtonClick(object sender, EventArgs mouseEvent)
-		{
-			QueueData.Instance.RemoveAll();
-			leaveEditMode();
-		}
-
-		private void leaveEditMode()
-		{
-			enterEditModeButton.Visible = true;
-			leaveEditModeButton.Visible = false;
-			clearAllButton.Visible = false;
-			clearAllPlaceholder.Visible = true;
-			queueDataView.EditMode = false;
-			addToQueueButton.Visible = true;
-			createButton.Visible = true;
-
-			// Avoid setting properties on shopButton when the object is null due to app configuration
-			if (OemSettings.Instance.ShowShopButton
-				&& shopButton != null)
-			{
-				shopButton.Visible = true;
-			}
-
-			queueMenuContainer.Visible = true;
-			SetVisibleButtons();
-		}
-
-		private void SetDisplayAttributes()
-		{
-			this.Padding = new BorderDouble(3);
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.AnchorAll();
-		}
-
-		private bool exportButton_Click()
-		{
-			CallOnSelectedItem(exportButton_Click);
-			return true;
-		}
-
-		private void exportButton_Click(object sender, EventArgs mouseEvent)
-		{
-			//Open export options
-			if (queueDataView.SelectedItems.Count == 1)
-			{
-				QueueRowItem libraryItem = queueDataView.SelectedItems[0];
-				OpenExportWindow(libraryItem.PrintItemWrapper);
-			}
-		}
-
-		private bool sendMenu_Selected()
-		{
-			CallOnSelectedItem(sendButton_Click);
-			return true;
-		}
-
-		private void sendButton_Click(object sender, EventArgs mouseEvent)
-		{
-			//Open export options
-			List<PrintItemWrapper> itemList = this.queueDataView.SelectedItems.Select(item => item.PrintItemWrapper).ToList();
-			if (sendButtonFunction != null)
-			{
-				UiThread.RunOnIdle((state) =>
-				{
-					sendButtonFunction(null, itemList);
-				});
-			}
-			else
-			{
-				UiThread.RunOnIdle((state) =>
-				{
-					StyledMessageBox.ShowMessageBox(null, "Oops! Send is currently disabled.", "Send Print");
-				});
-			}
-		}
-
-		private bool removeMenu_Selected()
-		{
-			CallOnSelectedItem(removeButton_Click);
-			return true;
-		}
-
-		private void CallOnSelectedItem(Action<object, EventArgs> functionToCall)
-		{
-			QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
-			if (selectedItem != null)
-			{
-				this.queueDataView.SelectedItems.Clear();
-				this.queueDataView.SelectedItems.Add(selectedItem);
-				functionToCall(null, null);
-			}
-		}
-
-		private void removeButton_Click(object sender, EventArgs mouseEvent)
-		{
-			// Sort by index in the QueueData list to prevent positions shifting due to removes
-			var sortedByIndexPos = this.queueDataView.SelectedItems.OrderByDescending(rowItem => QueueData.Instance.GetIndex(rowItem.PrintItemWrapper));
-
-			// Once sorted, remove each selected item
-			foreach (var item in sortedByIndexPos)
-			{
-				item.DeletePartFromQueue(null);
-			}
-
-			this.queueDataView.SelectedItems.Clear();
-		}
-
-		private bool addToLibraryMenu_Selected()
-		{
-			CallOnSelectedItem(addToLibraryButton_Click);
-			return true;
-		}
-
-		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
-		{
-			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
-			{
-				LibraryData.Instance.AddItem(queueItem.PrintItemWrapper);
-			}
-			queueDataView.ClearSelectedItems();
-		}
-
-		bool copyMenu_Selected()
-		{
-			CallOnSelectedItem(copy_Button_Click);
-			return true;
-		}
-
-		private void copy_Button_Click(object sender, EventArgs mouseEvent)
-		{
-			CreateCopyInQueue();
-		}
+		private event EventHandler unregisterEvents;
 
 		public void CreateCopyInQueue()
 		{
@@ -548,146 +331,40 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private class PartToAddToQueue
+		public override void OnClosed(EventArgs e)
 		{
-			internal string Name { get; set; }
-
-			internal string FileLocation { get; set; }
-
-			internal int InsertAfterIndex { get; set; }
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
 		}
 
-		private ExportPrintItemWindow exportingWindow;
-		private bool exportingWindowIsOpen = false;
-
-		private void OpenExportWindow(PrintItemWrapper printItem)
+		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			if (exportingWindowIsOpen == false)
+			foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
 			{
-				exportingWindow = new ExportPrintItemWindow(printItem);
-				this.exportingWindowIsOpen = true;
-				exportingWindow.Closed += (source, e) => this.exportingWindowIsOpen = false;
-				exportingWindow.ShowAsSystemWindow();
-			}
-			else
-			{
-				if (exportingWindow != null)
+				string extension = Path.GetExtension(droppedFileName).ToUpper();
+				if (MeshFileIo.ValidFileExtensions().Contains(extension)
+					|| extension == ".GCODE")
 				{
-					exportingWindow.BringToFront();
+					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
 				}
-			}
-		}
-
-		private void OpenPluginChooserWindow()
-		{
-			if (pluginChooserWindow == null)
-			{
-				pluginChooserWindow = new PluginChooserWindow();
-				pluginChooserWindow.Closed += (sender, e) =>
+				else if (extension == ".ZIP")
 				{
-					pluginChooserWindow = null;
-				};
-			}
-			else
-			{
-				pluginChooserWindow.BringToFront();
-			}
-		}
-
-		private void createPartsSheetsButton_Click(object sender, EventArgs mouseEvent)
-		{
-#if !__ANDROID__
-			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
-
-			FileDialog.SaveFileDialog(
-				new SaveFileDialogParams("Save Parts Sheet|*.pdf"),
-				(saveParams) =>
-				{
-					string partFileName = saveParams.FileName;
-
-					if (!partFileName.StartsWith("" + Path.DirectorySeparatorChar))
+					ProjectFileHandler project = new ProjectFileHandler(null);
+					List<PrintItem> partFiles = project.ImportFromProjectArchive(droppedFileName);
+					if (partFiles != null)
 					{
-						partFileName = Path.DirectorySeparatorChar + partFileName;
+						foreach (PrintItem part in partFiles)
+						{
+							QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+						}
 					}
-
-					PartsSheet currentPartsInQueue = new PartsSheet(parts, partFileName);
-					currentPartsInQueue.SaveSheets();
-				});
-#endif
-		}
-
-		private void onLibraryItemsSelectChanged(object sender, EventArgs e)
-		{
-			SetVisibleButtons();
-		}
-
-		private void SetVisibleButtons()
-		{
-			int selectedCount = queueDataView.SelectedItems.Count;
-			if (selectedCount > 0 && queueDataView.EditMode)
-			{
-				sendItemButton.Visible = true;
-				if (selectedCount == 1)
-				{
-					exportItemButton.Visible = true;
-					copyItemButton.Visible = true;
-					removeItemButton.Visible = true;
-					addToLibraryButton.Visible = true;
 				}
-				else
-				{
-					exportItemButton.Visible = false;
-					copyItemButton.Visible = false;
-					removeItemButton.Visible = true;
-					addToLibraryButton.Visible = true;
-				}
-
-				//addToQueueButton.Visible = false;
-				//createButton.Visible = false;
 			}
-			else
-			{
-				//addToQueueButton.Visible = true;
-				//createButton.Visible = true;
-				sendItemButton.Visible = false;
-				exportItemButton.Visible = false;
-				copyItemButton.Visible = false;
-				removeItemButton.Visible = false;
-				addToLibraryButton.Visible = false;
-			}
-		}
 
-		private void exportToSDProcess_UpdateRemainingItems(object sender, EventArgs e)
-		{
-			ExportToFolderProcess exportToSDProcess = (ExportToFolderProcess)sender;
-		}
-
-		private void exportQueueButton_Click(object sender, EventArgs mouseEvent)
-		{
-			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
-			ProjectFileHandler project = new ProjectFileHandler(partList);
-			project.SaveAs();
-		}
-
-		private void importQueueButton_Click(object sender, EventArgs mouseEvent)
-		{
-			ProjectFileHandler project = new ProjectFileHandler(null);
-			throw new NotImplementedException();
-#if false
-			List<PrintItem> partFiles = project.OpenFromDialog();
-			if (partFiles != null)
-			{
-			foreach (PrintItem part in partFiles)
-			{
-			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
-			}
-			}
-#endif
-		}
-
-		private void deleteAllFromQueueButton_Click(object sender, EventArgs mouseEvent)
-		{
-			QueueData.Instance.RemoveAll();
+			base.OnDragDrop(fileDropEventArgs);
 		}
 
 		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
@@ -720,42 +397,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 			base.OnDragOver(fileDropEventArgs);
 		}
 
-		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
+		private void AddHandlers()
 		{
-			foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
-			{
-				string extension = Path.GetExtension(droppedFileName).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(extension)
-					|| extension == ".GCODE")
-				{
-					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
-				}
-				else if (extension == ".ZIP")
-				{
-					ProjectFileHandler project = new ProjectFileHandler(null);
-					List<PrintItem> partFiles = project.ImportFromProjectArchive(droppedFileName);
-					if (partFiles != null)
-					{
-						foreach (PrintItem part in partFiles)
-						{
-							QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
-						}
-					}
-				}
-			}
-
-			base.OnDragDrop(fileDropEventArgs);
-		}
-
-		private void addToQueueButton_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(AddItemsToQueue);
-		}
-
-		private void AddPartCopyToQueue(object state)
-		{
-			var partInfo = state as PartToAddToQueue;
-			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(partInfo.Name, partInfo.FileLocation)), QueueData.ValidateSizeOn32BitSystems.Skip, partInfo.InsertAfterIndex);
+			queueDataView.SelectedItems.OnAdd += onLibraryItemsSelectChanged;
+			queueDataView.SelectedItems.OnRemove += onLibraryItemsSelectChanged;
 		}
 
 		private void AddItemsToQueue(object state)
@@ -792,6 +437,293 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 				});
+		}
+
+		private void AddPartCopyToQueue(object state)
+		{
+			var partInfo = state as PartToAddToQueue;
+			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(partInfo.Name, partInfo.FileLocation)), QueueData.ValidateSizeOn32BitSystems.Skip, partInfo.InsertAfterIndex);
+		}
+
+		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
+		{
+			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
+			{
+				LibraryData.Instance.AddItem(queueItem.PrintItemWrapper);
+			}
+			queueDataView.ClearSelectedItems();
+		}
+
+		private bool addToLibraryMenu_Selected()
+		{
+			CallOnSelectedItem(addToLibraryButton_Click);
+			return true;
+		}
+
+		private void addToQueueButton_Click(object sender, EventArgs mouseEvent)
+		{
+			UiThread.RunOnIdle(AddItemsToQueue);
+		}
+
+		private void CallOnSelectedItem(Action<object, EventArgs> functionToCall)
+		{
+			QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
+			if (selectedItem != null)
+			{
+				this.queueDataView.SelectedItems.Clear();
+				this.queueDataView.SelectedItems.Add(selectedItem);
+				functionToCall(null, null);
+			}
+		}
+
+		private void clearAllButtonClick(object sender, EventArgs mouseEvent)
+		{
+			QueueData.Instance.RemoveAll();
+			leaveEditMode();
+		}
+
+		private void copyButton_Click(object sender, EventArgs mouseEvent)
+		{
+			CreateCopyInQueue();
+		}
+
+		private bool copyMenu_Selected()
+		{
+			CallOnSelectedItem(copyButton_Click);
+			return true;
+		}
+
+		private void deleteAllFromQueueButton_Click(object sender, EventArgs mouseEvent)
+		{
+			QueueData.Instance.RemoveAll();
+		}
+
+		private void enterEditModeButtonClick(object sender, EventArgs mouseEvent)
+		{
+			enterEditModeButton.Visible = false;
+			leaveEditModeButton.Visible = true;
+			queueDataView.EditMode = true;
+			editOperationButtons.Visible = true;
+
+			SetEditButtonsStates();
+		}
+
+		private bool exportButton_Click()
+		{
+			CallOnSelectedItem(exportButton_Click);
+			return true;
+		}
+
+		private void exportButton_Click(object sender, EventArgs mouseEvent)
+		{
+			//Open export options
+			if (queueDataView.SelectedItems.Count == 1)
+			{
+				QueueRowItem libraryItem = queueDataView.SelectedItems[0];
+				OpenExportWindow(libraryItem.PrintItemWrapper);
+			}
+		}
+
+		private void exportQueueButton_Click(object sender, EventArgs mouseEvent)
+		{
+			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
+			ProjectFileHandler project = new ProjectFileHandler(partList);
+			project.SaveAs();
+		}
+
+		private void exportToSDProcess_UpdateRemainingItems(object sender, EventArgs e)
+		{
+			ExportToFolderProcess exportToSDProcess = (ExportToFolderProcess)sender;
+		}
+
+		private void importQueueButton_Click(object sender, EventArgs mouseEvent)
+		{
+			ProjectFileHandler project = new ProjectFileHandler(null);
+			throw new NotImplementedException();
+		}
+
+		private void ItemMenu_SelectionChanged(object sender, EventArgs e)
+		{
+			string menuSelection = ((DropDownMenu)sender).SelectedValue;
+			foreach (Tuple<string, Func<bool>> item in menuItems)
+			{
+				if (item.Item1 == menuSelection)
+				{
+					if (item.Item2 != null)
+					{
+						item.Item2();
+					}
+				}
+			}
+		}
+
+		private void leaveEditMode()
+		{
+			enterEditModeButton.Visible = true;
+			leaveEditModeButton.Visible = false;
+			queueDataView.EditMode = false;
+			editOperationButtons.Visible = false;
+
+			SetEditButtonsStates();
+		}
+
+		private void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
+		{
+			leaveEditMode();
+		}
+
+		private void onLibraryItemsSelectChanged(object sender, EventArgs e)
+		{
+			SetEditButtonsStates();
+		}
+
+		private void OpenExportWindow(PrintItemWrapper printItem)
+		{
+			if (exportingWindowIsOpen == false)
+			{
+				exportingWindow = new ExportPrintItemWindow(printItem);
+				this.exportingWindowIsOpen = true;
+				exportingWindow.Closed += (source, e) => this.exportingWindowIsOpen = false;
+				exportingWindow.ShowAsSystemWindow();
+			}
+			else
+			{
+				if (exportingWindow != null)
+				{
+					exportingWindow.BringToFront();
+				}
+			}
+		}
+
+		private void OpenPluginChooserWindow()
+		{
+			if (pluginChooserWindow == null)
+			{
+				pluginChooserWindow = new PluginChooserWindow();
+				pluginChooserWindow.Closed += (sender, e) =>
+				{
+					pluginChooserWindow = null;
+				};
+			}
+			else
+			{
+				pluginChooserWindow.BringToFront();
+			}
+		}
+
+		private void removeButton_Click(object sender, EventArgs mouseEvent)
+		{
+			// Sort by index in the QueueData list to prevent positions shifting due to removes
+			var sortedByIndexPos = this.queueDataView.SelectedItems.OrderByDescending(rowItem => QueueData.Instance.GetIndex(rowItem.PrintItemWrapper));
+
+			// Once sorted, remove each selected item
+			foreach (var item in sortedByIndexPos)
+			{
+				item.DeletePartFromQueue(null);
+			}
+
+			this.queueDataView.SelectedItems.Clear();
+		}
+
+		private bool removeMenu_Selected()
+		{
+			CallOnSelectedItem(removeButton_Click);
+			return true;
+		}
+
+		private void sendButton_Click(object sender, EventArgs mouseEvent)
+		{
+			//Open export options
+			List<PrintItemWrapper> itemList = this.queueDataView.SelectedItems.Select(item => item.PrintItemWrapper).ToList();
+			if (sendButtonFunction != null)
+			{
+				UiThread.RunOnIdle((state) =>
+				{
+					sendButtonFunction(null, itemList);
+				});
+			}
+			else
+			{
+				UiThread.RunOnIdle((state) =>
+				{
+					StyledMessageBox.ShowMessageBox(null, "Oops! Send is currently disabled.", "Send Print");
+				});
+			}
+		}
+
+		private bool sendMenu_Selected()
+		{
+			CallOnSelectedItem(sendButton_Click);
+			return true;
+		}
+
+		private void SetDisplayAttributes()
+		{
+			this.Padding = new BorderDouble(3);
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.AnchorAll();
+		}
+
+		private void SetMenuItems(DropDownMenu dropDownMenu)
+		{
+			menuItems = new TupleList<string, Func<bool>>();
+
+			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Export".Localize(), exportButton_Click));
+			menuItems.Add(new Tuple<string, Func<bool>>("Copy".Localize(), copyMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Remove".Localize(), removeMenu_Selected));
+
+			BorderDouble padding = dropDownMenu.MenuItemsPadding;
+			//Add the menu items to the menu itself
+			foreach (Tuple<string, Func<bool>> item in menuItems)
+			{
+				if (item.Item2 == null)
+				{
+					dropDownMenu.MenuItemsPadding = new BorderDouble(5, 0, padding.Right, 3);
+				}
+				else
+				{
+					dropDownMenu.MenuItemsPadding = new BorderDouble(10, 5, padding.Right, 5);
+				}
+
+				dropDownMenu.AddItem(item.Item1);
+			}
+
+			dropDownMenu.Padding = padding;
+		}
+
+		private void SetEditButtonsStates()
+		{
+			int selectedCount = queueDataView.SelectedItems.Count;
+			bool enabled = (selectedCount > 0 && queueDataView.EditMode);
+
+			int i=0;
+			foreach (var child in editOperationButtons.Children)
+			{
+				var button = child as Button;
+				if (button != null)
+				{
+					if (selectedCount > 1 && !editOperationMultiCapable[i])
+					{
+						button.Enabled = false;
+					}
+					else
+					{
+						button.Enabled = enabled;
+					}
+				}
+				i++;
+			}
+		}
+
+		private class PartToAddToQueue
+		{
+			internal string FileLocation { get; set; }
+
+			internal int InsertAfterIndex { get; set; }
+
+			internal string Name { get; set; }
 		}
 	}
 }
