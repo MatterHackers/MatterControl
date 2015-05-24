@@ -52,7 +52,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		Button addToQueueButton;
 		private Button createButton;
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
-		private FlowLayoutWidget editOperationButtons;
+		private FlowLayoutWidget itemOperationButtons;
+		private DropDownMenu itemMenu;
 		private List<bool> editOperationMultiCapable = new List<bool>();
 		private Button enterEditModeButton;
 		private ExportPrintItemWindow exportingWindow;
@@ -83,7 +84,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			editButtonFactory.disabledFillColor = new RGBA_Bytes();
 			editButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			editButtonFactory.borderWidth = 0;
-			editButtonFactory.FixedWidth = 70 * TextWidget.GlobalPointSizeScaleRatio;
+			editButtonFactory.Margin = new BorderDouble(10, 0);
 
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
@@ -91,10 +92,24 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 				leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
 				leaveEditModeButton.Click += leaveEditModeButtonClick;
-				leaveEditModeButton.Visible = false;
 
 				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
-				enterEditModeButton.Click += enterEditModeButtonClick;
+				enterEditModeButton.Click += enterEditModeButtonClick;				
+
+				if (leaveEditModeButton.Width < enterEditModeButton.Width)
+				{
+					editButtonFactory.FixedWidth = enterEditModeButton.Width;
+					leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
+					leaveEditModeButton.Click += leaveEditModeButtonClick;
+				}
+				else
+				{
+					editButtonFactory.FixedWidth = leaveEditModeButton.Width;
+					enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+					enterEditModeButton.Click += enterEditModeButtonClick;
+				}
+
+				leaveEditModeButton.Visible = false;
 
 				FlowLayoutWidget topBarContainer = new FlowLayoutWidget();
 				topBarContainer.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
@@ -103,18 +118,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 				topBarContainer.AddChild(enterEditModeButton);
 				topBarContainer.AddChild(leaveEditModeButton);
-				topBarContainer.AddChild(editOperationButtons);
+				topBarContainer.AddChild(itemOperationButtons);
 
 				topBarContainer.AddChild(new HorizontalSpacer());
 
 				// put in the itme edit menu
 				{
-					DropDownMenu itemMenu = new DropDownMenu("v");
+					itemMenu = new DropDownMenu("Item".Localize() + " ");
 					itemMenu.NormalColor = new RGBA_Bytes();
-					itemMenu.DrawDirectionalArrow = false;
-					itemMenu.VAnchor = VAnchor.ParentCenter;
-					itemMenu.Margin = new BorderDouble(30, 0);
+					itemMenu.BorderWidth = 1;
+					itemMenu.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
 					itemMenu.MenuAsWideAsItems = false;
+					itemMenu.VAnchor = VAnchor.ParentBottomTop;
+					itemMenu.Margin = new BorderDouble(0, 3);
 					itemMenu.AlignToRightEdge = true;
 
 					topBarContainer.AddChild(itemMenu);
@@ -212,7 +228,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void CreateEditBarButtons()
 		{
-			editOperationButtons = new FlowLayoutWidget();
+			itemOperationButtons = new FlowLayoutWidget();
 			double oldWidth = editButtonFactory.FixedWidth;
 			editButtonFactory.FixedWidth = 0;
 
@@ -220,31 +236,31 @@ namespace MatterHackers.MatterControl.PrintQueue
 			sendItemButton.Margin = new BorderDouble(0, 0, 3, 0);
 			sendItemButton.Click += new EventHandler(sendButton_Click);
 			editOperationMultiCapable.Add(true);
-			editOperationButtons.AddChild(sendItemButton);
+			itemOperationButtons.AddChild(sendItemButton);
 
 			Button addToLibraryButton = editButtonFactory.Generate("Add To Library".Localize());
 			addToLibraryButton.Margin = new BorderDouble(3, 0);
 			addToLibraryButton.Click += new EventHandler(addToLibraryButton_Click);
 			editOperationMultiCapable.Add(true);
-			editOperationButtons.AddChild(addToLibraryButton);
+			itemOperationButtons.AddChild(addToLibraryButton);
 
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += new EventHandler(exportButton_Click);
 			editOperationMultiCapable.Add(false);
-			editOperationButtons.AddChild(exportItemButton);
+			itemOperationButtons.AddChild(exportItemButton);
 
 			Button copyItemButton = editButtonFactory.Generate("Copy".Localize());
 			copyItemButton.Margin = new BorderDouble(3, 0);
 			copyItemButton.Click += new EventHandler(copyButton_Click);
 			editOperationMultiCapable.Add(false);
-			editOperationButtons.AddChild(copyItemButton);
+			itemOperationButtons.AddChild(copyItemButton);
 
 			Button removeItemButton = editButtonFactory.Generate("Remove".Localize());
 			removeItemButton.Margin = new BorderDouble(3, 0);
 			removeItemButton.Click += new EventHandler(removeButton_Click);
 			editOperationMultiCapable.Add(true);
-			editOperationButtons.AddChild(removeItemButton);
+			itemOperationButtons.AddChild(removeItemButton);
 
 			if (ActiveTheme.Instance.IsTouchScreen)
 			{
@@ -252,10 +268,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 				removeAllItemsButton.Margin = new BorderDouble(3, 0);
 				removeAllItemsButton.Click += clearAllButtonClick;
 				editOperationMultiCapable.Add(true);
-				editOperationButtons.AddChild(removeAllItemsButton);
+				itemOperationButtons.AddChild(removeAllItemsButton);
 			}
 
-			editOperationButtons.Visible = false;
+			itemOperationButtons.Visible = false;
 			editButtonFactory.FixedWidth = oldWidth;
 		}
 
@@ -503,7 +519,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
 			queueDataView.EditMode = true;
-			editOperationButtons.Visible = true;
+			itemOperationButtons.Visible = true;
+			itemMenu.Visible = false;
 
 			SetEditButtonsStates();
 		}
@@ -562,7 +579,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
 			queueDataView.EditMode = false;
-			editOperationButtons.Visible = false;
+			itemOperationButtons.Visible = false;
+			itemMenu.Visible = true;
 
 			SetEditButtonsStates();
 		}
@@ -699,7 +717,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			bool enabled = (selectedCount > 0 && queueDataView.EditMode);
 
 			int i=0;
-			foreach (var child in editOperationButtons.Children)
+			foreach (var child in itemOperationButtons.Children)
 			{
 				var button = child as Button;
 				if (button != null)
