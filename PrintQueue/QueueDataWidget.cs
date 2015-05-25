@@ -88,14 +88,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				CreateEditBarButtons();
+				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+				enterEditModeButton.Click += enterEditModeButtonClick;
 
 				leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
 				leaveEditModeButton.Click += leaveEditModeButtonClick;
 
-				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
-				enterEditModeButton.Click += enterEditModeButtonClick;				
-
+				// make sure the buttons are the same size even when localized
 				if (leaveEditModeButton.Width < enterEditModeButton.Width)
 				{
 					editButtonFactory.FixedWidth = enterEditModeButton.Width;
@@ -109,6 +108,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
+				CreateEditBarButtons();
 				leaveEditModeButton.Visible = false;
 
 				FlowLayoutWidget topBarContainer = new FlowLayoutWidget();
