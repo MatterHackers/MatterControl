@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				Button removeAllItemsButton = editButtonFactory.Generate("Remove All".Localize());
 				removeAllItemsButton.Margin = new BorderDouble(3, 0);
-				removeAllItemsButton.Click += clearAllButtonClick;
+				removeAllItemsButton.Click += clearAllButton_Click;
 				editOperationMultiCapable.Add(true);
 				itemOperationButtons.AddChild(removeAllItemsButton);
 			}
@@ -492,7 +492,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void clearAllButtonClick(object sender, EventArgs mouseEvent)
+		private bool clearAllMenu_Select()
+		{
+			clearAllButton_Click(null, null);
+			return true;
+		}
+
+		private void clearAllButton_Click(object sender, EventArgs mouseEvent)
 		{
 			QueueData.Instance.RemoveAll();
 			leaveEditMode();
@@ -690,6 +696,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			menuItems.Add(new Tuple<string, Func<bool>>("Export".Localize(), exportButton_Click));
 			menuItems.Add(new Tuple<string, Func<bool>>("Copy".Localize(), copyMenu_Selected));
 			menuItems.Add(new Tuple<string, Func<bool>>("Remove".Localize(), removeMenu_Selected));
+
+			if (ActiveTheme.Instance.IsTouchScreen)
+			{
+				menuItems.Add(new Tuple<string, Func<bool>>("Remove All".Localize(), clearAllMenu_Select));
+			}
+
 			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
 			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
 

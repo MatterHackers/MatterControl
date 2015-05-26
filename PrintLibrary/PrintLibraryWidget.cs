@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				buttonPanel.Padding = new BorderDouble(0, 3);
 				buttonPanel.MinimumSize = new Vector2(0, 46);
 				{
-					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
+					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
 					buttonPanel.AddChild(addToLibraryButton);
 					addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
 					addToLibraryButton.Click += new EventHandler(importToLibraryloadFile_Click);
