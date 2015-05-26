@@ -232,18 +232,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			double oldWidth = editButtonFactory.FixedWidth;
 			editButtonFactory.FixedWidth = 0;
 
-			Button sendItemButton = editButtonFactory.Generate("Send".Localize());
-			sendItemButton.Margin = new BorderDouble(0, 0, 3, 0);
-			sendItemButton.Click += new EventHandler(sendButton_Click);
-			editOperationMultiCapable.Add(true);
-			itemOperationButtons.AddChild(sendItemButton);
-
-			Button addToLibraryButton = editButtonFactory.Generate("Add To Library".Localize());
-			addToLibraryButton.Margin = new BorderDouble(3, 0);
-			addToLibraryButton.Click += new EventHandler(addToLibraryButton_Click);
-			editOperationMultiCapable.Add(true);
-			itemOperationButtons.AddChild(addToLibraryButton);
-
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += new EventHandler(exportButton_Click);
@@ -261,6 +249,18 @@ namespace MatterHackers.MatterControl.PrintQueue
 			removeItemButton.Click += new EventHandler(removeButton_Click);
 			editOperationMultiCapable.Add(true);
 			itemOperationButtons.AddChild(removeItemButton);
+
+			Button sendItemButton = editButtonFactory.Generate("Send".Localize());
+			sendItemButton.Margin = new BorderDouble(0, 0, 3, 0);
+			sendItemButton.Click += new EventHandler(sendButton_Click);
+			editOperationMultiCapable.Add(true);
+			itemOperationButtons.AddChild(sendItemButton);
+
+			Button addToLibraryButton = editButtonFactory.Generate("Add To Library".Localize());
+			addToLibraryButton.Margin = new BorderDouble(3, 0);
+			addToLibraryButton.Click += new EventHandler(addToLibraryButton_Click);
+			editOperationMultiCapable.Add(true);
+			itemOperationButtons.AddChild(addToLibraryButton);
 
 			if (ActiveTheme.Instance.IsTouchScreen)
 			{
@@ -687,11 +687,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			menuItems = new TupleList<string, Func<bool>>();
 
-			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
-			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
 			menuItems.Add(new Tuple<string, Func<bool>>("Export".Localize(), exportButton_Click));
 			menuItems.Add(new Tuple<string, Func<bool>>("Copy".Localize(), copyMenu_Selected));
 			menuItems.Add(new Tuple<string, Func<bool>>("Remove".Localize(), removeMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
 
 			BorderDouble padding = dropDownMenu.MenuItemsPadding;
 			//Add the menu items to the menu itself

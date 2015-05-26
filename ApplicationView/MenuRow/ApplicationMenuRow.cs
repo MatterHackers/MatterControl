@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
 					if (AlwaysShowUpdateStatus)
 					{
 						popUpAboutPage.RemoveAllChildren();
-						TextWidget updateStatusMessage = new TextWidget("Checking For Update".Localize(), textColor: linkButtonFactory.textColor, pointSize: linkButtonFactory.fontSize);
+						TextWidget updateStatusMessage = new TextWidget("Checking For Update...".Localize(), textColor: linkButtonFactory.textColor, pointSize: linkButtonFactory.fontSize);
 						updateStatusMessage.VAnchor = VAnchor.ParentCenter;
 						popUpAboutPage.AddChild(updateStatusMessage);
 						popUpAboutPage.Visible = true;

@@ -97,8 +97,9 @@ namespace MatterHackers.MatterControl
 				// this means we are in compact view and so we will make the tabs text a bit smaller
 				textSize = 14;
 				TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
+				advancedControlsButtonFactory.fontSize = 14;
 				advancedControlsButtonFactory.invertImageLocation = false;
-				advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Print\nQueue"), "icon_arrow_left_32x32.png");
+				advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Queue"), "icon_arrow_left_32x32.png");
 				advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
 				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
 				advancedControlsLinkButton.Cursor = Cursors.Hand;
@@ -123,7 +124,7 @@ namespace MatterHackers.MatterControl
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
 			//Add the tab contents for 'Advanced Controls'
-			string sliceSettingsLabel = LocalizedString.Get("Printing").ToUpper();
+			string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
 			sliceSettingsWidget = new SliceSettingsWidget();
 
@@ -140,7 +141,7 @@ namespace MatterHackers.MatterControl
 			MenuOptionSettings.controlsPopOut = controlsPopOut;
 #endif
 
-			string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
+			string configurationLabel = LocalizedString.Get("Options").ToUpper();
 			ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();
 			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", textSize,
 						ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));

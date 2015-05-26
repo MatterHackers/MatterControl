@@ -1,6 +1,7 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.CustomWidgets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,9 +61,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				colorWidget.Height = 20;
 				colorWidget.BackgroundColor = color;
 				colorWidget.Margin = new BorderDouble(2);
-				float feedRateToMMPerSecond = speed / 60;
+				double feedRateToMMPerSecond = speed / 60;
 
-				ColorToSpeedWidget colorToSpeedWidget = new ColorToSpeedWidget(colorWidget, feedRateToMMPerSecond.ToString());
+				ColorToSpeedWidget colorToSpeedWidget = new ColorToSpeedWidget(colorWidget, feedRateToMMPerSecond);
 				this.AddChild(colorToSpeedWidget);
 			}
 
@@ -75,24 +76,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public class ColorToSpeedWidget : FlowLayoutWidget
 		{
 			public string layerSpeed;
-			public GuiWidget speedColor;
-			public ColorToSpeedWidget(GuiWidget colorWidget, String speed)
+			public ColorToSpeedWidget(GuiWidget colorWidget, double speed)
 				: base(FlowDirection.LeftToRight)
 			{
 				Margin = new BorderDouble(2);
 
-				speedColor = colorWidget;
-				layerSpeed = speed + " mm\\s";
+				layerSpeed = "{0} mm\\s".FormatWith(speed);
 
 				colorWidget.Margin = new BorderDouble(left: 2);
 
 				TextWidget speedTextBox = new TextWidget(layerSpeed, pointSize: 12);
 				speedTextBox.TextColor = RGBA_Bytes.White;
 				speedTextBox.VAnchor = VAnchor.ParentCenter;
-				speedTextBox.Margin = new BorderDouble(left: 2);
+				speedTextBox.Margin = new BorderDouble(5, 0);
 
 				this.AddChild(colorWidget);
+				this.AddChild(new HorizontalSpacer());
 				this.AddChild(speedTextBox);
+
+				this.HAnchor |= HAnchor.ParentLeftRight;
 			}
 		}
 	}

@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new TupleList<string, Func<bool>>
             {
-                {LocalizedString.Get("Printing"), openPrintingPannel_Click},
+                {LocalizedString.Get("Settings"), openPrintingPannel_Click},
                 {LocalizedString.Get("Controls"), openControlsPannel_Click},
 				{LocalizedString.Get("Show Terminal"), openTermanialPannel_Click},
             };
