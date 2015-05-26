@@ -194,11 +194,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 
-					Button deleteAllFromQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Remove All"));
-					deleteAllFromQueueButton.Margin = new BorderDouble(3, 0);
-					deleteAllFromQueueButton.Click += new EventHandler(deleteAllFromQueueButton_Click);
-					//buttonPanel1.AddChild(deleteAllFromQueueButton);
-
 					buttonPanel1.AddChild(new HorizontalSpacer());
 
 					queueMenuContainer = new FlowLayoutWidget();
@@ -250,6 +245,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 			editOperationMultiCapable.Add(true);
 			itemOperationButtons.AddChild(removeItemButton);
 
+			if (ActiveTheme.Instance.IsTouchScreen)
+			{
+				Button removeAllItemsButton = editButtonFactory.Generate("Remove All".Localize());
+				removeAllItemsButton.Margin = new BorderDouble(3, 0);
+				removeAllItemsButton.Click += clearAllButton_Click;
+				editOperationMultiCapable.Add(true);
+				itemOperationButtons.AddChild(removeAllItemsButton);
+			}
+
 			Button sendItemButton = editButtonFactory.Generate("Send".Localize());
 			sendItemButton.Margin = new BorderDouble(0, 0, 3, 0);
 			sendItemButton.Click += new EventHandler(sendButton_Click);
@@ -261,15 +265,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			addToLibraryButton.Click += new EventHandler(addToLibraryButton_Click);
 			editOperationMultiCapable.Add(true);
 			itemOperationButtons.AddChild(addToLibraryButton);
-
-			if (ActiveTheme.Instance.IsTouchScreen)
-			{
-				Button removeAllItemsButton = editButtonFactory.Generate("Remove All".Localize());
-				removeAllItemsButton.Margin = new BorderDouble(3, 0);
-				removeAllItemsButton.Click += clearAllButton_Click;
-				editOperationMultiCapable.Add(true);
-				itemOperationButtons.AddChild(removeAllItemsButton);
-			}
 
 			itemOperationButtons.Visible = false;
 			editButtonFactory.FixedWidth = oldWidth;
