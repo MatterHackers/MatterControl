@@ -27,14 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Reflection;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
+using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -57,11 +53,11 @@ namespace MatterHackers.MatterControl.UI
 			FlowLayoutWidget topToBottomContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor =  VAnchor.ParentBottomTop,
+				VAnchor = VAnchor.ParentBottomTop,
 			};
 			outerContainer.AddChild(topToBottomContainer);
 
-			CheckBox toggleBox = CreateCheckboxFromToggleSwitchView();
+			CheckBox toggleBox = ImageButtonFactory.CreateToggleSwitch(true);
 			toggleBox.HAnchor = HAnchor.ParentLeftRight;
 			toggleBox.VAnchor = VAnchor.ParentBottomTop;
 			toggleBox.Margin = new BorderDouble(marginSize);
@@ -85,20 +81,6 @@ namespace MatterHackers.MatterControl.UI
 			Assert.IsTrue(bounds.Top == dimensions - marginSize, "Top margin is incorrect");
 			Assert.IsTrue(bounds.Bottom == marginSize, "Bottom margin is incorrect");
 		}
-
-		private static CheckBox CreateCheckboxFromToggleSwitchView()
-		{
-			ToggleSwitchView toggleView = new ToggleSwitchView("On", "Off",
-							60, 24,
-							ActiveTheme.Instance.PrimaryBackgroundColor,
-							new RGBA_Bytes(220, 220, 220),
-							ActiveTheme.Instance.PrimaryAccentColor,
-							ActiveTheme.Instance.PrimaryTextColor);
-			CheckBox toggleBox = new CheckBox(toggleView);
-			toggleBox.Checked = true;
-			return toggleBox;
-		}
-
 
 		private void OutputImage(ImageBuffer imageToOutput, string fileName)
 		{
