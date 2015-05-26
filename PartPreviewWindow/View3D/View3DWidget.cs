@@ -920,13 +920,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PlatingMeshGroupData meshData = new PlatingMeshGroupData();
 				meshData.currentScale = MeshGroupExtraData[meshGroupIndex].currentScale;
 				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
-				for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
+
+				if (traceInfoOpperation == TraceInfoOpperation.DO_COPY)
 				{
-					if (traceInfoOpperation == TraceInfoOpperation.DO_COPY)
-					{
-						meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
-					}
+					meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
 				}
+				
 				asynchPlatingDatas.Add(meshData);
 			}
 			UiThread.RunOnIdle((state) =>
