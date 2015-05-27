@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (sliceOptionsMenuDropList == null)
 			{
-				sliceOptionsMenuDropList = new DropDownMenu(LocalizedString.Get("Options  "));
+				sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ");
 				sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
 				sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
 				sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);

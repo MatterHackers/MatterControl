@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 				// put in the itme edit menu
 				{
-					itemMenu = new DropDownMenu("Item".Localize() + " ");
+					itemMenu = new DropDownMenu("Item".Localize() + "... ");
 					itemMenu.NormalColor = new RGBA_Bytes();
 					itemMenu.BorderWidth = 1;
 					itemMenu.BorderColor = ActiveTheme.Instance.SecondaryTextColor;
