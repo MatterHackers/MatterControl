@@ -70,6 +70,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 						this.ClearSelectedItems();
 						this.EnsureSelection();
 					}
+					else
+					{
+						foreach (var item in SelectedItems)
+						{
+							item.isSelectedItem = true;
+							item.selectionCheckBox.Checked = true;
+						}
+					}
 				}
 			}
 		}
