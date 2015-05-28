@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Margin = new BorderDouble(2);
 
-				layerSpeed = "{0} mm\\s".FormatWith(speed);
+				layerSpeed = "{0} mm/s".FormatWith(speed);
 
 				colorWidget.Margin = new BorderDouble(left: 2);
 
