@@ -31,6 +31,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			speeds.Select(speed => extrusionColors.GetColorForSpeed(speed)).ToArray();
 
+			if(speeds.Count <= 0)
+			{
+				// There are no paths so don't generate the rest of the widget.
+				return;
+			}
+
 			float min = speeds.Min();
 			float max = speeds.Max();
 			int maxItems = Math.Min(7, speeds.Count());
