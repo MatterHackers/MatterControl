@@ -71,7 +71,9 @@ namespace MatterHackers.MatterControl
 
 		private string unableToExitTitle = "Unable to Exit".Localize();
 
+#if !DEBUG
 		private static RaygunClient _raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==");
+#endif
 
 		static MatterControlApplication()
 		{
@@ -217,29 +219,24 @@ namespace MatterHackers.MatterControl
 						}
 						break;
 
-                    case "SLICE_AND_EXPORT_GCODE":
-                        if(currentCommandIndex + 1 <= commandLineArgs.Length)
-                        {
+					case "SLICE_AND_EXPORT_GCODE":
+						if (currentCommandIndex + 1 <= commandLineArgs.Length)
+						{
+							currentCommandIndex++;
+							string fullPath = commandLineArgs[currentCommandIndex];
+							QueueData.Instance.RemoveAll();
+							if (!string.IsNullOrEmpty(fullPath))
+							{
+								string fileName = Path.GetFileNameWithoutExtension(fullPath);
+								PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(fileName, fullPath));
+								QueueData.Instance.AddItem(printItemWrapper);
 
-                            currentCommandIndex++;
-                            string fullPath = commandLineArgs[currentCommandIndex];
-                            QueueData.Instance.RemoveAll();
-                            if(!string.IsNullOrEmpty(fullPath))
-                            {
-
-                                string fileName = Path.GetFileNameWithoutExtension(fullPath);
-                                PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(fileName,fullPath));
-                                QueueData.Instance.AddItem(printItemWrapper);
-
-                                SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                                ExportPrintItemWindow exportForTest = new ExportPrintItemWindow(printItemWrapper);
-                                exportForTest.ExportGcodeCommandLineUtility(fileName);
-                            
-                            }
-                       
-                        }
-                        break;
-
+								SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+								ExportPrintItemWindow exportForTest = new ExportPrintItemWindow(printItemWrapper);
+								exportForTest.ExportGcodeCommandLineUtility(fileName);
+							}
+						}
+						break;
 				}
 
 				if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
@@ -322,7 +319,14 @@ namespace MatterHackers.MatterControl
 
 		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)
 		{
-			_raygunClient.Send(e);
+			// Conditionally spin up error reporting if not on the Stable channel
+			string channel = UserSettings.Instance.get("UpdateFeedType");
+			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
+			{
+#if !DEBUG
+				_raygunClient.Send(e);
+#endif
+			}
 		}
 
 		private event EventHandler unregisterEvent;
@@ -385,14 +389,17 @@ namespace MatterHackers.MatterControl
 
 		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
 		{
-		  _raygunClient.Send(e.Exception);
+#if !DEBUG
+			_raygunClient.Send(e.Exception);
+#endif
 		}
 
 		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-		  _raygunClient.Send(e.ExceptionObject as Exception);
+#if !DEBUG
+			_raygunClient.Send(e.ExceptionObject as Exception);
+#endif
 		}
-
 
 		public static void WriteTestGCodeFile()
 		{
@@ -682,9 +689,5 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
 			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
 		}
-
-
-
 	}
-
 }
