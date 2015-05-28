@@ -3274,3 +3274,9 @@ Translated:More
 English:Share
 Translated:Share
 
+English:WARNING: Write Failed!
+Translated:WARNING: Write Failed!
+
+English:Can't access '{0}'.
+Translated:Can't access '{0}'.
+

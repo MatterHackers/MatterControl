@@ -320,9 +320,9 @@ namespace MatterHackers.MatterControl
 
 		public enum ReportSeverity2 { Warning, Error }
 
-		public void ReportException(Exception e, string key, string value, ReportSeverity2 warningLevel = ReportSeverity2.Warning)
+		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)
 		{
-			// do nothing
+			_raygunClient.Send(e);
 		}
 
 		private event EventHandler unregisterEvent;
