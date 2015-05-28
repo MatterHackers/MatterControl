@@ -3268,3 +3268,6 @@ Translated:Checking For Update
 English:Loading Parts...
 Translated:Loading Parts...
 
+English:More
+Translated:More
+
