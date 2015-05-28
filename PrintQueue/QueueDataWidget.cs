@@ -671,7 +671,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				menuItems.Add(new Tuple<string, Func<bool>>("Remove All".Localize(), clearAllMenu_Select));
 			}
 
-			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Share".Localize(), sendMenu_Selected));
 			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
 
 			BorderDouble padding = dropDownMenu.MenuItemsPadding;

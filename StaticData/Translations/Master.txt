@@ -3271,3 +3271,6 @@ Translated:Loading Parts...
 English:More
 Translated:More
 
+English:Share
+Translated:Share
+
