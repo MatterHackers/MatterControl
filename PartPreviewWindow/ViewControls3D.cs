@@ -37,15 +37,25 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+
+	public enum ViewControls3DButtons
+	{
+		Rotate,
+		Scale,
+		Translate,
+		PartSelect
+	}
+
 	public class ViewControls3D : FlowLayoutWidget
 	{
 		private GuiWidget partSelectSeparator;
 		private MeshViewerWidget meshViewerWidget;
 
-		public RadioButton translateButton;
-		public RadioButton rotateButton;
-		public RadioButton scaleButton;
-		public RadioButton partSelectButton;
+		private RadioButton translateButton;
+		private RadioButton rotateButton;
+		private RadioButton scaleButton;
+		private RadioButton partSelectButton;
+
 		private int buttonHeight;
 
 		public bool PartSelectVisible
@@ -55,6 +65,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				partSelectSeparator.Visible = value;
 				partSelectButton.Visible = value;
+			}
+		}
+
+		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
+
+		public ViewControls3DButtons ActiveButton
+		{
+			get
+			{
+				return activeTransformState;
+			}
+			set
+			{
+				this.activeTransformState = value;
+
+				switch(value)
+				{
+					case ViewControls3DButtons.Rotate:
+						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+						rotateButton.Checked = true;
+						break;
+
+					case ViewControls3DButtons.Translate:
+						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
+						translateButton.Checked = true;
+						break;
+
+					case ViewControls3DButtons.Scale:
+						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
+						scaleButton.Checked = true;
+						break;
+
+					case ViewControls3DButtons.PartSelect:
+						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
+						partSelectButton.Checked = true;
+						break;
+				}
 			}
 		}
 
@@ -90,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(rotateButton);
 			rotateButton.Click += (sender, e) =>
 			{
-				meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+				this.ActiveButton = ViewControls3DButtons.Rotate;
 			};
 
 			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
@@ -100,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(translateButton);
 			translateButton.Click += (sender, e) =>
 			{
-				meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
+				this.ActiveButton = ViewControls3DButtons.Translate;
 			};
 
 			string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
@@ -110,7 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(scaleButton);
 			scaleButton.Click += (sender, e) =>
 			{
-				meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
+				this.ActiveButton = ViewControls3DButtons.Scale;
 			};
 
 			partSelectSeparator = new GuiWidget(2, 32);
@@ -125,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(partSelectButton);
 			partSelectButton.Click += (sender, e) =>
 			{
-				meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
+				this.ActiveButton = ViewControls3DButtons.PartSelect;
 			};
 
 			Margin = new BorderDouble(5);

@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 				{
-					viewControls3D.partSelectButton.ClickButton(null);
+					viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 					int meshHitIndex;
 					if (FindMeshGroupHitPosition(mouseEvent.Position, out meshHitIndex))
 					{
@@ -522,7 +522,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			UnlockEditControls();
 			saveButton.Visible = true;
 			saveAndExitButton.Visible = true;
-			viewControls3D.partSelectButton.ClickButton(null);
+			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			PullMeshDataFromAsynchLists();
 		}
@@ -559,7 +559,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			viewControls3D.PartSelectVisible = false;
 			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
-				viewControls3D.rotateButton.ClickButton(null);
+				viewControls3D.ActiveButton = ViewControls3DButtons.Rotate; 
 			}
 		}
 
@@ -852,7 +852,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			if (MeshGroups.Count > 0)
 			{
-				partSelectButtonWasClicked = viewControls3D.partSelectButton.Checked;
+				partSelectButtonWasClicked = viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect;
+				
 
 				processingProgressControl.ProcessType = "Saving Parts:".Localize();
 				processingProgressControl.Visible = true;

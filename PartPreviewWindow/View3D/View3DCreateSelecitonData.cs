@@ -80,6 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				enterEditButtonsContainer.Visible = false;
 			}
 
+			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 			if (MeshGroups.Count > 0)
 			{
 				processingProgressControl.Visible = true;
@@ -98,7 +99,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SelectedMeshGroupIndex = 0;
 				buttonRightPanel.Visible = true;
 				UnlockEditControls();
-				viewControls3D.partSelectButton.ClickButton(null);
+				viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 				Invalidate();
 

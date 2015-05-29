@@ -263,7 +263,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 			viewControls3D.PartSelectVisible = false;
 			AddChild(viewControls3D);
-			viewControls3D.rotateButton.ClickButton(null);
+
+			viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
 			viewControls3D.Visible = false;
 
 			viewControlsToggle = new ViewControlsToggle();
