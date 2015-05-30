@@ -235,22 +235,23 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void MoveToNextWidget(object state)
 		{
-			// you can call this like this
-			//             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));
-			if (this.ActivePrinter.BaudRate == null)
+			if (Parent != null) // if it hasn't been closed
 			{
-				Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
-			else if (this.currentPrinterSetupStatus.DriversToInstall.Count > 0)
-			{
-				Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
-			}
-			else
-			{
-				Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
-				Parent.RemoveChild(this);
+				if (this.ActivePrinter.BaudRate == null)
+				{
+					Parent.AddChild(new SetupStepBaudRate((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
+					Parent.RemoveChild(this);
+				}
+				else if (this.currentPrinterSetupStatus.DriversToInstall.Count > 0)
+				{
+					Parent.AddChild(new SetupStepInstallDriver((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
+					Parent.RemoveChild(this);
+				}
+				else
+				{
+					Parent.AddChild(new SetupStepComPortOne((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
+					Parent.RemoveChild(this);
+				}
 			}
 		}
 
