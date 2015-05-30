@@ -108,8 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SelectedMeshGroupIndex = 0;
 			buttonRightPanel.Visible = true;
 			UnlockEditControls();
-
-			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+			viewControls3D.partSelectButton.ClickButton(null);
 
 			Invalidate();
 

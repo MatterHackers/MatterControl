@@ -223,58 +223,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return false;
 		}
 
-		ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
-		ViewControls3DButtons? activeButtonBeforeKeyOverride = null;
-
-		public override void OnKeyDown(KeyEventArgs keyEvent)
-		{
-
-			if (activeButtonBeforeKeyOverride == null)
-			{
-				activeButtonBeforeKeyOverride = viewControls3D.ActiveButton;
-
-				if (keyEvent.Alt)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-				}
-				else if (keyEvent.Shift)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
-				}
-				else if (keyEvent.Control)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
-				}
-			}
-
-			base.OnKeyDown(keyEvent);
-		}
-
-		public override void OnKeyUp(KeyEventArgs keyEvent)
-		{
-			if(activeButtonBeforeKeyOverride != null)
-			{
-				viewControls3D.ActiveButton = (ViewControls3DButtons)activeButtonBeforeKeyOverride;
-				activeButtonBeforeKeyOverride = null;
-			}
-
-			base.OnKeyUp(keyEvent);
-		}
-
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			// Show transform override
-			if(activeButtonBeforeMouseOverride == null && mouseEvent.Button == MouseButtons.Right)
-			{
-				activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
-				viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-			}
-			else if (activeButtonBeforeMouseOverride == null && mouseEvent.Button == MouseButtons.Middle)
-			{
-				activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
-				viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
-			}
-
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
 			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
@@ -391,12 +341,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			meshSelectInfo.downOnPart = false;
-
-			if(activeButtonBeforeMouseOverride != null)
-			{
-				viewControls3D.ActiveButton = (ViewControls3DButtons) activeButtonBeforeMouseOverride;
-				activeButtonBeforeMouseOverride = null;
-			}
 
 			base.OnMouseUp(mouseEvent);
 		}
@@ -823,9 +767,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonRightPanel.Visible = false;
 				doEdittingButtonsContainer.Visible = false;
 				viewControls3D.PartSelectVisible = false;
-				if (viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect)
+				if (viewControls3D.partSelectButton.Checked)
 				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+					viewControls3D.rotateButton.ClickButton(null);
 				}
 				SelectedMeshGroupIndex = -1;
 			}
@@ -1166,12 +1110,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (viewControls3D.PartSelectVisible == true)
 			{
 				viewControls3D.PartSelectVisible = false;
-				if (viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect)
+				if (viewControls3D.partSelectButton.Checked)
 				{
 					wasInSelectMode = true;
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+					viewControls3D.rotateButton.ClickButton(null);
+					viewControls3D.scaleButton.Click += StopReturnToSelectionButton;
+					viewControls3D.translateButton.Click += StopReturnToSelectionButton;
 				}
 			}
+		}
+
+		private void StopReturnToSelectionButton(object sender, EventArgs e)
+		{
+			wasInSelectMode = false;
+			RadioButton button = sender as RadioButton;
+			button.Click -= StopReturnToSelectionButton;
 		}
 
 		private void UnlockEditControls()
@@ -1194,9 +1147,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (wasInSelectMode)
 			{
-				viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+				viewControls3D.partSelectButton.ClickButton(null);
 				wasInSelectMode = false;
 			}
+
+			viewControls3D.scaleButton.Click -= StopReturnToSelectionButton;
+			viewControls3D.translateButton.Click -= StopReturnToSelectionButton;
 
 			UpdateSizeInfo();
 		}
