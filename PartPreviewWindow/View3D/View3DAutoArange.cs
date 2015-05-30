@@ -40,26 +40,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void AutoArrangePartsInBackground()
-		{
-			if (MeshGroups.Count > 0)
-			{
-				string progressArrangeParts = LocalizedString.Get("Arranging Parts");
-				string progressArrangePartsFull = string.Format("{0}:", progressArrangeParts);
-				processingProgressControl.ProcessType = progressArrangePartsFull;
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				BackgroundWorker arrangeMeshGroupsBackgroundWorker = new BackgroundWorker();
-
-				arrangeMeshGroupsBackgroundWorker.DoWork += new DoWorkEventHandler(arrangeMeshGroupsBackgroundWorker_DoWork);
-				arrangeMeshGroupsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(arrangeMeshGroupsBackgroundWorker_RunWorkerCompleted);
-
-				arrangeMeshGroupsBackgroundWorker.RunWorkerAsync();
-			}
-		}
-
 		private void arrangeMeshGroupsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -162,6 +142,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PartHasBeenChanged();
 
 			PullMeshGroupDataFromAsynchLists();
+		}
+
+		private void AutoArrangePartsInBackground()
+		{
+			if (MeshGroups.Count > 0)
+			{
+				string progressArrangeParts = LocalizedString.Get("Arranging Parts");
+				string progressArrangePartsFull = string.Format("{0}:", progressArrangeParts);
+				processingProgressControl.ProcessType = progressArrangePartsFull;
+				processingProgressControl.Visible = true;
+				processingProgressControl.PercentComplete = 0;
+				LockEditControls();
+
+				BackgroundWorker arrangeMeshGroupsBackgroundWorker = new BackgroundWorker();
+
+				arrangeMeshGroupsBackgroundWorker.DoWork += new DoWorkEventHandler(arrangeMeshGroupsBackgroundWorker_DoWork);
+				arrangeMeshGroupsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(arrangeMeshGroupsBackgroundWorker_RunWorkerCompleted);
+
+				arrangeMeshGroupsBackgroundWorker.RunWorkerAsync();
+			}
 		}
 	}
 }

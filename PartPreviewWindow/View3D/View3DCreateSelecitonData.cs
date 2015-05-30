@@ -38,29 +38,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void EnterEditAndCreateSelectionData()
-		{
-			if (enterEditButtonsContainer.Visible == true)
-			{
-				enterEditButtonsContainer.Visible = false;
-			}
-
-			if (MeshGroups.Count > 0)
-			{
-				processingProgressControl.Visible = true;
-				LockEditControls();
-				viewIsInEditModePreLock = true;
-
-				BackgroundWorker createSelectionDataBackgroundWorker = null;
-				createSelectionDataBackgroundWorker = new BackgroundWorker();
-
-				createSelectionDataBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createSelectionDataBackgroundWorker_RunWorkerCompleted);
-				createSelectionDataBackgroundWorker.DoWork += new DoWorkEventHandler(createSelectionDataBackgroundWorker_DoWork);
-
-				createSelectionDataBackgroundWorker.RunWorkerAsync();
-			}
-		}
-
 		private void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			string makingCopyLabel = LocalizedString.Get("Preparing Meshes");
@@ -125,6 +102,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else if (pendingPartsToLoad.Count > 0)
 			{
 				LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+			}
+		}
+
+		private void EnterEditAndCreateSelectionData()
+		{
+			if (enterEditButtonsContainer.Visible == true)
+			{
+				enterEditButtonsContainer.Visible = false;
+			}
+
+			if (MeshGroups.Count > 0)
+			{
+				processingProgressControl.Visible = true;
+				LockEditControls();
+				viewIsInEditModePreLock = true;
+
+				BackgroundWorker createSelectionDataBackgroundWorker = null;
+				createSelectionDataBackgroundWorker = new BackgroundWorker();
+
+				createSelectionDataBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createSelectionDataBackgroundWorker_RunWorkerCompleted);
+				createSelectionDataBackgroundWorker.DoWork += new DoWorkEventHandler(createSelectionDataBackgroundWorker_DoWork);
+
+				createSelectionDataBackgroundWorker.RunWorkerAsync();
 			}
 		}
 	}

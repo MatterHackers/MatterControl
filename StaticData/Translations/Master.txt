@@ -3280,3 +3280,9 @@ Translated:WARNING: Write Failed!
 English:Can't access '{0}'.
 Translated:Can't access '{0}'.
 
+English:Oops! Unable to save changes.
+Translated:Oops! Unable to save changes.
+
+English:Unable to save
+Translated:Unable to save
+

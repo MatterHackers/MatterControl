@@ -39,30 +39,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void AlignToSelectedMeshGroup()
-		{
-			if (MeshGroups.Count > 0)
-			{
-				// set the progress lable text
-				processingProgressControl.PercentComplete = 0;
-				processingProgressControl.Visible = true;
-				string makingCopyLabel = LocalizedString.Get("Aligning");
-				string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-				processingProgressControl.ProcessType = makingCopyLabelFull;
-
-				LockEditControls();
-				viewIsInEditModePreLock = true;
-
-				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
-				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
-
-				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(alignSelectedBackgroundWorker_RunWorkerCompleted);
-				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(alignSelectedBackgroundWorker_DoWork);
-
-				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
-			}
-		}
-
 		private void alignSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			if (SelectedMeshGroupIndex == -1)
@@ -161,6 +137,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UnlockEditControls();
 
 			Invalidate();
+		}
+
+		private void AlignToSelectedMeshGroup()
+		{
+			if (MeshGroups.Count > 0)
+			{
+				// set the progress lable text
+				processingProgressControl.PercentComplete = 0;
+				processingProgressControl.Visible = true;
+				string makingCopyLabel = LocalizedString.Get("Aligning");
+				string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+				processingProgressControl.ProcessType = makingCopyLabelFull;
+
+				LockEditControls();
+				viewIsInEditModePreLock = true;
+
+				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
+				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
+
+				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(alignSelectedBackgroundWorker_RunWorkerCompleted);
+				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(alignSelectedBackgroundWorker_DoWork);
+
+				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
+			}
 		}
 	}
 }

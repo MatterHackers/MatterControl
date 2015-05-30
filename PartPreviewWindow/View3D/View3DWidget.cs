@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-//#define SPLITTING_TEST
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -60,300 +58,57 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget : PartPreview3DWidget
 	{
-		private EventHandler unregisterEvents;
-
-		public enum WindowMode { Embeded, StandAlone };
-
-		public enum AutoRotate { Enabled, Disabled };
-
-		public enum OpenMode { Viewing, Editing }
-
-		private OpenMode openMode;
-
-		private bool editorThatRequestedSave = false;
-
-		private readonly int EditButtonHeight = 44;
-
-		public WindowMode windowType { get; set; }
-
-		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private MeshSelectInfo meshSelectInfo;
-
-		private EventHandler SelectionChanged;
-		private UpArrow3D upArrow;
 		internal HeightValueDisplay heightDisplay;
-
-		private FlowLayoutWidget viewOptionContainer;
-		private FlowLayoutWidget rotateOptionContainer;
-		private FlowLayoutWidget scaleOptionContainer;
-		private FlowLayoutWidget mirrorOptionContainer;
-		private FlowLayoutWidget materialOptionContainer;
-
-		private List<string> pendingPartsToLoad = new List<string>();
-
-		private bool DoAddFileAfterCreatingEditData { get; set; }
-
-		private ProgressControl processingProgressControl;
-		private FlowLayoutWidget enterEditButtonsContainer;
-		private FlowLayoutWidget doEdittingButtonsContainer;
-
-		private Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
-
-		private MHNumberEdit scaleRatioControl;
-
-		private CheckBox expandViewOptions;
-		private CheckBox expandRotateOptions;
-		private CheckBox expandScaleOptions;
-		private CheckBox expandMirrorOptions;
-		private CheckBox expandMaterialOptions;
-
-		private SplitButton saveButtons;
+		private readonly int EditButtonHeight = 44;
+		private AfterSaveCallback afterSaveCallback = null;
 		private Button applyScaleButton;
-
-		private PrintItemWrapper printItemWrapper;
-
-		private SaveAsWindow saveAsWindow = null;
-		private ExportPrintItemWindow exportingWindow = null;
-
-		private bool partHasBeenEdited = false;
-
 		private List<MeshGroup> asynchMeshGroups = new List<MeshGroup>();
 		private List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
 		private List<PlatingMeshGroupData> asynchPlatingDatas = new List<PlatingMeshGroupData>();
-
-		private List<PlatingMeshGroupData> MeshGroupExtraData;
-
-		public bool DisplayAllValueData { get; set; }
-
-		public ScaleRotateTranslate SelectedMeshGroupTransform
-		{
-			get { return meshViewerWidget.SelectedMeshGroupTransform; }
-			set { meshViewerWidget.SelectedMeshGroupTransform = value; }
-		}
-
-		public MeshGroup SelectedMeshGroup
-		{
-			get { return meshViewerWidget.SelectedMeshGroup; }
-		}
-
-		public bool HaveSelection
-		{
-			get { return MeshGroups.Count > 0 && SelectedMeshGroupIndex > -1; }
-		}
-
-		public int SelectedMeshGroupIndex
-		{
-			get
-			{
-				return meshViewerWidget.SelectedMeshGroupIndex;
-			}
-			set
-			{
-				if (value != SelectedMeshGroupIndex)
-				{
-					meshViewerWidget.SelectedMeshGroupIndex = value;
-					if (SelectionChanged != null)
-					{
-						SelectionChanged(this, null);
-					}
-					Invalidate();
-				}
-			}
-		}
-
-		public List<MeshGroup> MeshGroups
-		{
-			get { return meshViewerWidget.MeshGroups; }
-		}
-
-		public List<ScaleRotateTranslate> MeshGroupTransforms
-		{
-			get { return meshViewerWidget.MeshGroupTransforms; }
-		}
-
-		internal struct MeshSelectInfo
-		{
-			internal bool downOnPart;
-			internal PlaneShape hitPlane;
-			internal Vector3 planeDownHitPos;
-			internal Vector3 lastMoveDelta;
-		}
-
-		private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex)
-		{
-			meshHitIndex = 0;
-			if (MeshGroupExtraData.Count == 0 || MeshGroupExtraData[0].meshTraceableData == null)
-			{
-				return false;
-			}
-
-			List<IPrimitive> mesheTraceables = new List<IPrimitive>();
-			for (int i = 0; i < MeshGroupExtraData.Count; i++)
-			{
-				foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
-				{
-					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i].TotalTransform));
-				}
-			}
-			IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
-
-			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
-			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-			IntersectInfo info = allObjects.GetClosestIntersection(ray);
-			if (info != null)
-			{
-				meshSelectInfo.planeDownHitPos = info.hitPosition;
-				meshSelectInfo.lastMoveDelta = new Vector3();
-
-				for (int i = 0; i < MeshGroupExtraData.Count; i++)
-				{
-					List<IPrimitive> insideBounds = new List<IPrimitive>();
-					foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
-					{
-						traceData.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
-					}
-					if (insideBounds.Contains(info.closestHitObject))
-					{
-						meshHitIndex = i;
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			autoRotating = false;
-			base.OnMouseDown(mouseEvent);
-			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
-			{
-				if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-					&& mouseEvent.Button == MouseButtons.Left
-					&& ModifierKeys != Keys.Shift
-					&& ModifierKeys != Keys.Control
-					&& ModifierKeys != Keys.Alt)
-				{
-					if (!meshViewerWidget.MouseDownOnInteractionVolume)
-					{
-						int meshGroupHitIndex;
-						if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
-						{
-							meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
-							SelectedMeshGroupIndex = meshGroupHitIndex;
-
-							transformOnMouseDown = SelectedMeshGroupTransform.translation;
-
-							Invalidate();
-							meshSelectInfo.downOnPart = true;
-						}
-						else
-						{
-							SelectedMeshGroupIndex = -1;
-						}
-
-						UpdateSizeInfo();
-					}
-				}
-			}
-		}
-
+		private FlowLayoutWidget doEdittingButtonsContainer;
+		private bool editorThatRequestedSave = false;
+		private FlowLayoutWidget enterEditButtonsContainer;
+		private CheckBox expandMaterialOptions;
+		private CheckBox expandMirrorOptions;
+		private CheckBox expandRotateOptions;
+		private CheckBox expandScaleOptions;
+		private CheckBox expandViewOptions;
+		private ExportPrintItemWindow exportingWindow = null;
+		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
 		private bool firstDraw = true;
+		private bool hasDrawn = false;
+		private FlowLayoutWidget materialOptionContainer;
+		private List<PlatingMeshGroupData> MeshGroupExtraData;
+		private MeshSelectInfo meshSelectInfo;
+		private FlowLayoutWidget mirrorOptionContainer;
+		private OpenMode openMode;
+		private bool partHasBeenEdited = false;
+		private List<string> pendingPartsToLoad = new List<string>();
+		private PrintItemWrapper printItemWrapper;
+		private ProgressControl processingProgressControl;
+		private FlowLayoutWidget rotateOptionContainer;
+		private SaveAsWindow saveAsWindow = null;
+		private SplitButton saveButtons;
+		private bool saveSucceded = true;
+		private FlowLayoutWidget scaleOptionContainer;
+		private MHNumberEdit scaleRatioControl;
+		private EventHandler SelectionChanged;
+		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
+		private EditableNumberDisplay[] sizeDisplay = new EditableNumberDisplay[3];
+		private Stopwatch timeSinceLastSpin = new Stopwatch();
+		private Stopwatch timeSinceReported = new Stopwatch();
+		private Dictionary<string, List<GuiWidget>> transformControls = new Dictionary<string, List<GuiWidget>>();
+		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
+		private CheckBox uniformScale;
+		private EventHandler unregisterEvents;
 
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (firstDraw)
-			{
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-				firstDraw = false;
-			}
+		private UpArrow3D upArrow;
 
-			if (HaveSelection)
-			{
-				upArrow.SetPosition();
-				heightDisplay.SetPosition();
-			}
+		private bool viewIsInEditModePreLock = false;
 
-			hasDrawn = true;
-			base.OnDraw(graphics2D);
-			DrawStuffForSelectedPart(graphics2D);
-		}
+		private FlowLayoutWidget viewOptionContainer;
 
-		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
-		{
-			if (SelectedMeshGroup != null)
-			{
-				AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
-				Vector3 boundsCenter = selectedBounds.Center;
-				Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
-
-				Vector2 centerTopScreenPosition = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(centerTop);
-				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
-				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
-
-				PathStorage zArrow = new PathStorage();
-				zArrow.MoveTo(-6, -2);
-				zArrow.curve3(0, -4);
-				zArrow.LineTo(6, -2);
-				zArrow.LineTo(0, 12);
-				zArrow.LineTo(-6, -2);
-
-				VertexSourceApplyTransform translate = new VertexSourceApplyTransform(zArrow, Affine.NewTranslation(centerTopScreenPosition));
-
-				//graphics2D.Render(translate, RGBA_Bytes.Black);
-			}
-		}
-
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
-		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
-			{
-				Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-				Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
-				IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
-				if (info != null)
-				{
-					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
-
-					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
-					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
-					meshSelectInfo.lastMoveDelta = delta;
-
-					ScaleRotateTranslate translated = SelectedMeshGroupTransform;
-					translated.translation *= totalTransform;
-					SelectedMeshGroupTransform = translated;
-
-					Invalidate();
-				}
-			}
-
-			base.OnMouseMove(mouseEvent);
-		}
-
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
-		{
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-				&& meshSelectInfo.downOnPart
-				&& meshSelectInfo.lastMoveDelta != Vector3.Zero)
-			{
-				PartHasBeenChanged();
-			}
-
-			meshSelectInfo.downOnPart = false;
-
-			base.OnMouseUp(mouseEvent);
-		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
-
-			base.OnClosed(e);
-		}
+		private bool wasInSelectMode = false;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, MeshViewerWidget.BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, OpenMode openMode = OpenMode.Viewing)
 		{
@@ -664,45 +419,243 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
-		{
-			if (!editorThatRequestedSave)
-			{
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-			}
+		public delegate void AfterSaveCallback();
 
-			editorThatRequestedSave = false;
+		public enum AutoRotate { Enabled, Disabled };
+
+		public enum OpenMode { Viewing, Editing }
+
+		public enum WindowMode { Embeded, StandAlone };
+		private enum TraceInfoOpperation { DONT_COPY, DO_COPY };
+
+		public bool DisplayAllValueData { get; set; }
+
+		public bool HaveSelection
+		{
+			get { return MeshGroups.Count > 0 && SelectedMeshGroupIndex > -1; }
 		}
 
-		private void ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
+		public List<MeshGroup> MeshGroups
 		{
-			SwitchStateToNotEditing();
+			get { return meshViewerWidget.MeshGroups; }
+		}
 
-			MeshGroups.Clear();
-			MeshGroupExtraData.Clear();
-			MeshGroupTransforms.Clear();
-			if (printItemWrapper != null)
+		public List<ScaleRotateTranslate> MeshGroupTransforms
+		{
+			get { return meshViewerWidget.MeshGroupTransforms; }
+		}
+
+		public MeshGroup SelectedMeshGroup
+		{
+			get { return meshViewerWidget.SelectedMeshGroup; }
+		}
+
+		public int SelectedMeshGroupIndex
+		{
+			get
 			{
-				// remove it first to make sure we don't double add it
-				printItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-				printItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-
-				// Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
-				// not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
-				// parts themselves. For now, simply make that determination to allow testing of the proposed change and convey
-				// when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
-				MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
-				if (!PartShouldBeCentered(printItemWrapper))
+				return meshViewerWidget.SelectedMeshGroupIndex;
+			}
+			set
+			{
+				if (value != SelectedMeshGroupIndex)
 				{
-					centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
+					meshViewerWidget.SelectedMeshGroupIndex = value;
+					if (SelectionChanged != null)
+					{
+						SelectionChanged(this, null);
+					}
+					Invalidate();
 				}
+			}
+		}
 
-				// don't load the mesh until we get all the rest of the interface built
-				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
-				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
+		public ScaleRotateTranslate SelectedMeshGroupTransform
+		{
+			get { return meshViewerWidget.SelectedMeshGroupTransform; }
+			set { meshViewerWidget.SelectedMeshGroupTransform = value; }
+		}
+
+		public WindowMode windowType { get; set; }
+		private bool DoAddFileAfterCreatingEditData { get; set; }
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
 			}
 
-			partHasBeenEdited = false;
+			base.OnClosed(e);
+		}
+
+		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
+		{
+			if (AllowDragDrop())
+			{
+				pendingPartsToLoad.Clear();
+				foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
+				{
+					string extension = Path.GetExtension(droppedFileName).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
+					{
+						pendingPartsToLoad.Add(droppedFileName);
+					}
+				}
+
+				if (pendingPartsToLoad.Count > 0)
+				{
+					bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
+					if (enterEditModeBeforeAddingParts)
+					{
+						EnterEditAndCreateSelectionData();
+					}
+					else
+					{
+						LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+					}
+				}
+			}
+
+			base.OnDragDrop(fileDropEventArgs);
+		}
+
+		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
+		{
+			if (AllowDragDrop())
+			{
+				foreach (string file in fileDropEventArgs.DroppedFiles)
+				{
+					string extension = Path.GetExtension(file).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
+					{
+						fileDropEventArgs.AcceptDrop = true;
+					}
+				}
+			}
+			base.OnDragEnter(fileDropEventArgs);
+		}
+
+		public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
+		{
+			if (AllowDragDrop())
+			{
+				foreach (string file in fileDropEventArgs.DroppedFiles)
+				{
+					string extension = Path.GetExtension(file).ToLower();
+					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
+					{
+						fileDropEventArgs.AcceptDrop = true;
+					}
+				}
+			}
+			base.OnDragOver(fileDropEventArgs);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (firstDraw)
+			{
+				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+				firstDraw = false;
+			}
+
+			if (HaveSelection)
+			{
+				upArrow.SetPosition();
+				heightDisplay.SetPosition();
+			}
+
+			hasDrawn = true;
+			base.OnDraw(graphics2D);
+			DrawStuffForSelectedPart(graphics2D);
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			autoRotating = false;
+			base.OnMouseDown(mouseEvent);
+			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == Agg.UI.UnderMouseState.FirstUnderMouse)
+			{
+				if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+					&& mouseEvent.Button == MouseButtons.Left
+					&& ModifierKeys != Keys.Shift
+					&& ModifierKeys != Keys.Control
+					&& ModifierKeys != Keys.Alt)
+				{
+					if (!meshViewerWidget.MouseDownOnInteractionVolume)
+					{
+						int meshGroupHitIndex;
+						if (FindMeshGroupHitPosition(mouseEvent.Position, out meshGroupHitIndex))
+						{
+							meshSelectInfo.hitPlane = new PlaneShape(Vector3.UnitZ, meshSelectInfo.planeDownHitPos.z, null);
+							SelectedMeshGroupIndex = meshGroupHitIndex;
+
+							transformOnMouseDown = SelectedMeshGroupTransform.translation;
+
+							Invalidate();
+							meshSelectInfo.downOnPart = true;
+						}
+						else
+						{
+							SelectedMeshGroupIndex = -1;
+						}
+
+						UpdateSizeInfo();
+					}
+				}
+			}
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None && meshSelectInfo.downOnPart)
+			{
+				Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
+				Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
+				IntersectInfo info = meshSelectInfo.hitPlane.GetClosestIntersection(ray);
+				if (info != null)
+				{
+					Vector3 delta = info.hitPosition - meshSelectInfo.planeDownHitPos;
+
+					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-meshSelectInfo.lastMoveDelta));
+					totalTransform *= Matrix4X4.CreateTranslation(new Vector3(delta));
+					meshSelectInfo.lastMoveDelta = delta;
+
+					ScaleRotateTranslate translated = SelectedMeshGroupTransform;
+					translated.translation *= totalTransform;
+					SelectedMeshGroupTransform = translated;
+
+					Invalidate();
+				}
+			}
+
+			base.OnMouseMove(mouseEvent);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
+		{
+			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+				&& meshSelectInfo.downOnPart
+				&& meshSelectInfo.lastMoveDelta != Vector3.Zero)
+			{
+				PartHasBeenChanged();
+			}
+
+			meshSelectInfo.downOnPart = false;
+
+			base.OnMouseUp(mouseEvent);
+		}
+
+		public void PartHasBeenChanged()
+		{
+			saveButtons.Visible = true;
+		}
+
+		public void ThemeChanged(object sender, EventArgs e)
+		{
+			processingProgressControl.fillColor = ActiveTheme.Instance.PrimaryAccentColor;
+
+			MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 		}
 
 		private static bool PartShouldBeCentered(PrintItemWrapper printItemWrapper)
@@ -744,1064 +697,145 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return true;
 		}
 
-		private void ExitEditingAndSaveIfRequired(bool response)
+		private void AddHandlers()
 		{
-			if (response == true)
+			expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
+			expandMirrorOptions.CheckedStateChanged += expandMirrorOptions_CheckedStateChanged;
+			if (expandMaterialOptions != null)
 			{
-				MergeAndSavePartsToCurrentMeshFile(SwitchStateToNotEditing);
+				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
 			}
-			else
-			{
-				SwitchStateToNotEditing();
-				// and reload the part
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-			}
+			expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
+			expandScaleOptions.CheckedStateChanged += expandScaleOptions_CheckedStateChanged;
+
+			SelectionChanged += SetApplyScaleVisability;
 		}
 
-		private void SwitchStateToNotEditing()
+		private void AddMaterialControls(FlowLayoutWidget buttonPanel)
 		{
-			if (!enterEditButtonsContainer.Visible)
+			extruderButtons.Clear();
+			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount; extruderIndex++)
 			{
-				enterEditButtonsContainer.Visible = true;
-				processingProgressControl.Visible = false;
-				buttonRightPanel.Visible = false;
-				doEdittingButtonsContainer.Visible = false;
-				viewControls3D.PartSelectVisible = false;
-				if (viewControls3D.partSelectButton.Checked)
-				{
-					viewControls3D.rotateButton.ClickButton(null);
-				}
-				SelectedMeshGroupIndex = -1;
-			}
-		}
+				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+				colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
+				colorSelectionContainer.Padding = new BorderDouble(5);
 
-		private void OpenExportWindow()
-		{
-			if (exportingWindow == null)
-			{
-				exportingWindow = new ExportPrintItemWindow(this.printItemWrapper);
-				exportingWindow.Closed += (sender, e) =>
+				string colorLabelText = "Extruder {0}".Localize().FormatWith(extruderIndex + 1);
+				RadioButton extruderSelection = new RadioButton(colorLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
+				extruderButtons.Add(extruderSelection);
+				extruderSelection.SiblingRadioButtonList = extruderButtons;
+				colorSelectionContainer.AddChild(extruderSelection);
+				colorSelectionContainer.AddChild(new HorizontalSpacer());
+				int extruderIndexLocal = extruderIndex;
+				extruderSelection.Click += (sender, e) =>
 				{
-					exportingWindow = null;
+					if (SelectedMeshGroupIndex != -1)
+					{
+						foreach (Mesh mesh in SelectedMeshGroup.Meshes)
+						{
+							MeshMaterialData material = MeshMaterialData.Get(mesh);
+							if (material.MaterialIndex != extruderIndexLocal + 1)
+							{
+								material.MaterialIndex = extruderIndexLocal + 1;
+								PartHasBeenChanged();
+							}
+						}
+					}
 				};
-				exportingWindow.ShowAsSystemWindow();
-			}
-			else
-			{
-				exportingWindow.BringToFront();
-			}
-		}
 
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			processingProgressControl.fillColor = ActiveTheme.Instance.PrimaryAccentColor;
-
-			MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
-		}
-
-		private void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
-		{
-			if (windowType == WindowMode.Embeded)
-			{
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				this.SelectionChanged += (sender, e) =>
 				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						LockEditControls();
-						break;
+					if (SelectedMeshGroup != null)
+					{
+						Mesh mesh = SelectedMeshGroup.Meshes[0];
+						MeshMaterialData material = MeshMaterialData.Get(mesh);
 
-					default:
-						UnlockEditControls();
-						break;
-				}
+						for (int i = 0; i < extruderButtons.Count; i++)
+						{
+							if (material.MaterialIndex - 1 == i)
+							{
+								((RadioButton)extruderButtons[i]).Checked = true;
+							}
+						}
+					}
+				};
+
+				buttonPanel.AddChild(colorSelectionContainer);
 			}
 		}
 
-#if SPLITTING_TEST
-		Mesh originalMesh = null;
-#endif
-		private bool hasDrawn = false;
-		private Stopwatch timeSinceLastSpin = new Stopwatch();
-
-		private void AutoSpin(object state)
+		private void AddMirrorControls(FlowLayoutWidget buttonPanel)
 		{
-			if (!WidgetHasBeenClosed && autoRotating)
+			List<GuiWidget> mirrorControls = new List<GuiWidget>();
+			transformControls.Add("Mirror", mirrorControls);
+
+			textImageButtonFactory.FixedWidth = EditButtonHeight;
+
+			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
+
+			Button mirrorXButton = textImageButtonFactory.Generate("X", centerText: true);
+			buttonContainer.AddChild(mirrorXButton);
+			mirrorControls.Add(mirrorXButton);
+			mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
 			{
-				// add it back in to keep it running.
-				UiThread.RunOnIdle(AutoSpin, .04);
-
-				if ((!timeSinceLastSpin.IsRunning || timeSinceLastSpin.ElapsedMilliseconds > 50)
-					&& hasDrawn)
+				if (SelectedMeshGroupIndex != -1)
 				{
-					hasDrawn = false;
-					timeSinceLastSpin.Restart();
+					SelectedMeshGroup.ReverseFaceEdges();
 
-					Quaternion currentRotation = meshViewerWidget.TrackballTumbleWidget.TrackBallController.CurrentRotation.GetRotation();
-					Quaternion invertedRotation = Quaternion.Invert(currentRotation);
+					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+					scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
+					SelectedMeshGroupTransform = scale;
 
-					Quaternion rotateAboutZ = Quaternion.FromEulerAngles(new Vector3(0, 0, .01));
-					rotateAboutZ = invertedRotation * rotateAboutZ * currentRotation;
-					meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(rotateAboutZ);
+					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
+
+					PartHasBeenChanged();
 					Invalidate();
 				}
-
-#if SPLITTING_TEST // this some polygon splitting test code
-				if (MeshGroups.Count > 0
-					&& MeshGroups[0].Meshes.Count > 0)
-				{
-					if (originalMesh == null)
-					{
-						originalMesh = Mesh.Copy(MeshGroups[0].Meshes[0]);
-					}
-
-					Mesh meshToTransform = Mesh.Copy(originalMesh);
-
-					Vertex vertexCreated;
-					MeshEdge meshEdgeCreated;
-					meshToTransform.CleanAndMergMesh();
-					meshToTransform.SplitMeshEdge(meshToTransform.MeshEdges[0], out vertexCreated, out meshEdgeCreated);
-					meshToTransform.CleanAndMergMesh();
-
-					MeshGroups[0].Meshes[0] = meshToTransform;
-				}
-#endif
-			}
-		}
-
-		private void LoadAndAddPartsToPlate(string[] filesToLoad)
-		{
-			if (MeshGroups.Count > 0 && filesToLoad != null && filesToLoad.Length > 0)
-			{
-				string loadingPartLabel = "Loading Parts".Localize();
-				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
-				processingProgressControl.ProcessType = loadingPartLabelFull;
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-				BackgroundWorker loadAndAddPartsToPlateBackgroundWorker = null;
-				loadAndAddPartsToPlateBackgroundWorker = new BackgroundWorker();
-
-				loadAndAddPartsToPlateBackgroundWorker.DoWork += new DoWorkEventHandler(loadAndAddPartsToPlateBackgroundWorker_DoWork);
-				loadAndAddPartsToPlateBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted);
-
-				loadAndAddPartsToPlateBackgroundWorker.RunWorkerAsync(filesToLoad);
-			}
-		}
-
-		private enum TraceInfoOpperation { DONT_COPY, DO_COPY };
-
-		private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation, ReportProgressRatio reportProgress = null)
-		{
-			UiThread.RunOnIdle((state) =>
-			{
-				processingProgressControl.ProgressMessage = "Async Copy";
-			});
-			asynchMeshGroups.Clear();
-			asynchMeshGroupTransforms.Clear();
-			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
-			{
-				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
-				MeshGroup newMeshGroup = new MeshGroup();
-				for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
-				{
-					Mesh mesh = meshGroup.Meshes[meshIndex];
-					newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
-				}
-				asynchMeshGroups.Add(newMeshGroup);
-				asynchMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
-			}
-			asynchPlatingDatas.Clear();
-
-			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
-			{
-				PlatingMeshGroupData meshData = new PlatingMeshGroupData();
-				meshData.currentScale = MeshGroupExtraData[meshGroupIndex].currentScale;
-				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
-
-				if (traceInfoOpperation == TraceInfoOpperation.DO_COPY)
-				{
-					meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
-				}
-				
-				asynchPlatingDatas.Add(meshData);
-			}
-			UiThread.RunOnIdle((state) =>
-			{
-				processingProgressControl.ProgressMessage = "";
-			});
-		}
-
-		private void PullMeshGroupDataFromAsynchLists()
-		{
-			if (MeshGroups.Count != asynchMeshGroups.Count)
-			{
-				PartHasBeenChanged();
-			}
-
-			MeshGroups.Clear();
-			foreach (MeshGroup meshGroup in asynchMeshGroups)
-			{
-				MeshGroups.Add(meshGroup);
-			}
-			MeshGroupTransforms.Clear();
-			foreach (ScaleRotateTranslate transform in asynchMeshGroupTransforms)
-			{
-				MeshGroupTransforms.Add(transform);
-			}
-			MeshGroupExtraData.Clear();
-			foreach (PlatingMeshGroupData meshData in asynchPlatingDatas)
-			{
-				MeshGroupExtraData.Add(meshData);
-			}
-
-			if (MeshGroups.Count != MeshGroupTransforms.Count
-				|| MeshGroups.Count != MeshGroupExtraData.Count)
-			{
-				throw new Exception("These all need to remain in sync.");
-			}
-		}
-
-		private void loadAndAddPartsToPlateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
-
-			string[] filesToLoadIncludingZips = e.Argument as string[];
-			List<string> filesToLoad = new List<string>();
-			if (filesToLoadIncludingZips != null && filesToLoadIncludingZips.Length > 0)
-			{
-				for (int i = 0; i < filesToLoadIncludingZips.Length; i++)
-				{
-					string loadedFileName = filesToLoadIncludingZips[i];
-					string extension = Path.GetExtension(loadedFileName).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
-					{
-						filesToLoad.Add(loadedFileName);
-					}
-					else if (extension == ".ZIP")
-					{
-						ProjectFileHandler project = new ProjectFileHandler(null);
-						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
-						if (partFiles != null)
-						{
-							foreach (PrintItem part in partFiles)
-							{
-								filesToLoad.Add(part.FileLocation);
-							}
-						}
-					}
-				}
-
-				string progressMessage = "Loading Parts...".Localize();
-				double ratioPerFile = 1.0 / filesToLoad.Count;
-				double currentRatioDone = 0;
-				for (int i = 0; i < filesToLoad.Count; i++)
-				{
-					string loadedFileName = filesToLoad[i];
-					List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
-					{
-						continueProcessing = !this.WidgetHasBeenClosed;
-						double ratioAvailable = (ratioPerFile * .5);
-						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
-						BackgroundWorker_ProgressChanged(currentRatio, progressMessage, out continueProcessing);
-					});
-
-					if (WidgetHasBeenClosed)
-					{
-						return;
-					}
-					if (loadedMeshGroups != null)
-					{
-						double ratioPerSubMesh = ratioPerFile / loadedMeshGroups.Count;
-						double subMeshRatioDone = 0;
-
-						for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++)
-						{
-							MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
-
-							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, ScaleRotateTranslate.Identity(), asynchPlatingDatas, asynchMeshGroups, asynchMeshGroupTransforms);
-							if (WidgetHasBeenClosed)
-							{
-								return;
-							}
-							PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
-							{
-								continueProcessing = !this.WidgetHasBeenClosed;
-								double ratioAvailable = (ratioPerFile * .5);
-								//                    done outer loop  +  done this loop  +first 1/2 (load)+  this part * ratioAvailable
-								double currentRatio = currentRatioDone + subMeshRatioDone + ratioAvailable + progress0To1 * ratioPerSubMesh;
-								BackgroundWorker_ProgressChanged(currentRatio, progressMessage, out continueProcessing);
-							});
-
-							subMeshRatioDone += ratioPerSubMesh;
-						}
-					}
-
-					currentRatioDone += ratioPerFile;
-				}
-			}
-		}
-
-		private void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-			UnlockEditControls();
-			PartHasBeenChanged();
-
-			bool addingOnlyOneItem = asynchMeshGroups.Count == MeshGroups.Count + 1;
-
-			if (MeshGroups.Count > 0)
-			{
-				PullMeshGroupDataFromAsynchLists();
-				if (addingOnlyOneItem)
-				{
-					// if we are only adding one part to the plate set the selection to it
-					SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
-				}
-			}
-		}
-
-		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
-		{
-			if (windowType == WindowMode.Embeded)
-			{
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
-				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
-						break;
-
-					default:
-						UnlockEditControls();
-						break;
-				}
-			}
-			else
-			{
-				UnlockEditControls();
-			}
-
-			SelectionChanged(this, null);
-
-			if (openMode == OpenMode.Editing)
-			{
-				UiThread.RunOnIdle((state) =>
-				{
-					EnterEditAndCreateSelectionData();
-				});
-			}
-		}
-
-		private bool viewIsInEditModePreLock = false;
-		private bool wasInSelectMode = false;
-
-		private void LockEditControls()
-		{
-			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
-			enterEditButtonsContainer.Visible = false;
-			doEdittingButtonsContainer.Visible = false;
-			buttonRightPanelDisabledCover.Visible = true;
-			if (viewControls3D.PartSelectVisible == true)
-			{
-				viewControls3D.PartSelectVisible = false;
-				if (viewControls3D.partSelectButton.Checked)
-				{
-					wasInSelectMode = true;
-					viewControls3D.rotateButton.ClickButton(null);
-					viewControls3D.scaleButton.Click += StopReturnToSelectionButton;
-					viewControls3D.translateButton.Click += StopReturnToSelectionButton;
-				}
-			}
-		}
-
-		private void StopReturnToSelectionButton(object sender, EventArgs e)
-		{
-			wasInSelectMode = false;
-			RadioButton button = sender as RadioButton;
-			button.Click -= StopReturnToSelectionButton;
-		}
-
-		private void UnlockEditControls()
-		{
-			buttonRightPanelDisabledCover.Visible = false;
-			processingProgressControl.Visible = false;
-
-			if (viewIsInEditModePreLock)
-			{
-				if (!enterEditButtonsContainer.Visible)
-				{
-					viewControls3D.PartSelectVisible = true;
-					doEdittingButtonsContainer.Visible = true;
-				}
-			}
-			else
-			{
-				enterEditButtonsContainer.Visible = true;
-			}
-
-			if (wasInSelectMode)
-			{
-				viewControls3D.partSelectButton.ClickButton(null);
-				wasInSelectMode = false;
-			}
-
-			viewControls3D.scaleButton.Click -= StopReturnToSelectionButton;
-			viewControls3D.translateButton.Click -= StopReturnToSelectionButton;
-
-			UpdateSizeInfo();
-		}
-
-		private void DeleteSelectedMesh()
-		{
-			// don't ever delete the last mesh
-			if (SelectedMeshGroupIndex != -1
-				&& MeshGroups.Count > 1)
-			{
-				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
-				MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
-				MeshGroupTransforms.RemoveAt(SelectedMeshGroupIndex);
-				SelectedMeshGroupIndex = Math.Min(SelectedMeshGroupIndex, MeshGroups.Count - 1);
-				PartHasBeenChanged();
-				Invalidate();
-			}
-		}
-
-		private Stopwatch timeSinceReported = new Stopwatch();
-
-		private void BackgroundWorker_ProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
-		{
-			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
-				|| processingState != processingProgressControl.ProgressMessage)
-			{
-				UiThread.RunOnIdle((state) =>
-				{
-					processingProgressControl.PercentComplete = (int)(progress0To1 * 100 + .5);
-					processingProgressControl.ProgressMessage = processingState;
-				});
-				timeSinceReported.Restart();
-			}
-			continueProcessing = true;
-		}
-
-		private void CreateOptionsContent()
-		{
-			AddRotateControls(rotateOptionContainer);
-			AddScaleControls(scaleOptionContainer);
-		}
-
-		private FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
-		{
-			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			buttonRightPanel.Width = 200;
-			{
-				BorderDouble buttonMargin = new BorderDouble(top: 3);
-
-				expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Rotate"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
-				buttonRightPanel.AddChild(expandRotateOptions);
-
-				rotateOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				rotateOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-				rotateOptionContainer.Visible = false;
-				buttonRightPanel.AddChild(rotateOptionContainer);
-
-				expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Scale"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-				expandScaleOptions.Margin = new BorderDouble(bottom: 2);
-				buttonRightPanel.AddChild(expandScaleOptions);
-
-				scaleOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				scaleOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-				scaleOptionContainer.Visible = false;
-				buttonRightPanel.AddChild(scaleOptionContainer);
-
-				// put in the mirror options
-				{
-					expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Mirror"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-					expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
-					buttonRightPanel.AddChild(expandMirrorOptions);
-
-					mirrorOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					mirrorOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					mirrorOptionContainer.Visible = false;
-					buttonRightPanel.AddChild(mirrorOptionContainer);
-
-					AddMirrorControls(mirrorOptionContainer);
-				}
-
-				// put in the material options
-				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
-
-				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
-
-				if (numberOfExtruders > 1)
-				{
-					buttonRightPanel.AddChild(expandMaterialOptions);
-
-					materialOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					materialOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					materialOptionContainer.Visible = false;
-
-					buttonRightPanel.AddChild(materialOptionContainer);
-					AddMaterialControls(materialOptionContainer);
-				}
-
-				// put in the view options
-				{
-					expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Display"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
-					expandViewOptions.Margin = new BorderDouble(bottom: 2);
-					buttonRightPanel.AddChild(expandViewOptions);
-
-					viewOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					viewOptionContainer.HAnchor = HAnchor.ParentLeftRight;
-					viewOptionContainer.Padding = new BorderDouble(left: 4);
-					viewOptionContainer.Visible = false;
-					{
-						CheckBox showBedCheckBox = new CheckBox(LocalizedString.Get("Show Print Bed"), textColor: ActiveTheme.Instance.PrimaryTextColor);
-						showBedCheckBox.Checked = true;
-						showBedCheckBox.CheckedStateChanged += (sender, e) =>
-						{
-							meshViewerWidget.RenderBed = showBedCheckBox.Checked;
-						};
-						viewOptionContainer.AddChild(showBedCheckBox);
-
-						if (buildHeight > 0)
-						{
-							CheckBox showBuildVolumeCheckBox = new CheckBox(LocalizedString.Get("Show Print Area"), textColor: ActiveTheme.Instance.PrimaryTextColor);
-							showBuildVolumeCheckBox.Checked = false;
-							showBuildVolumeCheckBox.Margin = new BorderDouble(bottom: 5);
-							showBuildVolumeCheckBox.CheckedStateChanged += (sender, e) =>
-							{
-								meshViewerWidget.RenderBuildVolume = showBuildVolumeCheckBox.Checked;
-							};
-							viewOptionContainer.AddChild(showBuildVolumeCheckBox);
-						}
-
-#if __ANDROID__
-                        UserSettings.Instance.set("defaultRenderSetting", RenderTypes.Shaded.ToString());
-#else
-						CreateRenderTypeRadioButtons(viewOptionContainer);
-#endif
-					}
-					buttonRightPanel.AddChild(viewOptionContainer);
-				}
-
-				GuiWidget verticalSpacer = new GuiWidget();
-				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
-				buttonRightPanel.AddChild(verticalSpacer);
-			}
-
-			buttonRightPanel.Padding = new BorderDouble(6, 6);
-			buttonRightPanel.Margin = new BorderDouble(0, 1);
-			buttonRightPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			buttonRightPanel.VAnchor = VAnchor.ParentBottomTop;
-
-			return buttonRightPanel;
-		}
-
-		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
-		{
-			TupleList<string, Func<bool>> buttonList = new TupleList<string, Func<bool>>();
-			buttonList.Add("Save", () =>
-			{
-				MergeAndSavePartsToCurrentMeshFile();
-				return true;
-			});
-			buttonList.Add("Save As", () =>
-			{
-				UiThread.RunOnIdle(OpenSaveAsWindow);
-				return true;
-			});
-			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
-			splitButtonFactory.FixedHeight = 40 * TextWidget.GlobalPointSizeScaleRatio;
-			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
-			saveButtons.Visible = false;
-
-			saveButtons.Margin = new BorderDouble();
-			saveButtons.VAnchor |= VAnchor.ParentCenter;
-
-			flowToAddTo.AddChild(saveButtons);
-		}
-
-		private void OpenSaveAsWindow(object state)
-		{
-			if (saveAsWindow == null)
-			{
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
-				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
-			}
-			else
-			{
-				saveAsWindow.BringToFront();
-			}
-		}
-
-		private void SaveAsWindow_Closed(object sender, EventArgs e)
-		{
-			this.saveAsWindow = null;
-		}
-
-		public void PartHasBeenChanged()
-		{
-			saveButtons.Visible = true;
-		}
-
-		private FlowLayoutWidget CreateSaveButtons()
-		{
-			FlowLayoutWidget saveButtons = new FlowLayoutWidget();
-
-			//Create Save Button
-			double oldWidth = whiteButtonFactory.FixedWidth;
-			whiteButtonFactory.FixedWidth = 56 * TextWidget.GlobalPointSizeScaleRatio;
-			Button saveButton = whiteButtonFactory.Generate("Save".Localize(), centerText: true);
-			saveButton.Cursor = Cursors.Hand;
-			saveButtons.AddChild(saveButton);
-			saveButton.Click += (sender, e) =>
-			{
-				MergeAndSavePartsToCurrentMeshFile();
 			};
 
-			//Create Save As Button
-			whiteButtonFactory.FixedWidth = SideBarButtonWidth - whiteButtonFactory.FixedWidth - 2;
-			Button saveAsButton = whiteButtonFactory.Generate("Save As".Localize(), centerText: true);
-			whiteButtonFactory.FixedWidth = oldWidth;
-			saveAsButton.Cursor = Cursors.Hand;
-			saveButtons.AddChild(saveAsButton);
-			saveAsButton.Click += (sender, e) =>
+			Button mirrorYButton = textImageButtonFactory.Generate("Y", centerText: true);
+			buttonContainer.AddChild(mirrorYButton);
+			mirrorControls.Add(mirrorYButton);
+			mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
 			{
-				if (saveAsWindow == null)
+				if (SelectedMeshGroupIndex != -1)
 				{
-					saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
-					saveAsWindow.Closed += (sender2, e2) =>
-					{
-						saveAsWindow = null;
-					};
-				}
-				else
-				{
-					saveAsWindow.BringToFront();
+					SelectedMeshGroup.ReverseFaceEdges();
+
+					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+					scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
+					SelectedMeshGroupTransform = scale;
+
+					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
+
+					PartHasBeenChanged();
+					Invalidate();
 				}
 			};
 
-			saveButtons.Visible = false;
-
-			return saveButtons;
-		}
-
-		private void AddScaleControls(FlowLayoutWidget buttonPanel)
-		{
-			List<GuiWidget> scaleControls = new List<GuiWidget>();
-			transformControls.Add("Scale", scaleControls);
-
-			// Put in the scale ratio edit field
+			Button mirrorZButton = textImageButtonFactory.Generate("Z", centerText: true);
+			buttonContainer.AddChild(mirrorZButton);
+			mirrorControls.Add(mirrorZButton);
+			mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
 			{
-				FlowLayoutWidget scaleRatioContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
-				scaleRatioContainer.Padding = new BorderDouble(5);
-
-				string scaleRatioLabelText = "Ratio".Localize();
-				string scaleRatioLabelTextFull = "{0}:".FormatWith(scaleRatioLabelText);
-				TextWidget scaleRatioLabel = new TextWidget(scaleRatioLabelTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				scaleRatioLabel.Margin = new BorderDouble(0, 0, 3, 0);
-				scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
-				scaleRatioContainer.AddChild(scaleRatioLabel);
-
-				scaleRatioContainer.AddChild(new HorizontalSpacer());
-
-				scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50 * TextWidget.GlobalPointSizeScaleRatio, allowDecimals: true, increment: .05);
-				scaleRatioControl.SelectAllOnFocus = true;
-				scaleRatioControl.VAnchor = VAnchor.ParentCenter;
-				scaleRatioContainer.AddChild(scaleRatioControl);
-				scaleRatioControl.ActuallNumberEdit.KeyPressed += (sender, e) =>
+				if (SelectedMeshGroupIndex != -1)
 				{
-					SetApplyScaleVisability(this, null);
-				};
+					SelectedMeshGroup.ReverseFaceEdges();
 
-				scaleRatioControl.ActuallNumberEdit.KeyDown += (sender, e) =>
-				{
-					SetApplyScaleVisability(this, null);
-				};
+					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+					scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
+					SelectedMeshGroupTransform = scale;
 
-				scaleRatioControl.ActuallNumberEdit.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
-				{
-					ApplyScaleFromEditField();
-				};
+					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
 
-				scaleRatioContainer.AddChild(CreateScaleDropDownMenu());
-
-				buttonPanel.AddChild(scaleRatioContainer);
-
-				scaleControls.Add(scaleRatioControl);
-			}
-
-			applyScaleButton = whiteButtonFactory.Generate("Apply Scale".Localize(), centerText: true);
-			applyScaleButton.Visible = false;
-			applyScaleButton.Cursor = Cursors.Hand;
-			buttonPanel.AddChild(applyScaleButton);
-
-			scaleControls.Add(applyScaleButton);
-			applyScaleButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				ApplyScaleFromEditField();
+					PartHasBeenChanged();
+					Invalidate();
+				}
 			};
-
-			// add in the dimensions
-			{
-				buttonPanel.AddChild(createAxisScalingControl("x", 0));
-				buttonPanel.AddChild(createAxisScalingControl("y", 1));
-				buttonPanel.AddChild(createAxisScalingControl("z", 2));
-
-				uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				uniformScale.Checked = true;
-
-				FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-				leftToRight.Padding = new BorderDouble(5, 3);
-
-				leftToRight.AddChild(uniformScale);
-				buttonPanel.AddChild(leftToRight);
-			}
-
+			buttonPanel.AddChild(buttonContainer);
 			buttonPanel.AddChild(generateHorizontalRule());
-		}
-
-		private CheckBox uniformScale;
-		private EditableNumberDisplay[] sizeDisplay = new EditableNumberDisplay[3];
-
-		private GuiWidget createAxisScalingControl(string axis, int axisIndex)
-		{
-			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			leftToRight.Padding = new BorderDouble(5, 3);
-
-			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			sizeDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			leftToRight.AddChild(sizeDescription);
-
-			sizeDisplay[axisIndex] = new EditableNumberDisplay(textImageButtonFactory, "100", "1000.00");
-			sizeDisplay[axisIndex].EditComplete += (sender, e) =>
-			{
-				if (HaveSelection)
-				{
-					SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
-					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
-					UpdateSizeInfo();
-				}
-				else
-				{
-					sizeDisplay[axisIndex].SetDisplayString("---");
-				}
-			};
-
-			leftToRight.AddChild(sizeDisplay[axisIndex]);
-
-			return leftToRight;
-		}
-
-		private void SetNewModelSize(double sizeInMm, int axis)
-		{
-			if (HaveSelection)
-			{
-				// because we remove any current scale before we change to a new one we only get the size of the base mesh data
-				AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
-
-				double currentSize = originalMeshBounds.Size[axis];
-				double desiredSize = sizeDisplay[axis].GetValue();
-				double scaleFactor = 1;
-				if (currentSize != 0)
-				{
-					scaleFactor = desiredSize / currentSize;
-				}
-
-				if (uniformScale.Checked)
-				{
-					scaleRatioControl.ActuallNumberEdit.Value = scaleFactor;
-					ApplyScaleFromEditField();
-				}
-				else
-				{
-					ScaleAxis(scaleFactor, axis);
-				}
-			}
-		}
-
-		private void UpdateSizeInfo()
-		{
-			if (sizeDisplay[0] != null
-				&& SelectedMeshGroup != null)
-			{
-				AxisAlignedBoundingBox bounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.scale);
-				sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
-				sizeDisplay[1].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[1]));
-				sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));
-			}
-			else
-			{
-				sizeDisplay[0].SetDisplayString("---");
-				sizeDisplay[1].SetDisplayString("---");
-				sizeDisplay[2].SetDisplayString("---");
-			}
-		}
-
-		private void SetApplyScaleVisability(Object sender, EventArgs e)
-		{
-			if (HaveSelection)
-			{
-				double scale = scaleRatioControl.ActuallNumberEdit.Value;
-				if (scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[0]
-					|| scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[1]
-					|| scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[2])
-				{
-					applyScaleButton.Visible = true;
-				}
-				else
-				{
-					applyScaleButton.Visible = false;
-				}
-			}
-
-			UpdateSizeInfo();
-		}
-
-		private DropDownMenu CreateScaleDropDownMenu()
-		{
-			DropDownMenu presetScaleMenu = new DropDownMenu("", Direction.Down);
-			presetScaleMenu.NormalArrowColor = ActiveTheme.Instance.PrimaryTextColor;
-			presetScaleMenu.HoverArrowColor = ActiveTheme.Instance.PrimaryTextColor;
-			presetScaleMenu.MenuAsWideAsItems = false;
-			presetScaleMenu.AlignToRightEdge = true;
-			//presetScaleMenu.OpenOffset = new Vector2(-50, 0);
-			presetScaleMenu.HAnchor = HAnchor.AbsolutePosition;
-			presetScaleMenu.VAnchor = VAnchor.AbsolutePosition;
-			presetScaleMenu.Width = 25;
-			presetScaleMenu.Height = scaleRatioControl.Height + 2;
-
-			presetScaleMenu.AddItem("mm to in (.0393)");
-			presetScaleMenu.AddItem("in to mm (25.4)");
-			presetScaleMenu.AddItem("mm to cm (.1)");
-			presetScaleMenu.AddItem("cm to mm (10)");
-			string resetLable = "reset".Localize();
-			string resetLableFull = "{0} (1)".FormatWith(resetLable);
-			presetScaleMenu.AddItem(resetLableFull);
-
-			presetScaleMenu.SelectionChanged += (sender, e) =>
-			{
-				double scale = 1;
-				switch (presetScaleMenu.SelectedIndex)
-				{
-					case 0:
-						scale = 1.0 / 25.4;
-						break;
-
-					case 1:
-						scale = 25.4;
-						break;
-
-					case 2:
-						scale = .1;
-						break;
-
-					case 3:
-						scale = 10;
-						break;
-
-					case 4:
-						scale = 1;
-						break;
-				}
-
-				scaleRatioControl.ActuallNumberEdit.Value = scale;
-				ApplyScaleFromEditField();
-			};
-
-			return presetScaleMenu;
-		}
-
-		private void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
-		{
-			string renderTypeString = UserSettings.Instance.get("defaultRenderSetting");
-			if (renderTypeString == null)
-			{
-				if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
-				{
-					renderTypeString = "Shaded";
-				}
-				else
-				{
-					renderTypeString = "Outlines";
-				}
-				UserSettings.Instance.set("defaultRenderSetting", renderTypeString);
-			}
-			RenderOpenGl.RenderTypes renderType;
-			bool canParse = Enum.TryParse<RenderOpenGl.RenderTypes>(renderTypeString, out renderType);
-			if (canParse)
-			{
-				meshViewerWidget.RenderType = renderType;
-			}
-
-			{
-				RadioButton renderTypeShaded = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypeShaded.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
-
-				renderTypeShaded.CheckedStateChanged += (sender, e) =>
-				{
-					meshViewerWidget.RenderType = RenderTypes.Shaded;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
-				};
-				viewOptionContainer.AddChild(renderTypeShaded);
-			}
-
-			{
-				RadioButton renderTypeOutlines = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypeOutlines.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
-				renderTypeOutlines.CheckedStateChanged += (sender, e) =>
-				{
-					meshViewerWidget.RenderType = RenderTypes.Outlines;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
-				};
-				viewOptionContainer.AddChild(renderTypeOutlines);
-			}
-
-			{
-				RadioButton renderTypePolygons = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				renderTypePolygons.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
-				renderTypePolygons.CheckedStateChanged += (sender, e) =>
-				{
-					meshViewerWidget.RenderType = RenderTypes.Polygons;
-					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
-				};
-				viewOptionContainer.AddChild(renderTypePolygons);
-			}
-		}
-
-		private GuiWidget generateHorizontalRule()
-		{
-			GuiWidget horizontalRule = new GuiWidget();
-			horizontalRule.Height = 1;
-			horizontalRule.Margin = new BorderDouble(0, 1, 0, 3);
-			horizontalRule.HAnchor = HAnchor.ParentLeftRight;
-			horizontalRule.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
-			return horizontalRule;
-		}
-
-		private void ApplyScaleFromEditField()
-		{
-			if (HaveSelection)
-			{
-				double scale = scaleRatioControl.ActuallNumberEdit.Value;
-				if (scale > 0)
-				{
-					ScaleAxis(scale, 0);
-					ScaleAxis(scale, 1);
-					ScaleAxis(scale, 2);
-				}
-			}
-		}
-
-		private bool AllowDragDrop()
-		{
-			if (!enterEditButtonsContainer.Visible
-				&& !doEdittingButtonsContainer.Visible)
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
-		{
-			if (AllowDragDrop())
-			{
-				foreach (string file in fileDropEventArgs.DroppedFiles)
-				{
-					string extension = Path.GetExtension(file).ToLower();
-					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
-					{
-						fileDropEventArgs.AcceptDrop = true;
-					}
-				}
-			}
-			base.OnDragEnter(fileDropEventArgs);
-		}
-
-		public override void OnDragOver(FileDropEventArgs fileDropEventArgs)
-		{
-			if (AllowDragDrop())
-			{
-				foreach (string file in fileDropEventArgs.DroppedFiles)
-				{
-					string extension = Path.GetExtension(file).ToLower();
-					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
-					{
-						fileDropEventArgs.AcceptDrop = true;
-					}
-				}
-			}
-			base.OnDragOver(fileDropEventArgs);
-		}
-
-		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
-		{
-			if (AllowDragDrop())
-			{
-				pendingPartsToLoad.Clear();
-				foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
-				{
-					string extension = Path.GetExtension(droppedFileName).ToLower();
-					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
-					{
-						pendingPartsToLoad.Add(droppedFileName);
-					}
-				}
-
-				if (pendingPartsToLoad.Count > 0)
-				{
-					bool enterEditModeBeforeAddingParts = enterEditButtonsContainer.Visible == true;
-					if (enterEditModeBeforeAddingParts)
-					{
-						EnterEditAndCreateSelectionData();
-					}
-					else
-					{
-						LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-					}
-				}
-			}
-
-			base.OnDragDrop(fileDropEventArgs);
-		}
-
-		private void ScaleAxis(double scaleIn, int axis)
-		{
-			AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
-			AxisAlignedBoundingBox scaledBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.scale);
-
-			// first we remove any scale we have applied and then scale to the new value
-			Vector3 axisRemoveScalings = new Vector3();
-			axisRemoveScalings.x = scaledBounds.Size.x / originalMeshBounds.Size.x;
-			axisRemoveScalings.y = scaledBounds.Size.y / originalMeshBounds.Size.y;
-			axisRemoveScalings.z = scaledBounds.Size.z / originalMeshBounds.Size.z;
-
-			Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(1 / axisRemoveScalings);
-
-			Vector3 newScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
-			newScale[axis] = scaleIn;
-			Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
-
-			ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-			scale.scale *= totalScale;
-			SelectedMeshGroupTransform = scale;
-
-			PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-			PartHasBeenChanged();
-			Invalidate();
-			MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
-			SetApplyScaleVisability(this, null);
+			textImageButtonFactory.FixedWidth = 0;
 		}
 
 		private void AddRotateControls(FlowLayoutWidget buttonPanel)
@@ -1911,223 +945,905 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			textImageButtonFactory.FixedWidth = 0;
 		}
 
-		private void AddMirrorControls(FlowLayoutWidget buttonPanel)
+		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
 		{
-			List<GuiWidget> mirrorControls = new List<GuiWidget>();
-			transformControls.Add("Mirror", mirrorControls);
-
-			textImageButtonFactory.FixedWidth = EditButtonHeight;
-
-			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			Button mirrorXButton = textImageButtonFactory.Generate("X", centerText: true);
-			buttonContainer.AddChild(mirrorXButton);
-			mirrorControls.Add(mirrorXButton);
-			mirrorXButton.Click += (object sender, EventArgs mouseEvent) =>
+			TupleList<string, Func<bool>> buttonList = new TupleList<string, Func<bool>>();
+			buttonList.Add("Save", () =>
 			{
-				if (SelectedMeshGroupIndex != -1)
+				MergeAndSavePartsToCurrentMeshFile();
+				return true;
+			});
+			buttonList.Add("Save As", () =>
+			{
+				UiThread.RunOnIdle(OpenSaveAsWindow);
+				return true;
+			});
+			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
+			splitButtonFactory.FixedHeight = 40 * TextWidget.GlobalPointSizeScaleRatio;
+			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
+			saveButtons.Visible = false;
+
+			saveButtons.Margin = new BorderDouble();
+			saveButtons.VAnchor |= VAnchor.ParentCenter;
+
+			flowToAddTo.AddChild(saveButtons);
+		}
+
+		private void AddScaleControls(FlowLayoutWidget buttonPanel)
+		{
+			List<GuiWidget> scaleControls = new List<GuiWidget>();
+			transformControls.Add("Scale", scaleControls);
+
+			// Put in the scale ratio edit field
+			{
+				FlowLayoutWidget scaleRatioContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+				scaleRatioContainer.HAnchor = HAnchor.ParentLeftRight;
+				scaleRatioContainer.Padding = new BorderDouble(5);
+
+				string scaleRatioLabelText = "Ratio".Localize();
+				string scaleRatioLabelTextFull = "{0}:".FormatWith(scaleRatioLabelText);
+				TextWidget scaleRatioLabel = new TextWidget(scaleRatioLabelTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor);
+				scaleRatioLabel.Margin = new BorderDouble(0, 0, 3, 0);
+				scaleRatioLabel.VAnchor = VAnchor.ParentCenter;
+				scaleRatioContainer.AddChild(scaleRatioLabel);
+
+				scaleRatioContainer.AddChild(new HorizontalSpacer());
+
+				scaleRatioControl = new MHNumberEdit(1, pixelWidth: 50 * TextWidget.GlobalPointSizeScaleRatio, allowDecimals: true, increment: .05);
+				scaleRatioControl.SelectAllOnFocus = true;
+				scaleRatioControl.VAnchor = VAnchor.ParentCenter;
+				scaleRatioContainer.AddChild(scaleRatioControl);
+				scaleRatioControl.ActuallNumberEdit.KeyPressed += (sender, e) =>
 				{
-					SelectedMeshGroup.ReverseFaceEdges();
+					SetApplyScaleVisability(this, null);
+				};
 
-					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-					scale.scale *= Matrix4X4.CreateScale(-1, 1, 1);
-					SelectedMeshGroupTransform = scale;
+				scaleRatioControl.ActuallNumberEdit.KeyDown += (sender, e) =>
+				{
+					SetApplyScaleVisability(this, null);
+				};
 
-					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
+				scaleRatioControl.ActuallNumberEdit.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
+				{
+					ApplyScaleFromEditField();
+				};
 
-					PartHasBeenChanged();
-					Invalidate();
-				}
+				scaleRatioContainer.AddChild(CreateScaleDropDownMenu());
+
+				buttonPanel.AddChild(scaleRatioContainer);
+
+				scaleControls.Add(scaleRatioControl);
+			}
+
+			applyScaleButton = whiteButtonFactory.Generate("Apply Scale".Localize(), centerText: true);
+			applyScaleButton.Visible = false;
+			applyScaleButton.Cursor = Cursors.Hand;
+			buttonPanel.AddChild(applyScaleButton);
+
+			scaleControls.Add(applyScaleButton);
+			applyScaleButton.Click += (object sender, EventArgs mouseEvent) =>
+			{
+				ApplyScaleFromEditField();
 			};
 
-			Button mirrorYButton = textImageButtonFactory.Generate("Y", centerText: true);
-			buttonContainer.AddChild(mirrorYButton);
-			mirrorControls.Add(mirrorYButton);
-			mirrorYButton.Click += (object sender, EventArgs mouseEvent) =>
+			// add in the dimensions
 			{
-				if (SelectedMeshGroupIndex != -1)
-				{
-					SelectedMeshGroup.ReverseFaceEdges();
+				buttonPanel.AddChild(createAxisScalingControl("x", 0));
+				buttonPanel.AddChild(createAxisScalingControl("y", 1));
+				buttonPanel.AddChild(createAxisScalingControl("z", 2));
 
-					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-					scale.scale *= Matrix4X4.CreateScale(1, -1, 1);
-					SelectedMeshGroupTransform = scale;
+				uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				uniformScale.Checked = true;
 
-					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
+				FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+				leftToRight.Padding = new BorderDouble(5, 3);
 
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
+				leftToRight.AddChild(uniformScale);
+				buttonPanel.AddChild(leftToRight);
+			}
 
-			Button mirrorZButton = textImageButtonFactory.Generate("Z", centerText: true);
-			buttonContainer.AddChild(mirrorZButton);
-			mirrorControls.Add(mirrorZButton);
-			mirrorZButton.Click += (object sender, EventArgs mouseEvent) =>
-			{
-				if (SelectedMeshGroupIndex != -1)
-				{
-					SelectedMeshGroup.ReverseFaceEdges();
-
-					ScaleRotateTranslate scale = SelectedMeshGroupTransform;
-					scale.scale *= Matrix4X4.CreateScale(1, 1, -1);
-					SelectedMeshGroupTransform = scale;
-
-					PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-
-					PartHasBeenChanged();
-					Invalidate();
-				}
-			};
-			buttonPanel.AddChild(buttonContainer);
 			buttonPanel.AddChild(generateHorizontalRule());
-			textImageButtonFactory.FixedWidth = 0;
 		}
 
-		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
-
-		private void AddMaterialControls(FlowLayoutWidget buttonPanel)
+		private bool AllowDragDrop()
 		{
-			extruderButtons.Clear();
-			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.ExtruderCount; extruderIndex++)
+			if (!enterEditButtonsContainer.Visible
+				&& !doEdittingButtonsContainer.Visible)
 			{
-				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				colorSelectionContainer.HAnchor = HAnchor.ParentLeftRight;
-				colorSelectionContainer.Padding = new BorderDouble(5);
+				return false;
+			}
 
-				string colorLabelText = "Extruder {0}".Localize().FormatWith(extruderIndex + 1);
-				RadioButton extruderSelection = new RadioButton(colorLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				extruderButtons.Add(extruderSelection);
-				extruderSelection.SiblingRadioButtonList = extruderButtons;
-				colorSelectionContainer.AddChild(extruderSelection);
-				colorSelectionContainer.AddChild(new HorizontalSpacer());
-				int extruderIndexLocal = extruderIndex;
-				extruderSelection.Click += (sender, e) =>
+			return true;
+		}
+
+		private void ApplyScaleFromEditField()
+		{
+			if (HaveSelection)
+			{
+				double scale = scaleRatioControl.ActuallNumberEdit.Value;
+				if (scale > 0)
 				{
-					if (SelectedMeshGroupIndex != -1)
-					{
-						foreach (Mesh mesh in SelectedMeshGroup.Meshes)
-						{
-							MeshMaterialData material = MeshMaterialData.Get(mesh);
-							if (material.MaterialIndex != extruderIndexLocal + 1)
-							{
-								material.MaterialIndex = extruderIndexLocal + 1;
-								PartHasBeenChanged();
-							}
-						}
-					}
-				};
-
-				this.SelectionChanged += (sender, e) =>
-				{
-					if (SelectedMeshGroup != null)
-					{
-						Mesh mesh = SelectedMeshGroup.Meshes[0];
-						MeshMaterialData material = MeshMaterialData.Get(mesh);
-
-						for (int i = 0; i < extruderButtons.Count; i++)
-						{
-							if (material.MaterialIndex - 1 == i)
-							{
-								((RadioButton)extruderButtons[i]).Checked = true;
-							}
-						}
-					}
-				};
-
-#if false // no color swatch for this build
-                GuiWidget colorSwatch = new GuiWidget(15,15);
-                colorSwatch.Draw += (sender, e) =>
-                {
-                    DrawEventArgs drawEvent = e as DrawEventArgs;
-                    GuiWidget widget = sender as GuiWidget;
-                    if(widget != null && drawEvent != null && drawEvent.graphics2D != null)
-                    {
-                        drawEvent.graphics2D.Rectangle(widget.LocalBounds, RGBA_Bytes.Black);
-                    }
-                };
-                colorSwatch.BackgroundColor = MeshViewerWidget.GetMaterialColor(extruderIndexLocal+1);
-                Button swatchButton = new Button(0, 0, colorSwatch);
-                swatchButton.Click += (sender, e) =>
-                {
-                    nextColor++;
-                    RGBA_Bytes color = SelectionColors[nextColor % SelectionColors.Length];
-                    MeshViewerWidget.SetMaterialColor(extruderIndexLocal+1, color);
-                    colorSwatch.BackgroundColor = color;
-                };
-                colorSelectionContainer.AddChild(swatchButton);
-#endif
-
-				buttonPanel.AddChild(colorSelectionContainer);
+					ScaleAxis(scale, 0);
+					ScaleAxis(scale, 1);
+					ScaleAxis(scale, 2);
+				}
 			}
 		}
 
-		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
-
-		private void AddHandlers()
+		private void AutoSpin(object state)
 		{
-			expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
-			expandMirrorOptions.CheckedStateChanged += expandMirrorOptions_CheckedStateChanged;
-			if (expandMaterialOptions != null)
+			if (!WidgetHasBeenClosed && autoRotating)
 			{
-				expandMaterialOptions.CheckedStateChanged += expandMaterialOptions_CheckedStateChanged;
-			}
-			expandRotateOptions.CheckedStateChanged += expandRotateOptions_CheckedStateChanged;
-			expandScaleOptions.CheckedStateChanged += expandScaleOptions_CheckedStateChanged;
+				// add it back in to keep it running.
+				UiThread.RunOnIdle(AutoSpin, .04);
 
-			SelectionChanged += SetApplyScaleVisability;
+				if ((!timeSinceLastSpin.IsRunning || timeSinceLastSpin.ElapsedMilliseconds > 50)
+					&& hasDrawn)
+				{
+					hasDrawn = false;
+					timeSinceLastSpin.Restart();
+
+					Quaternion currentRotation = meshViewerWidget.TrackballTumbleWidget.TrackBallController.CurrentRotation.GetRotation();
+					Quaternion invertedRotation = Quaternion.Invert(currentRotation);
+
+					Quaternion rotateAboutZ = Quaternion.FromEulerAngles(new Vector3(0, 0, .01));
+					rotateAboutZ = invertedRotation * rotateAboutZ * currentRotation;
+					meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(rotateAboutZ);
+					Invalidate();
+				}
+			}
 		}
 
-		private void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
+		private void BackgroundWorker_ProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
 		{
-			editorThatRequestedSave = true;
-			if (MeshGroups.Count > 0)
+			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
+				|| processingState != processingProgressControl.ProgressMessage)
 			{
-				string progressSavingPartsLabel = "Saving".Localize();
-				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
-				processingProgressControl.ProcessType = progressSavingPartsLabelFull;
+				UiThread.RunOnIdle((state) =>
+				{
+					processingProgressControl.PercentComplete = (int)(progress0To1 * 100 + .5);
+					processingProgressControl.ProgressMessage = processingState;
+				});
+				timeSinceReported.Restart();
+			}
+			continueProcessing = true;
+		}
+
+		private void ClearBedAndLoadPrintItemWrapper(PrintItemWrapper printItemWrapper)
+		{
+			SwitchStateToNotEditing();
+
+			MeshGroups.Clear();
+			MeshGroupExtraData.Clear();
+			MeshGroupTransforms.Clear();
+			if (printItemWrapper != null)
+			{
+				// remove it first to make sure we don't double add it
+				printItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+				printItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+
+				// Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
+				// not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
+				// parts themselves. For now, simply make that determination to allow testing of the proposed change and convey
+				// when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
+				MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
+				if (!PartShouldBeCentered(printItemWrapper))
+				{
+					centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
+				}
+
+				// don't load the mesh until we get all the rest of the interface built
+				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
+				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
+			}
+
+			partHasBeenEdited = false;
+		}
+
+		private GuiWidget createAxisScalingControl(string axis, int axisIndex)
+		{
+			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+			leftToRight.Padding = new BorderDouble(5, 3);
+
+			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			sizeDescription.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			leftToRight.AddChild(sizeDescription);
+
+			sizeDisplay[axisIndex] = new EditableNumberDisplay(textImageButtonFactory, "100", "1000.00");
+			sizeDisplay[axisIndex].EditComplete += (sender, e) =>
+			{
+				if (HaveSelection)
+				{
+					SetNewModelSize(sizeDisplay[axisIndex].GetValue(), axisIndex);
+					sizeDisplay[axisIndex].SetDisplayString("{0:0.00}".FormatWith(SelectedMeshGroup.GetAxisAlignedBoundingBox().Size[axisIndex]));
+					UpdateSizeInfo();
+				}
+				else
+				{
+					sizeDisplay[axisIndex].SetDisplayString("---");
+				}
+			};
+
+			leftToRight.AddChild(sizeDisplay[axisIndex]);
+
+			return leftToRight;
+		}
+
+		private void CreateOptionsContent()
+		{
+			AddRotateControls(rotateOptionContainer);
+			AddScaleControls(scaleOptionContainer);
+		}
+
+		private void CreateRenderTypeRadioButtons(FlowLayoutWidget viewOptionContainer)
+		{
+			string renderTypeString = UserSettings.Instance.get("defaultRenderSetting");
+			if (renderTypeString == null)
+			{
+				if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+				{
+					renderTypeString = "Shaded";
+				}
+				else
+				{
+					renderTypeString = "Outlines";
+				}
+				UserSettings.Instance.set("defaultRenderSetting", renderTypeString);
+			}
+			RenderOpenGl.RenderTypes renderType;
+			bool canParse = Enum.TryParse<RenderOpenGl.RenderTypes>(renderTypeString, out renderType);
+			if (canParse)
+			{
+				meshViewerWidget.RenderType = renderType;
+			}
+
+			{
+				RadioButton renderTypeShaded = new RadioButton("Shaded".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeShaded.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
+
+				renderTypeShaded.CheckedStateChanged += (sender, e) =>
+				{
+					meshViewerWidget.RenderType = RenderTypes.Shaded;
+					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+				};
+				viewOptionContainer.AddChild(renderTypeShaded);
+			}
+
+			{
+				RadioButton renderTypeOutlines = new RadioButton("Outlines".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypeOutlines.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
+				renderTypeOutlines.CheckedStateChanged += (sender, e) =>
+				{
+					meshViewerWidget.RenderType = RenderTypes.Outlines;
+					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+				};
+				viewOptionContainer.AddChild(renderTypeOutlines);
+			}
+
+			{
+				RadioButton renderTypePolygons = new RadioButton("Polygons".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				renderTypePolygons.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
+				renderTypePolygons.CheckedStateChanged += (sender, e) =>
+				{
+					meshViewerWidget.RenderType = RenderTypes.Polygons;
+					UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+				};
+				viewOptionContainer.AddChild(renderTypePolygons);
+			}
+		}
+
+		private FlowLayoutWidget CreateRightButtonPanel(double buildHeight)
+		{
+			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			buttonRightPanel.Width = 200;
+			{
+				BorderDouble buttonMargin = new BorderDouble(top: 3);
+
+				expandRotateOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Rotate"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandRotateOptions.Margin = new BorderDouble(bottom: 2);
+				buttonRightPanel.AddChild(expandRotateOptions);
+
+				rotateOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				rotateOptionContainer.HAnchor = HAnchor.ParentLeftRight;
+				rotateOptionContainer.Visible = false;
+				buttonRightPanel.AddChild(rotateOptionContainer);
+
+				expandScaleOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Scale"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandScaleOptions.Margin = new BorderDouble(bottom: 2);
+				buttonRightPanel.AddChild(expandScaleOptions);
+
+				scaleOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				scaleOptionContainer.HAnchor = HAnchor.ParentLeftRight;
+				scaleOptionContainer.Visible = false;
+				buttonRightPanel.AddChild(scaleOptionContainer);
+
+				// put in the mirror options
+				{
+					expandMirrorOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Mirror"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandMirrorOptions.Margin = new BorderDouble(bottom: 2);
+					buttonRightPanel.AddChild(expandMirrorOptions);
+
+					mirrorOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+					mirrorOptionContainer.HAnchor = HAnchor.ParentLeftRight;
+					mirrorOptionContainer.Visible = false;
+					buttonRightPanel.AddChild(mirrorOptionContainer);
+
+					AddMirrorControls(mirrorOptionContainer);
+				}
+
+				// put in the material options
+				int numberOfExtruders = ActiveSliceSettings.Instance.ExtruderCount;
+
+				expandMaterialOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Material"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+				expandMaterialOptions.Margin = new BorderDouble(bottom: 2);
+
+				if (numberOfExtruders > 1)
+				{
+					buttonRightPanel.AddChild(expandMaterialOptions);
+
+					materialOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+					materialOptionContainer.HAnchor = HAnchor.ParentLeftRight;
+					materialOptionContainer.Visible = false;
+
+					buttonRightPanel.AddChild(materialOptionContainer);
+					AddMaterialControls(materialOptionContainer);
+				}
+
+				// put in the view options
+				{
+					expandViewOptions = expandMenuOptionFactory.GenerateCheckBoxButton(LocalizedString.Get("Display"), "icon_arrow_right_no_border_32x32.png", "icon_arrow_down_no_border_32x32.png");
+					expandViewOptions.Margin = new BorderDouble(bottom: 2);
+					buttonRightPanel.AddChild(expandViewOptions);
+
+					viewOptionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+					viewOptionContainer.HAnchor = HAnchor.ParentLeftRight;
+					viewOptionContainer.Padding = new BorderDouble(left: 4);
+					viewOptionContainer.Visible = false;
+					{
+						CheckBox showBedCheckBox = new CheckBox(LocalizedString.Get("Show Print Bed"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+						showBedCheckBox.Checked = true;
+						showBedCheckBox.CheckedStateChanged += (sender, e) =>
+						{
+							meshViewerWidget.RenderBed = showBedCheckBox.Checked;
+						};
+						viewOptionContainer.AddChild(showBedCheckBox);
+
+						if (buildHeight > 0)
+						{
+							CheckBox showBuildVolumeCheckBox = new CheckBox(LocalizedString.Get("Show Print Area"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+							showBuildVolumeCheckBox.Checked = false;
+							showBuildVolumeCheckBox.Margin = new BorderDouble(bottom: 5);
+							showBuildVolumeCheckBox.CheckedStateChanged += (sender, e) =>
+							{
+								meshViewerWidget.RenderBuildVolume = showBuildVolumeCheckBox.Checked;
+							};
+							viewOptionContainer.AddChild(showBuildVolumeCheckBox);
+						}
+
+						if (ActiveTheme.Instance.IsTouchScreen)
+						{
+							UserSettings.Instance.set("defaultRenderSetting", RenderTypes.Shaded.ToString());
+						}
+						else
+						{
+							CreateRenderTypeRadioButtons(viewOptionContainer);
+						}
+					}
+					buttonRightPanel.AddChild(viewOptionContainer);
+				}
+
+				GuiWidget verticalSpacer = new GuiWidget();
+				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
+				buttonRightPanel.AddChild(verticalSpacer);
+			}
+
+			buttonRightPanel.Padding = new BorderDouble(6, 6);
+			buttonRightPanel.Margin = new BorderDouble(0, 1);
+			buttonRightPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			buttonRightPanel.VAnchor = VAnchor.ParentBottomTop;
+
+			return buttonRightPanel;
+		}
+
+		private FlowLayoutWidget CreateSaveButtons()
+		{
+			FlowLayoutWidget saveButtons = new FlowLayoutWidget();
+
+			//Create Save Button
+			double oldWidth = whiteButtonFactory.FixedWidth;
+			whiteButtonFactory.FixedWidth = 56 * TextWidget.GlobalPointSizeScaleRatio;
+			Button saveButton = whiteButtonFactory.Generate("Save".Localize(), centerText: true);
+			saveButton.Cursor = Cursors.Hand;
+			saveButtons.AddChild(saveButton);
+			saveButton.Click += (sender, e) =>
+			{
+				MergeAndSavePartsToCurrentMeshFile();
+			};
+
+			//Create Save As Button
+			whiteButtonFactory.FixedWidth = SideBarButtonWidth - whiteButtonFactory.FixedWidth - 2;
+			Button saveAsButton = whiteButtonFactory.Generate("Save As".Localize(), centerText: true);
+			whiteButtonFactory.FixedWidth = oldWidth;
+			saveAsButton.Cursor = Cursors.Hand;
+			saveButtons.AddChild(saveAsButton);
+			saveAsButton.Click += (sender, e) =>
+			{
+				if (saveAsWindow == null)
+				{
+					saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+					saveAsWindow.Closed += (sender2, e2) =>
+					{
+						saveAsWindow = null;
+					};
+				}
+				else
+				{
+					saveAsWindow.BringToFront();
+				}
+			};
+
+			saveButtons.Visible = false;
+
+			return saveButtons;
+		}
+
+		private DropDownMenu CreateScaleDropDownMenu()
+		{
+			DropDownMenu presetScaleMenu = new DropDownMenu("", Direction.Down);
+			presetScaleMenu.NormalArrowColor = ActiveTheme.Instance.PrimaryTextColor;
+			presetScaleMenu.HoverArrowColor = ActiveTheme.Instance.PrimaryTextColor;
+			presetScaleMenu.MenuAsWideAsItems = false;
+			presetScaleMenu.AlignToRightEdge = true;
+			//presetScaleMenu.OpenOffset = new Vector2(-50, 0);
+			presetScaleMenu.HAnchor = HAnchor.AbsolutePosition;
+			presetScaleMenu.VAnchor = VAnchor.AbsolutePosition;
+			presetScaleMenu.Width = 25;
+			presetScaleMenu.Height = scaleRatioControl.Height + 2;
+
+			presetScaleMenu.AddItem("mm to in (.0393)");
+			presetScaleMenu.AddItem("in to mm (25.4)");
+			presetScaleMenu.AddItem("mm to cm (.1)");
+			presetScaleMenu.AddItem("cm to mm (10)");
+			string resetLable = "reset".Localize();
+			string resetLableFull = "{0} (1)".FormatWith(resetLable);
+			presetScaleMenu.AddItem(resetLableFull);
+
+			presetScaleMenu.SelectionChanged += (sender, e) =>
+			{
+				double scale = 1;
+				switch (presetScaleMenu.SelectedIndex)
+				{
+					case 0:
+						scale = 1.0 / 25.4;
+						break;
+
+					case 1:
+						scale = 25.4;
+						break;
+
+					case 2:
+						scale = .1;
+						break;
+
+					case 3:
+						scale = 10;
+						break;
+
+					case 4:
+						scale = 1;
+						break;
+				}
+
+				scaleRatioControl.ActuallNumberEdit.Value = scale;
+				ApplyScaleFromEditField();
+			};
+
+			return presetScaleMenu;
+		}
+
+		private void DeleteSelectedMesh()
+		{
+			// don't ever delete the last mesh
+			if (SelectedMeshGroupIndex != -1
+				&& MeshGroups.Count > 1)
+			{
+				MeshGroups.RemoveAt(SelectedMeshGroupIndex);
+				MeshGroupExtraData.RemoveAt(SelectedMeshGroupIndex);
+				MeshGroupTransforms.RemoveAt(SelectedMeshGroupIndex);
+				SelectedMeshGroupIndex = Math.Min(SelectedMeshGroupIndex, MeshGroups.Count - 1);
+				PartHasBeenChanged();
+				Invalidate();
+			}
+		}
+
+		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
+		{
+			if (SelectedMeshGroup != null)
+			{
+				AxisAlignedBoundingBox selectedBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.TotalTransform);
+				Vector3 boundsCenter = selectedBounds.Center;
+				Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+
+				Vector2 centerTopScreenPosition = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(centerTop);
+				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
+				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
+
+				PathStorage zArrow = new PathStorage();
+				zArrow.MoveTo(-6, -2);
+				zArrow.curve3(0, -4);
+				zArrow.LineTo(6, -2);
+				zArrow.LineTo(0, 12);
+				zArrow.LineTo(-6, -2);
+
+				VertexSourceApplyTransform translate = new VertexSourceApplyTransform(zArrow, Affine.NewTranslation(centerTopScreenPosition));
+
+				//graphics2D.Render(translate, RGBA_Bytes.Black);
+			}
+		}
+
+		private void ExitEditingAndSaveIfRequired(bool response)
+		{
+			if (response == true)
+			{
+				MergeAndSavePartsToCurrentMeshFile(SwitchStateToNotEditing);
+			}
+			else
+			{
+				SwitchStateToNotEditing();
+				// and reload the part
+				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+			}
+		}
+
+		private void expandMaterialOptions_CheckedStateChanged(object sender, EventArgs e)
+		{
+			if (expandMaterialOptions.Checked == true)
+			{
+				expandScaleOptions.Checked = false;
+				expandRotateOptions.Checked = false;
+				expandViewOptions.Checked = false;
+			}
+			materialOptionContainer.Visible = expandMaterialOptions.Checked;
+		}
+
+		private void expandMirrorOptions_CheckedStateChanged(object sender, EventArgs e)
+		{
+			if (mirrorOptionContainer.Visible != expandMirrorOptions.Checked)
+			{
+				if (expandMirrorOptions.Checked == true)
+				{
+					expandScaleOptions.Checked = false;
+					expandRotateOptions.Checked = false;
+					expandViewOptions.Checked = false;
+					expandMaterialOptions.Checked = false;
+				}
+				mirrorOptionContainer.Visible = expandMirrorOptions.Checked;
+			}
+		}
+
+		private void expandRotateOptions_CheckedStateChanged(object sender, EventArgs e)
+		{
+			if (rotateOptionContainer.Visible != expandRotateOptions.Checked)
+			{
+				if (expandRotateOptions.Checked == true)
+				{
+					expandViewOptions.Checked = false;
+					expandScaleOptions.Checked = false;
+					expandMirrorOptions.Checked = false;
+					expandMaterialOptions.Checked = false;
+				}
+				rotateOptionContainer.Visible = expandRotateOptions.Checked;
+			}
+		}
+
+		private void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
+		{
+			if (scaleOptionContainer.Visible != expandScaleOptions.Checked)
+			{
+				if (expandScaleOptions.Checked == true)
+				{
+					expandViewOptions.Checked = false;
+					expandRotateOptions.Checked = false;
+					expandMirrorOptions.Checked = false;
+					expandMaterialOptions.Checked = false;
+				}
+				scaleOptionContainer.Visible = expandScaleOptions.Checked;
+			}
+		}
+
+		private void expandViewOptions_CheckedStateChanged(object sender, EventArgs e)
+		{
+			if (viewOptionContainer.Visible != expandViewOptions.Checked)
+			{
+				if (expandViewOptions.Checked == true)
+				{
+					expandScaleOptions.Checked = false;
+					expandRotateOptions.Checked = false;
+					expandMirrorOptions.Checked = false;
+					expandMaterialOptions.Checked = false;
+				}
+				viewOptionContainer.Visible = expandViewOptions.Checked;
+			}
+		}
+
+		private bool FindMeshGroupHitPosition(Vector2 screenPosition, out int meshHitIndex)
+		{
+			meshHitIndex = 0;
+			if (MeshGroupExtraData.Count == 0 || MeshGroupExtraData[0].meshTraceableData == null)
+			{
+				return false;
+			}
+
+			List<IPrimitive> mesheTraceables = new List<IPrimitive>();
+			for (int i = 0; i < MeshGroupExtraData.Count; i++)
+			{
+				foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
+				{
+					mesheTraceables.Add(new Transform(traceData, MeshGroupTransforms[i].TotalTransform));
+				}
+			}
+			IPrimitive allObjects = BoundingVolumeHierarchy.CreateNewHierachy(mesheTraceables);
+
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
+			Ray ray = meshViewerWidget.TrackballTumbleWidget.GetRayFromScreen(meshViewerWidgetScreenPosition);
+			IntersectInfo info = allObjects.GetClosestIntersection(ray);
+			if (info != null)
+			{
+				meshSelectInfo.planeDownHitPos = info.hitPosition;
+				meshSelectInfo.lastMoveDelta = new Vector3();
+
+				for (int i = 0; i < MeshGroupExtraData.Count; i++)
+				{
+					List<IPrimitive> insideBounds = new List<IPrimitive>();
+					foreach (IPrimitive traceData in MeshGroupExtraData[i].meshTraceableData)
+					{
+						traceData.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
+					}
+					if (insideBounds.Contains(info.closestHitObject))
+					{
+						meshHitIndex = i;
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		private GuiWidget generateHorizontalRule()
+		{
+			GuiWidget horizontalRule = new GuiWidget();
+			horizontalRule.Height = 1;
+			horizontalRule.Margin = new BorderDouble(0, 1, 0, 3);
+			horizontalRule.HAnchor = HAnchor.ParentLeftRight;
+			horizontalRule.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
+			return horizontalRule;
+		}
+
+		private void LoadAndAddPartsToPlate(string[] filesToLoad)
+		{
+			if (MeshGroups.Count > 0 && filesToLoad != null && filesToLoad.Length > 0)
+			{
+				string loadingPartLabel = "Loading Parts".Localize();
+				string loadingPartLabelFull = "{0}:".FormatWith(loadingPartLabel);
+				processingProgressControl.ProcessType = loadingPartLabelFull;
 				processingProgressControl.Visible = true;
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
+				PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
-				mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
-				mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
+				BackgroundWorker loadAndAddPartsToPlateBackgroundWorker = null;
+				loadAndAddPartsToPlateBackgroundWorker = new BackgroundWorker();
 
-				mergeAndSavePartsBackgroundWorker.RunWorkerAsync(returnInfo);
+				loadAndAddPartsToPlateBackgroundWorker.DoWork += new DoWorkEventHandler(loadAndAddPartsToPlateBackgroundWorker_DoWork);
+				loadAndAddPartsToPlateBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted);
+
+				loadAndAddPartsToPlateBackgroundWorker.RunWorkerAsync(filesToLoad);
 			}
 		}
 
-		public delegate void AfterSaveCallback();
-
-		private AfterSaveCallback afterSaveCallback = null;
-
-		private void MergeAndSavePartsToCurrentMeshFile(AfterSaveCallback eventToCallAfterSave = null)
+		private void loadAndAddPartsToPlateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
-			editorThatRequestedSave = true;
-			afterSaveCallback = eventToCallAfterSave;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
+
+			string[] filesToLoadIncludingZips = e.Argument as string[];
+			List<string> filesToLoad = new List<string>();
+			if (filesToLoadIncludingZips != null && filesToLoadIncludingZips.Length > 0)
+			{
+				for (int i = 0; i < filesToLoadIncludingZips.Length; i++)
+				{
+					string loadedFileName = filesToLoadIncludingZips[i];
+					string extension = Path.GetExtension(loadedFileName).ToUpper();
+					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					{
+						filesToLoad.Add(loadedFileName);
+					}
+					else if (extension == ".ZIP")
+					{
+						ProjectFileHandler project = new ProjectFileHandler(null);
+						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+						if (partFiles != null)
+						{
+							foreach (PrintItem part in partFiles)
+							{
+								filesToLoad.Add(part.FileLocation);
+							}
+						}
+					}
+				}
+
+				string progressMessage = "Loading Parts...".Localize();
+				double ratioPerFile = 1.0 / filesToLoad.Count;
+				double currentRatioDone = 0;
+				for (int i = 0; i < filesToLoad.Count; i++)
+				{
+					string loadedFileName = filesToLoad[i];
+					List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(Path.GetFullPath(loadedFileName), (double progress0To1, string processingState, out bool continueProcessing) =>
+					{
+						continueProcessing = !this.WidgetHasBeenClosed;
+						double ratioAvailable = (ratioPerFile * .5);
+						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
+						BackgroundWorker_ProgressChanged(currentRatio, progressMessage, out continueProcessing);
+					});
+
+					if (WidgetHasBeenClosed)
+					{
+						return;
+					}
+					if (loadedMeshGroups != null)
+					{
+						double ratioPerSubMesh = ratioPerFile / loadedMeshGroups.Count;
+						double subMeshRatioDone = 0;
+
+						for (int subMeshIndex = 0; subMeshIndex < loadedMeshGroups.Count; subMeshIndex++)
+						{
+							MeshGroup meshGroup = loadedMeshGroups[subMeshIndex];
+
+							PlatingHelper.FindPositionForGroupAndAddToPlate(meshGroup, ScaleRotateTranslate.Identity(), asynchPlatingDatas, asynchMeshGroups, asynchMeshGroupTransforms);
+							if (WidgetHasBeenClosed)
+							{
+								return;
+							}
+							PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, (double progress0To1, string processingState, out bool continueProcessing) =>
+							{
+								continueProcessing = !this.WidgetHasBeenClosed;
+								double ratioAvailable = (ratioPerFile * .5);
+								//                    done outer loop  +  done this loop  +first 1/2 (load)+  this part * ratioAvailable
+								double currentRatio = currentRatioDone + subMeshRatioDone + ratioAvailable + progress0To1 * ratioPerSubMesh;
+								BackgroundWorker_ProgressChanged(currentRatio, progressMessage, out continueProcessing);
+							});
+
+							subMeshRatioDone += ratioPerSubMesh;
+						}
+					}
+
+					currentRatioDone += ratioPerFile;
+				}
+			}
+		}
+
+		private void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			if (WidgetHasBeenClosed)
+			{
+				return;
+			}
+			UnlockEditControls();
+			PartHasBeenChanged();
+
+			bool addingOnlyOneItem = asynchMeshGroups.Count == MeshGroups.Count + 1;
 
 			if (MeshGroups.Count > 0)
 			{
-				string progressSavingPartsLabel = "Saving".Localize();
-				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
-				processingProgressControl.ProcessType = progressSavingPartsLabelFull;
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
-
-				mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
-				mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
-
-				mergeAndSavePartsBackgroundWorker.RunWorkerAsync(printItemWrapper);
+				PullMeshGroupDataFromAsynchLists();
+				if (addingOnlyOneItem)
+				{
+					// if we are only adding one part to the plate set the selection to it
+					SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
+				}
 			}
 		}
 
-		private bool saveSucceded = true;
+		private void LockEditControls()
+		{
+			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
+			enterEditButtonsContainer.Visible = false;
+			doEdittingButtonsContainer.Visible = false;
+			buttonRightPanelDisabledCover.Visible = true;
+			if (viewControls3D.PartSelectVisible == true)
+			{
+				viewControls3D.PartSelectVisible = false;
+				if (viewControls3D.partSelectButton.Checked)
+				{
+					wasInSelectMode = true;
+					viewControls3D.rotateButton.ClickButton(null);
+					viewControls3D.scaleButton.Click += StopReturnToSelectionButton;
+					viewControls3D.translateButton.Click += StopReturnToSelectionButton;
+				}
+			}
+		}
+
+		private void MakeLowestFaceFlat(int indexToLayFlat)
+		{
+			Vertex lowestVertex = MeshGroups[indexToLayFlat].Meshes[0].Vertices[0];
+			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
+			Mesh meshToLayFlat = null;
+			foreach (Mesh meshToCheck in MeshGroups[indexToLayFlat].Meshes)
+			{
+				// find the lowest point on the model
+				for (int testIndex = 1; testIndex < meshToCheck.Vertices.Count; testIndex++)
+				{
+					Vertex vertex = meshToCheck.Vertices[testIndex];
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
+					if (vertexPosition.z < lowestVertexPosition.z)
+					{
+						lowestVertex = meshToCheck.Vertices[testIndex];
+						lowestVertexPosition = vertexPosition;
+						meshToLayFlat = meshToCheck;
+					}
+				}
+			}
+
+			Face faceToLayFlat = null;
+			double lowestAngleOfAnyFace = double.MaxValue;
+			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
+			foreach (Face face in lowestVertex.ConnectedFaces())
+			{
+				double biggestAngleToFaceVertex = double.MinValue;
+				foreach (Vertex faceVertex in face.Vertices())
+				{
+					if (faceVertex != lowestVertex)
+					{
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
+						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
+						double xLeg = new Vector2(pointRelLowest.x, pointRelLowest.y).Length;
+						double yLeg = pointRelLowest.z;
+						double angle = Math.Atan2(yLeg, xLeg);
+						if (angle > biggestAngleToFaceVertex)
+						{
+							biggestAngleToFaceVertex = angle;
+						}
+					}
+				}
+				if (biggestAngleToFaceVertex < lowestAngleOfAnyFace)
+				{
+					lowestAngleOfAnyFace = biggestAngleToFaceVertex;
+					faceToLayFlat = face;
+				}
+			}
+
+			double maxDistFromLowestZ = 0;
+			List<Vector3> faceVertexes = new List<Vector3>();
+			foreach (Vertex vertex in faceToLayFlat.Vertices())
+			{
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
+				faceVertexes.Add(vertexPosition);
+				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.z - lowestVertexPosition.z);
+			}
+
+			if (maxDistFromLowestZ > .001)
+			{
+				Vector3 xPositive = (faceVertexes[1] - faceVertexes[0]).GetNormal();
+				Vector3 yPositive = (faceVertexes[2] - faceVertexes[0]).GetNormal();
+				Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
+
+				// this code takes the minimum rotation required and looks much better.
+				Quaternion rotation = new Quaternion(planeNormal, new Vector3(0, 0, -1));
+				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
+
+				// rotate it
+				ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
+				rotated.rotation *= partLevelMatrix;
+				SelectedMeshGroupTransform = rotated;
+
+				PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
+
+				PartHasBeenChanged();
+				Invalidate();
+			}
+		}
 
 		private void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
@@ -2214,80 +1930,190 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void expandViewOptions_CheckedStateChanged(object sender, EventArgs e)
+		private void MergeAndSavePartsToCurrentMeshFile(AfterSaveCallback eventToCallAfterSave = null)
 		{
-			if (viewOptionContainer.Visible != expandViewOptions.Checked)
+			editorThatRequestedSave = true;
+			afterSaveCallback = eventToCallAfterSave;
+
+			if (MeshGroups.Count > 0)
 			{
-				if (expandViewOptions.Checked == true)
+				string progressSavingPartsLabel = "Saving".Localize();
+				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
+				processingProgressControl.ProcessType = progressSavingPartsLabelFull;
+				processingProgressControl.Visible = true;
+				processingProgressControl.PercentComplete = 0;
+				LockEditControls();
+
+				BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
+
+				mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
+				mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
+
+				mergeAndSavePartsBackgroundWorker.RunWorkerAsync(printItemWrapper);
+			}
+		}
+
+		private void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
+		{
+			editorThatRequestedSave = true;
+			if (MeshGroups.Count > 0)
+			{
+				string progressSavingPartsLabel = "Saving".Localize();
+				string progressSavingPartsLabelFull = "{0}:".FormatWith(progressSavingPartsLabel);
+				processingProgressControl.ProcessType = progressSavingPartsLabelFull;
+				processingProgressControl.Visible = true;
+				processingProgressControl.PercentComplete = 0;
+				LockEditControls();
+
+				BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
+
+				mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
+				mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
+
+				mergeAndSavePartsBackgroundWorker.RunWorkerAsync(returnInfo);
+			}
+		}
+
+		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
+		{
+			if (windowType == WindowMode.Embeded)
+			{
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
 				{
-					expandScaleOptions.Checked = false;
-					expandRotateOptions.Checked = false;
-					expandMirrorOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				viewOptionContainer.Visible = expandViewOptions.Checked;
-			}
-		}
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+						break;
 
-		private void expandMirrorOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (mirrorOptionContainer.Visible != expandMirrorOptions.Checked)
+					default:
+						UnlockEditControls();
+						break;
+				}
+			}
+			else
 			{
-				if (expandMirrorOptions.Checked == true)
+				UnlockEditControls();
+			}
+
+			SelectionChanged(this, null);
+
+			if (openMode == OpenMode.Editing)
+			{
+				UiThread.RunOnIdle((state) =>
 				{
-					expandScaleOptions.Checked = false;
-					expandRotateOptions.Checked = false;
-					expandViewOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				mirrorOptionContainer.Visible = expandMirrorOptions.Checked;
+					EnterEditAndCreateSelectionData();
+				});
 			}
 		}
 
-		private void expandMaterialOptions_CheckedStateChanged(object sender, EventArgs e)
+		private void OpenExportWindow()
 		{
-			if (expandMaterialOptions.Checked == true)
+			if (exportingWindow == null)
 			{
-				expandScaleOptions.Checked = false;
-				expandRotateOptions.Checked = false;
-				expandViewOptions.Checked = false;
-			}
-			materialOptionContainer.Visible = expandMaterialOptions.Checked;
-		}
-
-		private void expandRotateOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (rotateOptionContainer.Visible != expandRotateOptions.Checked)
-			{
-				if (expandRotateOptions.Checked == true)
+				exportingWindow = new ExportPrintItemWindow(this.printItemWrapper);
+				exportingWindow.Closed += (sender, e) =>
 				{
-					expandViewOptions.Checked = false;
-					expandScaleOptions.Checked = false;
-					expandMirrorOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				rotateOptionContainer.Visible = expandRotateOptions.Checked;
+					exportingWindow = null;
+				};
+				exportingWindow.ShowAsSystemWindow();
 			}
-		}
-
-		private void expandScaleOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (scaleOptionContainer.Visible != expandScaleOptions.Checked)
+			else
 			{
-				if (expandScaleOptions.Checked == true)
-				{
-					expandViewOptions.Checked = false;
-					expandRotateOptions.Checked = false;
-					expandMirrorOptions.Checked = false;
-					expandMaterialOptions.Checked = false;
-				}
-				scaleOptionContainer.Visible = expandScaleOptions.Checked;
+				exportingWindow.BringToFront();
 			}
 		}
 
-		private bool scaleQueueMenu_Click()
+		private void OpenSaveAsWindow(object state)
 		{
-			return true;
+			if (saveAsWindow == null)
+			{
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
+			}
+			else
+			{
+				saveAsWindow.BringToFront();
+			}
+		}
+
+		private void PullMeshGroupDataFromAsynchLists()
+		{
+			if (MeshGroups.Count != asynchMeshGroups.Count)
+			{
+				PartHasBeenChanged();
+			}
+
+			MeshGroups.Clear();
+			foreach (MeshGroup meshGroup in asynchMeshGroups)
+			{
+				MeshGroups.Add(meshGroup);
+			}
+			MeshGroupTransforms.Clear();
+			foreach (ScaleRotateTranslate transform in asynchMeshGroupTransforms)
+			{
+				MeshGroupTransforms.Add(transform);
+			}
+			MeshGroupExtraData.Clear();
+			foreach (PlatingMeshGroupData meshData in asynchPlatingDatas)
+			{
+				MeshGroupExtraData.Add(meshData);
+			}
+
+			if (MeshGroups.Count != MeshGroupTransforms.Count
+				|| MeshGroups.Count != MeshGroupExtraData.Count)
+			{
+				throw new Exception("These all need to remain in sync.");
+			}
+		}
+
+		private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation, ReportProgressRatio reportProgress = null)
+		{
+			UiThread.RunOnIdle((state) =>
+			{
+				processingProgressControl.ProgressMessage = "Async Copy";
+			});
+			asynchMeshGroups.Clear();
+			asynchMeshGroupTransforms.Clear();
+			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
+			{
+				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
+				MeshGroup newMeshGroup = new MeshGroup();
+				for (int meshIndex = 0; meshIndex < meshGroup.Meshes.Count; meshIndex++)
+				{
+					Mesh mesh = meshGroup.Meshes[meshIndex];
+					newMeshGroup.Meshes.Add(Mesh.Copy(mesh));
+				}
+				asynchMeshGroups.Add(newMeshGroup);
+				asynchMeshGroupTransforms.Add(MeshGroupTransforms[meshGroupIndex]);
+			}
+			asynchPlatingDatas.Clear();
+
+			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroupExtraData.Count; meshGroupIndex++)
+			{
+				PlatingMeshGroupData meshData = new PlatingMeshGroupData();
+				meshData.currentScale = MeshGroupExtraData[meshGroupIndex].currentScale;
+				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
+
+				if (traceInfoOpperation == TraceInfoOpperation.DO_COPY)
+				{
+					meshData.meshTraceableData.AddRange(MeshGroupExtraData[meshGroupIndex].meshTraceableData);
+				}
+
+				asynchPlatingDatas.Add(meshData);
+			}
+			UiThread.RunOnIdle((state) =>
+			{
+				processingProgressControl.ProgressMessage = "";
+			});
+		}
+
+		private void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
+		{
+			if (!editorThatRequestedSave)
+			{
+				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
+			}
+
+			editorThatRequestedSave = false;
 		}
 
 		private bool rotateQueueMenu_Click()
@@ -2295,84 +2121,187 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return true;
 		}
 
-		private void MakeLowestFaceFlat(int indexToLayFlat)
+		private void SaveAsWindow_Closed(object sender, EventArgs e)
 		{
-			Vertex lowestVertex = MeshGroups[indexToLayFlat].Meshes[0].Vertices[0];
-			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
-			Mesh meshToLayFlat = null;
-			foreach (Mesh meshToCheck in MeshGroups[indexToLayFlat].Meshes)
+			this.saveAsWindow = null;
+		}
+
+		private void ScaleAxis(double scaleIn, int axis)
+		{
+			AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox scaledBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.scale);
+
+			// first we remove any scale we have applied and then scale to the new value
+			Vector3 axisRemoveScalings = new Vector3();
+			axisRemoveScalings.x = scaledBounds.Size.x / originalMeshBounds.Size.x;
+			axisRemoveScalings.y = scaledBounds.Size.y / originalMeshBounds.Size.y;
+			axisRemoveScalings.z = scaledBounds.Size.z / originalMeshBounds.Size.z;
+
+			Matrix4X4 removeScaleMatrix = Matrix4X4.CreateScale(1 / axisRemoveScalings);
+
+			Vector3 newScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
+			newScale[axis] = scaleIn;
+			Matrix4X4 totalScale = removeScaleMatrix * Matrix4X4.CreateScale(newScale);
+
+			ScaleRotateTranslate scale = SelectedMeshGroupTransform;
+			scale.scale *= totalScale;
+			SelectedMeshGroupTransform = scale;
+
+			PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
+			PartHasBeenChanged();
+			Invalidate();
+			MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[axis] = scaleIn;
+			SetApplyScaleVisability(this, null);
+		}
+
+		private bool scaleQueueMenu_Click()
+		{
+			return true;
+		}
+
+		private void SetApplyScaleVisability(Object sender, EventArgs e)
+		{
+			if (HaveSelection)
 			{
-				// find the lowest point on the model
-				for (int testIndex = 1; testIndex < meshToCheck.Vertices.Count; testIndex++)
+				double scale = scaleRatioControl.ActuallNumberEdit.Value;
+				if (scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[0]
+					|| scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[1]
+					|| scale != MeshGroupExtraData[SelectedMeshGroupIndex].currentScale[2])
 				{
-					Vertex vertex = meshToCheck.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
-					if (vertexPosition.z < lowestVertexPosition.z)
-					{
-						lowestVertex = meshToCheck.Vertices[testIndex];
-						lowestVertexPosition = vertexPosition;
-						meshToLayFlat = meshToCheck;
-					}
+					applyScaleButton.Visible = true;
+				}
+				else
+				{
+					applyScaleButton.Visible = false;
 				}
 			}
 
-			Face faceToLayFlat = null;
-			double lowestAngleOfAnyFace = double.MaxValue;
-			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
-			foreach (Face face in lowestVertex.ConnectedFaces())
+			UpdateSizeInfo();
+		}
+
+		private void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
+		{
+			if (windowType == WindowMode.Embeded)
 			{
-				double biggestAngleToFaceVertex = double.MinValue;
-				foreach (Vertex faceVertex in face.Vertices())
+				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
 				{
-					if (faceVertex != lowestVertex)
-					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
-						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
-						double xLeg = new Vector2(pointRelLowest.x, pointRelLowest.y).Length;
-						double yLeg = pointRelLowest.z;
-						double angle = Math.Atan2(yLeg, xLeg);
-						if (angle > biggestAngleToFaceVertex)
-						{
-							biggestAngleToFaceVertex = angle;
-						}
-					}
-				}
-				if (biggestAngleToFaceVertex < lowestAngleOfAnyFace)
-				{
-					lowestAngleOfAnyFace = biggestAngleToFaceVertex;
-					faceToLayFlat = face;
+					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+						LockEditControls();
+						break;
+
+					default:
+						UnlockEditControls();
+						break;
 				}
 			}
+		}
 
-			double maxDistFromLowestZ = 0;
-			List<Vector3> faceVertexes = new List<Vector3>();
-			foreach (Vertex vertex in faceToLayFlat.Vertices())
+		private void SetNewModelSize(double sizeInMm, int axis)
+		{
+			if (HaveSelection)
 			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, MeshGroupTransforms[indexToLayFlat].rotation);
-				faceVertexes.Add(vertexPosition);
-				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.z - lowestVertexPosition.z);
+				// because we remove any current scale before we change to a new one we only get the size of the base mesh data
+				AxisAlignedBoundingBox originalMeshBounds = SelectedMeshGroup.GetAxisAlignedBoundingBox();
+
+				double currentSize = originalMeshBounds.Size[axis];
+				double desiredSize = sizeDisplay[axis].GetValue();
+				double scaleFactor = 1;
+				if (currentSize != 0)
+				{
+					scaleFactor = desiredSize / currentSize;
+				}
+
+				if (uniformScale.Checked)
+				{
+					scaleRatioControl.ActuallNumberEdit.Value = scaleFactor;
+					ApplyScaleFromEditField();
+				}
+				else
+				{
+					ScaleAxis(scaleFactor, axis);
+				}
+			}
+		}
+
+		private void StopReturnToSelectionButton(object sender, EventArgs e)
+		{
+			wasInSelectMode = false;
+			RadioButton button = sender as RadioButton;
+			button.Click -= StopReturnToSelectionButton;
+		}
+
+		private void SwitchStateToNotEditing()
+		{
+			if (!enterEditButtonsContainer.Visible)
+			{
+				enterEditButtonsContainer.Visible = true;
+				processingProgressControl.Visible = false;
+				buttonRightPanel.Visible = false;
+				doEdittingButtonsContainer.Visible = false;
+				viewControls3D.PartSelectVisible = false;
+				if (viewControls3D.partSelectButton.Checked)
+				{
+					viewControls3D.rotateButton.ClickButton(null);
+				}
+				SelectedMeshGroupIndex = -1;
+			}
+		}
+
+		private void UnlockEditControls()
+		{
+			buttonRightPanelDisabledCover.Visible = false;
+			processingProgressControl.Visible = false;
+
+			if (viewIsInEditModePreLock)
+			{
+				if (!enterEditButtonsContainer.Visible)
+				{
+					viewControls3D.PartSelectVisible = true;
+					doEdittingButtonsContainer.Visible = true;
+				}
+			}
+			else
+			{
+				enterEditButtonsContainer.Visible = true;
 			}
 
-			if (maxDistFromLowestZ > .001)
+			if (wasInSelectMode)
 			{
-				Vector3 xPositive = (faceVertexes[1] - faceVertexes[0]).GetNormal();
-				Vector3 yPositive = (faceVertexes[2] - faceVertexes[0]).GetNormal();
-				Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
-
-				// this code takes the minimum rotation required and looks much better.
-				Quaternion rotation = new Quaternion(planeNormal, new Vector3(0, 0, -1));
-				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
-
-				// rotate it
-				ScaleRotateTranslate rotated = SelectedMeshGroupTransform;
-				rotated.rotation *= partLevelMatrix;
-				SelectedMeshGroupTransform = rotated;
-
-				PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, MeshGroupTransforms, SelectedMeshGroupIndex);
-
-				PartHasBeenChanged();
-				Invalidate();
+				viewControls3D.partSelectButton.ClickButton(null);
+				wasInSelectMode = false;
 			}
+
+			viewControls3D.scaleButton.Click -= StopReturnToSelectionButton;
+			viewControls3D.translateButton.Click -= StopReturnToSelectionButton;
+
+			UpdateSizeInfo();
+		}
+
+		private void UpdateSizeInfo()
+		{
+			if (sizeDisplay[0] != null
+				&& SelectedMeshGroup != null)
+			{
+				AxisAlignedBoundingBox bounds = SelectedMeshGroup.GetAxisAlignedBoundingBox(SelectedMeshGroupTransform.scale);
+				sizeDisplay[0].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[0]));
+				sizeDisplay[1].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[1]));
+				sizeDisplay[2].SetDisplayString("{0:0.00}".FormatWith(bounds.Size[2]));
+			}
+			else
+			{
+				sizeDisplay[0].SetDisplayString("---");
+				sizeDisplay[1].SetDisplayString("---");
+				sizeDisplay[2].SetDisplayString("---");
+			}
+		}
+
+		internal struct MeshSelectInfo
+		{
+			internal bool downOnPart;
+			internal PlaneShape hitPlane;
+			internal Vector3 lastMoveDelta;
+			internal Vector3 planeDownHitPos;
 		}
 	}
 }

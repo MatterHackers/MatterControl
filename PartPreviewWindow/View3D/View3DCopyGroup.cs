@@ -37,28 +37,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void MakeCopyOfGroup()
-		{
-			if (MeshGroups.Count > 0
-				&& SelectedMeshGroupIndex != -1)
-			{
-				string makingCopyLabel = LocalizedString.Get("Making Copy");
-				string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-				processingProgressControl.ProcessType = makingCopyLabelFull;
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
-
-				BackgroundWorker copyGroupBackgroundWorker = null;
-				copyGroupBackgroundWorker = new BackgroundWorker();
-
-				copyGroupBackgroundWorker.DoWork += new DoWorkEventHandler(copyGroupBackgroundWorker_DoWork);
-				copyGroupBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(copyGroupBackgroundWorker_RunWorkerCompleted);
-
-				copyGroupBackgroundWorker.RunWorkerAsync();
-			}
-		}
-
 		private void copyGroupBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -99,6 +77,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// now set the selection to the new copy
 			MeshGroupExtraData[MeshGroups.Count - 1].currentScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
 			SelectedMeshGroupIndex = MeshGroups.Count - 1;
+		}
+
+		private void MakeCopyOfGroup()
+		{
+			if (MeshGroups.Count > 0
+				&& SelectedMeshGroupIndex != -1)
+			{
+				string makingCopyLabel = LocalizedString.Get("Making Copy");
+				string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+				processingProgressControl.ProcessType = makingCopyLabelFull;
+				processingProgressControl.Visible = true;
+				processingProgressControl.PercentComplete = 0;
+				LockEditControls();
+
+				BackgroundWorker copyGroupBackgroundWorker = null;
+				copyGroupBackgroundWorker = new BackgroundWorker();
+
+				copyGroupBackgroundWorker.DoWork += new DoWorkEventHandler(copyGroupBackgroundWorker_DoWork);
+				copyGroupBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(copyGroupBackgroundWorker_RunWorkerCompleted);
+
+				copyGroupBackgroundWorker.RunWorkerAsync();
+			}
 		}
 	}
 }
