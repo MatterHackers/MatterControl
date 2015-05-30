@@ -397,15 +397,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		void PrintItemSelectionChanged(object sender, EventArgs e)
 		{
-			// Set the selection to the selected print item.
-			QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
-			if (selectedItem != null)
+			if (!queueDataView.EditMode)
 			{
-				this.queueDataView.SelectedItems.Clear();
-				this.queueDataView.SelectedItems.Add(selectedItem);
+				// Set the selection to the selected print item.
+				QueueRowItem selectedItem = queueDataView.SelectedItem as QueueRowItem;
+				if (selectedItem != null)
+				{
+					if (this.queueDataView.SelectedItems.Count > 0
+						|| !this.queueDataView.SelectedItems.Contains(selectedItem))
+					{
+						this.queueDataView.SelectedItems.Clear();
+						this.queueDataView.SelectedItems.Add(selectedItem);
+					}
+				}
 			}
-
-			SetEditButtonsStates();
 		}
 
 		private void AddItemsToQueue(object state)
@@ -456,7 +461,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				LibraryData.Instance.AddItem(queueItem.PrintItemWrapper);
 			}
-			queueDataView.ClearSelectedItems();
 		}
 
 		private bool addToLibraryMenu_Selected()
@@ -671,7 +675,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				menuItems.Add(new Tuple<string, Func<bool>>("Remove All".Localize(), clearAllMenu_Select));
 			}
 
-			menuItems.Add(new Tuple<string, Func<bool>>("Share".Localize(), sendMenu_Selected));
+			menuItems.Add(new Tuple<string, Func<bool>>("Send".Localize(), sendMenu_Selected));
 			menuItems.Add(new Tuple<string, Func<bool>>("Add To Library".Localize(), addToLibraryMenu_Selected));
 
 			BorderDouble padding = dropDownMenu.MenuItemsPadding;

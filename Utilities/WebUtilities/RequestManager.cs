@@ -153,6 +153,14 @@ namespace MatterHackers.MatterControl
 				{
 					Console.WriteLine("Web exception occurred. Status code: {0}", ex.Status);
 				}
+				catch (IOException ioException)
+				{
+					Console.WriteLine("Web exception occurred. Message: {0}", ioException.Message);
+				}
+				catch (Exception e)
+				{
+					MatterControlApplication.Instance.ReportException(e);
+				}
 			}
 			return request;
 		}
@@ -161,7 +169,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (request == null)
 			{
-				throw new ArgumentNullException("request");
+				return null;
 			}
 			HttpWebResponse response = null;
 			try
