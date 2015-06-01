@@ -135,6 +135,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public void Delete()
 		{
 			PrintItem.Delete();
+
+			// Reset the Id field after calling delete to clear the association and ensure that future db operations
+			// result in inserts rather than update statements on a missing row
+			this.PrintItem.Id = 0;
 		}
 
 		public string Name
