@@ -68,6 +68,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 					if (this.editMode == false)
 					{
 						this.ClearSelectedItems();
+						this.EnsureSelection();
+					}
+					else
+					{
+						foreach (var item in SelectedItems)
+						{
+							item.isSelectedItem = true;
+							item.selectionCheckBox.Checked = true;
+						}
 					}
 				}
 			}
@@ -540,15 +549,39 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		static bool WidgetOrChildIsFirstUnderMouse(GuiWidget startWidget)
+		{
+			if (startWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
+			{
+				return true;
+			}
+
+			foreach (GuiWidget child in startWidget.Children)
+			{
+				if (child != null)
+				{
+					if (WidgetOrChildIsFirstUnderMouse(child))
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
 		private void itemToAdd_MouseEnterBounds(object sender, EventArgs e)
 		{
-			GuiWidget widgetEntered = ((GuiWidget)sender);
-			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
+			if (WidgetOrChildIsFirstUnderMouse(this))
 			{
-				GuiWidget child = topToBottomItemList.Children[index];
-				if (child == widgetEntered)
+				GuiWidget widgetEntered = ((GuiWidget)sender);
+				for (int index = 0; index < topToBottomItemList.Children.Count; index++)
 				{
-					HoverIndex = index;
+					GuiWidget child = topToBottomItemList.Children[index];
+					if (child == widgetEntered)
+					{
+						HoverIndex = index;
+					}
 				}
 			}
 		}
@@ -586,7 +619,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (SelectedIndex != -1)
 				{
-					return Children[SelectedIndex];
+					return topToBottomItemList.Children[SelectedIndex].Children[0];
 				}
 
 				return null;
@@ -596,7 +629,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				for (int i = 0; i < Children.Count; i++)
 				{
-					if (Children[SelectedIndex] == value)
+					if (topToBottomItemList.Children[SelectedIndex].Children[0] == value)
 					{
 						SelectedIndex = i;
 					}

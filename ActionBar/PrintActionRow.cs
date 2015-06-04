@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (!PrinterConnectionAndCommunication.Instance.PrinterIsConnected
 				&& PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
 			{
-				if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+				if (ActiveTheme.Instance.IsTouchScreen)
 				{
 					this.activePrintButtons.Add(connectButton);
 				}
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.ActionBar
 							this.activePrintButtons.Add(pauseButton);
 							this.activePrintButtons.Add(cancelButton);
 						}
-						else if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+						else if (ActiveTheme.Instance.IsTouchScreen)
 						{
 							this.activePrintButtons.Add(resetConnectionButton);
 						}
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
 				&& ActiveSliceSettings.Instance.ShowResetConnection()
-				&& UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+				&& ActiveTheme.Instance.IsTouchScreen)
 			{
 				this.activePrintButtons.Add(resetConnectionButton);
 				ShowActiveButtons();

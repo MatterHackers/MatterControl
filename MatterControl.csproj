@@ -136,9 +136,10 @@
     <Compile Include="ActionBar\PrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionView.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
+    <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
     <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\CompactSlidePanel.cs" />
     <Compile Include="ApplicationView\CompactTabView.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
+    <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
@@ -338,6 +340,14 @@
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetupStatus.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Mindscape.Raygun4Net, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Mindscape.Raygun4Net.5.0.0\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mindscape.Raygun4Net4, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Mindscape.Raygun4Net.5.0.0\lib\net40\Mindscape.Raygun4Net4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -346,6 +356,10 @@
       <HintPath>PdfSharp.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
+    <Reference Include="Raygun.Diagnostics, Version=0.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Raygun.Diagnostics.0.7.3\lib\net45\Raygun.Diagnostics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />

@@ -1474,7 +1474,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			timeSinceLastReadAnything.Restart();
 			// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
 			while (CommunicationState == CommunicationStates.AttemptingToConnect
-				|| (PrinterIsConnected && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
+				|| (PrinterIsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
 				if (PrinterIsPrinting
 					&& PrinterIsConnected
@@ -1756,7 +1756,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					string resumeGCode = ActiveSliceSettings.Instance.GetActiveValue("resume_gcode");
 					int lastIndexAdded = InjectGCode(resumeGCode, injectionStartIndex);
 
-					// put in the code to return to return to our pre-pause postion
+					// put in the code to return to our pre-pause postion
 					lastIndexAdded = InjectGCode("G0 X{0:0.000} Y{1:0.000} Z{2:0.000} F{3}".FormatWith(currentDestination.x, currentDestination.y, currentDestination.z, currentFeedRate), injectionStartIndex);
 					DoPause();
 				}
@@ -1997,6 +1997,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						{
 							CancelPrint();
 							MarkActivePrintCanceled();
+							CommunicationState = CommunicationStates.Printing;
 						}
 					}
 					break;

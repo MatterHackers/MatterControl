@@ -67,8 +67,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private CheckBox expandModelOptions;
 		private CheckBox expandDisplayOptions;
 		private CheckBox syncToPrint;
+		private CheckBox showSpeeds;
 
 		private GuiWidget gcodeDisplayWidget;
+
+		private ColorGradientWidget gradientWidget;
 
 		private EventHandler unregisterEvents;
 		private WindowMode windowMode;
@@ -78,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
 		private static string pressGenerateMessage = "Press 'generate' to view layers".Localize();
 		private static string fileNotFoundMessage = "File not found on disk.".Localize();
-		private static string fileTooBigToLoad = "GCode file too big to load for '{0}'.".Localize();
+		private static string fileTooBigToLoad = "GCode file too big to preview ({0}).".Localize();
 
 		private Vector2 bedCenter;
 		private Vector3 viewerVolume;
@@ -256,6 +259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls2D = new ViewControls2D();
 			AddChild(viewControls2D);
+
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 			viewControls3D.PartSelectVisible = false;
 			AddChild(viewControls3D);
@@ -564,12 +568,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in a show speed checkbox
 			{
-				CheckBox showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				showSpeeds = new CheckBox(LocalizedString.Get("Speeds"), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				showSpeeds.Checked = gcodeViewWidget.RenderSpeeds;
+				//showSpeeds.Checked = gradient.Visible;
 				showSpeeds.CheckedStateChanged += (sender, e) =>
 				{
+					/* if (!showSpeeds.Checked)
+					 {
+						 gradient.Visible = false;
+					 }
+					 else
+					 {
+						 gradient.Visible = true;
+					 }*/
+
+					gradientWidget.Visible = showSpeeds.Checked;
+
 					gcodeViewWidget.RenderSpeeds = showSpeeds.Checked;
 				};
+
 				layerInfoContainer.AddChild(showSpeeds);
 			}
 
@@ -865,7 +882,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (gcodeViewWidget != null
 				&& gcodeViewWidget.LoadedGCode == null)
 			{
-				if (GCodeFile.FileTooBigToLoad(printItem.FileLocation))
+				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loaded decided to not load it.
+				if (File.Exists(printItem.FileLocation))
 				{
 					SetProcessingMessage(string.Format(fileTooBigToLoad, printItem.Name));
 				}
@@ -879,7 +897,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& gcodeViewWidget.LoadedGCode != null
 				&& gcodeViewWidget.LoadedGCode.LineCount > 0)
 			{
+				CloseIfNotNull(gradientWidget);
+				gradientWidget = new ColorGradientWidget(gcodeViewWidget.LoadedGCode);
+				AddChild(gradientWidget);
+				gradientWidget.Visible = false;
+
 				CreateOptionsContent();
+				setGradientVisibility();
 				buttonRightPanel.Visible = true;
 				viewControlsToggle.Visible = true;
 
@@ -916,6 +940,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
 
 				meshViewerWidget.partProcessingInfo.Visible = false;
+			}
+		}
+
+		private void setGradientVisibility()
+		{
+			if (showSpeeds.Checked)
+			{
+				gradientWidget.Visible = true;
+			}
+			else
+			{
+				gradientWidget.Visible = false;
 			}
 		}
 

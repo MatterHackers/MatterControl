@@ -35,7 +35,7 @@ namespace MatterControl.Tests
                 var firstNamespace = assembly.GetTypes().First().Namespace;
 
                 // Only validate our assemblies
-                if (firstNamespace.Contains("MatterHackers") || firstNamespace.Contains("MatterControl"))
+				if (firstNamespace != null && (firstNamespace.Contains("MatterHackers") || firstNamespace.Contains("MatterControl")))
                 {
                     IsAssemblyOptimized(assembly);
                 }

@@ -3244,3 +3244,45 @@ Translated:The speed to move while printing the first layer. If expressed as a p
 English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
 Translated:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
 
+English:Features
+Translated:Features
+
+English:Update Available
+Translated:Update Available
+
+English:Check For Update
+Translated:Check For Update
+
+English:solid_shell
+Translated:solid_shell
+
+English:GCode file too big to preview ({0}).
+Translated:GCode file too big to preview ({0}).
+
+English:Up to Date
+Translated:Up to Date
+
+English:Checking For Update
+Translated:Checking For Update
+
+English:Loading Parts...
+Translated:Loading Parts...
+
+English:More
+Translated:More
+
+English:Share
+Translated:Share
+
+English:WARNING: Write Failed!
+Translated:WARNING: Write Failed!
+
+English:Can't access '{0}'.
+Translated:Can't access '{0}'.
+
+English:Oops! Unable to save changes.
+Translated:Oops! Unable to save changes.
+
+English:Unable to save
+Translated:Unable to save
+

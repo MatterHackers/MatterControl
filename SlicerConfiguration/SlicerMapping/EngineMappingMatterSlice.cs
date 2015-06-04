@@ -349,6 +349,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public class ExtruderOffsets : MapItem
 		{
+			public ExtruderOffsets(string mappedKey, string originalKey)
+				: base(mappedKey, originalKey)
+			{
+			}
+
 			public override string MappedValue
 			{
 				get
@@ -379,11 +384,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					return final.ToString();
 				}
-			}
-
-			public ExtruderOffsets(string mappedKey, string originalKey)
-				: base(mappedKey, originalKey)
-			{
 			}
 		}
 

@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (sliceOptionsMenuDropList == null)
 			{
-				sliceOptionsMenuDropList = new DropDownMenu(LocalizedString.Get("Options  "));
+				sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ");
 				sliceOptionsMenuDropList.HoverColor = new RGBA_Bytes(0, 0, 0, 50);
 				sliceOptionsMenuDropList.NormalColor = new RGBA_Bytes(0, 0, 0, 0);
 				sliceOptionsMenuDropList.BorderColor = new RGBA_Bytes(0, 0, 0, 0);
@@ -261,6 +261,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             "extruder_count",
 			"show_reset_connection",
             "extruders_share_temperature",
+			"center_part_on_bed",
         };
 
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
@@ -835,19 +836,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
                         }
                     }
 #endif
-
-					if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
-					{
-						addMaterialOverlay = true;
-					}
-					else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
-					{
-						addQualityOverlay = true;
-					}
-
 					settingName.Width = minSettingNameWidth;
 					//settingName.MinimumSize = new Vector2(minSettingNameWidth, settingName.MinimumSize.y);
 					leftToRightLayout.AddChild(settingName);
+				}
+
+				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 3))
+				{
+					addMaterialOverlay = true;
+				}
+				else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, 2))
+				{
+					addQualityOverlay = true;
 				}
 
 				switch (settingData.DataEditType)

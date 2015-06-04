@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 			this.AddTab(new SimpleTextTabWidget(new TabPage(partPreviewContainer, partPreviewLabel), "Part Preview Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			string sliceSettingsLabel = LocalizedString.Get("Printing").ToUpper();
+			string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
 			sliceSettingsWidget = new SliceSettingsWidget();
 			sliceTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
 

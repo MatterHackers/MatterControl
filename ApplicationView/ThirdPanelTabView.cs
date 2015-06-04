@@ -97,8 +97,9 @@ namespace MatterHackers.MatterControl
 				// this means we are in compact view and so we will make the tabs text a bit smaller
 				textSize = 14;
 				TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
+				advancedControlsButtonFactory.fontSize = 14;
 				advancedControlsButtonFactory.invertImageLocation = false;
-				advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Print\nQueue"), "icon_arrow_left_32x32.png");
+				advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Queue"), "icon_arrow_left_32x32.png");
 				advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
 				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
 				advancedControlsLinkButton.Cursor = Cursors.Hand;
@@ -123,14 +124,24 @@ namespace MatterHackers.MatterControl
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
 			//Add the tab contents for 'Advanced Controls'
-			string sliceSettingsLabel = LocalizedString.Get("Printing").ToUpper();
+			string sliceSettingsLabel = LocalizedString.Get("Settings").ToUpper();
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
 			sliceSettingsWidget = new SliceSettingsWidget();
 
-			advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(sliceSettingsWidget, sliceSettingsLabel), SliceSettingsTabName, new Vector2(590, 400), textSize));
-			advancedControls.AddTab(new PopOutTextTabWidget(new TabPage(manualPrinterControlsScrollArea, printerControlsLabel), ControlsTabName, new Vector2(400, 300), textSize));
+			TabPage sliceSettingsTabPage = new TabPage(sliceSettingsWidget, sliceSettingsLabel);
+			PopOutTextTabWidget sliceSettingPopOut = new PopOutTextTabWidget(sliceSettingsTabPage, SliceSettingsTabName, new Vector2(590, 400), textSize);
+			advancedControls.AddTab(sliceSettingPopOut);
+			
+			TabPage controlsTabPage = new TabPage(manualPrinterControlsScrollArea, printerControlsLabel);
+			PopOutTextTabWidget controlsPopOut = new PopOutTextTabWidget(controlsTabPage, ControlsTabName, new Vector2(400, 300), textSize);
+			advancedControls.AddTab(controlsPopOut);
 
-			string configurationLabel = LocalizedString.Get("Configuration").ToUpper();
+#if !__ANDROID__
+			MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
+			MenuOptionSettings.controlsPopOut = controlsPopOut;
+#endif
+
+			string configurationLabel = LocalizedString.Get("Options").ToUpper();
 			ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();
 			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, configurationLabel), "Configuration Tab", textSize,
 						ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));

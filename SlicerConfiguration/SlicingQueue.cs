@@ -203,49 +203,53 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				case ".AMF":
 					List<MeshGroup> meshGroups = MeshFileIo.Load(fileToSlice);
-					List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
-					for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+					if (meshGroups != null)
 					{
-						extruderMeshGroups.Add(new MeshGroup());
-					}
-					int maxExtruderIndex = 0;
-					foreach (MeshGroup meshGroup in meshGroups)
-					{
-						foreach (Mesh mesh in meshGroup.Meshes)
+						List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
+						for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 						{
-							MeshMaterialData material = MeshMaterialData.Get(mesh);
-							int extruderIndex = Math.Max(0, material.MaterialIndex - 1);
-							maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
-							if (extruderIndex >= extruderCount)
-							{
-								extrudersUsed[0] = true;
-								extruderMeshGroups[0].Meshes.Add(mesh);
-							}
-							else
-							{
-								extrudersUsed[extruderIndex] = true;
-								extruderMeshGroups[extruderIndex].Meshes.Add(mesh);
-							}
+							extruderMeshGroups.Add(new MeshGroup());
 						}
-					}
-
-					List<string> extruderFilesToSlice = new List<string>();
-					for (int i = 0; i < extruderMeshGroups.Count; i++)
-					{
-						MeshGroup meshGroup = extruderMeshGroups[i];
-						List<int> materialsToInclude = new List<int>();
-						materialsToInclude.Add(i + 1);
-						if (i == 0)
+						int maxExtruderIndex = 0;
+						foreach (MeshGroup meshGroup in meshGroups)
 						{
-							for (int j = extruderCount + 1; j < maxExtruderIndex + 2; j++)
+							foreach (Mesh mesh in meshGroup.Meshes)
 							{
-								materialsToInclude.Add(j);
+								MeshMaterialData material = MeshMaterialData.Get(mesh);
+								int extruderIndex = Math.Max(0, material.MaterialIndex - 1);
+								maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
+								if (extruderIndex >= extruderCount)
+								{
+									extrudersUsed[0] = true;
+									extruderMeshGroups[0].Meshes.Add(mesh);
+								}
+								else
+								{
+									extrudersUsed[extruderIndex] = true;
+									extruderMeshGroups[extruderIndex].Meshes.Add(mesh);
+								}
 							}
 						}
 
-						extruderFilesToSlice.Add(SaveAndGetFilenameForMaterial(meshGroup, materialsToInclude));
+						List<string> extruderFilesToSlice = new List<string>();
+						for (int i = 0; i < extruderMeshGroups.Count; i++)
+						{
+							MeshGroup meshGroup = extruderMeshGroups[i];
+							List<int> materialsToInclude = new List<int>();
+							materialsToInclude.Add(i + 1);
+							if (i == 0)
+							{
+								for (int j = extruderCount + 1; j < maxExtruderIndex + 2; j++)
+								{
+									materialsToInclude.Add(j);
+								}
+							}
+
+							extruderFilesToSlice.Add(SaveAndGetFilenameForMaterial(meshGroup, materialsToInclude));
+						}
+						return extruderFilesToSlice.ToArray();
 					}
-					return extruderFilesToSlice.ToArray();
+					return new string[] { "" };
 
 				default:
 					throw new NotImplementedException();

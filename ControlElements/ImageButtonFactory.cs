@@ -42,7 +42,14 @@ namespace MatterHackers.MatterControl
 
 		public static CheckBox CreateToggleSwitch(bool initialState)
 		{
-			ToggleSwitchView toggleView = new ToggleSwitchView("On".Localize(), "Off".Localize(),
+			string on = "On";
+			string off = "Off";
+			if (StaticData.Instance != null)
+			{
+				on = on.Localize();
+				off = off.Localize();
+			}
+			ToggleSwitchView toggleView = new ToggleSwitchView(on, off,
 				60, 24,
 				ActiveTheme.Instance.PrimaryBackgroundColor,
 				new RGBA_Bytes(220, 220, 220),
@@ -78,7 +85,7 @@ namespace MatterHackers.MatterControl
 				InvertLightness.DoInvertLightness(disabledImage);
 			}
 
-			if (UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen")
+			if (ActiveTheme.Instance.IsTouchScreen)
 			{
 				//normalImage.NewGraphics2D().Line(0, 0, normalImage.Width, normalImage.Height, RGBA_Bytes.Violet);
 				RoundedRect rect = new RoundedRect(pressedImage.GetBounds(), 0);

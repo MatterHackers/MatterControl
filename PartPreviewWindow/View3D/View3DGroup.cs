@@ -38,47 +38,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void GroupSelectedMeshs()
-		{
-			if (MeshGroups.Count > 0)
-			{
-				processingProgressControl.PercentComplete = 0;
-				processingProgressControl.Visible = true;
-				LockEditControls();
-				viewIsInEditModePreLock = true;
-
-				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
-				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
-
-				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(groupSelectedBackgroundWorker_RunWorkerCompleted);
-				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(groupSelectedBackgroundWorker_DoWork);
-
-				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
-			}
-		}
-
-		private void groupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-		{
-			string makingCopyLabel = LocalizedString.Get("Grouping");
-			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-			processingProgressControl.ProcessType = makingCopyLabelFull;
-
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
-
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-			for (int i = 0; i < asynchMeshGroups.Count; i++)
-			{
-				asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
-
-				bool continueProcessing;
-				BackgroundWorker_ProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
-			}
-
-			DoGroup(backgroundWorker);
-		}
-
 		private void DoGroup(BackgroundWorker backgroundWorker)
 		{
 			if (SelectedMeshGroupIndex == -1)
@@ -126,6 +85,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private void groupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			string makingCopyLabel = LocalizedString.Get("Grouping");
+			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+			processingProgressControl.ProcessType = makingCopyLabelFull;
+
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
+
+			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
+
+			for (int i = 0; i < asynchMeshGroups.Count; i++)
+			{
+				asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
+
+				bool continueProcessing;
+				BackgroundWorker_ProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
+			}
+
+			DoGroup(backgroundWorker);
+		}
+
 		private void groupSelectedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 			if (WidgetHasBeenClosed)
@@ -144,6 +125,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PartHasBeenChanged();
 
 			Invalidate();
+		}
+
+		private void GroupSelectedMeshs()
+		{
+			if (MeshGroups.Count > 0)
+			{
+				processingProgressControl.PercentComplete = 0;
+				processingProgressControl.Visible = true;
+				LockEditControls();
+				viewIsInEditModePreLock = true;
+
+				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
+				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
+
+				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(groupSelectedBackgroundWorker_RunWorkerCompleted);
+				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(groupSelectedBackgroundWorker_DoWork);
+
+				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
+			}
 		}
 	}
 }

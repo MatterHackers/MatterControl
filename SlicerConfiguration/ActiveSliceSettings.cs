@@ -230,6 +230,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return GetActiveValue("has_fan") == "1";
 		}
 
+		public bool CenterOnBed()
+		{
+			return GetActiveValue("center_part_on_bed") == "1";
+		}
+
 		public bool ShowResetConnection()
 		{
 			return GetActiveValue("show_reset_connection") == "1";
@@ -795,6 +800,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (KeyValuePair<String, DataStorage.SliceSetting> setting in this.DefaultSettings)
 			{
 				string activeValue = GetActiveValue(setting.Key);
+				activeValue = GCodeProcessing.ReplaceMacroValues(activeValue);
 				string settingString = string.Format("{0} = {1}", setting.Key, activeValue);
 				configFileAsList.Add(settingString);
 			}

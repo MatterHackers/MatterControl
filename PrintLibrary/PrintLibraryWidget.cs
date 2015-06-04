@@ -44,13 +44,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
-		private TextImageButtonFactory searchButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
-		private Button removeFromLibraryButton;
-		private Button addToQueueButton;
-		private Button searchButton;
-		private Button exportItemButton;
-		private Button editItemButton;
+	
+		private FlowLayoutWidget itemOperationButtons;
+		private List<bool> editOperationMultiCapable = new List<bool>();
+
 		private Button addToLibraryButton;
 		private Button enterEditModeButton;
 		private Button leaveEditModeButton;
@@ -63,24 +61,36 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			textImageButtonFactory.borderWidth = 0;
 
-			searchButtonFactory.normalTextColor = RGBA_Bytes.White;
-			searchButtonFactory.hoverTextColor = RGBA_Bytes.White;
-			searchButtonFactory.disabledTextColor = RGBA_Bytes.White;
-			searchButtonFactory.pressedTextColor = RGBA_Bytes.White;
-			searchButtonFactory.borderWidth = 0;
-			searchButtonFactory.FixedWidth = 80 * TextWidget.GlobalPointSizeScaleRatio;
-
 			editButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			editButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			editButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			editButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
+			editButtonFactory.disabledFillColor = new RGBA_Bytes();
 			editButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			editButtonFactory.borderWidth = 0;
-			editButtonFactory.FixedWidth = 70 * TextWidget.GlobalPointSizeScaleRatio;
+			editButtonFactory.Margin = new BorderDouble(10, 0);
 
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
 				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+				enterEditModeButton.Click += enterEditModeButtonClick;
+
 				leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
+				leaveEditModeButton.Click += leaveEditModeButtonClick;
+
+				// make sure the buttons are the same size even when localized
+				if (leaveEditModeButton.Width < enterEditModeButton.Width)
+				{
+					editButtonFactory.FixedWidth = enterEditModeButton.Width;
+					leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
+					leaveEditModeButton.Click += leaveEditModeButtonClick;
+				}
+				else
+				{
+					editButtonFactory.FixedWidth = leaveEditModeButton.Width;
+					enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+					enterEditModeButton.Click += enterEditModeButtonClick;
+				}
+				
 				leaveEditModeButton.Visible = false;
 
 				FlowLayoutWidget searchPanel = new FlowLayoutWidget();
@@ -92,8 +102,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					searchInput.Margin = new BorderDouble(0, 3, 0, 0);
 					searchInput.HAnchor = HAnchor.ParentLeftRight;
 					searchInput.VAnchor = VAnchor.ParentCenter;
+					searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
+					searchInput.ActualTextEditWidget.KeyUp += searchInputKeyUp;
 
-					searchButton = searchButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
+					double oldWidth = editButtonFactory.FixedWidth;
+					editButtonFactory.FixedWidth = 0;
+					Button searchButton = editButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
+					searchButton.Click += searchButtonClick;
+					editButtonFactory.FixedWidth = oldWidth;
 
 					searchPanel.AddChild(enterEditModeButton);
 					searchPanel.AddChild(leaveEditModeButton);
@@ -115,49 +131,27 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				navigationPanel.AddChild(new HorizontalSpacer());
 				navigationPanel.AddChild(navigationLabel);
 				navigationPanel.AddChild(new HorizontalSpacer());
-				//navigationPanel.AddChild(enterEditModeButton);
-				//navigationPanel.AddChild(leaveEditModeButton);
 
 				FlowLayoutWidget buttonPanel = new FlowLayoutWidget();
 				buttonPanel.HAnchor = HAnchor.ParentLeftRight;
 				buttonPanel.Padding = new BorderDouble(0, 3);
 				buttonPanel.MinimumSize = new Vector2(0, 46);
 				{
-					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Import"), "icon_import_white_32x32.png");
+					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
 					buttonPanel.AddChild(addToLibraryButton);
 					addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
 					addToLibraryButton.Click += new EventHandler(importToLibraryloadFile_Click);
-
-					addToQueueButton = textImageButtonFactory.Generate("Add to Queue".Localize());
-					addToQueueButton.Margin = new BorderDouble(3, 0);
-					addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
-					addToQueueButton.Visible = false;
-					buttonPanel.AddChild(addToQueueButton);
-
-					exportItemButton = textImageButtonFactory.Generate("Export".Localize());
-					exportItemButton.Margin = new BorderDouble(3, 0);
-					exportItemButton.Click += new EventHandler(exportButton_Click);
-					exportItemButton.Visible = false;
-					buttonPanel.AddChild(exportItemButton);
-
-					editItemButton = textImageButtonFactory.Generate("Edit".Localize());
-					editItemButton.Margin = new BorderDouble(3, 0);
-					editItemButton.Click += new EventHandler(editButton_Click);
-					editItemButton.Visible = false;
-					buttonPanel.AddChild(editItemButton);
-
-					removeFromLibraryButton = textImageButtonFactory.Generate("Remove".Localize());
-					removeFromLibraryButton.Margin = new BorderDouble(3, 0);
-					removeFromLibraryButton.Click += new EventHandler(deleteFromQueueButton_Click);
-					removeFromLibraryButton.Visible = false;
-					buttonPanel.AddChild(removeFromLibraryButton);
 
 					GuiWidget spacer = new GuiWidget();
 					spacer.HAnchor = HAnchor.ParentLeftRight;
 					buttonPanel.AddChild(spacer);
 				}
+	
+				CreateEditBarButtons();
+
 				//allControls.AddChild(navigationPanel);
 				allControls.AddChild(searchPanel);
+				allControls.AddChild(itemOperationButtons);
 				libraryDataView = new LibraryDataView();
 				allControls.AddChild(libraryDataView);
 				allControls.AddChild(buttonPanel);
@@ -169,15 +163,46 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddHandlers();
 		}
 
+		private void CreateEditBarButtons()
+		{
+			itemOperationButtons = new FlowLayoutWidget();
+			itemOperationButtons.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+			itemOperationButtons.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			double oldWidth = editButtonFactory.FixedWidth;
+			editButtonFactory.FixedWidth = 0;
+
+			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
+			exportItemButton.Margin = new BorderDouble(3, 0);
+			exportItemButton.Click += new EventHandler(exportButton_Click);
+			editOperationMultiCapable.Add(false);
+			itemOperationButtons.AddChild(exportItemButton);
+
+			Button editItemButton = editButtonFactory.Generate("Edit".Localize());
+			editItemButton.Margin = new BorderDouble(3, 0);
+			editItemButton.Click += new EventHandler(editButton_Click);
+			editOperationMultiCapable.Add(false);
+			itemOperationButtons.AddChild(editItemButton);
+
+			Button removeFromLibraryButton = editButtonFactory.Generate("Remove".Localize());
+			removeFromLibraryButton.Margin = new BorderDouble(3, 0);
+			removeFromLibraryButton.Click += new EventHandler(deleteFromQueueButton_Click);
+			editOperationMultiCapable.Add(true);
+			itemOperationButtons.AddChild(removeFromLibraryButton);
+
+			Button addToQueueButton = editButtonFactory.Generate("Add to Queue".Localize());
+			addToQueueButton.Margin = new BorderDouble(3, 0);
+			addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
+			editOperationMultiCapable.Add(true);
+			itemOperationButtons.AddChild(addToQueueButton);
+
+			itemOperationButtons.Visible = false;
+			editButtonFactory.FixedWidth = oldWidth;
+		}
+
 		private void AddHandlers()
 		{
 			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
 			libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
-			searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
-			searchButton.Click += searchButtonClick;
-			searchInput.ActualTextEditWidget.KeyUp += searchInputKeyUp;
-			enterEditModeButton.Click += enterEditModeButtonClick;
-			leaveEditModeButton.Click += leaveEditModeButtonClick;
 		}
 
 		private void searchInputKeyUp(object sender, KeyEventArgs keyEvent)
@@ -195,8 +220,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
 			libraryDataView.EditMode = true;
-			addToLibraryButton.Visible = false;
-			SetVisibleButtons();
+			itemOperationButtons.Visible = true;
+			SetEditButtonsStates();
 		}
 
 		private void leaveEditModeButtonClick(object sender, EventArgs mouseEvent)
@@ -204,14 +229,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
 			libraryDataView.EditMode = false;
-			addToLibraryButton.Visible = true;
-			SetVisibleButtons();
+			itemOperationButtons.Visible = false;
+			SetEditButtonsStates();
 		}
 
 		private void searchButtonClick(object sender, EventArgs mouseEvent)
 		{
 			string textToSend = searchInput.Text.Trim();
 			LibraryData.Instance.KeywordFilter = textToSend;
+			libraryDataView.ClearSelectedItems();
 		}
 
 		private void addToQueueButton_Click(object sender, EventArgs e)
@@ -225,34 +251,30 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void onLibraryItemsSelected(object sender, EventArgs e)
 		{
-			SetVisibleButtons();
+			SetEditButtonsStates();
 		}
 
-		private void SetVisibleButtons()
+		private void SetEditButtonsStates()
 		{
-			List<LibraryRowItem> selectedItemsList = libraryDataView.SelectedItems;
-			if (selectedItemsList.Count > 0)
-			{
-				if (selectedItemsList.Count == 1)
-				{
-					exportItemButton.Visible = true;
-					editItemButton.Visible = true;
-				}
-				else
-				{
-					exportItemButton.Visible = false;
-					editItemButton.Visible = false;
-				}
+			int selectedCount = libraryDataView.SelectedItems.Count;
+			bool enabled = (selectedCount > 0 && libraryDataView.EditMode);
 
-				addToQueueButton.Visible = true;
-				removeFromLibraryButton.Visible = true;
-			}
-			else
+			int i = 0;
+			foreach (var child in itemOperationButtons.Children)
 			{
-				addToQueueButton.Visible = false;
-				removeFromLibraryButton.Visible = false;
-				exportItemButton.Visible = false;
-				editItemButton.Visible = false;
+				var button = child as Button;
+				if (button != null)
+				{
+					if (selectedCount > 1 && !editOperationMultiCapable[i])
+					{
+						button.Enabled = false;
+					}
+					else
+					{
+						button.Enabled = enabled;
+					}
+				}
+				i++;
 			}
 		}
 

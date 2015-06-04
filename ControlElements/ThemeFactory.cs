@@ -287,6 +287,14 @@ namespace MatterHackers.MatterControl
 
 			return themeList;
 		}
+
+		public bool IsTouchScreen 
+		{
+			get 
+			{
+				return UserSettings.Instance.get("ApplicationDisplayMode") == "touchscreen"; 
+			}
+		}
 	}
 
 	public class Theme

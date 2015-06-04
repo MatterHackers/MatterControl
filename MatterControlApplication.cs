@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using Mindscape.Raygun4Net;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,6 +70,10 @@ namespace MatterHackers.MatterControl
 		private string unableToExitMessage = "Oops! You cannot exit while a print is active.".Localize();
 
 		private string unableToExitTitle = "Unable to Exit".Localize();
+
+#if !DEBUG
+		private static RaygunClient _raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==");
+#endif
 
 		static MatterControlApplication()
 		{
@@ -214,29 +219,24 @@ namespace MatterHackers.MatterControl
 						}
 						break;
 
-                    case "SLICE_AND_EXPORT_GCODE":
-                        if(currentCommandIndex + 1 <= commandLineArgs.Length)
-                        {
+					case "SLICE_AND_EXPORT_GCODE":
+						if (currentCommandIndex + 1 <= commandLineArgs.Length)
+						{
+							currentCommandIndex++;
+							string fullPath = commandLineArgs[currentCommandIndex];
+							QueueData.Instance.RemoveAll();
+							if (!string.IsNullOrEmpty(fullPath))
+							{
+								string fileName = Path.GetFileNameWithoutExtension(fullPath);
+								PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(fileName, fullPath));
+								QueueData.Instance.AddItem(printItemWrapper);
 
-                            currentCommandIndex++;
-                            string fullPath = commandLineArgs[currentCommandIndex];
-                            QueueData.Instance.RemoveAll();
-                            if(!string.IsNullOrEmpty(fullPath))
-                            {
-
-                                string fileName = Path.GetFileNameWithoutExtension(fullPath);
-                                PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(fileName,fullPath));
-                                QueueData.Instance.AddItem(printItemWrapper);
-
-                                SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                                ExportPrintItemWindow exportForTest = new ExportPrintItemWindow(printItemWrapper);
-                                exportForTest.ExportGcodeCommandLineUtility(fileName);
-                            
-                            }
-                       
-                        }
-                        break;
-
+								SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+								ExportPrintItemWindow exportForTest = new ExportPrintItemWindow(printItemWrapper);
+								exportForTest.ExportGcodeCommandLineUtility(fileName);
+							}
+						}
+						break;
 				}
 
 				if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
@@ -317,9 +317,16 @@ namespace MatterHackers.MatterControl
 
 		public enum ReportSeverity2 { Warning, Error }
 
-		public void ReportException(Exception e, string key, string value, ReportSeverity2 warningLevel = ReportSeverity2.Warning)
+		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)
 		{
-			// do nothing
+			// Conditionally spin up error reporting if not on the Stable channel
+			string channel = UserSettings.Instance.get("UpdateFeedType");
+			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
+			{
+#if !DEBUG
+				_raygunClient.Send(e);
+#endif
+			}
 		}
 
 		private event EventHandler unregisterEvent;
@@ -357,12 +364,41 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main()
 		{
-			// Make sure we have the right woring directory as we assume everything relative to the executable.
+			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
+
+			System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
+			//throw new Exception("Forced exception thrown manually!");
 
 			Datastore.Instance.Initialize();
 
+#if !DEBUG
+			// Conditionally spin up error reporting if not on the Stable channel
+			string channel = UserSettings.Instance.get("UpdateFeedType");
+			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
+#endif
+			{
+				System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+				AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+			}
+
 			MatterControlApplication app = MatterControlApplication.Instance;
+		}
+
+		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+		{
+#if !DEBUG
+			_raygunClient.Send(e.Exception);
+#endif
+		}
+
+		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+#if !DEBUG
+			_raygunClient.Send(e.ExceptionObject as Exception);
+#endif
 		}
 
 		public static void WriteTestGCodeFile()
@@ -644,7 +680,6 @@ namespace MatterHackers.MatterControl
 			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
 			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();
 			ClipperLib.Clipper.AssertDebugNotDefined();
-			MatterHackers.Csg.Utilities.AssertDebugNotDefined();
 			MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined();
 			MatterHackers.Localizations.TranslationMap.AssertDebugNotDefined();
 			MatterHackers.MarchingSquares.MarchingSquaresByte.AssertDebugNotDefined();
@@ -653,9 +688,5 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
 			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
 		}
-
-
-
 	}
-
 }

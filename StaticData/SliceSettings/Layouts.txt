@@ -66,13 +66,13 @@ Advanced
         layer_height
         first_layer_height
         bottom_clip_amount
-      Perimeters Surface
+      Outer Surface - Perimeters
         perimeters
         avoid_crossing_perimeters
         spiral_vase
         randomize_start
         external_perimeters_first
-      Top & Bottom Surface
+      Outer Surface - Top & Bottom
         top_solid_layers
         bottom_solid_layers
       Quality
@@ -248,16 +248,6 @@ Advanced
         build_height
         z_offset
         bed_shape
-      Hardware
-        has_fan
-        has_hardware_leveling
-        has_heated_bed
-        has_sd_card_reader
-        has_power_control
-        show_reset_connection
-        extruder_count
-        heat_extruder_before_homing
-        extruders_share_temperature
       Firmware
         z_can_be_negative
         gcode_flavor
@@ -268,6 +258,17 @@ Advanced
       Advanced
         use_firmware_retraction
         vibration_limit
+    Features
+      Hardware
+        has_fan
+        has_hardware_leveling
+        has_heated_bed
+        has_sd_card_reader
+        has_power_control
+        show_reset_connection
+        extruder_count
+        heat_extruder_before_homing
+        extruders_share_temperature
     Custom G-Code
       Start G-Code
         start_gcode

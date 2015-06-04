@@ -214,6 +214,9 @@ namespace MatterHackers.MatterControl
 			base.OnDraw(graphics2D);
 		}
 
+		readonly static string writeFaildeWaring = "WARNING: Write Failed!".Localize();
+		readonly static string cantAccessPath = "Can't access '{0}'.".Localize();
+
 		private void onExportLogFileSelected(SaveFileDialogParams saveParams)
 		{
 			if (saveParams.FileName != null)
@@ -221,7 +224,17 @@ namespace MatterHackers.MatterControl
 				string filePathToSave = saveParams.FileName;
 				if (filePathToSave != null && filePathToSave != "")
 				{
-					textScrollWidget.WriteToFile(filePathToSave);
+					try
+					{
+						textScrollWidget.WriteToFile(filePathToSave);
+					}
+					catch(UnauthorizedAccessException e)
+					{
+						PrinterOutputCache.Instance.PrinterLines.Add("");
+						PrinterOutputCache.Instance.PrinterLines.Add(writeFaildeWaring);
+						PrinterOutputCache.Instance.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
+						PrinterOutputCache.Instance.PrinterLines.Add("");
+					}
 				}
 			}
 		}

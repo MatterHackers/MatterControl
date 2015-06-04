@@ -39,25 +39,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void UngroupSelectedMeshGroup()
-		{
-			if (MeshGroups.Count > 0)
-			{
-				processingProgressControl.PercentComplete = 0;
-				processingProgressControl.Visible = true;
-				LockEditControls();
-				viewIsInEditModePreLock = true;
-
-				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
-				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
-
-				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ungroupSelectedBackgroundWorker_RunWorkerCompleted);
-				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(ungroupSelectedBackgroundWorker_DoWork);
-
-				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
-			}
-		}
-
 		private void ungroupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			if (SelectedMeshGroupIndex == -1)
@@ -138,6 +119,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PartHasBeenChanged();
 
 			Invalidate();
+		}
+
+		private void UngroupSelectedMeshGroup()
+		{
+			if (MeshGroups.Count > 0)
+			{
+				processingProgressControl.PercentComplete = 0;
+				processingProgressControl.Visible = true;
+				LockEditControls();
+				viewIsInEditModePreLock = true;
+
+				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
+				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
+
+				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ungroupSelectedBackgroundWorker_RunWorkerCompleted);
+				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(ungroupSelectedBackgroundWorker_DoWork);
+
+				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
+			}
 		}
 	}
 }
