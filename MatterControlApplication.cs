@@ -71,9 +71,22 @@ namespace MatterHackers.MatterControl
 
 		private string unableToExitTitle = "Unable to Exit".Localize();
 
-#if !DEBUG
-		private static RaygunClient _raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==");
+
+#if true//!DEBUG
+		RaygunClient _raygunClient = GetCorrectClient();
 #endif
+
+		static RaygunClient GetCorrectClient()
+		{
+			if (OsInformation.OperatingSystem == OSType.Mac)
+			{
+				return new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
+			}
+			else
+			{
+				return new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
+			}
+		}
 
 		static MatterControlApplication()
 		{
