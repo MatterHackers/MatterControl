@@ -1437,31 +1437,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void PulseRtsLow()
+		public void ArduinoDtrReset()
 		{
+			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
+			// current approach results in unpredictable behavior if the caller fails to close the connection 
 			if (serialPort == null && this.ActivePrinter != null)
 			{
-				serialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
-				serialPort.BaudRate = this.BaudRate;
+				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
+				resetSerialPort.Open();
 
-				// Set the read/write timeouts
-				serialPort.ReadTimeout = 500;
-				serialPort.WriteTimeout = 500;
-				serialPort.Open();
+				Thread.Sleep(500);
 
-				serialPort.RtsEnable = true;
-				serialPort.RtsEnable = false;
-				try
+				// Pulse DTR and RTS pins
+				for (int i = 0; i < 2; i++)
 				{
-					Thread.Sleep(100);
+					resetSerialPort.RtsEnable = false;
+					resetSerialPort.DtrEnable = false;
+					Thread.Sleep(10);
+					resetSerialPort.RtsEnable = true;
+					resetSerialPort.DtrEnable = true;
 				}
-				catch(Exception e)
-				{
-					// Let's track this issue if possible.
-					MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
-				}
-				serialPort.RtsEnable = true;
-				serialPort.Close();
+
+				resetSerialPort.Close();
 			}
 		}
 
