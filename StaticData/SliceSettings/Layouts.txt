@@ -1,5 +1,5 @@
 Simple
-  Settings
+  General
     Single
       Layers
         layer_height
@@ -8,7 +8,7 @@ Simple
         support_material
         create_raft
 Intermediate
-  Settings
+  General
     Layers/Surface
       Layer Height
         layer_height
@@ -60,7 +60,7 @@ Intermediate
         min_fan_speed
         max_fan_speed
 Advanced
-  Settings
+  General
     Layers/Surface
       Layer Height
         layer_height
@@ -241,23 +241,13 @@ Advanced
       Enable
         cool_extruder_lift
   Printer
-    General
+    Print Area
       Size and Coordinates
         bed_size
         print_center
         build_height
         z_offset
         bed_shape
-      Firmware
-        z_can_be_negative
-        gcode_flavor
-        gcode_output_type
-        use_relative_e_distances
-        gcode_arcs
-        g0
-      Advanced
-        use_firmware_retraction
-        vibration_limit
     Features
       Hardware
         has_fan
@@ -269,6 +259,16 @@ Advanced
         extruder_count
         heat_extruder_before_homing
         extruders_share_temperature
+      Firmware
+        z_can_be_negative
+        gcode_flavor
+        gcode_output_type
+        use_relative_e_distances
+        gcode_arcs
+        g0
+      Advanced
+        use_firmware_retraction
+        vibration_limit
     Custom G-Code
       Start G-Code
         start_gcode

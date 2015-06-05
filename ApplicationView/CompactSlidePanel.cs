@@ -76,14 +76,14 @@ namespace MatterHackers.MatterControl
 				advancedControlsButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 				advancedControlsButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
 				advancedControlsButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-				advancedControlsButtonFactory.fontSize = 14;
+				advancedControlsButtonFactory.fontSize = 10;
 
 				advancedControlsButtonFactory.disabledTextColor = RGBA_Bytes.LightGray;
 				advancedControlsButtonFactory.disabledFillColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				advancedControlsButtonFactory.disabledBorderColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 				advancedControlsButtonFactory.invertImageLocation = true;
-				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Settings"), "icon_arrow_right_32x32.png");
+				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Settings\n& Controls"), "icon_arrow_right_32x32.png");
 				advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
 				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
 				advancedControlsLinkButton.Cursor = Cursors.Hand;

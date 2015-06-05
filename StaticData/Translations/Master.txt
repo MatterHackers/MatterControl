@@ -3286,3 +3286,12 @@ Translated:Oops! Unable to save changes.
 English:Unable to save
 Translated:Unable to save
 
+English:Terminal
+Translated:Terminal
+
+English:Settings\n& Controls
+Translated:Settings\n& Controls
+
+English:Print Area
+Translated:Print Area
+
