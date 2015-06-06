@@ -161,10 +161,7 @@ namespace MatterHackers.MatterControl
 			string defaultPrinterDriver;
 			if (settingsDict.TryGetValue("driver_type", out defaultPrinterDriver))
 			{
-				if (Enum.IsDefined(typeof(ActivePrinterProfile.SlicingEngineTypes), defaultPrinterDriver))
-				{
-					ActivePrinter.DriverType = defaultPrinterDriver;
-				}
+				ActivePrinter.DriverType = defaultPrinterDriver;
 			}
 
 			settingsDict.TryGetValue("default_material_presets", out defaultMaterialPreset);
