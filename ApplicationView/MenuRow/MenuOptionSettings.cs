@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl
 		static public PopOutTextTabWidget controlsPopOut = null;
 
 		public MenuOptionSettings()
-			: base("Settings".Localize())
+			: base("View".Localize())
 		{
 		}
 
@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl
             {
                 {LocalizedString.Get("Settings"), openPrintingPannel_Click},
                 {LocalizedString.Get("Controls"), openControlsPannel_Click},
-				{LocalizedString.Get("Show Terminal"), openTermanialPannel_Click},
+				{LocalizedString.Get("Terminal"), openTermanialPannel_Click},
             };
 		}
 

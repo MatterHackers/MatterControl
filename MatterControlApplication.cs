@@ -71,9 +71,22 @@ namespace MatterHackers.MatterControl
 
 		private string unableToExitTitle = "Unable to Exit".Localize();
 
-#if !DEBUG
-		private static RaygunClient _raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==");
+
+#if true//!DEBUG
+		RaygunClient _raygunClient = GetCorrectClient();
 #endif
+
+		static RaygunClient GetCorrectClient()
+		{
+			if (OsInformation.OperatingSystem == OSType.Mac)
+			{
+				return new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
+			}
+			else
+			{
+				return new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
+			}
+		}
 
 		static MatterControlApplication()
 		{
@@ -364,6 +377,9 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main()
 		{
+			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 

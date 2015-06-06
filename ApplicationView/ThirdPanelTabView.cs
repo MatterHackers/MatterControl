@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 				TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 				advancedControlsButtonFactory.fontSize = 14;
 				advancedControlsButtonFactory.invertImageLocation = false;
-				advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Queue"), "icon_arrow_left_32x32.png");
+				advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Back"), "icon_arrow_left_32x32.png");
 				advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
 				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
 				advancedControlsLinkButton.Cursor = Cursors.Hand;

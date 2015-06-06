@@ -158,6 +158,12 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			string defaultPrinterDriver;
+			if (settingsDict.TryGetValue("driver_type", out defaultPrinterDriver))
+			{
+				ActivePrinter.DriverType = defaultPrinterDriver;
+			}
+
 			settingsDict.TryGetValue("default_material_presets", out defaultMaterialPreset);
 			settingsDict.TryGetValue("default_quality_preset", out defaultQualityPreset);
 			settingsDict.TryGetValue("default_movement_speeds", out defaultMovementSpeeds);
