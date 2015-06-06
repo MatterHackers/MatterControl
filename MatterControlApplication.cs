@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 
 
 #if true//!DEBUG
-		RaygunClient _raygunClient = GetCorrectClient();
+		static RaygunClient _raygunClient = GetCorrectClient();
 #endif
 
 		static RaygunClient GetCorrectClient()
