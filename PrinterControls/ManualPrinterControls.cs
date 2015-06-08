@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl
 			: base()
 		{
 			this.AnchorAll();
+            VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
 			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			this.AddChild(new ManualPrinterControls());
 		}
