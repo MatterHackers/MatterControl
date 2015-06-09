@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 								readData[i] = fileSizeAsBytes[i];
 							}
 
-							// push the file size into the first bytes
+							// push the wirte time
 							byte[] writeTimeAsBytes = BitConverter.GetBytes(currentWriteTime);
 							for (int i = 0; i < writeTimeAsBytes.Length; i++)
 							{
@@ -203,14 +203,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					this.fileHashCode = 0;
 				}
-
-				if (PrintItem != null 
-					&& PrintItem.FileHashCode != this.fileHashCode)
-				{
-					PrintItem.FileHashCode = this.fileHashCode;
-					PrintItem.Commit();
-				}
-
 
 				return this.fileHashCode;
 			}

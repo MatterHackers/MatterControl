@@ -189,8 +189,6 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string FileLocation { get; set; }
 
-		public long FileHashCode { get; set; }
-
 		public DateTime DateAdded { get; set; }
 
 		public int PrintCount { get; set; }
