@@ -534,7 +534,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (firstDraw && commandLineArgs.Length < 2)
+			if (firstDraw)
 			{
 				UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
@@ -550,16 +550,6 @@ namespace MatterHackers.MatterControl
 				}
 
 				TerminalWindow.ShowIfLeftOpen();
-
-#if false
-				foreach (CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
-				{
-					if (creatorInfo.description.Contains("Image"))
-					{
-						creatorInfo.functionToLaunchCreator(null, null);
-					}
-				}
-#endif
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);

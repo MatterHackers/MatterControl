@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private String fileType;
 
-		private int fileHashCode;
+		private long fileHashCode;
 		private long writeTime = 0;
 
 		public bool CurrentlySlicing { get; set; }
@@ -152,14 +152,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 			set { this.PrintItem.FileLocation = value; }
 		}
 
-		public int FileHashCode
+		public long FileHashCode
 		{
 			get
 			{
-				long currentWriteTime = File.GetLastWriteTime(this.FileLocation).ToBinary();
 				bool fileExists = System.IO.File.Exists(this.FileLocation);
 				if (fileExists)
 				{
+					long currentWriteTime = File.GetLastWriteTime(this.FileLocation).ToBinary();
+
 					if (this.fileHashCode == 0 || writeTime != currentWriteTime)
 					{
 						writeTime = currentWriteTime;
@@ -167,7 +168,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						{
 							long sizeOfFile = fileStream.Length;
 							int sizeOfRead = 1 << 16;
-							byte[] readData = new byte[sizeOfRead * 3];
+							byte[] readData = new byte[Math.Max(64, sizeOfRead * 3)];
 
 							// get a chuck from the begining
 							fileStream.Read(readData, sizeOfRead, sizeOfRead);
@@ -187,12 +188,29 @@ namespace MatterHackers.MatterControl.PrintQueue
 								readData[i] = fileSizeAsBytes[i];
 							}
 
-							int hashCode = agg_basics.ComputeHash(readData);
-							int fileSizeInt = (int)sizeOfFile;
-							this.fileHashCode = new { hashCode, currentWriteTime, fileSizeInt }.GetHashCode();
+							// push the file size into the first bytes
+							byte[] writeTimeAsBytes = BitConverter.GetBytes(currentWriteTime);
+							for (int i = 0; i < writeTimeAsBytes.Length; i++)
+							{
+								readData[fileSizeAsBytes.Length + i] = fileSizeAsBytes[i];
+							}
+
+							this.fileHashCode = agg_basics.ComputeHash(readData);
 						}
 					}
 				}
+				else
+				{
+					this.fileHashCode = 0;
+				}
+
+				if (PrintItem != null 
+					&& PrintItem.FileHashCode != this.fileHashCode)
+				{
+					PrintItem.FileHashCode = this.fileHashCode;
+					PrintItem.Commit();
+				}
+
 
 				return this.fileHashCode;
 			}
@@ -260,6 +278,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void OnFileHasChanged()
 		{
+			// Get the hashcode so we can save it if it has changed.
+			long fileHashCode = FileHashCode;
+
 			if (FileHasChanged != null)
 			{
 				FileHasChanged.CallEvents(this, null);
