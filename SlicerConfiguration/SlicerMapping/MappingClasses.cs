@@ -385,31 +385,44 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class AsPercentOfReferenceOrDirect : ScaledSingleNumber
+	public class AsPercentOfReferenceOrDirect : MapItem
 	{
-		internal string originalReference;
+		string originalReference;
+		double scale;
 
 		public override string MappedValue
 		{
 			get
 			{
+				double finalValue = 0;
 				if (OriginalValue.Contains("%"))
 				{
 					string withoutPercent = OriginalValue.Replace("%", "");
 					double ratio = MapItem.ParseValueString(withoutPercent) / 100.0;
 					string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
 					double valueToModify = MapItem.ParseValueString(originalReferenceString);
-					double finalValue = valueToModify * ratio * scale;
-					return finalValue.ToString();
+					finalValue = valueToModify * ratio;
+				}
+				else
+				{
+					finalValue = MapItem.ParseValueString(OriginalValue);
 				}
 
-				return base.MappedValue;
+				if (finalValue == 0)
+				{
+					finalValue = MapItem.ParseValueString(ActiveSliceSettings.Instance.GetActiveValue(originalReference));
+				}
+
+				finalValue *= scale;
+
+				return finalValue.ToString();
 			}
 		}
 
 		public AsPercentOfReferenceOrDirect(string mappedKey, string originalKey, string originalReference, double scale = 1)
-			: base(mappedKey, originalKey, scale)
+			: base(mappedKey, originalKey)
 		{
+			this.scale = scale;
 			this.originalReference = originalReference;
 		}
 	}

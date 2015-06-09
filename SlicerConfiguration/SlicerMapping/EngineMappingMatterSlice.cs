@@ -114,13 +114,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("extrusionMultiplier", "extrusion_multiplier"),
 
             //firstLayerExtrusionWidth=0.8 # The width of the line to extrude for the first layer.
-            new FirstLayerHeight("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
+            new AsPercentOfReferenceOrDirect("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
 
             //firstLayerSpeed=20 # mm/s.
             new AsPercentOfReferenceOrDirect("firstLayerSpeed", "first_layer_speed", "infill_speed"),
 
             //firstLayerThickness=0.3 # The height of the first layer to print, in millimeters.
-            new AsPercentOfReferenceOrDirect("firstLayerThickness", "first_layer_height", "layer_height", 1),
+            new AsPercentOfReferenceOrDirect("firstLayerThickness", "first_layer_height", "layer_height"),
 
             //firstLayerToAllowFan=2 # The fan will be force to stay off below this layer.
             new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
