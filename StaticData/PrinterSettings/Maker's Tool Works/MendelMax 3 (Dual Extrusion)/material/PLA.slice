@@ -1,0 +1,7 @@
+temperature = 204
+bed_temperature = 60
+disable_fan_first_layers = 1
+min_fan_speed = 35
+max_fan_speed = 100
+bridge_fan_speed = 100
+cooling = 1

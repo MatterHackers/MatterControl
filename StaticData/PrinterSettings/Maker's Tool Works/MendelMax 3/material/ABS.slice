@@ -1,0 +1,7 @@
+temperature = 233
+bed_temperature = 100
+disable_fan_first_layers = 1
+min_fan_speed = 0
+max_fan_speed = 0
+bridge_fan_speed = 0
+cooling = 0
