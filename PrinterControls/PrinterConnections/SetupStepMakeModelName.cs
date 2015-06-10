@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				if (usingDefaultName)
 				{
                     string printerInputName = String.Format("{0} {1}", this.ActivePrinter.Make, this.ActivePrinter.Model);
-                    string query = string.Format("SELECT Name FROM Printer WHERE Name LIKE \'{0}%\';", printerInputName);
+                    string query = string.Format("SELECT Name FROM Printer WHERE Name LIKE \"{0}%\";", printerInputName);
                     var names = Datastore.Instance.dbSQLite.Query<sqlName>(query).Select(item => item.Name).ToList();
 
                     if (!names.Contains(printerInputName))
