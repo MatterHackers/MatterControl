@@ -1448,15 +1448,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				Thread.Sleep(500);
 
-				// Pulse DTR and RTS pins
-				for (int i = 0; i < 2; i++)
-				{
-					resetSerialPort.RtsEnable = false;
-					resetSerialPort.DtrEnable = false;
-					Thread.Sleep(10);
-					resetSerialPort.RtsEnable = true;
-					resetSerialPort.DtrEnable = true;
-				}
+				ToggleHighLowHeigh(resetSerialPort);
 
 				resetSerialPort.Close();
 			}
@@ -1692,32 +1684,56 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void RebootBoard()
 		{
-			if (this.ActivePrinter != null
-				&& serialPort != null)
+			try
 			{
-				bool wasConnected = PrinterIsConnected;
-				// first make sure we are not printing if possible (cancel slicing)
-				IFrostedSerialPort currentSerialPort = serialPort;
-				Stop();
-				serialPort = currentSerialPort;
-
-				serialPort.RtsEnable = true;
-				serialPort.DtrEnable = true;
-				Thread.Sleep(100);
-				serialPort.RtsEnable = false;
-				serialPort.DtrEnable = false;
-				Thread.Sleep(100);
-				serialPort.RtsEnable = true;
-				serialPort.DtrEnable = true;
-
-				ClearQueuedGCode();
-
-				if (wasConnected)
+				if (this.ActivePrinter != null
+					&& serialPort != null)
 				{
-					// let the process know we canceled not ended normaly.
-					CommunicationState = CommunicationStates.Connected;
+					// first make sure we are not printing if possible (cancel slicing)
+					Stop();
+					if (serialPort != null) // we still have a serial port
+					{
+						ClearQueuedGCode();
+
+						ToggleHighLowHeigh(serialPort);
+
+						// let the process know we canceled not ended normaly.
+						CommunicationState = CommunicationStates.Connected;
+					}
+					else
+					{
+						// We reset the board while attempting to connect, so now we don't have a serial port.
+						// Create one and do the DTR to reset
+						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
+						resetSerialPort.Open();
+
+						Thread.Sleep(500);
+
+						ToggleHighLowHeigh(resetSerialPort);
+
+						resetSerialPort.Close();
+
+						// let the process know we canceled not ended normaly.
+						CommunicationState = CommunicationStates.Disconnected;
+					}
 				}
 			}
+			catch(Exception e)
+			{
+				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+			}
+		}
+
+		private void ToggleHighLowHeigh(IFrostedSerialPort serialPort)
+		{
+			serialPort.RtsEnable = true;
+			serialPort.DtrEnable = true;
+			Thread.Sleep(100);
+			serialPort.RtsEnable = false;
+			serialPort.DtrEnable = false;
+			Thread.Sleep(100);
+			serialPort.RtsEnable = true;
+			serialPort.DtrEnable = true;
 		}
 
 		public void ReleaseMotors()
@@ -1990,6 +2006,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						{
 							CancelPrint();
 							MarkActivePrintCanceled();
+							// We have to continue printing the end gcode, so we set this to Printing.
 							CommunicationState = CommunicationStates.Printing;
 						}
 					}
