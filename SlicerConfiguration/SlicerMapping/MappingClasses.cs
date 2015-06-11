@@ -93,6 +93,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public virtual string MappedValue { get { return OriginalValue; } }
 	}
 
+	public class MapFirstValue : MapItem
+	{
+		public MapFirstValue(string mappedKey, string originalKey)
+			: base(mappedKey, originalKey)
+		{
+		}
+
+		public override string MappedValue 
+		{
+			get
+			{
+				string mappedValue = base.MappedValue;
+				if (mappedValue.Contains(","))
+				{
+					string[] splitValues = mappedValue.Split(',');
+					return splitValues[0];
+				}
+
+				return mappedValue;
+			}
+		}
+	}
+
 	public class VisibleButNotMappedToEngine : MapItem
 	{
 		public override string MappedValue
@@ -283,7 +306,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class ScaledSingleNumber : MapItem
+	public class ScaledSingleNumber : MapFirstValue
 	{
 		internal double scale;
 
