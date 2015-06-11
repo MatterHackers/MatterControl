@@ -90,10 +90,7 @@ namespace MatterHackers.MatterControl
 
 		private void CancelButton_Click()
 		{
-			UiThread.RunOnIdle((state) =>
-				{
-					aboutWindow.Close();
-				});
+			UiThread.RunOnIdle(aboutWindow.Close);
 		}
 	}
 }

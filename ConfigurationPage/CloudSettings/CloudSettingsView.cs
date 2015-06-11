@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			if (enableCloudMonitorFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					enableCloudMonitorFunction(null);
 				});
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			if (disableCloudMonitorFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					disableCloudMonitorFunction(null);
 				});
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			if (openDashboardPageFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					openDashboardPageFunction(null);
 				});
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			if (openDashboardPageFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					openInstructionsPageFunction(null);
 				});
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			if (openPrintNotificationFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					openPrintNotificationFunction(null);
 				});

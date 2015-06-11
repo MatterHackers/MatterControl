@@ -325,12 +325,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private void buttonAbort_Click(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle(DoButtonAbort_Click);
-		}
-
-		private void DoButtonAbort_Click(object state)
-		{
-			Close();
+			UiThread.RunOnIdle(Close);
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -377,7 +372,7 @@ namespace MatterHackers.MatterControl.EeProm
 			UiThread.RunOnIdle(DoButtonSave_Click);
 		}
 
-		private void DoButtonSave_Click(object state)
+		private void DoButtonSave_Click()
 		{
 			SaveSettingsToActive();
 			currentEePromSettings.SaveToEeProm();

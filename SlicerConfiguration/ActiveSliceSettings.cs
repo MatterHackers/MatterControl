@@ -627,7 +627,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.activeSettingsLayers.Add(defaultSettingsLayer);
 		}
 
-		public void LoadSettingsFromIni(object state)
+		public void LoadSettingsFromIni()
 		{
 			OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Configuration|*.slice;*.ini");
 			openParams.ActionButtonLabel = "Load Configuration";

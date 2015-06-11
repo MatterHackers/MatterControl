@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 		}
 
-		private void DoExportExportLog_Click(object state)
+		private void DoExportExportLog_Click()
 		{
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as Text|*.txt");
 			saveParams.Title = "MatterControl: Terminal Log";
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void CloseWindow(object state)
+		private void CloseWindow()
 		{
 			this.Parent.Close();
 		}

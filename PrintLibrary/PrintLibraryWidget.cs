@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle);
 		}
 
-		private void importToLibraryloadFile_ClickOnIdle(object state)
+		private void importToLibraryloadFile_ClickOnIdle()
 		{
 			OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
 			FileDialog.OpenFileDialog(openParams, onLibraryLoadFileSelected);

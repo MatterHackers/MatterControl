@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			UiThread.RunOnIdle(MoveToManualConfiguration);
 		}
 
-		private void MoveToManualConfiguration(object state)
+		private void MoveToManualConfiguration()
 		{
 			Parent.AddChild(new SetupStepComPortManual((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
 			Parent.RemoveChild(this);
@@ -193,12 +193,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void NextButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle(DoNextButton_Click);
-		}
-
-		private void DoNextButton_Click(object state)
-		{
-			Parent.Close();
+			UiThread.RunOnIdle(Parent.Close);
 		}
 	}
 }

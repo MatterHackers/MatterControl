@@ -210,19 +210,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private bool ImportQueueMenu_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 				{
-					ActiveSliceSettings.Instance.LoadSettingsFromIni(state);
+					ActiveSliceSettings.Instance.LoadSettingsFromIni();
 				});
 			return true;
 		}
 
 		private bool ExportQueueMenu_Click()
 		{
-			UiThread.RunOnIdle((state) =>
-				{
-					ActiveSliceSettings.Instance.SaveAs();
-				});
+			UiThread.RunOnIdle(ActiveSliceSettings.Instance.SaveAs);
 			return true;
 		}
 
@@ -594,7 +591,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						string settingsScrollPosition = "SliceSettingsWidget_{0}_{1}_ScrollPosition".FormatWith(category.Name, group.Name);
 
-						UiThread.RunOnIdle((state) =>
+						UiThread.RunOnIdle(()=>
 						{
 							int scrollPosition = UserSettings.Instance.Fields.GetInt(settingsScrollPosition, -100000);
 							if (scrollPosition != -100000)
@@ -1324,7 +1321,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				container.MouseEnterBounds += (sender, e) =>
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						overlay.Visible = false;
 						clickToEdit.Visible = true;
@@ -1333,7 +1330,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				container.MouseLeaveBounds += (sender, e) =>
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						overlay.Visible = true;
 						clickToEdit.Visible = false;

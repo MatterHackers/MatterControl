@@ -32,64 +32,52 @@ using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
-	public abstract class LibraryProvider
+	public class LibraryProviderFileSystem : LibraryProvider
 	{
-		public static RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
-		public static RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
-		public static RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
+		private string rootPath;
 
-		private static LibraryProvider currentProvider;
+		public LibraryProviderFileSystem(string rootPath)
+		{
+			this.rootPath = rootPath;
+		}
 
-		public static LibraryProvider CurrentProvider
+		public override int Count
 		{
 			get
 			{
-				if (currentProvider == null)
-				{
-					// hack for the moment
-					currentProvider = new LibraryProviderSQLite();
-					//currentProvider = new LibraryProviderFileSystem(Path.Combine("C:", "Users", "LarsBrubaker", "Downloads"));
-				}
-				return currentProvider;
+				throw new NotImplementedException();
 			}
 		}
 
-		#region AbstractMethods
-
-		public abstract int Count { get; }
-
-		public abstract string KeywordFilter { get; set; }
-
-		public abstract PrintItemWrapper GetPrintItemWrapper(int itemIndex);
-
-		public abstract void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
-
-		public abstract void RemoveItem(PrintItemWrapper printItemWrapper);
-
-		#endregion AbstractMethods
-
-		public static void OnDataReloaded(EventArgs eventArgs)
+		public override string KeywordFilter
 		{
-			DataReloaded.CallEvents(CurrentProvider, eventArgs);
+			get
+			{
+				throw new NotImplementedException();
+			}
+
+			set
+			{
+				throw new NotImplementedException();
+			}
 		}
 
-		public static void OnItemAdded(EventArgs eventArgs)
+		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
-			ItemAdded.CallEvents(CurrentProvider, eventArgs);
+			throw new NotImplementedException();
 		}
 
-		public static void OnItemRemoved(EventArgs eventArgs)
+		public override void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
-			ItemRemoved.CallEvents(CurrentProvider, eventArgs);
+			throw new NotImplementedException();
 		}
 
-		public void SetCurrent(LibraryProvider current)
+		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
-			LibraryProvider.currentProvider = current;
+			throw new NotImplementedException();
 		}
 	}
 }

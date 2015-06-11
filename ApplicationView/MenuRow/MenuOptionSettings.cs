@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl
 
 		private bool openPrintingPannel_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				if (sliceSettingsPopOut != null)
 				{
@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl
 
 		private bool openControlsPannel_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				if (controlsPopOut != null)
 				{
@@ -57,10 +57,7 @@ namespace MatterHackers.MatterControl
 
 		private bool openTermanialPannel_Click()
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				TerminalWindow.Show();
-			});
+			UiThread.RunOnIdle(TerminalWindow.Show);
 			return true;
 		}
 	}

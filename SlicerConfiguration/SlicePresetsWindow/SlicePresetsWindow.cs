@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(DoChangeToSlicePresetList);
 		}
 
-		private void DoChangeToSlicePresetList(object state)
+		private void DoChangeToSlicePresetList()
 		{
 			GuiWidget slicePresetWidget = new SlicePresetListWidget(this);
 			this.RemoveAllChildren();
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return result;
 		}
 
-		private void DoChangeToSlicePresetDetail(object state)
+		private void DoChangeToSlicePresetDetail()
 		{
 			GuiWidget macroDetailWidget = new SlicePresetDetailWidget(this);
 			this.RemoveAllChildren();

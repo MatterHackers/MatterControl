@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			activePrintPreviewImage.Invalidate();
 		}
 
-		private void OnIdle(object state)
+		private void OnIdle()
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{

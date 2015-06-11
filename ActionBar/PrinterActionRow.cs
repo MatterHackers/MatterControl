@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 
 			// Bind connect button states to active printer state
-			this.SetConnectionButtonVisibleState(null);
+			this.SetConnectionButtonVisibleState();
 
 			actionBarButtonFactory.invertImageLocation = true;
 
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			UiThread.RunOnIdle(OnIdleDisconnect);
 		}
 
-		private void OnIdleDisconnect(object state)
+		private void OnIdleDisconnect()
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			PrinterConnectionAndCommunication.Instance.RebootBoard();
 		}
-		private void SetConnectionButtonVisibleState(object state)
+		private void SetConnectionButtonVisibleState()
 		{
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
 			{

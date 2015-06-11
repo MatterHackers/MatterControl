@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sliderWidth = 10;
 			}
 
-			CreateAndAddChildren(null);
+			CreateAndAddChildren();
 
 			SliceSettingsWidget.RegisterForSettingsChange("bed_size", RecreateBedAndPartPosition, ref unregisterEvents);
 			SliceSettingsWidget.RegisterForSettingsChange("print_center", RecreateBedAndPartPosition, ref unregisterEvents);
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				meshViewerWidget.CreatePrintBed(
 					viewerVolume,
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		private void CreateAndAddChildren(object state)
+		private void CreateAndAddChildren()
 		{
 			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -651,10 +651,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
 					PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
-					UiThread.RunOnIdle((state) =>
-					{
-						SetSyncToPrintVisibility();
-					});
+					UiThread.RunOnIdle(SetSyncToPrintVisibility);
 				}
 			}
 

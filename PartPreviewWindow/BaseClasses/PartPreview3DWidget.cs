@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			double buildHeight = ActiveSliceSettings.Instance.BuildHeight;
 
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				meshViewerWidget.CreatePrintBed(
 					new Vector3(ActiveSliceSettings.Instance.BedSize, buildHeight),

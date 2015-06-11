@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			editButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			editButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					if (editLevelingSettingsWindow == null)
 					{
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 			runPrintLevelingButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.UserRequestedCalibration);
 				});
@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void configureEePromButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(()=>
 			{
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
                         new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
@@ -333,10 +333,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void openGcodeTerminalButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				TerminalWindow.Show();
-			});
+			UiThread.RunOnIdle(TerminalWindow.Show);
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)

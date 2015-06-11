@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl
 			get { return "Controls Tab"; }
 		}
 
-		public void ReloadSliceSettings(object state)
+		public void ReloadSliceSettings()
 		{
 			WidescreenPanel.PreChangePanels.CallEvents(null, null);
 

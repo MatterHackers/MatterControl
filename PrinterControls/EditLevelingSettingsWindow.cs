@@ -153,10 +153,7 @@ namespace MatterHackers.MatterControl
 			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelPresetsButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					Close();
-				});
+				UiThread.RunOnIdle(Close);
 			};
 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -180,7 +177,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(DoSave_Click);
 		}
 
-		private void DoSave_Click(object state)
+		private void DoSave_Click()
 		{
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 

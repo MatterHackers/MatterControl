@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl
 
 		private void RestartApplication()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				//horrible hack - to be replaced
 				GuiWidget parent = this;

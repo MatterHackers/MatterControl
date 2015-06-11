@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void ModelDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ActivePrinter.Model = ((DropDownList)sender).SelectedLabel;
 				currentPrinterSetupStatus.LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.usingDefaultName = false;
 		}
 
-		private void MoveToNextWidget(object state)
+		private void MoveToNextWidget()
 		{
 			if (Parent != null) // if it hasn't been closed
 			{

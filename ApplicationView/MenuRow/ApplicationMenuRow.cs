@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 			popUpAboutPage.AddChild(updateStatusMessage);
 			updateStatusMessage.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					AboutWindow.Show();
 				});
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
 						Button updateStatusMessage = linkButtonFactory.Generate("Check For Update".Localize());
 						updateStatusMessage.Click += (sender2, e) =>
 						{
-							UiThread.RunOnIdle((state) =>
+							UiThread.RunOnIdle(() =>
 							{
 								AboutWindow.Show();
 							});
@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
 						Button updateStatusMessage = linkButtonFactory.Generate("Update Available".Localize());
 						updateStatusMessage.Click += (sender2, e) =>
 						{
-							UiThread.RunOnIdle((state) =>
+							UiThread.RunOnIdle(() =>
 							{
 								AboutWindow.Show();
 							});

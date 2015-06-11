@@ -172,10 +172,7 @@ namespace MatterHackers.MatterControl
 			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
 			cancelPresetsButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					Close();
-				});
+				UiThread.RunOnIdle(Close);
 			};
 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
@@ -199,7 +196,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(DoSave_Click);
 		}
 
-		private void DoSave_Click(object state)
+		private void DoSave_Click()
 		{
 			bool first = true;
 			StringBuilder settingString = new StringBuilder();

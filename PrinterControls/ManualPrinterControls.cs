@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private event EventHandler unregisterEvents;
-		public void AddPlugins(object state)
+		public void AddPlugins()
 		{
 			AddPluginControls.CallEvents(this, null);
 			pluginsQueuedToAdd = false;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl
 			temperatureControlsContainer = new TemperatureControls();
 			controlsTopToBottomLayout.AddChild(temperatureControlsContainer);
 		}
-		private void invalidateWidget(object state)
+		private void invalidateWidget()
 		{
 			this.Invalidate();
 		}

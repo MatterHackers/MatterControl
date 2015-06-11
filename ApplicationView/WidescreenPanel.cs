@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl
 			ColumnOne.AnchorAll();
 		}
 
-		private void LoadColumnTwo(object state = null)
+		private void LoadColumnTwo()
 		{
 			ColumnTwo.CloseAndRemoveAllChildren();
 
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl
 			AddChild(ColumnTwo);
 		}
 
-		public void ReloadAdvancedControlsPanel(object state)
+		public void ReloadAdvancedControlsPanel()
 		{
 			PreChangePanels.CallEvents(this, null);
 		}

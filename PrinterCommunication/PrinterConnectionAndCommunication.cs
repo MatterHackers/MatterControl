@@ -2312,7 +2312,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void DonePrintingSdFile(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ReadLineStartCallBacks.RemoveCallBackFromKey("Done printing file", DonePrintingSdFile);
 			});
@@ -2346,7 +2346,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void FileDeleteConfirmed(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ReadLineStartCallBacks.RemoveCallBackFromKey("File deleted:", FileDeleteConfirmed);
 			});

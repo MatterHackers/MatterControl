@@ -444,14 +444,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void DoAutoConnectIfRequired(object state)
+		public void DoAutoConnectIfRequired()
 		{
 			ActivePrinterProfile.CheckForAndDoAutoConnect();
 		}
 
 		public void LaunchBrowser(string targetUri)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				System.Diagnostics.Process.Start(targetUri);
 			});
@@ -602,7 +602,7 @@ namespace MatterHackers.MatterControl
 			file.WriteLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
 		}
 
-		private void CheckOnPrinter(object state)
+		private void CheckOnPrinter()
 		{
 			try
 			{

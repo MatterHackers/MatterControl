@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(save_OnIdle);
 		}
 
-		private void save_OnIdle(object state)
+		private void save_OnIdle()
 		{
 			bool first = true;
 			StringBuilder settingString = new StringBuilder();

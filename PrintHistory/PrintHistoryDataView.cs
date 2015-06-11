@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		private void ReloadData(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				LoadHistoryItems(Count);
 			});

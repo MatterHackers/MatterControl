@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 			UiThread.RunOnIdle(Reload);
 		}
 
-		public void Reload(object state)
+		public void Reload()
 		{
 			this.RemoveAllChildren();
 			this.AddElements();
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.CreatorPlugins
 			CreatorInformation callCorrectFunctionHold = state as CreatorInformation;
 			if (callCorrectFunctionHold != null)
 			{
-				UiThread.RunOnIdle((state2) =>
+				UiThread.RunOnIdle(() =>
 				{
 					callCorrectFunctionHold.functionToLaunchCreator(null, null);
 				});

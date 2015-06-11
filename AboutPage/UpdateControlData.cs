@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl
 				SetUpdateStatus(UpdateStatusStates.UpdateAvailable);
 				if (updateRequestType == UpdateRequestType.FirstTimeEver)
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						StyledMessageBox.ShowMessageBox(ProcessDialogResponse, updateAvailableMessage, updateAvailableTitle, StyledMessageBox.MessageType.YES_NO, downloadNow, remindMeLater);
 						// show a dialog to tell the user there is an update
@@ -317,10 +317,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.downloadPercent = (int)(e.BytesReceived * 100 / downloadSize);
 			}
-			UiThread.RunOnIdle((state) =>
-			{
-				UpdateStatusChanged.CallEvents(this, e);
-			});
+			UiThread.RunOnIdle(() => UpdateStatusChanged.CallEvents(this, e) );
 		}
 
 		private void DownloadCompleted(object sender, AsyncCompletedEventArgs e)
@@ -340,18 +337,12 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					UiThread.RunOnIdle((state) =>
-					{
-						SetUpdateStatus(UpdateStatusStates.UnableToConnectToServer);
-					});
+					UiThread.RunOnIdle(() => SetUpdateStatus(UpdateStatusStates.UnableToConnectToServer));
 				}
 			}
 			else
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					SetUpdateStatus(UpdateStatusStates.ReadyToInstall);
-				});
+				UiThread.RunOnIdle(() => SetUpdateStatus(UpdateStatusStates.ReadyToInstall));
 			}
 
 			webClient.Dispose();

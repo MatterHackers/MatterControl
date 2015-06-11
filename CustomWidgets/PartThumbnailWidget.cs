@@ -497,7 +497,7 @@ namespace MatterHackers.MatterControl
 			createThumbnailWorker = null;
 		}
 
-		private void DoOnMouseClick(object state)
+		private void DoOnMouseClick()
 		{
 			if (printItem != null)
 			{
@@ -521,7 +521,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void EnsureImageUpdated(object state)
+		private void EnsureImageUpdated()
 		{
 			thumbnailImage.MarkImageChanged();
 			Invalidate();

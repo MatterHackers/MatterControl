@@ -208,10 +208,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Button cancelButton = buttonFactory.Generate(LocalizedString.Get("Cancel"));
 			cancelButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					windowController.ChangeToSlicePresetList();
-				});
+				UiThread.RunOnIdle(windowController.ChangeToSlicePresetList);
 			};
 
 			container.AddChild(savePresetButton);
@@ -370,16 +367,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			MenuItem item = (MenuItem)sender;
 			string[] valueArray = item.Value.Split(':');
-			UiThread.RunOnIdle((state) =>
-			{
-				PopulateAddSettingRow(Int32.Parse(valueArray[0]), Int32.Parse(valueArray[1]), valueArray[2]);
-			});
+			UiThread.RunOnIdle(() => PopulateAddSettingRow(Int32.Parse(valueArray[0]), Int32.Parse(valueArray[1]), valueArray[2]));
 		}
 
 		private void LoadSettingsRows()
 		{
 			settingsRowContainer.RemoveScrollChildren();
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				foreach (KeyValuePair<String, DataStorage.SliceSetting> item in this.windowController.ActivePresetLayer.settingsDictionary)
 				{
@@ -413,7 +407,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void AddSettingToPreset()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				if (addRowSettingData != null)
 				{
@@ -456,7 +450,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void RemoveSetting(string configName)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				if (this.windowController.ActivePresetLayer.settingsDictionary.ContainsKey(configName))
 				{
@@ -904,7 +898,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void savePresets_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				if (ValidatePresetsForm())
 				{
@@ -920,7 +914,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void duplicatePresets_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				DataStorage.SliceSettingsCollection duplicateCollection = new SliceSettingsCollection();
 				duplicateCollection.Name = string.Format("{0} (copy)".FormatWith(windowController.ActivePresetLayer.settingsCollectionData.Name));
@@ -998,7 +992,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(SaveAs);
 		}
 
-		private void SaveAs(object state)
+		private void SaveAs()
 		{
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Slice Preset|*." + configFileExtension);
 			saveParams.FileName = presetNameInput.Text;

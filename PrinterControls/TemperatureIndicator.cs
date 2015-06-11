@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl
 				double temp = keyValue.Key;
 				tempButton.Click += (sender, e) =>
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						SetTargetTemperature(temp);
 						tempSliderContainer.Visible = false;
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl
 				double temp = GetPreheatTemperature();
 				tempButton.Click += (sender, e) =>
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 
 						SetTargetTemperature(temp);
@@ -527,7 +527,7 @@ namespace MatterHackers.MatterControl
 
 		protected override void SetTargetTemperature(double targetTemp)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				double goalTemp = (int)(targetTemp + .5);
 				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting

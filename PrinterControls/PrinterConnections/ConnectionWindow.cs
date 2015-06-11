@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			UiThread.RunOnIdle(DoChangeToAddPrinter);
 		}
 
-		private void DoChangeToAddPrinter(object state)
+		private void DoChangeToAddPrinter()
 		{
 			GuiWidget addConnectionWidget = new SetupStepMakeModelName(this, this);
 			this.RemoveAllChildren();
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			UiThread.RunOnIdle(DoChangeToChoosePrinter);
 		}
 
-		public void DoChangeToChoosePrinter(object state)
+		public void DoChangeToChoosePrinter()
 		{
 			GuiWidget chooseConnectionWidget = new ChooseConnectionWidget(this, this, this.editMode);
 			this.RemoveAllChildren();

@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				catch (System.UnauthorizedAccessException)
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						//Do something special when unauthorized?
 						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				catch
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
 					});

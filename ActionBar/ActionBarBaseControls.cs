@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onActivePrinterChanged(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				SetButtonText();
 			});

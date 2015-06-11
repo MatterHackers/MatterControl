@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
 			// Specifically, it has the wronge position on the app restarting.
 			if(false) 
 			{
-				UiThread.RunOnIdle((state) => 
+				UiThread.RunOnIdle(() => 
 				{
 					int scrollPosition = UserSettings.Instance.Fields.GetInt(CompactTabView_Options_ScrollPosition, -100000);
 					if (scrollPosition != -100000)
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void ReloadAdvancedControlsPanel(object state)
+		public void ReloadAdvancedControlsPanel()
 		{
 			UiThread.RunOnIdle(LoadAdvancedControls);
 		}
@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void LoadAdvancedControls(object state = null)
+		private void LoadAdvancedControls()
 		{
 			RreloadControlsWidget();
 			ReloadConfigurationWidget();

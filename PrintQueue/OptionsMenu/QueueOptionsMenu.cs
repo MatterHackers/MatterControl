@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return true;
 		}
 
-		private void PartSheetClickOnIdle(object state)
+		private void PartSheetClickOnIdle()
 		{
 #if !__ANDROID__
 			List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList();
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private string pleaseSelectPrinterMessage = "Before you can export printable files, you must select a printer.";
 		private string pleaseSelectPrinterTitle = "Please select a printer";
 
-		private void MustSelectPrinterMessage(object state)
+		private void MustSelectPrinterMessage()
 		{
 			StyledMessageBox.ShowMessageBox(null, pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
 		}
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.exportingWindow = null;
 		}
 
-		private void SelectLocationToExportGCode(object state)
+		private void SelectLocationToExportGCode()
 		{
 			SelectFolderDialogParams selectParams = new SelectFolderDialogParams("Select Location To Save Files");
 			selectParams.ActionButtonLabel = "Export".Localize();
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return true;
 		}
 
-		private void ExportQueueToZipOnIdle(object state)
+		private void ExportQueueToZipOnIdle()
 		{
 			List<PrintItem> partList = QueueData.Instance.CreateReadOnlyPartList();
 			ProjectFileHandler project = new ProjectFileHandler(partList);
@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return true;
 		}
 
-		private void removeAllPrintsFromQueue(object state)
+		private void removeAllPrintsFromQueue()
 		{
 			QueueData.Instance.RemoveAll();
 		}

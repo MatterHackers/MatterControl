@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 		}
 
-		private void RemoveThisFromPrintLibrary(object state)
+		private void RemoveThisFromPrintLibrary()
 		{
 			LibraryProvider.CurrentProvider.RemoveItem(this.printItemWrapper);
 		}
@@ -330,18 +330,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void onOpenPartViewClick(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				openPartView(state);
-			});
+			UiThread.RunOnIdle(() => openPartView());
 		}
 
 		private void onViewPartClick(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				this.rightButtonOverlay.SlideOut();
-				openPartView(state, View3DWidget.OpenMode.Viewing);
+				openPartView(View3DWidget.OpenMode.Viewing);
 			});
 		}
 
@@ -367,7 +364,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			viewWindowIsOpen = false;
 		}
 
-		private void openPartView(object state, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
+		private void openPartView(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
 			string pathAndFile = this.printItemWrapper.FileLocation;
 			if (File.Exists(pathAndFile))

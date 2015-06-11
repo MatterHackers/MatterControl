@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
 			cancelPresetsButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					windowController.ChangeToMacroList();
 				});
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl
 
 		private void saveMacro_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				if (ValidateMacroForm())
 				{
@@ -328,7 +328,7 @@ namespace MatterHackers.MatterControl
 			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));
 			cancelPresetsButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					this.windowController.Close();
 				});
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(DoChangeToMacroList);
 		}
 
-		private void DoChangeToMacroList(object state)
+		private void DoChangeToMacroList()
 		{
 			GuiWidget macroListWidget = new MacroListWidget(this);
 			this.RemoveAllChildren();
@@ -407,7 +407,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(DoChangeToMacroDetail);
 		}
 
-		private void DoChangeToMacroDetail(object state)
+		private void DoChangeToMacroDetail()
 		{
 			GuiWidget macroDetailWidget = new MacroDetailWidget(this);
 			this.RemoveAllChildren();

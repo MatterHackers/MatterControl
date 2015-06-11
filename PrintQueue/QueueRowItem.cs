@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public static void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
 		{
 			itemToRemove = printItemWrapper;
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				string maxLengthName = printItemWrapper.FileLocation;
 				int maxLength = 43;
@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		internal void DeletePartFromQueue(object state)
+		internal void DeletePartFromQueue()
 		{
 			if (PrintItemWrapper.PrintItem.FileLocation == QueueData.SdCardFileName)
 			{
@@ -439,16 +439,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void onRemovePartClick(object sender, EventArgs e)
 		{
 			this.actionButtonContainer.SlideOut();
-			UiThread.RunOnIdle((state) =>
-			{
-				DeletePartFromQueue(state);
-			});
+			UiThread.RunOnIdle(DeletePartFromQueue);
 		}
 
 		private void onViewPartClick(object sender, EventArgs e)
 		{
 			this.actionButtonContainer.SlideOut();
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				OpenPartViewWindow(View3DWidget.OpenMode.Viewing);
 			});
