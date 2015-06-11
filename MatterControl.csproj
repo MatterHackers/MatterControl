@@ -205,8 +205,10 @@
     <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="PrintHistory\PrintHistoryData.cs" />
-    <Compile Include="PrintLibrary\LibraryData.cs" />
-    <Compile Include="PrintLibrary\SelectedListItems.cs" />
+    <Compile Include="PrintLibrary\Provider\LibrarySQLiteData.cs" />
+    <Compile Include="PrintLibrary\Provider\LibraryProviderSQLite.cs" />
+    <Compile Include="PrintLibrary\Provider\LibraryProvider.cs" />
+    <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="PrintQueue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
     <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />

@@ -1871,7 +1871,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				saveSucceded = true;
-				LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
+				LibrarySQLiteData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
 			}
 			catch (System.UnauthorizedAccessException)
 			{
@@ -1908,7 +1908,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (returnInfo.placeInLibrary)
 				{
-					LibraryData.Instance.AddItem(printItemWrapper);
+					LibrarySQLiteData.Instance.AddItem(printItemWrapper);
 				}
 			}
 

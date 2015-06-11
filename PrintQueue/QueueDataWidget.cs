@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -459,7 +460,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
 			{
-				LibraryData.Instance.AddItem(queueItem.PrintItemWrapper);
+				LibrarySQLiteData.Instance.AddItem(queueItem.PrintItemWrapper);
 			}
 		}
 

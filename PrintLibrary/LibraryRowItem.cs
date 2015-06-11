@@ -32,6 +32,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
@@ -319,7 +320,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void RemoveThisFromPrintLibrary(object state)
 		{
-			LibraryData.Instance.RemoveItem(this.printItemWrapper);
+			LibraryProvider.CurrentProvider.RemoveItem(this.printItemWrapper);
 		}
 
 		private void onRemoveLinkClick(object sender, EventArgs e)

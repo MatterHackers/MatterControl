@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -185,7 +186,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			Button removeFromLibraryButton = editButtonFactory.Generate("Remove".Localize());
 			removeFromLibraryButton.Margin = new BorderDouble(3, 0);
-			removeFromLibraryButton.Click += new EventHandler(deleteFromQueueButton_Click);
+			removeFromLibraryButton.Click += new EventHandler(deleteFromLibraryButton_Click);
 			editOperationMultiCapable.Add(true);
 			itemOperationButtons.AddChild(removeFromLibraryButton);
 
@@ -235,8 +236,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void searchButtonClick(object sender, EventArgs mouseEvent)
 		{
-			string textToSend = searchInput.Text.Trim();
-			LibraryData.Instance.KeywordFilter = textToSend;
+			string searchText = searchInput.Text.Trim();
+			LibraryProvider.CurrentProvider.KeywordFilter = searchText;
 			libraryDataView.ClearSelectedItems();
 		}
 
@@ -285,11 +286,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AnchorAll();
 		}
 
-		private void deleteFromQueueButton_Click(object sender, EventArgs mouseEvent)
+		private void deleteFromLibraryButton_Click(object sender, EventArgs mouseEvent)
 		{
 			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
 			{
-				LibraryData.Instance.RemoveItem(item.printItemWrapper);
+				LibraryProvider.CurrentProvider.RemoveItem(item.printItemWrapper);
 			}
 
 			libraryDataView.ClearSelectedItems();
@@ -373,7 +374,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			LibraryData.Instance.LoadFilesIntoLibrary(fileDropEventArgs.DroppedFiles);
+			LibraryProvider.CurrentProvider.LoadFilesIntoLibrary(fileDropEventArgs.DroppedFiles);
 
 			base.OnDragDrop(fileDropEventArgs);
 		}
@@ -393,7 +394,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (openParams.FileNames != null)
 			{
-				LibraryData.Instance.LoadFilesIntoLibrary(openParams.FileNames);
+				LibraryProvider.CurrentProvider.LoadFilesIntoLibrary(openParams.FileNames);
 			}
 		}
 	}

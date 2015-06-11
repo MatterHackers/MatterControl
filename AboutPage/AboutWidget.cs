@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			foreach (PrintItemWrapper printItem in LibraryData.Instance.PrintItems)
+			foreach (PrintItemWrapper printItem in LibrarySQLiteData.Instance.PrintItems)
 			{
 				string fileLocation = printItem.FileLocation;
 				if (!referencedPrintItemsFilePaths.Contains(fileLocation))

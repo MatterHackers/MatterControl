@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,7 +44,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class LibraryData
+	public class LibrarySQLiteData
 	{
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
 
@@ -52,22 +53,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			get { return printItems; }
 		}
 
-		public RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
-		public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
-		public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
-		public RootedObjectEventHandler OrderChanged = new RootedObjectEventHandler();
-
 		private DataStorage.PrintItemCollection libraryCollection;
 
-		private static LibraryData instance;
+		private static LibrarySQLiteData instance;
 
-		public static LibraryData Instance
+		public static LibrarySQLiteData Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = new LibraryData();
+					instance = new LibrarySQLiteData();
 					instance.LoadLibraryItems();
 				}
 				return instance;
@@ -126,9 +122,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 			PrintItems.Insert(indexToInsert, item);
 			OnItemAdded(new IndexArgs(indexToInsert));
-            item.PrintItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-            item.PrintItem.Commit();
-           
+			item.PrintItem.PrintItemCollectionID = LibraryCollection.Id;
+			item.PrintItem.Commit();
 		}
 
 		public void RemoveItem(PrintItemWrapper printItemWrapper)
@@ -158,16 +153,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return null;
 		}
 
-		public List<PrintItem> CreateReadOnlyPartList()
-		{
-			List<PrintItem> listToReturn = new List<PrintItem>();
-			for (int i = 0; i < Count; i++)
-			{
-				listToReturn.Add(GetPrintItemWrapper(i).PrintItem);
-			}
-			return listToReturn;
-		}
-
 		public DataStorage.PrintItemCollection LibraryCollection
 		{
 			get
@@ -186,11 +171,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					libraryCollection.Commit();
 
 					// Preload library with Oem supplied list of default parts
-					string[] itemsToAdd = LibraryData.SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
+					string[] itemsToAdd = LibrarySQLiteData.SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
 					if (itemsToAdd.Length > 0)
 					{
 						// Import any files sync'd to disk into the library, then add them to the queue
-						LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd);
+						LibrarySQLiteData.Instance.LoadFilesIntoLibrary(itemsToAdd);
 					}
 				}
 				return libraryCollection;
@@ -207,7 +192,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return calibrationPrintFileNames.Where(fileName =>
 			{
 				// Filter out items that already exist in the library
-				return LibraryData.Instance.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
+				return LibrarySQLiteData.Instance.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
 			}).Select(fileName =>
 			{
 				// Copy calibration prints from StaticData to the filesystem before importing into the library
@@ -261,17 +246,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public void OnDataReloaded(EventArgs e)
 		{
-			DataReloaded.CallEvents(this, e);
+			LibraryProvider.OnDataReloaded(e);
 		}
 
 		public void OnItemAdded(EventArgs e)
 		{
-			ItemAdded.CallEvents(this, e);
+			LibraryProvider.OnItemAdded(e);
 		}
 
 		public void OnItemRemoved(EventArgs e)
 		{
-			ItemRemoved.CallEvents(this, e);
+			LibraryProvider.OnItemRemoved(e);
 		}
 
 		public void SaveLibraryItems()
@@ -344,7 +329,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			PrintItem printItem = new PrintItem();
 			printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
 			printItem.FileLocation = Path.GetFullPath(loadedFileName);
-			printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+			printItem.PrintItemCollectionID = LibrarySQLiteData.Instance.LibraryCollection.Id;
 			printItem.Commit();
 
 			if (MeshFileIo.ValidFileExtensions().Contains(extension))
@@ -354,8 +339,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				try
 				{
 					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-					LibraryData.SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
-					LibraryData.Instance.AddItem(printItemWrapper);
+					SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
+					Instance.AddItem(printItemWrapper);
 				}
 				catch (System.UnauthorizedAccessException)
 				{
@@ -378,7 +363,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
 				if (false)
 				{
-					LibraryData.Instance.AddItem(printItemWrapper);
+					LibrarySQLiteData.Instance.AddItem(printItemWrapper);
 				}
 				else // save a copy to the library and update this to point at it
 				{
@@ -392,7 +377,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					printItemWrapper.PrintItem.Commit();
 
 					// let the queue know that the item has changed so it load the correct part
-					LibraryData.Instance.AddItem(printItemWrapper);
+					LibrarySQLiteData.Instance.AddItem(printItemWrapper);
 				}
 			}
 		}

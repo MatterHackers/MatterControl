@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
@@ -80,7 +81,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (SelectedIndex >= 0)
 				{
-					return LibraryData.Instance.GetPrintItemWrapper(SelectedIndex);
+					return LibraryProvider.CurrentProvider.GetPrintItemWrapper(SelectedIndex);
 				}
 				else
 				{
@@ -189,26 +190,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			base.AddChild(topToBottomItemList);
 
-			for (int i = 0; i < LibraryData.Instance.Count; i++)
+			for (int i = 0; i < LibraryProvider.CurrentProvider.Count; i++)
 			{
-				PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(i);
+				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(i);
 				LibraryRowItem queueItem = new LibraryRowItem(item, this);
 				AddChild(queueItem);
 			}
 
 			this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
-			LibraryData.Instance.DataReloaded.RegisterEvent(LibraryDataReloaded, ref unregisterEvents);
-			LibraryData.Instance.ItemAdded.RegisterEvent(ItemAddedToLibrary, ref unregisterEvents);
-			LibraryData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
-			LibraryData.Instance.OrderChanged.RegisterEvent(LibraryOrderChanged, ref unregisterEvents);
+			LibraryProvider.DataReloaded.RegisterEvent(LibraryDataReloaded, ref unregisterEvents);
+			LibraryProvider.ItemAdded.RegisterEvent(ItemAddedToLibrary, ref unregisterEvents);
+			LibraryProvider.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
 		}
 
 		private void LibraryDataReloaded(object sender, EventArgs e)
 		{
 			this.RemoveListItems();
-			for (int i = 0; i < LibraryData.Instance.Count; i++)
+			for (int i = 0; i < LibraryProvider.CurrentProvider.Count; i++)
 			{
-				PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(i);
+				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(i);
 				LibraryRowItem queueItem = new LibraryRowItem(item, this);
 				AddChild(queueItem);
 			}
@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void ItemAddedToLibrary(object sender, EventArgs e)
 		{
 			IndexArgs addedIndexArgs = e as IndexArgs;
-			PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
+			PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(addedIndexArgs.Index);
 			LibraryRowItem libraryItem = new LibraryRowItem(item, this);
 			AddChild(libraryItem, addedIndexArgs.Index);
 		}
@@ -236,15 +236,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			IndexArgs removeIndexArgs = e as IndexArgs;
 			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
 
-			if (LibraryData.Instance.Count > 0)
+			if (LibraryProvider.CurrentProvider.Count > 0)
 			{
 				SelectedIndex = Math.Max(SelectedIndex - 1, 0);
 			}
-		}
-
-		private void LibraryOrderChanged(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
 		}
 
 		public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
@@ -303,7 +298,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (LibraryRowItem item in SelectedItems)
 			{
-				LibraryData.Instance.RemoveItem(item.printItemWrapper);
+				LibraryProvider.CurrentProvider.RemoveItem(item.printItemWrapper);
 			}
 		}
 

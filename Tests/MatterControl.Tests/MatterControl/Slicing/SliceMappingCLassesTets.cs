@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 		[Test]
 		public void AsPercentOfReferenceOrDirectTests()
 		{
+#if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", ".."));
 
@@ -83,6 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.Tests
 				AsPercentOfReferenceOrDirect mapper2 = new AsPercentOfReferenceOrDirect("notused", "primary", "reference", 1000);
 				Assert.IsTrue(mapper2.MappedValue == "100000");
 			}
+#endif
 		}
 	}
 }
