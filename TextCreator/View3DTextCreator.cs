@@ -959,12 +959,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private void onCloseButton_Click(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle(CloseOnIdle);
-		}
-
-		private void CloseOnIdle(object state)
-		{
-			Close();
+			UiThread.RunOnIdle(Close);
 		}
 	}
 }

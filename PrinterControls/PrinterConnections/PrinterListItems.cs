@@ -97,13 +97,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				// Changing ordering around so that CloseOnIdle is called after ActivePrinter is set
 				ActivePrinterProfile.Instance.ActivePrinter = this.printerRecord;
 
-				UiThread.RunOnIdle(CloseOnIdle);
+				UiThread.RunOnIdle(this.windowController.Close);
 			}
-		}
-
-		private void CloseOnIdle(object state)
-		{
-			this.windowController.Close();
 		}
 
 		private void onMouse_Enter(object sender, EventArgs args)
