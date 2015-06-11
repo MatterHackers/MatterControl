@@ -30,10 +30,7 @@ namespace MatterHackers.MatterControl
 
 		private bool addPrinter_Click()
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				ConnectionWindow.Show();
-			});
+			UiThread.RunOnIdle(ConnectionWindow.Show);
 			return true;
 		}
 

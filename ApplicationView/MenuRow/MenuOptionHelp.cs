@@ -59,10 +59,7 @@ namespace MatterHackers.MatterControl
 
 		private bool about_Click()
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				AboutWindow.Show();
-			});
+			UiThread.RunOnIdle(AboutWindow.Show);
 			return true;
 		}
 
