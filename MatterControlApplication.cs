@@ -383,11 +383,6 @@ namespace MatterHackers.MatterControl
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
-			System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
-			//throw new Exception("Forced exception thrown manually!");
-
 			Datastore.Instance.Initialize();
 
 #if !DEBUG
