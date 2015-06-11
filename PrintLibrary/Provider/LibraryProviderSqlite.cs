@@ -28,24 +28,21 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSQLite : LibraryProvider
 	{
-		public override int Count 
+		public override int CollectionCount
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public override int ItemCount
 		{
 			get
 			{
@@ -53,7 +50,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string KeywordFilter 
+		public override string KeywordFilter
 		{
 			get
 			{
@@ -66,20 +63,29 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override void AddCollectionToLibrary(string collectionName)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		{
+			LibrarySQLiteData.Instance.LoadFilesIntoLibrary(files, reportProgress, callback);
+		}
 
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
 			return LibrarySQLiteData.Instance.GetPrintItemWrapper(itemIndex);
 		}
 
+		public override void RemoveCollection(string collectionName)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
 			LibrarySQLiteData.Instance.RemoveItem(printItemWrapper);
-		}
-
-		public override void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
-		{
-			LibrarySQLiteData.Instance.LoadFilesIntoLibrary(files, reportProgress, callback);
 		}
 	}
 }

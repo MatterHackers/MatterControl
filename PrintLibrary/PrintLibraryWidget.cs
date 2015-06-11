@@ -374,7 +374,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			LibraryProvider.CurrentProvider.LoadFilesIntoLibrary(fileDropEventArgs.DroppedFiles);
+			LibraryProvider.CurrentProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
 
 			base.OnDragDrop(fileDropEventArgs);
 		}
@@ -394,7 +394,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (openParams.FileNames != null)
 			{
-				LibraryProvider.CurrentProvider.LoadFilesIntoLibrary(openParams.FileNames);
+				LibraryProvider.CurrentProvider.AddFilesToLibrary(openParams.FileNames);
 			}
 		}
 	}

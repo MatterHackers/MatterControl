@@ -32,23 +32,34 @@ using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderFileSystem : LibraryProvider
 	{
+		private string currentDirectory = ".";
+		private List<string> currentDirectoryFiles = new List<string>();
+		private string keywordFilter = string.Empty;
 		private string rootPath;
 
 		public LibraryProviderFileSystem(string rootPath)
 		{
 			this.rootPath = rootPath;
+
+			GetFilesInCurrentDirectory();
 		}
 
-		public override int Count
+		public override int CollectionCount
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public override int ItemCount
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return currentDirectoryFiles.Count;
 			}
 		}
 
@@ -56,21 +67,37 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return keywordFilter;
 			}
 
 			set
 			{
-				throw new NotImplementedException();
+				if (keywordFilter != value)
+				{
+					keywordFilter = value;
+					GetFilesInCurrentDirectory();
+					LibraryProvider.OnDataReloaded(null);
+				}
 			}
 		}
 
-		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
+		public override void AddCollectionToLibrary(string collectionName)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
+		{
+			string fileName = currentDirectoryFiles[itemIndex];
+			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName));
+		}
+
+		public override void RemoveCollection(string collectionName)
 		{
 			throw new NotImplementedException();
 		}
@@ -78,6 +105,23 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
 			throw new NotImplementedException();
+		}
+
+		private void GetFilesInCurrentDirectory()
+		{
+			currentDirectoryFiles.Clear();
+			string[] files = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
+			foreach (string filename in files)
+			{
+				if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
+				{
+					if (keywordFilter.Trim() == string.Empty
+						|| Path.GetFileNameWithoutExtension(filename).Contains(keywordFilter))
+					{
+						currentDirectoryFiles.Add(filename);
+					}
+				}
+			}
 		}
 	}
 }

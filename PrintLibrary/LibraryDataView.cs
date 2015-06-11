@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			base.AddChild(topToBottomItemList);
 
-			for (int i = 0; i < LibraryProvider.CurrentProvider.Count; i++)
+			for (int i = 0; i < LibraryProvider.CurrentProvider.ItemCount; i++)
 			{
 				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(i);
 				LibraryRowItem queueItem = new LibraryRowItem(item, this);
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void LibraryDataReloaded(object sender, EventArgs e)
 		{
 			this.RemoveListItems();
-			for (int i = 0; i < LibraryProvider.CurrentProvider.Count; i++)
+			for (int i = 0; i < LibraryProvider.CurrentProvider.ItemCount; i++)
 			{
 				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(i);
 				LibraryRowItem queueItem = new LibraryRowItem(item, this);
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			IndexArgs removeIndexArgs = e as IndexArgs;
 			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
 
-			if (LibraryProvider.CurrentProvider.Count > 0)
+			if (LibraryProvider.CurrentProvider.ItemCount > 0)
 			{
 				SelectedIndex = Math.Max(SelectedIndex - 1, 0);
 			}
