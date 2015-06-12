@@ -207,7 +207,7 @@
     <Compile Include="PrintHistory\PrintHistoryData.cs" />
     <Compile Include="PrintLibrary\Provider\LibraryProviderFileSystem.cs" />
     <Compile Include="PrintLibrary\Provider\LibrarySQLiteData.cs" />
-    <Compile Include="PrintLibrary\Provider\LibraryProviderSQLite.cs" />
+    <Compile Include="PrintLibrary\Provider\LibraryProviderSqlite.cs" />
     <Compile Include="PrintLibrary\Provider\LibraryProvider.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="PrintQueue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
