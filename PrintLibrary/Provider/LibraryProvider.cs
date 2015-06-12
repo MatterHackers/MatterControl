@@ -66,15 +66,17 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract string KeywordFilter { get; set; }
 
-		public abstract PrintItemWrapper GetPrintItemWrapper(int itemIndex);
-
 		public abstract void AddCollectionToLibrary(string collectionName);
 
 		public abstract void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
 
-		public abstract void RemoveItem(PrintItemWrapper printItemWrapper);
+		public abstract PrintItemWrapper GetCollectionItemWrapper(int collectionIndex);
+
+		public abstract PrintItemWrapper GetPrintItemWrapper(int itemIndex);
 
 		public abstract void RemoveCollection(string collectionName);
+
+		public abstract void RemoveItem(PrintItemWrapper printItemWrapper);
 
 		#endregion AbstractMethods
 

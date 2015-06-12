@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		private string currentDirectory = ".";
 		private List<string> currentDirectoryFiles = new List<string>();
+		private List<string> currentDirectoryDirectories = new List<string>();
 		private string keywordFilter = string.Empty;
 		private string rootPath;
 
@@ -52,7 +53,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override int CollectionCount
 		{
-			get { throw new NotImplementedException(); }
+			get 
+			{
+				return currentDirectoryDirectories.Count;
+			}
 		}
 
 		public override int ItemCount
@@ -91,6 +95,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
+		public override PrintItemWrapper GetCollectionItemWrapper(int collectionIndex)
+		{
+			string directoryName = currentDirectoryDirectories[collectionIndex];
+			return new PrintItemWrapper(new DataStorage.PrintItem("", directoryName));
+		}
+
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
@@ -109,6 +119,17 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private void GetFilesInCurrentDirectory()
 		{
+			currentDirectoryDirectories.Clear();
+			string[] directories = Directory.GetDirectories(Path.Combine(rootPath, currentDirectory));
+			foreach (string directoryName in directories)
+			{
+				if (keywordFilter.Trim() == string.Empty
+					|| Path.GetFileNameWithoutExtension(directoryName).Contains(keywordFilter))
+				{
+					currentDirectoryDirectories.Add(directoryName);
+				}
+			}
+
 			currentDirectoryFiles.Clear();
 			string[] files = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
 			foreach (string filename in files)

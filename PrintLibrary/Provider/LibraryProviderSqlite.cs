@@ -39,7 +39,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		public override int CollectionCount
 		{
-			get { throw new NotImplementedException(); }
+			get 
+			{
+				return 0;
+			}
 		}
 
 		public override int ItemCount
@@ -76,6 +79,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
 			return LibrarySQLiteData.Instance.GetPrintItemWrapper(itemIndex);
+		}
+
+		public override PrintItemWrapper GetCollectionItemWrapper(int collectionIndex)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override void RemoveCollection(string collectionName)

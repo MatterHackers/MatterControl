@@ -190,6 +190,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			base.AddChild(topToBottomItemList);
 
+			for (int i = 0; i < LibraryProvider.CurrentProvider.CollectionCount; i++)
+			{
+				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetCollectionItemWrapper(i);
+				LibraryRowItem queueItem = new LibraryRowItem(item, this);
+				AddChild(queueItem);
+			}
+
 			for (int i = 0; i < LibraryProvider.CurrentProvider.ItemCount; i++)
 			{
 				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(i);
