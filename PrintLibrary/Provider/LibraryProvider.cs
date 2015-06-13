@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
 
-		public abstract PrintItemWrapper GetCollectionItemWrapper(int collectionIndex);
+		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
 		public abstract PrintItemWrapper GetPrintItemWrapper(int itemIndex);
 

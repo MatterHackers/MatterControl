@@ -3316,3 +3316,6 @@ Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filam
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
 
+English:Open
+Translated:Open
+

@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
 			{
-				QueueData.Instance.AddItem(item.printItemWrapper);
+				item.AddToQueue();
 			}
 			libraryDataView.ClearSelectedItems();
 		}
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
 			{
-				LibraryProvider.CurrentProvider.RemoveItem(item.printItemWrapper);
+				item.RemoveFromCollection();
 			}
 
 			libraryDataView.ClearSelectedItems();
@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (libraryDataView.SelectedItems.Count == 1)
 			{
 				LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-				OpenExportWindow(libraryItem.printItemWrapper);
+				libraryItem.Export();
 			}
 		}
 
@@ -315,25 +315,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (libraryDataView.SelectedItems.Count == 1)
 			{
 				LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-				libraryItem.OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
-			}
-		}
-
-		private void OpenExportWindow(PrintItemWrapper printItem)
-		{
-			if (exportingWindowIsOpen == false)
-			{
-				exportingWindow = new ExportPrintItemWindow(printItem);
-				this.exportingWindowIsOpen = true;
-				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
-				exportingWindow.ShowAsSystemWindow();
-			}
-			else
-			{
-				if (exportingWindow != null)
-				{
-					exportingWindow.BringToFront();
-				}
+				libraryItem.Edit();
 			}
 		}
 

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
@@ -95,10 +96,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override PrintItemWrapper GetCollectionItemWrapper(int collectionIndex)
+		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			string directoryName = currentDirectoryDirectories[collectionIndex];
-			return new PrintItemWrapper(new DataStorage.PrintItem("", directoryName));
+			return new PrintItemCollection(Path.GetFileNameWithoutExtension(directoryName), directoryName);
 		}
 
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)

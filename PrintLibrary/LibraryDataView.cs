@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -188,21 +189,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AutoScroll = true;
 			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-			base.AddChild(topToBottomItemList);
+			AddChild(topToBottomItemList);
 
-			for (int i = 0; i < LibraryProvider.CurrentProvider.CollectionCount; i++)
-			{
-				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetCollectionItemWrapper(i);
-				LibraryRowItem queueItem = new LibraryRowItem(item, this);
-				AddChild(queueItem);
-			}
-
-			for (int i = 0; i < LibraryProvider.CurrentProvider.ItemCount; i++)
-			{
-				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(i);
-				LibraryRowItem queueItem = new LibraryRowItem(item, this);
-				AddChild(queueItem);
-			}
+			AddAllItems();
 
 			this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
 			LibraryProvider.DataReloaded.RegisterEvent(LibraryDataReloaded, ref unregisterEvents);
@@ -210,16 +199,30 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			LibraryProvider.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
 		}
 
-		private void LibraryDataReloaded(object sender, EventArgs e)
+		private void AddAllItems()
 		{
-			this.RemoveListItems();
+			topToBottomItemList.RemoveAllChildren();
+
+			for (int i = 0; i < LibraryProvider.CurrentProvider.CollectionCount; i++)
+			{
+				PrintItemCollection item = LibraryProvider.CurrentProvider.GetCollectionItem(i);
+				LibraryRowItem queueItem = new LibraryRowItemCollection(item, this);
+				AddListItemToTopToBottom(queueItem);
+			}
+
 			for (int i = 0; i < LibraryProvider.CurrentProvider.ItemCount; i++)
 			{
 				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(i);
-				LibraryRowItem queueItem = new LibraryRowItem(item, this);
-				AddChild(queueItem);
+				LibraryRowItem queueItem = new LibraryRowItemPart(item, this);
+				AddListItemToTopToBottom(queueItem);
 			}
 		}
+
+		private void LibraryDataReloaded(object sender, EventArgs e)
+		{
+			AddAllItems();
+		}
+
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -234,8 +237,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			IndexArgs addedIndexArgs = e as IndexArgs;
 			PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(addedIndexArgs.Index);
-			LibraryRowItem libraryItem = new LibraryRowItem(item, this);
-			AddChild(libraryItem, addedIndexArgs.Index);
+			LibraryRowItem libraryItem = new LibraryRowItemPart(item, this);
+			AddListItemToTopToBottom(libraryItem, addedIndexArgs.Index);
 		}
 
 		private void ItemRemovedFromToLibrary(object sender, EventArgs e)
@@ -249,10 +252,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
+		public void AddListItemToTopToBottom(GuiWidget child, int indexInChildrenList = -1)
 		{
 			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-			itemHolder.Name = "LB item holder";
+			itemHolder.Name = "list item holder";
 			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
 			itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			itemHolder.AddChild(child);
@@ -305,7 +308,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (LibraryRowItem item in SelectedItems)
 			{
-				LibraryProvider.CurrentProvider.RemoveItem(item.printItemWrapper);
+				item.RemoveFromParentCollection();
 			}
 		}
 
@@ -324,11 +327,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					topToBottomItemList.RemoveChild(itemHolder);
 				}
 			}
-		}
-
-		public void RemoveListItems()
-		{
-			topToBottomItemList.RemoveAllChildren();
 		}
 
 		private void itemHolder_ParentChanged(object sender, EventArgs e)

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
@@ -81,7 +82,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return LibrarySQLiteData.Instance.GetPrintItemWrapper(itemIndex);
 		}
 
-		public override PrintItemWrapper GetCollectionItemWrapper(int collectionIndex)
+		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			throw new NotImplementedException();
 		}

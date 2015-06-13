@@ -41,24 +41,20 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class LibraryRowItem : GuiWidget
+	public abstract class LibraryRowItem : GuiWidget
 	{
-		public PrintItemWrapper printItemWrapper;
 		public RGBA_Bytes WidgetTextColor;
 		public RGBA_Bytes WidgetBackgroundColor;
 
-		public bool isActivePrint = false;
 		public bool isSelectedItem = false;
 
 		private bool isHoverItem = false;
-		private TextWidget partLabel;
+		protected TextWidget partLabel;
 		public CheckBox selectionCheckBox;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		private bool viewWindowIsOpen = false;
-		private PartPreviewMainWindow viewingWindow;
-		private LibraryDataView libraryDataView;
-		private SlideWidget rightButtonOverlay;
-		private GuiWidget selectionCheckBoxContainer;
+		protected LibraryDataView libraryDataView;
+		protected SlideWidget rightButtonOverlay;
+		protected GuiWidget selectionCheckBoxContainer;
 		private bool editMode = false;
 
 		public bool EditMode
@@ -93,10 +89,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public LibraryRowItem(PrintItemWrapper printItem, LibraryDataView libraryDataView)
+		public LibraryRowItem(LibraryDataView libraryDataView)
 		{
 			this.libraryDataView = libraryDataView;
-			this.printItemWrapper = printItem;
+		}
+
+		protected void CreateGuiElements()
+		{
 			this.Cursor = Cursors.Hand;
 
 			linkButtonFactory.fontSize = 10;
@@ -121,8 +120,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				primaryFlow.HAnchor = HAnchor.ParentLeftRight;
 				primaryFlow.VAnchor = VAnchor.ParentBottomTop;
 
-				PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(printItem, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-
 				selectionCheckBoxContainer = new GuiWidget();
 				selectionCheckBoxContainer.VAnchor = VAnchor.ParentBottomTop;
 				selectionCheckBoxContainer.Width = 40;
@@ -138,7 +135,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 				middleColumn.Margin = new BorderDouble(10, 6);
 				{
-					string labelName = textInfo.ToTitleCase(printItem.Name);
+					string labelName = textInfo.ToTitleCase(GetItemName());
 					labelName = labelName.Replace('_', ' ');
 					partLabel = new TextWidget(labelName, pointSize: 14);
 					partLabel.TextColor = WidgetTextColor;
@@ -147,7 +144,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					middleColumn.AddChild(partLabel);
 				}
 				primaryFlow.AddChild(selectionCheckBoxContainer);
-				primaryFlow.AddChild(thumbnailWidget);
+
+				
+				primaryFlow.AddChild(GetThumbnailWidget());
 				primaryFlow.AddChild(middleColumn);
 
 				primaryContainer.AddChild(primaryFlow);
@@ -169,60 +168,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddHandlers();
 		}
 
+		protected abstract string GetItemName();
+
+		protected abstract GuiWidget GetThumbnailWidget();
+
 		private ConditionalClickWidget primaryClickContainer;
 
-		private SlideWidget getItemActionButtons()
-		{
-			SlideWidget buttonContainer = new SlideWidget();
-			buttonContainer.VAnchor = VAnchor.ParentBottomTop;
-
-			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
-
-			TextWidget printLabel = new TextWidget("Print".Localize());
-			printLabel.TextColor = RGBA_Bytes.White;
-			printLabel.VAnchor = VAnchor.ParentCenter;
-			printLabel.HAnchor = HAnchor.ParentCenter;
-
-			FatFlatClickWidget printButton = new FatFlatClickWidget(printLabel);
-			printButton.VAnchor = VAnchor.ParentBottomTop;
-			printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-			printButton.Width = 100;
-			printButton.Click += (sender, e) =>
-			{
-				if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
-				{
-					QueueData.Instance.AddItem(this.printItemWrapper, 0);
-					QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
-					PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-				}
-				else
-				{
-					QueueData.Instance.AddItem(this.printItemWrapper);
-				}
-				buttonContainer.SlideOut();
-				this.Invalidate();
-			}; ;
-
-			TextWidget viewButtonLabel = new TextWidget("View".Localize());
-			viewButtonLabel.TextColor = RGBA_Bytes.White;
-			viewButtonLabel.VAnchor = VAnchor.ParentCenter;
-			viewButtonLabel.HAnchor = HAnchor.ParentCenter;
-
-			FatFlatClickWidget viewButton = new FatFlatClickWidget(viewButtonLabel);
-			viewButton.VAnchor = VAnchor.ParentBottomTop;
-			viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-			viewButton.Width = 100;
-			viewButton.Click += onViewPartClick;
-
-			buttonFlowContainer.AddChild(viewButton);
-			buttonFlowContainer.AddChild(printButton);
-
-			buttonContainer.AddChild(buttonFlowContainer);
-			buttonContainer.Width = 200;
-
-			return buttonContainer;
-		}
+		protected abstract SlideWidget getItemActionButtons();
 
 		private void SetDisplayAttributes()
 		{
@@ -318,65 +270,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 		}
 
-		private void RemoveThisFromPrintLibrary()
-		{
-			LibraryProvider.CurrentProvider.RemoveItem(this.printItemWrapper);
-		}
-
-		private void onRemoveLinkClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(RemoveThisFromPrintLibrary);
-		}
-
-		private void onOpenPartViewClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(() => openPartView());
-		}
-
-		private void onViewPartClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				this.rightButtonOverlay.SlideOut();
-				openPartView(View3DWidget.OpenMode.Viewing);
-			});
-		}
-
-		public void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
-		{
-			if (viewWindowIsOpen == false)
-			{
-				viewingWindow = new PartPreviewMainWindow(this.printItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
-				this.viewWindowIsOpen = true;
-				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
-			}
-			else
-			{
-				if (viewingWindow != null)
-				{
-					viewingWindow.BringToFront();
-				}
-			}
-		}
-
-		private void PartPreviewMainWindow_Closed(object sender, EventArgs e)
-		{
-			viewWindowIsOpen = false;
-		}
-
-		private void openPartView(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
-		{
-			string pathAndFile = this.printItemWrapper.FileLocation;
-			if (File.Exists(pathAndFile))
-			{
-				OpenPartViewWindow(openMode);
-			}
-			else
-			{
-				string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the library?", pathAndFile);
-				StyledMessageBox.ShowMessageBox(null, message, "Item not found", StyledMessageBox.MessageType.YES_NO);
-			}
-		}
+		protected abstract void RemoveThisFromPrintLibrary();
 
 		private void onConfirmRemove(bool messageBoxResponse)
 		{
@@ -430,5 +324,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
 			}
 		}
+
+		public abstract void RemoveFromParentCollection();
+
+		public abstract void AddToQueue();
+
+		public abstract void RemoveFromCollection();
+
+		public abstract void Edit();
+
+		public abstract void Export();
 	}
 }
