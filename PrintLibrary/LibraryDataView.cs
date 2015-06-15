@@ -199,9 +199,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			LibraryProvider.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
 		}
 
+		public void RebuildView()
+		{
+			AddAllItems();
+		}
+
 		private void AddAllItems()
 		{
 			topToBottomItemList.RemoveAllChildren();
+
+			PrintItemCollection parent = LibraryProvider.CurrentProvider.GetParentCollectionItem();
+			if (parent != null)
+			{
+				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, false);
+				AddListItemToTopToBottom(queueItem);
+			}
 
 			for (int i = 0; i < LibraryProvider.CurrentProvider.CollectionCount; i++)
 			{

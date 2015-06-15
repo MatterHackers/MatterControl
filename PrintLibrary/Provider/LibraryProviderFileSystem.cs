@@ -52,6 +52,25 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			GetFilesInCurrentDirectory();
 		}
 
+		public LibraryProviderFileSystem(PrintItemCollection collectionBase)
+		{
+			this.rootPath = collectionBase.Key;
+
+			GetFilesInCurrentDirectory();
+		}
+
+		public override void SetCollectionBase(PrintItemCollection collectionBase)
+		{
+			string collectionPath = collectionBase.Key;
+			int startOfCurrentDir = collectionPath.IndexOf('.');
+			if (startOfCurrentDir != -1)
+			{
+				this.currentDirectory = collectionPath.Substring(startOfCurrentDir);
+			}
+
+			GetFilesInCurrentDirectory();
+		}
+
 		public override int CollectionCount
 		{
 			get 
@@ -94,6 +113,17 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
 			throw new NotImplementedException();
+		}
+
+		public override PrintItemCollection GetParentCollectionItem()
+		{
+			if (currentDirectory != ".")
+			{
+				string parentDirectory = Path.GetDirectoryName(currentDirectory);
+				return new PrintItemCollection("..", parentDirectory);
+			}
+
+			return null;
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)

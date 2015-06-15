@@ -53,13 +53,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					// hack for the moment
 					currentProvider = new LibraryProviderSQLite();
-					//currentProvider = new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"));
+					//PrintItemCollection collectionBase = new PrintItemCollection("Downloads", Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"));
+					//currentProvider = new LibraryProviderFileSystem(collectionBase);
 				}
 				return currentProvider;
 			}
 		}
 
 		#region AbstractMethods
+
+		public abstract void SetCollectionBase(PrintItemCollection collectionBase);
 
 		public abstract int CollectionCount { get; }
 
@@ -70,6 +73,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public abstract void AddCollectionToLibrary(string collectionName);
 
 		public abstract void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
+
+		public abstract PrintItemCollection GetParentCollectionItem();
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 

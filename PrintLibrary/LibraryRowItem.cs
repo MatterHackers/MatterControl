@@ -30,32 +30,33 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public abstract class LibraryRowItem : GuiWidget
 	{
-		public RGBA_Bytes WidgetTextColor;
-		public RGBA_Bytes WidgetBackgroundColor;
-
 		public bool isSelectedItem = false;
-
-		private bool isHoverItem = false;
-		protected TextWidget partLabel;
 		public CheckBox selectionCheckBox;
-		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		public RGBA_Bytes WidgetBackgroundColor;
+		public RGBA_Bytes WidgetTextColor;
 		protected LibraryDataView libraryDataView;
+		protected TextWidget partLabel;
 		protected SlideWidget rightButtonOverlay;
 		protected GuiWidget selectionCheckBoxContainer;
 		private bool editMode = false;
+		private bool isHoverItem = false;
+		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		private ConditionalClickWidget primaryClickContainer;
+
+		public LibraryRowItem(LibraryDataView libraryDataView)
+		{
+			this.libraryDataView = libraryDataView;
+		}
+
+		private event EventHandler unregisterEvents;
 
 		public bool EditMode
 		{
@@ -89,9 +90,52 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public LibraryRowItem(LibraryDataView libraryDataView)
+		public override void OnClosed(EventArgs e)
 		{
-			this.libraryDataView = libraryDataView;
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.libraryDataView.EditMode)
+			{
+				selectionCheckBoxContainer.Visible = true;
+				rightButtonOverlay.Visible = false;
+			}
+			else
+			{
+				selectionCheckBoxContainer.Visible = false;
+			}
+
+			base.OnDraw(graphics2D);
+
+			if (this.isSelectedItem)
+			{
+				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+				this.partLabel.TextColor = RGBA_Bytes.White;
+				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
+			}
+			else if (this.IsHoverItem)
+			{
+				RectangleDouble Bounds = LocalBounds;
+				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
+
+				this.BackgroundColor = RGBA_Bytes.White;
+				this.partLabel.TextColor = RGBA_Bytes.Black;
+				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+
+				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
+			}
+			else
+			{
+				this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
+				this.partLabel.TextColor = RGBA_Bytes.Black;
+				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+			}
 		}
 
 		protected void CreateGuiElements()
@@ -145,7 +189,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				primaryFlow.AddChild(selectionCheckBoxContainer);
 
-				
 				primaryFlow.AddChild(GetThumbnailWidget());
 				primaryFlow.AddChild(middleColumn);
 
@@ -158,7 +201,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				primaryContainer.AddChild(primaryClickContainer);
 
-				rightButtonOverlay = getItemActionButtons();
+				rightButtonOverlay = GetItemActionButtons();
 				rightButtonOverlay.Visible = false;
 
 				mainContainer.AddChild(primaryContainer);
@@ -168,32 +211,27 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddHandlers();
 		}
 
+		#region Abstract Functions
+
+		public abstract void AddToQueue();
+
+		public abstract void Edit();
+
+		public abstract void Export();
+
+		public abstract void RemoveFromCollection();
+
+		public abstract void RemoveFromParentCollection();
+
+		protected abstract SlideWidget GetItemActionButtons();
+
 		protected abstract string GetItemName();
 
 		protected abstract GuiWidget GetThumbnailWidget();
 
-		private ConditionalClickWidget primaryClickContainer;
+		protected abstract void RemoveThisFromPrintLibrary();
 
-		protected abstract SlideWidget getItemActionButtons();
-
-		private void SetDisplayAttributes()
-		{
-			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
-			{
-				this.Height = 65;
-			}
-			else
-			{
-				this.Height = 50;
-			}
-
-			this.Padding = new BorderDouble(0);
-			this.Margin = new BorderDouble(6, 0, 6, 6);
-		}
-
-		private event EventHandler unregisterEvents;
+		#endregion Abstract Functions
 
 		private void AddHandlers()
 		{
@@ -217,13 +255,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			//selectionCheckBox.CheckedStateChanged += selectionCheckBox_CheckedStateChanged;
 		}
 
-		public override void OnClosed(EventArgs e)
+		private void onAddLinkClick(object sender, EventArgs e)
 		{
-			if (unregisterEvents != null)
+		}
+
+		private void onConfirmRemove(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
 			{
-				unregisterEvents(this, null);
+				libraryDataView.RemoveChild(this);
 			}
-			base.OnClosed(e);
 		}
 
 		private void onLibraryItemClick(object sender, EventArgs e)
@@ -252,6 +293,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
+		private void onThemeChanged(object sender, EventArgs e)
+		{
+			//Set background and text color to new theme
+			this.Invalidate();
+		}
+
 		private void selectionCheckBox_CheckedStateChanged(object sender, EventArgs e)
 		{
 			if (selectionCheckBox.Checked == true)
@@ -266,73 +313,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private void onAddLinkClick(object sender, EventArgs e)
+		private void SetDisplayAttributes()
 		{
-		}
-
-		protected abstract void RemoveThisFromPrintLibrary();
-
-		private void onConfirmRemove(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
+			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
 			{
-				libraryDataView.RemoveChild(this);
-			}
-		}
-
-		private void onThemeChanged(object sender, EventArgs e)
-		{
-			//Set background and text color to new theme
-			this.Invalidate();
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (this.libraryDataView.EditMode)
-			{
-				selectionCheckBoxContainer.Visible = true;
-				rightButtonOverlay.Visible = false;
+				this.Height = 65;
 			}
 			else
 			{
-				selectionCheckBoxContainer.Visible = false;
+				this.Height = 50;
 			}
 
-			base.OnDraw(graphics2D);
-
-			if (this.isSelectedItem)
-			{
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.partLabel.TextColor = RGBA_Bytes.White;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
-			}
-			else if (this.IsHoverItem)
-			{
-				RectangleDouble Bounds = LocalBounds;
-				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
-
-				this.BackgroundColor = RGBA_Bytes.White;
-				this.partLabel.TextColor = RGBA_Bytes.Black;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
-
-				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
-			}
-			else
-			{
-				this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
-				this.partLabel.TextColor = RGBA_Bytes.Black;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
-			}
+			this.Padding = new BorderDouble(0);
+			this.Margin = new BorderDouble(6, 0, 6, 6);
 		}
-
-		public abstract void RemoveFromParentCollection();
-
-		public abstract void AddToQueue();
-
-		public abstract void RemoveFromCollection();
-
-		public abstract void Edit();
-
-		public abstract void Export();
 	}
 }

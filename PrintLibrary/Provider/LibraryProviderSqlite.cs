@@ -46,6 +46,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override PrintItemCollection GetParentCollectionItem()
+		{
+			return null;
+		}
+
+		public override void SetCollectionBase(PrintItemCollection collectionBase)
+		{
+		}
+
 		public override int ItemCount
 		{
 			get

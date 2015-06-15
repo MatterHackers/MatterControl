@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -45,10 +47,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class LibraryRowItemCollection : LibraryRowItem
 	{
 		PrintItemCollection collection;
+		bool isSubdirector;
 
-		public LibraryRowItemCollection(PrintItemCollection collection, LibraryDataView libraryDataView)
+		public LibraryRowItemCollection(PrintItemCollection collection, LibraryDataView libraryDataView, bool isSubdirector = true)
 			: base(libraryDataView)
 		{
+			this.isSubdirector = isSubdirector;
 			this.collection = collection;
 			CreateGuiElements();
 		}
@@ -82,8 +86,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		protected override GuiWidget GetThumbnailWidget()
 		{
-			PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(null, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-			return thumbnailWidget;
+			string path = Path.Combine("Icons", "FileDialog", "folder.png");
+			if(!isSubdirector)
+			{
+				path = Path.Combine("Icons", "FileDialog", "upfolder.png");
+			}
+			ImageBuffer imageBuffer = new ImageBuffer();
+			StaticData.Instance.LoadImage(path, imageBuffer);
+
+			ImageWidget folderThumbnail = new ImageWidget(imageBuffer);
+			return folderThumbnail;
 		}
 
 		protected override string GetItemName()
@@ -91,7 +103,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return collection.Name;
 		}
 
-		protected override SlideWidget getItemActionButtons()
+		protected override SlideWidget GetItemActionButtons()
 		{
 			SlideWidget buttonContainer = new SlideWidget();
 			buttonContainer.VAnchor = VAnchor.ParentBottomTop;
@@ -110,13 +122,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			openButton.Width = 100;
 			openButton.Click += (sender, e) =>
 			{
-				throw new NotImplementedException();
+				if (isSubdirector)
+				{
+					LibraryProvider.CurrentProvider.SetCollectionBase(collection);
+				}
+				else
+				{
+					LibraryProvider.CurrentProvider.SetCollectionBase(LibraryProvider.CurrentProvider.GetParentCollectionItem());
+				}
+
+				UiThread.RunOnIdle(libraryDataView.RebuildView);
 			};
 
 			buttonFlowContainer.AddChild(openButton);
 
 			buttonContainer.AddChild(buttonFlowContainer);
-			buttonContainer.Width = 200;
+			buttonContainer.Width = 100;
 
 			return buttonContainer;
 		}

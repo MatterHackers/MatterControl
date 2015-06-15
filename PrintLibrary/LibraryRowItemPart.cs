@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private ConditionalClickWidget primaryClickContainer;
 
-		protected override SlideWidget getItemActionButtons()
+		protected override SlideWidget GetItemActionButtons()
 		{
 			SlideWidget buttonContainer = new SlideWidget();
 			buttonContainer.VAnchor = VAnchor.ParentBottomTop;

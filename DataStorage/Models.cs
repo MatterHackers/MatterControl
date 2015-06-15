@@ -180,12 +180,15 @@ namespace MatterHackers.MatterControl.DataStorage
 		public PrintItemCollection()
 		{ }
 
-		public PrintItemCollection(string name, string id)
+		public PrintItemCollection(string name, string collectionKey)
 		{ 
 			this.Name = name;
+			Key = collectionKey;
 		}
 
 		public string Name { get; set; }
+
+		public string Key { get; set; }
 	}
 
 	public class PrintItem : Entity
