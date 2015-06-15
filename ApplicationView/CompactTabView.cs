@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl
 				case UpdateControlData.UpdateStatusStates.UpdateDownloading:
 					if (addedUpdateMark == null)
 					{
-						addedUpdateMark = new NotificationWidget();
+						addedUpdateMark = new UpdateNotificationMark();
 						addedUpdateMark.OriginRelativeParent = new Vector2(aboutTabWidget.tabTitle.Width + 3, 7);
 						aboutTabWidget.AddChild(addedUpdateMark);
 					}

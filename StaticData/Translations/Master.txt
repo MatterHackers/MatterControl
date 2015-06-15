@@ -3319,3 +3319,6 @@ Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extru
 English:Open
 Translated:Open
 
+English:Checking For Update...
+Translated:Checking For Update...
+

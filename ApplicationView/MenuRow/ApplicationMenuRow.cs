@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 
 			Button updateStatusMessage = linkButtonFactory.Generate("Update Available");
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
-			popUpAboutPage = new GuiWidget();
+			popUpAboutPage = new FlowLayoutWidget();
 			popUpAboutPage.Margin = new BorderDouble(30, 0, 0, 0);
 			popUpAboutPage.HAnchor = HAnchor.FitToChildren;
 			popUpAboutPage.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
@@ -159,6 +159,9 @@ namespace MatterHackers.MatterControl
 						{
 							UiThread.RunOnIdle(AboutWindow.Show);
 						};
+						var updateMark = new UpdateNotificationMark();
+						updateMark.VAnchor = VAnchor.ParentTop;
+						popUpAboutPage.AddChild(updateMark);
 						popUpAboutPage.AddChild(updateStatusMessage);
 						popUpAboutPage.Visible = true;
 					}
