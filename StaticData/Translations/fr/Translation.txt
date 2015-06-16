@@ -2,7 +2,7 @@ English:Connect
 Translated:Connecter
 
 English:Disconnect
-Translated:Déconnecté
+Translated:Déconnecter
 
 English:Status
 Translated:Status
@@ -23,7 +23,7 @@ English:Next Print
 Translated:Impression Suivante
 
 English:Add
-Translated:Add
+Translated:Ajouter
 
 English:Add a file to be printed
 Translated:Ajouter un fichier pour l'imprimer
@@ -32,13 +32,13 @@ English:Start
 Translated:Démarrer
 
 English:Begin printing the selected item.
-Translated:Démarer l'impression de l'objet selectioné
+Translated:Démarrer l'impression de l'objet selectioné
 
 English:Skip
 Translated:Passer
 
 English:Skip the current item and move to the next in queue
-Translated:Passer l'élément courent et démarer le suivant dans la file d'attente
+Translated:Passer l'élément courent et démarrer le suivant dans la file d'attente
 
 English:Remove
 Translated:Suprimer
@@ -50,7 +50,7 @@ English:Pause
 Translated:Pause
 
 English:Pause the current print
-Translated:Metre en Pause l'impression
+Translated:Mettre en Pause l'impression
 
 English:Cancel Connect
 Translated:Annuler la connexion
@@ -86,10 +86,10 @@ English:No printer selected.  Press 'Connect' to choose a printer.
 Translated:Aucune imprimante de sélectionée. Appuyez sur 'Connection' pour choisir une imprimante
 
 English:Press 'Add' to choose an item to print
-Translated:Appuyez sur 'Ajouter' Pour choisir un élement à imprimer
+Translated:Appuyez sur 'Ajouter' pour choisir un élement à imprimer
 
 English:No items in the print queue
-Translated:Aucune éléménent dans la file d'impression
+Translated:Aucun éléménent dans la file d'impression
 
 English:Queued to Print
 Translated:Mis en file d'attente
@@ -98,7 +98,7 @@ English:View
 Translated:Vue
 
 English:Copy
-Translated:Copie
+Translated:Copier
 
 English:Add to Queue
 Translated:Ajouter à la file d'attente
@@ -107,13 +107,13 @@ English:Export
 Translated:Exporter
 
 English:Est. Print Time
-Translated:Temps d'impression estimée
+Translated:Temps d'impression estimé
 
 English:Calculating...
 Translated:Calcul en cours...
 
 English:complete
-Translated:Fini
+Translated:Fin
 
 English:Remove All
 Translated:Suprimer tout
@@ -173,7 +173,7 @@ English:Please consider
 Translated:Veuillez considérer
 
 English:donating
-Translated:faire un don
+Translated:de faire un don
 
 English: to help support and improve MatterControl.
 Translated:Pour aider à supporter et améliorer MatterControl.
@@ -227,7 +227,7 @@ English:Show Print Area
 Translated:Afficher la surface d'impression
 
 English:Show Wireframe
-Translated:Affichage en file de fer
+Translated:Mode file de fer
 
 English:Auto-Arrange
 Translated:Arrangement-Auto
@@ -248,7 +248,7 @@ English:Conversions
 Translated:Convertions
 
 English:reset
-Translated:Réinitialiser
+Translated:réinitialiser
 
 English:Apply Scale
 Translated:Appliquer l'agrandissement
@@ -275,7 +275,7 @@ English:Loading GCode...
 Translated:Chargement du GCode...
 
 English:Press 'generate' to view layers
-Translated:Appuyez sur 'generer' pour voir les couches
+Translated:Appuyez sur 'générer' pour voir les couches
 
 English:Model
 Translated:Model
@@ -293,7 +293,7 @@ English:Advanced\nControls
 Translated:Contrôles\nAvancés
 
 English:Print\nQueue
-Translated:File D'attente\nD'impression
+Translated:File d'attente\nD'impression
 
 English:Actual
 Translated:Actuel
@@ -305,7 +305,7 @@ English:Presets
 Translated:Presets
 
 English:Movement Controls
-Translated:Controles de mouvement
+Translated:Contrôles de mouvement
 
 English:ALL
 Translated:TOUT
@@ -317,7 +317,7 @@ English:Retract
 Translated:Retracter
 
 English:Extrude
-Translated:Extrudeer
+Translated:Extruder
 
 English:Communications
 Translated:Communications
@@ -326,10 +326,10 @@ English:SHOW TERMINAL
 Translated:AFFICHER LE TERMINAL
 
 English:Fan Controls
-Translated:Controles des ventilateurs
+Translated:Contrôles des ventilateurs
 
 English:Fan Speed:
-Translated:Vitesse des ventillateurs:
+Translated:Vitesse des ventilateurs:
 
 English:Macros
 Translated:Macros
@@ -344,16 +344,16 @@ English:Speed Multiplier
 Translated:Multiplicateur de vitesse
 
 English:Set
-Translated:Set
+Translated:Définir
 
 English:Extrusion Multiplier
 Translated:Multiplicateur d'extrusion
 
 English:Controls
-Translated:Controles
+Translated:Contrôles
 
 English:Slice Settings
-Translated:Paramètre de Slicing
+Translated:Paramètres de Slicing
 
 English:Show Help
 Translated:Afficher l'aide
@@ -386,16 +386,16 @@ English:Attempts to minimize the number of perimeter crossing. This can help wit
 Translated:Essaye de minimiser le nombre de croisement de périmètre. Ceci peut aider à réduire les effects de suintement ou de fils.
 
 English:The shape of the physical print bed.
-Translated:La forme physique du lit d'impréssion.
+Translated:Forme physique du lit d'impréssion.
 
 English:The size of the print bed.
-Translated:La taille du lit d'impression.
+Translated:Taille du lit d'impression.
 
 English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
-Translated:La température du lit après que la première couche soit imprimée. Metre à 0 pour suprimer les commande de température du lit.
+Translated:Température du lit après que la première couche soit imprimée. Metre à 0 pour suprimer les commande de température du lit.
 
 English:How many layers will be solid filled on the bottom surfaces of the object.
-Translated:Combien de couches seront remplie au niveau de la surface inférieur de l'objet.
+Translated:Combien de couches seront remplies au niveau de la surface inférieur de l'objet.
 
 English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
 Translated:Acceleration pendant le pontage (bridging). Metre à 0 pour désactiver le changement d'accélération.
@@ -404,19 +404,19 @@ English:The fan speed to use during bridging.
 Translated:La vitesse du ventillateur pendant le pontage (bridging).
 
 English:This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
-Translated:Ceci controle le ratio de matière extrudé pendant le pontage (bridging). Réduire ce paramètre légèrement peut aider en tirant plus sur le filament. L'utilisation d'un ventillateur peut grandement aider.
+Translated:Ceci contrôle le ratio de matière extrudé pendant le pontage (bridging). Réduire ce paramètre légèrement peut aider en tirant plus sur le filament. L'utilisation d'un ventilateur peut grandement aider.
 
 English:The speed to move when bridging between walls.
 Translated:La vitesse utilisé pendant un pontage (bridging) entre deux paroies.
 
 English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
-Translated:La quantité de bord (brim) dessiné autour de chaque objet.Ceci est utile afin d'être sur que l'object reste bien collé au lit.
+Translated:La quantité de bord (brim) dessiné autour de chaque objet. Ceci est utile afin d'être sûr que l'object reste bien collé au lit.
 
 English:The height of the printable area. If set to 0 the parts height will not be validated.
-Translated:La hauteur de la surface d'impression. Si 0, la hauteur de l'object sera invalid.
+Translated:La hauteur de la surface d'impression. Si 0, la hauteur de l'object sera invalide.
 
 English:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
-Translated:Chaque object est imprimer individuellement, une fois finie, la tête chauffante passerra à l'objet suivant en recommençant en bas du plateau.
+Translated:Chaque object est imprimé individuellement, une fois finie, la tête chauffante passerra à l'objet suivant en recommençant en bas du plateau.
 
 English:Moves the extruder up off the part to allow cooling.
 Translated:Lève la tête chauffante au dessus de l'object afin de permettre le refroidissement.
@@ -425,16 +425,16 @@ English:Turns on and off all cooling settings (all settings below this one).
 Translated:Active ou désactive tous les paramètres de refroidissement(Tous les paramètre en dessous celui là).
 
 English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
-Translated:Acceleration à utiliser sur tous les mouvements non définis ci-dessus.Utiliser 0 pour désactiver le changement d'accélération de l'imprimante.
+Translated:Acceleration à utiliser sur tous les mouvements non définis ci-dessus. Utiliser 0 pour désactiver le changement d'accélération de l'imprimante.
 
 English:The number of layers for which the fan will be forced to remain off.
-Translated:Le nombre de couches pour lesquels le ventillateur restera désactivé.
+Translated:Le nombre de couches pour lesquels le ventilateur restera désactivé.
 
 English:This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
-Translated:Ce gcode sera inséré à la fin de toutes les sorties automatique du slicer (Les toutes dernières commande gcode).
+Translated:Ce gcode sera inséré à la fin de toutes les sorties automatique du slicer (Les toutes dernières commandes gcode).
 
 English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Perimeters speed.
-Translated:La vitesse utilisée pour imprimer la surface extérieure visible de l'object.Ce paramètre peut être donné explicitement en mm/s ou en utilisant un pourcentage de vitesse de périphérie.
+Translated:Vitesse utilisé pour imprimer la surface extérieure visible de l'object. Ce paramètre peut être donné explicitement en mm/s ou en utilisant un pourcentage de vitesse de périphérie.
 
 English:Normally external perimeters are printed last, this makes them go first.
 Translated:En règle générale, le périmètre extérieur est imprimé en dernier, Ce paramètre permet de l'imprimer en premier.
@@ -443,58 +443,58 @@ English:Allow slicer to generate extra perimeters when needed for sloping walls.
 Translated:Permet à slic3r de générer un périmètre suplémentaire au besoin pour les paroies pentues.
 
 English:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
-Translated:Ce paramètre est utilisé pour déterminé l'espacement des objects entre eux lorsque l'impression d séparé des objets est utilisé.
+Translated:Ce paramètre est utilisé pour déterminé l'espacement des objects entre eux lorsque l'impression séparé des objets est utilisé.
 
 English:This is the offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
-Translated:C'est le décallage de chaque tête chauffante relative à la premirèe tête chauffante.Seulement utile pour les machines à multiple tête chauffantes.
+Translated:C'est le décallage de chaque tête chauffante relative à la première tête chauffante. Seulement utile pour les machines à multiple têtes chauffantes.
 
 English:This is the identifier used in the gcode to specify the extruder.
 Translated:Ce paramètre correspond à l'identifiant utilisé dans le gcode pour spécifier l'extruder.
 
 English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good min value) will decrease the amount being extruded.
-Translated:Toutes les extrusion sont multiplié par ce facteur.Augmenter le facteur au dessus de 1 (1.1 est une bonne valeur max) vont augmenter la quantité de filament extrudé; Diminuer ce facteur (0.9 est une bonne valeur min)diminuera la quantité de filament extrudé.
+Translated:Toutes les extrusions sont multipliées par ce facteur. Augmenter le facteur au dessus de 1 (1.1 est une bonne valeur max) vont augmenter la quantité de filament extrudé; Diminuer ce facteur (0.9 est une bonne valeur min) diminuera la quantité de filament extrudé.
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Laissez ce paramètre à 0 pour activer le calcul automatique de la largeur d'extrusion (extrusion width).
 
 English:This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.
-Translated:Ce paramètre forcera le ventillateur à rester alumer pendant toutes la durée de l'impression. En règle générale, vous devez avec se paramètre désactiver et activer l'auto refroidissement (auto cooling).
+Translated:Ce paramètre forcera le ventilateur à rester allumer pendant toutes la durée de l'impression. En règle générale, vous devez avoir ce paramètre désactivé et activer l'auto refroidissement (auto cooling).
 
 English:If a layer is estimated to take less than this to print, the fan will be turned on.
-Translated:Si la durée d'une couche est estimée prendre moins de temps que la valeur du paramètre alors le ventillateur s'alumera.
+Translated:Si la durée d'une couche est estimée prendre moins de temps que la valeur du paramètre alors le ventilateur s'alumera.
 
 English:This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
-Translated:Ce paramètre doit correspondre à la valeur réél du diamètre du filament utilisé sur votre imprimante.Mesurez 5 fois avec un pied à coulisse en prenant 5 point sur une bone longeur de fil et faites en la moyenne.
+Translated:Ce paramètre doit correspondre à la valeur réelle du diamètre du filament utilisé sur votre imprimante. Mesurez 5 fois avec un pied à coulisse en prenant 5 points sur une bone longeur de fil et faites en la moyenne.
 
 English:Sets the starting angle of the infill. Not used when bridging.
-Translated:Définie l'angle de départ pour le remplissage.Non utilisé lors d'un pontage (bridging).
+Translated:Définie l'angle de départ pour le remplissage. Non utilisé lors d'un pontage (bridging).
 
 English:The ratio of material to empty space ranged 0 to 1. Zero would be no infill; 1 is solid infill.
-Translated:Ce paramètre correspond au ratio de matière/vide allant de 0 à 1.0 étant vide (aucun remplissage) et 1 étant plein (100% rempli).
+Translated:Ce paramètre correspond au ratio de matière/vide allant de 0 à 1.0; 0 étant vide (aucun remplissage) et 1 étant plein (100% rempli).
 
 English:The pattern used on the inside portions of the print.
 Translated:Le pattern utilisé à l'intérieur de l'object.
 
 English:Acceleration to use while printing the first layer. Set to 0 to the default first layer acceleration.
-Translated:Acceleration à utilisé pendant l'impression de la première couche.Metre à 0 pour utiliser la valeur d'accélaration par défaut.
+Translated:Acceleration à utiliser pendant l'impression de la première couche. Metre à 0 pour utiliser la valeur d'accélaration par défaut.
 
 English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
 Translated:Ce paramètre correspond à la température du lit avant l'impression de la première couche. L'imprimante attendra que cette température soit atteinte avant de commancer l'impression. Metre à 0 pour désactiver la chauffe du lit.
 
 English:Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.
-Translated:Metre ce paramètre à plus de 100% peut parfois aider à augmenter l'adhésion de la première couchesur le lit chauffant.
+Translated:Metre ce paramètre à plus de 100% peut parfois aider à augmenter l'adhésion de la première couche sur le lit chauffant.
 
 English:Sets the height of the first layer. It is often desirable to print a taller first layer to ensure a good solid adhesion to the build plate.
-Translated:Configure la hauteur de la première couche. Il est souvent préférable d'imprimaer la première couche légèrement plus épaisse que les couche suivantes afin d'optimiser l'adhésion de votre pièce sur la surface d'impression.
+Translated:Configure la hauteur de la première couche. Il est souvent préférable d'imprimer la première couche légèrement plus épaisse que les couche suivantes afin d'optimiser l'adhésion de votre pièce sur la surface d'impression.
 
 English:The speed to move while printing the first layer.  If expressed as a percentage it will modify the corresponding speed set above.
 Translated:Ce paramètre correspond à la vitesse de déplacement pendant l'impression de la première couche. Si exprimé en pourcentage, cela modifiera la valeur précédente.
 
 English:The temperature to set the extruder to before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
-Translated:Ce paramètre correspond à la temprérature de consigne à atteindre de la tête chauffante avant le début de l'impression. L'imprimante attendra que cette température de consigne soit atteinte avant de démarrer l'impression.
+Translated:Ce paramètre correspond à la temprérature de consigne à atteindre par la tête chauffante avant le début de l'impression. L'imprimante attendra que cette température de consigne soit atteinte avant de démarrer l'impression.
 
 English:Use G0 for moves rather than G1.
-Translated:Utilise G0 pour effectuver les déplacement plutôt que G1.
+Translated:Utilise G0 pour éffectuer les déplacements plutôt que G1.
 
 English:Speed to fill small gaps. Keep low to avoid vibration. Set to 0 to skip filling small gaps.
 Translated:Vitesse utilisée pour remplir de petits trous. Conservez la basse afin d'éviter les vibrations. Utiliser 0 afin d'éviter de remplir les petits trous.
@@ -506,67 +506,67 @@ English:Include detailed comments in the gcode.
 Translated:Inclure des commentaires dans le gcode.
 
 English:Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.
-Translated:Certains firmware utilisent différent code pour g et m. Activer ce paramètre permet d'être sur que le gcode généré utilisera des commandes compatibles.
+Translated:Certains firmwares utilisent différents code pour G et M. Activer ce paramètre permet d'être sûr que le gcode généré utilisera des commandes compatibles.
 
 English:Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.
 Translated:Accélération à utiliser pendant un remplissage. Metre à 0 afin de désactiver le changement d'accélération de l'imprimante.
 
 English:Sets which layers will receive infill. This should normally stay set to 1 to make strong parts.
-Translated:Décide de quel couche sera remplie.Ce paramètre doit en principe rester à 1 afin d'obtenir des objets plus solide.
+Translated:Décide de quel couche sera remplie. Ce paramètre doit en principe rester à 1 afin d'obtenir des objets plus solide.
 
 English:The index of the extruder to use for infill.
 Translated:Ce paramètre correspond à l'index de l'extrudeur à utiliser pour le remplissage.
 
 English:Sets infill to happen before perimeters are created.
-Translated:Ce paramètre permet d'effectuer le remplissage avant d'effectuer les contours de l'objet.
+Translated:Ce paramètre permet d'éffectuer le remplissage avant d'éffectuer les contours de l'objet.
 
 English:Creates infill only where it will be used as internal support.
-Translated:Ce paramètre permet de remplir l'objet seulement lorsque ce dernier sera utiliser comme support à l'intérieur de l'object.
+Translated:Ce paramètre permet de remplir l'objet seulement lorsque ce dernier sera utilisé comme support à l'intérieur de l'object.
 
 English:The speed to print infill.
-Translated:Ce paramètre correspond à la vitesse utilisée pour le remplissage de l'objet.
+Translated:Vitesse utilisée pour le remplissage de l'objet.
 
 English:This gcode will be inserted right after the change in z height for the next layer.
 Translated:Ce gcode sera inséré juste après le changement de hauteur au passage se la couche suivante.
 
 English:Sets the height of each layer of the print. A smaller number will create more layers and more vertical accuracy but also a slower print.
-Translated:Ce paramètre correspond à la hauteur de chaque couche pendant l'impression. Un nombre très bas génèrement plus de couches, améliora la qualité de votre object, mais pendra plus de temps à s'imprimer.
+Translated:Hauteur de chaque couche pendant l'impression. Un nombre très bas génère plus de couches, améliora la qualité de votre object, mais pendra plus de temps à s'imprimer.
 
 English:This is the maximum speed that your fan can run at.
-Translated:Ce paramètre correspond à la vitesse maximale de votre ventillateur.
+Translated:Vitesse maximale de votre ventillateur.
 
 English:This is the minimum amount of filament that must be extruded before a rectarction can occure.
-Translated:Ce paramètre correspond à la quantité minimum de filament qui doit être extrudé avant qu'une retraction puisse s'éffectuer.
+Translated:Quantité minimum de filament qui doit être extrudé avant qu'une retraction puisse s'éffectuer.
 
 English:This is the minimum fan speed that your fan can run at.
-Translated:Ce paramètre correspond à la vitesse minimum de votre ventillateur.
+Translated:Vitesse minimum de votre ventillateur.
 
 English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the min layer time.
-Translated:Ce paramètre correspond à la vitesse minimale que votre imprimante utilisera afin de satisfaire un temps d'impression de couche minimal.
+Translated:Vitesse minimale que votre imprimante utilisera afin de satisfaire un temps d'impression de couche minimal.
 
 English:Sets the minimum amount of filament to use drawing the skirt loops. This will cause at least enough skirt loops to be drawn to use this amount of filament.
 Translated:Permet de définir la quantité minium de filament utilisé pour déssiner les boucles de la jupe (skirt) autour de votre object.
 
 English:These notes will be added as comments in the header of the output gcode.
-Translated:Ces notes seront ajouté en temps que commentaire  en entête de votre gcode.
+Translated:Ces notes seront ajoutés en temps que commentaire en entête de votre gcode.
 
 English:This is the diameter of your extruder nozle.
-Translated:Ce paramètre correspond au diamètre de votre buze de tête chauffante.
+Translated:Diamètre de votre buze de tête chauffante.
 
 English:Prevents retraction while within a printing perimeter.
 Translated:Evite les rétractions pendant l'impression de la périphérie de l'object.
 
 English:This will lower the temperature of the non-printing extruder to help prevent oozing.
-Translated:Ce paramètre réduira la température de votre tête chauffante pendant les phase de non impression afin de réduire l'effet de suintement.
+Translated:Ce paramètre réduira la température de votre tête chauffante pendant les phases de non impression afin de réduire l'effet de suintement (oozing).
 
 English:Experimental feature that attempts to improve overhangs using the fan and bridge settings.
-Translated:Fonctionalité expérimentale dont le but est d'améliorer la performance des impressions dans le vide (overhangs) en utilisants les paramètres associés au ventillateur et au pontage (bridge).
+Translated:Fonctionalité expérimentale dont le but est d'améliorer la performance des impressions dans le vide (overhangs) en utilisants les paramètres associés au ventilateur et au pontage (bridge).
 
 English:Sets the way that slicer creates file names (this is not used by MatterControl).
 Translated:Configure la manière dont le slicer génère les noms de fichiers (Ceci n'est pas utilisé par  MatterControl).
 
 English:Acceleration to use on perimeters. Set to 0 to disable changing the printer's acceleration.
-Translated:Accélération à utilisé sur la périphérie de l'objet. Metre à 0 pour désactiver le changement d'accélération.
+Translated:Accélération à utiliser sur la périphérie de l'objet. Metre à 0 pour désactiver le changement d'accélération.
 
 English:The index of the extruder to use for perimeters.
 Translated:L'index de l'extrudeur à utiliser sur les périphéries.
@@ -575,10 +575,10 @@ English:Sets the default movement speed while printing perimeters.
 Translated:Configure les vitesses de déplacement pendant l'impression des périphéries.
 
 English:The number of external layers or shells to create.
-Translated:Nombre de couches extérieures à générés sur les périphéries de l'objet.
+Translated:Nombre de couches extérieures à générer sur les périphéries de l'objet.
 
 English:You can include additional programs to process the gcode after slicer is finished. The complete path of the program to run should be included here.
-Translated:Vous pouvez configurer des application suplémentaires pour gérer le gcode, avec une execution postérieure au slicer.Le chein complet de l'application doit être inclue.
+Translated:Vous pouvez configurer des applications suplémentaires pour gérer le gcode, avec une execution postérieure au slicer.Le chemin complet de l'application doit être inclu.
 
 English:The position (coordinates) of the center of the print bed.
 Translated:La position (coordonés) en mm du centre du lit chauffant.
@@ -590,37 +590,37 @@ English:Start each new layer from a different vertex to reduce seams.
 Translated:Commence chaque nouvelle couche à un emplacement différent afin de réduire les défauts en périphérie (effets de couture-> seams).
 
 English:The minimum distance of a non-printing move that will result in a retraction.
-Translated:La distance minimale d'un déplacement dans le vide qui induit une retraction.
+Translated:La distance minimale d'un déplacement dans le vide qui induit une rétraction.
 
 English:If set, a retraction will occur prior to changing the layer height.
-Translated:Si défini, une retraction interviendra anvant le changement de couche verticale.
+Translated:Si défini, une retraction interviendra avant le changement de couche verticale.
 
 English:The amount that the filament will be reversed after each qualifying non-printing move.
-Translated:Définit la quantité de filament qui sera retracté lors d'un mouvement dans le vide.
+Translated:Définit la quantité de filament qui sera rétracté lors d'un mouvement dans le vide.
 
 English:The amount that the filament will be reversed before changing to a new tool.
-Translated:Définit la quantité de filament restracté lors d'un changement d'outil/tête chauffante.
+Translated:Définit la quantité de filament rétracté lors d'un changement d'outil/tête chauffante.
 
 English:The amount the extruder head will be lifted after each retraction.
 Translated:Définit la hauteur de réhaussement de la tête chauffante après chaque rétraction.
 
 English:The amount the filament will be retracted when changing to a different extruder.
-Translated:Définit la quantité de filament retracté lors d'un changement de tête chauffante/extruder.
+Translated:Définit la quantité de filament rétracté lors d'un changement de tête chauffante/extrudeur.
 
 English:No updates are currently available.
 Translated:Aucune mise à jours disponible.
 
 English:Additional amount of filament that will be extruded after a retraction.
-Translated:Quantité suplémentaire de filament qui sera extrudé après chaque retraction.
+Translated:Quantité suplémentaire de filament qui sera extrudé après chaque rétraction.
 
 English:The amount of extra extrusion that will occur when an extruder is selected.
-Translated:Quantité suplémentaire de filament qui sera extrudé lorsqu'un extruder est selectioné.
+Translated:Quantité suplémentaire de filament qui sera extrudé lorsqu'un extrudeur est selectioné.
 
 English:The speed that the filament will be retracted (and re-extruded).
-Translated:Vitesse à laquelle le filament sera retracté et re-extrudé.
+Translated:Vitesse à laquelle le filament sera rétracté et re-extrudé.
 
 English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
-Translated:Résolution minimale pour votre modèle. Laissez 0 afin de prendre en compte tous les détails de votre modèle.
+Translated:Résolution minimale de votre modèle. Laissez 0 afin de prendre en compte tous les détails de votre modèle.
 
 English:The distance to start drawing the first skirt loop.
 Translated:Distance à partir de laquelle les boucles de la jupe (skirt) seront déssinées.
@@ -629,7 +629,7 @@ English:The number of layers to draw the skirt.
 Translated:Nombre de boucles utilisé pour dessiner la jupe (skirt).
 
 English:The number of loops to draw around all the parts on the bed.
-Translated:Nombre de boucle dessiné autour des objets au niveau du lit.
+Translated:Nombre de boucle dessinées autour des objets au niveau du lit.
 
 English:If a layer is estimated to take less than this to print, the movement speed will be reduced to try and make the layer take this long to print.
 Translated:Si une couche est estimée durer moins que ce paramètre, la vitesse de déplacement de l'imprimante sera réduite afin d'allonger la durée d'impression de la couche en cours.
@@ -644,22 +644,22 @@ English:Forces solid infill for any area less than this amount.
 Translated:Force un remplissage complet pour chaque zone plus petites que cette valeur.
 
 English:Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.
-Translated:Définit la fréquence de remplissage complet d'une couche.0 correspond à un remplissage normal.
+Translated:Définit la fréquence de remplissage complet d'une couche. 0 correspond à un remplissage normal.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Vitesse à laquelle imprimer le remplissage à 100%. Ce paramètre peut aussi être exprimé en pourcentage de vitesse de rempliçage.
+Translated:Vitesse à laquelle imprimer le remplissage à 100%. Ce paramètre peut aussi être exprimé en pourcentage de la vitesse de rempliçage.
 
 English:Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.
-Translated:Force l'impression à avoir uniquement une couche et augmente graduellement la hauteur de couche pendant l'impression.Un seul objet peut être imprimer à la fois en utilisant cette fonctionalité.
+Translated:Force l'impression à avoir uniquement une couche de périphérie et augmente graduellement la hauteur de couche pendant l'impression. Un seul objet peut être imprimer à la fois en utilisant cette fonctionalité.
 
 English:This is the amount to lower the temperature of an extruder that is not currently printing.
 Translated:Cette valeur réduit la température des tête chauffante lorsqu'elle n'impriment pas. (cas des imprimantes avec plusieurs tête chauffantes)
 
 English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].
-Translated:Ce gcode sera inséré juste après la configuration des températures.Si vous avez une commande pour configurer la température dans cette section, elles ne seront pas généré en dehors de cette section.Vous pouvez aussi inclure des valeurs appartenant à d'autre paramètres tels que [first_layer_temperature].
+Translated:Ce gcode sera inséré juste après la configuration des températures. Si vous avez une commande pour configurer la température dans cette section, elles ne seront pas générées en dehors de cette section. Vous pouvez aussi inclure des valeurs appartenant à d'autres paramètres tels que [first_layer_temperature].
 
 English:Make sure the first point on a perimeter is a concave point.
-Translated:Sassurer que le premier point sur la périphérie est un point concave.
+Translated:S'assurer que le premier point sur la périphérie est un point concave.
 
 English:Make sure the first point on a perimeter is not an overhang.
 Translated:S'assurer que le premier point sur la périphérie n'est pas dans le vide.
@@ -695,7 +695,7 @@ English:The speed to print support material structures.
 Translated:Vitessse d'impression pour les supports.
 
 English:The last angle at which support material will be generated. Larger numbers will result in more support. Set to 0 to enable automatic settings.
-Translated:Le dernier angle à partir duquel le support sera généré. Au plus grande la valeur, au plus dens le support généré. Metre à 0 pour activer le paramètre automatique.
+Translated:Dernier angle à partir duquel le support sera généré. Au plus grande la valeur, au plus dens le support généré. Metre à 0 pour activer le paramètre automatique.
 
 English:The distance the support material will be from the object in the x and y direction.
 Translated:Distance entre l'objet et le support dans l'axe des x et y.
@@ -710,13 +710,13 @@ English:The temperature to set the extruder to after the first layer has been pr
 Translated:Température de l'extrudeur après la première couche.
 
 English:Detect when walls are too close together and need to be extruded as just one wall.
-Translated:Détecte quand des paroies sont trop proche et ont besoint d'être considérées comme une seule paroie.
+Translated:Détecte quand des paroies sont trop proches et ont besoin d'être considérées comme une seule paroie.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
-Translated:Nombre de coeur CPU utilisés lors du slicing. Augmenter trop cette valeur peut ralentire fortement votre machine.
+Translated:Nombre de coeurs CPU utilisés lors du slicing. Augmenter trop cette valeur peut ralentire fortement votre machine.
 
 English:This gcode will be inserted after every tool change.
-Translated:Ce gcode sera inséré arpès un changement d'outil.
+Translated:Ce gcode sera inséré après un changement d'outil.
 
 English:The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
 Translated:Vitesse d'impression au niveau du remplissage supérieur (top infill).Cette valeur peut être explicitement donnée en pourcentage par rapport à la vitesse de remplissage.
@@ -728,16 +728,16 @@ English:Speed to move when not extruding material.
 Translated:Vitesse de mouvement lors d'un déplacement sans extrusion.
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:Utilise la fonctionalité de retraction au niveau du firmware.
+Translated:Utilise la fonctionalité de rétraction au niveau du firmware.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
-Translated:D'habitude vous devriez vouloir utiliser des distance absolue pour l'extrudeur. Cochez cette option seulement si vous êtes sur que votre imprimante à besoin de distance relative pour l'extrudeur.
+Translated:D'habitude vous devriez vouloir utiliser des distances absolue pour l'extrudeur. Cochez cette option seulement si vous êtes sûr que votre imprimante à besoin de distance relative pour l'extrudeur.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:Ce paramètre permet de réduire les vibration de votre machine pendant l'impression. Si votre machine possède un point de résonance qui pose soucis, vous pouvez utiliser cette valeur afin d'essayer de déplacer ce point de résonance.
+Translated:Ce paramètre permet de réduire les vibrations de votre machine pendant l'impression. Si votre machine possède un point de résonance qui pose soucis, vous pouvez utiliser cette valeur afin d'essayer de déplacer ce point de résonance.
 
 English:This will cause the extruder to move while retracting to minimize blobs.
-Translated:Ce paramètre permet de déplacer la tête chauffante tout en effectuant la rétraction afin de miniminer les effets de (goutte) blob.
+Translated:Ce paramètre permet de déplacer la tête chauffante tout en éffectuant la rétraction afin de miniminer les effets de (goutte) blob.
 
 English:This value will be added to all of the z positions of the created gcode.
 Translated:Cette valeur est un offset qui sera rajouté pour chaque déplacement en Z créé dans le gcode.
@@ -758,25 +758,25 @@ English:Vertical Shells
 Translated:Surface verticale
 
 English:Infill
-Translated:Replissage
+Translated:Remplissage
 
 English:Fill Density
 Translated:Densité de remplissage
 
 English:Fill Pattern
-Translated:Patterne de remplissage
+Translated:Pattern de remplissage
 
 English:Support Material
 Translated:Matière de Support
 
 English:Generate Support Material
-Translated:Generer un Support
+Translated:Générer un Support
 
 English:Filament
 Translated:Filament
 
 English:Diameter
-Translated:Diametre
+Translated:Diamètre
 
 English:Extrude First Layer
 Translated:Extruder la première couche
@@ -797,7 +797,7 @@ English:Cooling
 Translated:Refroidissement
 
 English:Enable Auto Cooling
-Translated:Activer le Refroidissement Auto
+Translated:Activer le refroidissement Auto
 
 English:Enable
 Translated:Activer
@@ -824,7 +824,7 @@ English:Extruder 1
 Translated:Extrudeur 1
 
 English:Nozzle Diameter
-Translated:Diametre de la buze
+Translated:Diamètre de la buze
 
 English:Size
 Translated:Taille
@@ -854,14 +854,14 @@ English:Automatic Print Leveling (disabled)
 Translated:Mise à niveau automatique du lit (désactivée)
 
 English:Extruder Temperature
-Translated:Temperature de l'Extrudeur
+Translated:Température de l'Extrudeur
 
 English:View Manual Printer Controls and Slicing Settings
-Translated:Voir les controls manuels et les paramètres de slicing.
+Translated:Voir les contrôls manuels et les paramètres de slicing.
 
 English:View Queue and Library
-Translated:Voir la file d'attente et la Bibliothèque
+Translated:Voir la file d'attente et la bibliothèque
 
 English:Bed Temperature
-Translated:Temperature du Lit
+Translated:Température du Lit
 
