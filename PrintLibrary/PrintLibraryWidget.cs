@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void searchButtonClick(object sender, EventArgs mouseEvent)
 		{
 			string searchText = searchInput.Text.Trim();
-			LibraryProvider.CurrentProvider.KeywordFilter = searchText;
+			LibraryProvider.Instance.KeywordFilter = searchText;
 			libraryDataView.ClearSelectedItems();
 		}
 
@@ -356,7 +356,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			LibraryProvider.CurrentProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
+			LibraryProvider.Instance.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
 
 			base.OnDragDrop(fileDropEventArgs);
 		}
@@ -376,7 +376,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (openParams.FileNames != null)
 			{
-				LibraryProvider.CurrentProvider.AddFilesToLibrary(openParams.FileNames);
+				LibraryProvider.Instance.AddFilesToLibrary(openParams.FileNames);
 			}
 		}
 	}

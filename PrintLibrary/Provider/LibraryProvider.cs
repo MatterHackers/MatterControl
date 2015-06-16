@@ -33,7 +33,6 @@ using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -43,26 +42,29 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public static RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
 
-		private static LibraryProvider currentProvider;
+		private static LibraryProvider instance;
 
-		public static LibraryProvider CurrentProvider
+		public static LibraryProvider Instance
 		{
 			get
 			{
-				if (currentProvider == null)
+				if (instance == null)
 				{
-					// hack for the moment
-					currentProvider = new LibraryProviderSQLite();
-					//PrintItemCollection collectionBase = new PrintItemCollection("Downloads", Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"));
-					//currentProvider = new LibraryProviderFileSystem(collectionBase);
+					instance = new LibraryProviderSQLite(null);
+					//instance = new LibraryProviderSelector();
 				}
-				return currentProvider;
+
+				return instance;
 			}
 		}
 
-		#region AbstractMethods
+		#region Abstract Methods
 
-		public abstract void SetCollectionBase(PrintItemCollection collectionBase);
+		public abstract bool HasParent { get; }
+
+		public abstract string Key { get; }
+
+		public abstract string Name { get; }
 
 		public abstract int CollectionCount { get; }
 
@@ -74,9 +76,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
 
-		public abstract PrintItemCollection GetParentCollectionItem();
-
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
+
+		public abstract PrintItemCollection GetParentCollectionItem();
 
 		public abstract PrintItemWrapper GetPrintItemWrapper(int itemIndex);
 
@@ -84,26 +86,41 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void RemoveItem(PrintItemWrapper printItemWrapper);
 
-		#endregion AbstractMethods
+		public abstract void SetCollectionBase(PrintItemCollection collectionBase);
+
+		#endregion Abstract Methods
+
+		#region Static Methods
 
 		public static void OnDataReloaded(EventArgs eventArgs)
 		{
-			DataReloaded.CallEvents(CurrentProvider, eventArgs);
+			DataReloaded.CallEvents(Instance, eventArgs);
 		}
 
 		public static void OnItemAdded(EventArgs eventArgs)
 		{
-			ItemAdded.CallEvents(CurrentProvider, eventArgs);
+			ItemAdded.CallEvents(Instance, eventArgs);
 		}
 
 		public static void OnItemRemoved(EventArgs eventArgs)
 		{
-			ItemRemoved.CallEvents(CurrentProvider, eventArgs);
+			IndexArgs removeIndexArgs = eventArgs as IndexArgs;
+			if (removeIndexArgs != null)
+			{
+				int numIndicesToSkip = Instance.CollectionCount;
+				if (Instance.HasParent)
+				{
+					numIndicesToSkip++;
+				}
+				ItemRemoved.CallEvents(Instance, new IndexArgs(removeIndexArgs.Index + numIndicesToSkip));
+			}
 		}
 
-		public void SetCurrent(LibraryProvider current)
+		public static void SetCurrent(LibraryProvider current)
 		{
-			LibraryProvider.currentProvider = current;
+			LibraryProvider.instance = current;
 		}
+
+		#endregion Static Methods
 	}
 }

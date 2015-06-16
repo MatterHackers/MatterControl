@@ -178,7 +178,8 @@ namespace MatterHackers.MatterControl.DataStorage
 	public class PrintItemCollection : Entity
 	{
 		public PrintItemCollection()
-		{ }
+		{
+		}
 
 		public PrintItemCollection(string name, string collectionKey)
 		{ 

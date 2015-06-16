@@ -39,43 +39,55 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderFileSystem : LibraryProvider
 	{
+		public string key;
+		private static int keyCount = 0;
 		private string currentDirectory = ".";
-		private List<string> currentDirectoryFiles = new List<string>();
 		private List<string> currentDirectoryDirectories = new List<string>();
+		private List<string> currentDirectoryFiles = new List<string>();
+		private string description;
 		private string keywordFilter = string.Empty;
+		private string parentKey = null;
 		private string rootPath;
 
-		public LibraryProviderFileSystem(string rootPath)
+		public LibraryProviderFileSystem(string rootPath, string description)
 		{
+			this.description = description;
 			this.rootPath = rootPath;
 
+			key = keyCount.ToString();
+			keyCount++;
 			GetFilesInCurrentDirectory();
 		}
 
-		public LibraryProviderFileSystem(PrintItemCollection collectionBase)
+		public LibraryProviderFileSystem(PrintItemCollection collectionBase, string description, string parentKey)
 		{
+			this.parentKey = parentKey;
+			this.description = description;
 			this.rootPath = collectionBase.Key;
-
-			GetFilesInCurrentDirectory();
-		}
-
-		public override void SetCollectionBase(PrintItemCollection collectionBase)
-		{
-			string collectionPath = collectionBase.Key;
-			int startOfCurrentDir = collectionPath.IndexOf('.');
-			if (startOfCurrentDir != -1)
-			{
-				this.currentDirectory = collectionPath.Substring(startOfCurrentDir);
-			}
+			key = keyCount.ToString();
+			keyCount++;
 
 			GetFilesInCurrentDirectory();
 		}
 
 		public override int CollectionCount
 		{
-			get 
+			get
 			{
 				return currentDirectoryDirectories.Count;
+			}
+		}
+
+		public override bool HasParent
+		{
+			get
+			{
+				if (parentKey != null)
+				{
+					return true;
+				}
+
+				return false;
 			}
 		}
 
@@ -84,6 +96,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			get
 			{
 				return currentDirectoryFiles.Count;
+			}
+		}
+
+		public override string Key
+		{
+			get
+			{
+				return "LibraryProvider_" + key.ToString();
 			}
 		}
 
@@ -105,6 +125,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override string Name { get { return description; } }
+
 		public override void AddCollectionToLibrary(string collectionName)
 		{
 			throw new NotImplementedException();
@@ -115,21 +137,30 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override PrintItemCollection GetParentCollectionItem()
-		{
-			if (currentDirectory != ".")
-			{
-				string parentDirectory = Path.GetDirectoryName(currentDirectory);
-				return new PrintItemCollection("..", parentDirectory);
-			}
-
-			return null;
-		}
-
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			string directoryName = currentDirectoryDirectories[collectionIndex];
 			return new PrintItemCollection(Path.GetFileNameWithoutExtension(directoryName), directoryName);
+		}
+
+		public override PrintItemCollection GetParentCollectionItem()
+		{
+			if (currentDirectory == ".")
+			{
+				if (parentKey != null)
+				{
+					return new PrintItemCollection("..", parentKey);
+				}
+				else
+				{
+					return null;
+				}
+			}
+			else
+			{
+				string parentDirectory = Path.GetDirectoryName(currentDirectory);
+				return new PrintItemCollection("..", parentDirectory);
+			}
 		}
 
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
@@ -146,6 +177,18 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
 			throw new NotImplementedException();
+		}
+
+		public override void SetCollectionBase(PrintItemCollection collectionBase)
+		{
+			string collectionPath = collectionBase.Key;
+			int startOfCurrentDir = collectionPath.IndexOf('.');
+			if (startOfCurrentDir != -1)
+			{
+				this.currentDirectory = collectionPath.Substring(startOfCurrentDir);
+			}
+
+			GetFilesInCurrentDirectory();
 		}
 
 		private void GetFilesInCurrentDirectory()

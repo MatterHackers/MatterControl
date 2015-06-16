@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void RemoveFromParentCollection()
 		{
-			LibraryProvider.CurrentProvider.RemoveItem(printItemWrapper);
+			LibraryProvider.Instance.RemoveItem(printItemWrapper);
 		}
 
 		public override void Export()
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void RemoveFromCollection()
 		{
-			LibraryProvider.CurrentProvider.RemoveItem(printItemWrapper);
+			LibraryProvider.Instance.RemoveItem(printItemWrapper);
 		}
 
 		public override void AddToQueue()
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		protected override void RemoveThisFromPrintLibrary()
 		{
-			LibraryProvider.CurrentProvider.RemoveItem(this.printItemWrapper);
+			LibraryProvider.Instance.RemoveItem(this.printItemWrapper);
 		}
 
 		private void onRemoveLinkClick(object sender, EventArgs e)

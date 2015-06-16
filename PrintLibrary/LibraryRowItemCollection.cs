@@ -124,11 +124,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (isSubdirector)
 				{
-					LibraryProvider.CurrentProvider.SetCollectionBase(collection);
+					LibraryProvider.Instance.SetCollectionBase(collection);
 				}
 				else
 				{
-					LibraryProvider.CurrentProvider.SetCollectionBase(LibraryProvider.CurrentProvider.GetParentCollectionItem());
+					LibraryProvider.Instance.SetCollectionBase(LibraryProvider.Instance.GetParentCollectionItem());
 				}
 
 				UiThread.RunOnIdle(libraryDataView.RebuildView);

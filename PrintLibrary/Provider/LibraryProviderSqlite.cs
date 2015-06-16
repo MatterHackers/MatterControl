@@ -38,21 +38,32 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSQLite : LibraryProvider
 	{
+		private string parentKey = null;
+
+		public LibraryProviderSQLite(string parentKey)
+		{
+			this.parentKey = parentKey;
+		}
+
 		public override int CollectionCount
 		{
-			get 
+			get
 			{
 				return 0;
 			}
 		}
 
-		public override PrintItemCollection GetParentCollectionItem()
+		public override bool HasParent
 		{
-			return null;
-		}
+			get
+			{
+				if (parentKey != null)
+				{
+					return true;
+				}
 
-		public override void SetCollectionBase(PrintItemCollection collectionBase)
-		{
+				return false;
+			}
 		}
 
 		public override int ItemCount
@@ -60,6 +71,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			get
 			{
 				return LibrarySQLiteData.Instance.Count;
+			}
+		}
+
+		public override string Key
+		{
+			get
+			{
+				return "LibraryProviderSqlite";
 			}
 		}
 
@@ -76,6 +95,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override string Name
+		{
+			get
+			{
+				return "Local Library";
+			}
+		}
+
 		public override void AddCollectionToLibrary(string collectionName)
 		{
 			throw new NotImplementedException();
@@ -86,14 +113,26 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibrarySQLiteData.Instance.LoadFilesIntoLibrary(files, reportProgress, callback);
 		}
 
-		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
-		{
-			return LibrarySQLiteData.Instance.GetPrintItemWrapper(itemIndex);
-		}
-
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			throw new NotImplementedException();
+		}
+
+		public override PrintItemCollection GetParentCollectionItem()
+		{
+			if (parentKey != null)
+			{
+				return new PrintItemCollection("..", parentKey);
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
+		{
+			return LibrarySQLiteData.Instance.GetPrintItemWrapper(itemIndex);
 		}
 
 		public override void RemoveCollection(string collectionName)
@@ -104,6 +143,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
 			LibrarySQLiteData.Instance.RemoveItem(printItemWrapper);
+		}
+
+		public override void SetCollectionBase(PrintItemCollection collectionBase)
+		{
 		}
 	}
 }

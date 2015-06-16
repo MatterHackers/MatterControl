@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (SelectedIndex >= 0)
 				{
-					return LibraryProvider.CurrentProvider.GetPrintItemWrapper(SelectedIndex);
+					return LibraryProvider.Instance.GetPrintItemWrapper(SelectedIndex);
 				}
 				else
 				{
@@ -208,23 +208,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			topToBottomItemList.RemoveAllChildren();
 
-			PrintItemCollection parent = LibraryProvider.CurrentProvider.GetParentCollectionItem();
+			PrintItemCollection parent = LibraryProvider.Instance.GetParentCollectionItem();
 			if (parent != null)
 			{
 				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, false);
 				AddListItemToTopToBottom(queueItem);
 			}
 
-			for (int i = 0; i < LibraryProvider.CurrentProvider.CollectionCount; i++)
+			for (int i = 0; i < LibraryProvider.Instance.CollectionCount; i++)
 			{
-				PrintItemCollection item = LibraryProvider.CurrentProvider.GetCollectionItem(i);
+				PrintItemCollection item = LibraryProvider.Instance.GetCollectionItem(i);
 				LibraryRowItem queueItem = new LibraryRowItemCollection(item, this);
 				AddListItemToTopToBottom(queueItem);
 			}
 
-			for (int i = 0; i < LibraryProvider.CurrentProvider.ItemCount; i++)
+			for (int i = 0; i < LibraryProvider.Instance.ItemCount; i++)
 			{
-				PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(i);
+				PrintItemWrapper item = LibraryProvider.Instance.GetPrintItemWrapper(i);
 				LibraryRowItem queueItem = new LibraryRowItemPart(item, this);
 				AddListItemToTopToBottom(queueItem);
 			}
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void ItemAddedToLibrary(object sender, EventArgs e)
 		{
 			IndexArgs addedIndexArgs = e as IndexArgs;
-			PrintItemWrapper item = LibraryProvider.CurrentProvider.GetPrintItemWrapper(addedIndexArgs.Index);
+			PrintItemWrapper item = LibraryProvider.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
 			LibraryRowItem libraryItem = new LibraryRowItemPart(item, this);
 			AddListItemToTopToBottom(libraryItem, addedIndexArgs.Index);
 		}
@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			IndexArgs removeIndexArgs = e as IndexArgs;
 			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
 
-			if (LibraryProvider.CurrentProvider.ItemCount > 0)
+			if (LibraryProvider.Instance.ItemCount > 0)
 			{
 				SelectedIndex = Math.Max(SelectedIndex - 1, 0);
 			}
