@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl
 				SetUpdateStatus(UpdateStatusStates.CheckingForUpdate);
 				RequestLatestVersion request = new RequestLatestVersion();
 				request.RequestSucceeded += new EventHandler(onVersionRequestSucceeded);
-				request.RequestFailed += new EventHandler(onVersionRequestFailed);
+				request.RequestFailed += onVersionRequestFailed;
 				request.Request();
 			}
 		}
@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		private void onVersionRequestFailed(object sender, EventArgs e)
+		private void onVersionRequestFailed(object sender, ResponseEventArgs e)
 		{
 			SetUpdateStatus(UpdateStatusStates.UpToDate);
 		}

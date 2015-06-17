@@ -34,6 +34,11 @@ using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.VersionManagement
 {
+	public class ResponseEventArgs : EventArgs
+	{
+		public JsonResponseDictionary ResponseValues { get; set; }
+	}
+
 	public class WebRequestBase
 	{
 		protected string uri;
@@ -41,7 +46,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		public event EventHandler RequestSucceeded;
 
-		public event EventHandler RequestFailed;
+		public event EventHandler<ResponseEventArgs> RequestFailed;
 
 		public event EventHandler RequestComplete;
 
@@ -62,11 +67,11 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 		}
 
-		protected void OnRequestFailed()
+		protected void OnRequestFailed(JsonResponseDictionary responseValues)
 		{
 			if (RequestFailed != null)
 			{
-				RequestFailed(this, null);
+				RequestFailed(this, new ResponseEventArgs() { ResponseValues = responseValues });
 			}
 		}
 
@@ -121,7 +126,6 @@ namespace MatterHackers.MatterControl.VersionManagement
 		protected virtual void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
 		{
 			JsonResponseDictionary responseValues = e.Result as JsonResponseDictionary;
-
 			if (responseValues != null)
 			{
 				string requestSuccessStatus = responseValues.get("Status");
@@ -133,7 +137,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 				else
 				{
 					ProcessErrorResponse(responseValues);
-					OnRequestFailed();
+					OnRequestFailed(responseValues);
 				}
 
 				OnRequestComplete();
