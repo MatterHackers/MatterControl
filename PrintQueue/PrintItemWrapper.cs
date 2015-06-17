@@ -39,22 +39,24 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class PrintItemWrapper
 	{
-		public RootedObjectEventHandler SlicingOutputMessage = new RootedObjectEventHandler();
-		public RootedObjectEventHandler SlicingDone = new RootedObjectEventHandler();
 		public RootedObjectEventHandler FileHasChanged = new RootedObjectEventHandler();
+		public RootedObjectEventHandler SlicingDone = new RootedObjectEventHandler();
+		public RootedObjectEventHandler SlicingOutputMessage = new RootedObjectEventHandler();
+		private static string fileNotFound = "File Not Found\n'{0}'".Localize();
 
-		public PrintItem PrintItem { get; set; }
+		private static string readyToPrint = "Ready to Print".Localize();
+
+		private static string slicingError = "Slicing Error".Localize();
+
+		private bool doneSlicing;
+
+		private long fileHashCode;
 
 		private String fileType;
 
-		private long fileHashCode;
-		private long writeTime = 0;
-
-		public bool CurrentlySlicing { get; set; }
-
 		private bool slicingHadError = false;
 
-		public bool SlicingHadError { get { return slicingHadError; } }
+		private long writeTime = 0;
 
 		public PrintItemWrapper(DataStorage.PrintItem printItem)
 		{
@@ -75,10 +77,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private bool doneSlicing;
-		private static string slicingError = "Slicing Error".Localize();
-		private static string readyToPrint = "Ready to Print".Localize();
-		private static string fileNotFound = "File Not Found\n'{0}'".Localize();
+		public bool CurrentlySlicing { get; set; }
 
 		public bool DoneSlicing
 		{
@@ -121,35 +120,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 					}
 				}
 			}
-		}
-
-		public void OnSlicingOutputMessage(EventArgs e)
-		{
-			StringEventArgs message = e as StringEventArgs;
-			if (SlicingOutputMessage != null)
-			{
-				SlicingOutputMessage.CallEvents(this, message);
-			}
-		}
-
-		public void Delete()
-		{
-			PrintItem.Delete();
-
-			// Reset the Id field after calling delete to clear the association and ensure that future db operations
-			// result in inserts rather than update statements on a missing row
-			this.PrintItem.Id = 0;
-		}
-
-		public string Name
-		{
-			get { return this.PrintItem.Name; }
-		}
-
-		public string FileLocation
-		{
-			get { return this.PrintItem.FileLocation; }
-			set { this.PrintItem.FileLocation = value; }
 		}
 
 		public long FileHashCode
@@ -208,6 +178,51 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
+		public string FileLocation
+		{
+			get { return this.PrintItem.FileLocation; }
+			set { this.PrintItem.FileLocation = value; }
+		}
+
+		public string Name
+		{
+			get { return this.PrintItem.Name; }
+		}
+
+		public PrintItem PrintItem { get; set; }
+
+		public bool SlicingHadError { get { return slicingHadError; } }
+
+		public void Delete()
+		{
+			PrintItem.Delete();
+
+			// Reset the Id field after calling delete to clear the association and ensure that future db operations
+			// result in inserts rather than update statements on a missing row
+			this.PrintItem.Id = 0;
+		}
+
+		public string GetGCodePathAndFileName()
+		{
+			if (FileLocation.Trim() != "")
+			{
+				if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
+				{
+					return FileLocation;
+				}
+
+				string engineString = ((int)ActivePrinterProfile.Instance.ActiveSliceEngineType).ToString();
+
+				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
+				string gcodePathAndFileName = Path.Combine(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
+				return gcodePathAndFileName;
+			}
+			else
+			{
+				return null;
+			}
+		}
+
 		public bool IsGCodeFileComplete(string gcodePathAndFileName)
 		{
 			if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
@@ -247,27 +262,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return gCodeFileIsComplete;
 		}
 
-		public string GetGCodePathAndFileName()
-		{
-			if (FileLocation.Trim() != "")
-			{
-				if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
-				{
-					return FileLocation;
-				}
-
-				string engineString = ((int)ActivePrinterProfile.Instance.ActiveSliceEngineType).ToString();
-
-				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetHashCode().ToString();
-				string gcodePathAndFileName = Path.Combine(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
-				return gcodePathAndFileName;
-			}
-			else
-			{
-				return null;
-			}
-		}
-
 		public void OnFileHasChanged()
 		{
 			// Get the hashcode so we can save it if it has changed.
@@ -276,6 +270,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 			if (FileHasChanged != null)
 			{
 				FileHasChanged.CallEvents(this, null);
+			}
+		}
+
+		public void OnSlicingOutputMessage(EventArgs e)
+		{
+			StringEventArgs message = e as StringEventArgs;
+			if (SlicingOutputMessage != null)
+			{
+				SlicingOutputMessage.CallEvents(this, message);
 			}
 		}
 	}
