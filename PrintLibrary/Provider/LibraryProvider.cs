@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public abstract class LibraryProvider
 	{
+		public static RootedObjectEventHandler CollectionChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
@@ -50,7 +51,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					//instance = new LibraryProviderSQLite(null);
 					instance = new LibraryProviderSelector();
 				}
 
@@ -60,21 +60,24 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Abstract Methods
 
-		public abstract bool HasParent { get; }
-
-		public abstract string ProviderTypeKey { get; }
-
-		public abstract string Name { get; }
-
 		public abstract int CollectionCount { get; }
+
+		public abstract bool HasParent { get; }
 
 		public abstract int ItemCount { get; }
 
 		public abstract string KeywordFilter { get; set; }
 
+		public abstract string Name { get; }
+
+		public abstract string ProviderKey { get; }
+
 		public abstract void AddCollectionToLibrary(string collectionName);
 
 		public abstract void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
+
+		// A key,value list that threads into the current collection looks like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
+		public abstract string GetBreadCrumbs();
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
@@ -105,11 +108,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public static void OnItemRemoved(EventArgs eventArgs)
 		{
 			ItemRemoved.CallEvents(Instance, eventArgs);
-		}
-
-		public static void SetCurrent(LibraryProvider current)
-		{
-			LibraryProvider.instance = current;
 		}
 
 		#endregion Static Methods

@@ -199,6 +199,8 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string Name { get; set; }
 
+		public string LibraryProviderBreadCrumbs { get; set; }
+
 		public string FileLocation { get; set; }
 
 		public DateTime DateAdded { get; set; }
@@ -210,10 +212,11 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 		}
 
-		public PrintItem(string name, string fileLocation)
+		public PrintItem(string name, string fileLocation, string libraryProviderBreadCrumbs = "")
 		{
 			this.Name = name;
 			this.FileLocation = fileLocation;
+			this.LibraryProviderBreadCrumbs = libraryProviderBreadCrumbs;
 
 			DateAdded = DateTime.Now;
 			PrintCount = 0;

@@ -28,12 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
-using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -231,7 +231,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			AddAllItems();
 		}
-
 
 		public override void OnClosed(EventArgs e)
 		{

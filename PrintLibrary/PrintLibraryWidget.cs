@@ -38,6 +38,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
+		private TextWidget breadCrumbDisplay;
 	
 		private FlowLayoutWidget itemOperationButtons;
 		private List<bool> editOperationMultiCapable = new List<bool>();
@@ -150,8 +152,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	
 				CreateEditBarButtons();
 
+				breadCrumbDisplay = new TextWidget("");
+				breadCrumbDisplay.AutoExpandBoundsToText = true;
+
 				//allControls.AddChild(navigationPanel);
 				allControls.AddChild(searchPanel);
+				allControls.AddChild(breadCrumbDisplay);
 				allControls.AddChild(itemOperationButtons);
 				libraryDataView = new LibraryDataView();
 				allControls.AddChild(libraryDataView);
@@ -200,10 +206,47 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			editButtonFactory.FixedWidth = oldWidth;
 		}
 
+		private event EventHandler unregisterEvents;
 		private void AddHandlers()
 		{
 			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
 			libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
+			LibraryProvider.CollectionChanged.RegisterEvent(CollectionChanged, ref unregisterEvents);
+		}
+
+		private void CollectionChanged(object sender, EventArgs e)
+		{
+			string breadCrumbs = LibraryProvider.Instance.GetBreadCrumbs();
+			StringBuilder path = new StringBuilder();
+			string[] splitOnBar = breadCrumbs.Split('|');
+			if (splitOnBar.Length > 1)
+			{
+				bool first = true;
+				foreach (string split in splitOnBar)
+				{
+					if (!first)
+					{
+						path.Append("->");
+					}
+					string[] splitOnComma = split.Split(',');
+					if (splitOnComma.Length > 1 
+						&& splitOnComma[1] != "..")
+					{
+						path.Append(splitOnComma[1]);
+						first = false;
+					}
+				}
+			}
+			breadCrumbDisplay.Text = path.ToString();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
 		}
 
 		private void searchInputKeyUp(object sender, KeyEventArgs keyEvent)

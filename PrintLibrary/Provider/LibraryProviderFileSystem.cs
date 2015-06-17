@@ -49,24 +49,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string parentKey = null;
 		private string rootPath;
 
-		public LibraryProviderFileSystem(string rootPath, string description)
+		public LibraryProviderFileSystem(string rootPath, string description, string parentKeyKey)
 		{
+			this.parentKey = parentKeyKey;
 			this.description = description;
 			this.rootPath = rootPath;
 
 			key = keyCount.ToString();
 			keyCount++;
-			GetFilesInCurrentDirectory();
-		}
-
-		public LibraryProviderFileSystem(PrintItemCollection collectionBase, string description, string parentKey)
-		{
-			this.parentKey = parentKey;
-			this.description = description;
-			this.rootPath = collectionBase.Key;
-			key = keyCount.ToString();
-			keyCount++;
-
 			GetFilesInCurrentDirectory();
 		}
 
@@ -99,14 +89,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string ProviderTypeKey
-		{
-			get
-			{
-				return "LibraryProvider_" + key.ToString() + "_Key";
-			}
-		}
-
 		public override string KeywordFilter
 		{
 			get
@@ -127,6 +109,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override string Name { get { return description; } }
 
+		public override string ProviderKey
+		{
+			get
+			{
+				return "FileSystem_" + key.ToString() + "_Key";
+			}
+		}
+
 		public override void AddCollectionToLibrary(string collectionName)
 		{
 			throw new NotImplementedException();
@@ -135,6 +125,35 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
 			throw new NotImplementedException();
+		}
+
+		public override string GetBreadCrumbs()
+		{
+			throw new NotImplementedException();
+
+			// append all of the collection keys with names 
+			string addDirectory = currentDirectory;
+			List<string> collectionKeys = new List<string>();
+			while (addDirectory != ".")
+			{
+				collectionKeys.Add(addDirectory);
+				addDirectory = Path.GetDirectoryName(addDirectory);
+			}
+
+			string total = "";
+			bool first = true;
+			for(int i = collectionKeys.Count-1; i>=0; i--)
+			{
+				string key = collectionKeys[i];
+				if (!first)
+				{
+					total += "|";
+				}
+				total += key + "," + Path.GetFileName(key);
+				first = false;
+			}
+
+			return total;
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -166,7 +185,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
-			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName));
+			string breadCrumbs = LibraryProvider.Instance.GetBreadCrumbs();
+			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName, breadCrumbs));
 		}
 
 		public override void RemoveCollection(string collectionName)
@@ -200,7 +220,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				if (keywordFilter.Trim() == string.Empty
 					|| Path.GetFileNameWithoutExtension(directoryName).Contains(keywordFilter))
 				{
-					currentDirectoryDirectories.Add(directoryName);
+					string subPath = directoryName.Substring(rootPath.Length + 1);
+					currentDirectoryDirectories.Add(subPath);
 				}
 			}
 

@@ -74,14 +74,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string ProviderTypeKey
-		{
-			get
-			{
-				return "LibraryProviderSqliteKey";
-			}
-		}
-
 		public override string KeywordFilter
 		{
 			get
@@ -103,6 +95,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override string ProviderKey
+		{
+			get
+			{
+				return "LibraryProviderSqliteKey";
+			}
+		}
+
 		public override void AddCollectionToLibrary(string collectionName)
 		{
 			throw new NotImplementedException();
@@ -111,6 +111,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
 			LibrarySQLiteData.Instance.LoadFilesIntoLibrary(files, reportProgress, callback);
+		}
+
+		public override string GetBreadCrumbs()
+		{
+			throw new NotImplementedException();
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)

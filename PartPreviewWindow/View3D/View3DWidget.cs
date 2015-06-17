@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -1871,6 +1872,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				saveSucceded = true;
+				//LibraryProvider.Instance.SaveToCollection(printItemWrapper.PrintItem.LibraryProviderBreadCrumbs
 				LibrarySQLiteData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
 			}
 			catch (System.UnauthorizedAccessException)

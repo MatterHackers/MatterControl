@@ -34,36 +34,40 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Text;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSelector : LibraryProvider
 	{
 		private List<LibraryProvider> libraryProviders = new List<LibraryProvider>();
-		int selectedLibraryProvider = -1;
+		private int selectedLibraryProvider = -1;
 
 		public LibraryProviderSelector()
 		{
 			// put in the sqlite provider
-			LibraryProviderSQLite localStore = new LibraryProviderSQLite(this.ProviderTypeKey);
+			LibraryProviderSQLite localStore = new LibraryProviderSQLite(this.ProviderKey);
 			libraryProviders.Add(localStore);
 
 			// and any directory providers (sd card provider, etc...)
-			PrintItemCollection downloadsCollection = new PrintItemCollection("Downloads", Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"));
-			//libraryProviders.Add(new LibraryProviderFileSystem(downloadsCollection, "Downloads", this.ProviderTypeKey));
+			libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this.ProviderKey));
 
 			PrintItemCollection libraryCollection = new PrintItemCollection("Library Folder1", Path.Combine("C:\\", "Users", "LarsBrubaker", "AppData", "Local", "MatterControl", "Library"));
-			//libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderTypeKey));
+			//libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderKey));
 
 			// Check for LibraryProvider factories and put them in the list too.
 			PluginFinder<LibraryProviderFactory> libraryFactories = new PluginFinder<LibraryProviderFactory>();
 			foreach (LibraryProviderFactory factory in libraryFactories.Plugins)
 			{
-				libraryProviders.Add(factory.CreateProvider(this.ProviderTypeKey));
+				libraryProviders.Add(factory.CreateProvider(this.ProviderKey));
 			}
+
+			breadCrumbStack.Add(new PrintItemCollection("..", ProviderKey));
 		}
 
 		#region Overriden Abstract Methods
+
+		private List<PrintItemCollection> breadCrumbStack = new List<PrintItemCollection>();
 
 		public override int CollectionCount
 		{
@@ -76,6 +80,21 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				else
 				{
 					return libraryProviders[selectedLibraryProvider].CollectionCount;
+				}
+			}
+		}
+
+		public override bool HasParent
+		{
+			get
+			{
+				if (selectedLibraryProvider == -1)
+				{
+					return false;
+				}
+				else
+				{
+					return libraryProviders[selectedLibraryProvider].HasParent;
 				}
 			}
 		}
@@ -121,6 +140,22 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override string Name
+		{
+			get
+			{
+				return "Never visible";
+			}
+		}
+
+		public override string ProviderKey
+		{
+			get
+			{
+				return "ProviderSelectorKey";
+			}
+		}
+
 		public override void AddCollectionToLibrary(string collectionName)
 		{
 			if (selectedLibraryProvider == -1)
@@ -145,33 +180,47 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		// A key,value list that threads into the current collection loos like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
+		public override string GetBreadCrumbs()
+		{
+			if (selectedLibraryProvider == -1)
+			{
+				return "";
+			}
+			else
+			{
+				StringBuilder breadCrumbString = new StringBuilder();
+				bool first = true;
+
+				for(int i=0; i<breadCrumbStack.Count; i++)
+				{
+					PrintItemCollection collection = breadCrumbStack[i];
+					if (first)
+					{
+						breadCrumbString.Append("{0},{1}".FormatWith(collection.Key, collection.Name));
+						first = false;
+					}
+					else
+					{
+						breadCrumbString.Append("|{0},{1}".FormatWith(collection.Key, collection.Name));
+					}
+				}
+
+				return breadCrumbString.ToString();
+			}
+		}
+
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			if (selectedLibraryProvider == -1)
 			{
 				LibraryProvider provider = libraryProviders[collectionIndex];
-				return new PrintItemCollection(provider.Name, provider.ProviderTypeKey);
+				return new PrintItemCollection(provider.Name, provider.ProviderKey);
 			}
 			else
 			{
 				return libraryProviders[selectedLibraryProvider].GetCollectionItem(collectionIndex);
 			}
-		}
-
-		public override string ProviderTypeKey
-		{
-			get 
-			{
-				return "LibraryProviderSelectorKey";
-			}
-		}
-
-		public override string Name 
-		{ 
-			get 
-			{
-				return "Never visible"; 
-			} 
 		}
 
 		public override PrintItemCollection GetParentCollectionItem()
@@ -196,21 +245,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				return libraryProviders[selectedLibraryProvider].GetPrintItemWrapper(itemIndex);
 			}
-		}
-
-		public override bool HasParent 
-		{
-			get 
-			{
-				if (selectedLibraryProvider == -1)
-				{
-					return false;
-				}
-				else
-				{
-					return libraryProviders[selectedLibraryProvider].HasParent;
-				}
-			} 
 		}
 
 		public override void RemoveCollection(string collectionName)
@@ -239,27 +273,46 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void SetCollectionBase(PrintItemCollection collectionBase)
 		{
-			if (collectionBase.Key == this.ProviderTypeKey)
+			// This logic may need to be move legitamately into the virtual functions of the providers rather than all
+			// gathered up here. If you find that this is not working the way you want ask me. LBB
+			if ((breadCrumbStack.Count > 2 
+				&& collectionBase.Key == breadCrumbStack[breadCrumbStack.Count - 2].Key)
+				|| (breadCrumbStack.Count > 1 
+				&& selectedLibraryProvider != -1 
+				&& collectionBase.Key == libraryProviders[selectedLibraryProvider].GetParentCollectionItem().Key)
+				)
 			{
-				selectedLibraryProvider = -1;
-				return;
+				breadCrumbStack.RemoveAt(breadCrumbStack.Count-1);
+			}
+			else
+			{
+				breadCrumbStack.Add(collectionBase);
 			}
 
-			bool wasSet = false;
-			for (int i = 0; i < libraryProviders.Count; i++)
+			if (collectionBase.Key == this.ProviderKey)
 			{
-				if (libraryProviders[i].ProviderTypeKey == collectionBase.Key)
+				selectedLibraryProvider = -1;
+			}
+			else
+			{
+				bool wasSet = false;
+				for (int i = 0; i < libraryProviders.Count; i++)
 				{
-					selectedLibraryProvider = i;
-					wasSet = true;
-					break;
+					if (libraryProviders[i].ProviderKey == collectionBase.Key)
+					{
+						selectedLibraryProvider = i;
+						wasSet = true;
+						break;
+					}
+				}
+
+				if (!wasSet)
+				{
+					libraryProviders[selectedLibraryProvider].SetCollectionBase(collectionBase);
 				}
 			}
 
-			if (!wasSet)
-			{
-				libraryProviders[selectedLibraryProvider].SetCollectionBase(collectionBase);
-			}
+			CollectionChanged.CallEvents(this, null);
 		}
 
 		#endregion Overriden Abstract Methods
