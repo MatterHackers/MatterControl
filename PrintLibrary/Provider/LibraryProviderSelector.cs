@@ -50,10 +50,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			// and any directory providers (sd card provider, etc...)
 			PrintItemCollection downloadsCollection = new PrintItemCollection("Downloads", Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"));
-			libraryProviders.Add(new LibraryProviderFileSystem(downloadsCollection, "Downloads", this.ProviderTypeKey));
+			//libraryProviders.Add(new LibraryProviderFileSystem(downloadsCollection, "Downloads", this.ProviderTypeKey));
 
 			PrintItemCollection libraryCollection = new PrintItemCollection("Library Folder1", Path.Combine("C:\\", "Users", "LarsBrubaker", "AppData", "Local", "MatterControl", "Library"));
-			libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderTypeKey));
+			//libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderTypeKey));
 
 			// Check for LibraryProvider factories and put them in the list too.
 			PluginFinder<LibraryProviderFactory> libraryFactories = new PluginFinder<LibraryProviderFactory>();
