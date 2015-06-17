@@ -187,10 +187,10 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public int GetMaterialSetting(int extruderPosition)
+		public int GetMaterialSetting(int extruderNumber1Based)
 		{
 			int i = 0;
-			if (extruderPosition > 0
+			if (extruderNumber1Based > 0
 				&& ActivePrinter != null)
 			{
 				string materialSettings = ActivePrinter.MaterialCollectionIds;
@@ -198,9 +198,9 @@ namespace MatterHackers.MatterControl
 				if (materialSettings != null)
 				{
 					materialSettingsList = materialSettings.Split(',');
-					if (materialSettingsList.Count() >= extruderPosition)
+					if (materialSettingsList.Count() >= extruderNumber1Based)
 					{
-						Int32.TryParse(materialSettingsList[extruderPosition - 1], out i);
+						Int32.TryParse(materialSettingsList[extruderNumber1Based - 1], out i);
 					}
 				}
 			}

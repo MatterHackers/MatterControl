@@ -139,15 +139,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.HasUncommittedChanges = false;
 		}
 
-		public void LoadSettingsForMaterial(int extruderIndex)
+		public void LoadSettingsForMaterial(int extruderNumber1Based)
 		{
 			if (ActivePrinterProfile.Instance.ActivePrinter != null)
 			{
 				SettingsLayer printerSettingsLayer;
 				DataStorage.SliceSettingsCollection collection;
-				if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex) != 0)
+				if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based) != 0)
 				{
-					int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex);
+					int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based);
 					collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
 					printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
 				}
@@ -159,13 +159,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string GetMaterialValue(string sliceSetting, int extruderIndex)
+		public string GetMaterialValue(string sliceSetting, int extruderNumber1Based)
 		{
 			int numberOfActiveLayers = activeSettingsLayers.Count;
 			string settingValue = null;
-			if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex) != 0)
+			if (ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based) != 0)
 			{
-				int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderIndex);
+				int materialOneSettingsID = ActivePrinterProfile.Instance.GetMaterialSetting(extruderNumber1Based);
 				DataStorage.SliceSettingsCollection collection = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.SliceSettingsCollection>().Where(v => v.Id == materialOneSettingsID).Take(1).FirstOrDefault();
 				SettingsLayer printerSettingsLayer = LoadConfigurationSettingsFromDatastore(collection);
 				if (printerSettingsLayer.settingsDictionary.ContainsKey(sliceSetting))
