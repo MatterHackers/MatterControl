@@ -74,11 +74,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string Key
+		public override string ProviderTypeKey
 		{
 			get
 			{
-				return "LibraryProviderSqlite";
+				return "LibraryProviderSqliteKey";
 			}
 		}
 

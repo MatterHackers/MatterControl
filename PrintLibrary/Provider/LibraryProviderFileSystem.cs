@@ -99,11 +99,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string Key
+		public override string ProviderTypeKey
 		{
 			get
 			{
-				return "LibraryProvider_" + key.ToString();
+				return "LibraryProvider_" + key.ToString() + "_Key";
 			}
 		}
 

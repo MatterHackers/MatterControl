@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			CreateGuiElements();
 		}
 
-		private ConditionalClickWidget primaryClickContainer;
-
 		protected override SlideWidget GetItemActionButtons()
 		{
 			SlideWidget buttonContainer = new SlideWidget();
@@ -257,6 +255,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			UiThread.RunOnIdle(() => openPartView());
 		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Clicks == 2)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					openPartView(View3DWidget.OpenMode.Viewing);
+				});
+			}
+			base.OnMouseDown(mouseEvent);
+		}
+
 
 		private void onViewPartClick(object sender, EventArgs e)
 		{

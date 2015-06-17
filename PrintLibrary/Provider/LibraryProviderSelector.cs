@@ -45,14 +45,22 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public LibraryProviderSelector()
 		{
 			// put in the sqlite provider
-			LibraryProviderSQLite localStore = new LibraryProviderSQLite(Key);
+			LibraryProviderSQLite localStore = new LibraryProviderSQLite(this.ProviderTypeKey);
 			libraryProviders.Add(localStore);
 
 			// and any directory providers (sd card provider, etc...)
-			PrintItemCollection collectionBase = new PrintItemCollection("Downloads", Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"));
-			libraryProviders.Add(new LibraryProviderFileSystem(collectionBase, "Downloads", Key));
+			PrintItemCollection downloadsCollection = new PrintItemCollection("Downloads", Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"));
+			libraryProviders.Add(new LibraryProviderFileSystem(downloadsCollection, "Downloads", this.ProviderTypeKey));
+
+			PrintItemCollection libraryCollection = new PrintItemCollection("Library Folder1", Path.Combine("C:\\", "Users", "LarsBrubaker", "AppData", "Local", "MatterControl", "Library"));
+			libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderTypeKey));
 
 			// Check for LibraryProvider factories and put them in the list too.
+			PluginFinder<LibraryProviderFactory> libraryFactories = new PluginFinder<LibraryProviderFactory>();
+			foreach (LibraryProviderFactory factory in libraryFactories.Plugins)
+			{
+				libraryProviders.Add(factory.CreateProvider(this.ProviderTypeKey));
+			}
 		}
 
 		#region Overriden Abstract Methods
@@ -142,7 +150,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			if (selectedLibraryProvider == -1)
 			{
 				LibraryProvider provider = libraryProviders[collectionIndex];
-				return new PrintItemCollection(provider.Name, provider.Key);
+				return new PrintItemCollection(provider.Name, provider.ProviderTypeKey);
 			}
 			else
 			{
@@ -150,11 +158,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string Key
+		public override string ProviderTypeKey
 		{
 			get 
 			{
-				return "LibraryProviderSelector";
+				return "LibraryProviderSelectorKey";
 			}
 		}
 
@@ -231,7 +239,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void SetCollectionBase(PrintItemCollection collectionBase)
 		{
-			if (collectionBase.Key == Key)
+			if (collectionBase.Key == this.ProviderTypeKey)
 			{
 				selectedLibraryProvider = -1;
 				return;
@@ -240,7 +248,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			bool wasSet = false;
 			for (int i = 0; i < libraryProviders.Count; i++)
 			{
-				if (libraryProviders[i].Key == collectionBase.Key)
+				if (libraryProviders[i].ProviderTypeKey == collectionBase.Key)
 				{
 					selectedLibraryProvider = i;
 					wasSet = true;

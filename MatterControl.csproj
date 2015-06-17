@@ -207,6 +207,7 @@
     <Compile Include="PrintHistory\PrintHistoryData.cs" />
     <Compile Include="PrintLibrary\LibraryRowItemCollection.cs" />
     <Compile Include="PrintLibrary\LibraryRowItemPart.cs" />
+    <Compile Include="PrintLibrary\Provider\LibraryProviderFactory.cs" />
     <Compile Include="PrintLibrary\Provider\LibraryProviderSelector.cs" />
     <Compile Include="PrintLibrary\Provider\LibraryProviderFileSystem.cs" />
     <Compile Include="PrintLibrary\Provider\LibrarySQLiteData.cs" />

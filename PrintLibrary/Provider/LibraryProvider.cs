@@ -50,8 +50,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderSQLite(null);
-					//instance = new LibraryProviderSelector();
+					//instance = new LibraryProviderSQLite(null);
+					instance = new LibraryProviderSelector();
 				}
 
 				return instance;
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract bool HasParent { get; }
 
-		public abstract string Key { get; }
+		public abstract string ProviderTypeKey { get; }
 
 		public abstract string Name { get; }
 
@@ -104,16 +104,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public static void OnItemRemoved(EventArgs eventArgs)
 		{
-			IndexArgs removeIndexArgs = eventArgs as IndexArgs;
-			if (removeIndexArgs != null)
-			{
-				int numIndicesToSkip = Instance.CollectionCount;
-				if (Instance.HasParent)
-				{
-					numIndicesToSkip++;
-				}
-				ItemRemoved.CallEvents(Instance, new IndexArgs(removeIndexArgs.Index + numIndicesToSkip));
-			}
+			ItemRemoved.CallEvents(Instance, eventArgs);
 		}
 
 		public static void SetCurrent(LibraryProvider current)

@@ -122,16 +122,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			openButton.Width = 100;
 			openButton.Click += (sender, e) =>
 			{
-				if (isSubdirector)
-				{
-					LibraryProvider.Instance.SetCollectionBase(collection);
-				}
-				else
-				{
-					LibraryProvider.Instance.SetCollectionBase(LibraryProvider.Instance.GetParentCollectionItem());
-				}
-
-				UiThread.RunOnIdle(libraryDataView.RebuildView);
+				ChangeCollection();
 			};
 
 			buttonFlowContainer.AddChild(openButton);
@@ -140,6 +131,29 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			buttonContainer.Width = 100;
 
 			return buttonContainer;
+		}
+
+		private void ChangeCollection()
+		{
+			if (isSubdirector)
+			{
+				LibraryProvider.Instance.SetCollectionBase(collection);
+			}
+			else
+			{
+				LibraryProvider.Instance.SetCollectionBase(LibraryProvider.Instance.GetParentCollectionItem());
+			}
+
+			UiThread.RunOnIdle(libraryDataView.RebuildView);
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Clicks == 2)
+			{
+				UiThread.RunOnIdle(ChangeCollection);
+			}
+			base.OnMouseDown(mouseEvent);
 		}
 
 		private void SetDisplayAttributes()

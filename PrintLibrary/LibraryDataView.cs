@@ -41,15 +41,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		private event EventHandler unregisterEvents;
 
-		private void SetDisplayAttributes()
-		{
-			this.MinimumSize = new Vector2(0, 200);
-			this.AnchorAll();
-			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			this.AutoScroll = true;
-			this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
-		}
-
 		private bool editMode = false;
 
 		public bool EditMode
@@ -183,12 +174,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public LibraryDataView()
 		{
-			SetDisplayAttributes();
-			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			// set the display attributes
+			{
+				this.AnchorAll();
+				this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+				this.ScrollArea.Padding = new BorderDouble(3, 3, 5, 3);
+			}
+
+			ScrollArea.HAnchor = HAnchor.ParentLeftRight;
 
 			AutoScroll = true;
 			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			topToBottomItemList.HAnchor = HAnchor.ParentLeftRight;
 			AddChild(topToBottomItemList);
 
 			AddAllItems();
@@ -250,13 +247,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			IndexArgs addedIndexArgs = e as IndexArgs;
 			PrintItemWrapper item = LibraryProvider.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
 			LibraryRowItem libraryItem = new LibraryRowItemPart(item, this);
-			AddListItemToTopToBottom(libraryItem, addedIndexArgs.Index);
+
+			int displayIndexToAdd = addedIndexArgs.Index + LibraryProvider.Instance.CollectionCount;
+			if (LibraryProvider.Instance.HasParent)
+			{
+				displayIndexToAdd++;
+			}
+			AddListItemToTopToBottom(libraryItem, displayIndexToAdd);
 		}
 
 		private void ItemRemovedFromToLibrary(object sender, EventArgs e)
 		{
 			IndexArgs removeIndexArgs = e as IndexArgs;
-			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
+			int indexToRemove = removeIndexArgs.Index + LibraryProvider.Instance.CollectionCount;
+			if (LibraryProvider.Instance.HasParent)
+			{
+				indexToRemove++;
+			}
+			topToBottomItemList.RemoveChild(indexToRemove);
 
 			if (LibraryProvider.Instance.ItemCount > 0)
 			{
