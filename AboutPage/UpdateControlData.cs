@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
 				}
 				else if (OsInformation.OperatingSystem == OSType.X11)
 				{
-					return "deb";
+					return "tar.gz";
 				}
 				else if (OsInformation.OperatingSystem == OSType.Android)
 				{
