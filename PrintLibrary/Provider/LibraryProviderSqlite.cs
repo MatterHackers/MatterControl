@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
@@ -39,10 +40,25 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	public class LibraryProviderSQLite : LibraryProvider
 	{
 		private string parentKey = null;
+		static LibraryProviderSQLite instance = null;
 
-		public LibraryProviderSQLite(string parentKey)
+		public new static LibraryProviderSQLite Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new LibraryProviderSQLite();
+				}
+
+				return instance;
+			}
+		}
+
+		public void SetParentKey(string parentKey)
 		{
 			this.parentKey = parentKey;
+			UiThread.RunOnIdle(() => LibraryProvider.OnDataReloaded(null));
 		}
 
 		public override int CollectionCount

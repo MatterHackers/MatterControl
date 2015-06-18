@@ -46,11 +46,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public LibraryProviderSelector()
 		{
 			// put in the sqlite provider
-			LibraryProviderSQLite localStore = new LibraryProviderSQLite(this.ProviderKey);
-			libraryProviders.Add(localStore);
+			libraryProviders.Add(LibraryProviderSQLite.Instance);
+			LibraryProviderSQLite.Instance.SetParentKey(this.ProviderKey);
 
 			// and any directory providers (sd card provider, etc...)
 			//libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this.ProviderKey));
+			//#if __ANDROID__
+			libraryProviders.Add(new LibraryProviderFileSystem(ApplicationDataStorage.Instance.PublicDataStoragePath, "Downloads", this.ProviderKey));
 
 			PrintItemCollection libraryCollection = new PrintItemCollection("Library Folder1", Path.Combine("C:\\", "Users", "LarsBrubaker", "AppData", "Local", "MatterControl", "Library"));
 			//libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderKey));
@@ -192,7 +194,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				StringBuilder breadCrumbString = new StringBuilder();
 				bool first = true;
 
-				for(int i=0; i<breadCrumbStack.Count; i++)
+				for (int i = 0; i < breadCrumbStack.Count; i++)
 				{
 					PrintItemCollection collection = breadCrumbStack[i];
 					if (first)
@@ -279,14 +281,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			// This logic may need to be move legitamately into the virtual functions of the providers rather than all
 			// gathered up here. If you find that this is not working the way you want ask me. LBB
-			if ((breadCrumbStack.Count > 2 
+			if ((breadCrumbStack.Count > 2
 				&& collectionBase.Key == breadCrumbStack[breadCrumbStack.Count - 2].Key)
-				|| (breadCrumbStack.Count > 1 
-				&& selectedLibraryProvider != -1 
+				|| (breadCrumbStack.Count > 1
+				&& selectedLibraryProvider != -1
 				&& collectionBase.Key == libraryProviders[selectedLibraryProvider].GetParentCollectionItem().Key)
 				)
 			{
-				breadCrumbStack.RemoveAt(breadCrumbStack.Count-1);
+				breadCrumbStack.RemoveAt(breadCrumbStack.Count - 1);
 			}
 			else
 			{
