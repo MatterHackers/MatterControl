@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			libraryProviders.Add(localStore);
 
 			// and any directory providers (sd card provider, etc...)
-			libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this.ProviderKey));
+			//libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this.ProviderKey));
 
 			PrintItemCollection libraryCollection = new PrintItemCollection("Library Folder1", Path.Combine("C:\\", "Users", "LarsBrubaker", "AppData", "Local", "MatterControl", "Library"));
 			//libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderKey));
@@ -239,7 +239,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			if (selectedLibraryProvider == -1)
 			{
-				throw new NotImplementedException();
+				if (libraryProviders[0].ProviderKey != LibraryProviderSQLite.StaticProviderKey)
+				{
+					throw new Exception("It is expected these are the same.");
+				}
+				return libraryProviders[0].GetPrintItemWrapper(itemIndex);
 			}
 			else
 			{

@@ -95,11 +95,19 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string ProviderKey
+		public static string StaticProviderKey
 		{
 			get
 			{
 				return "LibraryProviderSqliteKey";
+			}
+		}
+
+		public override string ProviderKey
+		{
+			get
+			{
+				return StaticProviderKey;
 			}
 		}
 
