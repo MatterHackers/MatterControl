@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -64,12 +65,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				libraryProviders.Add(factory.CreateProvider(this.ProviderKey));
 			}
 
-			breadCrumbStack.Add(new PrintItemCollection("..", ProviderKey));
+			providerLocationStack.Add(new PrintItemCollection("..", ProviderKey));
 		}
 
 		#region Overriden Abstract Methods
 
-		private List<PrintItemCollection> breadCrumbStack = new List<PrintItemCollection>();
+		private List<PrintItemCollection> providerLocationStack = new List<PrintItemCollection>();
 
 		public override int CollectionCount
 		{
@@ -183,32 +184,32 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 
 		// A key,value list that threads into the current collection loos like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
-		public override string GetBreadCrumbs()
+		public override List<ProviderLocatorNode> GetProviderLocator()
 		{
 			if (selectedLibraryProvider == -1)
 			{
-				return "";
+				return new List<ProviderLocatorNode>();
 			}
 			else
 			{
-				StringBuilder breadCrumbString = new StringBuilder();
+				List<ProviderLocatorNode> providerPathNodes = new List<ProviderLocatorNode>();
 				bool first = true;
 
-				for (int i = 0; i < breadCrumbStack.Count; i++)
+				for (int i = 0; i < providerLocationStack.Count; i++)
 				{
-					PrintItemCollection collection = breadCrumbStack[i];
+					PrintItemCollection collection = providerLocationStack[i];
 					if (first)
 					{
-						breadCrumbString.Append("{0},{1}".FormatWith(collection.Key, collection.Name));
+						providerPathNodes.Add(new ProviderLocatorNode(collection.Key, collection.Name));
 						first = false;
 					}
 					else
 					{
-						breadCrumbString.Append("|{0},{1}".FormatWith(collection.Key, collection.Name));
+						providerPathNodes.Add(new ProviderLocatorNode(collection.Key, collection.Name));
 					}
 				}
 
-				return breadCrumbString.ToString();
+				return providerPathNodes;
 			}
 		}
 
@@ -281,18 +282,18 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			// This logic may need to be move legitamately into the virtual functions of the providers rather than all
 			// gathered up here. If you find that this is not working the way you want ask me. LBB
-			if ((breadCrumbStack.Count > 2
-				&& collectionBase.Key == breadCrumbStack[breadCrumbStack.Count - 2].Key)
-				|| (breadCrumbStack.Count > 1
+			if ((providerLocationStack.Count > 2
+				&& collectionBase.Key == providerLocationStack[providerLocationStack.Count - 2].Key)
+				|| (providerLocationStack.Count > 1
 				&& selectedLibraryProvider != -1
 				&& collectionBase.Key == libraryProviders[selectedLibraryProvider].GetParentCollectionItem().Key)
 				)
 			{
-				breadCrumbStack.RemoveAt(breadCrumbStack.Count - 1);
+				providerLocationStack.RemoveAt(providerLocationStack.Count - 1);
 			}
 			else
 			{
-				breadCrumbStack.Add(collectionBase);
+				providerLocationStack.Add(collectionBase);
 			}
 
 			if (collectionBase.Key == this.ProviderKey)

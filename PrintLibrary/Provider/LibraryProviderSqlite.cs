@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibrarySQLiteData.Instance.LoadFilesIntoLibrary(files, reportProgress, callback);
 		}
 
-		public override string GetBreadCrumbs()
+		public override List<ProviderLocatorNode> GetProviderLocator()
 		{
 			throw new NotImplementedException();
 		}

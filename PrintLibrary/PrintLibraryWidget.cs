@@ -31,9 +31,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
@@ -48,7 +47,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
 		private TextWidget breadCrumbDisplay;
-	
+
 		private FlowLayoutWidget itemOperationButtons;
 		private List<bool> editOperationMultiCapable = new List<bool>();
 
@@ -93,7 +92,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
-				
+
 				leaveEditModeButton.Visible = false;
 
 				FlowLayoutWidget searchPanel = new FlowLayoutWidget();
@@ -149,7 +148,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					spacer.HAnchor = HAnchor.ParentLeftRight;
 					buttonPanel.AddChild(spacer);
 				}
-	
+
 				CreateEditBarButtons();
 
 				breadCrumbDisplay = new TextWidget("");
@@ -207,6 +206,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		private event EventHandler unregisterEvents;
+
 		private void AddHandlers()
 		{
 			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
@@ -216,27 +216,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void CollectionChanged(object sender, EventArgs e)
 		{
-			string breadCrumbs = LibraryProvider.Instance.GetBreadCrumbs();
+			List<ProviderLocatorNode> providerLocator = LibraryProvider.Instance.GetProviderLocator();
 			StringBuilder path = new StringBuilder();
-			string[] splitOnBar = breadCrumbs.Split('|');
-			if (splitOnBar.Length > 1)
+			bool first = true;
+			foreach (ProviderLocatorNode node in providerLocator)
 			{
-				bool first = true;
-				foreach (string split in splitOnBar)
+				if (!first)
 				{
-					if (!first)
-					{
-						path.Append("->");
-					}
-					string[] splitOnComma = split.Split(',');
-					if (splitOnComma.Length > 1 
-						&& splitOnComma[1] != "..")
-					{
-						path.Append(splitOnComma[1]);
-						first = false;
-					}
+					path.Append("->");
+				}
+
+				if (node.Name != "..")
+				{
+					path.Append(node.Name);
+					first = false;
 				}
 			}
+
 			breadCrumbDisplay.Text = path.ToString();
 		}
 

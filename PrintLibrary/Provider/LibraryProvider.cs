@@ -36,6 +36,18 @@ using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
+	public class ProviderLocatorNode
+	{
+		public string Key;
+		public string Name;
+
+		public ProviderLocatorNode(string key, string name)
+		{
+			this.Key = key;
+			this.Name = name;
+		}
+	}
+
 	public abstract class LibraryProvider
 	{
 		public static RootedObjectEventHandler CollectionChanged = new RootedObjectEventHandler();
@@ -77,7 +89,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public abstract void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
 
 		// A key,value list that threads into the current collection looks like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
-		public abstract string GetBreadCrumbs();
+		public abstract List<ProviderLocatorNode> GetProviderLocator();
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 

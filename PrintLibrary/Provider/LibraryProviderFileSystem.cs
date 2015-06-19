@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -127,33 +128,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override string GetBreadCrumbs()
+		public override List<ProviderLocatorNode> GetProviderLocator()
 		{
 			throw new NotImplementedException();
-
-			// append all of the collection keys with names 
-			string addDirectory = currentDirectory;
-			List<string> collectionKeys = new List<string>();
-			while (addDirectory != ".")
-			{
-				collectionKeys.Add(addDirectory);
-				addDirectory = Path.GetDirectoryName(addDirectory);
-			}
-
-			string total = "";
-			bool first = true;
-			for(int i = collectionKeys.Count-1; i>=0; i--)
-			{
-				string key = collectionKeys[i];
-				if (!first)
-				{
-					total += "|";
-				}
-				total += key + "," + Path.GetFileName(key);
-				first = false;
-			}
-
-			return total;
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -185,8 +162,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
-			string breadCrumbs = LibraryProvider.Instance.GetBreadCrumbs();
-			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName, breadCrumbs));
+			List<ProviderLocatorNode> providerLocator = LibraryProvider.Instance.GetProviderLocator();
+			string providerLocatorJson = JsonConvert.SerializeObject(providerLocator);
+			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName, providerLocatorJson));
 		}
 
 		public override void RemoveCollection(string collectionName)
