@@ -142,8 +142,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private string dataLastRead = "";
-
 		private string deviceCode;
 
 		private string doNotShowAgainMessage = "Do not show this message again".Localize();
@@ -1458,6 +1456,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			ReadThreadHolder readThreadHolder = args.Argument as ReadThreadHolder;
 
+			string dataLastRead = string.Empty;
+
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			timeSinceLastReadAnything.Restart();
 			// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
@@ -1486,6 +1486,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							do
 							{
 								int returnPosition = dataLastRead.IndexOf('\n');
+
+								// Abort if we're AttemptingToConnect, no newline was found in the accumulator string and there's too many non-ascii chars
+								if(this.communicationState == CommunicationStates.AttemptingToConnect && returnPosition < 0)
+								{
+									int totalInvalid = dataLastRead.Count(c => c == '?');
+									if (totalInvalid > MAX_INVALID_CONNECTION_CHARS)
+									{
+										AbortConnectionAttempt("Invalid printer response".Localize(), false);
+									}
+								}
+								
 								if (returnPosition < 0)
 								{
 									// there is no return keep getting characters
