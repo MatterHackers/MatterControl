@@ -160,6 +160,7 @@ namespace MatterHackers.MatterControl
 							UiThread.RunOnIdle(AboutWindow.Show);
 						};
 						var updateMark = new UpdateNotificationMark();
+						updateMark.Margin = new BorderDouble(0, 0, 3, 2);
 						updateMark.VAnchor = VAnchor.ParentTop;
 						popUpAboutPage.AddChild(updateMark);
 						popUpAboutPage.AddChild(updateStatusMessage);
