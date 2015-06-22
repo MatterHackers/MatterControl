@@ -234,6 +234,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			breadCrumbDisplay.Text = path.ToString();
+			libraryDataView.ClearSelectedItems();
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -395,7 +396,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			LibraryProvider.Instance.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
+			LibraryProvider.Instance.AddFilesToLibrary(fileDropEventArgs.DroppedFiles, LibraryProvider.Instance.GetProviderLocator());
 
 			base.OnDragDrop(fileDropEventArgs);
 		}
@@ -415,7 +416,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (openParams.FileNames != null)
 			{
-				LibraryProvider.Instance.AddFilesToLibrary(openParams.FileNames);
+				LibraryProvider.Instance.AddFilesToLibrary(openParams.FileNames, null);
 			}
 		}
 	}

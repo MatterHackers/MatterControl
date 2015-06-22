@@ -123,7 +123,40 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerLocator, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		{
+			if (providerLocator == null || providerLocator.Count <= 1)
+			{
+				string destPath = rootPath;
+
+				CopyAllFiles(files, destPath);
+			}
+			else // we have a path that we need to save to
+			{
+				string destPath = GetPathFromLocator(providerLocator);
+
+				CopyAllFiles(files, destPath);
+			}
+
+			GetFilesInCurrentDirectory();
+			LibraryProvider.OnDataReloaded(null);
+		}
+
+		private static void CopyAllFiles(IList<string> files, string destPath)
+		{
+			// make sure the directory exists
+			Directory.CreateDirectory(destPath);
+
+			// save it to the root directory
+			foreach (string file in files)
+			{
+				string outputFileName = Path.Combine(destPath, Path.GetFileName(file));
+				// and copy the file
+				File.Copy(file, outputFileName);
+			}
+		}
+
+		private string GetPathFromLocator(List<ProviderLocatorNode> providerLocator)
 		{
 			throw new NotImplementedException();
 		}
@@ -174,7 +207,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
-			throw new NotImplementedException();
+			File.Delete(printItemWrapper.PrintItem.FileLocation);
+			GetFilesInCurrentDirectory();
+			LibraryProvider.OnDataReloaded(null);
 		}
 
 		public override void SetCollectionBase(PrintItemCollection collectionBase)

@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerSavePath, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
 			LibrarySQLiteData.Instance.LoadFilesIntoLibrary(files, reportProgress, callback);
 		}

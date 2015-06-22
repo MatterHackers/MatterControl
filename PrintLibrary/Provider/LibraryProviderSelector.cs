@@ -171,16 +171,33 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerSavePath, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
-			if (selectedLibraryProvider == -1)
+			List<ProviderLocatorNode> subProviderSavePath;
+			int libraryProviderToUseIndex = GetProviderIndex(providerSavePath, out subProviderSavePath);
+
+			libraryProviders[libraryProviderToUseIndex].AddFilesToLibrary(files, subProviderSavePath, reportProgress, callback);
+		}
+
+		private int GetProviderIndex(List<ProviderLocatorNode> providerSavePath, out List<ProviderLocatorNode> subProviderSavePath)
+		{
+			subProviderSavePath = null;
+
+			if (providerSavePath != null
+				&& providerSavePath.Count > 1) // key 0 is this provider so we want to look at the next provider
 			{
-				throw new NotImplementedException();
+				for (int i = 0; i < libraryProviders.Count; i++)
+				{
+					if (libraryProviders[i].ProviderKey == providerSavePath[1].Key)
+					{
+						subProviderSavePath = new List<ProviderLocatorNode>(providerSavePath);
+						subProviderSavePath.RemoveAt(0);
+						return i;
+					}
+				}
 			}
-			else
-			{
-				libraryProviders[selectedLibraryProvider].AddFilesToLibrary(files, reportProgress, callback);
-			}
+
+			return 0;
 		}
 
 		// A key,value list that threads into the current collection loos like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
@@ -268,14 +285,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
-			if (selectedLibraryProvider == -1)
+			List<ProviderLocatorNode> providerPath = null;
+			if (printItemWrapper.PrintItem.LibraryProviderLocatorJson != null)
 			{
-				throw new NotImplementedException();
+				providerPath = JsonConvert.DeserializeObject<List<ProviderLocatorNode>>(printItemWrapper.PrintItem.LibraryProviderLocatorJson);
 			}
-			else
-			{
-				libraryProviders[selectedLibraryProvider].RemoveItem(printItemWrapper);
-			}
+			 
+			List<ProviderLocatorNode> subProviderSavePath;
+			int libraryProviderToUseIndex = GetProviderIndex(providerPath, out subProviderSavePath);
+
+			libraryProviders[libraryProviderToUseIndex].RemoveItem(printItemWrapper);
 		}
 
 		public override void SetCollectionBase(PrintItemCollection collectionBase)
