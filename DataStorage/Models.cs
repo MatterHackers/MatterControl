@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.MatterControl.PrintLibrary.Provider;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -220,6 +222,16 @@ namespace MatterHackers.MatterControl.DataStorage
 
 			DateAdded = DateTime.Now;
 			PrintCount = 0;
+		}
+
+		public List<ProviderLocatorNode> GetLibraryProviderLocator()
+		{
+			List<ProviderLocatorNode> providerPath = null;
+			if (LibraryProviderLocatorJson != null)
+			{
+				providerPath = JsonConvert.DeserializeObject<List<ProviderLocatorNode>>(LibraryProviderLocatorJson);
+			}
+			return providerPath;
 		}
 	}
 

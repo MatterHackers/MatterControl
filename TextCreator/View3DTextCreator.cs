@@ -926,21 +926,15 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			if (filePath != null)
 			{
 				PrintItem printItem = new PrintItem();
-				printItem.Commit();
 
 				printItem.Name = string.Format("{0}", word);
 				printItem.FileLocation = Path.GetFullPath(filePath);
 				printItem.PrintItemCollectionID = LibrarySQLiteData.Instance.LibraryCollection.Id;
-				printItem.Commit();
 
 				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
 
-				LibrarySQLiteData.Instance.AddItem(printItemWrapper);
-
 				// and save to the queue
-				{
-					QueueData.Instance.AddItem(printItemWrapper);
-				}
+				QueueData.Instance.AddItem(printItemWrapper);
 			}
 
 			//Exit after save

@@ -270,16 +270,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			libraryProviders[libraryProviderToUseIndex].RemoveItem(printItemWrapper);
 		}
 
-		private static List<ProviderLocatorNode> GetProviderPathFromPrintItem(PrintItemWrapper printItemWrapper)
-		{
-			List<ProviderLocatorNode> providerPath = null;
-			if (printItemWrapper.PrintItem.LibraryProviderLocatorJson != null)
-			{
-				providerPath = JsonConvert.DeserializeObject<List<ProviderLocatorNode>>(printItemWrapper.PrintItem.LibraryProviderLocatorJson);
-			}
-			return providerPath;
-		}
-
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null)
 		{
 			if (selectedLibraryProvider == -1)
@@ -341,7 +331,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private int GetProviderIndex(PrintItemWrapper printItemWrapper, out List<ProviderLocatorNode> subProviderSavePath)
 		{
-			List<ProviderLocatorNode> providerPath = GetProviderPathFromPrintItem(printItemWrapper);
+			List<ProviderLocatorNode> providerPath = printItemWrapper.PrintItem.GetLibraryProviderLocator();
 
 			return GetProviderIndex(providerPath, out subProviderSavePath);
 		}
