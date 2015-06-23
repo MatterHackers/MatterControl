@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
+		static public void SaveToLibraryFolder2(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
 		{
 			string[] metaData = { "Created By", "MatterControl" };
 			if (AbsolutePositioned)
@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				try
 				{
 					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-					SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
+					SaveToLibraryFolder2(printItemWrapper, meshToConvertAndSave, false);
 					Instance.AddItem(printItemWrapper);
 				}
 				catch (System.UnauthorizedAccessException)

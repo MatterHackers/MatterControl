@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -142,30 +143,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibraryProvider.OnDataReloaded(null);
 		}
 
-		private static void CopyAllFiles(IList<string> files, string destPath)
-		{
-			// make sure the directory exists
-			Directory.CreateDirectory(destPath);
-
-			// save it to the root directory
-			foreach (string file in files)
-			{
-				string outputFileName = Path.Combine(destPath, Path.GetFileName(file));
-				// and copy the file
-				File.Copy(file, outputFileName);
-			}
-		}
-
-		private string GetPathFromLocator(List<ProviderLocatorNode> providerLocator)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override List<ProviderLocatorNode> GetProviderLocator()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			string directoryName = currentDirectoryDirectories[collectionIndex];
@@ -200,6 +177,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName, providerLocatorJson));
 		}
 
+		public override List<ProviderLocatorNode> GetProviderLocator()
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void RemoveCollection(string collectionName)
 		{
 			throw new NotImplementedException();
@@ -212,6 +194,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibraryProvider.OnDataReloaded(null);
 		}
 
+		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void SetCollectionBase(PrintItemCollection collectionBase)
 		{
 			string collectionPath = collectionBase.Key;
@@ -222,6 +209,32 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			GetFilesInCurrentDirectory();
+		}
+
+		private static void CopyAllFiles(IList<string> files, string destPath)
+		{
+			// make sure the directory exists
+			try
+			{
+				Directory.CreateDirectory(destPath);
+			}
+			catch (Exception e)
+			{
+			}
+
+			// save it to the root directory
+			foreach (string file in files)
+			{
+				string outputFileName = Path.Combine(destPath, Path.GetFileName(file));
+				// and copy the file
+				try
+				{
+					File.Copy(file, outputFileName);
+				}
+				catch (Exception e)
+				{
+				}
+			}
 		}
 
 		private void GetFilesInCurrentDirectory()
@@ -251,6 +264,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					}
 				}
 			}
+		}
+
+		private string GetPathFromLocator(List<ProviderLocatorNode> providerLocator)
+		{
+			string pathWithDot = Path.Combine(rootPath, providerLocator[providerLocator.Count - 1].Key);
+			string pathWithoutDot = pathWithDot.Replace("." + Path.DirectorySeparatorChar, "");
+			return pathWithoutDot;
 		}
 	}
 }

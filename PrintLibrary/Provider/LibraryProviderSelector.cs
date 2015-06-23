@@ -30,12 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
-using System;
+using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Text;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -179,57 +179,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			libraryProviders[libraryProviderToUseIndex].AddFilesToLibrary(files, subProviderSavePath, reportProgress, callback);
 		}
 
-		private int GetProviderIndex(List<ProviderLocatorNode> providerSavePath, out List<ProviderLocatorNode> subProviderSavePath)
-		{
-			subProviderSavePath = null;
-
-			if (providerSavePath != null
-				&& providerSavePath.Count > 1) // key 0 is this provider so we want to look at the next provider
-			{
-				for (int i = 0; i < libraryProviders.Count; i++)
-				{
-					if (libraryProviders[i].ProviderKey == providerSavePath[1].Key)
-					{
-						subProviderSavePath = new List<ProviderLocatorNode>(providerSavePath);
-						subProviderSavePath.RemoveAt(0);
-						return i;
-					}
-				}
-			}
-
-			return 0;
-		}
-
-		// A key,value list that threads into the current collection loos like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
-		public override List<ProviderLocatorNode> GetProviderLocator()
-		{
-			if (selectedLibraryProvider == -1)
-			{
-				return new List<ProviderLocatorNode>();
-			}
-			else
-			{
-				List<ProviderLocatorNode> providerPathNodes = new List<ProviderLocatorNode>();
-				bool first = true;
-
-				for (int i = 0; i < providerLocationStack.Count; i++)
-				{
-					PrintItemCollection collection = providerLocationStack[i];
-					if (first)
-					{
-						providerPathNodes.Add(new ProviderLocatorNode(collection.Key, collection.Name));
-						first = false;
-					}
-					else
-					{
-						providerPathNodes.Add(new ProviderLocatorNode(collection.Key, collection.Name));
-					}
-				}
-
-				return providerPathNodes;
-			}
-		}
-
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			if (selectedLibraryProvider == -1)
@@ -271,6 +220,36 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		// A key,value list that threads into the current collection loos like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
+		public override List<ProviderLocatorNode> GetProviderLocator()
+		{
+			if (selectedLibraryProvider == -1)
+			{
+				return new List<ProviderLocatorNode>();
+			}
+			else
+			{
+				List<ProviderLocatorNode> providerPathNodes = new List<ProviderLocatorNode>();
+				bool first = true;
+
+				for (int i = 0; i < providerLocationStack.Count; i++)
+				{
+					PrintItemCollection collection = providerLocationStack[i];
+					if (first)
+					{
+						providerPathNodes.Add(new ProviderLocatorNode(collection.Key, collection.Name));
+						first = false;
+					}
+					else
+					{
+						providerPathNodes.Add(new ProviderLocatorNode(collection.Key, collection.Name));
+					}
+				}
+
+				return providerPathNodes;
+			}
+		}
+
 		public override void RemoveCollection(string collectionName)
 		{
 			if (selectedLibraryProvider == -1)
@@ -285,16 +264,35 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
+			List<ProviderLocatorNode> subProviderSavePath;
+			int libraryProviderToUseIndex = GetProviderIndex(printItemWrapper, out subProviderSavePath);
+
+			libraryProviders[libraryProviderToUseIndex].RemoveItem(printItemWrapper);
+		}
+
+		private static List<ProviderLocatorNode> GetProviderPathFromPrintItem(PrintItemWrapper printItemWrapper)
+		{
 			List<ProviderLocatorNode> providerPath = null;
 			if (printItemWrapper.PrintItem.LibraryProviderLocatorJson != null)
 			{
 				providerPath = JsonConvert.DeserializeObject<List<ProviderLocatorNode>>(printItemWrapper.PrintItem.LibraryProviderLocatorJson);
 			}
-			 
-			List<ProviderLocatorNode> subProviderSavePath;
-			int libraryProviderToUseIndex = GetProviderIndex(providerPath, out subProviderSavePath);
+			return providerPath;
+		}
 
-			libraryProviders[libraryProviderToUseIndex].RemoveItem(printItemWrapper);
+		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null)
+		{
+			if (selectedLibraryProvider == -1)
+			{
+				throw new NotImplementedException();
+			}
+			else
+			{
+				List<ProviderLocatorNode> subProviderSavePath;
+				int libraryProviderToUseIndex = GetProviderIndex(printItemWrapper, out subProviderSavePath);
+
+				libraryProviders[libraryProviderToUseIndex].SaveToLibrary(printItemWrapper, meshGroupsToSave, subProviderSavePath);
+			}
 		}
 
 		public override void SetCollectionBase(PrintItemCollection collectionBase)
@@ -339,6 +337,34 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			CollectionChanged.CallEvents(this, null);
+		}
+
+		private int GetProviderIndex(PrintItemWrapper printItemWrapper, out List<ProviderLocatorNode> subProviderSavePath)
+		{
+			List<ProviderLocatorNode> providerPath = GetProviderPathFromPrintItem(printItemWrapper);
+
+			return GetProviderIndex(providerPath, out subProviderSavePath);
+		}
+
+		private int GetProviderIndex(List<ProviderLocatorNode> providerSavePath, out List<ProviderLocatorNode> subProviderSavePath)
+		{
+			subProviderSavePath = null;
+
+			if (providerSavePath != null
+				&& providerSavePath.Count > 1) // key 0 is this provider so we want to look at the next provider
+			{
+				for (int i = 0; i < libraryProviders.Count; i++)
+				{
+					if (libraryProviders[i].ProviderKey == providerSavePath[1].Key)
+					{
+						subProviderSavePath = new List<ProviderLocatorNode>(providerSavePath);
+						subProviderSavePath.RemoveAt(0);
+						return i;
+					}
+				}
+			}
+
+			return 0;
 		}
 
 		#endregion Overriden Abstract Methods

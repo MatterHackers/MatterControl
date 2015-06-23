@@ -34,21 +34,19 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.VectorMath;
+using MatterHackers.PolygonMesh;
 using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class LibraryRowItemPart : LibraryRowItem
 	{
+		public bool isActivePrint = false;
 		public PrintItemWrapper printItemWrapper;
 
 		private ExportPrintItemWindow exportingWindow;
-
-		public bool isActivePrint = false;
-
 		private PartPreviewMainWindow viewingWindow;
 
 		public LibraryRowItemPart(PrintItemWrapper printItem, LibraryDataView libraryDataView)
@@ -56,6 +54,95 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			this.printItemWrapper = printItem;
 			CreateGuiElements();
+		}
+
+		public override void AddToQueue()
+		{
+			QueueData.Instance.AddItem(printItemWrapper);
+		}
+
+		public override void Edit()
+		{
+			OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
+		}
+
+		public override void Export()
+		{
+			OpenExportWindow(printItemWrapper);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.libraryDataView.EditMode)
+			{
+				selectionCheckBoxContainer.Visible = true;
+				rightButtonOverlay.Visible = false;
+			}
+			else
+			{
+				selectionCheckBoxContainer.Visible = false;
+			}
+
+			base.OnDraw(graphics2D);
+
+			if (this.isSelectedItem)
+			{
+				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+				this.partLabel.TextColor = RGBA_Bytes.White;
+				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
+			}
+			else if (this.IsHoverItem)
+			{
+				RectangleDouble Bounds = LocalBounds;
+				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
+
+				this.BackgroundColor = RGBA_Bytes.White;
+				this.partLabel.TextColor = RGBA_Bytes.Black;
+				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+
+				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
+			}
+			else
+			{
+				this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
+				this.partLabel.TextColor = RGBA_Bytes.Black;
+				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+			}
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Clicks == 2)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					openPartView(View3DWidget.OpenMode.Viewing);
+				});
+			}
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
+		{
+			if (viewingWindow == null)
+			{
+				viewingWindow = new PartPreviewMainWindow(this.printItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
+				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
+			}
+			else
+			{
+				viewingWindow.BringToFront();
+			}
+		}
+
+		public override void RemoveFromCollection()
+		{
+			LibraryProvider.Instance.RemoveItem(printItemWrapper);
+		}
+
+		public override void RemoveFromParentCollection()
+		{
+			LibraryProvider.Instance.RemoveItem(printItemWrapper);
 		}
 
 		protected override SlideWidget GetItemActionButtons()
@@ -111,9 +198,88 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return buttonContainer;
 		}
 
+		protected override string GetItemName()
+		{
+			return printItemWrapper.Name;
+		}
+
+		protected override GuiWidget GetThumbnailWidget()
+		{
+			PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
+			return thumbnailWidget;
+		}
+
+		protected override void RemoveThisFromPrintLibrary()
+		{
+			LibraryProvider.Instance.RemoveItem(this.printItemWrapper);
+		}
+
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)
 		{
 			exportingWindow = null;
+		}
+
+		private void onAddLinkClick(object sender, EventArgs e)
+		{
+		}
+
+		private void onConfirmRemove(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
+				libraryDataView.RemoveChild(this);
+			}
+		}
+
+		private void onLibraryItemClick(object sender, EventArgs e)
+		{
+			if (this.libraryDataView.EditMode == false)
+			{
+				//UiThread.RunOnIdle((state) =>
+				//{
+				//    openPartView(state);
+				//});
+			}
+			else
+			{
+				if (this.isSelectedItem == false)
+				{
+					this.isSelectedItem = true;
+					this.selectionCheckBox.Checked = true;
+					libraryDataView.SelectedItems.Add(this);
+				}
+				else
+				{
+					this.isSelectedItem = false;
+					this.selectionCheckBox.Checked = false;
+					libraryDataView.SelectedItems.Remove(this);
+				}
+			}
+		}
+
+		private void onOpenPartViewClick(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() => openPartView());
+		}
+
+		private void onRemoveLinkClick(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(RemoveThisFromPrintLibrary);
+		}
+
+		private void onThemeChanged(object sender, EventArgs e)
+		{
+			//Set background and text color to new theme
+			this.Invalidate();
+		}
+
+		private void onViewPartClick(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				this.rightButtonOverlay.SlideOut();
+				openPartView(View3DWidget.OpenMode.Viewing);
+			});
 		}
 
 		private void OpenExportWindow()
@@ -144,72 +310,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private void SetDisplayAttributes()
+		private void openPartView(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
-			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
+			string pathAndFile = this.printItemWrapper.FileLocation;
+			if (File.Exists(pathAndFile))
 			{
-				this.Height = 65;
+				OpenPartViewWindow(openMode);
 			}
 			else
 			{
-				this.Height = 50;
+				string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the library?", pathAndFile);
+				StyledMessageBox.ShowMessageBox(null, message, "Item not found", StyledMessageBox.MessageType.YES_NO);
 			}
-
-			this.Padding = new BorderDouble(0);
-			this.Margin = new BorderDouble(6, 0, 6, 6);
 		}
 
-		public override void RemoveFromParentCollection()
+		private void PartPreviewMainWindow_Closed(object sender, EventArgs e)
 		{
-			LibraryProvider.Instance.RemoveItem(printItemWrapper);
-		}
-
-		public override void Export()
-		{
-			OpenExportWindow(printItemWrapper);
-		}
-
-		public override void Edit()
-		{
-			OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
-		}
-
-		public override void RemoveFromCollection()
-		{
-			LibraryProvider.Instance.RemoveItem(printItemWrapper);
-		}
-
-		public override void AddToQueue()
-		{
-			QueueData.Instance.AddItem(printItemWrapper);
-		}
-
-		private void onLibraryItemClick(object sender, EventArgs e)
-		{
-			if (this.libraryDataView.EditMode == false)
-			{
-				//UiThread.RunOnIdle((state) =>
-				//{
-				//    openPartView(state);
-				//});
-			}
-			else
-			{
-				if (this.isSelectedItem == false)
-				{
-					this.isSelectedItem = true;
-					this.selectionCheckBox.Checked = true;
-					libraryDataView.SelectedItems.Add(this);
-				}
-				else
-				{
-					this.isSelectedItem = false;
-					this.selectionCheckBox.Checked = false;
-					libraryDataView.SelectedItems.Remove(this);
-				}
-			}
+			viewingWindow = null;
 		}
 
 		private void selectionCheckBox_CheckedStateChanged(object sender, EventArgs e)
@@ -226,141 +343,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private void onAddLinkClick(object sender, EventArgs e)
+		private void SetDisplayAttributes()
 		{
-		}
-
-		protected override GuiWidget GetThumbnailWidget()
-		{
-			PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-			return thumbnailWidget;
-		}
-
-		protected override string GetItemName()
-		{
-			return printItemWrapper.Name;
-		}
-
-		protected override void RemoveThisFromPrintLibrary()
-		{
-			LibraryProvider.Instance.RemoveItem(this.printItemWrapper);
-		}
-
-		private void onRemoveLinkClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(RemoveThisFromPrintLibrary);
-		}
-
-		private void onOpenPartViewClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(() => openPartView());
-		}
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			if (mouseEvent.Clicks == 2)
+			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					openPartView(View3DWidget.OpenMode.Viewing);
-				});
-			}
-			base.OnMouseDown(mouseEvent);
-		}
-
-
-		private void onViewPartClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				this.rightButtonOverlay.SlideOut();
-				openPartView(View3DWidget.OpenMode.Viewing);
-			});
-		}
-
-		public void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
-		{
-			if (viewingWindow == null)
-			{
-				viewingWindow = new PartPreviewMainWindow(this.printItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
-				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
+				this.Height = 65;
 			}
 			else
 			{
-				viewingWindow.BringToFront();
-			}
-		}
-
-		private void PartPreviewMainWindow_Closed(object sender, EventArgs e)
-		{
-			viewingWindow = null;
-		}
-
-		private void openPartView(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
-		{
-			string pathAndFile = this.printItemWrapper.FileLocation;
-			if (File.Exists(pathAndFile))
-			{
-				OpenPartViewWindow(openMode);
-			}
-			else
-			{
-				string message = String.Format("Cannot find\n'{0}'.\nWould you like to remove it from the library?", pathAndFile);
-				StyledMessageBox.ShowMessageBox(null, message, "Item not found", StyledMessageBox.MessageType.YES_NO);
-			}
-		}
-
-		private void onConfirmRemove(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				libraryDataView.RemoveChild(this);
-			}
-		}
-
-		private void onThemeChanged(object sender, EventArgs e)
-		{
-			//Set background and text color to new theme
-			this.Invalidate();
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (this.libraryDataView.EditMode)
-			{
-				selectionCheckBoxContainer.Visible = true;
-				rightButtonOverlay.Visible = false;
-			}
-			else
-			{
-				selectionCheckBoxContainer.Visible = false;
+				this.Height = 50;
 			}
 
-			base.OnDraw(graphics2D);
-
-			if (this.isSelectedItem)
-			{
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.partLabel.TextColor = RGBA_Bytes.White;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
-			}
-			else if (this.IsHoverItem)
-			{
-				RectangleDouble Bounds = LocalBounds;
-				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
-
-				this.BackgroundColor = RGBA_Bytes.White;
-				this.partLabel.TextColor = RGBA_Bytes.Black;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
-
-				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
-			}
-			else
-			{
-				this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
-				this.partLabel.TextColor = RGBA_Bytes.Black;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
-			}
+			this.Padding = new BorderDouble(0);
+			this.Margin = new BorderDouble(6, 0, 6, 6);
 		}
 	}
 }

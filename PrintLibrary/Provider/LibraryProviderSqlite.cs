@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,8 +40,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSQLite : LibraryProvider
 	{
+		private static LibraryProviderSQLite instance = null;
 		private string parentKey = null;
-		static LibraryProviderSQLite instance = null;
 
 		public new static LibraryProviderSQLite Instance
 		{
@@ -55,10 +56,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public void SetParentKey(string parentKey)
+		public static string StaticProviderKey
 		{
-			this.parentKey = parentKey;
-			UiThread.RunOnIdle(() => LibraryProvider.OnDataReloaded(null));
+			get
+			{
+				return "LibraryProviderSqliteKey";
+			}
 		}
 
 		public override int CollectionCount
@@ -111,14 +114,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public static string StaticProviderKey
-		{
-			get
-			{
-				return "LibraryProviderSqliteKey";
-			}
-		}
-
 		public override string ProviderKey
 		{
 			get
@@ -135,11 +130,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerSavePath, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
 			LibrarySQLiteData.Instance.LoadFilesIntoLibrary(files, reportProgress, callback);
-		}
-
-		public override List<ProviderLocatorNode> GetProviderLocator()
-		{
-			throw new NotImplementedException();
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -164,6 +154,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return LibrarySQLiteData.Instance.GetPrintItemWrapper(itemIndex);
 		}
 
+		public override List<ProviderLocatorNode> GetProviderLocator()
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void RemoveCollection(string collectionName)
 		{
 			throw new NotImplementedException();
@@ -174,8 +169,19 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibrarySQLiteData.Instance.RemoveItem(printItemWrapper);
 		}
 
+		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void SetCollectionBase(PrintItemCollection collectionBase)
 		{
+		}
+
+		public void SetParentKey(string parentKey)
+		{
+			this.parentKey = parentKey;
+			UiThread.RunOnIdle(() => LibraryProvider.OnDataReloaded(null));
 		}
 	}
 }

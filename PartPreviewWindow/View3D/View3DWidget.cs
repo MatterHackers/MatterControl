@@ -1873,7 +1873,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				saveSucceded = true;
 				//LibraryProvider.Instance.SaveToCollection(printItemWrapper.PrintItem.LibraryProviderLocator
-				LibrarySQLiteData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
+				LibraryProvider.Instance.SaveToLibrary(printItemWrapper, asynchMeshGroups);
 			}
 			catch (System.UnauthorizedAccessException)
 			{
