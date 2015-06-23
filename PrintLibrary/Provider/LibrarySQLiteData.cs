@@ -121,7 +121,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				indexToInsert = PrintItems.Count;
 			}
 			PrintItems.Insert(indexToInsert, item);
-			OnItemAdded(new IndexArgs(indexToInsert));
+			// Check if the collection we are adding to is the the currently visible collection.
+			List<ProviderLocatorNode> currentDisplayedCollection = LibraryProvider.Instance.GetProviderLocator();
+			if (currentDisplayedCollection.Count > 0 && currentDisplayedCollection[1].Key == LibraryProviderSQLite.StaticProviderKey)
+			{
+				OnItemAdded(new IndexArgs(indexToInsert));
+			}
 			item.PrintItem.PrintItemCollectionID = LibraryCollection.Id;
 			item.PrintItem.Commit();
 		}
