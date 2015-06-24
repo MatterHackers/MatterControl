@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return ;
+				return 0;
 			}
 		}
 
