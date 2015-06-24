@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	public class LibraryProviderSQLite : LibraryProvider
 	{
 		private static LibraryProviderSQLite instance = null;
-		private string parentKey = null;
+		private string parentProviderKey = null;
 
 		public new static LibraryProviderSQLite Instance
 		{
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return 0;
+				return ;
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				if (parentKey != null)
+				if (parentProviderKey != null)
 				{
 					return true;
 				}
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return LibrarySQLiteData.Instance.Count;
+				return LibrarySQLiteData.Instance.ItemCount;
 			}
 		}
 
@@ -139,9 +139,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override PrintItemCollection GetParentCollectionItem()
 		{
-			if (parentKey != null)
+			if (parentProviderKey != null)
 			{
-				return new PrintItemCollection("..", parentKey);
+				return new PrintItemCollection("..", parentProviderKey);
 			}
 			else
 			{
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public void SetParentKey(string parentKey)
 		{
-			this.parentKey = parentKey;
+			this.parentProviderKey = parentKey;
 			UiThread.RunOnIdle(() => LibraryProvider.OnDataReloaded(null));
 		}
 	}

@@ -179,6 +179,9 @@ namespace MatterHackers.MatterControl.DataStorage
 
 	public class PrintItemCollection : Entity
 	{
+		[Indexed]
+		public int ParentCollectionID { get; set; }
+
 		public PrintItemCollection()
 		{
 		}

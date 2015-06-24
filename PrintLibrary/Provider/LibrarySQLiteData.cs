@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public PrintItemWrapper GetPrintItemWrapper(int index)
 		{
-			if (index >= 0 && index < Count)
+			if (index >= 0 && index < ItemCount)
 			{
 				return PrintItems[index];
 			}
@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			//
 		}
 
-		public int Count
+		public int ItemCount
 		{
 			get
 			{

@@ -139,10 +139,35 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				buttonPanel.Padding = new BorderDouble(0, 3);
 				buttonPanel.MinimumSize = new Vector2(0, 46);
 				{
-					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
-					buttonPanel.AddChild(addToLibraryButton);
-					addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
-					addToLibraryButton.Click += new EventHandler(importToLibraryloadFile_Click);
+					// the add button
+					{
+						addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+						buttonPanel.AddChild(addToLibraryButton);
+						addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
+						addToLibraryButton.Click += new EventHandler((sender, e) => UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle));
+					}
+
+					// the create folder button
+					{
+						Button createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
+						buttonPanel.AddChild(createFolderButton);
+						createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
+						createFolderButton.Click += new EventHandler((sender, e) =>
+						{
+						}
+						);
+					}
+
+					// the redeem code button
+					{
+						Button redeemCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Redeem"));
+						buttonPanel.AddChild(redeemCodeButton);
+						redeemCodeButton.Margin = new BorderDouble(0, 0, 3, 0);
+						redeemCodeButton.Click += new EventHandler((sender, e) =>
+						{
+						}
+						);
+					}
 
 					GuiWidget spacer = new GuiWidget();
 					spacer.HAnchor = HAnchor.ParentLeftRight;
@@ -399,11 +424,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			LibraryProvider.Instance.AddFilesToLibrary(fileDropEventArgs.DroppedFiles, LibraryProvider.Instance.GetProviderLocator());
 
 			base.OnDragDrop(fileDropEventArgs);
-		}
-
-		private void importToLibraryloadFile_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle);
 		}
 
 		private void importToLibraryloadFile_ClickOnIdle()
