@@ -121,7 +121,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void AddCollectionToLibrary(string collectionName)
 		{
-			throw new NotImplementedException();
+			string directoryPath = Path.Combine(rootPath, currentDirectory, collectionName);
+			if (!Directory.Exists(directoryPath))
+			{
+				Directory.CreateDirectory(directoryPath);
+				GetFilesInCurrentDirectory();
+				LibraryProvider.OnDataReloaded(null);
+			}
 		}
 
 		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerLocator, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)

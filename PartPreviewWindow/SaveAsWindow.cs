@@ -12,18 +12,16 @@ namespace MatterHackers.MatterControl
 {
 	public class SaveAsWindow : SystemWindow
 	{
+		private CheckBox addToLibraryOption;
+		private Action<SaveAsReturnInfo> functionToCallOnSaveAs;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
-		private CheckBox addToLibraryOption;
 
-		public delegate void SetPrintItemWrapperAndSave(SaveAsReturnInfo returnInfo);
-
-		private SetPrintItemWrapperAndSave functionToCallOnSaveAs;
-
-		public SaveAsWindow(SetPrintItemWrapperAndSave functionToCallOnSaveAs)
+		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs)
 			: base(480, 250)
 		{
 			Title = "MatterControl - Save As";
+			AlwaysOnTopOfMain = true;
 
 			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
@@ -40,7 +38,7 @@ namespace MatterHackers.MatterControl
 
 			//Creates Text and adds into header
 			{
-				string saveAsLabel = "Save New Design to Queue:";
+				string saveAsLabel = "Save New Design to Queue".Localize() + ":";
 				TextWidget elementHeader = new TextWidget(saveAsLabel, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				elementHeader.HAnchor = HAnchor.ParentLeftRight;
@@ -60,24 +58,24 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
-			string fileNameLabel = "Design Name";
+			string fileNameLabel = "Design Name".Localize();
 			TextWidget textBoxHeader = new TextWidget(fileNameLabel, pointSize: 12);
 			textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textBoxHeader.Margin = new BorderDouble(5);
 			textBoxHeader.HAnchor = HAnchor.ParentLeft;
 
-			string fileNameLabelFull = "Enter the name of your design.";
+			string fileNameLabelFull = "Enter the name of your design.".Localize(); ;
 			TextWidget textBoxHeaderFull = new TextWidget(fileNameLabelFull, pointSize: 9);
 			textBoxHeaderFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textBoxHeaderFull.Margin = new BorderDouble(5);
 			textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
 
 			//Adds text box and check box to the above container
-			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here");
+			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize());
 			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
 			textToAddWidget.Margin = new BorderDouble(5);
 
-			addToLibraryOption = new CheckBox("Also save to Library", ActiveTheme.Instance.PrimaryTextColor);
+			addToLibraryOption = new CheckBox("Also save to Library".Localize(), ActiveTheme.Instance.PrimaryTextColor);
 			addToLibraryOption.Margin = new BorderDouble(5);
 			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
 
@@ -107,7 +105,7 @@ namespace MatterHackers.MatterControl
 			//Adds SaveAs and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			Button cancelButton = textImageButtonFactory.Generate("Cancel", centerText: true);
+			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
 			cancelButton.Visible = true;
 			cancelButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(cancelButton);
@@ -131,11 +129,25 @@ namespace MatterHackers.MatterControl
 			SubmitForm();
 		}
 
+		private void SubmitForm()
+		{
+			string newName = textToAddWidget.ActualTextEditWidget.Text;
+			if (newName != "")
+			{
+				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
+				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, addToLibraryOption.Checked);
+				functionToCallOnSaveAs(returnInfo);
+				CloseOnIdle();
+			}
+		}
+
 		public class SaveAsReturnInfo
 		{
 			public string fileNameAndPath;
-			public bool placeInLibrary;
 			public string newName;
+			public bool placeInLibrary;
 			public PrintItemWrapper printItemWrapper;
 
 			public SaveAsReturnInfo(string newName, string fileNameAndPath, bool placeInLibrary)
@@ -151,20 +163,6 @@ namespace MatterHackers.MatterControl
 				printItem.Commit();
 
 				printItemWrapper = new PrintItemWrapper(printItem);
-			}
-		}
-
-		private void SubmitForm()
-		{
-			string newName = textToAddWidget.ActualTextEditWidget.Text;
-			if (newName != "")
-			{
-				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
-				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
-
-				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, addToLibraryOption.Checked);
-				functionToCallOnSaveAs(returnInfo);
-				CloseOnIdle();
 			}
 		}
 	}

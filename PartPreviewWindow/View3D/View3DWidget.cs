@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		internal HeightValueDisplay heightDisplay;
 		private readonly int EditButtonHeight = 44;
-		private AfterSaveCallback afterSaveCallback = null;
+		private Action afterSaveCallback = null;
 		private Button applyScaleButton;
 		private List<MeshGroup> asynchMeshGroups = new List<MeshGroup>();
 		private List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
@@ -419,8 +419,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				partHasBeenEdited = true;
 			};
 		}
-
-		public delegate void AfterSaveCallback();
 
 		public enum AutoRotate { Enabled, Disabled };
 
@@ -1932,7 +1930,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void MergeAndSavePartsToCurrentMeshFile(AfterSaveCallback eventToCallAfterSave = null)
+		private void MergeAndSavePartsToCurrentMeshFile(Action eventToCallAfterSave = null)
 		{
 			editorThatRequestedSave = true;
 			afterSaveCallback = eventToCallAfterSave;

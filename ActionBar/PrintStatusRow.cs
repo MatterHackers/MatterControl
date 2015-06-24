@@ -82,9 +82,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		public delegate void AddIconToPrintStatusRowDelegate(GuiWidget iconContainer);
-
-		public static event AddIconToPrintStatusRowDelegate AddIconToPrintStatusRow
+		public static event Action<GuiWidget> AddIconToPrintStatusRow
 		{
 			add
 			{
@@ -99,7 +97,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		private static event AddIconToPrintStatusRowDelegate privateAddIconToPrintStatusRow;
+		private static event Action<GuiWidget> privateAddIconToPrintStatusRow;
 
 		private event EventHandler unregisterEvents;
 		private string ActivePrintStatusText

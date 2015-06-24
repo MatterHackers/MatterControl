@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class PrintLibraryWidget : GuiWidget
 	{
+		private CreateFolderWindow createFolderWindow = null;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
@@ -154,6 +155,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createFolderButton.Click += new EventHandler((sender, e) =>
 						{
+							if (createFolderWindow == null)
+							{
+								createFolderWindow = new CreateFolderWindow(CreateNamedFolder);
+								createFolderWindow.Closed += new EventHandler(CreateFolderWindow_Closed);
+							}
+							else
+							{
+								createFolderWindow.BringToFront();
+							}
 						}
 						);
 					}
@@ -192,6 +202,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AddChild(allControls);
 
 			AddHandlers();
+		}
+
+		private void CreateFolderWindow_Closed(object sender, EventArgs e)
+		{
+			this.createFolderWindow = null;
+		}
+
+		private void CreateNamedFolder(CreateFolderWindow.CreateFolderReturnInfo returnInfo)
+		{
+			LibraryProvider.Instance.AddCollectionToLibrary(returnInfo.newName);
 		}
 
 		private void CreateEditBarButtons()

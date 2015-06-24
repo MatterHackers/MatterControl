@@ -474,7 +474,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			itemHolder.MouseEnterBounds += new EventHandler(itemToAdd_MouseEnterBounds);
 			itemHolder.MouseLeaveBounds += new EventHandler(itemToAdd_MouseLeaveBounds);
-			itemHolder.MouseDownInBounds += new MouseEventHandler(itemHolder_MouseDownInBounds);
+			itemHolder.MouseDownInBounds += itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
 		}
 
@@ -514,7 +514,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			FlowLayoutWidget itemHolder = (FlowLayoutWidget)sender;
 			itemHolder.MouseEnterBounds -= new EventHandler(itemToAdd_MouseEnterBounds);
 			itemHolder.MouseLeaveBounds -= new EventHandler(itemToAdd_MouseLeaveBounds);
-			itemHolder.MouseDownInBounds -= new MouseEventHandler(itemHolder_MouseDownInBounds);
+			itemHolder.MouseDownInBounds -= itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
 		}
 

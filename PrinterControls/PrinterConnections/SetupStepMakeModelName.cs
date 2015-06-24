@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerNameInput = new MHTextEditWidget(this.ActivePrinter.Name);
 			printerNameInput.HAnchor = HAnchor.ParentLeftRight;
-			printerNameInput.KeyPressed += new KeyPressEventHandler(PrinterNameInput_KeyPressed);
+			printerNameInput.KeyPressed += PrinterNameInput_KeyPressed;
 
 			printerNameError = new TextWidget(LocalizedString.Get("Give your printer a name."), 0, 0, 10);
 			printerNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
