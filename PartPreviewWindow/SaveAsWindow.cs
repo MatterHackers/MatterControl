@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl
 				PrintItem printItem = new PrintItem();
 				printItem.Name = newName;
 				printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
-				printItem.PrintItemCollectionID = LibrarySQLiteData.Instance.LibraryCollection.Id;
+				printItem.PrintItemCollectionID = LibrarySQLiteData.Instance.RootLibraryCollection.Id;
 				printItem.Commit();
 
 				printItemWrapper = new PrintItemWrapper(printItem);

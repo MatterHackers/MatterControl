@@ -929,7 +929,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				printItem.Name = string.Format("{0}", word);
 				printItem.FileLocation = Path.GetFullPath(filePath);
-				printItem.PrintItemCollectionID = LibrarySQLiteData.Instance.LibraryCollection.Id;
 
 				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
 

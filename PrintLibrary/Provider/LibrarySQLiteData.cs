@@ -127,8 +127,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				OnItemAdded(new IndexArgs(indexToInsert));
 			}
-			item.PrintItem.PrintItemCollectionID = LibraryCollection.Id;
+			item.PrintItem.PrintItemCollectionID = RootLibraryCollection.Id;
 			item.PrintItem.Commit();
+		}
+
+		public void AddCollection(PrintItemCollection collection)
+		{
+			collection.Commit();
 		}
 
 		public void RemoveItem(PrintItemWrapper printItemWrapper)
@@ -158,7 +163,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return null;
 		}
 
-		public DataStorage.PrintItemCollection LibraryCollection
+		public DataStorage.PrintItemCollection RootLibraryCollection
 		{
 			get
 			{
@@ -215,7 +220,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		internal IEnumerable<DataStorage.PrintItem> GetLibraryItems(string keyphrase = null)
 		{
-			if (LibraryCollection == null)
+			if (RootLibraryCollection == null)
 			{
 				return null;
 			}
@@ -277,11 +282,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private ReportProgressRatio fileLoadReportProgress = null;
-
 		public void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
-			this.fileLoadReportProgress = reportProgress;
 			if (files != null && files.Count > 0)
 			{
 				BackgroundWorker loadFilesIntoLibraryBackgroundWorker = new BackgroundWorker();
@@ -334,7 +336,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			PrintItem printItem = new PrintItem();
 			printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
 			printItem.FileLocation = Path.GetFullPath(loadedFileName);
-			printItem.PrintItemCollectionID = LibrarySQLiteData.Instance.LibraryCollection.Id;
+			printItem.PrintItemCollectionID = LibrarySQLiteData.Instance.RootLibraryCollection.Id;
 			printItem.Commit();
 
 			if (MeshFileIo.ValidFileExtensions().Contains(extension))

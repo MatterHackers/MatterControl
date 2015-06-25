@@ -31,7 +31,6 @@ using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,7 +50,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibraryProviderSQLite.Instance.SetParentKey(this.ProviderKey);
 
 			// and any directory providers (sd card provider, etc...)
-			//libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this.ProviderKey));
+			libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this.ProviderKey));
 			//#if __ANDROID__
 			//libraryProviders.Add(new LibraryProviderFileSystem(ApplicationDataStorage.Instance.PublicDataStoragePath, "Downloads", this.ProviderKey));
 
@@ -177,6 +176,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			int libraryProviderToUseIndex = GetProviderIndex(providerSavePath, out subProviderSavePath);
 
 			libraryProviders[libraryProviderToUseIndex].AddFilesToLibrary(files, subProviderSavePath, reportProgress, callback);
+		}
+
+		public override void AddItem(PrintItemWrapper itemToAdd)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)

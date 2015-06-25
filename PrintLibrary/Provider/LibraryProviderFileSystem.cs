@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
@@ -47,19 +48,30 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private List<string> currentDirectoryDirectories = new List<string>();
 		private List<string> currentDirectoryFiles = new List<string>();
 		private string description;
+		private FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		private string keywordFilter = string.Empty;
-		private string parentKey = null;
+		private string parentProviderKey = null;
 		private string rootPath;
 
-		public LibraryProviderFileSystem(string rootPath, string description, string parentKeyKey)
+		public LibraryProviderFileSystem(string rootPath, string description, string parentProviderKey)
 		{
-			this.parentKey = parentKeyKey;
+			this.parentProviderKey = parentProviderKey;
 			this.description = description;
 			this.rootPath = rootPath;
 
 			key = keyCount.ToString();
 			keyCount++;
-			GetFilesInCurrentDirectory();
+			SetCollectionBase(null);
+
+			directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+				   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+			directoryWatcher.Changed += new FileSystemEventHandler(DiretoryContentsChanged);
+			directoryWatcher.Created += new FileSystemEventHandler(DiretoryContentsChanged);
+			directoryWatcher.Deleted += new FileSystemEventHandler(DiretoryContentsChanged);
+			directoryWatcher.Renamed += new RenamedEventHandler(DiretoryContentsChanged);
+
+			// Begin watching.
+			directoryWatcher.EnableRaisingEvents = true;
 		}
 
 		public override int CollectionCount
@@ -74,7 +86,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				if (parentKey != null)
+				if (parentProviderKey != null)
 				{
 					return true;
 				}
@@ -103,7 +115,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				if (keywordFilter != value)
 				{
 					keywordFilter = value;
-					GetFilesInCurrentDirectory();
+					GetFilesAndCollectionsInCurrentDirectory();
 					LibraryProvider.OnDataReloaded(null);
 				}
 			}
@@ -125,7 +137,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			if (!Directory.Exists(directoryPath))
 			{
 				Directory.CreateDirectory(directoryPath);
-				GetFilesInCurrentDirectory();
+				GetFilesAndCollectionsInCurrentDirectory();
 				LibraryProvider.OnDataReloaded(null);
 			}
 		}
@@ -145,8 +157,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				CopyAllFiles(files, destPath);
 			}
 
-			GetFilesInCurrentDirectory();
+			GetFilesAndCollectionsInCurrentDirectory();
 			LibraryProvider.OnDataReloaded(null);
+		}
+
+		public override void AddItem(PrintItemWrapper itemToAdd)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -159,9 +176,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			if (currentDirectory == ".")
 			{
-				if (parentKey != null)
+				if (parentProviderKey != null)
 				{
-					return new PrintItemCollection("..", parentKey);
+					return new PrintItemCollection("..", parentProviderKey);
 				}
 				else
 				{
@@ -196,7 +213,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
 			File.Delete(printItemWrapper.PrintItem.FileLocation);
-			GetFilesInCurrentDirectory();
+			GetFilesAndCollectionsInCurrentDirectory();
 			LibraryProvider.OnDataReloaded(null);
 		}
 
@@ -207,14 +224,23 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void SetCollectionBase(PrintItemCollection collectionBase)
 		{
-			string collectionPath = collectionBase.Key;
-			int startOfCurrentDir = collectionPath.IndexOf('.');
-			if (startOfCurrentDir != -1)
+			if (collectionBase == null)
 			{
-				this.currentDirectory = collectionPath.Substring(startOfCurrentDir);
+				currentDirectory = ".";
+			}
+			else
+			{
+				string collectionPath = collectionBase.Key;
+				int startOfCurrentDir = collectionPath.IndexOf('.');
+				if (startOfCurrentDir != -1)
+				{
+					this.currentDirectory = collectionPath.Substring(startOfCurrentDir);
+				}
 			}
 
-			GetFilesInCurrentDirectory();
+			GetFilesAndCollectionsInCurrentDirectory();
+
+			directoryWatcher.Path = Path.Combine(rootPath, currentDirectory);
 		}
 
 		private static void CopyAllFiles(IList<string> files, string destPath)
@@ -243,7 +269,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		private void GetFilesInCurrentDirectory()
+		private void DiretoryContentsChanged(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				GetFilesAndCollectionsInCurrentDirectory();
+				LibraryProvider.OnDataReloaded(null);
+			});
+		}
+
+		private void GetFilesAndCollectionsInCurrentDirectory()
 		{
 			currentDirectoryDirectories.Clear();
 			string[] directories = Directory.GetDirectories(Path.Combine(rootPath, currentDirectory));

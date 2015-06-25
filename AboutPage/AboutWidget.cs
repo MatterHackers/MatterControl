@@ -35,8 +35,10 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.HtmlParsing;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
@@ -117,7 +119,7 @@ namespace MatterHackers.MatterControl
 
 			HashSet<string> referencedPrintItemsFilePaths = new HashSet<string>();
 			HashSet<string> referencedThumbnailFiles = new HashSet<string>();
-			// Get a list of all the stl and amf files referenced in the queue or library.
+			// Get a list of all the stl and amf files referenced in the queue.
 			foreach (PrintItemWrapper printItem in QueueData.Instance.PrintItems)
 			{
 				string fileLocation = printItem.FileLocation;
@@ -128,13 +130,15 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			foreach (PrintItemWrapper printItem in LibrarySQLiteData.Instance.PrintItems)
+			// Add in all the stl and amf files referenced in the library.
+			foreach (PrintItem printItem in LibraryProviderSQLite.GetAllPrintItemsRecursive())
 			{
+				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
 				string fileLocation = printItem.FileLocation;
 				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
 				{
 					referencedPrintItemsFilePaths.Add(fileLocation);
-					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItem));
+					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItemWrapper));
 				}
 			}
 
