@@ -118,11 +118,25 @@ namespace MatterHackers.MatterControl
 
 			GuiWidget manualPrinterControls = new ManualControlsWidget();
 
+#if __ANDROID__
+            //Add the tab contents for 'Advanced Controls'
+            string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
+            manualControlsPage = new TabPage(manualPrinterControls, printerControlsLabel);
+            this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
+				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+#else
+            ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
+            manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+            manualPrinterControlsScrollArea.AnchorAll();
+            manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
+
 			//Add the tab contents for 'Advanced Controls'
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-			manualControlsPage = new TabPage(manualPrinterControls, printerControlsLabel);
-			this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
+            manualControlsPage = new TabPage(manualPrinterControlsScrollArea, printerControlsLabel);           
+
+            this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+#endif
 
 			HorizontalLine lineSpacerOne = new HorizontalLine();
 			lineSpacerOne.Margin = new BorderDouble(4, 10);
@@ -155,7 +169,7 @@ namespace MatterHackers.MatterControl
 			// Specifically, it has the wronge position on the app restarting.
 			if(false) 
 			{
-				UiThread.RunOnIdle((state) => 
+				UiThread.RunOnIdle(() => 
 				{
 					int scrollPosition = UserSettings.Instance.Fields.GetInt(CompactTabView_Options_ScrollPosition, -100000);
 					if (scrollPosition != -100000)
@@ -225,7 +239,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void ReloadAdvancedControlsPanel(object state)
+		public void ReloadAdvancedControlsPanel()
 		{
 			UiThread.RunOnIdle(LoadAdvancedControls);
 		}
@@ -245,7 +259,7 @@ namespace MatterHackers.MatterControl
 				case UpdateControlData.UpdateStatusStates.UpdateDownloading:
 					if (addedUpdateMark == null)
 					{
-						addedUpdateMark = new NotificationWidget();
+						addedUpdateMark = new UpdateNotificationMark();
 						addedUpdateMark.OriginRelativeParent = new Vector2(aboutTabWidget.tabTitle.Width + 3, 7);
 						aboutTabWidget.AddChild(addedUpdateMark);
 					}
@@ -265,7 +279,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void LoadAdvancedControls(object state = null)
+		private void LoadAdvancedControls()
 		{
 			RreloadControlsWidget();
 			ReloadConfigurationWidget();

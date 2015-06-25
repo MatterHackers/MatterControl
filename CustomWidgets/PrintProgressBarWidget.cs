@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl
 			UpdatePrintStatus();
 		}
 
-		private void OnIdle(object state)
+		private void OnIdle()
 		{
 			currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
 			UpdatePrintStatus();

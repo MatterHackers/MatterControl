@@ -167,10 +167,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			resumeButton.Click += new EventHandler(onResumeButton_Click);
 			pauseButton.Click += new EventHandler(onPauseButton_Click);
 			connectButton.Click += new EventHandler(onConnectButton_Click);
-			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(ResetConnectionButton_Click); };
+			resetConnectionButton.Click += (sender, e) => { UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard); };
 
 			cancelButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelButton_Click); };
-			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelConnectionButton_Click); };
+			cancelConnectButton.Click += (sender, e) => { UiThread.RunOnIdle(CancelPrinting); };
 			reprintButton.Click += new EventHandler(onReprintButton_Click);
 			doneWithCurrentPartButton.Click += new EventHandler(onDoneWithCurrentPartButton_Click);
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		private void AddButtonOnIdle(object state)
+		private void AddButtonOnIdle()
 		{
 			FileDialog.OpenFileDialog(
 				new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				});
 		}
 
-		private void CancelButton_Click(object state)
+		private void CancelButton_Click()
 		{
 			if (timeSincePrintStarted.IsRunning && timeSincePrintStarted.ElapsedMilliseconds > (2 * 60 * 1000))
 			{
@@ -351,13 +351,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			else
 			{
 				CancelPrinting();
-				UiThread.RunOnIdle((state2) => { SetButtonStates(); });
+				UiThread.RunOnIdle(SetButtonStates);
 			}
-		}
-
-		private void CancelConnectionButton_Click(object state)
-		{
-			CancelPrinting();
 		}
 
 		private void CancelPrinting()
@@ -368,17 +363,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			PrinterConnectionAndCommunication.Instance.Stop();
 			timeSincePrintStarted.Reset();
-			UiThread.RunOnIdle((state2) => { SetButtonStates(); });
+			UiThread.RunOnIdle(SetButtonStates);
 		}
 
 		private void onAddButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(AddButtonOnIdle);
-		}
-
-		private void ResetConnectionButton_Click(object state)
-		{
-			PrinterConnectionAndCommunication.Instance.RebootBoard();
 		}
 
 		private void onConnectButton_Click(object sender, EventArgs mouseEvent)
@@ -417,10 +407,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (messageBoxResponse)
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					CancelPrinting();
-				});
+				UiThread.RunOnIdle(CancelPrinting);
 			}
 		}
 
@@ -444,10 +431,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onReprintButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-			});
+			UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible);
 		}
 
 		private void onResumeButton_Click(object sender, EventArgs mouseEvent)
@@ -468,10 +452,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onStartButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-			});
+			UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible);
 		}
 
 		private void onStateChanged(object sender, EventArgs e)

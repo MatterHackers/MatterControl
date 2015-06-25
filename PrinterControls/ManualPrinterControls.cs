@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl
 			: base()
 		{
 			this.AnchorAll();
+            VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
 			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			this.AddChild(new ManualPrinterControls());
 		}
@@ -101,7 +102,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private event EventHandler unregisterEvents;
-		public void AddPlugins(object state)
+		public void AddPlugins()
 		{
 			AddPluginControls.CallEvents(this, null);
 			pluginsQueuedToAdd = false;
@@ -160,7 +161,7 @@ namespace MatterHackers.MatterControl
 			temperatureControlsContainer = new TemperatureControls();
 			controlsTopToBottomLayout.AddChild(temperatureControlsContainer);
 		}
-		private void invalidateWidget(object state)
+		private void invalidateWidget()
 		{
 			this.Invalidate();
 		}

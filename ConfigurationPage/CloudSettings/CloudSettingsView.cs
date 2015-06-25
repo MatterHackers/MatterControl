@@ -61,24 +61,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.linkButtonFactory.fontSize = 11;
 		}
 
-		public delegate void EnableCloudMonitor(object state);
-
-		public static EnableCloudMonitor enableCloudMonitorFunction = null;
+		public static Action enableCloudMonitorFunction = null;
 
 		private void enableCloudMonitor_Click(object sender, EventArgs mouseEvent)
 		{
 			if (enableCloudMonitorFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					enableCloudMonitorFunction(null);
-				});
+				UiThread.RunOnIdle(enableCloudMonitorFunction);
 			}
 		}
 
-		public delegate void DisableCloudMonitor(object state);
-
-		public static DisableCloudMonitor disableCloudMonitorFunction = null;
+		public static Action disableCloudMonitorFunction = null;
 
 		private void disableCloudMonitor_Click(object sender, EventArgs mouseEvent)
 		{
@@ -87,40 +80,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			if (disableCloudMonitorFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					disableCloudMonitorFunction(null);
-				});
+				UiThread.RunOnIdle(disableCloudMonitorFunction);
 			}
 		}
 
-		public delegate void OpenDashboardPage(object state);
-
-		public static OpenDashboardPage openDashboardPageFunction = null;
+		public static Action openDashboardPageFunction = null;
 
 		private void goCloudMonitoringWebPageButton_Click(object sender, EventArgs mouseEvent)
 		{
 			if (openDashboardPageFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					openDashboardPageFunction(null);
-				});
+				UiThread.RunOnIdle(openDashboardPageFunction);
 			}
 		}
 
-		public delegate void OpenInstructionsPage(object state);
-
-		public static OpenInstructionsPage openInstructionsPageFunction = null;
+		public static Action openInstructionsPageFunction = null;
 
 		private void goCloudMonitoringInstructionsButton_Click(object sender, EventArgs mouseEvent)
 		{
 			if (openDashboardPageFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					openInstructionsPageFunction(null);
-				});
+				UiThread.RunOnIdle(openInstructionsPageFunction);
 			}
 		}
 
@@ -275,18 +255,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.Invalidate();
 		}
 
-		public delegate void OpenNotificationFormWindow(object state);
-
-		public static OpenNotificationFormWindow openPrintNotificationFunction = null;
+		public static Action openPrintNotificationFunction = null;
 
 		private void configureNotificationSettingsButton_Click(object sender, EventArgs mouseEvent)
 		{
 			if (openPrintNotificationFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					openPrintNotificationFunction(null);
-				});
+				UiThread.RunOnIdle(openPrintNotificationFunction);
 			}
 		}
 

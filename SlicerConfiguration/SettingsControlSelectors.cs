@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ActivePrinterProfile.Instance.ActiveQualitySettingsID = Int32.Parse(item.Value);
 				}
 			}
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ActiveSliceSettings.Instance.LoadAllSettings();
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             // after getting the new name select it and relead the slice setting widget editing the new setting
             throw new NotImplementedException();
 #else
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ActiveSliceSettings.Instance.LoadAllSettings();
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();

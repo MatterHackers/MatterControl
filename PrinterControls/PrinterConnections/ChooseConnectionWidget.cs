@@ -206,12 +206,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private void CloseWindow(object o, EventArgs e)
 		{
 			//Stop listening for connection events (if set) and close window
-			UiThread.RunOnIdle(CloseOnIdle);
-		}
-
-		private void CloseOnIdle(object state)
-		{
-			this.containerWindowToClose.Close();
+			UiThread.RunOnIdle(containerWindowToClose.Close);
 		}
 
 		private IEnumerable<Printer> GetAllPrinters()

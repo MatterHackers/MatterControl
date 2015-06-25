@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 		}
 
-		private void installButton_Click(object state)
+		private void installButton_Click()
 		{
 			bool canContinue = this.OnSave();
 			if (canContinue)
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			return container;
 		}
 
-		private void MoveToNextWidget(object state)
+		private void MoveToNextWidget()
 		{
 			// you can call this like this
 			//             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));

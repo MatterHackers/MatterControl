@@ -31,21 +31,24 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class PrintLibraryWidget : GuiWidget
 	{
+		private CreateFolderWindow createFolderWindow = null;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
-	
+		private TextWidget breadCrumbDisplay;
+
 		private FlowLayoutWidget itemOperationButtons;
 		private List<bool> editOperationMultiCapable = new List<bool>();
 
@@ -90,7 +93,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
-				
+
 				leaveEditModeButton.Visible = false;
 
 				FlowLayoutWidget searchPanel = new FlowLayoutWidget();
@@ -137,20 +140,58 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				buttonPanel.Padding = new BorderDouble(0, 3);
 				buttonPanel.MinimumSize = new Vector2(0, 46);
 				{
-					addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
-					buttonPanel.AddChild(addToLibraryButton);
-					addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
-					addToLibraryButton.Click += new EventHandler(importToLibraryloadFile_Click);
+					// the add button
+					{
+						addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+						buttonPanel.AddChild(addToLibraryButton);
+						addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
+						addToLibraryButton.Click += new EventHandler((sender, e) => UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle));
+					}
+
+					// the create folder button
+					{
+						Button createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
+						buttonPanel.AddChild(createFolderButton);
+						createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
+						createFolderButton.Click += new EventHandler((sender, e) =>
+						{
+							if (createFolderWindow == null)
+							{
+								createFolderWindow = new CreateFolderWindow(CreateNamedFolder);
+								createFolderWindow.Closed += new EventHandler(CreateFolderWindow_Closed);
+							}
+							else
+							{
+								createFolderWindow.BringToFront();
+							}
+						}
+						);
+					}
+
+					// the redeem code button
+					{
+						Button redeemCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Redeem"));
+						buttonPanel.AddChild(redeemCodeButton);
+						redeemCodeButton.Margin = new BorderDouble(0, 0, 3, 0);
+						redeemCodeButton.Click += new EventHandler((sender, e) =>
+						{
+						}
+						);
+					}
 
 					GuiWidget spacer = new GuiWidget();
 					spacer.HAnchor = HAnchor.ParentLeftRight;
 					buttonPanel.AddChild(spacer);
 				}
-	
+
 				CreateEditBarButtons();
+
+				breadCrumbDisplay = new TextWidget("");
+				breadCrumbDisplay.AutoExpandBoundsToText = true;
 
 				//allControls.AddChild(navigationPanel);
 				allControls.AddChild(searchPanel);
+				allControls.AddChild(breadCrumbDisplay);
 				allControls.AddChild(itemOperationButtons);
 				libraryDataView = new LibraryDataView();
 				allControls.AddChild(libraryDataView);
@@ -161,6 +202,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AddChild(allControls);
 
 			AddHandlers();
+		}
+
+		private void CreateFolderWindow_Closed(object sender, EventArgs e)
+		{
+			this.createFolderWindow = null;
+		}
+
+		private void CreateNamedFolder(CreateFolderWindow.CreateFolderReturnInfo returnInfo)
+		{
+			LibraryProvider.Instance.AddCollectionToLibrary(returnInfo.newName);
 		}
 
 		private void CreateEditBarButtons()
@@ -185,7 +236,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			Button removeFromLibraryButton = editButtonFactory.Generate("Remove".Localize());
 			removeFromLibraryButton.Margin = new BorderDouble(3, 0);
-			removeFromLibraryButton.Click += new EventHandler(deleteFromQueueButton_Click);
+			removeFromLibraryButton.Click += new EventHandler(deleteFromLibraryButton_Click);
 			editOperationMultiCapable.Add(true);
 			itemOperationButtons.AddChild(removeFromLibraryButton);
 
@@ -199,10 +250,45 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			editButtonFactory.FixedWidth = oldWidth;
 		}
 
+		private event EventHandler unregisterEvents;
+
 		private void AddHandlers()
 		{
 			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
 			libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
+			LibraryProvider.CollectionChanged.RegisterEvent(CollectionChanged, ref unregisterEvents);
+		}
+
+		private void CollectionChanged(object sender, EventArgs e)
+		{
+			List<ProviderLocatorNode> providerLocator = LibraryProvider.Instance.GetProviderLocator();
+			StringBuilder path = new StringBuilder();
+			bool first = true;
+			foreach (ProviderLocatorNode node in providerLocator)
+			{
+				if (!first)
+				{
+					path.Append("->");
+				}
+
+				if (node.Name != "..")
+				{
+					path.Append(node.Name);
+					first = false;
+				}
+			}
+
+			breadCrumbDisplay.Text = path.ToString();
+			libraryDataView.ClearSelectedItems();
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
 		}
 
 		private void searchInputKeyUp(object sender, KeyEventArgs keyEvent)
@@ -235,8 +321,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void searchButtonClick(object sender, EventArgs mouseEvent)
 		{
-			string textToSend = searchInput.Text.Trim();
-			LibraryData.Instance.KeywordFilter = textToSend;
+			string searchText = searchInput.Text.Trim();
+			LibraryProvider.Instance.KeywordFilter = searchText;
 			libraryDataView.ClearSelectedItems();
 		}
 
@@ -244,7 +330,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
 			{
-				QueueData.Instance.AddItem(item.printItemWrapper);
+				item.AddToQueue();
 			}
 			libraryDataView.ClearSelectedItems();
 		}
@@ -285,11 +371,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AnchorAll();
 		}
 
-		private void deleteFromQueueButton_Click(object sender, EventArgs mouseEvent)
+		private void deleteFromLibraryButton_Click(object sender, EventArgs mouseEvent)
 		{
 			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
 			{
-				LibraryData.Instance.RemoveItem(item.printItemWrapper);
+				item.RemoveFromCollection();
 			}
 
 			libraryDataView.ClearSelectedItems();
@@ -304,7 +390,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (libraryDataView.SelectedItems.Count == 1)
 			{
 				LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-				OpenExportWindow(libraryItem.printItemWrapper);
+				libraryItem.Export();
 			}
 		}
 
@@ -314,25 +400,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (libraryDataView.SelectedItems.Count == 1)
 			{
 				LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-				libraryItem.OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
-			}
-		}
-
-		private void OpenExportWindow(PrintItemWrapper printItem)
-		{
-			if (exportingWindowIsOpen == false)
-			{
-				exportingWindow = new ExportPrintItemWindow(printItem);
-				this.exportingWindowIsOpen = true;
-				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
-				exportingWindow.ShowAsSystemWindow();
-			}
-			else
-			{
-				if (exportingWindow != null)
-				{
-					exportingWindow.BringToFront();
-				}
+				libraryItem.Edit();
 			}
 		}
 
@@ -373,17 +441,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			LibraryData.Instance.LoadFilesIntoLibrary(fileDropEventArgs.DroppedFiles);
+			LibraryProvider.Instance.AddFilesToLibrary(fileDropEventArgs.DroppedFiles, LibraryProvider.Instance.GetProviderLocator());
 
 			base.OnDragDrop(fileDropEventArgs);
 		}
 
-		private void importToLibraryloadFile_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle);
-		}
-
-		private void importToLibraryloadFile_ClickOnIdle(object state)
+		private void importToLibraryloadFile_ClickOnIdle()
 		{
 			OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
 			FileDialog.OpenFileDialog(openParams, onLibraryLoadFileSelected);
@@ -393,7 +456,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (openParams.FileNames != null)
 			{
-				LibraryData.Instance.LoadFilesIntoLibrary(openParams.FileNames);
+				LibraryProvider.Instance.AddFilesToLibrary(openParams.FileNames, null);
 			}
 		}
 	}

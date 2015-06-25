@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			SaveAndExit();
 		}
 
-		private void MoveToNextWidget(object state)
+		private void MoveToNextWidget()
 		{
 			// you can call this like this
 			//             AfterUiEvents.AddAction(new AfterUIAction(MoveToNextWidget));

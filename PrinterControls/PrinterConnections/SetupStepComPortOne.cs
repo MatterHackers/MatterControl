@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			UiThread.RunOnIdle(MoveToManualConfiguration);
 		}
 
-		private void MoveToManualConfiguration(object state)
+		private void MoveToManualConfiguration()
 		{
 			Parent.AddChild(new SetupStepComPortManual((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
 			Parent.RemoveChild(this);
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			UiThread.RunOnIdle(MoveToNextWidget);
 		}
 
-		private void MoveToNextWidget(object state)
+		private void MoveToNextWidget()
 		{
 			Parent.AddChild(new SetupStepComPortTwo((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
 			Parent.RemoveChild(this);

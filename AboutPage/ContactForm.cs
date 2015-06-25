@@ -228,17 +228,11 @@ namespace MatterHackers.MatterControl.ContactForm
 		{
 			cancelButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					Close();
-				});
+				UiThread.RunOnIdle(Close);
 			};
 			doneButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					Close();
-				});
+				UiThread.RunOnIdle(Close);
 			};
 			submitButton.Click += new EventHandler(SubmitContactForm);
 		}

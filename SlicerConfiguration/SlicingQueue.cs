@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 											message = "Saving intermediate file";
 										}
 										message += "...";
-										UiThread.RunOnIdle((state) =>
+										UiThread.RunOnIdle(() =>
 										{
 											itemToSlice.OnSlicingOutputMessage(new StringEventArgs(message));
 										});
@@ -430,7 +430,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 					}
 
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						itemToSlice.CurrentlySlicing = false;
 						itemToSlice.DoneSlicing = true;
@@ -459,7 +459,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					message = "Saving intermediate file";
 				}
 				message += "...";
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					if (itemCurrentlySlicing != null)
 					{

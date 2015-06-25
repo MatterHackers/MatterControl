@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterCont
 		{670BDDFF-927B-425D-9DD1-22ACB14356EB} = {670BDDFF-927B-425D-9DD1-22ACB14356EB}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tesselate", "SubModules\agg-sharp\Tesselate\Tesselate.csproj", "{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tesselate", "Submodules\agg-sharp\Tesselate\Tesselate.csproj", "{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformWin32", "Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj", "{670BDDFF-927B-425D-9DD1-22ACB14356EB}"
 	ProjectSection(ProjectDependencies) = postProject

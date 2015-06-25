@@ -114,13 +114,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("extrusionMultiplier", "extrusion_multiplier"),
 
             //firstLayerExtrusionWidth=0.8 # The width of the line to extrude for the first layer.
-            new FirstLayerHeight("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
+            new AsPercentOfReferenceOrDirect("firstLayerExtrusionWidth", "first_layer_extrusion_width", "nozzle_diameter"),
 
             //firstLayerSpeed=20 # mm/s.
             new AsPercentOfReferenceOrDirect("firstLayerSpeed", "first_layer_speed", "infill_speed"),
 
             //firstLayerThickness=0.3 # The height of the first layer to print, in millimeters.
-            new AsPercentOfReferenceOrDirect("firstLayerThickness", "first_layer_height", "layer_height", 1),
+            new AsPercentOfReferenceOrDirect("firstLayerThickness", "first_layer_height", "layer_height"),
 
             //firstLayerToAllowFan=2 # The fan will be force to stay off below this layer.
             new MapItem("firstLayerToAllowFan", "disable_fan_first_layers"),
@@ -172,10 +172,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //minimumLayerTimeSeconds=5
             new MapItem("minimumLayerTimeSeconds", "slowdown_below_layer_time"),
 
-			new MapItem("unretractExtraExtrusion", "retract_restart_extra"),
+			new MapFirstValue("unretractExtraExtrusion", "retract_restart_extra"),
 
             //minimumTravelToCauseRetraction=1.5 # The minimum travel distance that will require a retraction
-            new MapItem("minimumTravelToCauseRetraction", "retract_before_travel"),
+            new MapFirstValue("minimumTravelToCauseRetraction", "retract_before_travel"),
 
             //modelRotationMatrix=[[1,0,0],[0,1,0],[0,0,1]]
             //multiVolumeOverlapPercent=0
@@ -222,15 +222,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //retractionOnExtruderSwitch=14.5
             new MapItem("retractionOnExtruderSwitch", "retract_length_tool_change"),
 
-            new MapItem("retractionOnTravel", "retract_length"),
+            new MapFirstValue("retractionOnTravel", "retract_length"),
             //retractionOnTravel=4.5
             //new MapItem("retractionOnTravel", "retract_before_travel"),
 
             //retractionSpeed=45 # mm/s.
-            new MapItem("retractionSpeed", "retract_speed"),
+            new MapFirstValue("retractionSpeed", "retract_speed"),
 
             //retractionZHop=0 # The amount to move the extruder up in z after retracting (before a move). mm.
-            new MapItem("retractionZHop", "retract_lift"),
+            new MapFirstValue("retractionZHop", "retract_lift"),
 
             //skirtDistanceFromObject=6 # How far from objects the first skirt loop should be, in millimeters.
             new MapItem("skirtDistanceFromObject", "skirt_distance"),

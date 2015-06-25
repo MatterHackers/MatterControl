@@ -926,21 +926,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			if (filePath != null)
 			{
 				PrintItem printItem = new PrintItem();
-				printItem.Commit();
 
 				printItem.Name = string.Format("{0}", word);
 				printItem.FileLocation = Path.GetFullPath(filePath);
-				printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
-				printItem.Commit();
 
 				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
 
-				LibraryData.Instance.AddItem(printItemWrapper);
-
 				// and save to the queue
-				{
-					QueueData.Instance.AddItem(printItemWrapper);
-				}
+				QueueData.Instance.AddItem(printItemWrapper);
 			}
 
 			//Exit after save
@@ -959,12 +952,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private void onCloseButton_Click(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle(CloseOnIdle);
-		}
-
-		private void CloseOnIdle(object state)
-		{
-			Close();
+			UiThread.RunOnIdle(Close);
 		}
 	}
 }

@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CreatorPlugins;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -413,7 +414,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void AddItemsToQueue(object state)
+		private void AddItemsToQueue()
 		{
 			FileDialog.OpenFileDialog(
 				new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams)
@@ -459,7 +460,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
 			{
-				LibraryData.Instance.AddItem(queueItem.PrintItemWrapper);
+				LibraryProvider.Instance.AddItem(queueItem.PrintItemWrapper);
 			}
 		}
 
@@ -621,7 +622,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			// Once sorted, remove each selected item
 			foreach (var item in sortedByIndexPos)
 			{
-				item.DeletePartFromQueue(null);
+				item.DeletePartFromQueue();
 			}
 
 			this.queueDataView.SelectedItems.Clear();
@@ -639,17 +640,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			List<PrintItemWrapper> itemList = this.queueDataView.SelectedItems.Select(item => item.PrintItemWrapper).ToList();
 			if (sendButtonFunction != null)
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					sendButtonFunction(null, itemList);
-				});
+				UiThread.RunOnIdle(() => sendButtonFunction(null, itemList));
 			}
 			else
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					StyledMessageBox.ShowMessageBox(null, "Oops! Send is currently disabled.", "Send Print");
-				});
+				UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(null, "Oops! Send is currently disabled.", "Send Print"));
 			}
 		}
 

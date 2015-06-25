@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		internal HeightValueDisplay heightDisplay;
 		private readonly int EditButtonHeight = 44;
-		private AfterSaveCallback afterSaveCallback = null;
+		private Action afterSaveCallback = null;
 		private Button applyScaleButton;
 		private List<MeshGroup> asynchMeshGroups = new List<MeshGroup>();
 		private List<ScaleRotateTranslate> asynchMeshGroupTransforms = new List<ScaleRotateTranslate>();
@@ -175,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					enterEditButtonsContainer.AddChild(addButton);
 					addButton.Click += (sender, e) =>
 					{
-						UiThread.RunOnIdle((state) =>
+						UiThread.RunOnIdle(() =>
 						{
 							DoAddFileAfterCreatingEditData = true;
 							EnterEditAndCreateSelectionData();
@@ -193,7 +194,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					exportButton.Margin = new BorderDouble(right: 10);
 					exportButton.Click += (sender, e) =>
 					{
-						UiThread.RunOnIdle((state) =>
+						UiThread.RunOnIdle(() =>
 						{
 							OpenExportWindow();
 						});
@@ -213,7 +214,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(addButton);
 					addButton.Click += (sender, e) =>
 					{
-						UiThread.RunOnIdle((state) =>
+						UiThread.RunOnIdle(() =>
 						{
 							FileDialog.OpenFileDialog(
 								new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
@@ -287,7 +288,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Button leaveEditModeButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
 					leaveEditModeButton.Click += (sender, e) =>
 					{
-						UiThread.RunOnIdle((state) =>
+						UiThread.RunOnIdle(() =>
 						{
 							if (saveButtons.Visible)
 							{
@@ -418,8 +419,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				partHasBeenEdited = true;
 			};
 		}
-
-		public delegate void AfterSaveCallback();
 
 		public enum AutoRotate { Enabled, Disabled };
 
@@ -1070,7 +1069,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void AutoSpin(object state)
+		private void AutoSpin()
 		{
 			if (!WidgetHasBeenClosed && autoRotating)
 			{
@@ -1099,7 +1098,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
 				|| processingState != processingProgressControl.ProgressMessage)
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					processingProgressControl.PercentComplete = (int)(progress0To1 * 100 + .5);
 					processingProgressControl.ProgressMessage = processingState;
@@ -1871,12 +1870,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				saveSucceded = true;
-				LibraryData.SaveToLibraryFolder(printItemWrapper, asynchMeshGroups, true);
+				//LibraryProvider.Instance.SaveToCollection(printItemWrapper.PrintItem.LibraryProviderLocator
+				LibraryProvider.Instance.SaveToLibrary(printItemWrapper, asynchMeshGroups);
 			}
 			catch (System.UnauthorizedAccessException)
 			{
 				saveSucceded = false;
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					//Do something special when unauthorized?
 					StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
@@ -1885,7 +1885,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			catch
 			{
 				saveSucceded = false;
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
 				});
@@ -1908,7 +1908,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (returnInfo.placeInLibrary)
 				{
-					LibraryData.Instance.AddItem(printItemWrapper);
+					LibrarySQLiteData.Instance.AddItem(printItemWrapper);
 				}
 			}
 
@@ -1930,7 +1930,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void MergeAndSavePartsToCurrentMeshFile(AfterSaveCallback eventToCallAfterSave = null)
+		private void MergeAndSavePartsToCurrentMeshFile(Action eventToCallAfterSave = null)
 		{
 			editorThatRequestedSave = true;
 			afterSaveCallback = eventToCallAfterSave;
@@ -1998,10 +1998,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (openMode == OpenMode.Editing)
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					EnterEditAndCreateSelectionData();
-				});
+				UiThread.RunOnIdle(EnterEditAndCreateSelectionData);
 			}
 		}
 
@@ -2022,7 +2019,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void OpenSaveAsWindow(object state)
+		private void OpenSaveAsWindow()
 		{
 			if (saveAsWindow == null)
 			{
@@ -2067,7 +2064,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void PushMeshGroupDataToAsynchLists(TraceInfoOpperation traceInfoOpperation, ReportProgressRatio reportProgress = null)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				processingProgressControl.ProgressMessage = "Async Copy";
 			});
@@ -2100,7 +2097,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				asynchPlatingDatas.Add(meshData);
 			}
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				processingProgressControl.ProgressMessage = "";
 			});

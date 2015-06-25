@@ -185,39 +185,42 @@ namespace MatterHackers.MatterControl
 			int numLinesToDraw = NumVisibleLines;
 
 			double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
-			using (TimedLock.Lock(this, "DrawingLines"))
+			using (TimedLock.Lock(visibleLines, ""))
 			{
-				int startLineIndex = visibleLines.Count - numLinesToDraw;
-				if (forceStartLine != -1)
+				using (TimedLock.Lock(this, "DrawingLines"))
 				{
-					y = LocalBounds.Top;
+					int startLineIndex = visibleLines.Count - numLinesToDraw;
+					if (forceStartLine != -1)
+					{
+						y = LocalBounds.Top;
 
-					if (forceStartLine > visibleLines.Count - numLinesToDraw)
-					{
-						forceStartLine = -1;
-					}
-					else
-					{
-						// make sure we show all the lines we can
-						startLineIndex = Math.Min(forceStartLine, startLineIndex);
-					}
-				}
-				int endLineIndex = visibleLines.Count;
-				for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
-				{
-					if (lineIndex >= 0)
-					{
-						if (visibleLines[lineIndex] != null)
+						if (forceStartLine > visibleLines.Count - numLinesToDraw)
 						{
-							printer.Text = visibleLines[lineIndex];
-							printer.Origin = new Vector2(Bounds.Left + 2, y);
-							printer.Render(graphics2D, TextColor);
+							forceStartLine = -1;
+						}
+						else
+						{
+							// make sure we show all the lines we can
+							startLineIndex = Math.Min(forceStartLine, startLineIndex);
 						}
 					}
-					y -= printer.TypeFaceStyle.EmSizeInPixels;
-					if (y < -printer.TypeFaceStyle.EmSizeInPixels)
+					int endLineIndex = visibleLines.Count;
+					for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
 					{
-						break;
+						if (lineIndex >= 0)
+						{
+							if (visibleLines[lineIndex] != null)
+							{
+								printer.Text = visibleLines[lineIndex];
+								printer.Origin = new Vector2(Bounds.Left + 2, y);
+								printer.Render(graphics2D, TextColor);
+							}
+						}
+						y -= printer.TypeFaceStyle.EmSizeInPixels;
+						if (y < -printer.TypeFaceStyle.EmSizeInPixels)
+						{
+							break;
+						}
 					}
 				}
 			}

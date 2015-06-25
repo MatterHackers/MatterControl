@@ -58,7 +58,8 @@
     <Compile Include="MatterControl\MatterControl.UI.cs" />
     <Compile Include="MatterControl\HtmlParser.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
-    <Compile Include="MatterControl\SliceLayersTests.cs" />
+    <Compile Include="MatterControl\Slicing\SliceMappingCLassesTets.cs" />
+    <Compile Include="MatterControl\Slicing\SliceLayersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -326,10 +326,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void BindBaudRateHandlers()
 		{
-			otherBaudRateRadioButton.CheckedStateChanged += new RadioButton.CheckedStateChangedEventHandler(BindBaudRate_Select);
+			otherBaudRateRadioButton.CheckedStateChanged += BindBaudRate_Select;
 			foreach (BaudRateRadioButton button in BaudRateButtonsList)
 			{
-				button.CheckedStateChanged += new RadioButton.CheckedStateChangedEventHandler(BindBaudRate_Select);
+				button.CheckedStateChanged += BindBaudRate_Select;
 			}
 			BindBaudRate_Select(null, null);
 		}
@@ -404,7 +404,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 			else
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					this.containerWindowToClose.Close();
 				});

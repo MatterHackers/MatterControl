@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl
 
 		public void ReloadAll(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				// give the widget a chance to hear about the close before they are actually colsed.
 				WidescreenPanel.PreChangePanels.CallEvents(this, null);

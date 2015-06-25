@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		private void ReloadData(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				LoadHistoryItems(Count);
 			});
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
 		{
 			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-			itemHolder.Name = "LB item holder";
+			itemHolder.Name = "list item holder";
 			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
 			itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			itemHolder.AddChild(child);

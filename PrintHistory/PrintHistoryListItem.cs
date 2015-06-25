@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					printButton.Width = actionButtonSize;
 					printButton.Click += (sender, e) =>
 					{
-						UiThread.RunOnIdle((state) =>
+						UiThread.RunOnIdle(() =>
 						{
 							if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
 							{
@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
 		{
 			itemToRemove = printItemWrapper;
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				string maxLengthName = printItemWrapper.FileLocation;
 				int maxLength = 43;

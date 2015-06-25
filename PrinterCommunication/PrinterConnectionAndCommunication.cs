@@ -143,8 +143,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private string dataLastRead = "";
-
 		private string deviceCode;
 
 		private string doNotShowAgainMessage = "Do not show this message again".Localize();
@@ -1438,37 +1436,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void PulseRtsLow()
+		public void ArduinoDtrReset()
 		{
+			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
+			// current approach results in unpredictable behavior if the caller fails to close the connection 
 			if (serialPort == null && this.ActivePrinter != null)
 			{
-				serialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
-				serialPort.BaudRate = this.BaudRate;
+				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
+				resetSerialPort.Open();
 
-				// Set the read/write timeouts
-				serialPort.ReadTimeout = 500;
-				serialPort.WriteTimeout = 500;
-				serialPort.Open();
+				Thread.Sleep(500);
 
-				serialPort.RtsEnable = true;
-				serialPort.RtsEnable = false;
-				try
-				{
-					Thread.Sleep(100);
-				}
-				catch(Exception e)
-				{
-					// Let's track this issue if possible.
-					MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
-				}
-				serialPort.RtsEnable = true;
-				serialPort.Close();
+				ToggleHighLowHeigh(resetSerialPort);
+
+				resetSerialPort.Close();
 			}
 		}
 
 		public void ReadFromPrinter(object sender, DoWorkEventArgs args)
 		{
 			ReadThreadHolder readThreadHolder = args.Argument as ReadThreadHolder;
+
+			string dataLastRead = string.Empty;
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			timeSinceLastReadAnything.Restart();
@@ -1498,6 +1487,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							do
 							{
 								int returnPosition = dataLastRead.IndexOf('\n');
+
+								// Abort if we're AttemptingToConnect, no newline was found in the accumulator string and there's too many non-ascii chars
+								if(this.communicationState == CommunicationStates.AttemptingToConnect && returnPosition < 0)
+								{
+									int totalInvalid = dataLastRead.Count(c => c == '?');
+									if (totalInvalid > MAX_INVALID_CONNECTION_CHARS)
+									{
+										AbortConnectionAttempt("Invalid printer response".Localize(), false);
+									}
+								}
+								
 								if (returnPosition < 0)
 								{
 									// there is no return keep getting characters
@@ -1696,32 +1696,56 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void RebootBoard()
 		{
-			if (this.ActivePrinter != null
-				&& serialPort != null)
+			try
 			{
-				bool wasConnected = PrinterIsConnected;
-				// first make sure we are not printing if possible (cancel slicing)
-				IFrostedSerialPort currentSerialPort = serialPort;
-				Stop();
-				serialPort = currentSerialPort;
-
-				serialPort.RtsEnable = true;
-				serialPort.DtrEnable = true;
-				Thread.Sleep(100);
-				serialPort.RtsEnable = false;
-				serialPort.DtrEnable = false;
-				Thread.Sleep(100);
-				serialPort.RtsEnable = true;
-				serialPort.DtrEnable = true;
-
-				ClearQueuedGCode();
-
-				if (wasConnected)
+				if (this.ActivePrinter != null
+					&& serialPort != null)
 				{
-					// let the process know we canceled not ended normaly.
-					CommunicationState = CommunicationStates.Connected;
+					// first make sure we are not printing if possible (cancel slicing)
+					Stop();
+					if (serialPort != null) // we still have a serial port
+					{
+						ClearQueuedGCode();
+
+						ToggleHighLowHeigh(serialPort);
+
+						// let the process know we canceled not ended normaly.
+						CommunicationState = CommunicationStates.Connected;
+					}
+					else
+					{
+						// We reset the board while attempting to connect, so now we don't have a serial port.
+						// Create one and do the DTR to reset
+						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(ActivePrinterProfile.Instance.ActivePrinter.DriverType).Create(this.ActivePrinter.ComPort);
+						resetSerialPort.Open();
+
+						Thread.Sleep(500);
+
+						ToggleHighLowHeigh(resetSerialPort);
+
+						resetSerialPort.Close();
+
+						// let the process know we canceled not ended normaly.
+						CommunicationState = CommunicationStates.Disconnected;
+					}
 				}
 			}
+			catch(Exception e)
+			{
+				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+			}
+		}
+
+		private void ToggleHighLowHeigh(IFrostedSerialPort serialPort)
+		{
+			serialPort.RtsEnable = true;
+			serialPort.DtrEnable = true;
+			Thread.Sleep(100);
+			serialPort.RtsEnable = false;
+			serialPort.DtrEnable = false;
+			Thread.Sleep(100);
+			serialPort.RtsEnable = true;
+			serialPort.DtrEnable = true;
 		}
 
 		public void ReleaseMotors()
@@ -1994,6 +2018,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						{
 							CancelPrint();
 							MarkActivePrintCanceled();
+							// We have to continue printing the end gcode, so we set this to Printing.
 							CommunicationState = CommunicationStates.Printing;
 						}
 					}
@@ -2299,7 +2324,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void DonePrintingSdFile(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ReadLineStartCallBacks.RemoveCallBackFromKey("Done printing file", DonePrintingSdFile);
 			});
@@ -2333,7 +2358,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void FileDeleteConfirmed(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ReadLineStartCallBacks.RemoveCallBackFromKey("File deleted:", FileDeleteConfirmed);
 			});

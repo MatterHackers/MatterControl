@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 			return longName.Substring(0, Math.Min(longName.Length, 8));
 		}
 
-		private void ExportGCode_Click(object state)
+		private void ExportGCode_Click()
 		{
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
 			saveParams.Title = "MatterControl: Export File";
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl
             }
         }
 
-		private void ExportX3G_Click(object state)
+		private void ExportX3G_Click()
 		{
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export X3G|*.x3g", title: "Export X3G");
 			saveParams.Title = "MatterControl: Export File";
@@ -368,7 +368,7 @@ namespace MatterHackers.MatterControl
 
 		private void exportAMF_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath);
 				saveParams.Title = "MatterControl: Export File";
@@ -418,7 +418,7 @@ namespace MatterHackers.MatterControl
 
 		private void exportSTL_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");
 				saveParams.Title = "MatterControl: Export File";

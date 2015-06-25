@@ -79,12 +79,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 	public class ActionLinkFactory
 	{
-		public ActionLink Generate(string linkText, int fontSize, GuiWidget.MouseEventHandler clickEvent)
+		public ActionLink Generate(string linkText, int fontSize, EventHandler<MouseEventArgs> clickEvent)
 		{
 			ActionLink actionLink = new ActionLink(linkText, fontSize);
 			if (clickEvent != null)
 			{
-				actionLink.MouseUp += new GuiWidget.MouseEventHandler(clickEvent);
+				actionLink.MouseUp += clickEvent;
 			}
 			return actionLink;
 		}

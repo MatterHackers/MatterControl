@@ -30,16 +30,13 @@ namespace MatterHackers.MatterControl
 
 		private bool addPrinter_Click()
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				ConnectionWindow.Show();
-			});
+			UiThread.RunOnIdle(ConnectionWindow.Show);
 			return true;
 		}
 
 		private bool importFile_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				FileDialog.OpenFileDialog(
 					new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams)
@@ -67,7 +64,7 @@ namespace MatterHackers.MatterControl
 
 		private bool exit_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				GuiWidget parent = this;
 				while (parent as MatterControlApplication == null)

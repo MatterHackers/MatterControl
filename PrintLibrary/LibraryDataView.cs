@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
@@ -38,15 +40,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class LibraryDataView : ScrollableWidget
 	{
 		private event EventHandler unregisterEvents;
-
-		private void SetDisplayAttributes()
-		{
-			this.MinimumSize = new Vector2(0, 200);
-			this.AnchorAll();
-			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			this.AutoScroll = true;
-			this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
-		}
 
 		private bool editMode = false;
 
@@ -80,7 +73,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (SelectedIndex >= 0)
 				{
-					return LibraryData.Instance.GetPrintItemWrapper(SelectedIndex);
+					return LibraryProvider.Instance.GetPrintItemWrapper(SelectedIndex);
 				}
 				else
 				{
@@ -99,9 +92,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.SelectedItems.Clear();
 		}
 
-		public delegate void SelectedValueChangedEventHandler(object sender, EventArgs e);
-
-		public event SelectedValueChangedEventHandler SelectedValueChanged;
+		public event Action<object, EventArgs> SelectedValueChanged;
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
 
@@ -181,37 +172,62 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public LibraryDataView()
 		{
-			SetDisplayAttributes();
-			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			// set the display attributes
+			{
+				this.AnchorAll();
+				this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+				this.ScrollArea.Padding = new BorderDouble(3, 3, 5, 3);
+			}
+
+			ScrollArea.HAnchor = HAnchor.ParentLeftRight;
 
 			AutoScroll = true;
 			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-			base.AddChild(topToBottomItemList);
+			topToBottomItemList.HAnchor = HAnchor.ParentLeftRight;
+			AddChild(topToBottomItemList);
 
-			for (int i = 0; i < LibraryData.Instance.Count; i++)
-			{
-				PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(i);
-				LibraryRowItem queueItem = new LibraryRowItem(item, this);
-				AddChild(queueItem);
-			}
+			AddAllItems();
 
 			this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
-			LibraryData.Instance.DataReloaded.RegisterEvent(LibraryDataReloaded, ref unregisterEvents);
-			LibraryData.Instance.ItemAdded.RegisterEvent(ItemAddedToLibrary, ref unregisterEvents);
-			LibraryData.Instance.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
-			LibraryData.Instance.OrderChanged.RegisterEvent(LibraryOrderChanged, ref unregisterEvents);
+			LibraryProvider.DataReloaded.RegisterEvent(LibraryDataReloaded, ref unregisterEvents);
+			LibraryProvider.ItemAdded.RegisterEvent(ItemAddedToLibrary, ref unregisterEvents);
+			LibraryProvider.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
+		}
+
+		public void RebuildView()
+		{
+			AddAllItems();
+		}
+
+		private void AddAllItems()
+		{
+			topToBottomItemList.RemoveAllChildren();
+
+			PrintItemCollection parent = LibraryProvider.Instance.GetParentCollectionItem();
+			if (parent != null)
+			{
+				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, false);
+				AddListItemToTopToBottom(queueItem);
+			}
+
+			for (int i = 0; i < LibraryProvider.Instance.CollectionCount; i++)
+			{
+				PrintItemCollection item = LibraryProvider.Instance.GetCollectionItem(i);
+				LibraryRowItem queueItem = new LibraryRowItemCollection(item, this);
+				AddListItemToTopToBottom(queueItem);
+			}
+
+			for (int i = 0; i < LibraryProvider.Instance.ItemCount; i++)
+			{
+				PrintItemWrapper item = LibraryProvider.Instance.GetPrintItemWrapper(i);
+				LibraryRowItem queueItem = new LibraryRowItemPart(item, this);
+				AddListItemToTopToBottom(queueItem);
+			}
 		}
 
 		private void LibraryDataReloaded(object sender, EventArgs e)
 		{
-			this.RemoveListItems();
-			for (int i = 0; i < LibraryData.Instance.Count; i++)
-			{
-				PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(i);
-				LibraryRowItem queueItem = new LibraryRowItem(item, this);
-				AddChild(queueItem);
-			}
+			AddAllItems();
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -226,31 +242,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void ItemAddedToLibrary(object sender, EventArgs e)
 		{
 			IndexArgs addedIndexArgs = e as IndexArgs;
-			PrintItemWrapper item = LibraryData.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
-			LibraryRowItem libraryItem = new LibraryRowItem(item, this);
-			AddChild(libraryItem, addedIndexArgs.Index);
+			PrintItemWrapper item = LibraryProvider.Instance.GetPrintItemWrapper(addedIndexArgs.Index);
+			LibraryRowItem libraryItem = new LibraryRowItemPart(item, this);
+
+			int displayIndexToAdd = addedIndexArgs.Index + LibraryProvider.Instance.CollectionCount;
+			if (LibraryProvider.Instance.HasParent)
+			{
+				displayIndexToAdd++;
+			}
+			AddListItemToTopToBottom(libraryItem, displayIndexToAdd);
 		}
 
 		private void ItemRemovedFromToLibrary(object sender, EventArgs e)
 		{
 			IndexArgs removeIndexArgs = e as IndexArgs;
-			topToBottomItemList.RemoveChild(removeIndexArgs.Index);
+			int indexToRemove = removeIndexArgs.Index + LibraryProvider.Instance.CollectionCount;
+			if (LibraryProvider.Instance.HasParent)
+			{
+				indexToRemove++;
+			}
+			topToBottomItemList.RemoveChild(indexToRemove);
 
-			if (LibraryData.Instance.Count > 0)
+			if (LibraryProvider.Instance.ItemCount > 0)
 			{
 				SelectedIndex = Math.Max(SelectedIndex - 1, 0);
 			}
 		}
 
-		private void LibraryOrderChanged(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
+		public void AddListItemToTopToBottom(GuiWidget child, int indexInChildrenList = -1)
 		{
 			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-			itemHolder.Name = "LB item holder";
+			itemHolder.Name = "list item holder";
 			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
 			itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
 			itemHolder.AddChild(child);
@@ -259,7 +281,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			itemHolder.MouseEnterBounds += new EventHandler(itemToAdd_MouseEnterBounds);
 			itemHolder.MouseLeaveBounds += new EventHandler(itemToAdd_MouseLeaveBounds);
-			itemHolder.MouseDownInBounds += new MouseEventHandler(itemHolder_MouseDownInBounds);
+			itemHolder.MouseDownInBounds += itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
 		}
 
@@ -303,7 +325,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (LibraryRowItem item in SelectedItems)
 			{
-				LibraryData.Instance.RemoveItem(item.printItemWrapper);
+				item.RemoveFromParentCollection();
 			}
 		}
 
@@ -324,17 +346,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public void RemoveListItems()
-		{
-			topToBottomItemList.RemoveAllChildren();
-		}
-
 		private void itemHolder_ParentChanged(object sender, EventArgs e)
 		{
 			FlowLayoutWidget itemHolder = (FlowLayoutWidget)sender;
 			itemHolder.MouseEnterBounds -= new EventHandler(itemToAdd_MouseEnterBounds);
 			itemHolder.MouseLeaveBounds -= new EventHandler(itemToAdd_MouseLeaveBounds);
-			itemHolder.MouseDownInBounds -= new MouseEventHandler(itemHolder_MouseDownInBounds);
+			itemHolder.MouseDownInBounds -= itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
 		}
 

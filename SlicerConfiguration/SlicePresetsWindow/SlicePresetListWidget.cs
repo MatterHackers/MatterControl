@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Button addPresetButton = buttonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
 			addPresetButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					windowController.ChangeToSlicePresetDetail();
 				});
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Button closeButton = buttonFactory.Generate(LocalizedString.Get("Close"));
 			closeButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					windowController.Close();
 				});
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			UiThread.RunOnIdle(importPresetDo);
 		}
 
-		private void importPresetDo(object state)
+		private void importPresetDo()
 		{
 			OpenFileDialogParams openParams = new OpenFileDialogParams("Load Slice Preset|*.slice;*.ini");
 			openParams.ActionButtonLabel = "Load Slice Preset";
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				materialEditLink.VAnchor = Agg.UI.VAnchor.ParentCenter;
 				materialEditLink.Click += (sender, e) =>
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						windowController.ChangeToSlicePresetDetail(preset);
 					});
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				materialRemoveLink.VAnchor = Agg.UI.VAnchor.ParentCenter;
 				materialRemoveLink.Click += (sender, e) =>
 				{
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						//Unwind this setting if it is currently active
 						if (ActivePrinterProfile.Instance.ActivePrinter != null)

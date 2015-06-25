@@ -165,10 +165,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onActivePrinterChanged(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				SetButtonText();
-			});
+			UiThread.RunOnIdle(SetButtonText);
 		}
 
 		private int GetPrinterRecordCount()

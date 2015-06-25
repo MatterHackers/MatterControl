@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 
 
 #if true//!DEBUG
-		RaygunClient _raygunClient = GetCorrectClient();
+		static RaygunClient _raygunClient = GetCorrectClient();
 #endif
 
 		static RaygunClient GetCorrectClient()
@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl
 			{
 				UseOpenGL = true;
 			}
-			string version = "1.2";
+			string version = "1.3";
 
 			Title = "MatterControl {0}".FormatWith(version);
 			if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
@@ -383,11 +383,6 @@ namespace MatterHackers.MatterControl
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
-			System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
-			//throw new Exception("Forced exception thrown manually!");
-
 			Datastore.Instance.Initialize();
 
 #if !DEBUG
@@ -449,14 +444,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void DoAutoConnectIfRequired(object state)
+		public void DoAutoConnectIfRequired()
 		{
 			ActivePrinterProfile.CheckForAndDoAutoConnect();
 		}
 
 		public void LaunchBrowser(string targetUri)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				System.Diagnostics.Process.Start(targetUri);
 			});
@@ -534,7 +529,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (firstDraw && commandLineArgs.Length < 2)
+			if (firstDraw)
 			{
 				UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
@@ -550,16 +545,6 @@ namespace MatterHackers.MatterControl
 				}
 
 				TerminalWindow.ShowIfLeftOpen();
-
-#if false
-				foreach (CreatorInformation creatorInfo in RegisteredCreators.Instance.Creators)
-				{
-					if (creatorInfo.description.Contains("Image"))
-					{
-						creatorInfo.functionToLaunchCreator(null, null);
-					}
-				}
-#endif
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
@@ -617,7 +602,7 @@ namespace MatterHackers.MatterControl
 			file.WriteLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
 		}
 
-		private void CheckOnPrinter(object state)
+		private void CheckOnPrinter()
 		{
 			try
 			{

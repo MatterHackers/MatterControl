@@ -3295,3 +3295,51 @@ Translated:Settings\n& Controls
 English:Print Area
 Translated:Print Area
 
+English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
+Translated:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+
+English:First Layer Extrusion Width' must be greater than 0.
+Translated:First Layer Extrusion Width' must be greater than 0.
+
+English:First Layer Extrusion Width = {0}
+Translated:First Layer Extrusion Width = {0}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+
+English:Open
+Translated:Open
+
+English:Checking For Update...
+Translated:Checking For Update...
+
+English:Create Folder
+Translated:Create Folder
+
+English:Redeem
+Translated:Redeem
+
+English:First Layer Height = {0}\nNozzle Diameter = {1}
+Translated:First Layer Height = {0}\nNozzle Diameter = {1}
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+
+English:Create New Folder:
+Translated:Create New Folder:
+
+English:Folder Name
+Translated:Folder Name
+
+English:Enter a Folder Name Here
+Translated:Enter a Folder Name Here
+

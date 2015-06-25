@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PartPreviewContent partPreviewWidget;
 
 		public PartPreviewMainWindow(PrintItemWrapper printItem, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
-			: base(690, 340)
+			: base(750, 550)
 		{
 			UseOpenGL = true;
 			string partPreviewTitle = LocalizedString.Get("MatterControl");
@@ -65,8 +65,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			AddHandlers();
 
-			Width = 640;
-			Height = 480;
+			Width = 750;
+			Height = 550;
 
 			MinimumSize = new Vector2(400, 300);
 			ShowAsSystemWindow();

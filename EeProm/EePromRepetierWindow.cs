@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.EeProm
 			UiThread.RunOnIdle(DoButtonSave_Click);
 		}
 
-		private void DoButtonSave_Click(object state)
+		private void DoButtonSave_Click()
 		{
 			currentEePromSettings.Save();
 			currentEePromSettings.Clear();
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl.EeProm
 			UiThread.RunOnIdle(DoButtonAbort_Click);
 		}
 
-		private void DoButtonAbort_Click(object state)
+		private void DoButtonAbort_Click()
 		{
 			currentEePromSettings.Clear();
 			data.Clear();

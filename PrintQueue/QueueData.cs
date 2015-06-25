@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					partUnderConsideration = item;
 					// Show a dialog and only load the part to the queue if the user clicks yes.
-					UiThread.RunOnIdle((state) =>
+					UiThread.RunOnIdle(() =>
 					{
 						string memoryWarningMessage = "Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.".Localize().FormatWith(item.Name);
 						StyledMessageBox.ShowMessageBox(UserSaidToAllowAddToQueue, memoryWarningMessage, "File May Cause Problems".Localize(), StyledMessageBox.MessageType.YES_NO, "Add To Queue", "Do Not Add");

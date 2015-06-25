@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("coolHeadLift", "cool_extruder_lift"),
 
             new ScaledSingleNumber("retractionAmount", "retract_length", 1000),
-            new MapItem("retractionSpeed", "retract_speed"),
+            new MapFirstValue("retractionSpeed", "retract_speed"),
             new ScaledSingleNumber("retractionMinimalDistance", "retract_before_travel", 1000),
             new ScaledSingleNumber("minimalExtrusionBeforeRetraction", "min_extrusion_before_retract", 1000),
 

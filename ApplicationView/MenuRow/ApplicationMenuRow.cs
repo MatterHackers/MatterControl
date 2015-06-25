@@ -73,17 +73,14 @@ namespace MatterHackers.MatterControl
 
 			Button updateStatusMessage = linkButtonFactory.Generate("Update Available");
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(SetUpdateNotification, ref unregisterEvents);
-			popUpAboutPage = new GuiWidget();
+			popUpAboutPage = new FlowLayoutWidget();
 			popUpAboutPage.Margin = new BorderDouble(30, 0, 0, 0);
 			popUpAboutPage.HAnchor = HAnchor.FitToChildren;
 			popUpAboutPage.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
 			popUpAboutPage.AddChild(updateStatusMessage);
 			updateStatusMessage.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
-				{
-					AboutWindow.Show();
-				});
+				UiThread.RunOnIdle(AboutWindow.Show);
 			};
 			this.AddChild(popUpAboutPage);
 			SetUpdateNotification(this, null);
@@ -145,10 +142,7 @@ namespace MatterHackers.MatterControl
 						Button updateStatusMessage = linkButtonFactory.Generate("Check For Update".Localize());
 						updateStatusMessage.Click += (sender2, e) =>
 						{
-							UiThread.RunOnIdle((state) =>
-							{
-								AboutWindow.Show();
-							});
+							UiThread.RunOnIdle(AboutWindow.Show);
 						};
 						popUpAboutPage.AddChild(updateStatusMessage);
 						popUpAboutPage.Visible = true;
@@ -163,11 +157,12 @@ namespace MatterHackers.MatterControl
 						Button updateStatusMessage = linkButtonFactory.Generate("Update Available".Localize());
 						updateStatusMessage.Click += (sender2, e) =>
 						{
-							UiThread.RunOnIdle((state) =>
-							{
-								AboutWindow.Show();
-							});
+							UiThread.RunOnIdle(AboutWindow.Show);
 						};
+						var updateMark = new UpdateNotificationMark();
+						updateMark.Margin = new BorderDouble(0, 0, 3, 2);
+						updateMark.VAnchor = VAnchor.ParentTop;
+						popUpAboutPage.AddChild(updateMark);
 						popUpAboutPage.AddChild(updateStatusMessage);
 						popUpAboutPage.Visible = true;
 					}

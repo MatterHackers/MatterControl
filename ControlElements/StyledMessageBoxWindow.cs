@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl
 
 		private void noButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle(CloseOnIdle);
+			UiThread.RunOnIdle(Close);
 			if (responseCallback != null)
 			{
 				responseCallback(false);
@@ -187,16 +187,11 @@ namespace MatterHackers.MatterControl
 
 		private void okButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle(CloseOnIdle);
+			UiThread.RunOnIdle(Close);
 			if (responseCallback != null)
 			{
 				responseCallback(true);
 			}
-		}
-
-		private void CloseOnIdle(object state)
-		{
-			Close();
 		}
 	}
 }

@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (!allowLessThan0
 				&& PrinterConnectionAndCommunication.Instance.LastReportedPosition.z - moveAmount < 0)
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					StyledMessageBox.ShowMessageBox(null, zIsTooLowMessage, zTooLowTitle, StyledMessageBox.MessageType.OK);
 				});

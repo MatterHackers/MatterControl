@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerNameInput = new MHTextEditWidget(this.ActivePrinter.Name);
 			printerNameInput.HAnchor = HAnchor.ParentLeftRight;
-			printerNameInput.KeyPressed += new KeyPressEventHandler(PrinterNameInput_KeyPressed);
+			printerNameInput.KeyPressed += PrinterNameInput_KeyPressed;
 
 			printerNameError = new TextWidget(LocalizedString.Get("Give your printer a name."), 0, 0, 10);
 			printerNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void ModelDropList_SelectionChanged(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ActivePrinter.Model = ((DropDownList)sender).SelectedLabel;
 				currentPrinterSetupStatus.LoadSetupSettings(ActivePrinter.Make, ActivePrinter.Model);
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				if (usingDefaultName)
 				{
                     string printerInputName = String.Format("{0} {1}", this.ActivePrinter.Make, this.ActivePrinter.Model);
-                    string query = string.Format("SELECT Name FROM Printer WHERE Name LIKE \'{0}%\';", printerInputName);
+                    string query = string.Format("SELECT Name FROM Printer WHERE Name LIKE \"{0}%\";", printerInputName);
                     var names = Datastore.Instance.dbSQLite.Query<sqlName>(query).Select(item => item.Name).ToList();
 
                     if (!names.Contains(printerInputName))
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.usingDefaultName = false;
 		}
 
-		private void MoveToNextWidget(object state)
+		private void MoveToNextWidget()
 		{
 			if (Parent != null) // if it hasn't been closed
 			{

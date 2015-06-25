@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl
 
 		private bool bug_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ContactFormWindow.Open();
 			});
@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 
 		private bool help_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles");
 			});
@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 		private bool checkForUpdate_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ApplicationMenuRow.AlwaysShowUpdateStatus = true;
 				UpdateControlData.Instance.CheckForUpdateUserRequested();
@@ -59,10 +59,7 @@ namespace MatterHackers.MatterControl
 
 		private bool about_Click()
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				AboutWindow.Show();
-			});
+			UiThread.RunOnIdle(AboutWindow.Show);
 			return true;
 		}
 
@@ -73,7 +70,7 @@ namespace MatterHackers.MatterControl
 
 		private bool notes_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 				{
 					MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
 				});
@@ -82,7 +79,7 @@ namespace MatterHackers.MatterControl
 
 		private bool gettingStarted_Click()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				MatterControlApplication.Instance.LaunchBrowser("http://www.mattercontrol.com/articles/mattercontrol-getting-started");
 			});

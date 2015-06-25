@@ -93,6 +93,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public virtual string MappedValue { get { return OriginalValue; } }
 	}
 
+	public class MapFirstValue : MapItem
+	{
+		public MapFirstValue(string mappedKey, string originalKey)
+			: base(mappedKey, originalKey)
+		{
+		}
+
+		public override string MappedValue 
+		{
+			get
+			{
+				string mappedValue = base.MappedValue;
+				if (mappedValue.Contains(","))
+				{
+					string[] splitValues = mappedValue.Split(',');
+					return splitValues[0];
+				}
+
+				return mappedValue;
+			}
+		}
+	}
+
 	public class VisibleButNotMappedToEngine : MapItem
 	{
 		public override string MappedValue
@@ -169,16 +192,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Start heating all the extruder that we are going to use.
-			for (int extruderIndex = 0; extruderIndex < numberOfHeatedExtruders; extruderIndex++)
+			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 			{
-				if (extrudersUsed.Count > extruderIndex
-					&& extrudersUsed[extruderIndex])
+				if (extrudersUsed.Count > extruderIndex0Based
+					&& extrudersUsed[extruderIndex0Based])
 				{
-					string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex);
+					string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex0Based + 1);
 					if (materialTemperature != "0")
 					{
-						string setTempString = "M104 T{0} S{1}".FormatWith(extruderIndex, materialTemperature);
-						AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("start heating extruder {0}", extruderIndex));
+						string setTempString = "M104 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
+						AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("start heating extruder {0}", extruderIndex0Based + 1));
 					}
 				}
 			}
@@ -186,16 +209,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
 			if (ActiveSliceSettings.Instance.GetActiveValue("heat_extruder_before_homing") == "1")
 			{
-				for (int extruderIndex = 0; extruderIndex < numberOfHeatedExtruders; extruderIndex++)
+				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
-					if (extrudersUsed.Count > extruderIndex
-						&& extrudersUsed[extruderIndex])
+					if (extrudersUsed.Count > extruderIndex0Based
+						&& extrudersUsed[extruderIndex0Based])
 					{
-						string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex);
+						string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex0Based + 1);
 						if (materialTemperature != "0")
 						{
-							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex, materialTemperature);
-							AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("wait for extruder {0}", extruderIndex));
+							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
+							AddDefaultIfNotPresent(preStartGCode, setTempString, preStartGCodeLines, string.Format("wait for extruder {0}", extruderIndex0Based));
 						}
 					}
 				}
@@ -238,16 +261,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// don't set the extrudes to heating if we alread waited for them to reach temp
 			if (ActiveSliceSettings.Instance.GetActiveValue("heat_extruder_before_homing") != "1")
 			{
-				for (int extruderIndex = 0; extruderIndex < numberOfHeatedExtruders; extruderIndex++)
+				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
-					if (extrudersUsed.Count > extruderIndex
-						&& extrudersUsed[extruderIndex])
+					if (extrudersUsed.Count > extruderIndex0Based
+						&& extrudersUsed[extruderIndex0Based])
 					{
-						string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex + 1);
+						string materialTemperature = ActiveSliceSettings.Instance.GetMaterialValue("temperature", extruderIndex0Based + 1);
 						if (materialTemperature != "0")
 						{
-							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex, materialTemperature);
-							AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", extruderIndex));
+							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
+							AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", extruderIndex0Based));
 						}
 					}
 				}
@@ -283,7 +306,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class ScaledSingleNumber : MapItem
+	public class ScaledSingleNumber : MapFirstValue
 	{
 		internal double scale;
 
@@ -385,31 +408,44 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class AsPercentOfReferenceOrDirect : ScaledSingleNumber
+	public class AsPercentOfReferenceOrDirect : MapItem
 	{
-		internal string originalReference;
+		string originalReference;
+		double scale;
 
 		public override string MappedValue
 		{
 			get
 			{
+				double finalValue = 0;
 				if (OriginalValue.Contains("%"))
 				{
 					string withoutPercent = OriginalValue.Replace("%", "");
 					double ratio = MapItem.ParseValueString(withoutPercent) / 100.0;
 					string originalReferenceString = ActiveSliceSettings.Instance.GetActiveValue(originalReference);
 					double valueToModify = MapItem.ParseValueString(originalReferenceString);
-					double finalValue = valueToModify * ratio * scale;
-					return finalValue.ToString();
+					finalValue = valueToModify * ratio;
+				}
+				else
+				{
+					finalValue = MapItem.ParseValueString(OriginalValue);
 				}
 
-				return base.MappedValue;
+				if (finalValue == 0)
+				{
+					finalValue = MapItem.ParseValueString(ActiveSliceSettings.Instance.GetActiveValue(originalReference));
+				}
+
+				finalValue *= scale;
+
+				return finalValue.ToString();
 			}
 		}
 
 		public AsPercentOfReferenceOrDirect(string mappedKey, string originalKey, string originalReference, double scale = 1)
-			: base(mappedKey, originalKey, scale)
+			: base(mappedKey, originalKey)
 		{
+			this.scale = scale;
 			this.originalReference = originalReference;
 		}
 	}

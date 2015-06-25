@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void RestartApplication()
 		{
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				// Iterate to the top SystemWindow
 				GuiWidget parent = this;

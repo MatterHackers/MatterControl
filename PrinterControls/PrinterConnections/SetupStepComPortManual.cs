@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 		}
 
-		private void RecreateCurrentWidget(object state)
+		private void RecreateCurrentWidget()
 		{
 			Parent.AddChild(new SetupStepComPortManual((ConnectionWindow)Parent, Parent, this.currentPrinterSetupStatus));
 			Parent.RemoveChild(this);
@@ -204,10 +204,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void NextButton_Click(object sender, EventArgs mouseEvent)
 		{
-			UiThread.RunOnIdle((state) =>
-			{
-				Parent.Close();
-			});
+			UiThread.RunOnIdle(Parent.Close);
 		}
 	}
 }

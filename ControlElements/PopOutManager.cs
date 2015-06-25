@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 			this.dataBaseKeyPrefix = dataBaseKeyPrefix;
 			this.widgetWhosContentsPopOut = widgetWhosContentsPopOut;
 
-			UiThread.RunOnIdle((state) =>
+			UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.MainView.DrawAfter += ShowOnFirstSystemWindowDraw;
 			});
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (widgetWhosContentsPopOut.Children.Count > 0)
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					bool wasLeftOpen = UserSettings.Instance.Fields.GetBool(WindowLeftOpenKey, false);
 					if (wasLeftOpen)
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl
 			bringBackToTabButton.Cursor = Cursors.Hand;
 			bringBackToTabButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					SaveWindowShouldStartClosed();
 					SystemWindow temp = PopedOutSystemWindow;
