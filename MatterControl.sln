@@ -130,8 +130,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterSlice.Tests", "Submod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X3GDriver", "..\X3GDriver\X3GDriver\X3GDriver.csproj", "{26164CC3-29AD-4384-861C-181440934B00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterSlice.Tests", "Submodules\MatterSlice\Tests\MatterSlice.Tests\MatterSlice.Tests.csproj", "{8CD15B23-D30F-470E-99BA-9276FB7CABD4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1154,6 +1152,34 @@ Global
 		{8CD15B23-D30F-470E-99BA-9276FB7CABD4}.Release64|Mixed Platforms.Build.0 = Release|Any CPU
 		{8CD15B23-D30F-470E-99BA-9276FB7CABD4}.Release64|x64.ActiveCfg = Release|Any CPU
 		{8CD15B23-D30F-470E-99BA-9276FB7CABD4}.Release64|x86.ActiveCfg = Release|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug|x64.ActiveCfg = Debug|x64
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug|x64.Build.0 = Debug|x64
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug64|Any CPU.ActiveCfg = Debug64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug64|Any CPU.Build.0 = Debug64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug64|Mixed Platforms.ActiveCfg = Debug64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug64|Mixed Platforms.Build.0 = Debug64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug64|x64.ActiveCfg = Debug64|x64
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug64|x64.Build.0 = Debug64|x64
+		{26164CC3-29AD-4384-861C-181440934B00}.Debug64|x86.ActiveCfg = Debug64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release|x64.ActiveCfg = Release|x64
+		{26164CC3-29AD-4384-861C-181440934B00}.Release|x64.Build.0 = Release|x64
+		{26164CC3-29AD-4384-861C-181440934B00}.Release|x86.ActiveCfg = Release|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release64|Any CPU.ActiveCfg = Release64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release64|Any CPU.Build.0 = Release64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release64|Mixed Platforms.ActiveCfg = Release64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release64|Mixed Platforms.Build.0 = Release64|Any CPU
+		{26164CC3-29AD-4384-861C-181440934B00}.Release64|x64.ActiveCfg = Release64|x64
+		{26164CC3-29AD-4384-861C-181440934B00}.Release64|x64.Build.0 = Release64|x64
+		{26164CC3-29AD-4384-861C-181440934B00}.Release64|x86.ActiveCfg = Release64|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
