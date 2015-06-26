@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		private void onVersionRequestFailed(object sender, ResponseEventArgs e)
+		private void onVersionRequestFailed(object sender, ResponseErrorEventArgs e)
 		{
 			SetUpdateStatus(UpdateStatusStates.UpToDate);
 		}
