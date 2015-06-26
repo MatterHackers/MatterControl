@@ -43,11 +43,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private List<LibraryProvider> libraryProviders = new List<LibraryProvider>();
 		private int selectedLibraryProvider = -1;
 
-		public LibraryProviderSelector()
+		public LibraryProviderSelector(string parentProviderKey)
+			: base(parentProviderKey)
 		{
 			// put in the sqlite provider
 			libraryProviders.Add(LibraryProviderSQLite.Instance);
-			LibraryProviderSQLite.Instance.SetParentKey(this.ProviderKey);
 
 			// and any directory providers (sd card provider, etc...)
 			libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this.ProviderKey));
@@ -58,10 +58,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			//libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderKey));
 
 			// Check for LibraryProvider factories and put them in the list too.
-			PluginFinder<LibraryProviderFactory> libraryFactories = new PluginFinder<LibraryProviderFactory>();
-			foreach (LibraryProviderFactory factory in libraryFactories.Plugins)
+			PluginFinder<LibraryProviderPlugin> libraryProviderPlugins = new PluginFinder<LibraryProviderPlugin>();
+			foreach (LibraryProviderPlugin libraryProviderPlugin in libraryProviderPlugins.Plugins)
 			{
-				libraryProviders.Add(factory.CreateProvider(this.ProviderKey));
+				libraryProviders.Add(libraryProviderPlugin.CreateLibraryProvider(this.ProviderKey));
 			}
 
 			providerLocationStack.Add(new PrintItemCollection("..", ProviderKey));
@@ -82,21 +82,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				else
 				{
 					return libraryProviders[selectedLibraryProvider].CollectionCount;
-				}
-			}
-		}
-
-		public override bool HasParent
-		{
-			get
-			{
-				if (selectedLibraryProvider == -1)
-				{
-					return false;
-				}
-				else
-				{
-					return libraryProviders[selectedLibraryProvider].HasParent;
 				}
 			}
 		}
@@ -151,6 +136,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 
 		public override string ProviderKey
+		{
+			get
+			{
+				return LibraryProviderSelectorKey;
+			}
+		}
+
+		public static string LibraryProviderSelectorKey
 		{
 			get
 			{

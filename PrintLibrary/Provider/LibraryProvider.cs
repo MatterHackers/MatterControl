@@ -39,6 +39,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public abstract class LibraryProvider
 	{
+		private string parentProviderKey = null;
+		public string ParentProviderKey { get { return parentProviderKey; } }
+
 		public static RootedObjectEventHandler CollectionChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
@@ -52,18 +55,41 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderSelector();
+					instance = new LibraryProviderSelector(null);
 				}
 
 				return instance;
 			}
+
+			set
+			{
+				instance = value;
+			}
 		}
+
+		public LibraryProvider(string parentProviderKey)
+		{
+			this.parentProviderKey = parentProviderKey;
+		}
+
+		#region Member Methods
+		public bool HasParent
+		{
+			get
+			{
+				if (this.parentProviderKey != null)
+				{
+					return true;
+				}
+
+				return false;
+			}
+		}
+		#endregion
 
 		#region Abstract Methods
 
 		public abstract int CollectionCount { get; }
-
-		public abstract bool HasParent { get; }
 
 		public abstract int ItemCount { get; }
 

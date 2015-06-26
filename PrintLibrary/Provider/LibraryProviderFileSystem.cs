@@ -50,12 +50,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string description;
 		private FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		private string keywordFilter = string.Empty;
-		private string parentProviderKey = null;
 		private string rootPath;
 
 		public LibraryProviderFileSystem(string rootPath, string description, string parentProviderKey)
+			: base(parentProviderKey)
 		{
-			this.parentProviderKey = parentProviderKey;
 			this.description = description;
 			this.rootPath = rootPath;
 
@@ -79,19 +78,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			get
 			{
 				return currentDirectoryDirectories.Count;
-			}
-		}
-
-		public override bool HasParent
-		{
-			get
-			{
-				if (parentProviderKey != null)
-				{
-					return true;
-				}
-
-				return false;
 			}
 		}
 
@@ -176,9 +162,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			if (currentDirectory == ".")
 			{
-				if (parentProviderKey != null)
+				if (ParentProviderKey != null)
 				{
-					return new PrintItemCollection("..", parentProviderKey);
+					return new PrintItemCollection("..", ParentProviderKey);
 				}
 				else
 				{

@@ -208,7 +208,7 @@
     <Compile Include="PrintLibrary\CreateFolderWindow.cs" />
     <Compile Include="PrintLibrary\LibraryRowItemCollection.cs" />
     <Compile Include="PrintLibrary\LibraryRowItemPart.cs" />
-    <Compile Include="PrintLibrary\Provider\LibraryProviderFactory.cs" />
+    <Compile Include="PrintLibrary\Provider\LibraryProviderPlugin.cs" />
     <Compile Include="PrintLibrary\Provider\LibraryProviderSelector.cs" />
     <Compile Include="PrintLibrary\Provider\LibraryProviderFileSystem.cs" />
     <Compile Include="PrintLibrary\Provider\LibrarySQLiteData.cs" />

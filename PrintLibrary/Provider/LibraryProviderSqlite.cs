@@ -50,11 +50,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 		private PrintItemCollection collectionBase = GetRootLibraryCollection();
 		private string keywordFilter = string.Empty;
-		private string parentProviderKey = null;
 
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
 
 		public LibraryProviderSQLite()
+			: base(LibraryProviderSelector.LibraryProviderSelectorKey)
 		{
 			LoadLibraryItems();
 		}
@@ -85,19 +85,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			get
 			{
 				return childCollections.Count;
-			}
-		}
-
-		public override bool HasParent
-		{
-			get
-			{
-				if (parentProviderKey != null)
-				{
-					return true;
-				}
-
-				return false;
 			}
 		}
 
@@ -282,9 +269,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override PrintItemCollection GetParentCollectionItem()
 		{
-			if (parentProviderKey != null)
+			if (ParentProviderKey != null)
 			{
-				return new PrintItemCollection("..", parentProviderKey);
+				return new PrintItemCollection("..", ParentProviderKey);
 			}
 			else
 			{
@@ -355,12 +342,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			this.collectionBase = collectionBase;
 
 			LoadLibraryItems();
-		}
-
-		public void SetParentKey(string parentKey)
-		{
-			this.parentProviderKey = parentKey;
-			UiThread.RunOnIdle(() => LibraryProvider.OnDataReloaded(null));
 		}
 
 		private static void AddStlOrGcode(string loadedFileName, string extension)
