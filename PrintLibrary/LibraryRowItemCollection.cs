@@ -95,6 +95,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			StaticData.Instance.LoadImage(path, imageBuffer);
 
 			ImageWidget folderThumbnail = new ImageWidget(imageBuffer);
+			folderThumbnail.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			return folderThumbnail;
 		}
 
