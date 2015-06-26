@@ -261,7 +261,35 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				// and copy the file
 				try
 				{
-					File.Copy(file, outputFileName);
+					if (!File.Exists(file))
+					{
+						File.Copy(file, outputFileName);
+					}
+					else // make a new file and append a number so that we are not destructive
+					{
+						string directory = Path.GetDirectoryName(outputFileName);
+						string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputFileName);
+						string extension = Path.GetExtension(outputFileName);
+						// get the filename without a number on the end
+						int lastSpaceIndex = fileNameWithoutExtension.LastIndexOf(' ');
+						if (lastSpaceIndex != -1)
+						{
+							int endingNumber;
+							// check if the last set of characters is a number
+							if(int.TryParse(fileNameWithoutExtension.Substring(lastSpaceIndex), out endingNumber))
+							{
+								fileNameWithoutExtension = fileNameWithoutExtension.Substring(0, lastSpaceIndex);
+							}
+						}
+						int numberToAppend = 2;
+						string fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
+						while (File.Exists(fileNameToUse))
+						{
+							numberToAppend++;
+							fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
+						}
+						File.Copy(file, fileNameToUse);
+					}
 				}
 				catch (Exception e)
 				{
