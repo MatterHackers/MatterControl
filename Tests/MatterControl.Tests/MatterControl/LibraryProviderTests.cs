@@ -46,10 +46,9 @@ namespace MatterControl.Tests
     [TestFixture]
     public class LibraryProviderTests
     {
-		static string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "LibraryProviderData");
-		static string meshFileName = Path.Combine(pathToMesh, "Box20x20x10.stl");
+		string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "LibraryProviderData");
+		string meshFileName;
 
-		bool collectionChanged = false;
 		bool dataReloaded = false;
 		bool itemAdded = false;
 		bool itemRemoved = false;
@@ -63,22 +62,22 @@ namespace MatterControl.Tests
 #endif
 		}
 
-		[TestFixtureSetUp]
-		void SetupBeforeTest()
+		[SetUp]
+		public void SetupBeforeTest()
 		{
-			collectionChanged = false;
+			meshFileName = Path.Combine(pathToMesh, "Box20x20x10.stl");
+
 			dataReloaded = false;
 			itemAdded = false;
 			itemRemoved = false;
 
-			LibraryProvider.CollectionChanged.RegisterEvent((sender, e) => { collectionChanged = true; }, ref unregisterEvents);
 			LibraryProvider.DataReloaded.RegisterEvent((sender, e) => { dataReloaded = true; }, ref unregisterEvents);
 			LibraryProvider.ItemAdded.RegisterEvent((sender, e) => { itemAdded = true; }, ref unregisterEvents);
 			LibraryProvider.ItemRemoved.RegisterEvent((sender, e) => { itemRemoved = true; }, ref unregisterEvents);
 		}
 
 		[TearDown]
-		void TeardownAfterTest()
+		public void TeardownAfterTest()
 		{
 			unregisterEvents(this, null);
 		}
@@ -97,27 +96,48 @@ namespace MatterControl.Tests
 			string collectionName = "Collection1";
 			string createdDirectory = Path.Combine(pathToMesh, collectionName);
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
-			Assert.IsTrue(collectionChanged == false);
+			Assert.IsTrue(dataReloaded == false);
 			testProvider.AddCollectionToLibrary(collectionName);
-			Assert.IsTrue(collectionChanged == true);
+			Assert.IsTrue(testProvider.CollectionCount == 1);
+			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(Directory.Exists(createdDirectory));
 
-			collectionChanged = false;
+			dataReloaded = false;
 			// make sure removing it gets rid of it
-			Assert.IsTrue(collectionChanged == false);
-			testProvider.RemoveCollection("Collection1");
-			Assert.IsTrue(collectionChanged == true);
+			Assert.IsTrue(dataReloaded == false);
+			testProvider.RemoveCollection(testProvider.GetCollectionItem(0));
+			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
+
+			// test GetProviderForItem
 		}
 
 		[Test, Category("LibraryProviderSqlite")]
 		public void LibraryProviderSqlite_NavigationWorking()
         {
-			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null);
+			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null);
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
-			Assert.IsTrue(testProvider.ItemCount == 0, "Start with a new database for these tests.");
-			PrintItem printItem = new PrintItem("Test_RootItem", meshFileName);
-			testProvider.AddItem(new PrintItemWrapper(printItem));
-        }
+			Assert.IsTrue(testProvider.ItemCount == 1, "Start with a new database for these tests.");
+			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapper(0);
+			List<ProviderLocatorNode> providerLocator = itemAtRoot.PrintItem.GetLibraryProviderLocator();
+			Assert.IsTrue(providerLocator.Count == 1);
+
+			// create a collection and make sure it is on disk
+			string collectionName = "Collection1";
+			//Assert.IsTrue(); // assert that the record does not exist in the DB
+			Assert.IsTrue(dataReloaded == false);
+			testProvider.AddCollectionToLibrary(collectionName);
+			Assert.IsTrue(testProvider.CollectionCount == 1);
+			Assert.IsTrue(dataReloaded == true);
+			// Assert.IsTrue(); // assert that the record does exist in the DB
+
+			dataReloaded = false;
+			// make sure removing it gets rid of it
+			Assert.IsTrue(dataReloaded == false);
+			testProvider.RemoveCollection(testProvider.GetCollectionItem(0));
+			Assert.IsTrue(dataReloaded == true);
+			Assert.IsTrue(testProvider.CollectionCount == 0);
+			//Assert.IsTrue(); // assert that the record does not exist in the DB
+		}
     }
 }

@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			string directoryName = currentDirectoryDirectories[collectionIndex];
-			return new PrintItemCollection(Path.GetFileNameWithoutExtension(directoryName), directoryName);
+			return new PrintItemCollection(Path.GetFileNameWithoutExtension(directoryName), Path.Combine(rootPath, directoryName));
 		}
 
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
@@ -179,9 +179,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new LibraryProviderFileSystem(Path.Combine(rootPath, collection.Key), collection.Name, this);
 		}
 
-		public override void RemoveCollection(string collectionName)
+		public override void RemoveCollection(PrintItemCollection collectionToRemove)
 		{
-			string directoryPath = Path.Combine(rootPath, currentDirectory, collectionName);
+			string directoryPath = collectionToRemove.Key;
 			if (Directory.Exists(directoryPath))
 			{
 				Directory.Delete(directoryPath);

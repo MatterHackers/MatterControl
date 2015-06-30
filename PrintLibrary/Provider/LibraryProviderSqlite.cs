@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,17 +47,22 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	public class LibraryProviderSQLite : LibraryProvider
 	{
 		private static LibraryProviderSQLite instance = null;
-		private static PrintItemCollection rotLibraryCollection;
+		private PrintItemCollection baseLibraryCollection;
 
 		private List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
-		private PrintItemCollection collectionBase = GetRootLibraryCollection();
 		private string keywordFilter = string.Empty;
 
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
 
-		public LibraryProviderSQLite(LibraryProvider parentLibraryProvider)
+		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
 			: base(parentLibraryProvider)
 		{
+			if (baseLibraryCollection == null)
+			{
+				baseLibraryCollection = GetRootLibraryCollection2(this);
+			}
+
+			this.baseLibraryCollection = baseLibraryCollection;
 			LoadLibraryItems();
 		}
 
@@ -66,7 +72,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderSQLite(null);
+					instance = new LibraryProviderSQLite(null, null);
 				}
 
 				return instance;
@@ -120,7 +126,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override string ProviderData
 		{
-			get { throw new NotImplementedException(); }
+			get 
+			{
+				return baseLibraryCollection.Id.ToString();
+			}
 		}
 
 		public override string ProviderKey
@@ -139,31 +148,28 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return result;
 		}
 
-		public static PrintItemCollection GetRootLibraryCollection()
+		static PrintItemCollection GetRootLibraryCollection2(LibraryProviderSQLite rootLibrary)
 		{
 			// Attempt to initialize the library from the Datastore if null
-			if (rotLibraryCollection == null)
-			{
-				rotLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
-			}
+			PrintItemCollection rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
 
 			// If the _library collection is still missing, create and populate it with default content
-			if (rotLibraryCollection == null)
+			if (rootLibraryCollection == null)
 			{
-				rotLibraryCollection = new PrintItemCollection();
-				rotLibraryCollection.Name = "_library";
-				rotLibraryCollection.Commit();
+				rootLibraryCollection = new PrintItemCollection();
+				rootLibraryCollection.Name = "_library";
+				rootLibraryCollection.Commit();
 
 				// Preload library with Oem supplied list of default parts
 				string[] itemsToAdd = SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
 				if (itemsToAdd.Length > 0)
 				{
 					// Import any files sync'd to disk into the library, then add them to the queue
-					LibraryProviderSQLite rootLibrary = new LibraryProviderSQLite(null);
 					rootLibrary.AddFilesToLibrary(itemsToAdd);
 				}
 			}
-			return rotLibraryCollection;
+
+			return rootLibraryCollection;
 		}
 
 		static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
@@ -205,7 +211,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return calibrationPrintFileNames.Where(fileName =>
 			{
 				// Filter out items that already exist in the library
-				LibraryProviderSQLite rootLibrary = new LibraryProviderSQLite(null);
+				LibraryProviderSQLite rootLibrary = new LibraryProviderSQLite(null, null);
 				return rootLibrary.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
 			}).Select(fileName =>
 			{
@@ -225,8 +231,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void AddCollectionToLibrary(string collectionName)
 		{
 			PrintItemCollection newCollection = new PrintItemCollection(collectionName, "");
-			newCollection.ParentCollectionID = collectionBase.Id;
+			newCollection.ParentCollectionID = baseLibraryCollection.Id;
 			newCollection.Commit();
+			LoadLibraryItems();
+			LibraryProvider.OnDataReloaded(null);
 		}
 
 		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerSavePath = null, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
@@ -251,6 +259,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void AddItem(PrintItemWrapper itemToAdd)
 		{
 			throw new NotImplementedException();
+			LibraryProvider.OnDataReloaded(null);
+		}
+
+		void SetProviderLocator(PrintItemWrapper itemToSetProviderLocatorOn)
+		{
+			List<ProviderLocatorNode> providerLocator = GetProviderLocator();
+			string providerLocatorJson = JsonConvert.SerializeObject(providerLocator);
+			itemToSetProviderLocatorOn.PrintItem.LibraryProviderLocatorJson = providerLocatorJson;
 		}
 
 		public void AddItem(PrintItemWrapper item, int indexToInsert = -1)
@@ -259,6 +275,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				indexToInsert = printItems.Count;
 			}
+			SetProviderLocator(item);
 			printItems.Insert(indexToInsert, item);
 			// Check if the collection we are adding to is the the currently visible collection.
 			List<ProviderLocatorNode> currentDisplayedCollection = GetProviderLocator();
@@ -266,7 +283,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				OnItemAdded(new IndexArgs(indexToInsert));
 			}
-			item.PrintItem.PrintItemCollectionID = GetRootLibraryCollection().Id;
+			item.PrintItem.PrintItemCollectionID = baseLibraryCollection.Id;
 			item.PrintItem.Commit();
 		}
 
@@ -287,7 +304,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
 		{
-			throw new NotImplementedException();
+			return new LibraryProviderSQLite(collection, this);
 		}
 
 		public void LoadLibraryItems()
@@ -298,17 +315,26 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				foreach (PrintItem part in partFiles)
 				{
-					printItems.Add(new PrintItemWrapper(part));
+					PrintItemWrapper item = new PrintItemWrapper(part);
+					SetProviderLocator(item);
+					printItems.Add(item);
 				}
 			}
 
 			childCollections.Clear();
-			childCollections.AddRange(GetChildCollections());
+			GetChildCollections();
+			IEnumerable<PrintItemCollection> collections = GetChildCollections();
+			if(collections != null)
+			{
+				childCollections.AddRange(collections);
+			}
 		}
 
-		public override void RemoveCollection(string collectionName)
+		public override void RemoveCollection(PrintItemCollection collectionToRemove)
 		{
-			throw new NotImplementedException();
+			collectionToRemove.Delete();
+			LoadLibraryItems();
+			LibraryProvider.OnDataReloaded(null);
 		}
 
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
@@ -333,12 +359,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		private static void AddStlOrGcode(LibraryProvider libraryToAddTo, string loadedFileName, string extension)
+		private static void AddStlOrGcode(LibraryProviderSQLite libraryToAddTo, string loadedFileName, string extension)
 		{
 			PrintItem printItem = new PrintItem();
 			printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
 			printItem.FileLocation = Path.GetFullPath(loadedFileName);
-			printItem.PrintItemCollectionID = GetRootLibraryCollection().Id;
+			printItem.PrintItemCollectionID = libraryToAddTo.baseLibraryCollection.Id;
 			printItem.Commit();
 
 			if (MeshFileIo.ValidFileExtensions().Contains(extension))
@@ -393,35 +419,24 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private IEnumerable<PrintItemCollection> GetChildCollections()
 		{
-			if (collectionBase != null)
-			{
-				string query;
-				query = string.Format("SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {0} ORDER BY Name ASC;", collectionBase.Id);
-				IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
-				return result;
-			}
-
-			return null;
+			string query = string.Format("SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
+			IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
+			return result;
 		}
 
 		private IEnumerable<PrintItem> GetLibraryItems(string keyphrase = null)
 		{
-			if (collectionBase != null)
+			string query;
+			if (keyphrase == null)
 			{
-				string query;
-				if (keyphrase == null)
-				{
-					query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", collectionBase.Id);
-				}
-				else
-				{
-					query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} AND Name LIKE '%{1}%' ORDER BY Name ASC;", collectionBase.Id, keyphrase);
-				}
-				IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
-				return result;
+				query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
 			}
-
-			return null;
+			else
+			{
+				query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} AND Name LIKE '%{1}%' ORDER BY Name ASC;", baseLibraryCollection.Id, keyphrase);
+			}
+			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
+			return result;
 		}
 
 		private void loadFilesIntoLibraryBackgoundWorker_DoWork(object sender, DoWorkEventArgs e)

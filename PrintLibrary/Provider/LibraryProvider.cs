@@ -39,7 +39,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public abstract class LibraryProvider
 	{
-		public static RootedObjectEventHandler CollectionChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
@@ -109,7 +108,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract LibraryProvider GetProviderForItem(PrintItemCollection collection);
 
-		public abstract void RemoveCollection(string collectionName);
+		public abstract void RemoveCollection(PrintItemCollection collectionToRemove);
 
 		public abstract void RemoveItem(PrintItemWrapper printItemWrapper);
 

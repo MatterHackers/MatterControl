@@ -47,10 +47,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			: base(null)
 		{
 			// put in the sqlite provider
-			libraryProviders.Add(new LibraryProviderSQLite(this));
+			libraryProviders.Add(new LibraryProviderSQLite(null, this));
 
 			// and any directory providers (sd card provider, etc...)
-			//libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this));
+			libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this));
 			//#if __ANDROID__
 			//libraryProviders.Add(new LibraryProviderFileSystem(ApplicationDataStorage.Instance.PublicDataStoragePath, "Downloads", this.ProviderKey));
 
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override void RemoveCollection(string collectionName)
+		public override void RemoveCollection(PrintItemCollection collectionToRemove)
 		{
 			throw new NotImplementedException();
 		}
