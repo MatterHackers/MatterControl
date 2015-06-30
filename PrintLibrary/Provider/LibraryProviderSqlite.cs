@@ -47,25 +47,26 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		private static LibraryProviderSQLite instance = null;
 		private static PrintItemCollection rotLibraryCollection;
+
 		private List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 		private PrintItemCollection collectionBase = GetRootLibraryCollection();
 		private string keywordFilter = string.Empty;
 
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
 
-		public LibraryProviderSQLite()
-			: base(LibraryProviderSelector.LibraryProviderSelectorKey)
+		public LibraryProviderSQLite(LibraryProvider parentLibraryProvider)
+			: base(parentLibraryProvider)
 		{
 			LoadLibraryItems();
 		}
 
-		public new static LibraryProviderSQLite Instance
+		public static LibraryProvider Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderSQLite();
+					instance = new LibraryProviderSQLite(null);
 				}
 
 				return instance;
@@ -117,6 +118,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override string ProviderData
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		public override string ProviderKey
 		{
 			get
@@ -153,7 +159,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				if (itemsToAdd.Length > 0)
 				{
 					// Import any files sync'd to disk into the library, then add them to the queue
-					Instance.AddFilesToLibrary(itemsToAdd);
+					LibraryProviderSQLite rootLibrary = new LibraryProviderSQLite(null);
+					rootLibrary.AddFilesToLibrary(itemsToAdd);
 				}
 			}
 			return rotLibraryCollection;
@@ -198,7 +205,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return calibrationPrintFileNames.Where(fileName =>
 			{
 				// Filter out items that already exist in the library
-				return Instance.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
+				LibraryProviderSQLite rootLibrary = new LibraryProviderSQLite(null);
+				return rootLibrary.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
 			}).Select(fileName =>
 			{
 				// Copy calibration prints from StaticData to the filesystem before importing into the library
@@ -253,7 +261,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			printItems.Insert(indexToInsert, item);
 			// Check if the collection we are adding to is the the currently visible collection.
-			List<ProviderLocatorNode> currentDisplayedCollection = LibraryProvider.Instance.GetProviderLocator();
+			List<ProviderLocatorNode> currentDisplayedCollection = GetProviderLocator();
 			if (currentDisplayedCollection.Count > 0 && currentDisplayedCollection[1].Key == LibraryProviderSQLite.StaticProviderKey)
 			{
 				OnItemAdded(new IndexArgs(indexToInsert));
@@ -267,18 +275,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return childCollections[collectionIndex];
 		}
 
-		public override PrintItemCollection GetParentCollectionItem()
-		{
-			if (ParentProviderKey != null)
-			{
-				return new PrintItemCollection("..", ParentProviderKey);
-			}
-			else
-			{
-				return null;
-			}
-		}
-
 		public override PrintItemWrapper GetPrintItemWrapper(int index)
 		{
 			if (index >= 0 && index < printItems.Count)
@@ -289,7 +285,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return null;
 		}
 
-		public override List<ProviderLocatorNode> GetProviderLocator()
+		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
 		{
 			throw new NotImplementedException();
 		}
@@ -337,14 +333,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override void SetCollectionBase(PrintItemCollection collectionBase)
-		{
-			this.collectionBase = collectionBase;
-
-			LoadLibraryItems();
-		}
-
-		private static void AddStlOrGcode(string loadedFileName, string extension)
+		private static void AddStlOrGcode(LibraryProvider libraryToAddTo, string loadedFileName, string extension)
 		{
 			PrintItem printItem = new PrintItem();
 			printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
@@ -360,7 +349,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
 					SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
-					Instance.AddItem(printItemWrapper);
+					libraryToAddTo.AddItem(printItemWrapper);
 				}
 				catch (System.UnauthorizedAccessException)
 				{
@@ -383,7 +372,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
 				if (false)
 				{
-					Instance.AddItem(printItemWrapper);
+					libraryToAddTo.AddItem(printItemWrapper);
 				}
 				else // save a copy to the library and update this to point at it
 				{
@@ -397,7 +386,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					printItemWrapper.PrintItem.Commit();
 
 					// let the queue know that the item has changed so it load the correct part
-					Instance.AddItem(printItemWrapper);
+					libraryToAddTo.AddItem(printItemWrapper);
 				}
 			}
 		}
@@ -453,13 +442,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						{
 							foreach (PrintItem part in partFiles)
 							{
-								AddStlOrGcode(part.FileLocation, Path.GetExtension(part.FileLocation).ToUpper());
+								AddStlOrGcode(this, part.FileLocation, Path.GetExtension(part.FileLocation).ToUpper());
 							}
 						}
 					}
 					else
 					{
-						AddStlOrGcode(loadedFileName, extension);
+						AddStlOrGcode(this, loadedFileName, extension);
 					}
 				}
 			}

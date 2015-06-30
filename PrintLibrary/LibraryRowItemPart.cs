@@ -137,12 +137,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void RemoveFromCollection()
 		{
-			LibraryProvider.Instance.RemoveItem(printItemWrapper);
-		}
-
-		public override void RemoveFromParentCollection()
-		{
-			LibraryProvider.Instance.RemoveItem(printItemWrapper);
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(printItemWrapper);
 		}
 
 		protected override SlideWidget GetItemActionButtons()
@@ -211,7 +206,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		protected override void RemoveThisFromPrintLibrary()
 		{
-			LibraryProvider.Instance.RemoveItem(this.printItemWrapper);
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(this.printItemWrapper);
 		}
 
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)

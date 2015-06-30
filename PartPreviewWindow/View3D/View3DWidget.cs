@@ -1870,8 +1870,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				saveSucceded = true;
-				//LibraryProvider.Instance.SaveToCollection(printItemWrapper.PrintItem.LibraryProviderLocator
-				LibraryProvider.Instance.SaveToLibrary(printItemWrapper, asynchMeshGroups);
+				//LibraryDataView.CurrentLibraryProvider.SaveToCollection(printItemWrapper.PrintItem.LibraryProviderLocator
+				LibraryProviderSQLite.Instance.SaveToLibrary(printItemWrapper, asynchMeshGroups);
 			}
 			catch (System.UnauthorizedAccessException)
 			{

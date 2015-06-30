@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void CreateNamedFolder(CreateFolderWindow.CreateFolderReturnInfo returnInfo)
 		{
-			LibraryProvider.Instance.AddCollectionToLibrary(returnInfo.newName);
+			LibraryDataView.CurrentLibraryProvider.AddCollectionToLibrary(returnInfo.newName);
 		}
 
 		private void CreateEditBarButtons()
@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void CollectionChanged(object sender, EventArgs e)
 		{
-			List<ProviderLocatorNode> providerLocator = LibraryProvider.Instance.GetProviderLocator();
+			List<ProviderLocatorNode> providerLocator = LibraryDataView.CurrentLibraryProvider.GetProviderLocator();
 			StringBuilder path = new StringBuilder();
 			bool first = true;
 			foreach (ProviderLocatorNode node in providerLocator)
@@ -322,7 +322,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void searchButtonClick(object sender, EventArgs mouseEvent)
 		{
 			string searchText = searchInput.Text.Trim();
-			LibraryProvider.Instance.KeywordFilter = searchText;
+			LibraryDataView.CurrentLibraryProvider.KeywordFilter = searchText;
 			libraryDataView.ClearSelectedItems();
 		}
 
@@ -441,7 +441,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			LibraryProvider.Instance.AddFilesToLibrary(fileDropEventArgs.DroppedFiles, LibraryProvider.Instance.GetProviderLocator());
+			LibraryDataView.CurrentLibraryProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles, LibraryDataView.CurrentLibraryProvider.GetProviderLocator());
 
 			base.OnDragDrop(fileDropEventArgs);
 		}
@@ -456,7 +456,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (openParams.FileNames != null)
 			{
-				LibraryProvider.Instance.AddFilesToLibrary(openParams.FileNames, null);
+				LibraryDataView.CurrentLibraryProvider.AddFilesToLibrary(openParams.FileNames, null);
 			}
 		}
 	}

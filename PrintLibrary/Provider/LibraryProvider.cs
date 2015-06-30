@@ -39,45 +39,26 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public abstract class LibraryProvider
 	{
-		private string parentProviderKey = null;
-		public string ParentProviderKey { get { return parentProviderKey; } }
-
 		public static RootedObjectEventHandler CollectionChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
+		private LibraryProvider parentLibraryProvider = null;
 
-		private static LibraryProvider instance;
-
-		public static LibraryProvider Instance
+		public LibraryProvider(LibraryProvider parentLibraryProvider)
 		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new LibraryProviderSelector(null);
-				}
-
-				return instance;
-			}
-
-			set
-			{
-				instance = value;
-			}
+			this.parentLibraryProvider = parentLibraryProvider;
 		}
 
-		public LibraryProvider(string parentProviderKey)
-		{
-			this.parentProviderKey = parentProviderKey;
-		}
+		public LibraryProvider ParentLibraryProvider { get { return parentLibraryProvider; } }
 
 		#region Member Methods
+
 		public bool HasParent
 		{
 			get
 			{
-				if (this.parentProviderKey != null)
+				if (this.ParentLibraryProvider != null)
 				{
 					return true;
 				}
@@ -85,7 +66,22 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				return false;
 			}
 		}
-		#endregion
+
+		// A key,value list that threads into the current collection looks like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
+		public List<ProviderLocatorNode> GetProviderLocator()
+		{
+			List<ProviderLocatorNode> providerLocator = new List<ProviderLocatorNode>();
+			if (ParentLibraryProvider != null)
+			{
+				providerLocator.AddRange(ParentLibraryProvider.GetProviderLocator());
+			}
+
+			providerLocator.Add(new ProviderLocatorNode(ProviderKey, Name, ProviderData));
+
+			return providerLocator;
+		}
+
+		#endregion Member Methods
 
 		#region Abstract Methods
 
@@ -97,6 +93,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract string Name { get; }
 
+		public abstract string ProviderData { get; }
+
 		public abstract string ProviderKey { get; }
 
 		public abstract void AddCollectionToLibrary(string collectionName);
@@ -107,12 +105,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
-		public abstract PrintItemCollection GetParentCollectionItem();
-
 		public abstract PrintItemWrapper GetPrintItemWrapper(int itemIndex);
 
-		// A key,value list that threads into the current collection looks like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
-		public abstract List<ProviderLocatorNode> GetProviderLocator();
+		public abstract LibraryProvider GetProviderForItem(PrintItemCollection collection);
 
 		public abstract void RemoveCollection(string collectionName);
 
@@ -120,25 +115,23 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null);
 
-		public abstract void SetCollectionBase(PrintItemCollection collectionBase);
-
 		#endregion Abstract Methods
 
 		#region Static Methods
 
 		public static void OnDataReloaded(EventArgs eventArgs)
 		{
-			DataReloaded.CallEvents(Instance, eventArgs);
+			DataReloaded.CallEvents(null, eventArgs);
 		}
 
 		public static void OnItemAdded(EventArgs eventArgs)
 		{
-			ItemAdded.CallEvents(Instance, eventArgs);
+			ItemAdded.CallEvents(null, eventArgs);
 		}
 
 		public static void OnItemRemoved(EventArgs eventArgs)
 		{
-			ItemRemoved.CallEvents(Instance, eventArgs);
+			ItemRemoved.CallEvents(null, eventArgs);
 		}
 
 		#endregion Static Methods
@@ -148,11 +141,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		public string Key;
 		public string Name;
+		public string ProviderData;
 
-		public ProviderLocatorNode(string key, string name)
+		public ProviderLocatorNode(string key, string name, string providerData)
 		{
 			this.Key = key;
 			this.Name = name;
+			this.ProviderData = providerData;
 		}
 	}
 }

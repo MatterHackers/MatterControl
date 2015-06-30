@@ -52,15 +52,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string keywordFilter = string.Empty;
 		private string rootPath;
 
-		public LibraryProviderFileSystem(string rootPath, string description, string parentProviderKey)
-			: base(parentProviderKey)
+		public LibraryProviderFileSystem(string rootPath, string description, LibraryProvider parentLibraryProvider)
+			: base(parentLibraryProvider)
 		{
 			this.description = description;
 			this.rootPath = rootPath;
 
 			key = keyCount.ToString();
 			keyCount++;
-			SetCollectionBase(null);
+
+			directoryWatcher.Path = rootPath;
 
 			directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
 				   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -71,6 +72,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			// Begin watching.
 			directoryWatcher.EnableRaisingEvents = true;
+
+			GetFilesAndCollectionsInCurrentDirectory();
 		}
 
 		public override int CollectionCount
@@ -108,6 +111,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 
 		public override string Name { get { return description; } }
+
+		public override string ProviderData
+		{
+			get { return rootPath; }
+		}
 
 		public override string ProviderKey
 		{
@@ -158,42 +166,28 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new PrintItemCollection(Path.GetFileNameWithoutExtension(directoryName), directoryName);
 		}
 
-		public override PrintItemCollection GetParentCollectionItem()
-		{
-			if (currentDirectory == ".")
-			{
-				if (ParentProviderKey != null)
-				{
-					return new PrintItemCollection("..", ParentProviderKey);
-				}
-				else
-				{
-					return null;
-				}
-			}
-			else
-			{
-				string parentDirectory = Path.GetDirectoryName(currentDirectory);
-				return new PrintItemCollection("..", parentDirectory);
-			}
-		}
-
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
-			List<ProviderLocatorNode> providerLocator = LibraryProvider.Instance.GetProviderLocator();
+			List<ProviderLocatorNode> providerLocator = GetProviderLocator();
 			string providerLocatorJson = JsonConvert.SerializeObject(providerLocator);
 			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName, providerLocatorJson));
 		}
 
-		public override List<ProviderLocatorNode> GetProviderLocator()
+		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
 		{
-			throw new NotImplementedException();
+			return new LibraryProviderFileSystem(Path.Combine(rootPath, collection.Key), collection.Name, this);
 		}
 
 		public override void RemoveCollection(string collectionName)
 		{
-			throw new NotImplementedException();
+			string directoryPath = Path.Combine(rootPath, currentDirectory, collectionName);
+			if (Directory.Exists(directoryPath))
+			{
+				Directory.Delete(directoryPath);
+				GetFilesAndCollectionsInCurrentDirectory();
+				LibraryProvider.OnDataReloaded(null);
+			}
 		}
 
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
@@ -206,27 +200,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
 		{
 			throw new NotImplementedException();
-		}
-
-		public override void SetCollectionBase(PrintItemCollection collectionBase)
-		{
-			if (collectionBase == null)
-			{
-				currentDirectory = ".";
-			}
-			else
-			{
-				string collectionPath = collectionBase.Key;
-				int startOfCurrentDir = collectionPath.IndexOf('.');
-				if (startOfCurrentDir != -1)
-				{
-					this.currentDirectory = collectionPath.Substring(startOfCurrentDir);
-				}
-			}
-
-			GetFilesAndCollectionsInCurrentDirectory();
-
-			directoryWatcher.Path = Path.Combine(rootPath, currentDirectory);
 		}
 
 		private static void CopyAllFiles(IList<string> files, string destPath)
@@ -262,7 +235,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						{
 							int endingNumber;
 							// check if the last set of characters is a number
-							if(int.TryParse(fileNameWithoutExtension.Substring(lastSpaceIndex), out endingNumber))
+							if (int.TryParse(fileNameWithoutExtension.Substring(lastSpaceIndex), out endingNumber))
 							{
 								fileNameWithoutExtension = fileNameWithoutExtension.Substring(0, lastSpaceIndex);
 							}

@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderPlugin
 	{
-		virtual public LibraryProvider CreateLibraryProvider(string parentProviderKey)
+		virtual public LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
 		{
 			throw new NotImplementedException();
 		}
