@@ -43,8 +43,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class PrintLibraryWidget : GuiWidget
 	{
-		private CreateFolderWindow createFolderWindow = null;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private static CreateFolderWindow createFolderWindow = null;
+		private static TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
 		private TextWidget breadCrumbDisplay;
@@ -52,9 +52,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private FlowLayoutWidget itemOperationButtons;
 		private List<bool> editOperationMultiCapable = new List<bool>();
 
-		private Button addToLibraryButton;
+		private static Button addToLibraryButton;
 		private Button enterEditModeButton;
 		private Button leaveEditModeButton;
+        private static FlowLayoutWidget buttonPanel;
 		private MHTextEditWidget searchInput;
 		private LibraryDataView libraryDataView;
 
@@ -135,55 +136,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				navigationPanel.AddChild(navigationLabel);
 				navigationPanel.AddChild(new HorizontalSpacer());
 
-				FlowLayoutWidget buttonPanel = new FlowLayoutWidget();
+				buttonPanel = new FlowLayoutWidget();
 				buttonPanel.HAnchor = HAnchor.ParentLeftRight;
 				buttonPanel.Padding = new BorderDouble(0, 3);
 				buttonPanel.MinimumSize = new Vector2(0, 46);
-				{
-					// the add button
-					{
-						addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
-						buttonPanel.AddChild(addToLibraryButton);
-						addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
-						addToLibraryButton.Click += new EventHandler((sender, e) => UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle));
-					}
 
-					// the create folder button
-					{
-						Button createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
-						buttonPanel.AddChild(createFolderButton);
-						createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
-						createFolderButton.Click += new EventHandler((sender, e) =>
-						{
-							if (createFolderWindow == null)
-							{
-								createFolderWindow = new CreateFolderWindow(CreateNamedFolder);
-								createFolderWindow.Closed += new EventHandler(CreateFolderWindow_Closed);
-							}
-							else
-							{
-								createFolderWindow.BringToFront();
-							}
-						}
-						);
-					}
-
-					// the redeem code button
-					{
-						Button redeemCodeButton = textImageButtonFactory.Generate(LocalizedString.Get("Redeem"));
-						buttonPanel.AddChild(redeemCodeButton);
-						redeemCodeButton.Margin = new BorderDouble(0, 0, 3, 0);
-						redeemCodeButton.Click += new EventHandler((sender, e) =>
-						{
-						}
-						);
-					}
-
-					GuiWidget spacer = new GuiWidget();
-					spacer.HAnchor = HAnchor.ParentLeftRight;
-					buttonPanel.AddChild(spacer);
-				}
-
+                AddLibraryButtonElements();
 				CreateEditBarButtons();
 
 				breadCrumbDisplay = new TextWidget("");
@@ -204,12 +162,77 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddHandlers();
 		}
 
-		private void CreateFolderWindow_Closed(object sender, EventArgs e)
+        private static void AddLibraryButtonElements()
+        {
+            textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+		    textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+		    textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+            buttonPanel.RemoveAllChildren();	
+            // the add button
+			{
+				addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+				buttonPanel.AddChild(addToLibraryButton);
+				addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
+				addToLibraryButton.Click += new EventHandler((sender, e) => UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle));
+			}
+
+			// the create folder button
+			{
+				Button createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
+				buttonPanel.AddChild(createFolderButton);
+				createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
+				createFolderButton.Click += new EventHandler((sender, e) =>
+				{
+					if (createFolderWindow == null)
+					{
+						createFolderWindow = new CreateFolderWindow(CreateNamedFolder);
+						createFolderWindow.Closed += new EventHandler(CreateFolderWindow_Closed);
+					}
+					else
+					{
+						createFolderWindow.BringToFront();
+					}
+				}
+				);
+			}
+
+			//Add extra buttons (ex. from plugins) if available
+            if (privateAddLibraryButton != null)
+            {
+                privateAddLibraryButton(buttonPanel);
+            }
+
+			GuiWidget spacer = new GuiWidget();
+			spacer.HAnchor = HAnchor.ParentLeftRight;
+			buttonPanel.AddChild(spacer);
+        }
+
+        public delegate void AddLibraryButtonDelegate(GuiWidget extraButtonContainer);
+
+        private static event AddLibraryButtonDelegate privateAddLibraryButton;
+        public static event AddLibraryButtonDelegate AddLibraryButton
+        {
+            add
+            {
+                privateAddLibraryButton += value;
+                // and create button container right away
+                AddLibraryButtonElements();
+            }
+
+            remove
+            {
+                privateAddLibraryButton -= value;
+            }
+        }
+        
+
+		private static void CreateFolderWindow_Closed(object sender, EventArgs e)
 		{
-			this.createFolderWindow = null;
+			createFolderWindow = null;
 		}
 
-		private void CreateNamedFolder(CreateFolderWindow.CreateFolderReturnInfo returnInfo)
+		private static void CreateNamedFolder(CreateFolderWindow.CreateFolderReturnInfo returnInfo)
 		{
 			LibraryDataView.CurrentLibraryProvider.AddCollectionToLibrary(returnInfo.newName);
 		}
@@ -446,13 +469,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			base.OnDragDrop(fileDropEventArgs);
 		}
 
-		private void importToLibraryloadFile_ClickOnIdle()
+		private static void importToLibraryloadFile_ClickOnIdle()
 		{
 			OpenFileDialogParams openParams = new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true);
 			FileDialog.OpenFileDialog(openParams, onLibraryLoadFileSelected);
 		}
 
-		private void onLibraryLoadFileSelected(OpenFileDialogParams openParams)
+		private static void onLibraryLoadFileSelected(OpenFileDialogParams openParams)
 		{
 			if (openParams.FileNames != null)
 			{
