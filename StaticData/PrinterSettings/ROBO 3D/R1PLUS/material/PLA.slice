@@ -1,7 +1,0 @@
-bed_temperature = 50
-disable_fan_first_layers = 2
-fan_always_on = 1
-first_layer_bed_temperature = 55
-first_layer_temperature = 210
-retract_length = 3
-temperature = 210
