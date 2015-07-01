@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 	}
 
-	internal class Datastore
+	public class Datastore
 	{
 		public bool ConnectionError = false;
 		public ISQLite dbSQLite;

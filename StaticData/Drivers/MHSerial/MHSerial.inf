@@ -39,6 +39,7 @@ makeit.name="MakeIt"
 ramps.name="RAMPS"
 ftdi.name="FTDI"
 flashforge.name="Flashforge"
+dremel.name="Dremel 3D Printer"
 
 [DefaultInstall]
 CopyINF=arduino.inf
@@ -98,6 +99,8 @@ DefaultDestDir=12
 %ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
 %ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
 %flashforge.name%=DriverInstall, USB\VID_23C1&PID_D314&REV_0001
+%dremel.name%=DriverInstall, USB\VID_2A89&PID_8889&REV_0200
+%dremel.name%=DriverInstall, USB\VID_2A89&PID_8889
 
 [DeviceList.NTamd64]
 %due.bossa.name%=DriverInstall, USB\VID_03EB&PID_6124
@@ -138,6 +141,7 @@ DefaultDestDir=12
 %ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
 %ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
 %flashforge.name%=DriverInstall, USB\VID_23C1&PID_D314&REV_0001
+%dremel.name%=DriverInstall, USB\VID_2A89&PID_8889
 
 [DeviceList.NTia64]
 %esplora.bootloader.name%=DriverInstall, USB\VID_2341&PID_003C
@@ -175,6 +179,7 @@ DefaultDestDir=12
 %ramps.name%=DriverInstall, USB\VID_1A86&PID_7523
 %ftdi.name%=DriverInstall, USB\VID_0403&PID_6001
 %flashforge.name%=DriverInstall, USB\VID_23C1&PID_D314&REV_0001
+%dremel.name%=DriverInstall, USB\VID_2A89&PID_8889
 
 [DriverInstall]
 include=mdmcpq.inf,usb.inf

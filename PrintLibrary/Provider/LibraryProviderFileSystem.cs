@@ -50,18 +50,18 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string description;
 		private FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		private string keywordFilter = string.Empty;
-		private string parentProviderKey = null;
 		private string rootPath;
 
-		public LibraryProviderFileSystem(string rootPath, string description, string parentProviderKey)
+		public LibraryProviderFileSystem(string rootPath, string description, LibraryProvider parentLibraryProvider)
+			: base(parentLibraryProvider)
 		{
-			this.parentProviderKey = parentProviderKey;
 			this.description = description;
 			this.rootPath = rootPath;
 
 			key = keyCount.ToString();
 			keyCount++;
-			SetCollectionBase(null);
+
+			directoryWatcher.Path = rootPath;
 
 			directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
 				   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -72,6 +72,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			// Begin watching.
 			directoryWatcher.EnableRaisingEvents = true;
+
+			GetFilesAndCollectionsInCurrentDirectory();
 		}
 
 		public override int CollectionCount
@@ -79,19 +81,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			get
 			{
 				return currentDirectoryDirectories.Count;
-			}
-		}
-
-		public override bool HasParent
-		{
-			get
-			{
-				if (parentProviderKey != null)
-				{
-					return true;
-				}
-
-				return false;
 			}
 		}
 
@@ -123,6 +112,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override string Name { get { return description; } }
 
+		public override string ProviderData
+		{
+			get { return rootPath; }
+		}
+
 		public override string ProviderKey
 		{
 			get
@@ -142,23 +136,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerLocator, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
-			if (providerLocator == null || providerLocator.Count <= 1)
-			{
-				string destPath = rootPath;
+			string destPath = rootPath;
 
-				CopyAllFiles(files, destPath);
-			}
-			else // we have a path that we need to save to
-			{
-				string destPath = GetPathFromLocator(providerLocator);
-
-				CopyAllFiles(files, destPath);
-			}
+			CopyAllFiles(files, destPath);
 
 			GetFilesAndCollectionsInCurrentDirectory();
 			LibraryProvider.OnDataReloaded(null);
+			LibraryProvider.OnItemAdded(null);
 		}
 
 		public override void AddItem(PrintItemWrapper itemToAdd)
@@ -169,45 +155,31 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			string directoryName = currentDirectoryDirectories[collectionIndex];
-			return new PrintItemCollection(Path.GetFileNameWithoutExtension(directoryName), directoryName);
-		}
-
-		public override PrintItemCollection GetParentCollectionItem()
-		{
-			if (currentDirectory == ".")
-			{
-				if (parentProviderKey != null)
-				{
-					return new PrintItemCollection("..", parentProviderKey);
-				}
-				else
-				{
-					return null;
-				}
-			}
-			else
-			{
-				string parentDirectory = Path.GetDirectoryName(currentDirectory);
-				return new PrintItemCollection("..", parentDirectory);
-			}
+			return new PrintItemCollection(Path.GetFileNameWithoutExtension(directoryName), Path.Combine(rootPath, directoryName));
 		}
 
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
-			List<ProviderLocatorNode> providerLocator = LibraryProvider.Instance.GetProviderLocator();
+			List<ProviderLocatorNode> providerLocator = GetProviderLocator();
 			string providerLocatorJson = JsonConvert.SerializeObject(providerLocator);
 			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName, providerLocatorJson));
 		}
 
-		public override List<ProviderLocatorNode> GetProviderLocator()
+		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
 		{
-			throw new NotImplementedException();
+			return new LibraryProviderFileSystem(Path.Combine(rootPath, collection.Key), collection.Name, this);
 		}
 
-		public override void RemoveCollection(string collectionName)
+		public override void RemoveCollection(PrintItemCollection collectionToRemove)
 		{
-			throw new NotImplementedException();
+			string directoryPath = collectionToRemove.Key;
+			if (Directory.Exists(directoryPath))
+			{
+				Directory.Delete(directoryPath);
+				GetFilesAndCollectionsInCurrentDirectory();
+				LibraryProvider.OnDataReloaded(null);
+			}
 		}
 
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
@@ -220,27 +192,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
 		{
 			throw new NotImplementedException();
-		}
-
-		public override void SetCollectionBase(PrintItemCollection collectionBase)
-		{
-			if (collectionBase == null)
-			{
-				currentDirectory = ".";
-			}
-			else
-			{
-				string collectionPath = collectionBase.Key;
-				int startOfCurrentDir = collectionPath.IndexOf('.');
-				if (startOfCurrentDir != -1)
-				{
-					this.currentDirectory = collectionPath.Substring(startOfCurrentDir);
-				}
-			}
-
-			GetFilesAndCollectionsInCurrentDirectory();
-
-			directoryWatcher.Path = Path.Combine(rootPath, currentDirectory);
 		}
 
 		private static void CopyAllFiles(IList<string> files, string destPath)
@@ -261,7 +212,35 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				// and copy the file
 				try
 				{
-					File.Copy(file, outputFileName);
+					if (!File.Exists(file))
+					{
+						File.Copy(file, outputFileName);
+					}
+					else // make a new file and append a number so that we are not destructive
+					{
+						string directory = Path.GetDirectoryName(outputFileName);
+						string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputFileName);
+						string extension = Path.GetExtension(outputFileName);
+						// get the filename without a number on the end
+						int lastSpaceIndex = fileNameWithoutExtension.LastIndexOf(' ');
+						if (lastSpaceIndex != -1)
+						{
+							int endingNumber;
+							// check if the last set of characters is a number
+							if (int.TryParse(fileNameWithoutExtension.Substring(lastSpaceIndex), out endingNumber))
+							{
+								fileNameWithoutExtension = fileNameWithoutExtension.Substring(0, lastSpaceIndex);
+							}
+						}
+						int numberToAppend = 2;
+						string fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
+						while (File.Exists(fileNameToUse))
+						{
+							numberToAppend++;
+							fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
+						}
+						File.Copy(file, fileNameToUse);
+					}
 				}
 				catch (Exception e)
 				{

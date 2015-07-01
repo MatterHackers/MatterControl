@@ -460,7 +460,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
 			{
-				LibraryProvider.Instance.AddItem(queueItem.PrintItemWrapper);
+				LibraryDataView.CurrentLibraryProvider.AddItem(queueItem.PrintItemWrapper);
 			}
 		}
 

@@ -40,64 +40,67 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSelector : LibraryProvider
 	{
+		private static LibraryProviderSelector instance = null;
 		private List<LibraryProvider> libraryProviders = new List<LibraryProvider>();
-		private int selectedLibraryProvider = -1;
 
-		public LibraryProviderSelector()
+		private LibraryProviderSelector()
+			: base(null)
 		{
 			// put in the sqlite provider
-			libraryProviders.Add(LibraryProviderSQLite.Instance);
-			LibraryProviderSQLite.Instance.SetParentKey(this.ProviderKey);
+			libraryProviders.Add(new LibraryProviderSQLite(null, this));
 
 			// and any directory providers (sd card provider, etc...)
-			libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this.ProviderKey));
+			//
+			// Add "Downloads" file system example
+			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+			if (Directory.Exists(downloadsDirectory))
+			{
+				libraryProviders.Add(new LibraryProviderFileSystem(downloadsDirectory, "Downloads", this));
+			}
+
 			//#if __ANDROID__
 			//libraryProviders.Add(new LibraryProviderFileSystem(ApplicationDataStorage.Instance.PublicDataStoragePath, "Downloads", this.ProviderKey));
 
-			PrintItemCollection libraryCollection = new PrintItemCollection("Library Folder1", Path.Combine("C:\\", "Users", "LarsBrubaker", "AppData", "Local", "MatterControl", "Library"));
-			//libraryProviders.Add(new LibraryProviderFileSystem(libraryCollection, "Library Folder2", this.ProviderKey));
-
 			// Check for LibraryProvider factories and put them in the list too.
-			PluginFinder<LibraryProviderFactory> libraryFactories = new PluginFinder<LibraryProviderFactory>();
-			foreach (LibraryProviderFactory factory in libraryFactories.Plugins)
+			PluginFinder<LibraryProviderPlugin> libraryProviderPlugins = new PluginFinder<LibraryProviderPlugin>();
+			foreach (LibraryProviderPlugin libraryProviderPlugin in libraryProviderPlugins.Plugins)
 			{
-				libraryProviders.Add(factory.CreateProvider(this.ProviderKey));
+				libraryProviders.Add(libraryProviderPlugin.CreateLibraryProvider(this));
 			}
 
 			providerLocationStack.Add(new PrintItemCollection("..", ProviderKey));
+		}
+
+		public static LibraryProviderSelector Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new LibraryProviderSelector();
+				}
+
+				return instance;
+			}
 		}
 
 		#region Overriden Abstract Methods
 
 		private List<PrintItemCollection> providerLocationStack = new List<PrintItemCollection>();
 
+		public static string LibraryProviderSelectorKey
+		{
+			get
+			{
+				return "ProviderSelectorKey";
+			}
+		}
+
 		public override int CollectionCount
 		{
 			get
 			{
-				if (selectedLibraryProvider == -1)
-				{
-					return libraryProviders.Count;
-				}
-				else
-				{
-					return libraryProviders[selectedLibraryProvider].CollectionCount;
-				}
-			}
-		}
-
-		public override bool HasParent
-		{
-			get
-			{
-				if (selectedLibraryProvider == -1)
-				{
-					return false;
-				}
-				else
-				{
-					return libraryProviders[selectedLibraryProvider].HasParent;
-				}
+				return libraryProviders.Count;
 			}
 		}
 
@@ -105,14 +108,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				if (selectedLibraryProvider == -1)
-				{
-					return 0;
-				}
-				else
-				{
-					return libraryProviders[selectedLibraryProvider].ItemCount;
-				}
+				return 0;
 			}
 		}
 
@@ -120,25 +116,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				if (selectedLibraryProvider == -1)
-				{
-					return "";
-				}
-				else
-				{
-					return libraryProviders[selectedLibraryProvider].KeywordFilter;
-				}
+				return "";
 			}
 
 			set
 			{
-				if (selectedLibraryProvider == -1)
-				{
-				}
-				else
-				{
-					libraryProviders[selectedLibraryProvider].KeywordFilter = value;
-				}
 			}
 		}
 
@@ -150,32 +132,27 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override string ProviderData
+		{
+			get { return ""; }
+		}
+
 		public override string ProviderKey
 		{
 			get
 			{
-				return "ProviderSelectorKey";
+				return LibraryProviderSelectorKey;
 			}
 		}
 
 		public override void AddCollectionToLibrary(string collectionName)
 		{
-			if (selectedLibraryProvider == -1)
-			{
-				throw new NotImplementedException();
-			}
-			else
-			{
-				libraryProviders[selectedLibraryProvider].AddCollectionToLibrary(collectionName);
-			}
+			throw new NotImplementedException();
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerSavePath, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
-			List<ProviderLocatorNode> subProviderSavePath;
-			int libraryProviderToUseIndex = GetProviderIndex(providerSavePath, out subProviderSavePath);
-
-			libraryProviders[libraryProviderToUseIndex].AddFilesToLibrary(files, subProviderSavePath, reportProgress, callback);
+			throw new NotImplementedException();
 		}
 
 		public override void AddItem(PrintItemWrapper itemToAdd)
@@ -185,85 +162,35 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
-			if (selectedLibraryProvider == -1)
-			{
-				LibraryProvider provider = libraryProviders[collectionIndex];
-				return new PrintItemCollection(provider.Name, provider.ProviderKey);
-			}
-			else
-			{
-				return libraryProviders[selectedLibraryProvider].GetCollectionItem(collectionIndex);
-			}
-		}
-
-		public override PrintItemCollection GetParentCollectionItem()
-		{
-			if (selectedLibraryProvider == -1)
-			{
-				return null;
-			}
-			else
-			{
-				return libraryProviders[selectedLibraryProvider].GetParentCollectionItem();
-			}
+			LibraryProvider provider = libraryProviders[collectionIndex];
+			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
-			if (selectedLibraryProvider == -1)
+			if (libraryProviders[0].ProviderKey != LibraryProviderSQLite.StaticProviderKey)
 			{
-				if (libraryProviders[0].ProviderKey != LibraryProviderSQLite.StaticProviderKey)
-				{
-					throw new Exception("It is expected these are the same.");
-				}
-				return libraryProviders[0].GetPrintItemWrapper(itemIndex);
+				throw new Exception("It is expected these are the same.");
 			}
-			else
-			{
-				return libraryProviders[selectedLibraryProvider].GetPrintItemWrapper(itemIndex);
-			}
+			return libraryProviders[0].GetPrintItemWrapper(itemIndex);
 		}
 
-		// A key,value list that threads into the current collection loos like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
-		public override List<ProviderLocatorNode> GetProviderLocator()
+		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
 		{
-			if (selectedLibraryProvider == -1)
+			foreach (LibraryProvider libraryProvider in libraryProviders)
 			{
-				return new List<ProviderLocatorNode>();
-			}
-			else
-			{
-				List<ProviderLocatorNode> providerPathNodes = new List<ProviderLocatorNode>();
-				bool first = true;
-
-				for (int i = 0; i < providerLocationStack.Count; i++)
+				if (collection.Key == libraryProvider.ProviderKey)
 				{
-					PrintItemCollection collection = providerLocationStack[i];
-					if (first)
-					{
-						providerPathNodes.Add(new ProviderLocatorNode(collection.Key, collection.Name));
-						first = false;
-					}
-					else
-					{
-						providerPathNodes.Add(new ProviderLocatorNode(collection.Key, collection.Name));
-					}
+					return libraryProvider;
 				}
-
-				return providerPathNodes;
 			}
+
+			throw new NotImplementedException();
 		}
 
-		public override void RemoveCollection(string collectionName)
+		public override void RemoveCollection(PrintItemCollection collectionToRemove)
 		{
-			if (selectedLibraryProvider == -1)
-			{
-				throw new NotImplementedException();
-			}
-			else
-			{
-				libraryProviders[selectedLibraryProvider].RemoveCollection(collectionName);
-			}
+			throw new NotImplementedException();
 		}
 
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
@@ -276,61 +203,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null)
 		{
-			if (selectedLibraryProvider == -1)
-			{
-				throw new NotImplementedException();
-			}
-			else
-			{
-				List<ProviderLocatorNode> subProviderSavePath;
-				int libraryProviderToUseIndex = GetProviderIndex(printItemWrapper, out subProviderSavePath);
-
-				libraryProviders[libraryProviderToUseIndex].SaveToLibrary(printItemWrapper, meshGroupsToSave, subProviderSavePath);
-			}
-		}
-
-		public override void SetCollectionBase(PrintItemCollection collectionBase)
-		{
-			// This logic may need to be move legitamately into the virtual functions of the providers rather than all
-			// gathered up here. If you find that this is not working the way you want ask me. LBB
-			if ((providerLocationStack.Count > 2
-				&& collectionBase.Key == providerLocationStack[providerLocationStack.Count - 2].Key)
-				|| (providerLocationStack.Count > 1
-				&& selectedLibraryProvider != -1
-				&& collectionBase.Key == libraryProviders[selectedLibraryProvider].GetParentCollectionItem().Key)
-				)
-			{
-				providerLocationStack.RemoveAt(providerLocationStack.Count - 1);
-			}
-			else
-			{
-				providerLocationStack.Add(collectionBase);
-			}
-
-			if (collectionBase.Key == this.ProviderKey)
-			{
-				selectedLibraryProvider = -1;
-			}
-			else
-			{
-				bool wasSet = false;
-				for (int i = 0; i < libraryProviders.Count; i++)
-				{
-					if (libraryProviders[i].ProviderKey == collectionBase.Key)
-					{
-						selectedLibraryProvider = i;
-						wasSet = true;
-						break;
-					}
-				}
-
-				if (!wasSet)
-				{
-					libraryProviders[selectedLibraryProvider].SetCollectionBase(collectionBase);
-				}
-			}
-
-			CollectionChanged.CallEvents(this, null);
+			throw new NotImplementedException();
 		}
 
 		private int GetProviderIndex(PrintItemWrapper printItemWrapper, out List<ProviderLocatorNode> subProviderSavePath)
@@ -362,5 +235,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 
 		#endregion Overriden Abstract Methods
+
+		public static LibraryProvider GetProviderForItem(PrintItemWrapper printItemWrapper)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

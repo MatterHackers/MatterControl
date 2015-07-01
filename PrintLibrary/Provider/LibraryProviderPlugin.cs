@@ -36,9 +36,9 @@ using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
-	public class LibraryProviderFactory
+	public class LibraryProviderPlugin
 	{
-		virtual public LibraryProvider CreateProvider(string parentKey)
+		virtual public LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
 		{
 			throw new NotImplementedException();
 		}

@@ -46,13 +46,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class LibraryRowItemCollection : LibraryRowItem
 	{
+		LibraryProvider parentProvider;
 		PrintItemCollection collection;
-		bool isSubdirector;
 
-		public LibraryRowItemCollection(PrintItemCollection collection, LibraryDataView libraryDataView, bool isSubdirector = true)
+		public LibraryRowItemCollection(PrintItemCollection collection, LibraryDataView libraryDataView, LibraryProvider parentProvider)
 			: base(libraryDataView)
 		{
-			this.isSubdirector = isSubdirector;
+			this.parentProvider = parentProvider;
 			this.collection = collection;
 			CreateGuiElements();
 		}
@@ -77,17 +77,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			throw new NotImplementedException();
 		}
 
-		public override void RemoveFromParentCollection()
-		{
-			throw new NotImplementedException();
-		}
-
 		private ConditionalClickWidget primaryClickContainer;
 
 		protected override GuiWidget GetThumbnailWidget()
 		{
 			string path = Path.Combine("Icons", "FileDialog", "folder.png");
-			if(!isSubdirector)
+			if(parentProvider != null)
 			{
 				path = Path.Combine("Icons", "FileDialog", "upfolder.png");
 			}
@@ -95,6 +90,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			StaticData.Instance.LoadImage(path, imageBuffer);
 
 			ImageWidget folderThumbnail = new ImageWidget(imageBuffer);
+			folderThumbnail.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			return folderThumbnail;
 		}
 
@@ -135,13 +131,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void ChangeCollection()
 		{
-			if (isSubdirector)
+			if (parentProvider == null)
 			{
-				LibraryProvider.Instance.SetCollectionBase(collection);
+				LibraryDataView.CurrentLibraryProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(collection);
 			}
 			else
 			{
-				LibraryProvider.Instance.SetCollectionBase(LibraryProvider.Instance.GetParentCollectionItem());
+				LibraryDataView.CurrentLibraryProvider = parentProvider;
 			}
 
 			UiThread.RunOnIdle(libraryDataView.RebuildView);
