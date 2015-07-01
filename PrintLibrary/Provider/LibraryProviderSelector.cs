@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "Never visible";
+				return "..";
 			}
 		}
 

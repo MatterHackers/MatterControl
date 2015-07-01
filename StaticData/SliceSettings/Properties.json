@@ -390,7 +390,7 @@
     "PresentationName": "G-Code Output",
     "HelpText": "Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.",
     "DataEditType": "LIST",
-    "ExtraSettings": "REPRAP,ULTIGCODE,MAKERBOT,BFB,MACH3"
+    "ExtraSettings": "REPRAP,ULTIGCODE,BFB,MACH3"
   },
   {
     "SlicerConfigName": "has_fan",

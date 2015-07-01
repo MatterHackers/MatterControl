@@ -62,6 +62,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private bool settingLocalBounds = false;
 
+		public static RootedObjectEventHandler ChangedCurrentLibraryProvider = new RootedObjectEventHandler();
+
 		public LibraryDataView()
 		{
 			// set the display attributes
@@ -109,6 +111,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			set
 			{
 				currentLibraryProvider = value;
+				ChangedCurrentLibraryProvider.CallEvents(null, null);
 			}
 		}
 
