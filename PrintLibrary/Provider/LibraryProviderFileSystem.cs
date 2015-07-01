@@ -107,7 +107,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				{
 					keywordFilter = value;
 					GetFilesAndCollectionsInCurrentDirectory();
-					LibraryProvider.OnDataReloaded(null);
 				}
 			}
 		}
@@ -134,7 +133,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				Directory.CreateDirectory(directoryPath);
 				GetFilesAndCollectionsInCurrentDirectory();
-				LibraryProvider.OnDataReloaded(null);
 			}
 		}
 
@@ -145,8 +143,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			CopyAllFiles(files, destPath);
 
 			GetFilesAndCollectionsInCurrentDirectory();
-			LibraryProvider.OnDataReloaded(null);
-			LibraryProvider.OnItemAdded(null);
 		}
 
 		public override void AddItem(PrintItemWrapper itemToAdd)
@@ -187,7 +183,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					Thread.Sleep(1); // make sure we are not eating all the cpu time.
 				}
 				GetFilesAndCollectionsInCurrentDirectory();
-				LibraryProvider.OnDataReloaded(null);
 			}
 		}
 
@@ -195,8 +190,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			File.Delete(printItemWrapper.PrintItem.FileLocation);
 			GetFilesAndCollectionsInCurrentDirectory();
-			LibraryProvider.OnDataReloaded(null);
-			LibraryProvider.OnItemRemoved(null);
 		}
 
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
@@ -263,7 +256,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			UiThread.RunOnIdle(() =>
 			{
 				GetFilesAndCollectionsInCurrentDirectory();
-				LibraryProvider.OnDataReloaded(null);
 			});
 		}
 
@@ -294,6 +286,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					}
 				}
 			}
+
+			LibraryProvider.OnDataReloaded(null);
 		}
 
 		private string GetPathFromLocator(List<ProviderLocatorNode> providerLocator)

@@ -84,8 +84,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
 			LibraryProvider.DataReloaded.RegisterEvent(LibraryDataReloaded, ref unregisterEvents);
-			LibraryProvider.ItemAdded.RegisterEvent(ItemAddedToLibrary, ref unregisterEvents);
-			LibraryProvider.ItemRemoved.RegisterEvent(ItemRemovedFromToLibrary, ref unregisterEvents);
 		}
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
@@ -436,21 +434,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			HoverIndex = -1;
 		}
 
-		private void ItemAddedToLibrary(object sender, EventArgs e)
-		{
-			IndexArgs addedIndexArgs = e as IndexArgs;
-			PrintItemWrapper item = LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapper(addedIndexArgs.Index);
-			GuiWidget thumbnailWidget = LibraryDataView.CurrentLibraryProvider.GetItemThumbnail(addedIndexArgs.Index);
-			LibraryRowItem libraryItem = new LibraryRowItemPart(item, this, thumbnailWidget);
-
-			int displayIndexToAdd = addedIndexArgs.Index + LibraryDataView.CurrentLibraryProvider.CollectionCount;
-			if (LibraryDataView.CurrentLibraryProvider.HasParent)
-			{
-				displayIndexToAdd++;
-			}
-			AddListItemToTopToBottom(libraryItem, displayIndexToAdd);
-		}
-
 		private void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
 		{
 		}
@@ -462,22 +445,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			itemHolder.MouseLeaveBounds -= new EventHandler(itemToAdd_MouseLeaveBounds);
 			itemHolder.MouseDownInBounds -= itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
-		}
-
-		private void ItemRemovedFromToLibrary(object sender, EventArgs e)
-		{
-			IndexArgs removeIndexArgs = e as IndexArgs;
-			int indexToRemove = removeIndexArgs.Index + LibraryDataView.CurrentLibraryProvider.CollectionCount;
-			if (LibraryDataView.CurrentLibraryProvider.HasParent)
-			{
-				indexToRemove++;
-			}
-			topToBottomItemList.RemoveChild(indexToRemove);
-
-			if (LibraryDataView.CurrentLibraryProvider.ItemCount > 0)
-			{
-				SelectedIndex = Math.Max(SelectedIndex - 1, 0);
-			}
 		}
 
 		private void itemToAdd_MouseEnterBounds(object sender, EventArgs e)

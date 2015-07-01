@@ -254,12 +254,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 				loadFilesIntoLibraryBackgroundWorker.RunWorkerAsync(files);
 			}
-
-			if (baseLibraryCollection != null)
-			{
-				LoadLibraryItems();
-				LibraryProvider.OnDataReloaded(null);
-			}
 		}
 
 		public override void AddItem(PrintItemWrapper itemToAdd)
@@ -287,7 +281,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			List<ProviderLocatorNode> currentDisplayedCollection = GetProviderLocator();
 			if (currentDisplayedCollection.Count > 0 && currentDisplayedCollection[0].Key == LibraryProviderSQLite.StaticProviderKey)
 			{
-				OnItemAdded(new IndexArgs(indexToInsert));
+				//OnItemAdded(new IndexArgs(indexToInsert));
 			}
 			item.PrintItem.PrintItemCollectionID = baseLibraryCollection.Id;
 			item.PrintItem.Commit();
@@ -360,7 +354,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			printItemWrapper.Delete();
 
 			LoadLibraryItems();
-			OnItemRemoved(new IndexArgs(index));
+			LibraryProvider.OnDataReloaded(null);
 		}
 
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
@@ -480,6 +474,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private void loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
+			if (baseLibraryCollection != null)
+			{
+				LoadLibraryItems();
+				LibraryProvider.OnDataReloaded(null);
+			}
 		}
 	}
 }

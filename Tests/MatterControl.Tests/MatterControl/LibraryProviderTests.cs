@@ -43,8 +43,6 @@ namespace MatterControl.Tests
 	public class LibraryProviderTests
 	{
 		private bool dataReloaded = false;
-		private bool itemAdded = false;
-		private bool itemRemoved = false;
 		private string meshFileName = "Box20x20x10.stl";
 		private string meshPathAndFileName;
 		private string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "LibraryProviderData");
@@ -87,11 +85,11 @@ namespace MatterControl.Tests
 			// add an item works correctly
 			LibraryProvider subProvider = testProvider.GetProviderForItem(testProvider.GetCollectionItem(0));
 			dataReloaded = false;
-			itemAdded = false;
+			//itemAdded = false;
 			string subPathAndFile = Path.Combine(createdDirectory, meshFileName);
 			Assert.IsTrue(!File.Exists(subPathAndFile));
 			Assert.IsTrue(dataReloaded == false);
-			Assert.IsTrue(itemAdded == false);
+			//Assert.IsTrue(itemAdded == false);
 
 			// WIP: saving the name incorectly for this location (does not need to be changed).
 			subProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
@@ -99,7 +97,7 @@ namespace MatterControl.Tests
 
 			Assert.IsTrue(subProvider.ItemCount == 1);
 			Assert.IsTrue(dataReloaded == true);
-			Assert.IsTrue(itemAdded == true);
+			//Assert.IsTrue(itemAdded == true);
 			Assert.IsTrue(File.Exists(subPathAndFile));
 
 			// make sure the provider locator is correct
@@ -107,10 +105,8 @@ namespace MatterControl.Tests
 			// remove item works
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			Assert.IsTrue(itemRemoved == false);
 			subProvider.RemoveItem(subProvider.GetPrintItemWrapper(0));
 			Assert.IsTrue(dataReloaded == true);
-			Assert.IsTrue(itemRemoved == true);
 			Assert.IsTrue(!File.Exists(subPathAndFile));
 
 			// remove collection gets rid of it
@@ -147,17 +143,14 @@ namespace MatterControl.Tests
 
 			// add an item works correctly
 			dataReloaded = false;
-			itemAdded = false;
 			Assert.IsTrue(!NamedItemExists(collectionName));
 			Assert.IsTrue(dataReloaded == false);
-			Assert.IsTrue(itemAdded == false);
 
 			testProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
 			Thread.Sleep(3000); // wait for the add to finihs
 
 			Assert.IsTrue(testProvider.ItemCount == 2);
 			Assert.IsTrue(dataReloaded == true);
-			Assert.IsTrue(itemAdded == true);
 			string fileNameWithExtension = Path.GetFileNameWithoutExtension(meshPathAndFileName);
 			Assert.IsTrue(NamedItemExists(fileNameWithExtension));
 
@@ -166,10 +159,8 @@ namespace MatterControl.Tests
 			// remove item works
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			Assert.IsTrue(itemRemoved == false);
 			testProvider.RemoveItem(testProvider.GetPrintItemWrapper(1));
 			Assert.IsTrue(dataReloaded == true);
-			Assert.IsTrue(itemRemoved == true);
 			Assert.IsTrue(!NamedItemExists(fileNameWithExtension));
 
 			// remove collection gets rid of it
@@ -187,12 +178,8 @@ namespace MatterControl.Tests
 			meshPathAndFileName = Path.Combine(pathToMesh, meshFileName);
 
 			dataReloaded = false;
-			itemAdded = false;
-			itemRemoved = false;
 
 			LibraryProvider.DataReloaded.RegisterEvent((sender, e) => { dataReloaded = true; }, ref unregisterEvents);
-			LibraryProvider.ItemAdded.RegisterEvent((sender, e) => { itemAdded = true; }, ref unregisterEvents);
-			LibraryProvider.ItemRemoved.RegisterEvent((sender, e) => { itemRemoved = true; }, ref unregisterEvents);
 		}
 
 		[TearDown]

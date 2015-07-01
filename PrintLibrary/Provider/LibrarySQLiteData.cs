@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			List<ProviderLocatorNode> currentDisplayedCollection = LibraryProviderSQLite.Instance.GetProviderLocator();
 			if (currentDisplayedCollection.Count > 0 && currentDisplayedCollection[1].Key == LibraryProviderSQLite.StaticProviderKey)
 			{
-				OnItemAdded(new IndexArgs(indexToInsert));
+				//OnItemAdded(new IndexArgs(indexToInsert));
 			}
 			item.PrintItem.PrintItemCollectionID = RootLibraryCollection.Id;
 			item.PrintItem.Commit();
@@ -149,8 +149,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			// and remove it from the data base
 			printItemWrapper.Delete();
-
-			OnItemRemoved(new IndexArgs(index));
 		}
 
 		public PrintItemWrapper GetPrintItemWrapper(int index)
@@ -257,16 +255,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public void OnDataReloaded(EventArgs e)
 		{
 			LibraryProvider.OnDataReloaded(e);
-		}
-
-		public void OnItemAdded(EventArgs e)
-		{
-			LibraryProvider.OnItemAdded(e);
-		}
-
-		public void OnItemRemoved(EventArgs e)
-		{
-			LibraryProvider.OnItemRemoved(e);
 		}
 
 		public void SaveLibraryItems()
