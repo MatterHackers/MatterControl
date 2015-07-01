@@ -3343,3 +3343,18 @@ Translated:Folder Name
 English:Enter a Folder Name Here
 Translated:Enter a Folder Name Here
 
+English:Save New Design to Queue
+Translated:Save New Design to Queue
+
+English:Design Name
+Translated:Design Name
+
+English:Enter the name of your design.
+Translated:Enter the name of your design.
+
+English:Enter a Design Name Here
+Translated:Enter a Design Name Here
+
+English:Also save to Library
+Translated:Also save to Library
+
