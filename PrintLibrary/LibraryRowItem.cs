@@ -50,9 +50,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private bool isHoverItem = false;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private ConditionalClickWidget primaryClickContainer;
+		GuiWidget thumbnailWidget;
 
-		public LibraryRowItem(LibraryDataView libraryDataView)
+		public LibraryRowItem(LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
 		{
+			this.thumbnailWidget = thumbnailWidget;
 			this.libraryDataView = libraryDataView;
 		}
 
@@ -189,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				primaryFlow.AddChild(selectionCheckBoxContainer);
 
-				primaryFlow.AddChild(GetThumbnailWidget());
+				primaryFlow.AddChild(thumbnailWidget);
 				primaryFlow.AddChild(middleColumn);
 
 				primaryContainer.AddChild(primaryFlow);
@@ -224,8 +226,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		protected abstract SlideWidget GetItemActionButtons();
 
 		protected abstract string GetItemName();
-
-		protected abstract GuiWidget GetThumbnailWidget();
 
 		protected abstract void RemoveThisFromPrintLibrary();
 

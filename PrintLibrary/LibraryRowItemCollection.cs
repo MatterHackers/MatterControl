@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		LibraryProvider parentProvider;
 		PrintItemCollection collection;
 
-		public LibraryRowItemCollection(PrintItemCollection collection, LibraryDataView libraryDataView, LibraryProvider parentProvider)
-			: base(libraryDataView)
+		public LibraryRowItemCollection(PrintItemCollection collection, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
+			: base(libraryDataView, thumbnailWidget)
 		{
 			this.parentProvider = parentProvider;
 			this.collection = collection;
@@ -78,21 +78,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		private ConditionalClickWidget primaryClickContainer;
-
-		protected override GuiWidget GetThumbnailWidget()
-		{
-			string path = Path.Combine("Icons", "FileDialog", "folder.png");
-			if(parentProvider != null)
-			{
-				path = Path.Combine("Icons", "FileDialog", "upfolder.png");
-			}
-			ImageBuffer imageBuffer = new ImageBuffer();
-			StaticData.Instance.LoadImage(path, imageBuffer);
-
-			ImageWidget folderThumbnail = new ImageWidget(imageBuffer);
-			folderThumbnail.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-			return folderThumbnail;
-		}
 
 		protected override string GetItemName()
 		{

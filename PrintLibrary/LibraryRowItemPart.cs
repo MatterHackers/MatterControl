@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private ExportPrintItemWindow exportingWindow;
 		private PartPreviewMainWindow viewingWindow;
 
-		public LibraryRowItemPart(PrintItemWrapper printItem, LibraryDataView libraryDataView)
-			: base(libraryDataView)
+		public LibraryRowItemPart(PrintItemWrapper printItem, LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
+			: base(libraryDataView, thumbnailWidget)
 		{
 			this.printItemWrapper = printItem;
 			CreateGuiElements();
@@ -196,12 +196,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		protected override string GetItemName()
 		{
 			return printItemWrapper.Name;
-		}
-
-		protected override GuiWidget GetThumbnailWidget()
-		{
-			PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-			return thumbnailWidget;
 		}
 
 		protected override void RemoveThisFromPrintLibrary()

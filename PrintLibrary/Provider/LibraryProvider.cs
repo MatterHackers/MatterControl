@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
@@ -134,6 +135,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 
 		#endregion Static Methods
+
+		public virtual GuiWidget GetItemThumbnail(int printItemIndex)
+		{
+			PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(GetPrintItemWrapper(printItemIndex), "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
+			return thumbnailWidget;
+		}
 	}
 
 	public class ProviderLocatorNode

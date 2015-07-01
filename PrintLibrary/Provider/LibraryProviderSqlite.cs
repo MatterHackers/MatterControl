@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -77,6 +78,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 				return instance;
 			}
+		}
+
+		public override GuiWidget GetItemThumbnail(int printItemIndex)
+		{
+			//PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(GetPrintItemWrapper(printItemIndex), "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
+			//return thumbnailWidget;
+
+			ImageWidget_AsyncLoadOnDraw imageWidget = new ImageWidget_AsyncLoadOnDraw(new ImageBuffer(40, 40, 32, new BlenderBGRA()), "http://inside.matterhackers.com/gae-wiki-static/mh-icon-white.png");
+			return imageWidget;
 		}
 
 		public static string StaticProviderKey
