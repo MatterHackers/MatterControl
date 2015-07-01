@@ -36,7 +36,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -176,7 +178,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			string directoryPath = collectionToRemove.Key;
 			if (Directory.Exists(directoryPath))
 			{
+				Stopwatch time = Stopwatch.StartNew();
 				Directory.Delete(directoryPath);
+				// Wait for up to some amount of time for the directory to be gone.
+				while (Directory.Exists(directoryPath) 
+					&& time.ElapsedMilliseconds < 100)
+				{
+					Thread.Sleep(1); // make sure we are not eating all the cpu time.
+				}
 				GetFilesAndCollectionsInCurrentDirectory();
 				LibraryProvider.OnDataReloaded(null);
 			}
@@ -187,6 +196,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			File.Delete(printItemWrapper.PrintItem.FileLocation);
 			GetFilesAndCollectionsInCurrentDirectory();
 			LibraryProvider.OnDataReloaded(null);
+			LibraryProvider.OnItemRemoved(null);
 		}
 
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
@@ -212,7 +222,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				// and copy the file
 				try
 				{
-					if (!File.Exists(file))
+					if (!File.Exists(outputFileName))
 					{
 						File.Copy(file, outputFileName);
 					}
