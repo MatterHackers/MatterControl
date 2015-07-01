@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void AddCollectionToLibrary(string collectionName);
 
-		public abstract void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerSavePath, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
+		public abstract void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null);
 
 		public abstract void AddItem(PrintItemWrapper itemToAdd);
 

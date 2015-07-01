@@ -464,7 +464,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			LibraryDataView.CurrentLibraryProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles, LibraryDataView.CurrentLibraryProvider.GetProviderLocator());
+			LibraryDataView.CurrentLibraryProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
 
 			base.OnDragDrop(fileDropEventArgs);
 		}

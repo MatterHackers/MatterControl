@@ -234,10 +234,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			newCollection.ParentCollectionID = baseLibraryCollection.Id;
 			newCollection.Commit();
 			LoadLibraryItems();
-			LibraryProvider.OnDataReloaded(null);
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerSavePath = null, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
 			if (files != null && files.Count > 0)
 			{
@@ -253,6 +252,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 
 				loadFilesIntoLibraryBackgroundWorker.RunWorkerAsync(files);
+			}
+
+			if (baseLibraryCollection != null)
+			{
+				LoadLibraryItems();
+				LibraryProvider.OnDataReloaded(null);
 			}
 		}
 
@@ -279,7 +284,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			printItems.Insert(indexToInsert, item);
 			// Check if the collection we are adding to is the the currently visible collection.
 			List<ProviderLocatorNode> currentDisplayedCollection = GetProviderLocator();
-			if (currentDisplayedCollection.Count > 0 && currentDisplayedCollection[1].Key == LibraryProviderSQLite.StaticProviderKey)
+			if (currentDisplayedCollection.Count > 0 && currentDisplayedCollection[0].Key == LibraryProviderSQLite.StaticProviderKey)
 			{
 				OnItemAdded(new IndexArgs(indexToInsert));
 			}
@@ -328,6 +333,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				childCollections.AddRange(collections);
 			}
+
+			LibraryProvider.OnDataReloaded(null);
 		}
 
 		public override void RemoveCollection(PrintItemCollection collectionToRemove)
@@ -351,6 +358,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			// and remove it from the data base
 			printItemWrapper.Delete();
 
+			LoadLibraryItems();
 			OnItemRemoved(new IndexArgs(index));
 		}
 

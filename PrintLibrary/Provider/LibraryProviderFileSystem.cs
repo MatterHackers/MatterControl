@@ -136,23 +136,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, List<ProviderLocatorNode> providerLocator, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
-			if (providerLocator == null || providerLocator.Count <= 1)
-			{
-				string destPath = rootPath;
+			string destPath = rootPath;
 
-				CopyAllFiles(files, destPath);
-			}
-			else // we have a path that we need to save to
-			{
-				string destPath = GetPathFromLocator(providerLocator);
-
-				CopyAllFiles(files, destPath);
-			}
+			CopyAllFiles(files, destPath);
 
 			GetFilesAndCollectionsInCurrentDirectory();
 			LibraryProvider.OnDataReloaded(null);
+			LibraryProvider.OnItemAdded(null);
 		}
 
 		public override void AddItem(PrintItemWrapper itemToAdd)
