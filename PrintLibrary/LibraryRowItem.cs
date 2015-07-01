@@ -221,8 +221,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public abstract void RemoveFromCollection();
 
-		public abstract void RemoveFromParentCollection();
-
 		protected abstract SlideWidget GetItemActionButtons();
 
 		protected abstract string GetItemName();
