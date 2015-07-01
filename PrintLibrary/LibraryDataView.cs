@@ -28,12 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
+using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -383,6 +386,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
+		protected GuiWidget GetThumbnailWidget(bool upFolder)
+		{
+			string path = Path.Combine("Icons", "FileDialog", "folder.png");
+			if (upFolder)
+			{
+				path = Path.Combine("Icons", "FileDialog", "upfolder.png");
+			}
+			ImageBuffer imageBuffer = new ImageBuffer();
+			StaticData.Instance.LoadImage(path, imageBuffer);
+
+			ImageWidget folderThumbnail = new ImageWidget(imageBuffer);
+			folderThumbnail.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+			return folderThumbnail;
+		}
+
 		private void AddAllItems()
 		{
 			topToBottomItemList.RemoveAllChildren();
@@ -390,21 +408,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (LibraryDataView.CurrentLibraryProvider.ParentLibraryProvider != null)
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", LibraryDataView.CurrentLibraryProvider.ProviderKey);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, LibraryDataView.CurrentLibraryProvider.ParentLibraryProvider);
+				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, LibraryDataView.CurrentLibraryProvider.ParentLibraryProvider, GetThumbnailWidget(true));
 				AddListItemToTopToBottom(queueItem);
 			}
 
 			for (int i = 0; i < LibraryDataView.CurrentLibraryProvider.CollectionCount; i++)
 			{
 				PrintItemCollection item = LibraryDataView.CurrentLibraryProvider.GetCollectionItem(i);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(item, this, null);
+				LibraryRowItem queueItem = new LibraryRowItemCollection(item, this, null, GetThumbnailWidget(false));
 				AddListItemToTopToBottom(queueItem);
 			}
 
 			for (int i = 0; i < LibraryDataView.CurrentLibraryProvider.ItemCount; i++)
 			{
 				PrintItemWrapper item = LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapper(i);
-				LibraryRowItem queueItem = new LibraryRowItemPart(item, this);
+				GuiWidget thumbnailWidget = LibraryDataView.CurrentLibraryProvider.GetItemThumbnail(i);
+				LibraryRowItem queueItem = new LibraryRowItemPart(item, this, thumbnailWidget);
 				AddListItemToTopToBottom(queueItem);
 			}
 		}
@@ -418,7 +437,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			IndexArgs addedIndexArgs = e as IndexArgs;
 			PrintItemWrapper item = LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapper(addedIndexArgs.Index);
-			LibraryRowItem libraryItem = new LibraryRowItemPart(item, this);
+			GuiWidget thumbnailWidget = LibraryDataView.CurrentLibraryProvider.GetItemThumbnail(addedIndexArgs.Index);
+			LibraryRowItem libraryItem = new LibraryRowItemPart(item, this, thumbnailWidget);
 
 			int displayIndexToAdd = addedIndexArgs.Index + LibraryDataView.CurrentLibraryProvider.CollectionCount;
 			if (LibraryDataView.CurrentLibraryProvider.HasParent)
