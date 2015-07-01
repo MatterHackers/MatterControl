@@ -203,9 +203,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 privateAddLibraryButton(buttonPanel);
             }
 
-			GuiWidget spacer = new GuiWidget();
-			spacer.HAnchor = HAnchor.ParentLeftRight;
-			buttonPanel.AddChild(spacer);
         }
 
         public delegate void AddLibraryButtonDelegate(GuiWidget extraButtonContainer);
