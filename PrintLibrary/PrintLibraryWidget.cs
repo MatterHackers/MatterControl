@@ -276,10 +276,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
 			libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
-			LibraryProvider.DataReloaded.RegisterEvent(LibraryProviderDataReleaded, ref unregisterEvents);
+			LibraryDataView.ChangedCurrentLibraryProvider.RegisterEvent(SetBreadCrumbs, ref unregisterEvents);
 		}
 
-		private void LibraryProviderDataReleaded(object sender, EventArgs e)
+		public void SetBreadCrumbs(object sender, EventArgs e)
 		{
 			List<ProviderLocatorNode> providerLocator = LibraryDataView.CurrentLibraryProvider.GetProviderLocator();
 			StringBuilder path = new StringBuilder();

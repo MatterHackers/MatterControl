@@ -80,15 +80,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override GuiWidget GetItemThumbnail(int printItemIndex)
-		{
-			//PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(GetPrintItemWrapper(printItemIndex), "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-			//return thumbnailWidget;
-
-			ImageWidget_AsyncLoadOnDraw imageWidget = new ImageWidget_AsyncLoadOnDraw(new ImageBuffer(40, 40, 32, new BlenderBGRA()), "http://inside.matterhackers.com/gae-wiki-static/mh-icon-white.png");
-			return imageWidget;
-		}
-
 		public static string StaticProviderKey
 		{
 			get
