@@ -1478,7 +1478,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						&& readThreadHolder.IsCurrentThread())
 					{
 						using (TimedLock.Lock(this, "ReadFromPrinter"))
-						{
+						{                            
 							string allDataRead = serialPort.ReadExisting();
 							//Debug.Write("r: " + allDataRead);
 							//Console.Write(indata);
@@ -2899,11 +2899,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					try
 					{
-						timeSinceLastWrite.Restart();
-						timeHaveBeenWaitingForOK.Restart();
 						using (TimedLock.Lock(this, "serialPort.Write"))
 						{
-							serialPort.Write(lineToWrite);
+                            serialPort.Write(lineToWrite);
+                            timeSinceLastWrite.Restart();
+                            timeHaveBeenWaitingForOK.Restart();
+
 						}
 						//Debug.Write("w: " + lineToWrite);
 					}
