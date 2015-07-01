@@ -39,7 +39,6 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
-using MatterHackers.MatterControl.Plugins.X3GDriver;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
