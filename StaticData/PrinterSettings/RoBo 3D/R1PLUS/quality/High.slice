@@ -1,5 +1,0 @@
-layer_height = 0.1
-first_layer_height = 0.3
-perimeters = 2
-fill_density = 0.25
-top_solid_layers = 8
