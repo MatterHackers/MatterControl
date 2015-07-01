@@ -27,62 +27,37 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
+using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.DataStorage;
 using System.IO;
-using MatterHackers.Agg.PlatformAbstract;
 using System.Threading;
 
 namespace MatterControl.Tests
 {
-    [TestFixture]
-    public class LibraryProviderTests
-    {
-		string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "LibraryProviderData");
-		string meshFileName = "Box20x20x10.stl";
-		string meshPathAndFileName;
-
-		bool dataReloaded = false;
-		bool itemAdded = false;
-		bool itemRemoved = false;
-		private event EventHandler unregisterEvents;
+	[TestFixture]
+	public class LibraryProviderTests
+	{
+		private bool dataReloaded = false;
+		private bool itemAdded = false;
+		private bool itemRemoved = false;
+		private string meshFileName = "Box20x20x10.stl";
+		private string meshPathAndFileName;
+		private string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "LibraryProviderData");
 
 		public LibraryProviderTests()
 		{
-#if !__ANDROID__
+			#if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", ".."));
-#endif
+			#endif
 		}
 
-		[SetUp]
-		public void SetupBeforeTest()
-		{
-			meshPathAndFileName = Path.Combine(pathToMesh, meshFileName);
-
-			dataReloaded = false;
-			itemAdded = false;
-			itemRemoved = false;
-
-			LibraryProvider.DataReloaded.RegisterEvent((sender, e) => { dataReloaded = true; }, ref unregisterEvents);
-			LibraryProvider.ItemAdded.RegisterEvent((sender, e) => { itemAdded = true; }, ref unregisterEvents);
-			LibraryProvider.ItemRemoved.RegisterEvent((sender, e) => { itemRemoved = true; }, ref unregisterEvents);
-		}
-
-		[TearDown]
-		public void TeardownAfterTest()
-		{
-			unregisterEvents(this, null);
-		}
+		private event EventHandler unregisterEvents;
 
 		[Test, Category("LibraryProviderFileSystem")]
 		public void LibraryProviderFileSystem_NavigationWorking()
@@ -147,40 +122,9 @@ namespace MatterControl.Tests
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
 		}
 
-		private bool NamedCollectionExists(string nameToLookFor)
-		{
-			string query = string.Format("SELECT * FROM PrintItemCollection WHERE Name = '{0}' ORDER BY Name ASC;", nameToLookFor);
-			IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
-			foreach (PrintItemCollection collection in result)
-			{
-				if (collection.Name == nameToLookFor)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private bool NamedItemExists(string nameToLookFor)
-		{
-			string query = string.Format("SELECT * FROM PrintItem WHERE Name = '{0}' ORDER BY Name ASC;", nameToLookFor);
-			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
-			foreach (PrintItem collection in result)
-			{
-				if (collection.Name == nameToLookFor)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-
 		[Test, Category("LibraryProviderSqlite")]
 		public void LibraryProviderSqlite_NavigationWorking()
-        {
+		{
 			Datastore.Instance.Initialize();
 			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null);
 			Thread.Sleep(3000); // wait for the library to finish initializing
@@ -235,7 +179,56 @@ namespace MatterControl.Tests
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
-
 		}
-    }
+
+		[SetUp]
+		public void SetupBeforeTest()
+		{
+			meshPathAndFileName = Path.Combine(pathToMesh, meshFileName);
+
+			dataReloaded = false;
+			itemAdded = false;
+			itemRemoved = false;
+
+			LibraryProvider.DataReloaded.RegisterEvent((sender, e) => { dataReloaded = true; }, ref unregisterEvents);
+			LibraryProvider.ItemAdded.RegisterEvent((sender, e) => { itemAdded = true; }, ref unregisterEvents);
+			LibraryProvider.ItemRemoved.RegisterEvent((sender, e) => { itemRemoved = true; }, ref unregisterEvents);
+		}
+
+		[TearDown]
+		public void TeardownAfterTest()
+		{
+			unregisterEvents(this, null);
+		}
+
+		private bool NamedCollectionExists(string nameToLookFor)
+		{
+			string query = string.Format("SELECT * FROM PrintItemCollection WHERE Name = '{0}' ORDER BY Name ASC;", nameToLookFor);
+			IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
+			foreach (PrintItemCollection collection in result)
+			{
+				if (collection.Name == nameToLookFor)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool NamedItemExists(string nameToLookFor)
+		{
+			string query = string.Format("SELECT * FROM PrintItem WHERE Name = '{0}' ORDER BY Name ASC;", nameToLookFor);
+			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
+			foreach (PrintItem collection in result)
+			{
+				if (collection.Name == nameToLookFor)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
 }
