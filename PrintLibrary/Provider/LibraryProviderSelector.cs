@@ -50,7 +50,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			libraryProviders.Add(new LibraryProviderSQLite(null, this));
 
 			// and any directory providers (sd card provider, etc...)
-			libraryProviders.Add(new LibraryProviderFileSystem(Path.Combine("C:\\", "Users", "LarsBrubaker", "Downloads"), "Downloads", this));
+			//
+			// Add "Downloads" file system example
+			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+			if (Directory.Exists(downloadsDirectory))
+			{
+				libraryProviders.Add(new LibraryProviderFileSystem(downloadsDirectory, "Downloads", this));
+			}
+
 			//#if __ANDROID__
 			//libraryProviders.Add(new LibraryProviderFileSystem(ApplicationDataStorage.Instance.PublicDataStoragePath, "Downloads", this.ProviderKey));
 
