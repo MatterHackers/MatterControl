@@ -34,6 +34,7 @@ using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using MatterHackers.Localizations;
 using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
@@ -128,7 +129,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "..";
+				return "Home".Localize();
 			}
 		}
 

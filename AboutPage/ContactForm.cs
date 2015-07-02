@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			SetButtonAttributes();
 			AnchorAll();
 
-			cancelButton = textImageButtonFactory.Generate(LocalizedString.Get("Cancel"));
+			cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
 			submitButton = textImageButtonFactory.Generate(LocalizedString.Get("Submit"));
 			doneButton = textImageButtonFactory.Generate(LocalizedString.Get("Done"));
 			doneButton.Visible = false;
