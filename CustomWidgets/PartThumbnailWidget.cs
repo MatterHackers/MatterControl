@@ -43,6 +43,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
@@ -66,7 +67,7 @@ namespace MatterHackers.MatterControl
 		//Don't delete this - required for OnDraw
 		protected RGBA_Bytes HoverBorderColor = new RGBA_Bytes();
 
-		private static BackgroundWorker createThumbnailWorker = null;
+		private static bool processingThumbnail = false;
 
 		private static string partExtension = ".png";
 
@@ -80,7 +81,7 @@ namespace MatterHackers.MatterControl
 
 		private PrintItemWrapper printItem;
 
-		private bool thumbNailHasBeenRequested = false;
+		private bool thumbNailHasBeenCreated = false;
 
 		private ImageBuffer thumbnailImage = new Agg.Image.ImageBuffer();
 
@@ -145,7 +146,7 @@ namespace MatterHackers.MatterControl
 					printItem.FileHasChanged.UnregisterEvent(item_FileHasChanged, ref unregisterEvents);
 				}
 				printItem = value;
-				thumbNailHasBeenRequested = false;
+				thumbNailHasBeenCreated = false;
 				if (printItem != null)
 				{
 					printItem.FileHasChanged.RegisterEvent(item_FileHasChanged, ref unregisterEvents);
@@ -201,11 +202,9 @@ namespace MatterHackers.MatterControl
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			//Trigger thumbnail generation if neeeded
-			if (!thumbNailHasBeenRequested)
+			if (!thumbNailHasBeenCreated && !processingThumbnail)
 			{
-				BackgroundWorker tryLoad = new BackgroundWorker();
-				tryLoad.DoWork += new DoWorkEventHandler(TryLoad);
-				tryLoad.RunWorkerAsync(this);
+				Task.Run(() => LoadOrCreateThumbnail());
 			}
 
 			if (this.FirstWidgetUnderMouse)
@@ -388,9 +387,8 @@ namespace MatterHackers.MatterControl
 			return folderToSaveThumbnailsTo;
 		}
 
-		private void createThumbnailWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void CreateThumbnail(PartThumbnailWidget thumbnailWidget)
 		{
-			PartThumbnailWidget thumbnailWidget = e.Argument as PartThumbnailWidget;
 			if (thumbnailWidget != null)
 			{
 				string stlHashCode = thumbnailWidget.PrintItem.FileHashCode.ToString();
@@ -492,11 +490,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void createThumbnailWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			createThumbnailWorker = null;
-		}
-
 		private void DoOnMouseClick()
 		{
 			if (printItem != null)
@@ -529,7 +522,7 @@ namespace MatterHackers.MatterControl
 
 		private void item_FileHasChanged(object sender, EventArgs e)
 		{
-			thumbNailHasBeenRequested = false;
+			thumbNailHasBeenCreated = false;
 			Invalidate();
 		}
 		private void onEnter(object sender, EventArgs e)
@@ -711,23 +704,25 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
-		private void TryLoad(object sender, DoWorkEventArgs e)
+		private void LoadOrCreateThumbnail()
 		{
 			using (TimedLock.Lock(this, "TryLoad"))
 			{
-				if (SetImageFast())
+				if (!thumbNailHasBeenCreated)
 				{
-					thumbNailHasBeenRequested = true;
-				}
-				else
-				{
-					if (createThumbnailWorker == null)
+					if (SetImageFast())
 					{
-						createThumbnailWorker = new BackgroundWorker();
-						createThumbnailWorker.DoWork += new DoWorkEventHandler(createThumbnailWorker_DoWork);
-						createThumbnailWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createThumbnailWorker_RunWorkerCompleted);
-						createThumbnailWorker.RunWorkerAsync(this);
-						thumbNailHasBeenRequested = true;
+						thumbNailHasBeenCreated = true;
+					}
+					else
+					{
+						if (!processingThumbnail)
+						{
+							thumbNailHasBeenCreated = true;
+							processingThumbnail = true;
+							CreateThumbnail(this);
+							processingThumbnail = false;
+						}
 					}
 				}
 			}
