@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Localizations;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -215,6 +216,17 @@ namespace MatterHackers.MatterControl.VersionManagement
 				try
 				{
 					responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
+
+					string errorMessage;
+					if(responseValues.TryGetValue("ErrorMessage", out errorMessage) && errorMessage.IndexOf("expired session") != -1)
+					{
+						// TODO: Map more error conditions (beyond just session expired) to CredentialsInvalid status
+						UserSettings.Instance.set("CredentialsInvalid", "true");
+						UserSettings.Instance.set("CredentialsInvalidReason", "Session Expired".Localize());
+
+						// Notify connection status changed and now invalid
+						ApplicationController.Instance.ChangeCloudSyncStatus();
+					}
 				}
 				catch
 				{

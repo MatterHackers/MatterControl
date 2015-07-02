@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	internal class UpdateNotificationMark : GuiWidget
+	public class UpdateNotificationMark : GuiWidget
 	{
 		public UpdateNotificationMark()
 			: base(12, 12)
