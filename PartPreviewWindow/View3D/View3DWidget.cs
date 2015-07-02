@@ -54,6 +54,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -1093,7 +1094,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void BackgroundWorker_ProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
+		private void ReportProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
 		{
 			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
 				|| processingState != processingProgressControl.ProgressMessage)
@@ -1619,7 +1620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return horizontalRule;
 		}
 
-		private void LoadAndAddPartsToPlate(string[] filesToLoad)
+		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
 			if (MeshGroups.Count > 0 && filesToLoad != null && filesToLoad.Length > 0)
 			{
@@ -1632,22 +1633,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
-				BackgroundWorker loadAndAddPartsToPlateBackgroundWorker = null;
-				loadAndAddPartsToPlateBackgroundWorker = new BackgroundWorker();
+				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad));
 
-				loadAndAddPartsToPlateBackgroundWorker.DoWork += new DoWorkEventHandler(loadAndAddPartsToPlateBackgroundWorker_DoWork);
-				loadAndAddPartsToPlateBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted);
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
 
-				loadAndAddPartsToPlateBackgroundWorker.RunWorkerAsync(filesToLoad);
+				UnlockEditControls();
+				PartHasBeenChanged();
+
+				bool addingOnlyOneItem = asynchMeshGroups.Count == MeshGroups.Count + 1;
+
+				if (MeshGroups.Count > 0)
+				{
+					PullMeshGroupDataFromAsynchLists();
+					if (addingOnlyOneItem)
+					{
+						// if we are only adding one part to the plate set the selection to it
+						SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
+					}
+				}
 			}
 		}
 
-		private void loadAndAddPartsToPlateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void loadAndAddPartsToPlate(string[] filesToLoadIncludingZips)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
-			string[] filesToLoadIncludingZips = e.Argument as string[];
 			List<string> filesToLoad = new List<string>();
 			if (filesToLoadIncludingZips != null && filesToLoadIncludingZips.Length > 0)
 			{
@@ -1684,7 +1697,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						continueProcessing = !this.WidgetHasBeenClosed;
 						double ratioAvailable = (ratioPerFile * .5);
 						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
-						BackgroundWorker_ProgressChanged(currentRatio, progressMessage, out continueProcessing);
+						ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
 					});
 
 					if (WidgetHasBeenClosed)
@@ -1711,7 +1724,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								double ratioAvailable = (ratioPerFile * .5);
 								//                    done outer loop  +  done this loop  +first 1/2 (load)+  this part * ratioAvailable
 								double currentRatio = currentRatioDone + subMeshRatioDone + ratioAvailable + progress0To1 * ratioPerSubMesh;
-								BackgroundWorker_ProgressChanged(currentRatio, progressMessage, out continueProcessing);
+								ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
 							});
 
 							subMeshRatioDone += ratioPerSubMesh;
@@ -1719,28 +1732,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					currentRatioDone += ratioPerFile;
-				}
-			}
-		}
-
-		private void loadAndAddPartsToPlateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-			UnlockEditControls();
-			PartHasBeenChanged();
-
-			bool addingOnlyOneItem = asynchMeshGroups.Count == MeshGroups.Count + 1;
-
-			if (MeshGroups.Count > 0)
-			{
-				PullMeshGroupDataFromAsynchLists();
-				if (addingOnlyOneItem)
-				{
-					// if we are only adding one part to the plate set the selection to it
-					SelectedMeshGroupIndex = asynchMeshGroups.Count - 1;
 				}
 			}
 		}
@@ -1866,7 +1857,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
 
 					bool continueProcessing;
-					BackgroundWorker_ProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
+					ReportProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
 				}
 
 				saveSucceded = true;

@@ -32,15 +32,15 @@ using MatterHackers.PolygonMesh;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void copyGroupBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void copyGroupBackgroundWorker_DoWork()
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Mesh mesh = asynchMeshGroups[SelectedMeshGroupIndex].Meshes[i];
 				copyMeshGroup.Meshes.Add(Mesh.Copy(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
 				{
-					BackgroundWorker_ProgressChanged(progress0To1, processingState, out continueProcessing);
+					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
 				}));
 			}
 
@@ -60,26 +60,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, asynchMeshGroups.Count - 1, null);
 
 			bool continueProcessing2;
-			BackgroundWorker_ProgressChanged(.95, "", out continueProcessing2);
+			ReportProgressChanged(.95, "", out continueProcessing2);
 		}
 
-		private void copyGroupBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-
-			UnlockEditControls();
-			PullMeshGroupDataFromAsynchLists();
-			PartHasBeenChanged();
-
-			// now set the selection to the new copy
-			MeshGroupExtraData[MeshGroups.Count - 1].currentScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
-			SelectedMeshGroupIndex = MeshGroups.Count - 1;
-		}
-
-		private void MakeCopyOfGroup()
+		private async void MakeCopyOfGroup()
 		{
 			if (MeshGroups.Count > 0
 				&& SelectedMeshGroupIndex != -1)
@@ -91,13 +75,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				BackgroundWorker copyGroupBackgroundWorker = null;
-				copyGroupBackgroundWorker = new BackgroundWorker();
+				await Task.Run(() => copyGroupBackgroundWorker_DoWork());
 
-				copyGroupBackgroundWorker.DoWork += new DoWorkEventHandler(copyGroupBackgroundWorker_DoWork);
-				copyGroupBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(copyGroupBackgroundWorker_RunWorkerCompleted);
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
 
-				copyGroupBackgroundWorker.RunWorkerAsync();
+				UnlockEditControls();
+				PullMeshGroupDataFromAsynchLists();
+				PartHasBeenChanged();
+
+				// now set the selection to the new copy
+				MeshGroupExtraData[MeshGroups.Count - 1].currentScale = MeshGroupExtraData[SelectedMeshGroupIndex].currentScale;
+				SelectedMeshGroupIndex = MeshGroups.Count - 1;
 			}
 		}
 	}

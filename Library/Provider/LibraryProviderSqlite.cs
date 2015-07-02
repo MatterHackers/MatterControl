@@ -42,6 +42,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -237,22 +238,21 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LoadLibraryItems();
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override async void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null)
 		{
 			if (files != null && files.Count > 0)
 			{
-				BackgroundWorker loadFilesIntoLibraryBackgroundWorker = new BackgroundWorker();
-				loadFilesIntoLibraryBackgroundWorker.WorkerReportsProgress = true;
+				// create enough info to show that we have items pending (maybe use names from this file list for them)
+				// refresh the display to show the pending items
+				//LibraryProvider.OnDataReloaded(null);
 
-				loadFilesIntoLibraryBackgroundWorker.DoWork += new DoWorkEventHandler(loadFilesIntoLibraryBackgoundWorker_DoWork);
-				loadFilesIntoLibraryBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted);
+				await Task.Run(() => loadFilesIntoLibraryBackgoundWorker_DoWork(files));
 
-				if (callback != null)
+				if (baseLibraryCollection != null)
 				{
-					loadFilesIntoLibraryBackgroundWorker.RunWorkerCompleted += callback;
+					LoadLibraryItems();
+					LibraryProvider.OnDataReloaded(null);
 				}
-
-				loadFilesIntoLibraryBackgroundWorker.RunWorkerAsync(files);
 			}
 		}
 
@@ -442,9 +442,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return result;
 		}
 
-		private void loadFilesIntoLibraryBackgoundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void loadFilesIntoLibraryBackgoundWorker_DoWork(IList<string> fileList)
 		{
-			IList<string> fileList = e.Argument as IList<string>;
 			foreach (string loadedFileName in fileList)
 			{
 				string extension = Path.GetExtension(loadedFileName).ToUpper();
@@ -469,15 +468,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						AddStlOrGcode(this, loadedFileName, extension);
 					}
 				}
-			}
-		}
-
-		private void loadFilesIntoLibraryBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (baseLibraryCollection != null)
-			{
-				LoadLibraryItems();
-				LibraryProvider.OnDataReloaded(null);
 			}
 		}
 	}

@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			for (int meshGroupIndex = 0; meshGroupIndex < asynchMeshGroups.Count; meshGroupIndex++)
 			{
 				bool continueProcessing2 = true;
-				BackgroundWorker_ProgressChanged(currentRatioDone, "Calculating Positions...".Localize(), out continueProcessing2);
+				ReportProgressChanged(currentRatioDone, "Calculating Positions...".Localize(), out continueProcessing2);
 
 				MeshGroup meshGroup = asynchMeshGroups[meshGroupIndex];
 				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asynchMeshGroupTransforms[meshGroupIndex].TotalTransform).minXYZ;

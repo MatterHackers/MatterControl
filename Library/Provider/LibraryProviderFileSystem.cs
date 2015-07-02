@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
+		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null)
 		{
 			string destPath = rootPath;
 

@@ -62,14 +62,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// create the selection info
 				PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
 				{
-					BackgroundWorker_ProgressChanged(progress0To1, processingState, out continueProcessing);
+					ReportProgressChanged(progress0To1, processingState, out continueProcessing);
 				});
 
 				currentRatioDone += ratioPerMeshGroup;
 			}
 
 			bool continueProcessing2;
-			BackgroundWorker_ProgressChanged(1, "Creating GL Data", out continueProcessing2);
+			ReportProgressChanged(1, "Creating GL Data", out continueProcessing2);
 			meshViewerWidget.CreateGlDataForMeshes(asynchMeshGroups);
 		}
 

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				discreetMeshes = CreateDiscreteMeshes.SplitConnectedIntoMeshes(asynchMeshGroups[indexBeingReplaced], (double progress0To1, string processingState, out bool continueProcessing) =>
 				{
-					BackgroundWorker_ProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
+					ReportProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
 				});
 			}
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// and create selection info
 				PlatingHelper.CreateITraceableForMeshGroup(asynchPlatingDatas, asynchMeshGroups, addedMeshIndex, (double progress0To1, string processingState, out bool continueProcessing) =>
 				{
-					BackgroundWorker_ProgressChanged(.5 + progress0To1 * .5 * currentRatioDone, processingState, out continueProcessing);
+					ReportProgressChanged(.5 + progress0To1 * .5 * currentRatioDone, processingState, out continueProcessing);
 				});
 				currentRatioDone += ratioPerDiscreetMesh;
 			}
