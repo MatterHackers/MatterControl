@@ -2056,7 +2056,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private void CancelPrint()
+		public void CancelPrint()
 		{
 			using (TimedLock.Lock(this, "CancelingPrint"))
 			{

@@ -12,24 +12,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
 	public class CloudSettingsWidget : SettingsViewBase
 	{
-		private DisableableWidget cloudMonitorContainer;
 		private DisableableWidget notificationSettingsContainer;
-
-		private Button enableCloudMonitorButton;
-		private Button disableCloudMonitorButton;
-		private Button goCloudMonitoringWebPageButton;
-
-		private Button cloudMonitorInstructionsLink;
-		private TextWidget cloudMonitorStatusLabel;
-		private Button configureNotificationSettingsButton;
 
 		public CloudSettingsWidget()
 			: base(LocalizedString.Get("Cloud Settings"))
 		{
-			cloudMonitorContainer = new DisableableWidget();
-			cloudMonitorContainer.AddChild(GetCloudMonitorControls());
-			mainContainer.AddChild(cloudMonitorContainer);
-
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
 			notificationSettingsContainer = new DisableableWidget();
@@ -38,7 +25,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			AddChild(mainContainer);
 
-			SetCloudButtonVisiblity();
 
 			AddHandlers();
 		}
@@ -120,45 +106,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				InvertLightness.DoInvertLightness(cloudMonitorImage);
 			}
 
-			ImageWidget cloudMonitoringIcon = new ImageWidget(cloudMonitorImage);
-			cloudMonitoringIcon.Margin = new BorderDouble(right: 6);
-
-			enableCloudMonitorButton = textImageButtonFactory.Generate("Enable".Localize().ToUpper());
-			enableCloudMonitorButton.Margin = new BorderDouble(left: 6);
-			enableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
-			enableCloudMonitorButton.Click += new EventHandler(enableCloudMonitor_Click);
-
-			disableCloudMonitorButton = textImageButtonFactory.Generate("Disable".Localize().ToUpper());
-			disableCloudMonitorButton.Margin = new BorderDouble(left: 6);
-			disableCloudMonitorButton.VAnchor = VAnchor.ParentCenter;
-			disableCloudMonitorButton.Click += new EventHandler(disableCloudMonitor_Click);
-
-			cloudMonitorInstructionsLink = linkButtonFactory.Generate("More Info".Localize().ToUpper());
-			cloudMonitorInstructionsLink.VAnchor = VAnchor.ParentCenter;
-			cloudMonitorInstructionsLink.Click += new EventHandler(goCloudMonitoringInstructionsButton_Click);
-			cloudMonitorInstructionsLink.Margin = new BorderDouble(left: 6);
-
-			goCloudMonitoringWebPageButton = linkButtonFactory.Generate("View Status".Localize().ToUpper());
-			goCloudMonitoringWebPageButton.VAnchor = VAnchor.ParentCenter;
-			goCloudMonitoringWebPageButton.Click += new EventHandler(goCloudMonitoringWebPageButton_Click);
-			goCloudMonitoringWebPageButton.Margin = new BorderDouble(left: 6);
-
-			cloudMonitorStatusLabel = new TextWidget("");
-			cloudMonitorStatusLabel.AutoExpandBoundsToText = true;
-			cloudMonitorStatusLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			cloudMonitorStatusLabel.VAnchor = VAnchor.ParentCenter;
-
-			GuiWidget hSpacer = new GuiWidget();
-			hSpacer.HAnchor = HAnchor.ParentLeftRight;
-
-			buttonBar.AddChild(cloudMonitoringIcon);
-			buttonBar.AddChild(cloudMonitorStatusLabel);
-			buttonBar.AddChild(cloudMonitorInstructionsLink);
-			buttonBar.AddChild(goCloudMonitoringWebPageButton);
-			buttonBar.AddChild(hSpacer);
-			buttonBar.AddChild(enableCloudMonitorButton);
-			buttonBar.AddChild(disableCloudMonitorButton);
-
 			return buttonBar;
 		}
 
@@ -183,11 +130,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget levelingIcon = new ImageWidget(notificationSettingsImage);
 			levelingIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
-			configureNotificationSettingsButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
-			configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
-			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
-			configureNotificationSettingsButton.Click += new EventHandler(configureNotificationSettingsButton_Click);
-
 			notificationSettingsLabel = new TextWidget(LocalizedString.Get("Notification Settings"));
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -209,27 +151,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(levelingIcon);
 			buttonRow.AddChild(notificationSettingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(configureNotificationSettingsButton);
 			buttonRow.AddChild(levelingSwitchContainer);
 
 			return buttonRow;
-		}
-
-		private void SetCloudButtonVisiblity()
-		{
-			bool cloudMontitorEnabled = (PrinterSettings.Instance.get("CloudMonitorEnabled") == "true");
-			enableCloudMonitorButton.Visible = !cloudMontitorEnabled;
-			disableCloudMonitorButton.Visible = cloudMontitorEnabled;
-			goCloudMonitoringWebPageButton.Visible = cloudMontitorEnabled;
-
-			if (cloudMontitorEnabled)
-			{
-				cloudMonitorStatusLabel.Text = LocalizedString.Get("Cloud Monitoring (enabled)");
-			}
-			else
-			{
-				cloudMonitorStatusLabel.Text = LocalizedString.Get("Cloud Monitoring (disabled)");
-			}
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -251,7 +175,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			SetVisibleControls();
 			this.Invalidate();
 		}
 
@@ -265,17 +188,5 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 		}
 
-		private void SetVisibleControls()
-		{
-			if (ActivePrinterProfile.Instance.ActivePrinter == null)
-			{
-				// no printer selected
-				cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-			}
-			else // we at least have a printer selected
-			{
-				cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-			}
-		}
 	}
 }

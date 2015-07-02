@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.ContactForm
 				submitButton.Visible = false;
 
 				postRequest.RequestSucceeded += new EventHandler(onPostRequestSucceeded);
-				postRequest.RequestFailed += new EventHandler(onPostRequestFailed);
+				postRequest.RequestFailed += onPostRequestFailed;
 				postRequest.Request();
 			}
 		}
@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			doneButton.Visible = true;
 		}
 
-		private void onPostRequestFailed(object sender, EventArgs e)
+		private void onPostRequestFailed(object sender, ResponseErrorEventArgs e)
 		{
 			submissionStatus.Text = LocalizedString.Get("Sorry!  We weren't able to submit your request.");
 			doneButton.Visible = true;

@@ -34,6 +34,114 @@ using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.VersionManagement
 {
+	public class ResponseErrorEventArgs : EventArgs
+	{
+		public JsonResponseDictionary ResponseValues { get; set; }
+	}
+
+	public class ResponseSuccessEventArgs<T> : EventArgs
+	{
+		public T ResponseItem { get; set; }
+	}
+
+	public class WebRequestBase<T> where T : class 
+	{
+		protected string uri;
+		protected Dictionary<string, string> requestValues;
+
+		public event EventHandler<ResponseSuccessEventArgs<T>> RequestSucceeded;
+
+		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
+
+		public event EventHandler RequestComplete;
+
+		protected void OnRequestSuceeded(T responseItem)
+		{
+			if (RequestSucceeded != null)
+			{
+				RequestSucceeded(this, new ResponseSuccessEventArgs<T>() { ResponseItem = responseItem });
+			}
+		}
+
+		//This gets called after failure or success
+		protected void OnRequestComplete()
+		{
+			if (RequestComplete != null)
+			{
+				RequestComplete(this, null);
+			}
+		}
+
+		protected void OnRequestFailed(JsonResponseDictionary responseValues)
+		{
+			if (RequestFailed != null)
+			{
+				RequestFailed(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
+			}
+		}
+
+		public WebRequestBase()
+		{
+			requestValues = new Dictionary<string, string>();
+		}
+		
+		protected virtual void SendRequest(object sender, DoWorkEventArgs e)
+		{
+			RequestManager requestManager = new RequestManager();
+			string jsonToSend = JsonConvert.SerializeObject(requestValues);
+
+			System.Diagnostics.Trace.Write(string.Format("ServiceRequest: {0}\r\n  {1}\r\n", uri, string.Join("\r\n\t", jsonToSend.Split(','))));
+
+			requestManager.SendPOSTRequest(uri, jsonToSend, "", "", false);
+
+			if (requestManager.LastResponse != null)
+			{
+				try
+				{
+					e.Result = JsonConvert.DeserializeObject<T>(requestManager.LastResponse);
+				}
+				catch
+				{
+					e.Result = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
+				}
+			}
+
+			T responseItem = e.Result as T;
+			if (responseItem != null)
+			{
+				OnRequestSuceeded(responseItem);
+			}
+			else
+			{
+				OnRequestFailed(e.Result as JsonResponseDictionary);
+			}
+
+			OnRequestComplete();
+		}
+
+		public virtual void ProcessErrorResponse(JsonResponseDictionary responseValues)
+		{
+			string errorMessage = responseValues.get("ErrorMessage");
+			if (errorMessage != null)
+			{
+				Console.WriteLine(string.Format("Request Failed: {0}", errorMessage));
+			}
+			else
+			{
+				Console.WriteLine(string.Format("Request Failed: Unknown Reason"));
+			}
+		}
+
+		public virtual void Request()
+		{
+			BackgroundWorker doRequestWorker = new BackgroundWorker();
+			doRequestWorker.DoWork += new DoWorkEventHandler(SendRequest);
+			//doRequestWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ProcessResponse);
+			doRequestWorker.RunWorkerAsync();
+		}
+	}
+
+
 	public class WebRequestBase
 	{
 		protected string uri;
@@ -41,7 +149,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		public event EventHandler RequestSucceeded;
 
-		public event EventHandler RequestFailed;
+		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
 
 		public event EventHandler RequestComplete;
 
@@ -62,11 +170,11 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 		}
 
-		protected void OnRequestFailed()
+		protected void OnRequestFailed(JsonResponseDictionary responseValues)
 		{
 			if (RequestFailed != null)
 			{
-				RequestFailed(this, null);
+				RequestFailed(this, new ResponseErrorEventArgs() { ResponseValues = responseValues });
 			}
 		}
 
@@ -91,6 +199,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 			RequestManager requestManager = new RequestManager();
 			string jsonToSend = getJsonToSend();
+
+			System.Diagnostics.Trace.Write(string.Format("ServiceRequest: {0}\r\n  {1}\r\n", uri, string.Join("\r\n\t", jsonToSend.Split(','))));
 
 			requestManager.SendPOSTRequest(uri, jsonToSend, "", "", false);
 			if (requestManager.LastResponse == null)
@@ -121,7 +231,6 @@ namespace MatterHackers.MatterControl.VersionManagement
 		protected virtual void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
 		{
 			JsonResponseDictionary responseValues = e.Result as JsonResponseDictionary;
-
 			if (responseValues != null)
 			{
 				string requestSuccessStatus = responseValues.get("Status");
@@ -133,7 +242,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 				else
 				{
 					ProcessErrorResponse(responseValues);
-					OnRequestFailed();
+					OnRequestFailed(responseValues);
 				}
 
 				OnRequestComplete();
