@@ -50,15 +50,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			// put in the sqlite provider
 			libraryProviders.Add(new LibraryProviderSQLite(null, this));
 
-			// and any directory providers (sd card provider, etc...)
-			//
-			// Add "Downloads" file system example
-			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-			if (Directory.Exists(downloadsDirectory))
-			{
-				libraryProviders.Add(new LibraryProviderFileSystem(downloadsDirectory, "Downloads", this));
-			}
-
 			//#if __ANDROID__
 			//libraryProviders.Add(new LibraryProviderFileSystem(ApplicationDataStorage.Instance.PublicDataStoragePath, "Downloads", this.ProviderKey));
 
@@ -69,7 +60,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				libraryProviders.Add(libraryProviderPlugin.CreateLibraryProvider(this));
 			}
 
-			providerLocationStack.Add(new PrintItemCollection("..", ProviderKey));
+			// and any directory providers (sd card provider, etc...)
+			// Add "Downloads" file system example
+			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+			if (Directory.Exists(downloadsDirectory))
+			{
+				libraryProviders.Add(new LibraryProviderFileSystem(downloadsDirectory, "Downloads", this));
+			}
 		}
 
 		public static LibraryProviderSelector Instance
@@ -87,8 +84,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Overriden Abstract Methods
 
-		private List<PrintItemCollection> providerLocationStack = new List<PrintItemCollection>();
-
 		public static string LibraryProviderSelectorKey
 		{
 			get
@@ -103,6 +98,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				return libraryProviders.Count;
 			}
+		}
+
+		public override void Dispose()
+		{
 		}
 
 		public override int ItemCount

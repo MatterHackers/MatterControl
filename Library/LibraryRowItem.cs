@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 				middleColumn.Margin = new BorderDouble(10, 6);
 				{
-					string labelName = textInfo.ToTitleCase(GetItemName());
+					string labelName = GetItemName();
 					labelName = labelName.Replace('_', ' ');
 					partLabel = new TextWidget(labelName, pointSize: 14);
 					partLabel.TextColor = WidgetTextColor;

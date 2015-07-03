@@ -108,8 +108,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			set
 			{
-				currentLibraryProvider = value;
-				ChangedCurrentLibraryProvider.CallEvents(null, null);
+				if (currentLibraryProvider != value)
+				{
+					bool isChildOfCurrent = value.ParentLibraryProvider == currentLibraryProvider;
+
+					// Dispose of all children below this one.
+					while (!isChildOfCurrent && currentLibraryProvider != value)
+					{
+						LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
+						currentLibraryProvider.Dispose();
+						currentLibraryProvider = parent;
+					}
+
+					currentLibraryProvider = value;
+
+					ChangedCurrentLibraryProvider.CallEvents(null, null);
+				}
 			}
 		}
 

@@ -67,15 +67,25 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
 				   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-			directoryWatcher.Changed += new FileSystemEventHandler(DiretoryContentsChanged);
-			directoryWatcher.Created += new FileSystemEventHandler(DiretoryContentsChanged);
-			directoryWatcher.Deleted += new FileSystemEventHandler(DiretoryContentsChanged);
-			directoryWatcher.Renamed += new RenamedEventHandler(DiretoryContentsChanged);
+			directoryWatcher.Changed += DiretoryContentsChanged;
+			directoryWatcher.Created += DiretoryContentsChanged;
+			directoryWatcher.Deleted += DiretoryContentsChanged;
+			directoryWatcher.Renamed += DiretoryContentsChanged;
 
 			// Begin watching.
 			directoryWatcher.EnableRaisingEvents = true;
 
 			GetFilesAndCollectionsInCurrentDirectory();
+		}
+
+		public override void Dispose()
+		{
+			directoryWatcher.EnableRaisingEvents = false;
+
+			directoryWatcher.Changed -= DiretoryContentsChanged;
+			directoryWatcher.Created -= DiretoryContentsChanged;
+			directoryWatcher.Deleted -= DiretoryContentsChanged;
+			directoryWatcher.Renamed -= DiretoryContentsChanged;
 		}
 
 		public override int CollectionCount
@@ -175,7 +185,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			if (Directory.Exists(directoryPath))
 			{
 				Stopwatch time = Stopwatch.StartNew();
-				Directory.Delete(directoryPath);
+				Directory.Delete(directoryPath, true);
 				// Wait for up to some amount of time for the directory to be gone.
 				while (Directory.Exists(directoryPath) 
 					&& time.ElapsedMilliseconds < 100)

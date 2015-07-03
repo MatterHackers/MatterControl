@@ -175,10 +175,10 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private string updateAvailableMessage = "There is a recommended update avalible for MatterControl. Would you like to download it now?".Localize();
-		private string updateAvailableTitle = "Recommended Update Available".Localize();
-		private string downloadNow = "Download Now".Localize();
-		private string remindMeLater = "Remind Me Later".Localize();
+		private static string updateAvailableMessage = "There is a recommended update avalible for MatterControl. Would you like to download it now?".Localize();
+		private static string updateAvailableTitle = "Recommended Update Available".Localize();
+		private static string downloadNow = "Download Now".Localize();
+		private static string remindMeLater = "Remind Me Later".Localize();
 
 		private void onVersionRequestSucceeded(object sender, EventArgs e)
 		{

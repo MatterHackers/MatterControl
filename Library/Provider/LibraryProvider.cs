@@ -38,7 +38,7 @@ using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
-	public abstract class LibraryProvider
+	public abstract class LibraryProvider : IDisposable
 	{
 		public static RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
 		private LibraryProvider parentLibraryProvider = null;
@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Abstract Methods
 
+		public abstract void Dispose();
 		public abstract int CollectionCount { get; }
 
 		public abstract int ItemCount { get; }

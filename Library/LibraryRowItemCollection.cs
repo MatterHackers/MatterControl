@@ -67,9 +67,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			throw new NotImplementedException();
 		}
 
+		private static string collectionNotEmtyMessage = "The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?".Localize();
+		private static string collectionNotEmtyTitle = "Collection not Empty".Localize();
+		private static string deleteNow = "Delete".Localize();
+		private static string doNotDelete = "Do NOT Delete".Localize();
+
 		public override void RemoveFromCollection()
 		{
-			throw new NotImplementedException();
+			using (LibraryProvider collectionProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(collection))
+			{
+				if (collectionProvider.ItemCount > 0 || collectionProvider.CollectionCount > 0)
+				{
+					collectionNotEmtyMessage = collectionNotEmtyMessage.FormatWith(collection.Name);
+					UiThread.RunOnIdle(() =>
+					{
+						// Let the user know this collection is not empty and check if they want to delete it.
+						StyledMessageBox.ShowMessageBox(ProcessDialogResponse, collectionNotEmtyMessage, collectionNotEmtyTitle, StyledMessageBox.MessageType.YES_NO, deleteNow, doNotDelete);
+					});
+				}
+				else
+				{
+					LibraryDataView.CurrentLibraryProvider.RemoveCollection(collection);
+				}
+			}
+		}
+
+		private void ProcessDialogResponse(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
+				LibraryDataView.CurrentLibraryProvider.RemoveCollection(collection);
+			}
 		}
 
 		public override void AddToQueue()

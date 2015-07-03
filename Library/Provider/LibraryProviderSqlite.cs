@@ -89,6 +89,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override void Dispose()
+		{
+		}
+
 		public override int CollectionCount
 		{
 			get
@@ -122,7 +126,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "Local Library";
+				return "Library (local)";
 			}
 		}
 
