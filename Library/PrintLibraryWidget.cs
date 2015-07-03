@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private static TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
-		private TextWidget breadCrumbDisplay;
+		private FlowLayoutWidget breadCrumbDisplayHolder;
 
 		private FlowLayoutWidget itemOperationButtons;
 		private List<bool> editOperationMultiCapable = new List<bool>();
@@ -144,12 +144,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 AddLibraryButtonElements();
 				CreateEditBarButtons();
 
-				breadCrumbDisplay = new TextWidget("");
-				breadCrumbDisplay.AutoExpandBoundsToText = true;
+				breadCrumbDisplayHolder = new FlowLayoutWidget(FlowDirection.RightToLeft);
 
 				//allControls.AddChild(navigationPanel);
 				allControls.AddChild(searchPanel);
-				allControls.AddChild(breadCrumbDisplay);
+				allControls.AddChild(breadCrumbDisplayHolder);
 				allControls.AddChild(itemOperationButtons);
 				libraryDataView = new LibraryDataView();
 				allControls.AddChild(libraryDataView);
@@ -160,6 +159,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AddChild(allControls);
 
 			AddHandlers();
+			SetBreadCrumbs(null, null);
 		}
 
         private static void AddLibraryButtonElements()
@@ -281,24 +281,33 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public void SetBreadCrumbs(object sender, EventArgs e)
 		{
-			List<ProviderLocatorNode> providerLocator = LibraryDataView.CurrentLibraryProvider.GetProviderLocator();
-			StringBuilder path = new StringBuilder();
+			breadCrumbDisplayHolder.CloseAndRemoveAllChildren();
+			LibraryProvider currentProvider = LibraryDataView.CurrentLibraryProvider;
 			bool first = true;
-			foreach (ProviderLocatorNode node in providerLocator)
+			while(currentProvider != null)
 			{
 				if (!first)
 				{
-					path.Append("->");
+					GuiWidget separator = new TextWidget(">");
+					separator.VAnchor = VAnchor.ParentCenter;
+					separator.Margin = new BorderDouble(3, 0);
+					breadCrumbDisplayHolder.AddChild(separator);
 				}
 
-				if (node.Name != "..")
+				Button installUpdateLink = textImageButtonFactory.Generate(currentProvider.Name);
+				LibraryProvider localCurrentProvider = currentProvider;
+				installUpdateLink.Click += (sender2, e2) =>
 				{
-					path.Append(node.Name);
-					first = false;
-				}
+					UiThread.RunOnIdle(() => {
+						LibraryDataView.CurrentLibraryProvider = localCurrentProvider;
+						libraryDataView.RebuildView();
+					});
+				};
+				breadCrumbDisplayHolder.AddChild(installUpdateLink);
+				first = false;
+				currentProvider = currentProvider.ParentLibraryProvider;
 			}
 
-			breadCrumbDisplay.Text = path.ToString();
 			libraryDataView.ClearSelectedItems();
 		}
 
