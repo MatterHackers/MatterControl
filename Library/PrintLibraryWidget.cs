@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (!first)
 				{
-					GuiWidget separator = new TextWidget(">");
+					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
 					separator.VAnchor = VAnchor.ParentCenter;
 					separator.Margin = new BorderDouble(3, 0);
 					breadCrumbDisplayHolder.AddChild(separator);

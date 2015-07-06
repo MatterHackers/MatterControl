@@ -306,6 +306,10 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 			return providerPath;
 		}
+
+		public bool ReadOnly { get; set; }
+
+		public bool Protected { get; set; }
 	}
 
 	public class PrintItemCollection : Entity
