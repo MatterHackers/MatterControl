@@ -119,6 +119,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				topBarContainer.Padding = new BorderDouble(0);
 
 				topBarContainer.AddChild(enterEditModeButton);
+
 				topBarContainer.AddChild(leaveEditModeButton);
 				topBarContainer.AddChild(new HorizontalSpacer());
 				topBarContainer.AddChild(itemOperationButtons);

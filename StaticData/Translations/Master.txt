@@ -3370,3 +3370,9 @@ Translated:Collection not Empty
 English:Do NOT Delete
 Translated:Do NOT Delete
 
+English:Library (cloud)
+Translated:Library (cloud)
+
+English:Purchased
+Translated:Purchased
+
