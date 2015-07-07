@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private FlowLayoutWidget itemOperationButtons;
 		private DropDownMenu moreMenu;
-		private List<bool> editOperationMultiCapable = new List<bool>();
+		private List<ButtonEnableData> editButtonsEnableData = new List<ButtonEnableData>();
 		private Button enterEditModeButton;
 		private ExportPrintItemWindow exportingWindow;
 		private bool exportingWindowIsOpen = false;
@@ -234,19 +234,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += new EventHandler(exportButton_Click);
-			editOperationMultiCapable.Add(false);
+			editButtonsEnableData.Add(new ButtonEnableData(false, false));
 			itemOperationButtons.AddChild(exportItemButton);
 
 			Button copyItemButton = editButtonFactory.Generate("Copy".Localize());
 			copyItemButton.Margin = new BorderDouble(3, 0);
 			copyItemButton.Click += new EventHandler(copyButton_Click);
-			editOperationMultiCapable.Add(false);
+			editButtonsEnableData.Add(new ButtonEnableData(false, true));
 			itemOperationButtons.AddChild(copyItemButton);
 
 			Button removeItemButton = editButtonFactory.Generate("Remove".Localize());
 			removeItemButton.Margin = new BorderDouble(3, 0);
 			removeItemButton.Click += new EventHandler(removeButton_Click);
-			editOperationMultiCapable.Add(true);
+			editButtonsEnableData.Add(new ButtonEnableData(true, true));
 			itemOperationButtons.AddChild(removeItemButton);
 
 			editButtonFactory.FixedWidth = oldWidth;
@@ -696,24 +696,36 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void SetEditButtonsStates()
 		{
 			int selectedCount = queueDataView.SelectedItems.Count;
-			bool enabled = (selectedCount > 0);
 
-			int i=0;
-			foreach (var child in itemOperationButtons.Children)
+			for(int buttonIndex=0; buttonIndex<itemOperationButtons.Children.Count; buttonIndex++)
 			{
+				bool enabled = selectedCount > 0;
+				var child = itemOperationButtons.Children[buttonIndex];
 				var button = child as Button;
 				if (button != null)
 				{
-					if (selectedCount > 1 && !editOperationMultiCapable[i])
+					if ((selectedCount > 1 && !editButtonsEnableData[buttonIndex].multipleItems))
 					{
-						button.Enabled = false;
+						enabled = false;
 					}
 					else
 					{
-						button.Enabled = enabled;
+						bool enabledState = enabled;
+
+						if (!editButtonsEnableData[buttonIndex].protectedItems)
+						{
+							// so we can show for multi items lets check for protected items
+							for (int itemIndex = 0; itemIndex < queueDataView.SelectedItems.Count; itemIndex++)
+							{
+								if (queueDataView.SelectedItems[itemIndex].PrintItemWrapper.PrintItem.Protected)
+								{
+									enabled = false;
+								}
+							}
+						}
 					}
+					button.Enabled = enabled;
 				}
-				i++;
 			}
 		}
 

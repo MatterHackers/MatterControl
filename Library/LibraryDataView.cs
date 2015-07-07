@@ -491,7 +491,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void LibraryDataReloaded(object sender, EventArgs e)
 		{
-			AddAllItems();
+			UiThread.RunOnIdle(AddAllItems);
 		}
 	}
 }

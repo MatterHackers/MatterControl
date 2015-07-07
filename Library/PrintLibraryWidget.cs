@@ -41,6 +41,18 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
+	internal class ButtonEnableData
+	{
+		internal bool multipleItems;
+		internal bool protectedItems;
+
+		internal ButtonEnableData(bool multipleItems, bool protectedItems)
+		{
+			this.multipleItems = multipleItems;
+			this.protectedItems = protectedItems;
+		}
+	}
+
 	public class PrintLibraryWidget : GuiWidget
 	{
 		private static CreateFolderWindow createFolderWindow = null;
@@ -50,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private FlowLayoutWidget breadCrumbDisplayHolder;
 
 		private FlowLayoutWidget itemOperationButtons;
-		private List<bool> editOperationMultiCapable = new List<bool>();
+		private List<ButtonEnableData> editButtonsEnableData = new List<ButtonEnableData>();
 
 		private static Button addToLibraryButton;
 		private Button enterEditModeButton;
@@ -245,25 +257,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += new EventHandler(exportButton_Click);
-			editOperationMultiCapable.Add(false);
+			editButtonsEnableData.Add(new ButtonEnableData(false, false));
 			itemOperationButtons.AddChild(exportItemButton);
 
 			Button editItemButton = editButtonFactory.Generate("Edit".Localize());
 			editItemButton.Margin = new BorderDouble(3, 0);
 			editItemButton.Click += new EventHandler(editButton_Click);
-			editOperationMultiCapable.Add(false);
+			editButtonsEnableData.Add(new ButtonEnableData(false, false));
 			itemOperationButtons.AddChild(editItemButton);
 
 			Button removeFromLibraryButton = editButtonFactory.Generate("Remove".Localize());
 			removeFromLibraryButton.Margin = new BorderDouble(3, 0);
 			removeFromLibraryButton.Click += new EventHandler(deleteFromLibraryButton_Click);
-			editOperationMultiCapable.Add(true);
+			editButtonsEnableData.Add(new ButtonEnableData(true, false));
 			itemOperationButtons.AddChild(removeFromLibraryButton);
 
 			Button addToQueueButton = editButtonFactory.Generate("Add to Queue".Localize());
 			addToQueueButton.Margin = new BorderDouble(3, 0);
 			addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
-			editOperationMultiCapable.Add(true);
+			editButtonsEnableData.Add(new ButtonEnableData(true, true));
 			itemOperationButtons.AddChild(addToQueueButton);
 
 			itemOperationButtons.Visible = false;
@@ -372,24 +384,36 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void SetEditButtonsStates()
 		{
 			int selectedCount = libraryDataView.SelectedItems.Count;
-			bool enabled = (selectedCount > 0 && libraryDataView.EditMode);
 
-			int i = 0;
-			foreach (var child in itemOperationButtons.Children)
+			for(int buttonIndex=0; buttonIndex<itemOperationButtons.Children.Count; buttonIndex++)
 			{
+				bool enabled = (selectedCount > 0 && libraryDataView.EditMode);
+				var child = itemOperationButtons.Children[buttonIndex];
 				var button = child as Button;
 				if (button != null)
 				{
-					if (selectedCount > 1 && !editOperationMultiCapable[i])
+					if ((selectedCount > 1 && !editButtonsEnableData[buttonIndex].multipleItems))
 					{
-						button.Enabled = false;
+						enabled = false;
 					}
 					else
 					{
-						button.Enabled = enabled;
+						bool enabledState = enabled;
+
+						if (!editButtonsEnableData[buttonIndex].protectedItems)
+						{
+							// so we can show for multi items lets check for protected items
+							for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
+							{
+								if (LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapper(itemIndex).PrintItem.Protected)
+								{
+									enabled = false;
+								}
+							}
+						}
 					}
+					button.Enabled = enabled;
 				}
-				i++;
 			}
 		}
 

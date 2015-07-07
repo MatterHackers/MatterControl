@@ -31,14 +31,11 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {

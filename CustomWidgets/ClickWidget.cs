@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (PrivateClick != null)
 			{
-				PrivateClick(this, mouseEvent);
+				UiThread.RunOnIdle(() => PrivateClick(this, mouseEvent));
 			}
 		}
 
