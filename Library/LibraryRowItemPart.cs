@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
@@ -44,7 +45,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class LibraryRowItemPart : LibraryRowItem
 	{
 		public bool isActivePrint = false;
-		public PrintItemWrapper printItemWrapper;
+		private PrintItemWrapper printItemWrapper;
+		public override PrintItemWrapper PrintItemWrapper { get { return printItemWrapper; } }
+		public override PrintItemCollection PrintItemCollection { get { return null; } }
 
 		private ExportPrintItemWindow exportingWindow;
 		private PartPreviewMainWindow viewingWindow;
@@ -58,7 +61,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void AddToQueue()
 		{
-			QueueData.Instance.AddItem(printItemWrapper);
+			QueueData.Instance.AddItem(PrintItemWrapper);
 		}
 
 		public override void Edit()
@@ -68,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void Export()
 		{
-			OpenExportWindow(printItemWrapper);
+			OpenExportWindow(PrintItemWrapper);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -126,7 +129,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (viewingWindow == null)
 			{
-				viewingWindow = new PartPreviewMainWindow(this.printItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
+				viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
 				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
 			}
 			else
@@ -137,7 +140,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void RemoveFromCollection()
 		{
-			LibraryDataView.CurrentLibraryProvider.RemoveItem(printItemWrapper);
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(PrintItemWrapper);
 		}
 
 		protected override SlideWidget GetItemActionButtons()
@@ -161,13 +164,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
 				{
-					QueueData.Instance.AddItem(this.printItemWrapper, 0);
+					QueueData.Instance.AddItem(this.PrintItemWrapper, 0);
 					QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
 					PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
 				}
 				else
 				{
-					QueueData.Instance.AddItem(this.printItemWrapper);
+					QueueData.Instance.AddItem(this.PrintItemWrapper);
 				}
 				buttonContainer.SlideOut();
 				this.Invalidate();
@@ -195,12 +198,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		protected override string GetItemName()
 		{
-			return printItemWrapper.Name;
+			return PrintItemWrapper.Name;
 		}
 
 		protected override void RemoveThisFromPrintLibrary()
 		{
-			LibraryDataView.CurrentLibraryProvider.RemoveItem(this.printItemWrapper);
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(this.PrintItemWrapper);
 		}
 
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)
@@ -275,7 +278,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (exportingWindow == null)
 			{
-				exportingWindow = new ExportPrintItemWindow(this.printItemWrapper);
+				exportingWindow = new ExportPrintItemWindow(this.PrintItemWrapper);
 				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
 				exportingWindow.ShowAsSystemWindow();
 			}
@@ -301,7 +304,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void openPartView(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
-			string pathAndFile = this.printItemWrapper.FileLocation;
+			string pathAndFile = this.PrintItemWrapper.FileLocation;
 			if (File.Exists(pathAndFile))
 			{
 				OpenPartViewWindow(openMode);

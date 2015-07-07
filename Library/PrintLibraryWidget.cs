@@ -32,6 +32,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using System;
@@ -405,9 +406,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							// so we can show for multi items lets check for protected items
 							for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
 							{
-								if (LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapper(itemIndex).PrintItem.Protected)
+								PrintItemWrapper printItem = libraryDataView.SelectedItems[itemIndex].PrintItemWrapper;
+								if (printItem != null)
 								{
-									enabled = false;
+									if (printItem.PrintItem.Protected)
+									{
+										enabled = false;
+									}
 								}
 							}
 						}

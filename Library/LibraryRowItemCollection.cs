@@ -47,15 +47,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class LibraryRowItemCollection : LibraryRowItem
 	{
 		LibraryProvider parentProvider;
-		PrintItemCollection collection;
+		PrintItemCollection printItemCollection;
 
 		public LibraryRowItemCollection(PrintItemCollection collection, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
 			this.parentProvider = parentProvider;
-			this.collection = collection;
+			this.printItemCollection = collection;
 			CreateGuiElements();
 		}
+
+		public override PrintItemWrapper PrintItemWrapper { get { return null; } }
+		public override PrintItemCollection PrintItemCollection { get { return printItemCollection; } }
 
 		public override void Export()
 		{
@@ -74,11 +77,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void RemoveFromCollection()
 		{
-			using (LibraryProvider collectionProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(collection))
+			using (LibraryProvider collectionProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(printItemCollection))
 			{
 				if (collectionProvider.ItemCount > 0 || collectionProvider.CollectionCount > 0)
 				{
-					collectionNotEmtyMessage = collectionNotEmtyMessage.FormatWith(collection.Name);
+					collectionNotEmtyMessage = collectionNotEmtyMessage.FormatWith(printItemCollection.Name);
 					UiThread.RunOnIdle(() =>
 					{
 						// Let the user know this collection is not empty and check if they want to delete it.
@@ -87,7 +90,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				else
 				{
-					LibraryDataView.CurrentLibraryProvider.RemoveCollection(collection);
+					LibraryDataView.CurrentLibraryProvider.RemoveCollection(printItemCollection);
 				}
 			}
 		}
@@ -96,7 +99,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (messageBoxResponse)
 			{
-				LibraryDataView.CurrentLibraryProvider.RemoveCollection(collection);
+				LibraryDataView.CurrentLibraryProvider.RemoveCollection(printItemCollection);
 			}
 		}
 
@@ -109,7 +112,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		protected override string GetItemName()
 		{
-			return collection.Name;
+			return printItemCollection.Name;
 		}
 
 		protected override SlideWidget GetItemActionButtons()
@@ -146,7 +149,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (parentProvider == null)
 			{
-				LibraryDataView.CurrentLibraryProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(collection);
+				LibraryDataView.CurrentLibraryProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(printItemCollection);
 			}
 			else
 			{

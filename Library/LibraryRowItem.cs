@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
@@ -50,7 +52,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private bool isHoverItem = false;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private ConditionalClickWidget primaryClickContainer;
-		GuiWidget thumbnailWidget;
+		private GuiWidget thumbnailWidget;
 
 		public LibraryRowItem(LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
 		{
@@ -91,6 +93,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			}
 		}
+
+		public abstract PrintItemCollection PrintItemCollection { get; }
+
+		public abstract PrintItemWrapper PrintItemWrapper { get; }
 
 		public override void OnClosed(EventArgs e)
 		{
