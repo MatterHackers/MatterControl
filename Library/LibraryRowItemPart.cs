@@ -61,7 +61,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void AddToQueue()
 		{
-			QueueData.Instance.AddItem(PrintItemWrapper);
+			// create a new item that will be only in the queue
+			QueueData.Instance.AddItem(MakeCopyForQueue());
+		}
+
+		private PrintItemWrapper MakeCopyForQueue()
+		{
+			PrintItem printItemToCopy = PrintItemWrapper.PrintItem;
+			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItemToCopy.FileLocation));
+			string newFileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+			File.Copy(printItemToCopy.FileLocation, newFileLocation);
+			PrintItem printItemForQueue = new PrintItem(printItemToCopy.Name, newFileLocation);
+			printItemForQueue.Protected = printItemToCopy.Protected;
+			return new PrintItemWrapper(printItemForQueue);
 		}
 
 		public override void Edit()
@@ -164,13 +176,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
 				{
-					QueueData.Instance.AddItem(this.PrintItemWrapper, 0);
+					QueueData.Instance.AddItem(MakeCopyForQueue(), 0);
 					QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
 					PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
 				}
 				else
 				{
-					QueueData.Instance.AddItem(this.PrintItemWrapper);
+					QueueData.Instance.AddItem(MakeCopyForQueue());
 				}
 				buttonContainer.SlideOut();
 				this.Invalidate();
