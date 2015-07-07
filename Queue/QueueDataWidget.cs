@@ -263,10 +263,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			var queueRowItem = this.queueDataView.SelectedItems[0];
 
-			var printItem = queueRowItem.PrintItemWrapper;
+			var printItemWrapper = queueRowItem.PrintItemWrapper;
 
-			int thisIndexInQueue = QueueData.Instance.GetIndex(printItem);
-			if (thisIndexInQueue != -1 && File.Exists(printItem.FileLocation))
+			int thisIndexInQueue = QueueData.Instance.GetIndex(printItemWrapper);
+			if (thisIndexInQueue != -1 && File.Exists(printItemWrapper.FileLocation))
 			{
 				string libraryDataPath = ApplicationDataStorage.Instance.ApplicationLibraryDataPath;
 				if (!Directory.Exists(libraryDataPath))
@@ -278,14 +278,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 				int infiniteBlocker = 0;
 				do
 				{
-					newCopyFilename = Path.Combine(libraryDataPath, Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItem.FileLocation)));
+					newCopyFilename = Path.Combine(libraryDataPath, Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItemWrapper.FileLocation)));
 					newCopyFilename = Path.GetFullPath(newCopyFilename);
 					infiniteBlocker++;
 				} while (File.Exists(newCopyFilename) && infiniteBlocker < 100);
 
-				File.Copy(printItem.FileLocation, newCopyFilename);
+				File.Copy(printItemWrapper.FileLocation, newCopyFilename);
 
-				string newName = printItem.Name;
+				string newName = printItemWrapper.Name;
 
 				if (!newName.Contains(" - copy"))
 				{
@@ -315,10 +315,15 @@ namespace MatterHackers.MatterControl.PrintQueue
 				}
 				newName = testName;
 
+				PrintItem newPrintItem = new PrintItem();
+				newPrintItem.Name = newName;
+				newPrintItem.FileLocation = newCopyFilename;
+				newPrintItem.LibraryProviderLocatorJson = printItemWrapper.PrintItem.LibraryProviderLocatorJson;
+				newPrintItem.ReadOnly = printItemWrapper.PrintItem.ReadOnly;
+				newPrintItem.Protected = printItemWrapper.PrintItem.Protected;
 				UiThread.RunOnIdle(AddPartCopyToQueue, new PartToAddToQueue()
 				{
-					Name = newName,
-					FileLocation = newCopyFilename,
+					PrintItem = newPrintItem,
 					InsertAfterIndex = thisIndexInQueue + 1
 				});
 			}
@@ -454,7 +459,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void AddPartCopyToQueue(object state)
 		{
 			var partInfo = state as PartToAddToQueue;
-			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(partInfo.Name, partInfo.FileLocation)), QueueData.ValidateSizeOn32BitSystems.Skip, partInfo.InsertAfterIndex);
+			QueueData.Instance.AddItem(new PrintItemWrapper(partInfo.PrintItem), QueueData.ValidateSizeOn32BitSystems.Skip, partInfo.InsertAfterIndex);
 		}
 
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
@@ -731,11 +736,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private class PartToAddToQueue
 		{
-			internal string FileLocation { get; set; }
+			internal PrintItem PrintItem { get; set; }
 
 			internal int InsertAfterIndex { get; set; }
-
-			internal string Name { get; set; }
 		}
 	}
 }
