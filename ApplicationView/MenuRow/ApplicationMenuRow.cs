@@ -37,10 +37,17 @@ namespace MatterHackers.MatterControl
 {
 	public class ApplicationMenuRow : FlowLayoutWidget
 	{
-		private static FlowLayoutWidget rightElement;
-		LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		public delegate void AddRightElementDelegate(GuiWidget iconContainer);
+
+		public static event AddRightElementDelegate AddRightElement;
 
 		public static bool AlwaysShowUpdateStatus { get; set; }
+
+		private FlowLayoutWidget rightElement;
+
+		LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+
+		private event EventHandler unregisterEvents;
 
 		GuiWidget popUpAboutPage;
 
@@ -96,32 +103,17 @@ namespace MatterHackers.MatterControl
 
 			this.Padding = new BorderDouble(0, 0, 6, 0);
 
-			if (privateAddRightElement != null)
+
+			UiThread.RunOnIdle(() =>
 			{
-				privateAddRightElement(rightElement);
-			}
+				if (AddRightElement != null)
+				{
+					AddRightElement(rightElement);
+				}
+			}, 1);
+
 		}
 
-		public delegate void AddRightElementDelegate(GuiWidget iconContainer);
-
-		public static event AddRightElementDelegate AddRightElement
-		{
-			add
-			{
-				privateAddRightElement += value;
-				// and call it right away
-				value(rightElement);
-			}
-
-			remove
-			{
-				privateAddRightElement -= value;
-			}
-		}
-
-		private static event AddRightElementDelegate privateAddRightElement;
-
-		private event EventHandler unregisterEvents;
 		public override void OnClosed(EventArgs e)
 		{
 			if (unregisterEvents != null)
