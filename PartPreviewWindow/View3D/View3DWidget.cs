@@ -183,6 +183,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							EnterEditAndCreateSelectionData();
 						});
 					};
+					if (printItemWrapper.PrintItem.ReadOnly)
+					{
+						addButton.Enabled = false;
+					}
 
 					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "icon_edit_32x32.png");
 					enterEdittingButton.Margin = new BorderDouble(right: 4);
@@ -190,8 +194,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						EnterEditAndCreateSelectionData();
 					};
+					if (printItemWrapper.PrintItem.ReadOnly)
+					{
+						enterEdittingButton.Enabled = false;
+					}
 
 					Button exportButton = textImageButtonFactory.Generate("Export...".Localize());
+					if (printItemWrapper.PrintItem.Protected || printItemWrapper.PrintItem.ReadOnly)
+					{
+						exportButton.Enabled = false;
+					}
+
 					exportButton.Margin = new BorderDouble(right: 10);
 					exportButton.Click += (sender, e) =>
 					{
@@ -1047,8 +1060,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool AllowDragDrop()
 		{
-			if (!enterEditButtonsContainer.Visible
+			if ((!enterEditButtonsContainer.Visible
 				&& !doEdittingButtonsContainer.Visible)
+				|| 	printItemWrapper.PrintItem.ReadOnly)
 			{
 				return false;
 			}

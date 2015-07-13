@@ -75,8 +75,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.borderWidth = 0;
 
 			editButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;

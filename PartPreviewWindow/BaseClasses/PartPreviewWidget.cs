@@ -62,8 +62,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			
+			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
+			textImageButtonFactory.disabledFillColor = new RGBA_Bytes();
+
 
 			whiteButtonFactory.FixedWidth = SideBarButtonWidth;
 			whiteButtonFactory.FixedHeight = ShortButtonHeight;
