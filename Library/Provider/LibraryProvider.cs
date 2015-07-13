@@ -35,6 +35,7 @@ using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -106,7 +107,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
-		public abstract PrintItemWrapper GetPrintItemWrapper(int itemIndex);
+		public abstract Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex);
 
 		public abstract LibraryProvider GetProviderForItem(PrintItemCollection collection);
 
@@ -127,9 +128,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#endregion Static Methods
 
-		public virtual string GetItemName(int printItemIndex)
+		public virtual string GetPrintItemName(int itemIndex)
 		{
-			return GetPrintItemWrapper(printItemIndex).Name;
+			return "";
 		}
 
 		public virtual bool IsItemProtected(int itemIndex)
@@ -144,8 +145,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public virtual GuiWidget GetItemThumbnail(int printItemIndex)
 		{
-			PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(GetPrintItemWrapper(printItemIndex), "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-			return thumbnailWidget;
+			var printItemWrapper = GetPrintItemWrapperAsync(printItemIndex).Result;
+			return new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
 		}
 	}
 

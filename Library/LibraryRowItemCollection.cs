@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			this.parentProvider = parentProvider;
 			this.printItemCollection = collection;
+			this.ItemName = printItemCollection.Name;
+
 			CreateGuiElements();
 		}
 
@@ -114,11 +116,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		private ConditionalClickWidget primaryClickContainer;
-
-		protected override string GetItemName()
-		{
-			return printItemCollection.Name;
-		}
 
 		protected override SlideWidget GetItemActionButtons()
 		{

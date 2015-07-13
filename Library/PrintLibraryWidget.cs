@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			SetEditButtonsStates();
 		}
 
-		private void SetEditButtonsStates()
+		private async void SetEditButtonsStates()
 		{
 			int selectedCount = libraryDataView.SelectedItems.Count;
 

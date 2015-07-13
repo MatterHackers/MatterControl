@@ -81,6 +81,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override string GetPrintItemName(int itemIndex)
+		{
+			return "";
+		}
+
 		public static string StaticProviderKey
 		{
 			get
@@ -301,7 +306,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return childCollections[collectionIndex];
 		}
 
-		public override PrintItemWrapper GetPrintItemWrapper(int index)
+		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
 		{
 			if (index >= 0 && index < printItems.Count)
 			{
