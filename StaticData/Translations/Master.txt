@@ -3379,3 +3379,12 @@ Translated:Purchased
 English:Session Expired
 Translated:Session Expired
 
+English:Thumbnail Rendering
+Translated:Thumbnail Rendering
+
+English:Flat
+Translated:Flat
+
+English:3D
+Translated:3D
+

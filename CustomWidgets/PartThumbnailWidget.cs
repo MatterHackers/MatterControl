@@ -325,33 +325,36 @@ namespace MatterHackers.MatterControl
 
 		private static RenderType GetRenderType(string fileLocation)
 		{
-			return RenderType.ORTHOGROPHIC;
-
-			if (Is32Bit())
+			if (UserSettings.Instance.get("ThumbnailRenderingMode") == "raytraced")
 			{
-				long estimatedMemoryUse = 0;
-				if (File.Exists(fileLocation))
+				if (Is32Bit())
 				{
-					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(fileLocation);
+					long estimatedMemoryUse = 0;
+					if (File.Exists(fileLocation))
+					{
+						estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(fileLocation);
 
-					if (OsInformation.OperatingSystem == OSType.Android)
-					{
-						if (estimatedMemoryUse > renderOrthoAndroid)
+						if (OsInformation.OperatingSystem == OSType.Android)
 						{
-							return RenderType.ORTHOGROPHIC;
+							if (estimatedMemoryUse > renderOrthoAndroid)
+							{
+								return RenderType.ORTHOGROPHIC;
+							}
 						}
-					}
-					else
-					{
-						if (estimatedMemoryUse > renderOrthoDesktop)
+						else
 						{
-							return RenderType.ORTHOGROPHIC;
+							if (estimatedMemoryUse > renderOrthoDesktop)
+							{
+								return RenderType.ORTHOGROPHIC;
+							}
 						}
 					}
 				}
+
+				return RenderType.RAY_TRACE;
 			}
 
-			return RenderType.RAY_TRACE;
+			return RenderType.ORTHOGROPHIC;
 		}
 
 		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)

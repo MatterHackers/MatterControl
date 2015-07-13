@@ -42,10 +42,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		private Button languageRestartButton;
 		private Button configureUpdateFeedButton;
-		private Button displayControlRestartButton;
 
 		public ApplicationSettingsWidget()
-			: base(LocalizedString.Get("Application Settings"))
+			: base("Application Settings".Localize())
 		{
 			mainContainer.AddChild(GetUpdateControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -57,6 +56,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				mainContainer.AddChild(sliceEngineControl);
 				mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			}
+
+			mainContainer.AddChild(GetThumbnailRenderingControl());
+			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 
 #if !__ANDROID__
 			mainContainer.AddChild(GetDisplayControl());
@@ -130,8 +132,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 6);
 
-			string settingLabelBeggining = LocalizedString.Get("Theme");
-			string settingLabelEnd = LocalizedString.Get("Display Options");
+			string settingLabelBeggining = "Theme".Localize();
+			string settingLabelEnd = "Display Options".Localize();
 			string settingLabelFull = String.Format("{0}/{1}", settingLabelBeggining, settingLabelEnd);
 			TextWidget settingLabel = new TextWidget(settingLabelFull);//"Theme/Display Options"
 			settingLabel.AutoExpandBoundsToText = true;
@@ -174,12 +176,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Change Display Mode"));
+			TextWidget settingsLabel = new TextWidget("Change Display Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
-			displayControlRestartButton = textImageButtonFactory.Generate("Restart");
+			Button displayControlRestartButton = textImageButtonFactory.Generate("Restart");
 			displayControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			displayControlRestartButton.Visible = false;
 			displayControlRestartButton.Margin = new BorderDouble(right: 6);
@@ -197,8 +199,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(interfaceOptionsDropList);
 			optionsContainer.Width = 200;
 
-			MenuItem responsizeOptionsDropDownItem = interfaceOptionsDropList.AddItem(LocalizedString.Get("Normal"), "responsive");
-			MenuItem touchscreenOptionsDropDownItem = interfaceOptionsDropList.AddItem(LocalizedString.Get("Touchscreen"), "touchscreen");
+			MenuItem responsizeOptionsDropDownItem = interfaceOptionsDropList.AddItem("Normal".Localize(), "responsive");
+			MenuItem touchscreenOptionsDropDownItem = interfaceOptionsDropList.AddItem("Touchscreen".Localize(), "touchscreen");
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
 			string currentDisplayModeType = UserSettings.Instance.get("ApplicationDisplayMode");
@@ -209,7 +211,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 
 			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get("ApplicationDisplayMode");
-			interfaceOptionsDropList.SelectionChanged += new EventHandler(DisplayOptionsDropList_SelectionChanged);
+			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
+			{
+				string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+				if (releaseCode != UserSettings.Instance.get("ApplicationDisplayMode"))
+				{
+					UserSettings.Instance.set("ApplicationDisplayMode", releaseCode);
+					displayControlRestartButton.Visible = true;
+				}
+			};
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -224,7 +234,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Interface Mode"));
+			TextWidget settingsLabel = new TextWidget("Interface Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
@@ -238,8 +248,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(interfaceModeDropList);
 			optionsContainer.Width = 200;
 
-			MenuItem standardModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Standard"), "True");
-			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem(LocalizedString.Get("Advanced"), "False");
+			MenuItem standardModeDropDownItem = interfaceModeDropList.AddItem("Standard".Localize(), "True");
+			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem("Advanced".Localize(), "False");
 
 			interfaceModeDropList.SelectedValue = UserSettings.Instance.Fields.IsSimpleMode.ToString();
 			interfaceModeDropList.SelectionChanged += new EventHandler(InterfaceModeDropList_SelectionChanged);
@@ -260,7 +270,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
 			configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
 
-			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Update Notification Feed"));
+			TextWidget settingsLabel = new TextWidget("Update Notification Feed".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
@@ -274,13 +284,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(releaseOptionsDropList);
 			optionsContainer.Width = 200;
 
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Stable"), "release");
+			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Stable".Localize(), "release");
 			releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
 
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Beta"), "pre-release");
+			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
 			preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
 
-			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem(LocalizedString.Get("Alpha"), "development");
+			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
 			developmentDropDownItem.Selected += new EventHandler(FixTabDot);
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
@@ -306,7 +316,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget(LocalizedString.Get("Language Options"));
+			TextWidget settingsLabel = new TextWidget("Language Options".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
@@ -376,6 +386,53 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return buttonRow;
 		}
 
+		private FlowLayoutWidget GetThumbnailRenderingControl()
+		{
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Margin = new BorderDouble(top: 4);
+
+			TextWidget settingsLabel = new TextWidget("Thumbnail Rendering".Localize());
+			settingsLabel.AutoExpandBoundsToText = true;
+			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.VAnchor = VAnchor.ParentTop;
+
+			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			optionsContainer.Margin = new BorderDouble(bottom: 6);
+
+			StyledDropDownList interfaceOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+
+			optionsContainer.AddChild(interfaceOptionsDropList);
+			optionsContainer.Width = 200;
+
+			MenuItem responsizeOptionsDropDownItem = interfaceOptionsDropList.AddItem("Flat".Localize(), "orthographic");
+			MenuItem touchscreenOptionsDropDownItem = interfaceOptionsDropList.AddItem("3D".Localize(), "raytraced");
+
+			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "orthographic", "raytraced" };
+			string currentThumbnailRenderingMode = UserSettings.Instance.get("ThumbnailRenderingMode");
+
+			if (acceptableUpdateFeedTypeValues.IndexOf(currentThumbnailRenderingMode) == -1)
+			{
+				UserSettings.Instance.set("ThumbnailRenderingMode", "orthographic");
+			}
+
+			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get("ThumbnailRenderingMode");
+			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
+			{
+				string releaseCode = ((StyledDropDownList)sender).SelectedValue;
+				if (releaseCode != UserSettings.Instance.get("ThumbnailRenderingMode"))
+				{
+					UserSettings.Instance.set("ThumbnailRenderingMode", releaseCode);
+				}
+			};
+
+			buttonRow.AddChild(settingsLabel);
+			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(optionsContainer);
+			return buttonRow;
+		}
+
 		private void AddHandlers()
 		{
 		}
@@ -424,16 +481,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				UserSettings.Instance.Fields.IsSimpleMode = false;
 			}
 			ActiveTheme.Instance.ReloadThemeSettings();
-		}
-
-		private void DisplayOptionsDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string releaseCode = ((StyledDropDownList)sender).SelectedValue;
-			if (releaseCode != UserSettings.Instance.get("ApplicationDisplayMode"))
-			{
-				UserSettings.Instance.set("ApplicationDisplayMode", releaseCode);
-				displayControlRestartButton.Visible = true;
-			}
 		}
 
 		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
