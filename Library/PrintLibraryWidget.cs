@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 AddLibraryButtonElements();
 				CreateEditBarButtons();
 
-				breadCrumbDisplayHolder = new FlowLayoutWidget(FlowDirection.RightToLeft);
+				breadCrumbDisplayHolder = new FlowLayoutWidget();
 
 				//allControls.AddChild(navigationPanel);
 				allControls.AddChild(searchPanel);
@@ -297,8 +297,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			breadCrumbDisplayHolder.CloseAndRemoveAllChildren();
 			LibraryProvider currentProvider = LibraryDataView.CurrentLibraryProvider;
 			bool first = true;
+			List<LibraryProvider> providerList = new List<LibraryProvider>();
 			while(currentProvider != null)
 			{
+				providerList.Add(currentProvider);
+				currentProvider = currentProvider.ParentLibraryProvider;
+			}
+
+			for (int i = providerList.Count - 1; i >= 0; i--)
+			{
+				LibraryProvider localCurrentProvider = providerList[i];
 				if (!first)
 				{
 					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
@@ -307,18 +315,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					breadCrumbDisplayHolder.AddChild(separator);
 				}
 
-				Button installUpdateLink = textImageButtonFactory.Generate(currentProvider.Name);
-				LibraryProvider localCurrentProvider = currentProvider;
+				Button installUpdateLink = textImageButtonFactory.Generate(localCurrentProvider.Name);
 				installUpdateLink.Click += (sender2, e2) =>
 				{
-					UiThread.RunOnIdle(() => {
+					UiThread.RunOnIdle(() =>
+					{
 						LibraryDataView.CurrentLibraryProvider = localCurrentProvider;
 						libraryDataView.RebuildView();
 					});
 				};
 				breadCrumbDisplayHolder.AddChild(installUpdateLink);
 				first = false;
-				currentProvider = currentProvider.ParentLibraryProvider;
+			}
+
+			// while all the buttons don't fit in the control
+			if (breadCrumbDisplayHolder.Parent.Width > 0
+				&& breadCrumbDisplayHolder.Children.Count > 4
+				&& breadCrumbDisplayHolder.GetChildrenBoundsIncludingMargins().Width > breadCrumbDisplayHolder.Parent.Width)
+			{
+				// lets take out the > and put in a ...
+				breadCrumbDisplayHolder.RemoveChild(1);
+					GuiWidget separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor);
+					separator.VAnchor = VAnchor.ParentCenter;
+					separator.Margin = new BorderDouble(3, 0);
+					breadCrumbDisplayHolder.AddChild(separator, 1);
+
+				while (breadCrumbDisplayHolder.GetChildrenBoundsIncludingMargins().Width > breadCrumbDisplayHolder.Parent.Width
+					&& breadCrumbDisplayHolder.Children.Count > 4)
+				{
+					breadCrumbDisplayHolder.RemoveChild(3);
+					breadCrumbDisplayHolder.RemoveChild(2);
+				}
 			}
 
 			libraryDataView.ClearSelectedItems();
