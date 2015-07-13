@@ -307,10 +307,6 @@ namespace MatterHackers.MatterControl
 		{
 			// Switch to the purchased library
 			LibraryDataView.CurrentLibraryProvider = LibraryProviderSelector.Instance.PurchasedLibrary;
-
-			// Force a rebuild
-			LibraryProviderSelector.Instance.PurchasedLibrary.KeywordFilter = "!";
-			LibraryProviderSelector.Instance.PurchasedLibrary.KeywordFilter = "";
 		}
 
 		public void ChangeCloudSyncStatus(bool userAuthenticated)
