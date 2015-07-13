@@ -57,39 +57,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 		}
 
-		public static Action disableCloudMonitorFunction = null;
-
-		private void disableCloudMonitor_Click(object sender, EventArgs mouseEvent)
-		{
-			PrinterSettings.Instance.set("CloudMonitorEnabled", "false");
-			ApplicationController.Instance.ChangeCloudSyncStatus();
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-			if (disableCloudMonitorFunction != null)
-			{
-				UiThread.RunOnIdle(disableCloudMonitorFunction);
-			}
-		}
-
-		public static Action openDashboardPageFunction = null;
-
-		private void goCloudMonitoringWebPageButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (openDashboardPageFunction != null)
-			{
-				UiThread.RunOnIdle(openDashboardPageFunction);
-			}
-		}
-
-		public static Action openInstructionsPageFunction = null;
-
-		private void goCloudMonitoringInstructionsButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (openDashboardPageFunction != null)
-			{
-				UiThread.RunOnIdle(openInstructionsPageFunction);
-			}
-		}
-
 		private FlowLayoutWidget GetCloudMonitorControls()
 		{
 			FlowLayoutWidget buttonBar = new FlowLayoutWidget();
