@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					bool isChildOfCurrent = value.ParentLibraryProvider == currentLibraryProvider;
 
 					// Dispose of all children below this one.
-					while (!isChildOfCurrent && currentLibraryProvider != value)
+					while (!isChildOfCurrent && currentLibraryProvider != value && currentLibraryProvider.ParentLibraryProvider != null)
 					{
 						LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
 						currentLibraryProvider.Dispose();

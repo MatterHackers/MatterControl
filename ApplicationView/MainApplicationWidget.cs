@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -299,6 +301,12 @@ namespace MatterHackers.MatterControl
 		public void ReloadAdvancedControlsPanel()
 		{
 			ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
+		}
+
+		public void SwitchToPurchasedLibrary()
+		{
+			// Switch to the purchased library
+			LibraryDataView.CurrentLibraryProvider = LibraryProviderSelector.Instance.PurchasedLibrary;
 		}
 
 		public void ChangeCloudSyncStatus(bool userAuthenticated)
