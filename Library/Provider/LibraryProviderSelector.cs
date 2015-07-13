@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private List<LibraryProvider> visibleProviders;
 
+		internal LibraryProvider PurchasedLibrary { get; private set; }
+
 		private event EventHandler unregisterEvents;
 
 		private LibraryProviderSelector()
@@ -66,7 +68,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			PluginFinder<LibraryProviderPlugin> libraryProviderPlugins = new PluginFinder<LibraryProviderPlugin>();
 			foreach (LibraryProviderPlugin libraryProviderPlugin in libraryProviderPlugins.Plugins)
 			{
-				libraryProviders.Add(libraryProviderPlugin.CreateLibraryProvider(this));
+				// This coupling is required to navigate to the Purchased folder after redemption or purchase updates
+				var pluginProvider = libraryProviderPlugin.CreateLibraryProvider(this);
+				if (pluginProvider.ProviderKey == "LibraryProviderPurchasedKey")
+				{
+					this.PurchasedLibrary = pluginProvider;
+				}
+
+				libraryProviders.Add(pluginProvider);
 			}
 
 			// and any directory providers (sd card provider, etc...)
