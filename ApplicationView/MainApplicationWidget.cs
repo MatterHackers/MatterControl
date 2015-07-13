@@ -333,9 +333,14 @@ namespace MatterHackers.MatterControl
 			ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
 		}
 
-		public void ChangeCloudSyncStatus()
+		public void ChangeCloudSyncStatus(bool userAuthenticated)
 		{
-			CloudSyncStatusChanged.CallEvents(this, null);
+			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
+		}
+
+		public class CloudSyncEventArgs : EventArgs
+		{
+			public bool IsAuthenticated { get; set; }
 		}
 	}
 }

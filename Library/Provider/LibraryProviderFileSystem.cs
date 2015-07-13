@@ -78,6 +78,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			GetFilesAndCollectionsInCurrentDirectory();
 		}
 
+		public override bool Visible
+		{
+			get { return true; }
+		}
+
 		public override void Dispose()
 		{
 			directoryWatcher.EnableRaisingEvents = false;

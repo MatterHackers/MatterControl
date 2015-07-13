@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 						UserSettings.Instance.set("CredentialsInvalidReason", "Session Expired".Localize());
 
 						// Notify connection status changed and now invalid
-						ApplicationController.Instance.ChangeCloudSyncStatus();
+						ApplicationController.Instance.ChangeCloudSyncStatus(false);
 					}
 				}
 				catch
