@@ -36,6 +36,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using MatterHackers.Localizations;
 using System.IO;
+using System.Linq;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -44,9 +46,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private static LibraryProviderSelector instance = null;
 		private List<LibraryProvider> libraryProviders = new List<LibraryProvider>();
 
+		private List<LibraryProvider> visibleProviders;
+
+		private event EventHandler unregisterEvents;
+
 		private LibraryProviderSelector()
 			: base(null)
 		{
+
+			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
+
 			// put in the sqlite provider
 			libraryProviders.Add(new LibraryProviderSQLite(null, this));
 
@@ -67,6 +76,30 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				libraryProviders.Add(new LibraryProviderFileSystem(downloadsDirectory, "Downloads", this));
 			}
+
+			this.FilterProviders();
+		}
+
+
+		private void FilterProviders()
+		{
+			this.visibleProviders = libraryProviders.Where(p => p.Visible).ToList();
+			LibraryProvider.OnDataReloaded(null);
+		}
+
+		public void CloudSyncStatusChanged(object sender, EventArgs eventArgs)
+		{
+			var e = eventArgs as ApplicationController.CloudSyncEventArgs;
+
+			// If signing out, we need to force selection to this provider
+			if(e != null && !e.IsAuthenticated)
+			{
+				// Switch to the purchased library
+				LibraryDataView.CurrentLibraryProvider = this;
+			}
+
+			// Refresh state
+			UiThread.RunOnIdle(FilterProviders, 1);
 		}
 
 		public static LibraryProviderSelector Instance
@@ -96,8 +129,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return libraryProviders.Count;
+				return this.visibleProviders.Count;
 			}
+		}
+
+		public override bool Visible
+		{
+			get { return true; }
 		}
 
 		public override void Dispose()
@@ -162,22 +200,22 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
-			LibraryProvider provider = libraryProviders[collectionIndex];
+			LibraryProvider provider = visibleProviders[collectionIndex];
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
 		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
 		{
-			if (libraryProviders[0].ProviderKey != LibraryProviderSQLite.StaticProviderKey)
+			if (visibleProviders[0].ProviderKey != LibraryProviderSQLite.StaticProviderKey)
 			{
 				throw new Exception("It is expected these are the same.");
 			}
-			return libraryProviders[0].GetPrintItemWrapper(itemIndex);
+			return visibleProviders[0].GetPrintItemWrapper(itemIndex);
 		}
 
 		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
 		{
-			foreach (LibraryProvider libraryProvider in libraryProviders)
+			foreach (LibraryProvider libraryProvider in visibleProviders)
 			{
 				if (collection.Key == libraryProvider.ProviderKey)
 				{
@@ -198,7 +236,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			List<ProviderLocatorNode> subProviderSavePath;
 			int libraryProviderToUseIndex = GetProviderIndex(printItemWrapper, out subProviderSavePath);
 
-			libraryProviders[libraryProviderToUseIndex].RemoveItem(printItemWrapper);
+			visibleProviders[libraryProviderToUseIndex].RemoveItem(printItemWrapper);
 		}
 
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null)
@@ -220,9 +258,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			if (providerSavePath != null
 				&& providerSavePath.Count > 1) // key 0 is this provider so we want to look at the next provider
 			{
-				for (int i = 0; i < libraryProviders.Count; i++)
+				for (int i = 0; i < visibleProviders.Count; i++)
 				{
-					if (libraryProviders[i].ProviderKey == providerSavePath[1].Key)
+					if (visibleProviders[i].ProviderKey == providerSavePath[1].Key)
 					{
 						subProviderSavePath = new List<ProviderLocatorNode>(providerSavePath);
 						subProviderSavePath.RemoveAt(0);

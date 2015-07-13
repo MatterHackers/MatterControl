@@ -89,6 +89,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override bool Visible
+		{
+			get { return true; }
+		}
+
 		public override void Dispose()
 		{
 		}

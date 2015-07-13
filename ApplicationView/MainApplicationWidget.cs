@@ -230,10 +230,6 @@ namespace MatterHackers.MatterControl
 
 		public static event GetSessionInfoDelegate privateGetSessionInfo;
 
-		public static event EventHandler privateStartLogin;
-
-		public static event EventHandler privateStartLogout;
-
 		public SlicePresetsWindow EditMaterialPresetsWindow { get; set; }
 
 		public SlicePresetsWindow EditQualityPresetsWindow { get; set; }
@@ -255,34 +251,6 @@ namespace MatterHackers.MatterControl
 		public void ThemeChanged(object sender, EventArgs e)
 		{
 			ReloadAll(null, null);
-		}
-
-		public void StartLogin()
-		{
-			if (privateStartLogin != null)
-			{
-				privateStartLogin(null, null);
-			}
-		}
-
-		public void StartLogout()
-		{
-			if (privateStartLogout != null)
-			{
-				privateStartLogout(null, null);
-			}
-		}
-
-		public string GetSessionUsername()
-		{
-			if (privateGetSessionInfo != null)
-			{
-				return privateGetSessionInfo();
-			}
-			else
-			{
-				return null;
-			}
 		}
 
 		public void ReloadAll(object sender, EventArgs e)
@@ -333,9 +301,14 @@ namespace MatterHackers.MatterControl
 			ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
 		}
 
-		public void ChangeCloudSyncStatus()
+		public void ChangeCloudSyncStatus(bool userAuthenticated)
 		{
-			CloudSyncStatusChanged.CallEvents(this, null);
+			CloudSyncStatusChanged.CallEvents(this, new CloudSyncEventArgs() { IsAuthenticated = userAuthenticated });
+		}
+
+		public class CloudSyncEventArgs : EventArgs
+		{
+			public bool IsAuthenticated { get; set; }
 		}
 	}
 }

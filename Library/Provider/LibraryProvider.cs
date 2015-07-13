@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Member Methods
 
+		public abstract bool Visible { get; }
+
 		public bool HasParent
 		{
 			get
