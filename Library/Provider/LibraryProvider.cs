@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
-		public abstract Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex);
+		public abstract Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex, ReportProgressRatio reportProgress = null);
 
 		public abstract LibraryProvider GetProviderForItem(PrintItemCollection collection);
 

@@ -213,6 +213,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				mainContainer.AddChild(rightButtonOverlay);
 			}
 			this.AddChild(mainContainer);
+
 			AddHandlers();
 		}
 

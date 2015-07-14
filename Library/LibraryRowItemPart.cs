@@ -62,6 +62,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.itemIndex = itemIndex;
 
 			CreateGuiElements();
+
+			AddLoadingProgressBar();
 		}
 
 		public override bool Protected
@@ -76,10 +78,26 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (printItemInstance == null)
 			{
-				printItemInstance = await libraryProvider.GetPrintItemWrapperAsync(this.itemIndex);
+				printItemInstance = await libraryProvider.GetPrintItemWrapperAsync(this.itemIndex, ReportProgressRatio);
 			}
 
 			return printItemInstance;
+		}
+
+		void ReportProgressRatio(double progress0To1, string processingState, out bool continueProcessing)
+		{
+			continueProcessing = true;
+			processingProgressControl.RatioComplete = progress0To1;
+		}
+
+		ProgressBar processingProgressControl;
+		private void AddLoadingProgressBar()
+		{
+			processingProgressControl = new ProgressBar(ActiveTheme.Instance.SecondaryAccentColor, 10, 5);
+			processingProgressControl.BorderColor = new RGBA_Bytes();
+			processingProgressControl.VAnchor = VAnchor.ParentBottom;
+			processingProgressControl.HAnchor = HAnchor.ParentLeftRight;
+			this.AddChild(processingProgressControl);
 		}
 
 		public async override void AddToQueue()

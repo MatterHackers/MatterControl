@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (SelectedIndex >= 0)
 				{
-					return LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapper(SelectedIndex);
+					return LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapperAsync(SelectedIndex).Result;
 				}
 				else
 				{

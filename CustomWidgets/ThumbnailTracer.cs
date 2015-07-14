@@ -323,7 +323,7 @@ namespace MatterHackers.RayTracer
 			scene = new Scene();
 			scene.camera = new TrackBallCamera(trackballTumbleWidget);
 			//scene.background = new Background(new RGBA_Floats(0.5, .5, .5), 0.4);
-			scene.background = new Background(new RGBA_Floats(0, 0, 0, 0), 0.4);
+			scene.background = new Background(new RGBA_Floats(1, 1, 1, 0), 0.6);
 
 			AddTestMesh(loadedMeshGroups);
 
