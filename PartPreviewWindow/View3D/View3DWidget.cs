@@ -183,7 +183,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							EnterEditAndCreateSelectionData();
 						});
 					};
-					if (printItemWrapper.PrintItem.ReadOnly)
+					if (printItemWrapper != null 
+						&& printItemWrapper.PrintItem.ReadOnly)
 					{
 						addButton.Enabled = false;
 					}
@@ -194,13 +195,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						EnterEditAndCreateSelectionData();
 					};
-					if (printItemWrapper.PrintItem.ReadOnly)
+					
+					if (printItemWrapper != null 
+						&& printItemWrapper.PrintItem.ReadOnly)
 					{
 						enterEdittingButton.Enabled = false;
 					}
 
 					Button exportButton = textImageButtonFactory.Generate("Export...".Localize());
-					if (printItemWrapper.PrintItem.Protected || printItemWrapper.PrintItem.ReadOnly)
+					if (printItemWrapper != null && 
+						(printItemWrapper.PrintItem.Protected || printItemWrapper.PrintItem.ReadOnly))
 					{
 						exportButton.Enabled = false;
 					}
