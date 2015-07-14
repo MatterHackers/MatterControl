@@ -666,7 +666,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ThemeChanged(object sender, EventArgs e)
 		{
-			processingProgressControl.fillColor = ActiveTheme.Instance.PrimaryAccentColor;
+			processingProgressControl.FillColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 		}
@@ -1115,7 +1115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					processingProgressControl.PercentComplete = (int)(progress0To1 * 100 + .5);
+					processingProgressControl.RatioComplete = progress0To1;
 					processingProgressControl.ProgressMessage = processingState;
 				});
 				timeSinceReported.Restart();
