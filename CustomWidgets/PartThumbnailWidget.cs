@@ -156,34 +156,12 @@ namespace MatterHackers.MatterControl
 
 		public ImageSizes Size { get; set; }
 
-		private Point2D bigRenderSize
+		static private Point2D BigRenderSize
 		{
 			get
 			{
-				switch (GetRenderType(printItem.FileLocation))
-				{
-					case RenderType.RAY_TRACE:
-						return new Point2D(115, 115);
-
-					case RenderType.PERSPECTIVE:
-					case RenderType.ORTHOGROPHIC:
-						return new Point2D(460, 460);
-
-					default:
-						return new Point2D(460, 460);
-				}
+				return new Point2D(460, 460);
 			}
-		}
-
-		public static void CleanUpCacheData()
-		{
-			//string pngFileName = GetFilenameForSize(stlHashCode, ref size);
-			// delete everything that is a tga (we now save pngs).
-		}
-
-		public static string GetImageFilenameForItem(PrintItemWrapper item)
-		{
-			return GetFilenameForSize(item.FileHashCode.ToString(), new Point2D(460, 460));
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -301,18 +279,18 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static string GetFilenameForSize(string stlHashCode, Point2D size)
+		public static string GetImageFileName(PrintItemWrapper item)
+		{
+			return GetImageFileName(item.FileHashCode.ToString());
+		}
+
+		private static string GetImageFileName(string stlHashCode)
 		{
 			EnsureCorrectPartExtension();
 
 			string folderToSaveThumbnailsTo = ThumbnailPath();
-			string imageFileName = Path.Combine(folderToSaveThumbnailsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, size.x, size.y), partExtension));
-			return imageFileName;
-		}
+			string imageFileName = Path.Combine(folderToSaveThumbnailsTo, Path.ChangeExtension("{0}_{1}x{2}".FormatWith(stlHashCode, BigRenderSize.x, BigRenderSize.y), partExtension));
 
-		private static string GetImageFileName(string stlHashCode, Point2D size)
-		{
-			string imageFileName = GetFilenameForSize(stlHashCode, size);
 			string folderToSavePrintsTo = Path.GetDirectoryName(imageFileName);
 
 			if (!Directory.Exists(folderToSavePrintsTo))
@@ -357,10 +335,10 @@ namespace MatterHackers.MatterControl
 			return RenderType.ORTHOGROPHIC;
 		}
 
-		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode, Point2D size)
+		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode)
 		{
-			ImageBuffer tempImage = new ImageBuffer(size.x, size.y, 32, new BlenderBGRA());
-			string imageFileName = GetFilenameForSize(stlHashCode, size);
+			ImageBuffer tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y, 32, new BlenderBGRA());
+			string imageFileName = GetImageFileName(stlHashCode);
 
 			if (File.Exists(imageFileName))
 			{
@@ -410,7 +388,7 @@ namespace MatterHackers.MatterControl
 				{
 					case RenderType.RAY_TRACE:
 						{
-							ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, bigRenderSize.x, bigRenderSize.y);
+							ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
 							tracer.DoTrace();
 
 							bigRender = tracer.destImage;
@@ -419,11 +397,11 @@ namespace MatterHackers.MatterControl
 
 					case RenderType.PERSPECTIVE:
 						{
-							ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, bigRenderSize.x, bigRenderSize.y);
+							ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
 							thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
 							thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
 
-							bigRender = new ImageBuffer(bigRenderSize.x, bigRenderSize.y, 32, new BlenderBGRA());
+							bigRender = new ImageBuffer(BigRenderSize.x, BigRenderSize.y, 32, new BlenderBGRA());
 
 							foreach (MeshGroup meshGroup in loadedMeshGroups)
 							{
@@ -452,7 +430,7 @@ namespace MatterHackers.MatterControl
 
 						thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
 						thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-						bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, bigRenderSize);
+						bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, BigRenderSize);
 						if (bigRender == null)
 						{
 							bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
@@ -461,7 +439,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				// and save it to disk
-				string imageFileName = GetImageFileName(stlHashCode, bigRenderSize);
+				string imageFileName = GetImageFileName(stlHashCode);
 
 				if (partExtension == ".png")
 				{
@@ -637,7 +615,7 @@ namespace MatterHackers.MatterControl
 
 			string stlHashCode = this.PrintItem.FileHashCode.ToString();
 
-			ImageBuffer bigRender = LoadImageFromDisk(this, stlHashCode, bigRenderSize);
+			ImageBuffer bigRender = LoadImageFromDisk(this, stlHashCode);
 			if (bigRender == null)
 			{
 				this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);

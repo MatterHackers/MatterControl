@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
 				{
 					referencedPrintItemsFilePaths.Add(fileLocation);
-					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItem));
+					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFileName(printItem));
 				}
 			}
 
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl
 				if (!referencedPrintItemsFilePaths.Contains(fileLocation))
 				{
 					referencedPrintItemsFilePaths.Add(fileLocation);
-					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFilenameForItem(printItemWrapper));
+					referencedThumbnailFiles.Add(PartThumbnailWidget.GetImageFileName(printItemWrapper));
 				}
 			}
 

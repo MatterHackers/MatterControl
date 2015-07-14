@@ -47,6 +47,10 @@ namespace MatterHackers.MatterControl
 {
 	public class ImageWidget_AsyncLoadOnDraw : ImageWidget
 	{
+		ImageBuffer originalImage;
+		public ImageBuffer OriginalImage { get { return originalImage; } }
+		public event EventHandler LoadComplete;
+
 		bool startedLoad = false;
 		string uriToLoad;
 
@@ -81,6 +85,7 @@ namespace MatterHackers.MatterControl
 			Stream stream = new MemoryStream(raw);
 			ImageBuffer unScaledImage = new ImageBuffer(10, 10, 32, new BlenderBGRA());
 			ImageIO.LoadImageData(stream, unScaledImage);
+			originalImage = new ImageBuffer(unScaledImage);
 			// If the source image (the one we downloaded) is more than twice as big as our dest image.
 			while (unScaledImage.Width > Image.Width * 2)
 			{
@@ -94,6 +99,11 @@ namespace MatterHackers.MatterControl
 			Image.NewGraphics2D().Render(unScaledImage, 0, 0, 0, Image.Width / (double)unScaledImage.Width, Image.Height / (double)unScaledImage.Height);
 			Image.MarkImageChanged();
 			Invalidate();
+
+			if (LoadComplete != null)
+			{
+				LoadComplete(this, null);
+			}
 		}
 	}
 }
