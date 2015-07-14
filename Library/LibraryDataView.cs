@@ -290,7 +290,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			itemHolder.MouseEnterBounds += new EventHandler(itemToAdd_MouseEnterBounds);
 			itemHolder.MouseLeaveBounds += new EventHandler(itemToAdd_MouseLeaveBounds);
-			itemHolder.MouseDownInBounds += itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
 		}
 
@@ -438,24 +437,27 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			topToBottomItemList.RemoveAllChildren();
 
-			if (LibraryDataView.CurrentLibraryProvider.ParentLibraryProvider != null)
+			var provider = LibraryDataView.CurrentLibraryProvider;
+
+			if (provider != null)
 			{
-				PrintItemCollection parent = new PrintItemCollection("..", LibraryDataView.CurrentLibraryProvider.ProviderKey);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, LibraryDataView.CurrentLibraryProvider.ParentLibraryProvider, GetThumbnailWidget(true, LibraryDataView.CurrentLibraryProvider.ParentLibraryProvider, parent));
+				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
+				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, provider.ParentLibraryProvider, GetThumbnailWidget(true, provider.ParentLibraryProvider, parent));
 				AddListItemToTopToBottom(queueItem);
 			}
 
-			for (int i = 0; i < LibraryDataView.CurrentLibraryProvider.CollectionCount; i++)
+			for (int i = 0; i < provider.CollectionCount; i++)
 			{
-				PrintItemCollection item = LibraryDataView.CurrentLibraryProvider.GetCollectionItem(i);
+				PrintItemCollection item = provider.GetCollectionItem(i);
 				LibraryRowItem queueItem = new LibraryRowItemCollection(item, this, null, GetThumbnailWidget(false, null, item));
 				AddListItemToTopToBottom(queueItem);
 			}
 
-			for (int i = 0; i < LibraryDataView.CurrentLibraryProvider.ItemCount; i++)
+			for (int i = 0; i < provider.ItemCount; i++)
 			{
-				GuiWidget thumbnailWidget = LibraryDataView.CurrentLibraryProvider.GetItemThumbnail(i);
-				LibraryRowItem queueItem = new LibraryRowItemPart(LibraryDataView.CurrentLibraryProvider, i, this, thumbnailWidget);
+				GuiWidget thumbnailWidget = provider.GetItemThumbnail(i);
+				LibraryRowItem queueItem = new LibraryRowItemPart(provider, i, this, thumbnailWidget);
+
 				AddListItemToTopToBottom(queueItem);
 			}
 		}
@@ -465,16 +467,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			HoverIndex = -1;
 		}
 
-		private void itemHolder_MouseDownInBounds(object sender, MouseEventArgs mouseEvent)
-		{
-		}
-
 		private void itemHolder_ParentChanged(object sender, EventArgs e)
 		{
 			FlowLayoutWidget itemHolder = (FlowLayoutWidget)sender;
 			itemHolder.MouseEnterBounds -= new EventHandler(itemToAdd_MouseEnterBounds);
 			itemHolder.MouseLeaveBounds -= new EventHandler(itemToAdd_MouseLeaveBounds);
-			itemHolder.MouseDownInBounds -= itemHolder_MouseDownInBounds;
 			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
 		}
 

@@ -78,7 +78,7 @@ namespace MatterControl.Tests
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(Directory.Exists(createdDirectory));
 
-			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapper(0);
+			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapperAsync(0).Result;
 			List<ProviderLocatorNode> providerLocator = itemAtRoot.PrintItem.GetLibraryProviderLocator();
 			Assert.IsTrue(providerLocator.Count == 1);
 
@@ -105,7 +105,7 @@ namespace MatterControl.Tests
 			// remove item works
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			subProvider.RemoveItem(subProvider.GetPrintItemWrapper(0));
+			subProvider.RemoveItem(subProvider.GetPrintItemWrapperAsync(0).Result);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(!File.Exists(subPathAndFile));
 
@@ -137,7 +137,7 @@ namespace MatterControl.Tests
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(NamedCollectionExists(collectionName)); // assert that the record does exist in the DB
 
-			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapper(0);
+			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapperAsync(0).Result;
 			List<ProviderLocatorNode> providerLocator = itemAtRoot.PrintItem.GetLibraryProviderLocator();
 			Assert.IsTrue(providerLocator.Count == 1);
 
@@ -159,7 +159,7 @@ namespace MatterControl.Tests
 			// remove item works
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			testProvider.RemoveItem(testProvider.GetPrintItemWrapper(1));
+			testProvider.RemoveItem(testProvider.GetPrintItemWrapperAsync(1).Result);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(!NamedItemExists(fileNameWithExtension));
 

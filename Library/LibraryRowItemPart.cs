@@ -39,6 +39,7 @@ using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -46,21 +47,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		public bool isActivePrint = false;
 		LibraryProvider libraryProvider;
-		int itemIndex;
-		private PrintItemWrapper printItemWrapper;
-		public PrintItemWrapper PrintItemWrapper 
-		{
-			get 
-			{
-				if (printItemWrapper == null)
-				{
-					printItemWrapper = libraryProvider.GetPrintItemWrapper(itemIndex);
-				}
-				return printItemWrapper; 
-			} 
-		}
+		private int itemIndex;
 
-		//public override PrintItemCollection PrintItemCollection { get { return null; } }
+		public PrintItemWrapper printItemInstance = null;
 
 		private ExportPrintItemWindow exportingWindow;
 		private PartPreviewMainWindow viewingWindow;
@@ -68,8 +57,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public LibraryRowItemPart(LibraryProvider libraryProvider, int itemIndex, LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
+			this.ItemName = libraryProvider.GetPrintItemName(itemIndex);
 			this.libraryProvider = libraryProvider;
 			this.itemIndex = itemIndex;
+
 			CreateGuiElements();
 		}
 
@@ -81,21 +72,36 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public override void AddToQueue()
+		public async Task<PrintItemWrapper> GetPrintItemWrapperAsync()
 		{
-			// create a new item that will be only in the queue
-			QueueData.Instance.AddItem(MakeCopyForQueue());
+			if (printItemInstance == null)
+			{
+				printItemInstance = await libraryProvider.GetPrintItemWrapperAsync(this.itemIndex);
+			}
+
+			return printItemInstance;
 		}
 
-		private PrintItemWrapper MakeCopyForQueue()
+		public async override void AddToQueue()
 		{
-			PrintItem printItemToCopy = PrintItemWrapper.PrintItem;
+			// create a new item that will be only in the queue
+			QueueData.Instance.AddItem(await MakeCopyForQueue());
+		}
+
+		private async Task<PrintItemWrapper> MakeCopyForQueue()
+		{
+			var printItemWrapper = await this.GetPrintItemWrapperAsync();
+
+			PrintItem printItemToCopy =  printItemWrapper.PrintItem;
 			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItemToCopy.FileLocation));
 			string newFileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
 			File.Copy(printItemToCopy.FileLocation, newFileLocation);
-			PrintItem printItemForQueue = new PrintItem(printItemToCopy.Name, newFileLocation);
-			printItemForQueue.Protected = printItemToCopy.Protected;
-			return new PrintItemWrapper(printItemForQueue);
+
+			return new PrintItemWrapper(new PrintItem(printItemToCopy.Name, newFileLocation)
+			{
+				Protected = printItemToCopy.Protected
+			});
 		}
 
 		public override void Edit()
@@ -103,9 +109,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
 		}
 
-		public override void Export()
+		public async override void Export()
 		{
-			OpenExportWindow(PrintItemWrapper);
+			OpenExportWindow(await this.GetPrintItemWrapperAsync());
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -159,11 +165,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			base.OnMouseDown(mouseEvent);
 		}
 
-		public void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
+		public async void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
 			if (viewingWindow == null)
 			{
-				viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
+				var printItemWrapper = await this.GetPrintItemWrapperAsync();
+				viewingWindow = new PartPreviewMainWindow(printItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
 				viewingWindow.Closed += new EventHandler(PartPreviewMainWindow_Closed);
 			}
 			else
@@ -172,9 +179,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public override void RemoveFromCollection()
+		public async override void RemoveFromCollection()
 		{
-			LibraryDataView.CurrentLibraryProvider.RemoveItem(PrintItemWrapper);
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(await this.GetPrintItemWrapperAsync());
 		}
 
 		protected override SlideWidget GetItemActionButtons()
@@ -194,21 +201,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			printButton.VAnchor = VAnchor.ParentBottomTop;
 			printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			printButton.Width = 100;
-			printButton.Click += (sender, e) =>
-			{
-				if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
-				{
-					QueueData.Instance.AddItem(MakeCopyForQueue(), 0);
-					QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
-					PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-				}
-				else
-				{
-					QueueData.Instance.AddItem(MakeCopyForQueue());
-				}
-				buttonContainer.SlideOut();
-				this.Invalidate();
-			}; ;
+			printButton.Click += printButton_Click;
+			// HACK: No clear immediate workaround beyond this
+			printButton.Click += (s, e) => buttonContainer.SlideOut();
 
 			TextWidget viewButtonLabel = new TextWidget("View".Localize());
 			viewButtonLabel.TextColor = RGBA_Bytes.White;
@@ -230,14 +225,27 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return buttonContainer;
 		}
 
-		protected override string GetItemName()
+		private async void printButton_Click(object sender, EventArgs e)
 		{
-			return libraryProvider.GetItemName(itemIndex);
+			var newItem = await MakeCopyForQueue();
+
+			if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
+			{
+				QueueData.Instance.AddItem(newItem, 0);
+				QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
+				PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+			}
+			else
+			{
+				QueueData.Instance.AddItem(newItem);
+			}
+			this.Invalidate();
 		}
 
-		protected override void RemoveThisFromPrintLibrary()
+		protected async override void RemoveThisFromPrintLibrary()
 		{
-			LibraryDataView.CurrentLibraryProvider.RemoveItem(this.PrintItemWrapper);
+			// TODO: The LibraryProvider does not need a printitemwrapper to remove an item! Why not an interger like the others?
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(await this.GetPrintItemWrapperAsync());
 		}
 
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)
@@ -308,11 +316,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
-		private void OpenExportWindow()
+		private async void OpenExportWindow()
 		{
 			if (exportingWindow == null)
 			{
-				exportingWindow = new ExportPrintItemWindow(this.PrintItemWrapper);
+				exportingWindow = new ExportPrintItemWindow(await this.GetPrintItemWrapperAsync());
 				exportingWindow.Closed += new EventHandler(ExportQueueItemWindow_Closed);
 				exportingWindow.ShowAsSystemWindow();
 			}
@@ -336,9 +344,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private void openPartView(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
+		private async void openPartView(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
-			string pathAndFile = this.PrintItemWrapper.FileLocation;
+			var printItemWrapper = await this.GetPrintItemWrapperAsync();
+
+			string pathAndFile = printItemWrapper.FileLocation;
 			if (File.Exists(pathAndFile))
 			{
 				OpenPartViewWindow(openMode);

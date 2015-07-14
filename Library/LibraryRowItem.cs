@@ -33,6 +33,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -52,13 +53,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private ConditionalClickWidget primaryClickContainer;
 		private GuiWidget thumbnailWidget;
 
+		private event EventHandler unregisterEvents;
+
 		public LibraryRowItem(LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
 		{
 			this.thumbnailWidget = thumbnailWidget;
 			this.libraryDataView = libraryDataView;
 		}
 
-		private event EventHandler unregisterEvents;
+		public string ItemName { get; protected set; }
 
 		public bool EditMode
 		{
@@ -183,9 +186,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
 				middleColumn.Margin = new BorderDouble(10, 6);
 				{
-					string labelName = GetItemName();
-					labelName = labelName.Replace('_', ' ');
-					partLabel = new TextWidget(labelName, pointSize: 14);
+					partLabel = new TextWidget(this.ItemName.Replace('_', ' '), pointSize: 14);
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 18);
 					partLabel.VAnchor = VAnchor.ParentCenter;
@@ -226,8 +227,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public abstract void RemoveFromCollection();
 
 		protected abstract SlideWidget GetItemActionButtons();
-
-		protected abstract string GetItemName();
 
 		protected abstract void RemoveThisFromPrintLibrary();
 

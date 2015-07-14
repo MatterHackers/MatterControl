@@ -39,6 +39,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -171,11 +172,18 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new PrintItemCollection(Path.GetFileNameWithoutExtension(directoryName), Path.Combine(rootPath, directoryName));
 		}
 
-		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
+		public override string GetPrintItemName(int itemIndex)
+		{
+			return Path.GetFileName(currentDirectoryFiles[itemIndex]);
+		}
+
+		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
+			
 			List<ProviderLocatorNode> providerLocator = GetProviderLocator();
 			string providerLocatorJson = JsonConvert.SerializeObject(providerLocator);
+			
 			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName, providerLocatorJson));
 		}
 

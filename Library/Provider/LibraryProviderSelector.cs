@@ -38,6 +38,7 @@ using MatterHackers.Localizations;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg.UI;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -213,13 +214,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
-		public override PrintItemWrapper GetPrintItemWrapper(int itemIndex)
+		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex)
 		{
-			if (visibleProviders[0].ProviderKey != LibraryProviderSQLite.StaticProviderKey)
-			{
-				throw new Exception("It is expected these are the same.");
-			}
-			return visibleProviders[0].GetPrintItemWrapper(itemIndex);
+			throw new NotImplementedException("Print items are not allowed at the root level");
 		}
 
 		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
