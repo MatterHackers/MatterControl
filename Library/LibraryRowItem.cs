@@ -30,8 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
@@ -94,9 +92,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public abstract PrintItemCollection PrintItemCollection { get; }
-
-		public abstract PrintItemWrapper PrintItemWrapper { get; }
+		public abstract bool Protected { get; }
 
 		public override void OnClosed(EventArgs e)
 		{

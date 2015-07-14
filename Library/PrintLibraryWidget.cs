@@ -417,36 +417,33 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			for(int buttonIndex=0; buttonIndex<itemOperationButtons.Children.Count; buttonIndex++)
 			{
-				bool enabled = (selectedCount > 0 && libraryDataView.EditMode);
+				bool enabledStateToSet = (selectedCount > 0 && libraryDataView.EditMode);
 				var child = itemOperationButtons.Children[buttonIndex];
 				var button = child as Button;
 				if (button != null)
 				{
 					if ((selectedCount > 1 && !editButtonsEnableData[buttonIndex].multipleItems))
 					{
-						enabled = false;
+						enabledStateToSet = false;
 					}
 					else
 					{
-						bool enabledState = enabled;
+						bool enabledState = enabledStateToSet;
 
 						if (!editButtonsEnableData[buttonIndex].protectedItems)
 						{
 							// so we can show for multi items lets check for protected items
 							for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
 							{
-								PrintItemWrapper printItem = libraryDataView.SelectedItems[itemIndex].PrintItemWrapper;
-								if (printItem != null)
+								if (libraryDataView.SelectedItems[itemIndex].Protected)
 								{
-									if (printItem.PrintItem.Protected)
-									{
-										enabled = false;
-									}
+									enabledStateToSet = false;
 								}
 							}
 						}
 					}
-					button.Enabled = enabled;
+
+					button.Enabled = enabledStateToSet;
 				}
 			}
 		}

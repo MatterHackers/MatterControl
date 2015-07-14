@@ -57,8 +57,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			CreateGuiElements();
 		}
 
-		public override PrintItemWrapper PrintItemWrapper { get { return null; } }
-		public override PrintItemCollection PrintItemCollection { get { return printItemCollection; } }
+		//public override PrintItemWrapper PrintItemWrapper { get { return null; } }
+		public PrintItemCollection PrintItemCollection { get { return printItemCollection; } }
+
+		public override bool Protected
+		{
+			get { throw new NotImplementedException(); }
+		}
 
 		public override void Export()
 		{

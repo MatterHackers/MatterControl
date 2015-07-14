@@ -45,18 +45,40 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class LibraryRowItemPart : LibraryRowItem
 	{
 		public bool isActivePrint = false;
+		LibraryProvider libraryProvider;
+		int itemIndex;
 		private PrintItemWrapper printItemWrapper;
-		public override PrintItemWrapper PrintItemWrapper { get { return printItemWrapper; } }
-		public override PrintItemCollection PrintItemCollection { get { return null; } }
+		public PrintItemWrapper PrintItemWrapper 
+		{
+			get 
+			{
+				if (printItemWrapper == null)
+				{
+					printItemWrapper = libraryProvider.GetPrintItemWrapper(itemIndex);
+				}
+				return printItemWrapper; 
+			} 
+		}
+
+		//public override PrintItemCollection PrintItemCollection { get { return null; } }
 
 		private ExportPrintItemWindow exportingWindow;
 		private PartPreviewMainWindow viewingWindow;
 
-		public LibraryRowItemPart(PrintItemWrapper printItem, LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
+		public LibraryRowItemPart(LibraryProvider libraryProvider, int itemIndex, LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
-			this.printItemWrapper = printItem;
+			this.libraryProvider = libraryProvider;
+			this.itemIndex = itemIndex;
 			CreateGuiElements();
+		}
+
+		public override bool Protected
+		{
+			get 
+			{
+				return libraryProvider.IsItemProtected(itemIndex);
+			}
 		}
 
 		public override void AddToQueue()
@@ -210,7 +232,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		protected override string GetItemName()
 		{
-			return PrintItemWrapper.Name;
+			return libraryProvider.GetItemName(itemIndex);
 		}
 
 		protected override void RemoveThisFromPrintLibrary()

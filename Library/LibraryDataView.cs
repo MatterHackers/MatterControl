@@ -456,7 +456,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				PrintItemWrapper item = LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapper(i);
 				GuiWidget thumbnailWidget = LibraryDataView.CurrentLibraryProvider.GetItemThumbnail(i);
-				LibraryRowItem queueItem = new LibraryRowItemPart(item, this, thumbnailWidget);
+				LibraryRowItem queueItem = new LibraryRowItemPart(LibraryDataView.CurrentLibraryProvider, i, this, thumbnailWidget);
 				AddListItemToTopToBottom(queueItem);
 			}
 		}

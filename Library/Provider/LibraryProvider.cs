@@ -127,6 +127,21 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#endregion Static Methods
 
+		public virtual string GetItemName(int printItemIndex)
+		{
+			return GetPrintItemWrapper(printItemIndex).Name;
+		}
+
+		public virtual bool IsItemProtected(int itemIndex)
+		{
+			return false;
+		}
+
+		public virtual bool IsItemReadOnly(int itemIndex)
+		{
+			return false;
+		}
+
 		public virtual GuiWidget GetItemThumbnail(int printItemIndex)
 		{
 			PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(GetPrintItemWrapper(printItemIndex), "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
