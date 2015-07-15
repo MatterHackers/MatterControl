@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override string GetPrintItemName(int itemIndex)
 		{
-			return "";
+			return printItems[itemIndex].Name;
 		}
 
 		public static string StaticProviderKey
