@@ -103,15 +103,23 @@ namespace MatterHackers.MatterControl
 
 			this.Padding = new BorderDouble(0, 0, 6, 0);
 
-
-			UiThread.RunOnIdle(() =>
+			if (AddRightElement != null)
 			{
-				if (AddRightElement != null)
-				{
-					AddRightElement(rightElement);
-				}
-			}, 1);
+				AddRightElement(rightElement);
+			}
 
+			// When the application is first started, plugins are loaded after the MainView control has been initialize,
+			// and such they not around when this constructor executes. In that case, we run the AddRightElement 
+			// delegate after the plugins get initialized via the PluginsLoaded event
+			ApplicationController.Instance.PluginsLoaded.RegisterEvent(PluginsLoaded, ref unregisterEvents);
+		}
+
+		public void PluginsLoaded(object sender, EventArgs e)
+		{
+			if (AddRightElement != null)
+			{
+				AddRightElement(rightElement);
+			}
 		}
 
 		public override void OnClosed(EventArgs e)
