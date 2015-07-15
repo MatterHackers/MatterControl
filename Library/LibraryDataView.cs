@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var provider = LibraryDataView.CurrentLibraryProvider;
 
-			if (provider != null)
+			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
 				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, provider.ParentLibraryProvider, GetThumbnailWidget(true, provider.ParentLibraryProvider, parent));
