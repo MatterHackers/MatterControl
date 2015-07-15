@@ -43,6 +43,12 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
+
+	public interface IClickable
+	{
+		event EventHandler Click;
+	}
+
 	public class LibraryRowItemPart : LibraryRowItem
 	{
 		public bool isActivePrint = false;
@@ -57,6 +63,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public LibraryRowItemPart(LibraryProvider libraryProvider, int itemIndex, LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
+			var widget = thumbnailWidget as IClickable;
+			if (widget != null)
+			{
+				widget.Click += onViewPartClick;
+			}
+
 			this.ItemName = libraryProvider.GetPrintItemName(itemIndex);
 			this.libraryProvider = libraryProvider;
 			this.itemIndex = itemIndex;
