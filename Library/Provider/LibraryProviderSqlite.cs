@@ -367,7 +367,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			// and remove it from the data base
 			printItemWrapper.Delete();
 
-			LoadLibraryItems();
 			LibraryProvider.OnDataReloaded(null);
 		}
 
