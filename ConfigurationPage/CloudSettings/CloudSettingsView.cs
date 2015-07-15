@@ -14,6 +14,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		private DisableableWidget notificationSettingsContainer;
 
+		private Button configureNotificationSettingsButton;
 		public CloudSettingsWidget()
 			: base(LocalizedString.Get("Cloud Settings"))
 		{
@@ -97,6 +98,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			ImageWidget levelingIcon = new ImageWidget(notificationSettingsImage);
 			levelingIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
+			configureNotificationSettingsButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
+			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
+			configureNotificationSettingsButton.Click += new EventHandler(configureNotificationSettingsButton_Click);
+
 			notificationSettingsLabel = new TextWidget(LocalizedString.Get("Notification Settings"));
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -118,6 +124,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(levelingIcon);
 			buttonRow.AddChild(notificationSettingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(configureNotificationSettingsButton);
 			buttonRow.AddChild(levelingSwitchContainer);
 
 			return buttonRow;
