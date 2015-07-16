@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override string GetPrintItemName(int itemIndex)
 		{
-			return "";
+			return printItems[itemIndex].Name;
 		}
 
 		public static string StaticProviderKey
@@ -367,7 +367,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			// and remove it from the data base
 			printItemWrapper.Delete();
 
-			LoadLibraryItems();
 			LibraryProvider.OnDataReloaded(null);
 		}
 

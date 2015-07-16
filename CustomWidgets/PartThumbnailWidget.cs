@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
@@ -47,7 +48,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-	public class PartThumbnailWidget : ClickWidget
+	public class PartThumbnailWidget : ClickWidget, IClickable
 	{
 		const int tooBigAndroid = 50000000;
 		const int tooBigDesktop = 250000000;
@@ -124,9 +125,8 @@ namespace MatterHackers.MatterControl
 			this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
 
 			// Add Handlers
-			this.Click += new EventHandler(OnMouseClick);
-			this.MouseEnterBounds += new EventHandler(onEnter);
-			this.MouseLeaveBounds += new EventHandler(onExit);
+			this.MouseEnterBounds += onEnter;
+			this.MouseLeaveBounds += onExit;
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
@@ -471,30 +471,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void DoOnMouseClick()
-		{
-			if (printItem != null)
-			{
-				string pathAndFile = printItem.FileLocation;
-				if (File.Exists(pathAndFile))
-				{
-					bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
-					if (shiftKeyDown)
-					{
-						OpenPartPreviewWindow(View3DWidget.AutoRotate.Disabled);
-					}
-					else
-					{
-						OpenPartPreviewWindow(View3DWidget.AutoRotate.Enabled);
-					}
-				}
-				else
-				{
-					QueueRowItem.ShowCantFindFileMessage(printItem);
-				}
-			}
-		}
-
 		private void EnsureImageUpdated()
 		{
 			thumbnailImage.MarkImageChanged();
@@ -516,11 +492,6 @@ namespace MatterHackers.MatterControl
 		{
 			HoverBorderColor = new RGBA_Bytes();
 			this.Invalidate();
-		}
-
-		private void OnMouseClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(DoOnMouseClick);
 		}
 
 		private void OpenPartPreviewWindow(View3DWidget.AutoRotate autoRotate)

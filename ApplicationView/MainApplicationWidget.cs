@@ -227,6 +227,7 @@ namespace MatterHackers.MatterControl
 		public RootedObjectEventHandler ReloadAdvancedControlsPanelTrigger = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
+		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
 
 		public delegate string GetSessionInfoDelegate();
 

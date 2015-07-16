@@ -571,6 +571,11 @@ namespace MatterHackers.MatterControl
 
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			FindAndInstantiatePlugins();
+
+			if(ApplicationController.Instance.PluginsLoaded != null)
+			{
+				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
+			}
 		}
 
 		public void OpenCameraPreview()
