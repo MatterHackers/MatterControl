@@ -340,6 +340,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
+			int preAddCount = QueueData.Instance.Count;
+
 			foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
 			{
 				string extension = Path.GetExtension(droppedFileName).ToUpper();
@@ -360,6 +362,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 				}
+			}
+
+			if (QueueData.Instance.Count != preAddCount)
+			{
+				QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
 			}
 
 			base.OnDragDrop(fileDropEventArgs);
@@ -433,6 +440,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					if (openParams.FileNames != null)
 					{
+						int preAddCount = QueueData.Instance.Count;
+
 						foreach (string fileNameToLoad in openParams.FileNames)
 						{
 							if (Path.GetExtension(fileNameToLoad).ToUpper() == ".ZIP")
@@ -451,6 +460,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 							{
 								QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(fileNameToLoad), Path.GetFullPath(fileNameToLoad))));
 							}
+						}
+
+						if (QueueData.Instance.Count != preAddCount)
+						{
+							QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
 						}
 					}
 				});
