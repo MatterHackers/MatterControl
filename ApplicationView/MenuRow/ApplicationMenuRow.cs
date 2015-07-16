@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 						Button updateStatusMessage = linkButtonFactory.Generate("Update Available".Localize());
 						updateStatusMessage.Click += (sender2, e) =>
 						{
-							UiThread.RunOnIdle(AboutWindow.Show);
+                            UiThread.RunOnIdle(CheckForUpdateWindow.Show);
 						};
 						var updateMark = new UpdateNotificationMark();
 						updateMark.Margin = new BorderDouble(0, 0, 3, 2);

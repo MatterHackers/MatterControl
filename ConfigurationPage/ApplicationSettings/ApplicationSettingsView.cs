@@ -42,6 +42,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		private Button languageRestartButton;
 		private Button configureUpdateFeedButton;
+        public StyledDropDownList releaseOptionsDropList;
+        
 
 		public ApplicationSettingsWidget()
 			: base("Application Settings".Localize())
@@ -278,7 +280,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			StyledDropDownList releaseOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
+			releaseOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
 			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(releaseOptionsDropList);
