@@ -407,8 +407,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				path = Path.Combine("Icons", "FileDialog", "upfolder.png");
 			}
+			
 			ImageBuffer imageBuffer = new ImageBuffer();
 			StaticData.Instance.LoadImage(path, imageBuffer);
+
+			Vector2 expectedSize = new Vector2((int)(50 * TextWidget.GlobalPointSizeScaleRatio), (int)(50 * TextWidget.GlobalPointSizeScaleRatio));
+			if (imageBuffer.Width != expectedSize.x)
+			{
+				ImageBuffer scaledImageBuffer = new ImageBuffer((int)expectedSize.x, (int)expectedSize.y, 32, new BlenderBGRA());
+				scaledImageBuffer.NewGraphics2D().Render(imageBuffer, 0, 0, scaledImageBuffer.Width, scaledImageBuffer.Height);
+				imageBuffer = scaledImageBuffer;
+			}
 
 			ImageWidget folderThumbnail = new ImageWidget(imageBuffer);
 			folderThumbnail.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
