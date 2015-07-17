@@ -181,10 +181,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
 			
-			List<ProviderLocatorNode> providerLocator = GetProviderLocator();
-			string providerLocatorJson = JsonConvert.SerializeObject(providerLocator);
-			
-			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName, providerLocatorJson));
+			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName));
 		}
 
 		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)

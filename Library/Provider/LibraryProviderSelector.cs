@@ -239,43 +239,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RemoveItem(PrintItemWrapper printItemWrapper)
 		{
-			List<ProviderLocatorNode> subProviderSavePath;
-			int libraryProviderToUseIndex = GetProviderIndex(printItemWrapper, out subProviderSavePath);
-
-			visibleProviders[libraryProviderToUseIndex].RemoveItem(printItemWrapper);
+			throw new NotImplementedException();
 		}
 
 		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null)
 		{
 			throw new NotImplementedException();
-		}
-
-		private int GetProviderIndex(PrintItemWrapper printItemWrapper, out List<ProviderLocatorNode> subProviderSavePath)
-		{
-			List<ProviderLocatorNode> providerPath = printItemWrapper.PrintItem.GetLibraryProviderLocator();
-
-			return GetProviderIndex(providerPath, out subProviderSavePath);
-		}
-
-		private int GetProviderIndex(List<ProviderLocatorNode> providerSavePath, out List<ProviderLocatorNode> subProviderSavePath)
-		{
-			subProviderSavePath = null;
-
-			if (providerSavePath != null
-				&& providerSavePath.Count > 1) // key 0 is this provider so we want to look at the next provider
-			{
-				for (int i = 0; i < visibleProviders.Count; i++)
-				{
-					if (visibleProviders[i].ProviderKey == providerSavePath[1].Key)
-					{
-						subProviderSavePath = new List<ProviderLocatorNode>(providerSavePath);
-						subProviderSavePath.RemoveAt(0);
-						return i;
-					}
-				}
-			}
-
-			return 0;
 		}
 
 		#endregion Overriden Abstract Methods

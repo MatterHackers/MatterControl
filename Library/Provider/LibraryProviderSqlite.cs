@@ -276,20 +276,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibraryProvider.OnDataReloaded(null);
 		}
 
-		void SetProviderLocator(PrintItemWrapper itemToSetProviderLocatorOn)
-		{
-			List<ProviderLocatorNode> providerLocator = GetProviderLocator();
-			string providerLocatorJson = JsonConvert.SerializeObject(providerLocator);
-			itemToSetProviderLocatorOn.PrintItem.LibraryProviderLocatorJson = providerLocatorJson;
-		}
-
 		public void AddItem(PrintItemWrapper item, int indexToInsert = -1)
 		{
 			if (indexToInsert == -1)
 			{
 				indexToInsert = printItems.Count;
 			}
-			SetProviderLocator(item);
 			printItems.Insert(indexToInsert, item);
 			// Check if the collection we are adding to is the the currently visible collection.
 			List<ProviderLocatorNode> currentDisplayedCollection = GetProviderLocator();
@@ -330,7 +322,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				foreach (PrintItem part in partFiles)
 				{
 					PrintItemWrapper item = new PrintItemWrapper(part);
-					SetProviderLocator(item);
 					printItems.Add(item);
 				}
 			}
