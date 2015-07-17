@@ -1879,8 +1879,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				saveSucceded = true;
-				//LibraryDataView.CurrentLibraryProvider.SaveToCollection(printItemWrapper.PrintItem.LibraryProviderLocator
-				LibraryProviderSQLite.Instance.SaveToLibrary(printItemWrapper, asynchMeshGroups);
+
+				string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
+
+				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
+				printItemWrapper.OnFileHasChanged();
 			}
 			catch (System.UnauthorizedAccessException)
 			{
