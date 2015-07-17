@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		public ApplicationSettingsWidget()
 			: base("Application Settings".Localize())
 		{
-			mainContainer.AddChild(GetUpdateControl());
+
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			mainContainer.AddChild(GetLanguageControl());
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
@@ -262,55 +262,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return buttonRow;
 		}
 
-		private FlowLayoutWidget GetUpdateControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			configureUpdateFeedButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
-			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
-			configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
-
-			TextWidget settingsLabel = new TextWidget("Update Notification Feed".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			releaseOptionsDropList = new StyledDropDownList("Development", maxHeight: 200);
-			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(releaseOptionsDropList);
-			optionsContainer.Width = 200;
-
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Stable".Localize(), "release");
-			releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
-
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
-			preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
-
-			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
-			developmentDropDownItem.Selected += new EventHandler(FixTabDot);
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
-			string currentUpdateFeedType = UserSettings.Instance.get("UpdateFeedType");
-
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
-			{
-				UserSettings.Instance.set("UpdateFeedType", "release");
-			}
-
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("UpdateFeedType");
-			releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
 
 		private FlowLayoutWidget GetLanguageControl()
 		{

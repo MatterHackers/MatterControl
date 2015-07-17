@@ -63,7 +63,6 @@ namespace MatterHackers.MatterControl
 			customInfoTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
 			customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
 
-			//customInfoTopToBottom.AddChild(new UpdateControlView());
 			//AddMatterHackersInfo(customInfoTopToBottom);
 			customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
 
