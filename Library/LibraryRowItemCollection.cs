@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			CreateGuiElements();
 		}
 
-		//public override PrintItemWrapper PrintItemWrapper { get { return null; } }
 		public PrintItemCollection PrintItemCollection { get { return printItemCollection; } }
 
 		public override bool Protected
@@ -174,14 +173,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
-			{
-				this.Height = 65;
-			}
-			else
-			{
-				this.Height = 50;
-			}
+			this.Height = 50 * TextWidget.GlobalPointSizeScaleRatio;
 
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);

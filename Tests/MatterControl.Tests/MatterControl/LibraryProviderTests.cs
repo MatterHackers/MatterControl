@@ -79,8 +79,6 @@ namespace MatterControl.Tests
 			Assert.IsTrue(Directory.Exists(createdDirectory));
 
 			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapperAsync(0).Result;
-			List<ProviderLocatorNode> providerLocator = itemAtRoot.PrintItem.GetLibraryProviderLocator();
-			Assert.IsTrue(providerLocator.Count == 1);
 
 			// add an item works correctly
 			LibraryProvider subProvider = testProvider.GetProviderForItem(testProvider.GetCollectionItem(0));
@@ -138,8 +136,6 @@ namespace MatterControl.Tests
 			Assert.IsTrue(NamedCollectionExists(collectionName)); // assert that the record does exist in the DB
 
 			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapperAsync(0).Result;
-			List<ProviderLocatorNode> providerLocator = itemAtRoot.PrintItem.GetLibraryProviderLocator();
-			Assert.IsTrue(providerLocator.Count == 1);
 
 			// add an item works correctly
 			dataReloaded = false;

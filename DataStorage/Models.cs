@@ -274,11 +274,10 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 		}
 
-		public PrintItem(string name, string fileLocation, string libraryProviderLocatorJson = "")
+		public PrintItem(string name, string fileLocation)
 		{
 			this.Name = name;
 			this.FileLocation = fileLocation;
-			this.LibraryProviderLocatorJson = libraryProviderLocatorJson;
 
 			DateAdded = DateTime.Now;
 			PrintCount = 0;
@@ -288,24 +287,12 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string FileLocation { get; set; }
 
-		public string LibraryProviderLocatorJson { get; set; }
-
 		public string Name { get; set; }
 
 		public int PrintCount { get; set; }
 
 		[Indexed]
 		public int PrintItemCollectionID { get; set; }
-
-		public List<ProviderLocatorNode> GetLibraryProviderLocator()
-		{
-			List<ProviderLocatorNode> providerPath = null;
-			if (LibraryProviderLocatorJson != null)
-			{
-				providerPath = JsonConvert.DeserializeObject<List<ProviderLocatorNode>>(LibraryProviderLocatorJson);
-			}
-			return providerPath;
-		}
 
 		public bool ReadOnly { get; set; }
 

@@ -318,7 +318,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 				PrintItem newPrintItem = new PrintItem();
 				newPrintItem.Name = newName;
 				newPrintItem.FileLocation = newCopyFilename;
-				newPrintItem.LibraryProviderLocatorJson = printItemWrapper.PrintItem.LibraryProviderLocatorJson;
 				newPrintItem.ReadOnly = printItemWrapper.PrintItem.ReadOnly;
 				newPrintItem.Protected = printItemWrapper.PrintItem.Protected;
 				UiThread.RunOnIdle(AddPartCopyToQueue, new PartToAddToQueue()
