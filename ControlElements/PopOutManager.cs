@@ -127,6 +127,7 @@ namespace MatterHackers.MatterControl
 				{
 					GuiWidget child = widgetWhosContentsPopOut.Children[0];
 					widgetWhosContentsPopOut.RemoveChild(child);
+					child.ClearRemovedFlag();
 					widgetWhosContentsPopOut.AddChild(CreateContentForEmptyControl());
 					PopedOutSystemWindow.AddChild(child);
 				}
@@ -235,6 +236,7 @@ namespace MatterHackers.MatterControl
 			{
 				GuiWidget child = PopedOutSystemWindow.Children[0];
 				PopedOutSystemWindow.RemoveChild(child);
+				child.ClearRemovedFlag();
 				widgetWhosContentsPopOut.RemoveAllChildren();
 				widgetWhosContentsPopOut.AddChild(child);
 			}
