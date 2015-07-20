@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.IO;
@@ -58,10 +59,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private long writeTime = 0;
 
-		public PrintItemWrapper(DataStorage.PrintItem printItem)
+		public PrintItemWrapper(DataStorage.PrintItem printItem, LibraryProvider sourceLibraryProvider = null)
 		{
 			this.PrintItem = printItem;
 			this.fileType = Path.GetExtension(printItem.FileLocation).ToUpper();
+
+			SourceLibraryProvider = sourceLibraryProvider;
 		}
 
 		public PrintItemWrapper(int printItemId)
@@ -78,6 +81,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		}
 
 		public bool CurrentlySlicing { get; set; }
+
+		public LibraryProvider SourceLibraryProvider { get; private set; }
 
 		public bool DoneSlicing
 		{

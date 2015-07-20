@@ -472,7 +472,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void AddPartCopyToQueue(object state)
 		{
 			var partInfo = state as PartToAddToQueue;
-			QueueData.Instance.AddItem(new PrintItemWrapper(partInfo.PrintItem), QueueData.ValidateSizeOn32BitSystems.Skip, partInfo.InsertAfterIndex);
+			QueueData.Instance.AddItem(new PrintItemWrapper(partInfo.PrintItem), partInfo.InsertAfterIndex, QueueData.ValidateSizeOn32BitSystems.Skip);
 		}
 
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)

@@ -212,7 +212,6 @@
     <Compile Include="Library\Provider\LibraryProviderPlugin.cs" />
     <Compile Include="Library\Provider\LibraryProviderSelector.cs" />
     <Compile Include="Library\Provider\LibraryProviderFileSystem.cs" />
-    <Compile Include="Library\Provider\LibrarySQLiteData.cs" />
     <Compile Include="Library\Provider\LibraryProviderSqlite.cs" />
     <Compile Include="Library\Provider\LibraryProvider.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />

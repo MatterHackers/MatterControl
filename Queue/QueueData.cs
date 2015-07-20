@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public enum ValidateSizeOn32BitSystems { Required, Skip }
 
-		public void AddItem(PrintItemWrapper item, ValidateSizeOn32BitSystems checkSize = ValidateSizeOn32BitSystems.Required, int indexToInsert = -1)
+		public void AddItem(PrintItemWrapper item, int indexToInsert = -1, ValidateSizeOn32BitSystems checkSize = ValidateSizeOn32BitSystems.Required)
 		{
 			if (Is32Bit())
 			{
@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				foreach (PrintItem item in partFiles)
 				{
-					AddItem(new PrintItemWrapper(item), QueueData.ValidateSizeOn32BitSystems.Skip);
+					AddItem(new PrintItemWrapper(item), -1, QueueData.ValidateSizeOn32BitSystems.Skip);
 				}
 			}
 			RemoveAllSdCardFiles();

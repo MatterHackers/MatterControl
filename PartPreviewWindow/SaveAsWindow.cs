@@ -4,6 +4,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.IO;
@@ -12,16 +13,18 @@ namespace MatterHackers.MatterControl
 {
 	public class SaveAsWindow : SystemWindow
 	{
-		private CheckBox addToLibraryOption;
 		private Action<SaveAsReturnInfo> functionToCallOnSaveAs;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
+		private LibraryProvider selectedLibraryProvider;
 
-		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs)
+		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, LibraryProvider startingLibraryProvider)
 			: base(480, 250)
 		{
 			Title = "MatterControl - Save As";
 			AlwaysOnTopOfMain = true;
+
+			selectedLibraryProvider = startingLibraryProvider;
 
 			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
@@ -75,15 +78,10 @@ namespace MatterHackers.MatterControl
 			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
 			textToAddWidget.Margin = new BorderDouble(5);
 
-			addToLibraryOption = new CheckBox("Also save to Library".Localize(), ActiveTheme.Instance.PrimaryTextColor);
-			addToLibraryOption.Margin = new BorderDouble(5);
-			addToLibraryOption.HAnchor = HAnchor.ParentLeftRight;
-
 			middleRowContainer.AddChild(textBoxHeader);
 			middleRowContainer.AddChild(textBoxHeaderFull);
 			middleRowContainer.AddChild(textToAddWidget);
 			middleRowContainer.AddChild(new HorizontalSpacer());
-			middleRowContainer.AddChild(addToLibraryOption);
 			topToBottom.AddChild(middleRowContainer);
 
 			//Creates button container on the bottom of window
@@ -137,7 +135,7 @@ namespace MatterHackers.MatterControl
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
 				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, addToLibraryOption.Checked);
+				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, selectedLibraryProvider);
 				functionToCallOnSaveAs(returnInfo);
 				CloseOnIdle();
 			}
@@ -147,22 +145,19 @@ namespace MatterHackers.MatterControl
 		{
 			public string fileNameAndPath;
 			public string newName;
-			public bool placeInLibrary;
 			public PrintItemWrapper printItemWrapper;
 
-			public SaveAsReturnInfo(string newName, string fileNameAndPath, bool placeInLibrary)
+			public SaveAsReturnInfo(string newName, string fileNameAndPath, LibraryProvider destinationLibraryProvider)
 			{
 				this.newName = newName;
 				this.fileNameAndPath = fileNameAndPath;
-				this.placeInLibrary = placeInLibrary;
 
 				PrintItem printItem = new PrintItem();
 				printItem.Name = newName;
 				printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
-				printItem.PrintItemCollectionID = LibrarySQLiteData.Instance.RootLibraryCollection.Id;
-				printItem.Commit();
+				throw new NotImplementedException();
 
-				printItemWrapper = new PrintItemWrapper(printItem);
+				printItemWrapper = new PrintItemWrapper(printItem, destinationLibraryProvider);
 			}
 		}
 	}

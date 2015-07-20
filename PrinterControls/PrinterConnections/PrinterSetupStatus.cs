@@ -3,6 +3,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
@@ -54,14 +55,12 @@ namespace MatterHackers.MatterControl
 				// Load the calibration file names
 				List<string> calibrationPrintFileNames = LoadCalibrationPartNamesForPrinter(this.ActivePrinter.Make, this.ActivePrinter.Model);
 
-				string[] itemsToAdd = LibrarySQLiteData.SyncCalibrationFilesToDisk(calibrationPrintFileNames);
+				string[] itemsToAdd = LibraryProviderSQLite.SyncCalibrationFilesToDisk(calibrationPrintFileNames);
 				if (itemsToAdd.Length > 0)
 				{
 					// Import any files sync'd to disk into the library, then add them to the queue
-					LibrarySQLiteData.Instance.LoadFilesIntoLibrary(itemsToAdd, null, (sender, e) =>
-						{
-							AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
-						});
+					LibraryProviderSQLite.Instance.AddFilesToLibrary(itemsToAdd);
+					AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
 				}
 				else
 				{
@@ -83,10 +82,12 @@ namespace MatterHackers.MatterControl
 				}
 
 				// If the library item does not exist in the queue, add it
-				var libraryItem = LibrarySQLiteData.Instance.GetLibraryItems(nameOnly).FirstOrDefault();
-				if (libraryItem != null)
+				foreach (PrintItem libraryItem in ((LibraryProviderSQLite)LibraryProviderSQLite.Instance).GetLibraryItems(nameOnly))
 				{
-					QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
+					if (libraryItem != null)
+					{
+						QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
+					}
 				}
 			}
 		}

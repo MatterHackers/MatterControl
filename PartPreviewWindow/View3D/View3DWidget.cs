@@ -1388,7 +1388,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (saveAsWindow == null)
 				{
-					saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+					saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider);
 					saveAsWindow.Closed += (sender2, e2) =>
 					{
 						saveAsWindow = null;
@@ -1913,15 +1913,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (returnInfo != null)
 			{
-				QueueData.Instance.AddItem(printItemWrapper);
-				if (!PrinterConnectionAndCommunication.Instance.PrintIsActive)
-				{
-					QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
-				}
+				throw new NotImplementedException();
 
-				if (returnInfo.placeInLibrary)
+				if (returnInfo.printItemWrapper.SourceLibraryProvider != null)
 				{
-					LibrarySQLiteData.Instance.AddItem(printItemWrapper);
+					throw new NotImplementedException();
+					// save this part to correct library provider
+				}
+				else // there is no library provider so save it to the queue
+				{
+					QueueData.Instance.AddItem(printItemWrapper);
+					if (!PrinterConnectionAndCommunication.Instance.PrintIsActive)
+					{
+						QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
+					}
 				}
 			}
 
@@ -2036,7 +2041,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (saveAsWindow == null)
 			{
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile);
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider);
 				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
 			}
 			else

@@ -321,7 +321,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				foreach (PrintItem part in partFiles)
 				{
-					PrintItemWrapper item = new PrintItemWrapper(part);
+					PrintItemWrapper item = new PrintItemWrapper(part, this);
 					printItems.Add(item);
 				}
 			}
@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 				try
 				{
-					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, libraryToAddTo);
 					SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
 					libraryToAddTo.AddItem(printItemWrapper);
 				}
@@ -402,7 +402,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			else // it is not a mesh so just add it
 			{
-				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, libraryToAddTo);
 				if (false)
 				{
 					libraryToAddTo.AddItem(printItemWrapper);
@@ -431,7 +431,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return result;
 		}
 
-		private IEnumerable<PrintItem> GetLibraryItems(string keyphrase = null)
+		public IEnumerable<PrintItem> GetLibraryItems(string keyphrase = null)
 		{
 			string query;
 			if (keyphrase == null)
