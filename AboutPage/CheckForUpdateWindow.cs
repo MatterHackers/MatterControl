@@ -98,21 +98,21 @@ namespace MatterHackers.MatterControl.AboutPage
             additionalInfoContainer.HAnchor = HAnchor.ParentLeftRight;
             additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
              
-            string stableFeedInfoText = "Stable: Get the current release version of MatterControl(recommended).".Localize();
+            string stableFeedInfoText = "Stable: Get the current release version of MatterControl (recommended).".Localize();
             stableInfoLabel = new TextWidget(stableFeedInfoText);
             stableInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             stableInfoLabel.HAnchor = HAnchor.ParentLeftRight;
             stableInfoLabel.Margin = new BorderDouble(bottom:10);
             additionalInfoContainer.AddChild(stableInfoLabel);
 
-            string betaFeedInfoText = "Beta: Release candidate versions of MatterControl.".Localize();
+            string betaFeedInfoText = "Beta: Attain release candidate version of MatterControl.".Localize();
             betaInfoLabel = new TextWidget(betaFeedInfoText);
             betaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             betaInfoLabel.HAnchor = HAnchor.ParentLeftRight;
             betaInfoLabel.Margin = new BorderDouble(bottom: 10);
             additionalInfoContainer.AddChild(betaInfoLabel);
 
-            string alphaFeedInfoText = "Alpha: Access development versions of MatterControl(not recommended).".Localize();
+            string alphaFeedInfoText = "Alpha: Access the development version of MatterControl (not recommended).".Localize();
             alphaInfoLabel = new TextWidget(alphaFeedInfoText);
             alphaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             alphaInfoLabel.HAnchor = HAnchor.ParentLeftRight;
