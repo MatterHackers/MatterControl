@@ -2,6 +2,7 @@
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
+using MatterHackers.MatterControl.AboutPage;
 using MatterHackers.VectorMath;
 using System;
 

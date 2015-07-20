@@ -3388,3 +3388,6 @@ Translated:Flat
 English:3D
 Translated:3D
 
+English:Update Status
+Translated:Update Status
+

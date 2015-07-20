@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.AboutPage;
 using System;
 using MatterHackers.Localizations;
 
@@ -87,7 +88,7 @@ namespace MatterHackers.MatterControl
 			popUpAboutPage.AddChild(updateStatusMessage);
 			updateStatusMessage.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle(AboutWindow.Show);
+                UiThread.RunOnIdle(CheckForUpdateWindow.Show);
 			};
 			this.AddChild(popUpAboutPage);
 			SetUpdateNotification(this, null);
@@ -142,7 +143,7 @@ namespace MatterHackers.MatterControl
 						Button updateStatusMessage = linkButtonFactory.Generate("Check For Update".Localize());
 						updateStatusMessage.Click += (sender2, e) =>
 						{
-							UiThread.RunOnIdle(AboutWindow.Show);
+							UiThread.RunOnIdle(CheckForUpdateWindow.Show);
 						};
 						popUpAboutPage.AddChild(updateStatusMessage);
 						popUpAboutPage.Visible = true;
@@ -157,7 +158,7 @@ namespace MatterHackers.MatterControl
 						Button updateStatusMessage = linkButtonFactory.Generate("Update Available".Localize());
 						updateStatusMessage.Click += (sender2, e) =>
 						{
-							UiThread.RunOnIdle(AboutWindow.Show);
+                            UiThread.RunOnIdle(CheckForUpdateWindow.Show);
 						};
 						var updateMark = new UpdateNotificationMark();
 						updateMark.Margin = new BorderDouble(0, 0, 3, 2);
