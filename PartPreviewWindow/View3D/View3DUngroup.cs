@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				await Task.Run(() => UngroupSelected());
+				await Task.Run((System.Action)UngroupSelected);
 
 				if (WidgetHasBeenClosed)
 				{
