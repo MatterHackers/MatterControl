@@ -1,4 +1,4 @@
-﻿English:Connect
+English:Connect
 Translated:Podłącz drukarkę
 
 English:Disconnect
@@ -3411,10 +3411,4 @@ Translated:Beta:  Provides access to updates that are candidates for release in 
 
 English:Update Notification Feed 
 Translated:Update Notification Feed 
-
-English:Jakość
-Translated:Jakość
-
-English:Materiał
-Translated:Materiał
 
