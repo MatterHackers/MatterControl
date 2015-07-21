@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				await Task.Run(() => CopyGroup());
+				await Task.Run((System.Action)CopyGroup);
 
 				if (WidgetHasBeenClosed)
 				{

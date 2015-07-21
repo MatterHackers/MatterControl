@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				await Task.Run(() => CreateSelectionData());
+				await Task.Run((System.Action)CreateSelectionData);
 
 				if (WidgetHasBeenClosed)
 				{

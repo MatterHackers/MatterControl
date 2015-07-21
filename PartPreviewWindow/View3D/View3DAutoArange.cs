@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				await Task.Run(() => ArrangeMeshGroups());
+				await Task.Run((System.Action)ArrangeMeshGroups);
 
 				if (WidgetHasBeenClosed)
 				{

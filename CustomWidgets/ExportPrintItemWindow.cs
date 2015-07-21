@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
@@ -381,17 +382,13 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		private void onExportAmfFileSelected(SaveFileDialogParams saveParams)
+		private async void onExportAmfFileSelected(SaveFileDialogParams saveParams)
 		{
-			BackgroundWorker saveWorker = new BackgroundWorker();
-			saveWorker.DoWork += amfSaveWorker_DoWork;
-			saveWorker.RunWorkerAsync(saveParams);
+			await Task.Run(() => SaveAmf(saveParams));
 		}
 
-		private void amfSaveWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void SaveAmf(SaveFileDialogParams saveParams)
 		{
-			SaveFileDialogParams saveParams = e.Argument as SaveFileDialogParams;
-
 			if (saveParams.FileName != null)
 			{
 				string filePathToSave = saveParams.FileName;
@@ -431,16 +428,13 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		private void onExportStlFileSelected(SaveFileDialogParams saveParams)
+		private async void onExportStlFileSelected(SaveFileDialogParams saveParams)
 		{
-			BackgroundWorker saveWorker = new BackgroundWorker();
-			saveWorker.DoWork += stlSaveWorker_DoWork;
-			saveWorker.RunWorkerAsync(saveParams);
+			await Task.Run(() => SaveStl(saveParams));
 		}
 
-		private void stlSaveWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void SaveStl(SaveFileDialogParams saveParams)
 		{
-			SaveFileDialogParams saveParams = e.Argument as SaveFileDialogParams;
 			if (saveParams.FileName != null)
 			{
 				string filePathToSave = saveParams.FileName;
