@@ -282,8 +282,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		}
 
-		private event EventHandler unregisterEvents;
-
 		[Flags]
 		public enum Axis { X = 1, Y = 2, Z = 4, E = 8, XYZ = (X | Y | Z) }
 
@@ -1327,7 +1325,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
 								PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-								partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
+								partToPrint.SlicingDone += partToPrint_SliceDone;
 							}
 						}
 						else
@@ -2521,7 +2519,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
 				PrintItemWrapper partToPrint = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 				SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-				partToPrint.SlicingDone.RegisterEvent(partToPrint_SliceDone, ref unregisterEvents);
+				partToPrint.SlicingDone += partToPrint_SliceDone;
 			}
 		}
 
@@ -2569,7 +2567,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			PrintItemWrapper partToPrint = sender as PrintItemWrapper;
 			if (partToPrint != null)
 			{
-				partToPrint.SlicingDone.UnregisterEvent(partToPrint_SliceDone, ref unregisterEvents);
+				partToPrint.SlicingDone -= partToPrint_SliceDone;
 				string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
 				if (gcodePathAndFileName != "")
 				{

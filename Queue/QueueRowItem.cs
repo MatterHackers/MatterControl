@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public override void OnClosed(EventArgs e)
 		{
-			PrintItemWrapper.SlicingOutputMessage.UnregisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
+			PrintItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private void AddHandlers()
 		{
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-			PrintItemWrapper.SlicingOutputMessage.RegisterEvent(PrintItem_SlicingOutputMessage, ref unregisterEvents);
+			PrintItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 		}
 
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)

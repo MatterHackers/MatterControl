@@ -221,8 +221,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 
 						// we only hook these up to make sure we can regenerate the gcode when we want
-						printItem.SlicingOutputMessage.RegisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
-						printItem.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+						printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
+						printItem.SlicingDone += sliceItem_Done;
 					}
 					else
 					{
@@ -644,8 +644,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
 					&& PrinterConnectionAndCommunication.Instance.ActivePrintItem == printItem)
 				{
-					printItem.SlicingOutputMessage.UnregisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
-					printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
+					printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
+					printItem.SlicingDone -= sliceItem_Done;
 
 					generateGCodeButton.Visible = false;
 
@@ -718,12 +718,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!PrinterConnectionAndCommunication.Instance.PrinterIsPaused && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
 				// unregister first to make sure we don't double up in error (should not be needed but no harm)
-				printItem.SlicingOutputMessage.UnregisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
-				printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
+				printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
+				printItem.SlicingDone -= sliceItem_Done;
 
 				// register for done slicing and slicing messages
-				printItem.SlicingOutputMessage.RegisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
-				printItem.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+				printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
+				printItem.SlicingDone += sliceItem_Done;
 
 				generateGCodeButton.Visible = true;
 			}
@@ -1034,8 +1034,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printItem != null)
 			{
-				printItem.SlicingOutputMessage.UnregisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
-				printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
+				printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
+				printItem.SlicingDone -= sliceItem_Done;
 				if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
 				{
 					SlicingQueue.Instance.CancelCurrentSlicing();
@@ -1078,8 +1078,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// We can add this while we have it open (when we are done loading).
 			// So we need to make sure we only have it added once. This will be ok to run when
 			// not added or when added and will ensure we only have one hook.
-			printItem.SlicingOutputMessage.UnregisterEvent(sliceItem_SlicingOutputMessage, ref unregisterEvents);
-			printItem.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
+			printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
+			printItem.SlicingDone -= sliceItem_Done;
 
 			UiThread.RunOnIdle(CreateAndAddChildren);
 			startedSliceFromGenerateButton = false;

@@ -33,19 +33,19 @@ using MatterHackers.PolygonMesh;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void createSelectionDataBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void CreateSelectionData()
 		{
 			string makingCopyLabel = LocalizedString.Get("Preparing Meshes");
 			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
 			processingProgressControl.ProcessType = makingCopyLabelFull;
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
 
@@ -73,39 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.CreateGlDataForMeshes(asynchMeshGroups);
 		}
 
-		private void createSelectionDataBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-			// remove the original mesh and replace it with these new meshes
-			PullMeshGroupDataFromAsynchLists();
-
-			SelectedMeshGroupIndex = 0;
-			buttonRightPanel.Visible = true;
-			UnlockEditControls();
-			viewControls3D.partSelectButton.ClickButton(null);
-
-			Invalidate();
-
-			if (DoAddFileAfterCreatingEditData)
-			{
-				FileDialog.OpenFileDialog(
-					new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-					(openParams) =>
-					{
-						LoadAndAddPartsToPlate(openParams.FileNames);
-					});
-				DoAddFileAfterCreatingEditData = false;
-			}
-			else if (pendingPartsToLoad.Count > 0)
-			{
-				LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
-			}
-		}
-
-		private void EnterEditAndCreateSelectionData()
+		private async void EnterEditAndCreateSelectionData()
 		{
 			if (enterEditButtonsContainer.Visible == true)
 			{
@@ -118,13 +86,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				BackgroundWorker createSelectionDataBackgroundWorker = null;
-				createSelectionDataBackgroundWorker = new BackgroundWorker();
+				await Task.Run(() => CreateSelectionData());
 
-				createSelectionDataBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(createSelectionDataBackgroundWorker_RunWorkerCompleted);
-				createSelectionDataBackgroundWorker.DoWork += new DoWorkEventHandler(createSelectionDataBackgroundWorker_DoWork);
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
+				// remove the original mesh and replace it with these new meshes
+				PullMeshGroupDataFromAsynchLists();
 
-				createSelectionDataBackgroundWorker.RunWorkerAsync();
+				SelectedMeshGroupIndex = 0;
+				buttonRightPanel.Visible = true;
+				UnlockEditControls();
+				viewControls3D.partSelectButton.ClickButton(null);
+
+				Invalidate();
+
+				if (DoAddFileAfterCreatingEditData)
+				{
+					FileDialog.OpenFileDialog(
+						new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+						(openParams) =>
+						{
+							LoadAndAddPartsToPlate(openParams.FileNames);
+						});
+					DoAddFileAfterCreatingEditData = false;
+				}
+				else if (pendingPartsToLoad.Count > 0)
+				{
+					LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
+				}
 			}
 		}
 	}

@@ -35,17 +35,16 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void arrangeMeshGroupsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void ArrangeMeshGroups()
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
-
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
 			// move them all out of the way
 			for (int i = 0; i < asynchMeshGroups.Count; i++)
@@ -132,19 +131,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void arrangeMeshGroupsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-			UnlockEditControls();
-			PartHasBeenChanged();
-
-			PullMeshGroupDataFromAsynchLists();
-		}
-
-		private void AutoArrangePartsInBackground()
+		private async void AutoArrangePartsInBackground()
 		{
 			if (MeshGroups.Count > 0)
 			{
@@ -155,12 +142,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				BackgroundWorker arrangeMeshGroupsBackgroundWorker = new BackgroundWorker();
+				await Task.Run(() => ArrangeMeshGroups());
 
-				arrangeMeshGroupsBackgroundWorker.DoWork += new DoWorkEventHandler(arrangeMeshGroupsBackgroundWorker_DoWork);
-				arrangeMeshGroupsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(arrangeMeshGroupsBackgroundWorker_RunWorkerCompleted);
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
+				UnlockEditControls();
+				PartHasBeenChanged();
 
-				arrangeMeshGroupsBackgroundWorker.RunWorkerAsync();
+				PullMeshGroupDataFromAsynchLists();
 			}
 		}
 	}
