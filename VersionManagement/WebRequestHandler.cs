@@ -290,6 +290,19 @@ namespace MatterHackers.MatterControl.VersionManagement
 			doRequestWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ProcessResponse);
 			doRequestWorker.RunWorkerAsync();
 		}
+
+		public static void Request(string requestUrl, string[] requestStringPairs)
+		{
+			WebRequestBase tempRequest = new WebRequestBase();
+
+			tempRequest.uri = requestUrl;
+			for (int i = 0; i < requestStringPairs.Length; i += 2)
+			{
+				tempRequest.requestValues[requestStringPairs[i]] = requestStringPairs[i + 1];
+			}
+
+			tempRequest.Request();
+		}
 	}
 
 	//To do - move this
