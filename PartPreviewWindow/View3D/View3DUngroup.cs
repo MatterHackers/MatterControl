@@ -34,12 +34,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void ungroupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void UngroupSelected()
 		{
 			if (SelectedMeshGroupIndex == -1)
 			{
@@ -50,7 +51,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			processingProgressControl.ProcessType = makingCopyLabelFull;
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
@@ -101,27 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ungroupSelectedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-
-			// remove the original mesh and replace it with these new meshes
-			PullMeshGroupDataFromAsynchLists();
-
-			// our selection changed to the mesh we just added which is at the end
-			SelectedMeshGroupIndex = MeshGroups.Count - 1;
-
-			UnlockEditControls();
-
-			PartHasBeenChanged();
-
-			Invalidate();
-		}
-
-		private void UngroupSelectedMeshGroup()
+		private async void UngroupSelectedMeshGroup()
 		{
 			if (MeshGroups.Count > 0)
 			{
@@ -130,13 +110,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
-				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
+				await Task.Run(() => UngroupSelected());
 
-				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ungroupSelectedBackgroundWorker_RunWorkerCompleted);
-				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(ungroupSelectedBackgroundWorker_DoWork);
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
 
-				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
+				// remove the original mesh and replace it with these new meshes
+				PullMeshGroupDataFromAsynchLists();
+
+				// our selection changed to the mesh we just added which is at the end
+				SelectedMeshGroupIndex = MeshGroups.Count - 1;
+
+				UnlockEditControls();
+
+				PartHasBeenChanged();
+
+				Invalidate();
 			}
 		}
 	}

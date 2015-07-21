@@ -497,6 +497,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool DoAddFileAfterCreatingEditData { get; set; }
 		public override void OnClosed(EventArgs e)
 		{
+			printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
@@ -1137,8 +1138,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printItemWrapper != null)
 			{
 				// remove it first to make sure we don't double add it
-				printItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-				printItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
+				printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
+				printItemWrapper.FileHasChanged += ReloadMeshIfChangeExternaly;
 
 				// Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
 				// not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed

@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void copyGroupBackgroundWorker_DoWork()
+		private void CopyGroup()
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				await Task.Run(() => copyGroupBackgroundWorker_DoWork());
+				await Task.Run(() => CopyGroup());
 
 				if (WidgetHasBeenClosed)
 				{

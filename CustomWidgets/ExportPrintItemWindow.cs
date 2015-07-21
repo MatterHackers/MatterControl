@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl
                 {
 
                     SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-                    printItemWrapper.SlicingDone.RegisterEvent(sliceItem_Done, ref unregisterEvents);
+                    printItemWrapper.SlicingDone += sliceItem_Done;
 
                 }
                 else if (partIsGCode)
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl
 				{
 					Close();
 					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-					printItemWrapper.SlicingDone.RegisterEvent(x3gItemSlice_Complete, ref unregisterEvents);
+					printItemWrapper.SlicingDone += x3gItemSlice_Complete;
 				}
 				else if (partIsGCode)
 				{
@@ -352,6 +352,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
+			printItemWrapper.SlicingDone -= sliceItem_Done; 
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
@@ -469,14 +470,14 @@ namespace MatterHackers.MatterControl
 		{
 			PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
-			printItemWrapper.SlicingDone.UnregisterEvent(sliceItem_Done, ref unregisterEvents);
+			printItemWrapper.SlicingDone -= sliceItem_Done;
 			SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), gcodePathAndFilenameToSave);
 		}
 
 		private void x3gItemSlice_Complete(object sender, EventArgs e)
 		{
 			PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
-			printItemWrapper.SlicingDone.UnregisterEvent(x3gItemSlice_Complete, ref unregisterEvents);
+			printItemWrapper.SlicingDone -= x3gItemSlice_Complete;
 			if (File.Exists(sliceItem.GetGCodePathAndFileName()))
 			{
 				generateX3GfromGcode(sliceItem.GetGCodePathAndFileName(), x3gPathAndFilenameToSave);

@@ -40,9 +40,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class PrintItemWrapper
 	{
-		public RootedObjectEventHandler FileHasChanged = new RootedObjectEventHandler();
-		public RootedObjectEventHandler SlicingDone = new RootedObjectEventHandler();
-		public RootedObjectEventHandler SlicingOutputMessage = new RootedObjectEventHandler();
+		public event EventHandler FileHasChanged;
+		public event EventHandler SlicingDone;
+		public event EventHandler SlicingOutputMessage;
 		private static string fileNotFound = "File Not Found\n'{0}'".Localize();
 
 		private static string readyToPrint = "Ready to Print".Localize();
@@ -82,8 +82,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public bool CurrentlySlicing { get; set; }
 
-		public LibraryProvider SourceLibraryProvider { get; private set; }
-
 		public bool DoneSlicing
 		{
 			get
@@ -121,7 +119,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 						OnSlicingOutputMessage(new StringEventArgs(message));
 
-						SlicingDone.CallEvents(this, null);
+						if (SlicingDone != null)
+						{
+							SlicingDone(this, null);
+						}
 					}
 				}
 			}
@@ -197,6 +198,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public PrintItem PrintItem { get; set; }
 
 		public bool SlicingHadError { get { return slicingHadError; } }
+
+		public LibraryProvider SourceLibraryProvider { get; private set; }
 
 		public void Delete()
 		{
@@ -274,7 +277,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			if (FileHasChanged != null)
 			{
-				FileHasChanged.CallEvents(this, null);
+				FileHasChanged(this, null);
 			}
 		}
 
@@ -283,7 +286,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			StringEventArgs message = e as StringEventArgs;
 			if (SlicingOutputMessage != null)
 			{
-				SlicingOutputMessage.CallEvents(this, message);
+				SlicingOutputMessage(this, message);
 			}
 		}
 	}

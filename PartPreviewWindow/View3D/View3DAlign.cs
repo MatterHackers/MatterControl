@@ -34,12 +34,13 @@ using MatterHackers.VectorMath;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void alignSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void AlignSelected()
 		{
 			if (SelectedMeshGroupIndex == -1)
 			{
@@ -47,7 +48,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			// make sure our thread traslates numbmers correctly (always do this in a thread)
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
 			// save our data so we don't mess up the display while doing work
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
@@ -121,25 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void alignSelectedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-
-			// remove the original mesh and replace it with these new meshes
-			PullMeshGroupDataFromAsynchLists();
-
-			// our selection changed to the mesh we just added which is at the end
-			SelectedMeshGroupIndex = MeshGroups.Count - 1;
-
-			UnlockEditControls();
-
-			Invalidate();
-		}
-
-		private void AlignToSelectedMeshGroup()
+		private async void AlignToSelectedMeshGroup()
 		{
 			if (MeshGroups.Count > 0)
 			{
@@ -153,13 +135,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
-				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
+				await Task.Run(() => AlignSelected());
 
-				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(alignSelectedBackgroundWorker_RunWorkerCompleted);
-				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(alignSelectedBackgroundWorker_DoWork);
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
 
-				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
+				// remove the original mesh and replace it with these new meshes
+				PullMeshGroupDataFromAsynchLists();
+
+				// our selection changed to the mesh we just added which is at the end
+				SelectedMeshGroupIndex = MeshGroups.Count - 1;
+
+				UnlockEditControls();
+
+				Invalidate();
 			}
 		}
 	}

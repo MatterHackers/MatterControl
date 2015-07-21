@@ -33,17 +33,35 @@ using MatterHackers.PolygonMesh;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private void DoGroup(BackgroundWorker backgroundWorker)
+		private void GroupSelected()
 		{
+			string makingCopyLabel = LocalizedString.Get("Grouping");
+			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
+			processingProgressControl.ProcessType = makingCopyLabelFull;
+
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
+
+			for (int i = 0; i < asynchMeshGroups.Count; i++)
+			{
+				asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
+
+				bool continueProcessing;
+				ReportProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
+			}
+
 			if (SelectedMeshGroupIndex == -1)
 			{
 				SelectedMeshGroupIndex = 0;
 			}
+
 			MeshGroup meshGroupWeAreKeeping = asynchMeshGroups[SelectedMeshGroupIndex];
 			for (int meshGroupToMoveIndex = asynchMeshGroups.Count - 1; meshGroupToMoveIndex >= 0; meshGroupToMoveIndex--)
 			{
@@ -85,49 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void groupSelectedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-		{
-			string makingCopyLabel = LocalizedString.Get("Grouping");
-			string makingCopyLabelFull = string.Format("{0}:", makingCopyLabel);
-			processingProgressControl.ProcessType = makingCopyLabelFull;
-
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
-
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-			for (int i = 0; i < asynchMeshGroups.Count; i++)
-			{
-				asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
-
-				bool continueProcessing;
-				ReportProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
-			}
-
-			DoGroup(backgroundWorker);
-		}
-
-		private void groupSelectedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (WidgetHasBeenClosed)
-			{
-				return;
-			}
-
-			// remove the original mesh and replace it with these new meshes
-			PullMeshGroupDataFromAsynchLists();
-
-			// our selection changed to the mesh we just added which is at the end
-			SelectedMeshGroupIndex = MeshGroups.Count - 1;
-
-			UnlockEditControls();
-
-			PartHasBeenChanged();
-
-			Invalidate();
-		}
-
-		private void GroupSelectedMeshs()
+		private async void GroupSelectedMeshs()
 		{
 			if (MeshGroups.Count > 0)
 			{
@@ -136,13 +112,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				LockEditControls();
 				viewIsInEditModePreLock = true;
 
-				BackgroundWorker createDiscreteMeshesBackgroundWorker = null;
-				createDiscreteMeshesBackgroundWorker = new BackgroundWorker();
+				await Task.Run(() => GroupSelected());
 
-				createDiscreteMeshesBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(groupSelectedBackgroundWorker_RunWorkerCompleted);
-				createDiscreteMeshesBackgroundWorker.DoWork += new DoWorkEventHandler(groupSelectedBackgroundWorker_DoWork);
+				if (WidgetHasBeenClosed)
+				{
+					return;
+				}
 
-				createDiscreteMeshesBackgroundWorker.RunWorkerAsync();
+				// remove the original mesh and replace it with these new meshes
+				PullMeshGroupDataFromAsynchLists();
+
+				// our selection changed to the mesh we just added which is at the end
+				SelectedMeshGroupIndex = MeshGroups.Count - 1;
+
+				UnlockEditControls();
+
+				PartHasBeenChanged();
+
+				Invalidate();
 			}
 		}
 	}
