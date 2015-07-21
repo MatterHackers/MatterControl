@@ -35,9 +35,10 @@ namespace MatterHackers.MatterControl.AboutPage
         TextWidget stableInfoLabel;
         TextWidget alphaInfoLabel;
         TextWidget betaInfoLabel;
+        TextWidget updateChannelLabel;
 
         public CheckForUpdateWindow()
-            : base (620, 350)
+            : base (540, 350)
         {
             linkButtonFactory.fontSize = 10;
             linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl.AboutPage
            
             TextWidget checkUpdateLabel = new TextWidget("Check for Update".Localize(), pointSize: 20);
             checkUpdateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            checkUpdateLabel.Margin = new BorderDouble(5, 10, 10, 5);
+            checkUpdateLabel.Margin = new BorderDouble(2, 10, 10, 5);
             
             UpdateControlView updateStatusWidget = new UpdateControlView();
             
@@ -97,22 +98,30 @@ namespace MatterHackers.MatterControl.AboutPage
             additionalInfoContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
             additionalInfoContainer.HAnchor = HAnchor.ParentLeftRight;
             additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
+
+            string aboutUpdateChannel = "Changing your update channnel will change the version of MatterControl  \nthat you recieve when updating:";
+            updateChannelLabel = new TextWidget(aboutUpdateChannel);
+            updateChannelLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+            updateChannelLabel.HAnchor = HAnchor.ParentLeftRight;
+            updateChannelLabel.Margin = new BorderDouble(bottom: 20);
+            additionalInfoContainer.AddChild(updateChannelLabel);
+            
              
-            string stableFeedInfoText = "Stable: Get the current release version of MatterControl (recommended).".Localize();
+            string stableFeedInfoText = "Stable: The current release version of MatterControl (recommended).".Localize();
             stableInfoLabel = new TextWidget(stableFeedInfoText);
             stableInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             stableInfoLabel.HAnchor = HAnchor.ParentLeftRight;
             stableInfoLabel.Margin = new BorderDouble(bottom:10);
             additionalInfoContainer.AddChild(stableInfoLabel);
 
-            string betaFeedInfoText = "Beta: Attain release candidate version of MatterControl.".Localize();
+            string betaFeedInfoText = "Beta: The release candidate version of MatterControl.".Localize();
             betaInfoLabel = new TextWidget(betaFeedInfoText);
             betaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             betaInfoLabel.HAnchor = HAnchor.ParentLeftRight;
             betaInfoLabel.Margin = new BorderDouble(bottom: 10);
             additionalInfoContainer.AddChild(betaInfoLabel);
 
-            string alphaFeedInfoText = "Alpha: Access the development version of MatterControl (not recommended).".Localize();
+            string alphaFeedInfoText = "Alpha: The in development version of MatterControl.".Localize();
             alphaInfoLabel = new TextWidget(alphaFeedInfoText);
             alphaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
             alphaInfoLabel.HAnchor = HAnchor.ParentLeftRight;
@@ -147,8 +156,6 @@ namespace MatterHackers.MatterControl.AboutPage
                 });
             };
 
-            
-
             mainLabelContainer.AddChild(checkUpdateLabel);
             topToBottom.AddChild(mainLabelContainer);
             topToBottom.AddChild(updateStatusWidget);
@@ -168,6 +175,7 @@ namespace MatterHackers.MatterControl.AboutPage
             this.Title = "Check for Update".Localize();
             this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
             this.ShowAsSystemWindow();
+            this.AlwaysOnTopOfMain = true;
 
         }
 
