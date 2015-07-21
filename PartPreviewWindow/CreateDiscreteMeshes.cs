@@ -136,9 +136,8 @@ namespace MatterHackers.MatterControl
 			return discreetVolumes;
 		}
 
-		public static Mesh[] SplitIntoMeshesOnOrthographicZ(Mesh meshToSplit, Vector3 buildVolume, BackgroundWorker backgroundWorker, int startPercent, int endPercent)
+		public static Mesh[] SplitIntoMeshesOnOrthographicZ(Mesh meshToSplit, Vector3 buildVolume, ReportProgressRatio reportProgress)
 		{
-			int lengthPercent = endPercent - startPercent;
 			// check if the part is bigger than the build plate (if it is we need to use that as our size)
 			AxisAlignedBoundingBox partBounds = meshToSplit.GetAxisAlignedBoundingBox();
 
@@ -155,9 +154,10 @@ namespace MatterHackers.MatterControl
 
 			PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);
 
-			if (backgroundWorker != null)
+			bool continueProcessin = true;
+			if (reportProgress != null)
 			{
-				backgroundWorker.ReportProgress(startPercent + (int)(lengthPercent * .2));
+				reportProgress(.2, "", out continueProcessin);
 			}
 
 			//ImageIO.SaveImageData("test part plate 0.png", partPlate);
@@ -195,9 +195,9 @@ namespace MatterHackers.MatterControl
 			{
 				graphics2D.Render(PlatingHelper.PolygonToPathStorage(polygon), new RGBA_Bytes(rand.Next(128, 255), rand.Next(128, 255), rand.Next(128, 255)));
 			}
-			if (backgroundWorker != null)
+			if (reportProgress != null)
 			{
-				backgroundWorker.ReportProgress(startPercent + (int)(lengthPercent * .50));
+				reportProgress(.5, "", out continueProcessin);
 			}
 			//ImageIO.SaveImageData("test part plate 2.png", partPlate);
 
@@ -242,9 +242,9 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (backgroundWorker != null)
+			if (reportProgress != null)
 			{
-				backgroundWorker.ReportProgress(startPercent + (int)(lengthPercent));
+				reportProgress(.8, "", out continueProcessin);
 			}
 
 			for (int i = 0; i < discreteMeshes.Count(); i++)

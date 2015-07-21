@@ -50,6 +50,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
@@ -248,7 +249,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			buttonRightPanelDisabledCover.Visible = true;
 		}
 
-		private void InsertTextNow(string text)
+		private async void InsertTextNow(string text)
 		{
 			if (text.Length > 0)
 			{
@@ -259,15 +260,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				BackgroundWorker insertTextBackgroundWorker = null;
-				insertTextBackgroundWorker = new BackgroundWorker();
-				insertTextBackgroundWorker.WorkerReportsProgress = true;
+				await Task.Run(() => insertTextBackgroundWorker_DoWork(text));
 
-				insertTextBackgroundWorker.DoWork += new DoWorkEventHandler(insertTextBackgroundWorker_DoWork);
-				insertTextBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
-				insertTextBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(insertTextBackgroundWorker_RunWorkerCompleted);
-
-				insertTextBackgroundWorker.RunWorkerAsync(text);
+				UnlockEditControls();
+				PullMeshDataFromAsynchLists();
+				saveButton.Visible = true;
+				saveAndExitButton.Visible = true;
+				// now set the selection to the new copy
+				SelectedMeshGroupIndex = 0;
 			}
 		}
 
@@ -395,16 +395,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			base.OnMouseUp(mouseEvent);
 		}
 
-		private void insertTextBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void insertTextBackgroundWorker_DoWork(string currentText)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 
 			asynchMeshGroups.Clear();
 			asynchMeshGroupTransforms.Clear();
 			asynchPlatingDatas.Clear();
 
-			string currentText = (string)e.Argument;
 			TypeFacePrinter printer = new TypeFacePrinter(currentText, new StyledTypeFace(boldTypeFace, 12));
 			Vector2 size = printer.GetSize(currentText);
 			double centerOffset = -size.x / 2;
@@ -432,7 +430,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					{
 						continueProcessing = true;
 						int nextPercent = (int)((currentRatioDone + ratioPerMeshGroup * progress0To1) * 100);
-						backgroundWorker.ReportProgress(nextPercent);
+						processingProgressControl.PercentComplete = nextPercent;
 					});
 
 					currentRatioDone += ratioPerMeshGroup;
@@ -440,7 +438,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					PlatingHelper.PlaceMeshGroupOnBed(asynchMeshGroups, asynchMeshGroupTransforms, newIndex);
 				}
 
-				backgroundWorker.ReportProgress((i + 1) * 95 / currentText.Length);
+				processingProgressControl.PercentComplete = ((i + 1) * 95 / currentText.Length);
 			}
 
 			SetWordSpacing(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
@@ -452,17 +450,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				CreateUnderline(asynchMeshGroups, asynchMeshGroupTransforms, asynchPlatingDatas);
 			}
 
-			backgroundWorker.ReportProgress(95);
-		}
-
-		private void insertTextBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			UnlockEditControls();
-			PullMeshDataFromAsynchLists();
-			saveButton.Visible = true;
-			saveAndExitButton.Visible = true;
-			// now set the selection to the new copy
-			SelectedMeshGroupIndex = 0;
+			processingProgressControl.PercentComplete = 95;
 		}
 
 		private void CreateUnderline(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms, List<PlatingMeshGroupData> platingDataList)
@@ -851,7 +839,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private bool partSelectButtonWasClicked = false;
 
-		private void MergeAndSavePartsToStl()
+		private async void MergeAndSavePartsToStl()
 		{
 			if (MeshGroups.Count > 0)
 			{
@@ -865,21 +853,30 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				// we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
 				PushMeshGroupDataToAsynchLists(true);
 
-				BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
-				mergeAndSavePartsBackgroundWorker.WorkerReportsProgress = true;
+				string fileName = "TextCreator_{0}".FormatWith(Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
+				string filePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-				mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
-				mergeAndSavePartsBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
-				mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
+				processingProgressControl.RatioComplete = 0;
+				await Task.Run(() => mergeAndSavePartsBackgroundWorker_DoWork(filePath));
 
-				mergeAndSavePartsBackgroundWorker.RunWorkerAsync();
+				PrintItem printItem = new PrintItem();
+
+				printItem.Name = string.Format("{0}", word);
+				printItem.FileLocation = Path.GetFullPath(filePath);
+
+				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+
+				// and save to the queue
+				QueueData.Instance.AddItem(printItemWrapper);
+
+				//Exit after save
+				UiThread.RunOnIdle(CloseOnIdle);
 			}
 		}
 
-		private void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void mergeAndSavePartsBackgroundWorker_DoWork(string filePath)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 			try
 			{
 				// push all the transforms into the meshes
@@ -887,27 +884,24 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				{
 					asynchMeshGroups[i].Transform(MeshGroupTransforms[i].TotalTransform);
 
-					int nextPercent = (i + 1) * 40 / asynchMeshGroups.Count;
-					backgroundWorker.ReportProgress(nextPercent);
+					processingProgressControl.RatioComplete = (double)i / asynchMeshGroups.Count * .1;
 				}
-
-				string fileName = "TextCreator_{0}".FormatWith(Path.ChangeExtension(Path.GetRandomFileName(), ".amf"));
-				string filePath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
 				List<MeshGroup> mergResults = new List<MeshGroup>();
 				mergResults.Add(new MeshGroup());
 				mergResults[0].Meshes.Add(new Mesh());
+				double meshGroupIndex = 0;
 				foreach (MeshGroup meshGroup in asynchMeshGroups)
 				{
 					foreach (Mesh mesh in meshGroup.Meshes)
 					{
+						processingProgressControl.RatioComplete = .1 + (double)meshGroupIndex / asynchMeshGroups.Count;
 						mergResults[0].Meshes[0] = CsgOperations.Union(mergResults[0].Meshes[0], mesh);
 					}
+					meshGroupIndex++;
 				}
 
 				MeshFileIo.Save(mergResults, filePath);
-
-				e.Result = filePath;
 			}
 			catch (System.UnauthorizedAccessException)
 			{
@@ -918,26 +912,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.".Localize(), "Unable to save".Localize());
 			}
-		}
-
-		private void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			string filePath = e.Result as string;
-			if (filePath != null)
-			{
-				PrintItem printItem = new PrintItem();
-
-				printItem.Name = string.Format("{0}", word);
-				printItem.FileLocation = Path.GetFullPath(filePath);
-
-				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
-
-				// and save to the queue
-				QueueData.Instance.AddItem(printItemWrapper);
-			}
-
-			//Exit after save
-			UiThread.RunOnIdle(CloseOnIdle);
 		}
 
 		private bool scaleQueueMenu_Click()
