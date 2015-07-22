@@ -32,6 +32,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.VersionManagement
 {
@@ -40,27 +41,27 @@ namespace MatterHackers.MatterControl.VersionManagement
 		public JsonResponseDictionary ResponseValues { get; set; }
 	}
 
-	public class ResponseSuccessEventArgs<T> : EventArgs
+	public class ResponseSuccessEventArgs<ResponseType> : EventArgs
 	{
-		public T ResponseItem { get; set; }
+		public ResponseType ResponseItem { get; set; }
 	}
 
-	public class WebRequestBase<T> where T : class 
+	public class WebRequestBase<ResponseType> where ResponseType : class 
 	{
 		protected string uri;
 		protected Dictionary<string, string> requestValues;
 
-		public event EventHandler<ResponseSuccessEventArgs<T>> RequestSucceeded;
+		public event EventHandler<ResponseSuccessEventArgs<ResponseType>> RequestSucceeded;
 
 		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
 
 		public event EventHandler RequestComplete;
 
-		protected void OnRequestSuceeded(T responseItem)
+		protected void OnRequestSuceeded(ResponseType responseItem)
 		{
 			if (RequestSucceeded != null)
 			{
-				RequestSucceeded(this, new ResponseSuccessEventArgs<T>() { ResponseItem = responseItem });
+				RequestSucceeded(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
 			}
 		}
 
@@ -86,7 +87,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			requestValues = new Dictionary<string, string>();
 		}
 		
-		protected virtual void SendRequest(object sender, DoWorkEventArgs e)
+		protected void SendRequest()
 		{
 			RequestManager requestManager = new RequestManager();
 			string jsonToSend = JsonConvert.SerializeObject(requestValues);
@@ -95,26 +96,28 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 			requestManager.SendPOSTRequest(uri, jsonToSend, "", "", false);
 
+			ResponseType responseItem = null;
+			JsonResponseDictionary errorResults = null;
+
 			if (requestManager.LastResponse != null)
 			{
 				try
 				{
-					e.Result = JsonConvert.DeserializeObject<T>(requestManager.LastResponse);
+					responseItem = JsonConvert.DeserializeObject<ResponseType>(requestManager.LastResponse);
 				}
 				catch
 				{
-					e.Result = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
+					errorResults = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
 				}
 			}
 
-			T responseItem = e.Result as T;
 			if (responseItem != null)
 			{
 				OnRequestSuceeded(responseItem);
 			}
 			else
 			{
-				OnRequestFailed(e.Result as JsonResponseDictionary);
+				OnRequestFailed(errorResults);
 			}
 
 			OnRequestComplete();
@@ -133,12 +136,9 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 		}
 
-		public virtual void Request()
+		public async void Request()
 		{
-			BackgroundWorker doRequestWorker = new BackgroundWorker();
-			doRequestWorker.DoWork += new DoWorkEventHandler(SendRequest);
-			//doRequestWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ProcessResponse);
-			doRequestWorker.RunWorkerAsync();
+			await Task.Run((Action)SendRequest);
 		}
 	}
 
