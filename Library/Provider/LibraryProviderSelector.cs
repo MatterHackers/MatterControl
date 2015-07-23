@@ -198,11 +198,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null)
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void AddItem(PrintItemWrapper itemToAdd)
 		{
 			throw new NotImplementedException();
@@ -238,11 +233,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 
 		public override void RemoveItem(int itemToRemoveIndex)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null)
 		{
 			throw new NotImplementedException();
 		}

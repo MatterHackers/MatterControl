@@ -35,6 +35,7 @@ using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
@@ -68,6 +69,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null)
+		{
+			foreach (string file in files)
+			{
+				AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(file), file), this));
+			}
+		}
+
 		// A key,value list that threads into the current collection looks like "key0,displayName0|key1,displayName1|key2,displayName2|...|keyN,displayNameN".
 		public List<ProviderLocatorNode> GetProviderLocator()
 		{
@@ -86,7 +95,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Abstract Methods
 
+		public abstract void AddItem(PrintItemWrapper itemToAdd);
+		
 		public abstract void Dispose();
+		
 		public abstract int CollectionCount { get; }
 
 		public abstract int ItemCount { get; }
@@ -101,10 +113,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void AddCollectionToLibrary(string collectionName);
 
-		public abstract void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null);
-
-		public abstract void AddItem(PrintItemWrapper itemToAdd);
-
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
 		public abstract Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex, ReportProgressRatio reportProgress = null);
@@ -116,8 +124,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public abstract void RemoveCollection(int collectionIndexToRemove);
 
 		public abstract void RemoveItem(int itemIndexToRemove);
-
-		public abstract void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null);
 
 		#endregion Abstract Methods
 

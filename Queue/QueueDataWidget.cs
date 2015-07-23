@@ -479,7 +479,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
 			{
-				LibraryDataView.CurrentLibraryProvider.AddItem(queueItem.PrintItemWrapper);
+				// TODO: put up a library chooser and let the user put it where they want
+				LibraryProviderSQLite.Instance.AddFilesToLibrary(new string[] {queueItem.PrintItemWrapper.FileLocation });
 			}
 		}
 

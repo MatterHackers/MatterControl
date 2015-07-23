@@ -152,18 +152,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null)
+		public override void AddItem(PrintItemWrapper itemToAdd)
 		{
 			string destPath = rootPath;
 
-			CopyAllFiles(files, destPath);
+			CopyFile(itemToAdd.FileLocation, destPath);
 
 			GetFilesAndCollectionsInCurrentDirectory();
-		}
-
-		public override void AddItem(PrintItemWrapper itemToAdd)
-		{
-			throw new NotImplementedException();
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -213,12 +208,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			GetFilesAndCollectionsInCurrentDirectory();
 		}
 
-		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
-		{
-			throw new NotImplementedException();
-		}
-
-		private static void CopyAllFiles(IList<string> files, string destPath)
+		private static void CopyFile(string file, string destPath)
 		{
 			// make sure the directory exists
 			try
@@ -230,45 +220,42 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			// save it to the root directory
-			foreach (string file in files)
+			string outputFileName = Path.Combine(destPath, Path.GetFileName(file));
+			// and copy the file
+			try
 			{
-				string outputFileName = Path.Combine(destPath, Path.GetFileName(file));
-				// and copy the file
-				try
+				if (!File.Exists(outputFileName))
 				{
-					if (!File.Exists(outputFileName))
-					{
-						File.Copy(file, outputFileName);
-					}
-					else // make a new file and append a number so that we are not destructive
-					{
-						string directory = Path.GetDirectoryName(outputFileName);
-						string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputFileName);
-						string extension = Path.GetExtension(outputFileName);
-						// get the filename without a number on the end
-						int lastSpaceIndex = fileNameWithoutExtension.LastIndexOf(' ');
-						if (lastSpaceIndex != -1)
-						{
-							int endingNumber;
-							// check if the last set of characters is a number
-							if (int.TryParse(fileNameWithoutExtension.Substring(lastSpaceIndex), out endingNumber))
-							{
-								fileNameWithoutExtension = fileNameWithoutExtension.Substring(0, lastSpaceIndex);
-							}
-						}
-						int numberToAppend = 2;
-						string fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
-						while (File.Exists(fileNameToUse))
-						{
-							numberToAppend++;
-							fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
-						}
-						File.Copy(file, fileNameToUse);
-					}
+					File.Copy(file, outputFileName);
 				}
-				catch (Exception e)
+				else // make a new file and append a number so that we are not destructive
 				{
+					string directory = Path.GetDirectoryName(outputFileName);
+					string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputFileName);
+					string extension = Path.GetExtension(outputFileName);
+					// get the filename without a number on the end
+					int lastSpaceIndex = fileNameWithoutExtension.LastIndexOf(' ');
+					if (lastSpaceIndex != -1)
+					{
+						int endingNumber;
+						// check if the last set of characters is a number
+						if (int.TryParse(fileNameWithoutExtension.Substring(lastSpaceIndex), out endingNumber))
+						{
+							fileNameWithoutExtension = fileNameWithoutExtension.Substring(0, lastSpaceIndex);
+						}
+					}
+					int numberToAppend = 2;
+					string fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
+					while (File.Exists(fileNameToUse))
+					{
+						numberToAppend++;
+						fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
+					}
+					File.Copy(file, fileNameToUse);
 				}
+			}
+			catch (Exception e)
+			{
 			}
 		}
 

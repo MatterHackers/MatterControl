@@ -252,15 +252,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LoadLibraryItems();
 		}
 
-		public override async void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null)
+		public override void AddItem(PrintItemWrapper itemToAdd)
 		{
-			if (files != null && files.Count > 0)
+			if (itemToAdd != null && itemToAdd.FileLocation != null)
 			{
 				// create enough info to show that we have items pending (maybe use names from this file list for them)
 				// refresh the display to show the pending items
 				//LibraryProvider.OnDataReloaded(null);
 
-				await Task.Run(() => loadFilesIntoLibraryBackgoundWorker_DoWork(files));
+				Task.Run(() => loadFilesIntoLibraryBackgoundWorker_DoWork(new string[] { itemToAdd.FileLocation }));
 
 				if (baseLibraryCollection != null)
 				{
@@ -268,12 +268,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					LibraryProvider.OnDataReloaded(null);
 				}
 			}
-		}
-
-		public override void AddItem(PrintItemWrapper itemToAdd)
-		{
-			throw new NotImplementedException();
-			LibraryProvider.OnDataReloaded(null);
 		}
 
 		public void AddItem(PrintItemWrapper item, int indexToInsert = -1)
@@ -359,11 +353,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			printItems.RemoveAt(itemToRemoveIndex);
 
 			LibraryProvider.OnDataReloaded(null);
-		}
-
-		public override void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath)
-		{
-			throw new NotImplementedException();
 		}
 
 		private static void AddStlOrGcode(LibraryProviderSQLite libraryToAddTo, string loadedFileName, string extension)
