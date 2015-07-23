@@ -497,7 +497,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool DoAddFileAfterCreatingEditData { get; set; }
 		public override void OnClosed(EventArgs e)
 		{
-			printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
+			if (printItemWrapper != null)
+			{
+				printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
+			}
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
