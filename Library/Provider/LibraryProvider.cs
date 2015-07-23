@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public abstract Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex, ReportProgressRatio reportProgress = null);
 
 		// TODO: make this asnyc
+		//public abstract Task<LibraryProvider> GetProviderForCollectionAsync(PrintItemCollection collection);
 		public abstract LibraryProvider GetProviderForCollection(PrintItemCollection collection);
 
 		public abstract void RemoveCollection(int collectionIndexToRemove);
@@ -148,6 +149,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			var printItemWrapper = GetPrintItemWrapperAsync(printItemIndex).Result;
 			return new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
+		}
+
+		public virtual int GetCollectionChildCollectionCount(int collectionIndex)
+		{
+			return GetProviderForCollection(GetCollectionItem(collectionIndex)).CollectionCount;
+		}
+
+		public virtual int GetCollectionItemCount(int collectionIndex)
+		{
+			return GetProviderForCollection(GetCollectionItem(collectionIndex)).ItemCount;
 		}
 	}
 

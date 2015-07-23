@@ -3397,3 +3397,12 @@ Translated:The folder you are trying to delete '{0}' is not empty. Would you lik
 English:Folder not Empty
 Translated:Folder not Empty
 
+English:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+
+English:Delete folder?
+Translated:Delete folder?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+

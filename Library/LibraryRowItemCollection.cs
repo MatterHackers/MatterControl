@@ -78,29 +78,28 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			throw new NotImplementedException();
 		}
 
-		private static string collectionNotEmtyMessage = "The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?".Localize();
-		private static string collectionNotEmtyTitle = "Folder not Empty".Localize();
-		private static string deleteNow = "Delete".Localize();
-		private static string doNotDelete = "Cancel".Localize();
+		private static readonly string collectionNotEmtyMessage = "The folder '{0}' is not empty.\n\nWould you like to delete it anyway?".Localize();
+		private static readonly string collectionNotEmtyTitle = "Delete folder?".Localize();
+		private static readonly string deleteNow = "Delete".Localize();
+		private static readonly string doNotDelete = "Cancel".Localize();
 
 		public override void RemoveFromCollection()
 		{
-			// TODO: make a progress display to show that we are retieving the collection content (to check if its empty).
-			using (LibraryProvider collectionProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForCollection(printItemCollection))
+			int collectionItemCollectionCount = LibraryDataView.CurrentLibraryProvider.GetCollectionChildCollectionCount(collectionIndex);
+			int collectionItemItemCount = LibraryDataView.CurrentLibraryProvider.GetCollectionItemCount(collectionIndex);
+
+			if (collectionItemCollectionCount > 0 || collectionItemItemCount > 0)
 			{
-				if (collectionProvider.ItemCount > 0 || collectionProvider.CollectionCount > 0)
+				string message = collectionNotEmtyMessage.FormatWith(LibraryDataView.CurrentLibraryProvider.GetCollectionItem(collectionIndex).Name);
+				UiThread.RunOnIdle(() =>
 				{
-					collectionNotEmtyMessage = collectionNotEmtyMessage.FormatWith(printItemCollection.Name);
-					UiThread.RunOnIdle(() =>
-					{
-						// Let the user know this collection is not empty and check if they want to delete it.
-						StyledMessageBox.ShowMessageBox(ProcessDialogResponse, collectionNotEmtyMessage, collectionNotEmtyTitle, StyledMessageBox.MessageType.YES_NO, deleteNow, doNotDelete);
-					});
-				}
-				else
-				{
-					LibraryDataView.CurrentLibraryProvider.RemoveCollection(collectionIndex);
-				}
+					// Let the user know this collection is not empty and check if they want to delete it.
+					StyledMessageBox.ShowMessageBox(ProcessDialogResponse, message, collectionNotEmtyTitle, StyledMessageBox.MessageType.YES_NO, deleteNow, doNotDelete);
+				});
+			}
+			else
+			{
+				LibraryDataView.CurrentLibraryProvider.RemoveCollection(collectionIndex);
 			}
 		}
 

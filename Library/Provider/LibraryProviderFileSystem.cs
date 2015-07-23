@@ -283,29 +283,41 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private void GetFilesAndCollectionsInCurrentDirectory()
 		{
 			currentDirectoryDirectories.Clear();
-			string[] directories = Directory.GetDirectories(Path.Combine(rootPath, currentDirectory));
-			foreach (string directoryName in directories)
+			try
 			{
-				if (keywordFilter.Trim() == string.Empty
-					|| Path.GetFileNameWithoutExtension(directoryName).Contains(keywordFilter))
+				string[] directories = Directory.GetDirectories(Path.Combine(rootPath, currentDirectory));
+				foreach (string directoryName in directories)
 				{
-					string subPath = directoryName.Substring(rootPath.Length + 1);
-					currentDirectoryDirectories.Add(subPath);
+					if (keywordFilter.Trim() == string.Empty
+						|| Path.GetFileNameWithoutExtension(directoryName).Contains(keywordFilter))
+					{
+						string subPath = directoryName.Substring(rootPath.Length + 1);
+						currentDirectoryDirectories.Add(subPath);
+					}
 				}
+			}
+			catch (Exception)
+			{
 			}
 
 			currentDirectoryFiles.Clear();
-			string[] files = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
-			foreach (string filename in files)
+			try
 			{
-				if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
+				string[] files = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
+				foreach (string filename in files)
 				{
-					if (keywordFilter.Trim() == string.Empty
-						|| Path.GetFileNameWithoutExtension(filename).Contains(keywordFilter))
+					if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
 					{
-						currentDirectoryFiles.Add(filename);
+						if (keywordFilter.Trim() == string.Empty
+							|| Path.GetFileNameWithoutExtension(filename).Contains(keywordFilter))
+						{
+							currentDirectoryFiles.Add(filename);
+						}
 					}
 				}
+			}
+			catch (Exception)
+			{
 			}
 
 			LibraryProvider.OnDataReloaded(null);
