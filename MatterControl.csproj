@@ -189,10 +189,7 @@
     <Compile Include="ConfigurationPage\PrinterConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
-    <Compile Include="PrinterCommunication\Io\PrinterIoAdapter.cs" />
-    <Compile Include="PrinterCommunication\Io\PrinterIoBase.cs" />
-    <Compile Include="PrinterCommunication\Io\PrinterIoGCodeFile.cs" />
-    <Compile Include="PrinterCommunication\Io\PrinterIoInjectionFifo.cs" />
+    <Compile Include="PrinterCommunication\Io\GCodeFileProxy.cs" />
     <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />

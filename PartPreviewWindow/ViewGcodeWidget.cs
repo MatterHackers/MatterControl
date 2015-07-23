@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (gCodeRenderer.GCodeFileToDraw != null)
 				{
-					gCodeRenderer.GCodeFileToDraw.GetFilamentUsedMm(ActiveSliceSettings.Instance.NozzleDiameter);
+					gCodeRenderer.GCodeFileToDraw.GetFilamentUsedMm(ActiveSliceSettings.Instance.FilamentDiameter);
 				}
 			}
 			catch (Exception)
