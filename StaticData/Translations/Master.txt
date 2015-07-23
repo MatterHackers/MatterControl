@@ -3214,7 +3214,7 @@ Translated:Extruder Wipe Temperature
 English:Bed Remove Part Temperature
 Translated:Bed Remove Part Temperature
 
-	English:The temperature the extruder will be when extruder wipes.
+English:The temperature the extruder will be when extruder wipes.
 Translated:The temperature the extruder will be when extruder wipes.
 
 English:The temperature the extruder will be when extruder wipes.
@@ -3405,4 +3405,22 @@ Translated:Delete folder?
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 Translated:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+
+English:Delete folder?
+Translated:Delete folder?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+
+English:Delete folder?
+Translated:Delete folder?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+
+English:Delete folder?
+Translated:Delete folder?
 
