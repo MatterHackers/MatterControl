@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "Library (local)";
+				return "Local Library";
 			}
 		}
 
