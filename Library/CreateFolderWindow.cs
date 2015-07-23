@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl
 	{
 		private Action<CreateFolderReturnInfo> functionToCallToCreateNamedFolder;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		private MHTextEditWidget textToAddWidget;
+		private MHTextEditWidget folderNameWidget;
 
 		public CreateFolderWindow(Action<CreateFolderReturnInfo> functionToCallToCreateNamedFolder)
 			: base(480, 180)
@@ -62,12 +62,12 @@ namespace MatterHackers.MatterControl
 			textBoxHeader.HAnchor = HAnchor.ParentLeft;
 
 			//Adds text box and check box to the above container
-			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Folder Name Here".Localize());
-			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
-			textToAddWidget.Margin = new BorderDouble(5);
+			folderNameWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Folder Name Here".Localize());
+			folderNameWidget.HAnchor = HAnchor.ParentLeftRight;
+			folderNameWidget.Margin = new BorderDouble(5);
 
 			middleRowContainer.AddChild(textBoxHeader);
-			middleRowContainer.AddChild(textToAddWidget);
+			middleRowContainer.AddChild(folderNameWidget);
 			middleRowContainer.AddChild(new HorizontalSpacer());
 			topToBottom.AddChild(middleRowContainer);
 
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 			buttonRow.AddChild(createFolderButton);
 
 			createFolderButton.Click += new EventHandler(createFolderButton_Click);
-			textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
+			folderNameWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 			//Adds Create and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -104,6 +104,18 @@ namespace MatterHackers.MatterControl
 			ShowAsSystemWindow();
 		}
 
+		bool firstDraw = true;
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (firstDraw)
+			{
+				folderNameWidget.Focus();
+
+				firstDraw = false;
+			}
+			base.OnDraw(graphics2D);
+		}
+
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)
 		{
 			SubmitForm();
@@ -116,7 +128,7 @@ namespace MatterHackers.MatterControl
 
 		private void SubmitForm()
 		{
-			string newName = textToAddWidget.ActualTextEditWidget.Text;
+			string newName = folderNameWidget.ActualTextEditWidget.Text;
 			if (newName != "")
 			{
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");

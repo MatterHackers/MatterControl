@@ -184,14 +184,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName), this);
 		}
 
-		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
+		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
 			return new LibraryProviderFileSystem(Path.Combine(rootPath, collection.Key), collection.Name, this);
 		}
 
-		public override void RemoveCollection(PrintItemCollection collectionToRemove)
+		public override void RemoveCollection(int collectionIndexToRemove)
 		{
-			string directoryPath = collectionToRemove.Key;
+			string directoryPath = Path.Combine(rootPath, currentDirectoryDirectories[collectionIndexToRemove]);
 			if (Directory.Exists(directoryPath))
 			{
 				Stopwatch time = Stopwatch.StartNew();
@@ -206,9 +206,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override void RemoveItem(PrintItemWrapper printItemWrapper)
+		public override void RemoveItem(int itemToRemoveIndex)
 		{
-			File.Delete(printItemWrapper.PrintItem.FileLocation);
+			string filePath = currentDirectoryFiles[itemToRemoveIndex];
+			File.Delete(filePath);
 			GetFilesAndCollectionsInCurrentDirectory();
 		}
 

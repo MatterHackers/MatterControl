@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return null;
 		}
 
-		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
+		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
 			return new LibraryProviderSQLite(collection, this);
 		}
@@ -337,26 +337,26 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LibraryProvider.OnDataReloaded(null);
 		}
 
-		public override void RemoveCollection(PrintItemCollection collectionToRemove)
+		public override void RemoveCollection(int collectionIndexToRemove)
 		{
-			collectionToRemove.Delete();
+			childCollections[collectionIndexToRemove].Delete();
 			LoadLibraryItems();
 			LibraryProvider.OnDataReloaded(null);
 		}
 
-		public override void RemoveItem(PrintItemWrapper printItemWrapper)
+		public override void RemoveItem(int itemToRemoveIndex)
 		{
-			int index = printItems.IndexOf(printItemWrapper);
-			if (index < 0)
+			if (itemToRemoveIndex < 0)
 			{
 				// It may be possible to have the same item in the remove list twice.
 				// so if it is not in the PrintItems then ignore it.
 				return;
 			}
-			printItems.RemoveAt(index);
-
+	
 			// and remove it from the data base
-			printItemWrapper.Delete();
+			printItems[itemToRemoveIndex].Delete();
+
+			printItems.RemoveAt(itemToRemoveIndex);
 
 			LibraryProvider.OnDataReloaded(null);
 		}

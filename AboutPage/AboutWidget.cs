@@ -72,10 +72,10 @@ namespace MatterHackers.MatterControl
 #if false // test
 			{
 				SystemWindow releaseNotes = new SystemWindow(640, 480);
-				string releaseNotesFile = Path.Combine("OEMSettings", "ReleaseNotesMini.html");
+				string releaseNotesFile = Path.Combine("OEMSettings", "ReleaseNotes.html");
 				string releaseNotesContent = StaticData.Instance.ReadAllText(releaseNotesFile);
 				HtmlWidget content = new HtmlWidget(releaseNotesContent, RGBA_Bytes.Black);
-				content.AddChild(new GuiWidget(HAnchor.None, VAnchor.ParentBottomTop));
+				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.ParentBottomTop));
 				content.VAnchor |= VAnchor.ParentTop;
 				content.BackgroundColor = RGBA_Bytes.White;
 				releaseNotes.AddChild(content);

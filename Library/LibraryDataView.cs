@@ -429,7 +429,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (parentProvider == null)
 				{
-					LibraryDataView.CurrentLibraryProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(printItemCollection);
+					LibraryDataView.CurrentLibraryProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
 				}
 				else
 				{
@@ -451,14 +451,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, this, provider.ParentLibraryProvider, GetThumbnailWidget(true, provider.ParentLibraryProvider, parent));
+				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(true, provider.ParentLibraryProvider, parent));
 				AddListItemToTopToBottom(queueItem);
 			}
 
 			for (int i = 0; i < provider.CollectionCount; i++)
 			{
 				PrintItemCollection item = provider.GetCollectionItem(i);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(item, this, null, GetThumbnailWidget(false, null, item));
+				LibraryRowItem queueItem = new LibraryRowItemCollection(item, i, this, null, GetThumbnailWidget(false, null, item));
 				AddListItemToTopToBottom(queueItem);
 			}
 

@@ -3391,3 +3391,9 @@ Translated:3D
 English:Update Status
 Translated:Update Status
 
+English:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+
+English:Folder not Empty
+Translated:Folder not Empty
+

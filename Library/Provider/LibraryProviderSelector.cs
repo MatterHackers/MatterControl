@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException("Print items are not allowed at the root level");
 		}
 
-		public override LibraryProvider GetProviderForItem(PrintItemCollection collection)
+		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
 			foreach (LibraryProvider libraryProvider in visibleProviders)
 			{
@@ -232,12 +232,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
-		public override void RemoveCollection(PrintItemCollection collectionToRemove)
+		public override void RemoveCollection(int collectionIndexToRemove)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void RemoveItem(PrintItemWrapper printItemWrapper)
+		public override void RemoveItem(int itemToRemoveIndex)
 		{
 			throw new NotImplementedException();
 		}
@@ -248,10 +248,5 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 
 		#endregion Overriden Abstract Methods
-
-		public static LibraryProvider GetProviderForItem(PrintItemWrapper printItemWrapper)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

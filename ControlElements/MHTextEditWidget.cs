@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (noContentFieldDescription != null)
 			{
-				if (Text == "" && !ContainsFocus)
+				if (Text == "" || !ContainsFocus)
 				{
 					noContentFieldDescription.Visible = true;
 				}
@@ -108,6 +108,11 @@ namespace MatterHackers.MatterControl
 			{
 				actuallTextEditWidget.Text = value;
 			}
+		}
+
+		public override bool Focus()
+		{
+			return actuallTextEditWidget.Focus();
 		}
 
 		public bool SelectAllOnFocus

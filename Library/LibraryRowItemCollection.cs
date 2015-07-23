@@ -48,10 +48,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		LibraryProvider parentProvider;
 		PrintItemCollection printItemCollection;
+		int collectionIndex;
 
-		public LibraryRowItemCollection(PrintItemCollection collection, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
+		public LibraryRowItemCollection(PrintItemCollection collection, int collectionIndex, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
+			this.collectionIndex = collectionIndex;
 			this.parentProvider = parentProvider;
 			this.printItemCollection = collection;
 			this.ItemName = printItemCollection.Name;
@@ -63,7 +65,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override bool Protected
 		{
-			get { throw new NotImplementedException(); }
+			get { return false; }
 		}
 
 		public override void Export()
@@ -76,14 +78,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			throw new NotImplementedException();
 		}
 
-		private static string collectionNotEmtyMessage = "The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?".Localize();
-		private static string collectionNotEmtyTitle = "Collection not Empty".Localize();
+		private static string collectionNotEmtyMessage = "The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?".Localize();
+		private static string collectionNotEmtyTitle = "Folder not Empty".Localize();
 		private static string deleteNow = "Delete".Localize();
-		private static string doNotDelete = "Do NOT Delete".Localize();
+		private static string doNotDelete = "Cancel".Localize();
 
 		public override void RemoveFromCollection()
 		{
-			using (LibraryProvider collectionProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(printItemCollection))
+			// TODO: make a progress display to show that we are retieving the collection content (to check if its empty).
+			using (LibraryProvider collectionProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForCollection(printItemCollection))
 			{
 				if (collectionProvider.ItemCount > 0 || collectionProvider.CollectionCount > 0)
 				{
@@ -96,7 +99,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				else
 				{
-					LibraryDataView.CurrentLibraryProvider.RemoveCollection(printItemCollection);
+					LibraryDataView.CurrentLibraryProvider.RemoveCollection(collectionIndex);
 				}
 			}
 		}
@@ -105,7 +108,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (messageBoxResponse)
 			{
-				LibraryDataView.CurrentLibraryProvider.RemoveCollection(printItemCollection);
+				LibraryDataView.CurrentLibraryProvider.RemoveCollection(collectionIndex);
 			}
 		}
 
@@ -150,7 +153,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (parentProvider == null)
 			{
-				LibraryDataView.CurrentLibraryProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForItem(printItemCollection);
+				LibraryDataView.CurrentLibraryProvider = LibraryDataView.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
 			}
 			else
 			{

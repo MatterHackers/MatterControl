@@ -109,11 +109,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex, ReportProgressRatio reportProgress = null);
 
-		public abstract LibraryProvider GetProviderForItem(PrintItemCollection collection);
+		// TODO: make this asnyc
+		public abstract LibraryProvider GetProviderForCollection(PrintItemCollection collection);
 
-		public abstract void RemoveCollection(PrintItemCollection collectionToRemove);
+		public abstract void RemoveCollection(int collectionIndexToRemove);
 
-		public abstract void RemoveItem(PrintItemWrapper printItemWrapper);
+		public abstract void RemoveItem(int itemIndexToRemove);
 
 		public abstract void SaveToLibrary(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroupsToSave, List<ProviderLocatorNode> providerSavePath = null);
 

@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl
 
 			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
 
-			VAnchor |= VAnchor.ParentBottomTop;
-			HAnchor |= HAnchor.ParentLeftRight;
+			VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+			HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 		}
 
 		public class WrappingTextWidget : GuiWidget
@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl
 					break;
 
 				default:
-					throw new NotImplementedException("Don't know what to do with {0}".FormatWith(elementState.TypeName));
+					throw new NotImplementedException("Don't know what to do with '{0}'".FormatWith(elementState.TypeName));
 			}
 		}
 

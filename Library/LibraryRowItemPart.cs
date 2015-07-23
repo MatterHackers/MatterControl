@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public async override void RemoveFromCollection()
 		{
-			LibraryDataView.CurrentLibraryProvider.RemoveItem(await this.GetPrintItemWrapperAsync());
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(itemIndex);
 		}
 
 		protected override SlideWidget GetItemActionButtons()
@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		protected async override void RemoveThisFromPrintLibrary()
 		{
 			// TODO: The LibraryProvider does not need a printitemwrapper to remove an item! Why not an interger like the others?
-			LibraryDataView.CurrentLibraryProvider.RemoveItem(await this.GetPrintItemWrapperAsync());
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(itemIndex);
 		}
 
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)

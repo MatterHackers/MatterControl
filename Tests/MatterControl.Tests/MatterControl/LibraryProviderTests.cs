@@ -81,7 +81,7 @@ namespace MatterControl.Tests
 			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapperAsync(0).Result;
 
 			// add an item works correctly
-			LibraryProvider subProvider = testProvider.GetProviderForItem(testProvider.GetCollectionItem(0));
+			LibraryProvider subProvider = testProvider.GetProviderForCollection(testProvider.GetCollectionItem(0));
 			dataReloaded = false;
 			//itemAdded = false;
 			string subPathAndFile = Path.Combine(createdDirectory, meshFileName);
@@ -103,14 +103,14 @@ namespace MatterControl.Tests
 			// remove item works
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			subProvider.RemoveItem(subProvider.GetPrintItemWrapperAsync(0).Result);
+			subProvider.RemoveItem(0);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(!File.Exists(subPathAndFile));
 
 			// remove collection gets rid of it
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			testProvider.RemoveCollection(testProvider.GetCollectionItem(0));
+			testProvider.RemoveCollection(0);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
@@ -155,14 +155,14 @@ namespace MatterControl.Tests
 			// remove item works
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			testProvider.RemoveItem(testProvider.GetPrintItemWrapperAsync(1).Result);
+			testProvider.RemoveItem(1);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(!NamedItemExists(fileNameWithExtension));
 
 			// remove collection gets rid of it
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			testProvider.RemoveCollection(testProvider.GetCollectionItem(0));
+			testProvider.RemoveCollection(0);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
