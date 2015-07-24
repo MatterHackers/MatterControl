@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,26 +27,61 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Localizations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
-namespace MatterHackers.MatterControl.PrintLibrary.Provider
+namespace MatterHackers.MatterControl.VersionManagement
 {
-	public class LibraryProviderPlugin
+	//To do - move this
+	internal class ContactFormRequest : WebRequestBase
 	{
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		public ContactFormRequest(string question, string details, string email, string firstName, string lastName)
 		{
-			throw new NotImplementedException();
+			requestValues["FirstName"] = firstName;
+			requestValues["LastName"] = lastName;
+			requestValues["Email"] = email;
+			requestValues["FeedbackType"] = "Question";
+			requestValues["Comment"] = string.Format("{0}\n{1}", question, details);
+			uri = "https://mattercontrol.appspot.com/api/1/submit-feedback";
 		}
 
-		public virtual ImageBuffer GetFolderImage()
+		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
 		{
-			return LibraryProvider.NormalFolderImage;
+			JsonResponseDictionary response = responseValues;
+		}
+
+		public override void Request()
+		{
+			//If the client token exists, use it, otherwise wait for client token before making request
+			if (ApplicationSettings.Instance.get("ClientToken") == null)
+			{
+				ClientTokenRequest request = new ClientTokenRequest();
+				request.RequestSucceeded += new EventHandler(onClientTokenRequestSucceeded);
+				request.Request();
+			}
+			else
+			{
+				onClientTokenReady();
+			}
+		}
+
+		private void onClientTokenRequestSucceeded(object sender, EventArgs e)
+		{
+			onClientTokenReady();
+		}
+
+		public void onClientTokenReady()
+		{
+			string clientToken = ApplicationSettings.Instance.get("ClientToken");
+			requestValues["ClientToken"] = clientToken;
+			if (clientToken != null)
+			{
+				base.Request();
+			}
 		}
 	}
 }

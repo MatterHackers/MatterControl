@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2014, Kevin Pope
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,26 +27,31 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.Localizations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
-namespace MatterHackers.MatterControl.PrintLibrary.Provider
+namespace MatterHackers.MatterControl.VersionManagement
 {
-	public class LibraryProviderPlugin
+	public class ClientTokenRequest : WebRequestBase
 	{
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		public ClientTokenRequest()
 		{
-			throw new NotImplementedException();
+			requestValues["RequestToken"] = "ekshdsd5d5ssss5kels";
+			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
+			uri = "https://mattercontrol.appspot.com/api/1/get-client-consumer-token";
 		}
 
-		public virtual ImageBuffer GetFolderImage()
+		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
 		{
-			return LibraryProvider.NormalFolderImage;
+			string clientToken = responseValues.get("ClientToken");
+			if (clientToken != null)
+			{
+				ApplicationSettings.Instance.set("ClientToken", clientToken);
+			}
 		}
 	}
 }

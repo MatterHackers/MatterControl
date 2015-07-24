@@ -39,6 +39,8 @@ using System.IO;
 using System.Linq;
 using MatterHackers.Agg.UI;
 using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
@@ -53,6 +55,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private event EventHandler unregisterEvents;
 
+		List<ImageBuffer> folderImagesForChildren = new List<ImageBuffer>();
+
 		private LibraryProviderSelector()
 			: base(null)
 		{
@@ -62,8 +66,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			// put in the sqlite provider
 			libraryProviders.Add(new LibraryProviderSQLite(null, this));
 
-			//#if __ANDROID__
-			//libraryProviders.Add(new LibraryProviderFileSystem(ApplicationDataStorage.Instance.PublicDataStoragePath, "Downloads", this.ProviderKey));
+			AddFolderImage("library_folder.png");
 
 			// Check for LibraryProvider factories and put them in the list too.
 			PluginFinder<LibraryProviderPlugin> libraryProviderPlugins = new PluginFinder<LibraryProviderPlugin>();
@@ -77,6 +80,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 
 				libraryProviders.Add(pluginProvider);
+				folderImagesForChildren.Add(libraryProviderPlugin.GetFolderImage());
 			}
 
 			// and any directory providers (sd card provider, etc...)
@@ -85,11 +89,24 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			if (Directory.Exists(downloadsDirectory))
 			{
 				libraryProviders.Add(new LibraryProviderFileSystem(downloadsDirectory, "Downloads", this));
+				AddFolderImage("download_folder.png");
 			}
 
 			this.FilterProviders();
 		}
 
+		private void AddFolderImage(string iconFileName)
+		{
+			string libraryIconPath = Path.Combine("Icons", "FileDialog", iconFileName);
+			ImageBuffer libraryFolderImage = new ImageBuffer();
+			StaticData.Instance.LoadImage(libraryIconPath, libraryFolderImage);
+			folderImagesForChildren.Add(libraryFolderImage);
+		}
+
+		public override ImageBuffer GetCollectionFolderImage(int collectionIndex)
+		{
+			return folderImagesForChildren[collectionIndex];
+		}
 
 		private void FilterProviders()
 		{

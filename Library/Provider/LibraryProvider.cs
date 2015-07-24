@@ -28,13 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Member Methods
 
-		public abstract bool Visible { get; }
-
 		public bool HasParent
 		{
 			get
@@ -66,6 +64,42 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 
 				return false;
+			}
+		}
+
+		public abstract bool Visible { get; }
+
+		static ImageBuffer normalFolderImage = null;
+		public static ImageBuffer NormalFolderImage
+		{
+			get
+			{
+				if (normalFolderImage == null)
+				{
+					string path = Path.Combine("Icons", "FileDialog", "folder.png");
+
+					normalFolderImage = new ImageBuffer();
+					StaticData.Instance.LoadImage(path, normalFolderImage);
+				}
+
+				return normalFolderImage;
+			}
+		}
+
+		static ImageBuffer upFolderImage = null;
+		public static ImageBuffer UpFolderImage
+		{
+			get
+			{
+				if (upFolderImage == null)
+				{
+					string path = Path.Combine("Icons", "FileDialog", "up_folder.png");
+
+					upFolderImage = new ImageBuffer();
+					StaticData.Instance.LoadImage(path, upFolderImage);
+				}
+
+				return upFolderImage;
 			}
 		}
 
@@ -95,10 +129,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Abstract Methods
 
-		public abstract void AddItem(PrintItemWrapper itemToAdd);
-		
-		public abstract void Dispose();
-		
 		public abstract int CollectionCount { get; }
 
 		public abstract int ItemCount { get; }
@@ -112,6 +142,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public abstract string ProviderKey { get; }
 
 		public abstract void AddCollectionToLibrary(string collectionName);
+
+		public abstract void AddItem(PrintItemWrapper itemToAdd);
+
+		public abstract void Dispose();
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
@@ -136,6 +170,27 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#endregion Static Methods
 
+		public virtual int GetCollectionChildCollectionCount(int collectionIndex)
+		{
+			return GetProviderForCollection(GetCollectionItem(collectionIndex)).CollectionCount;
+		}
+
+		public virtual int GetCollectionItemCount(int collectionIndex)
+		{
+			return GetProviderForCollection(GetCollectionItem(collectionIndex)).ItemCount;
+		}
+
+		public virtual ImageBuffer GetCollectionFolderImage(int collectionIndex)
+		{
+			return NormalFolderImage;
+		}
+
+		public virtual GuiWidget GetItemThumbnail(int printItemIndex)
+		{
+			var printItemWrapper = GetPrintItemWrapperAsync(printItemIndex).Result;
+			return new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
+		}
+
 		public virtual string GetPrintItemName(int itemIndex)
 		{
 			return "";
@@ -149,22 +204,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public virtual bool IsItemReadOnly(int itemIndex)
 		{
 			return false;
-		}
-
-		public virtual GuiWidget GetItemThumbnail(int printItemIndex)
-		{
-			var printItemWrapper = GetPrintItemWrapperAsync(printItemIndex).Result;
-			return new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-		}
-
-		public virtual int GetCollectionChildCollectionCount(int collectionIndex)
-		{
-			return GetProviderForCollection(GetCollectionItem(collectionIndex)).CollectionCount;
-		}
-
-		public virtual int GetCollectionItemCount(int collectionIndex)
-		{
-			return GetProviderForCollection(GetCollectionItem(collectionIndex)).ItemCount;
 		}
 	}
 
