@@ -31,11 +31,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.PolygonMesh;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -77,21 +74,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			directoryWatcher.EnableRaisingEvents = true;
 
 			GetFilesAndCollectionsInCurrentDirectory();
-		}
-
-		public override bool Visible
-		{
-			get { return true; }
-		}
-
-		public override void Dispose()
-		{
-			directoryWatcher.EnableRaisingEvents = false;
-
-			directoryWatcher.Changed -= DiretoryContentsChanged;
-			directoryWatcher.Created -= DiretoryContentsChanged;
-			directoryWatcher.Deleted -= DiretoryContentsChanged;
-			directoryWatcher.Renamed -= DiretoryContentsChanged;
 		}
 
 		public override int CollectionCount
@@ -142,6 +124,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override bool Visible
+		{
+			get { return true; }
+		}
+
 		public override void AddCollectionToLibrary(string collectionName)
 		{
 			string directoryPath = Path.Combine(rootPath, currentDirectory, collectionName);
@@ -161,6 +148,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			GetFilesAndCollectionsInCurrentDirectory();
 		}
 
+		public override void Dispose()
+		{
+			directoryWatcher.EnableRaisingEvents = false;
+
+			directoryWatcher.Changed -= DiretoryContentsChanged;
+			directoryWatcher.Created -= DiretoryContentsChanged;
+			directoryWatcher.Deleted -= DiretoryContentsChanged;
+			directoryWatcher.Renamed -= DiretoryContentsChanged;
+		}
+
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
 			string directoryName = currentDirectoryDirectories[collectionIndex];
@@ -175,7 +172,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex, ReportProgressRatio reportProgress = null)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
-			
+
 			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName), this);
 		}
 
@@ -192,7 +189,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				Stopwatch time = Stopwatch.StartNew();
 				Directory.Delete(directoryPath, true);
 				// Wait for up to some amount of time for the directory to be gone.
-				while (Directory.Exists(directoryPath) 
+				while (Directory.Exists(directoryPath)
 					&& time.ElapsedMilliseconds < 100)
 				{
 					Thread.Sleep(1); // make sure we are not eating all the cpu time.

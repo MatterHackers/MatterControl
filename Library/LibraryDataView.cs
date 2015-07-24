@@ -400,17 +400,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		protected GuiWidget GetThumbnailWidget(bool upFolder, LibraryProvider parentProvider, PrintItemCollection printItemCollection)
+		protected GuiWidget GetThumbnailWidget(LibraryProvider parentProvider, PrintItemCollection printItemCollection, ImageBuffer imageBuffer)
 		{
-			string path = Path.Combine("Icons", "FileDialog", "folder.png");
-			if (upFolder)
-			{
-				path = Path.Combine("Icons", "FileDialog", "upfolder.png");
-			}
-			
-			ImageBuffer imageBuffer = new ImageBuffer();
-			StaticData.Instance.LoadImage(path, imageBuffer);
-
 			Vector2 expectedSize = new Vector2((int)(50 * TextWidget.GlobalPointSizeScaleRatio), (int)(50 * TextWidget.GlobalPointSizeScaleRatio));
 			if (imageBuffer.Width != expectedSize.x)
 			{
@@ -451,14 +442,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(true, provider.ParentLibraryProvider, parent));
+				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
 				AddListItemToTopToBottom(queueItem);
 			}
 
 			for (int i = 0; i < provider.CollectionCount; i++)
 			{
 				PrintItemCollection item = provider.GetCollectionItem(i);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(item, i, this, null, GetThumbnailWidget(false, null, item));
+				LibraryRowItem queueItem = new LibraryRowItemCollection(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
 				AddListItemToTopToBottom(queueItem);
 			}
 

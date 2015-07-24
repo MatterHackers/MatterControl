@@ -3424,3 +3424,6 @@ Translated:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
 English:Delete folder?
 Translated:Delete folder?
 
+English:Cloud Library
+Translated:Cloud Library
+

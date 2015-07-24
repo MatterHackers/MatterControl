@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		public ResponseType ResponseItem { get; set; }
 	}
 
-	public class WebRequestBase<ResponseType> where ResponseType : class 
+	public class WebRequestBase<ResponseType> where ResponseType : class
 	{
 		protected string uri;
 		protected Dictionary<string, string> requestValues;
@@ -141,7 +141,6 @@ namespace MatterHackers.MatterControl.VersionManagement
 			await Task.Run((Action)SendRequest);
 		}
 	}
-
 
 	public class WebRequestBase
 	{
@@ -302,138 +301,6 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 
 			tempRequest.Request();
-		}
-	}
-
-	//To do - move this
-	internal class ContactFormRequest : WebRequestBase
-	{
-		public ContactFormRequest(string question, string details, string email, string firstName, string lastName)
-		{
-			requestValues["FirstName"] = firstName;
-			requestValues["LastName"] = lastName;
-			requestValues["Email"] = email;
-			requestValues["FeedbackType"] = "Question";
-			requestValues["Comment"] = string.Format("{0}\n{1}", question, details);
-			uri = "https://mattercontrol.appspot.com/api/1/submit-feedback";
-		}
-
-		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
-		{
-			JsonResponseDictionary response = responseValues;
-		}
-
-		public override void Request()
-		{
-			//If the client token exists, use it, otherwise wait for client token before making request
-			if (ApplicationSettings.Instance.get("ClientToken") == null)
-			{
-				RequestClientToken request = new RequestClientToken();
-				request.RequestSucceeded += new EventHandler(onClientTokenRequestSucceeded);
-				request.Request();
-			}
-			else
-			{
-				onClientTokenReady();
-			}
-		}
-
-		private void onClientTokenRequestSucceeded(object sender, EventArgs e)
-		{
-			onClientTokenReady();
-		}
-
-		public void onClientTokenReady()
-		{
-			string clientToken = ApplicationSettings.Instance.get("ClientToken");
-			requestValues["ClientToken"] = clientToken;
-			if (clientToken != null)
-			{
-				base.Request();
-			}
-		}
-	}
-
-	public class RequestClientToken : WebRequestBase
-	{
-		public RequestClientToken()
-		{
-			requestValues["RequestToken"] = "ekshdsd5d5ssss5kels";
-			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
-			uri = "https://mattercontrol.appspot.com/api/1/get-client-consumer-token";
-		}
-
-		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
-		{
-			string clientToken = responseValues.get("ClientToken");
-			if (clientToken != null)
-			{
-				ApplicationSettings.Instance.set("ClientToken", clientToken);
-			}
-		}
-	}
-
-	internal class RequestLatestVersion : WebRequestBase
-	{
-		public RequestLatestVersion()
-		{
-			string feedType = UserSettings.Instance.get("UpdateFeedType");
-			if (feedType == null)
-			{
-				feedType = "release";
-				UserSettings.Instance.set("UpdateFeedType", feedType);
-			}
-			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
-			requestValues["UpdateFeedType"] = feedType;
-			uri = "https://mattercontrol.appspot.com/api/1/get-current-release-version";
-		}
-
-		public override void Request()
-		{
-			//If the client token exists, use it, otherwise wait for client token before making request
-			if (ApplicationSettings.Instance.get("ClientToken") == null)
-			{
-				RequestClientToken request = new RequestClientToken();
-				request.RequestSucceeded += new EventHandler(onRequestSucceeded);
-				request.Request();
-			}
-			else
-			{
-				onClientTokenReady();
-			}
-		}
-
-		private void onRequestSucceeded(object sender, EventArgs e)
-		{
-			onClientTokenReady();
-		}
-
-		public void onClientTokenReady()
-		{
-			string clientToken = ApplicationSettings.Instance.get("ClientToken");
-			requestValues["ClientToken"] = clientToken;
-			if (clientToken != null)
-			{
-				base.Request();
-			}
-		}
-
-		public override void ProcessSuccessResponse(JsonResponseDictionary responseValues)
-		{
-			List<string> responseKeys = new List<string> { "CurrentBuildToken", "CurrentBuildNumber", "CurrentBuildUrl", "CurrentReleaseVersion", "CurrentReleaseDate" };
-			foreach (string key in responseKeys)
-			{
-				saveResponse(key, responseValues);
-			}
-		}
-
-		private void saveResponse(string key, JsonResponseDictionary responseValues)
-		{
-			string value = responseValues.get(key);
-			if (value != null)
-			{
-				ApplicationSettings.Instance.set(key, value);
-			}
 		}
 	}
 }
