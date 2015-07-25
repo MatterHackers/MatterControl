@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public bool isActivePrint = false;
 		LibraryProvider libraryProvider;
 		private int itemIndex;
+		double thumbnailWidth = 0;
 
 		public PrintItemWrapper printItemInstance = null;
 
@@ -63,6 +64,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public LibraryRowItemPart(LibraryProvider libraryProvider, int itemIndex, LibraryDataView libraryDataView, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
+			thumbnailWidth = thumbnailWidget.Width;
 			var widget = thumbnailWidget as IClickable;
 			if (widget != null)
 			{
@@ -99,16 +101,26 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		void ReportProgressRatio(double progress0To1, string processingState, out bool continueProcessing)
 		{
 			continueProcessing = true;
+			if (progress0To1 == 0)
+			{
+				processingProgressControl.Visible = false;
+			}
+			else
+			{
+				processingProgressControl.Visible = true;
+			}
+
 			processingProgressControl.RatioComplete = progress0To1;
 		}
 
 		ProgressBar processingProgressControl;
 		private void AddLoadingProgressBar()
 		{
-			processingProgressControl = new ProgressBar(ActiveTheme.Instance.SecondaryAccentColor, 10, 5);
-			processingProgressControl.BorderColor = new RGBA_Bytes();
+			processingProgressControl = new ProgressBar(ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5);
 			processingProgressControl.VAnchor = VAnchor.ParentBottom;
-			processingProgressControl.HAnchor = HAnchor.ParentLeftRight;
+			processingProgressControl.HAnchor = HAnchor.ParentLeft;
+			processingProgressControl.Margin = new BorderDouble(thumbnailWidth + 3, 3, 3, 3);
+			processingProgressControl.Visible = false;
 			this.AddChild(processingProgressControl);
 		}
 
@@ -262,7 +274,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
 			{
 				QueueData.Instance.AddItem(newItem, indexToInsert: 0);
-				QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
+				QueueData.Instance.SelectedIndex = 0;
 				PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
 			}
 			else
