@@ -42,7 +42,6 @@ using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -50,28 +49,22 @@ namespace MatterHackers.MatterControl
 {
 	public class PartThumbnailWidget : ClickWidget, IClickable
 	{
-		const int tooBigAndroid = 50000000;
-		const int tooBigDesktop = 250000000;
-
-		const int renderOrthoAndroid = 20000000;
-		const int renderOrthoDesktop = 100000000;
-
 		// all the color stuff
 		new public double BorderWidth = 0;
 
 		public RGBA_Bytes FillColor = new RGBA_Bytes(255, 255, 255);
-
 		public RGBA_Bytes HoverBackgroundColor = new RGBA_Bytes(0, 0, 0, 50);
-
 		protected double borderRadius = 0;
 
 		//Don't delete this - required for OnDraw
 		protected RGBA_Bytes HoverBorderColor = new RGBA_Bytes();
 
-		private static bool processingThumbnail = false;
-
+		private const int renderOrthoAndroid = 20000000;
+		private const int renderOrthoDesktop = 100000000;
+		private const int tooBigAndroid = 50000000;
+		private const int tooBigDesktop = 250000000;
 		private static string partExtension = ".png";
-
+		private static bool processingThumbnail = false;
 		private ImageBuffer buildingThumbnailImage = new Agg.Image.ImageBuffer();
 
 		private RGBA_Bytes normalBackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
@@ -130,6 +123,8 @@ namespace MatterHackers.MatterControl
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
+		public event EventHandler<StringEventArgs> DoneRendering;
+
 		private event EventHandler unregisterEvents;
 
 		public enum ImageSizes { Size50x50, Size115x115 };
@@ -162,6 +157,11 @@ namespace MatterHackers.MatterControl
 			{
 				return new Point2D(460, 460);
 			}
+		}
+
+		public static string GetImageFileName(PrintItemWrapper item)
+		{
+			return GetImageFileName(item.FileHashCode.ToString());
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -279,11 +279,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static string GetImageFileName(PrintItemWrapper item)
-		{
-			return GetImageFileName(item.FileHashCode.ToString());
-		}
-
 		private static string GetImageFileName(string stlHashCode)
 		{
 			EnsureCorrectPartExtension();
@@ -335,6 +330,16 @@ namespace MatterHackers.MatterControl
 			return RenderType.ORTHOGROPHIC;
 		}
 
+		private static bool Is32Bit()
+		{
+			if (IntPtr.Size == 4)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		private static ImageBuffer LoadImageFromDisk(PartThumbnailWidget thumbnailWidget, string stlHashCode)
 		{
 			ImageBuffer tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y, 32, new BlenderBGRA());
@@ -368,106 +373,116 @@ namespace MatterHackers.MatterControl
 			return folderToSaveThumbnailsTo;
 		}
 
-		private void CreateThumbnail(PartThumbnailWidget thumbnailWidget)
+		private void CreateThumbnail()
 		{
-			if (thumbnailWidget != null)
+			string stlHashCode = this.PrintItem.FileHashCode.ToString();
+
+			ImageBuffer bigRender = new ImageBuffer();
+			if (!File.Exists(this.PrintItem.FileLocation))
 			{
-				string stlHashCode = thumbnailWidget.PrintItem.FileHashCode.ToString();
+				return;
+			}
 
-				ImageBuffer bigRender = new ImageBuffer();
-				if (!File.Exists(thumbnailWidget.PrintItem.FileLocation))
-				{
-					return;
-				}
+			List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(this.PrintItem.FileLocation);
 
-				List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(thumbnailWidget.PrintItem.FileLocation);
+			RenderType renderType = GetRenderType(this.PrintItem.FileLocation);
 
-				RenderType renderType = GetRenderType(thumbnailWidget.PrintItem.FileLocation);
+			switch (renderType)
+			{
+				case RenderType.RAY_TRACE:
+					{
+						ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
+						tracer.DoTrace();
 
-				switch (renderType)
-				{
-					case RenderType.RAY_TRACE:
+						bigRender = tracer.destImage;
+					}
+					break;
+
+				case RenderType.PERSPECTIVE:
+					{
+						ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
+						this.thumbnailImage = new ImageBuffer(this.buildingThumbnailImage);
+						this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+
+						bigRender = new ImageBuffer(BigRenderSize.x, BigRenderSize.y, 32, new BlenderBGRA());
+
+						foreach (MeshGroup meshGroup in loadedMeshGroups)
 						{
-							ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
-							tracer.DoTrace();
-
-							bigRender = tracer.destImage;
-						}
-						break;
-
-					case RenderType.PERSPECTIVE:
-						{
-							ThumbnailTracer tracer = new ThumbnailTracer(loadedMeshGroups, BigRenderSize.x, BigRenderSize.y);
-							thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
-							thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-
-							bigRender = new ImageBuffer(BigRenderSize.x, BigRenderSize.y, 32, new BlenderBGRA());
-
-							foreach (MeshGroup meshGroup in loadedMeshGroups)
+							double minZ = double.MaxValue;
+							double maxZ = double.MinValue;
+							foreach (Mesh loadedMesh in meshGroup.Meshes)
 							{
-								double minZ = double.MaxValue;
-								double maxZ = double.MinValue;
-								foreach (Mesh loadedMesh in meshGroup.Meshes)
-								{
-									tracer.GetMinMaxZ(loadedMesh, ref minZ, ref maxZ);
-								}
-
-								foreach (Mesh loadedMesh in meshGroup.Meshes)
-								{
-									tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White, minZ, maxZ);
-								}
+								tracer.GetMinMaxZ(loadedMesh, ref minZ, ref maxZ);
 							}
 
-							if (bigRender == null)
+							foreach (Mesh loadedMesh in meshGroup.Meshes)
 							{
-								bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
+								tracer.DrawTo(bigRender.NewGraphics2D(), loadedMesh, RGBA_Bytes.White, minZ, maxZ);
 							}
 						}
-						break;
 
-					case RenderType.NONE:
-					case RenderType.ORTHOGROPHIC:
-
-						thumbnailWidget.thumbnailImage = new ImageBuffer(thumbnailWidget.buildingThumbnailImage);
-						thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-						bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, BigRenderSize);
 						if (bigRender == null)
 						{
-							bigRender = new ImageBuffer(thumbnailWidget.noThumbnailImage);
+							bigRender = new ImageBuffer(this.noThumbnailImage);
 						}
-						break;
-				}
+					}
+					break;
 
-				// and save it to disk
-				string imageFileName = GetImageFileName(stlHashCode);
+				case RenderType.NONE:
+				case RenderType.ORTHOGROPHIC:
 
-				if (partExtension == ".png")
-				{
-					ImageIO.SaveImageData(imageFileName, bigRender);
-				}
-				else
-				{
-					ImageTgaIO.SaveImageData(imageFileName, bigRender);
-				}
+					this.thumbnailImage = new ImageBuffer(this.buildingThumbnailImage);
+					this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+					bigRender = BuildImageFromMeshGroups(loadedMeshGroups, stlHashCode, BigRenderSize);
+					if (bigRender == null)
+					{
+						bigRender = new ImageBuffer(this.noThumbnailImage);
+					}
+					break;
+			}
 
-				ImageBuffer unScaledImage = new ImageBuffer(bigRender.Width, bigRender.Height, 32, new BlenderBGRA());
-				unScaledImage.NewGraphics2D().Render(bigRender, 0, 0);
-				// If the source image (the one we downloaded) is more than twice as big as our dest image.
-				while (unScaledImage.Width > Width * 2)
-				{
-					// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
-					// So we scale as many times as we need to to get the Image to be the right size.
-					// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
-					ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, new BlenderBGRA());
-					halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
-					unScaledImage = halfImage;
-				}
+			// and save it to disk
+			string imageFileName = GetImageFileName(stlHashCode);
 
-				thumbnailWidget.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
-				thumbnailWidget.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
-				thumbnailWidget.thumbnailImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, (double)thumbnailWidget.thumbnailImage.Width / unScaledImage.Width, (double)thumbnailWidget.thumbnailImage.Height / unScaledImage.Height);
+			if (partExtension == ".png")
+			{
+				ImageIO.SaveImageData(imageFileName, bigRender);
+			}
+			else
+			{
+				ImageTgaIO.SaveImageData(imageFileName, bigRender);
+			}
 
-				UiThread.RunOnIdle(thumbnailWidget.EnsureImageUpdated);
+			ImageBuffer unScaledImage = new ImageBuffer(bigRender.Width, bigRender.Height, 32, new BlenderBGRA());
+			unScaledImage.NewGraphics2D().Render(bigRender, 0, 0);
+			// If the source image (the one we downloaded) is more than twice as big as our dest image.
+			while (unScaledImage.Width > Width * 2)
+			{
+				// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
+				// So we scale as many times as we need to to get the Image to be the right size.
+				// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
+				ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, new BlenderBGRA());
+				halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
+				unScaledImage = halfImage;
+			}
+
+			this.thumbnailImage = new ImageBuffer((int)Width, (int)Height, 32, new BlenderBGRA());
+			this.thumbnailImage.NewGraphics2D().Clear(new RGBA_Bytes(255, 255, 255, 0));
+			this.thumbnailImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, (double)this.thumbnailImage.Width / unScaledImage.Width, (double)this.thumbnailImage.Height / unScaledImage.Height);
+
+			UiThread.RunOnIdle(this.EnsureImageUpdated);
+
+			OnDoneRendering();
+		}
+
+		private void OnDoneRendering()
+		{
+			string stlHashCode = this.PrintItem.FileHashCode.ToString();
+			string imageFileName = GetImageFileName(stlHashCode);
+
+			if (DoneRendering != null)
+			{
+				DoneRendering(this, new StringEventArgs(imageFileName));
 			}
 		}
 
@@ -482,6 +497,61 @@ namespace MatterHackers.MatterControl
 			thumbNailHasBeenCreated = false;
 			Invalidate();
 		}
+
+		private void LoadOrCreateThumbnail()
+		{
+			using (TimedLock.Lock(this, "TryLoad"))
+			{
+				if (!thumbNailHasBeenCreated)
+				{
+					if (SetImageFast())
+					{
+						thumbNailHasBeenCreated = true;
+						OnDoneRendering();
+					}
+					else
+					{
+						if (!processingThumbnail)
+						{
+							thumbNailHasBeenCreated = true;
+							processingThumbnail = true;
+							CreateThumbnail();
+							processingThumbnail = false;
+						}
+					}
+				}
+			}
+		}
+
+		private bool MeshIsTooBigToLoad(string fileLocation)
+		{
+			if (Is32Bit())
+			{
+				long estimatedMemoryUse = 0;
+				if (File.Exists(fileLocation))
+				{
+					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(fileLocation);
+
+					if (OsInformation.OperatingSystem == OSType.Android)
+					{
+						if (estimatedMemoryUse > tooBigAndroid)
+						{
+							return true;
+						}
+					}
+					else
+					{
+						if (estimatedMemoryUse > tooBigDesktop)
+						{
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
 		private void onEnter(object sender, EventArgs e)
 		{
 			HoverBorderColor = new RGBA_Bytes(255, 255, 255);
@@ -581,7 +651,6 @@ namespace MatterHackers.MatterControl
 
 				UiThread.RunOnIdle(this.EnsureImageUpdated);
 				return true;
-				//GetRenderType(thumbnailWidget.PrintItem.FileLocation);
 			}
 
 			string stlHashCode = this.PrintItem.FileHashCode.ToString();
@@ -613,69 +682,6 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(this.EnsureImageUpdated);
 
 			return true;
-		}
-
-		private static bool Is32Bit()
-		{
-			if (IntPtr.Size == 4)
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		private bool MeshIsTooBigToLoad(string fileLocation)
-		{
-			if (Is32Bit())
-			{
-				long estimatedMemoryUse = 0;
-				if (File.Exists(fileLocation))
-				{
-					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(fileLocation);
-
-					if (OsInformation.OperatingSystem == OSType.Android)
-					{
-						if (estimatedMemoryUse > tooBigAndroid)
-						{
-							return true;
-						}
-					}
-					else
-					{
-						if (estimatedMemoryUse > tooBigDesktop)
-						{
-							return true;
-						}
-					}
-				}
-			}
-
-			return false;
-		}
-
-		private void LoadOrCreateThumbnail()
-		{
-			using (TimedLock.Lock(this, "TryLoad"))
-			{
-				if (!thumbNailHasBeenCreated)
-				{
-					if (SetImageFast())
-					{
-						thumbNailHasBeenCreated = true;
-					}
-					else
-					{
-						if (!processingThumbnail)
-						{
-							thumbNailHasBeenCreated = true;
-							processingThumbnail = true;
-							CreateThumbnail(this);
-							processingThumbnail = false;
-						}
-					}
-				}
-			}
 		}
 	}
 }
