@@ -64,6 +64,8 @@ namespace MatterControl.Tests
 			Thread.Sleep(3000); // wait for the library to finish initializing
 
 			LibraryProviderFileSystem testProvider = new LibraryProviderFileSystem(pathToMesh, "TestPath", null);
+			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
+
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
 			Assert.IsTrue(testProvider.ItemCount == 1, "Start with a new database for these tests.");
 
@@ -82,6 +84,7 @@ namespace MatterControl.Tests
 
 			// add an item works correctly
 			LibraryProvider subProvider = testProvider.GetProviderForCollection(testProvider.GetCollectionItem(0));
+			subProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 			dataReloaded = false;
 			//itemAdded = false;
 			string subPathAndFile = Path.Combine(createdDirectory, meshFileName);
@@ -121,6 +124,7 @@ namespace MatterControl.Tests
 		{
 			Datastore.Instance.Initialize();
 			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null);
+			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 			Thread.Sleep(3000); // wait for the library to finish initializing
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
 			Assert.IsTrue(testProvider.ItemCount == 1, "Start with a new database for these tests.");
@@ -174,8 +178,6 @@ namespace MatterControl.Tests
 			meshPathAndFileName = Path.Combine(pathToMesh, meshFileName);
 
 			dataReloaded = false;
-
-			LibraryProvider.DataReloaded.RegisterEvent((sender, e) => { dataReloaded = true; }, ref unregisterEvents);
 		}
 
 		[TearDown]

@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private void FilterProviders()
 		{
 			this.visibleProviders = libraryProviders.Where(p => p.Visible).ToList();
-			LibraryProvider.OnDataReloaded(null);
+			OnDataReloaded(null);
 		}
 
 		public void CloudSyncStatusChanged(object sender, EventArgs eventArgs)

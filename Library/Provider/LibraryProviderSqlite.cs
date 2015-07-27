@@ -265,7 +265,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				if (baseLibraryCollection != null)
 				{
 					LoadLibraryItems();
-					LibraryProvider.OnDataReloaded(null);
+					OnDataReloaded(null);
 				}
 			}
 		}
@@ -328,14 +328,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				childCollections.AddRange(collections);
 			}
 
-			LibraryProvider.OnDataReloaded(null);
+			OnDataReloaded(null);
 		}
 
 		public override void RemoveCollection(int collectionIndexToRemove)
 		{
 			childCollections[collectionIndexToRemove].Delete();
 			LoadLibraryItems();
-			LibraryProvider.OnDataReloaded(null);
+			OnDataReloaded(null);
 		}
 
 		public override void RemoveItem(int itemToRemoveIndex)
@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			printItems.RemoveAt(itemToRemoveIndex);
 
-			LibraryProvider.OnDataReloaded(null);
+			OnDataReloaded(null);
 		}
 
 		private static void AddStlOrGcode(LibraryProviderSQLite libraryToAddTo, string loadedFileName, string extension)

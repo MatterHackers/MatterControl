@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 			}
 
-			LibraryProvider.OnDataReloaded(null);
+			OnDataReloaded(null);
 		}
 
 		private string GetPathFromLocator(List<ProviderLocatorNode> providerLocator)

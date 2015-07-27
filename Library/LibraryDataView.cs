@@ -64,8 +64,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public static RootedObjectEventHandler ChangedCurrentLibraryProvider = new RootedObjectEventHandler();
 
+		private static LibraryDataView libraryDataViewInstance = null;
+
 		public LibraryDataView()
 		{
+			if (libraryDataViewInstance != null)
+			{
+				throw new Exception("There should only ever be one of these, Lars.");
+			}
+			libraryDataViewInstance = this;
+
 			// set the display attributes
 			{
 				this.AnchorAll();
@@ -83,7 +91,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddAllItems();
 
 			this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
-			LibraryProvider.DataReloaded.RegisterEvent(LibraryDataReloaded, ref unregisterEvents);
 		}
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
@@ -110,10 +117,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (currentLibraryProvider != value)
 				{
+					// unhook the update we were getting
+					currentLibraryProvider.DataReloaded -= libraryDataViewInstance.LibraryDataReloaded;
+					// and hook the new one
+					value.DataReloaded += libraryDataViewInstance.LibraryDataReloaded;
+
 					bool isChildOfCurrent = value.ParentLibraryProvider == currentLibraryProvider;
 
 					// Dispose of all children below this one.
-					while (!isChildOfCurrent && currentLibraryProvider != value && currentLibraryProvider.ParentLibraryProvider != null)
+					while (!isChildOfCurrent && currentLibraryProvider != value
+						&& currentLibraryProvider.ParentLibraryProvider != null)
 					{
 						LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
 						currentLibraryProvider.Dispose();
@@ -314,11 +327,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnClosed(EventArgs e)
 		{
+			currentLibraryProvider.DataReloaded -= LibraryDataReloaded;
+
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);
 			}
 			base.OnClosed(e);
+			libraryDataViewInstance = null;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)

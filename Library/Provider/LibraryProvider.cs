@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public abstract class LibraryProvider : IDisposable
 	{
-		public static RootedObjectEventHandler DataReloaded = new RootedObjectEventHandler();
+		public event EventHandler DataReloaded;
 		private LibraryProvider parentLibraryProvider = null;
 
 		public LibraryProvider(LibraryProvider parentLibraryProvider)
@@ -163,9 +163,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#region Static Methods
 
-		public static void OnDataReloaded(EventArgs eventArgs)
+		public void OnDataReloaded(EventArgs eventArgs)
 		{
-			DataReloaded.CallEvents(null, eventArgs);
+			if (DataReloaded != null)
+			{
+				DataReloaded(null, eventArgs);
+			}
 		}
 
 		#endregion Static Methods
