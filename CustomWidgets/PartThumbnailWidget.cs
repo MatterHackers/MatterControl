@@ -136,15 +136,17 @@ namespace MatterHackers.MatterControl
 			get { return printItem; }
 			set
 			{
-				if (printItem != null)
+				if (PrintItem != null)
 				{
-					printItem.FileHasChanged -= item_FileHasChanged;
+					PrintItem.FileHasChanged -= item_FileHasChanged;
 				}
+				
 				printItem = value;
+				
 				thumbNailHasBeenCreated = false;
-				if (printItem != null)
+				if (PrintItem != null)
 				{
-					printItem.FileHasChanged += item_FileHasChanged;
+					PrintItem.FileHasChanged += item_FileHasChanged;
 				}
 			}
 		}
@@ -170,9 +172,10 @@ namespace MatterHackers.MatterControl
 			{
 				unregisterEvents(this, null);
 			}
-			if (printItem != null)
+
+			if (PrintItem != null)
 			{
-				printItem.FileHasChanged -= item_FileHasChanged;
+				PrintItem.FileHasChanged -= item_FileHasChanged;
 			}
 			base.OnClosed(e);
 		}
@@ -477,12 +480,15 @@ namespace MatterHackers.MatterControl
 
 		private void OnDoneRendering()
 		{
-			string stlHashCode = this.PrintItem.FileHashCode.ToString();
-			string imageFileName = GetImageFileName(stlHashCode);
-
-			if (DoneRendering != null)
+			if (PrintItem != null)
 			{
-				DoneRendering(this, new StringEventArgs(imageFileName));
+				string stlHashCode = this.PrintItem.FileHashCode.ToString();
+				string imageFileName = GetImageFileName(stlHashCode);
+
+				if (DoneRendering != null)
+				{
+					DoneRendering(this, new StringEventArgs(imageFileName));
+				}
 			}
 		}
 
@@ -582,7 +588,7 @@ namespace MatterHackers.MatterControl
 
 		private bool SetImageFast()
 		{
-			if (this.printItem == null)
+			if (this.PrintItem == null)
 			{
 				this.thumbnailImage = new ImageBuffer(this.noThumbnailImage);
 				this.Invalidate();

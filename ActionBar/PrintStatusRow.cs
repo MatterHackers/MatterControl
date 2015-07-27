@@ -113,7 +113,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public override void OnClosed(EventArgs e)
 		{
-			activePrintPreviewImage.PrintItem.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
+			if (activePrintPreviewImage.PrintItem != null)
+			{
+				activePrintPreviewImage.PrintItem.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
+			}
 			if (unregisterEvents != null)
 			{
 				unregisterEvents(this, null);

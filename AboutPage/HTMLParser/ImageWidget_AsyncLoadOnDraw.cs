@@ -52,6 +52,9 @@ namespace MatterHackers.MatterControl
 		bool startedLoad = false;
 		string uriToLoad;
 
+		IRecieveBlenderByte scalingBlender = new BlenderBGRA();
+		public void SetScalingBlender(IRecieveBlenderByte blender) { scalingBlender = blender; }
+
 		public ImageWidget_AsyncLoadOnDraw(ImageBuffer image, string uriToLoad)
 			: base(image)
 		{
@@ -89,7 +92,7 @@ namespace MatterHackers.MatterControl
 				// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
 				// So we scale as many times as we need to to get the Image to be the right size.
 				// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
-				ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, new BlenderBGRA());
+				ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, scalingBlender);
 				halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
 				unScaledImage = halfImage;
 			}
