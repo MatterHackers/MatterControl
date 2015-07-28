@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			string sourceDir = Path.Combine(rootPath, currentDirectoryDirectories[collectionIndexToRename]);
 			if (Directory.Exists(sourceDir))
 			{
-				string destDir = Path.Combine(Path.GetDirectoryName(sourceDir), sourceDir);
+				string destDir = Path.Combine(Path.GetDirectoryName(sourceDir), newName);
 				Directory.Move(sourceDir, destDir);
 				Stopwatch time = Stopwatch.StartNew();
 				// Wait for up to some amount of time for the directory to be gone.

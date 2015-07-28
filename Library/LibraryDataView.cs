@@ -92,8 +92,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddChild(topToBottomItemList);
 
 			AddAllItems();
-
-			this.MouseLeaveBounds += new EventHandler(control_MouseLeaveBounds);
 		}
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
@@ -148,45 +146,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					this.editMode = value;
 					if (this.editMode == false)
 					{
-						this.ClearSelectedItems();
-					}
-				}
-			}
-		}
-
-		public int HoverIndex
-		{
-			get
-			{
-				return hoverIndex;
-			}
-			set
-			{
-				if (value < -1 || value >= topToBottomItemList.Children.Count)
-				{
-					throw new ArgumentOutOfRangeException();
-				}
-
-				if (value != hoverIndex)
-				{
-					hoverIndex = value;
-					OnHoverIndexChanged();
-
-					for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-					{
-						GuiWidget child = topToBottomItemList.Children[index];
-						if (index == HoverIndex)
+						while (SelectedItems.Count > 1)
 						{
-							((LibraryRowItem)child.Children[0]).IsHoverItem = true;
+							SelectedItems.RemoveAt(SelectedItems.Count - 1);
 						}
-						else if (((LibraryRowItem)child.Children[0]).IsHoverItem == true)
-						{
-							((LibraryRowItem)child.Children[0]).IsHoverItem = false;
-						}
-						child.Invalidate();
 					}
-
-					Invalidate();
 				}
 			}
 		}
@@ -225,62 +189,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public int SelectedIndex
-		{
-			get
-			{
-				return selectedIndex;
-			}
-			set
-			{
-				if (value < -1 || value >= topToBottomItemList.Children.Count)
-				{
-					throw new ArgumentOutOfRangeException();
-				}
-				selectedIndex = value;
-				OnSelectedIndexChanged();
-			}
-		}
-
-		public GuiWidget SelectedItem
-		{
-			get
-			{
-				if (SelectedIndex != -1)
-				{
-					return Children[SelectedIndex];
-				}
-
-				return null;
-			}
-
-			set
-			{
-				for (int i = 0; i < Children.Count; i++)
-				{
-					if (Children[SelectedIndex] == value)
-					{
-						SelectedIndex = i;
-					}
-				}
-			}
-		}
-
-		public PrintItemWrapper SelectedPart
-		{
-			get
-			{
-				if (SelectedIndex >= 0)
-				{
-					return LibraryDataView.CurrentLibraryProvider.GetPrintItemWrapperAsync(SelectedIndex).Result;
-				}
-				else
-				{
-					return null;
-				}
-			}
-		}
-
 		private int Count
 		{
 			get
@@ -298,10 +206,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			itemHolder.AddChild(child);
 			itemHolder.VAnchor = VAnchor.FitToChildren;
 			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
-
-			itemHolder.MouseEnterBounds += new EventHandler(itemToAdd_MouseEnterBounds);
-			itemHolder.MouseLeaveBounds += new EventHandler(itemToAdd_MouseLeaveBounds);
-			itemHolder.ParentChanged += new EventHandler(itemHolder_ParentChanged);
 		}
 
 		public void ClearSelected()
@@ -317,7 +221,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (LibraryRowItem item in SelectedItems)
 			{
-				item.isSelectedItem = false;
 				item.selectionCheckBox.Checked = false;
 			}
 			this.SelectedItems.Clear();
@@ -397,14 +300,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public void RemoveSelectedIndex()
-		{
-			if (SelectedIndex >= 0 && SelectedIndex < Count)
-			{
-				RemoveChild(SelectedIndex);
-			}
-		}
-
 		public void RemoveSelectedItems()
 		{
 			foreach (LibraryRowItem item in SelectedItems)
@@ -473,47 +368,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				LibraryRowItem queueItem = new LibraryRowItemPart(provider, i, this, thumbnailWidget);
 
 				AddListItemToTopToBottom(queueItem);
-			}
-		}
-
-		private void control_MouseLeaveBounds(object sender, EventArgs e)
-		{
-			HoverIndex = -1;
-		}
-
-		private void itemHolder_ParentChanged(object sender, EventArgs e)
-		{
-			FlowLayoutWidget itemHolder = (FlowLayoutWidget)sender;
-			itemHolder.MouseEnterBounds -= new EventHandler(itemToAdd_MouseEnterBounds);
-			itemHolder.MouseLeaveBounds -= new EventHandler(itemToAdd_MouseLeaveBounds);
-			itemHolder.ParentChanged -= new EventHandler(itemHolder_ParentChanged);
-		}
-
-		private void itemToAdd_MouseEnterBounds(object sender, EventArgs e)
-		{
-			GuiWidget widgetEntered = ((GuiWidget)sender);
-			for (int index = 0; index < topToBottomItemList.Children.Count; index++)
-			{
-				GuiWidget child = topToBottomItemList.Children[index];
-				if (child == widgetEntered)
-				{
-					HoverIndex = index;
-				}
-			}
-		}
-
-		private void itemToAdd_MouseLeaveBounds(object sender, EventArgs e)
-		{
-			GuiWidget widgetLeft = ((GuiWidget)sender);
-
-			if (SelectedIndex >= 0)
-			{
-				if (widgetLeft != topToBottomItemList.Children[SelectedIndex])
-				{
-					widgetLeft.BackgroundColor = new RGBA_Bytes();
-					widgetLeft.Invalidate();
-					Invalidate();
-				}
 			}
 		}
 

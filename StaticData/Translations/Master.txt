@@ -3427,3 +3427,15 @@ Translated:Delete folder?
 English:Cloud Library
 Translated:Cloud Library
 
+English:Rename
+Translated:Rename
+
+English:Rename Item:
+Translated:Rename Item:
+
+English:New Name
+Translated:New Name
+
+English:Enter New Name Here
+Translated:Enter New Name Here
+
