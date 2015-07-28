@@ -86,7 +86,20 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RenameItem(int itemIndexToRename, string newName)
 		{
-			throw new NotImplementedException();
+			string sourceFile = Path.Combine(rootPath, currentDirectoryFiles[itemIndexToRename]);
+			if (File.Exists(sourceFile))
+			{
+				string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), newName);
+				File.Move(sourceFile, destFile);
+				Stopwatch time = Stopwatch.StartNew();
+				// Wait for up to some amount of time for the directory to be gone.
+				while (File.Exists(destFile)
+					&& time.ElapsedMilliseconds < 100)
+				{
+					Thread.Sleep(1); // make sure we are not eating all the cpu time.
+				}
+				GetFilesAndCollectionsInCurrentDirectory();
+			}
 		}
 
 		public override int ItemCount
