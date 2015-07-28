@@ -168,6 +168,9 @@
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
     <Compile Include="DataStorage\Models.cs" />
+    <Compile Include="Library\RenameItemWindow.cs" />
+    <Compile Include="Library\Provider\LibraryProviderHistory.cs" />
+    <Compile Include="Library\Provider\LibraryProviderQueue.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />

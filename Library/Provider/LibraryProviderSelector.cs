@@ -49,8 +49,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private static LibraryProviderSelector instance = null;
 		private List<LibraryProvider> libraryProviders = new List<LibraryProvider>();
 
-		private List<LibraryProvider> visibleProviders;
-
 		internal LibraryProvider PurchasedLibrary { get; private set; }
 
 		private event EventHandler unregisterEvents;
@@ -63,9 +61,18 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
 
+			// This is test code for how to add these when we get to it
+			// put in the queue provider
+			libraryProviders.Add(new LibraryProviderQueue(null, this));
+			AddFolderImage("queue_folder.png");
+
+			// put in the queue provider
+			libraryProviders.Add(new LibraryProviderHistory(null, this));
+			AddFolderImage("queue_folder.png");
+			// */
+
 			// put in the sqlite provider
 			libraryProviders.Add(new LibraryProviderSQLite(null, this));
-
 			AddFolderImage("library_folder.png");
 
 			// Check for LibraryProvider factories and put them in the list too.
@@ -110,8 +117,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private void FilterProviders()
 		{
-			this.visibleProviders = libraryProviders.Where(p => p.Visible).ToList();
-			OnDataReloaded(null);
+		}
+
+		public override void RenameCollection(int collectionIndexToRename, string newName)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void RenameItem(int itemIndexToRename, string newName)
+		{
+			throw new NotImplementedException();
 		}
 
 		public void CloudSyncStatusChanged(object sender, EventArgs eventArgs)
@@ -156,7 +171,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return this.visibleProviders.Count;
+				return this.libraryProviders.Count;
 			}
 		}
 
@@ -212,17 +227,28 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void AddCollectionToLibrary(string collectionName)
 		{
-			throw new NotImplementedException();
+			UiThread.RunOnIdle(() =>
+			FileDialog.SelectFolderDialog(new SelectFolderDialogParams("Select Folder"), (SelectFolderDialogParams folderParams) =>
+			{
+				libraryProviders.Add(new LibraryProviderFileSystem(folderParams.FolderPath, collectionName, this));
+				AddFolderImage("folder.png");
+				UiThread.RunOnIdle(() => OnDataReloaded(null));
+			}));
 		}
 
 		public override void AddItem(PrintItemWrapper itemToAdd)
 		{
-			throw new NotImplementedException();
+			if (Directory.Exists(itemToAdd.FileLocation))
+			{
+				libraryProviders.Add(new LibraryProviderFileSystem(itemToAdd.FileLocation, Path.GetFileName(itemToAdd.FileLocation), this));
+				AddFolderImage("folder.png");
+				UiThread.RunOnIdle(() => OnDataReloaded(null));
+			}
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
-			LibraryProvider provider = visibleProviders[collectionIndex];
+			LibraryProvider provider = libraryProviders[collectionIndex];
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
@@ -233,7 +259,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			foreach (LibraryProvider libraryProvider in visibleProviders)
+			foreach (LibraryProvider libraryProvider in libraryProviders)
 			{
 				if (collection.Key == libraryProvider.ProviderKey)
 				{

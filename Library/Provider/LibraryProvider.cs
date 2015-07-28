@@ -157,7 +157,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void RemoveCollection(int collectionIndexToRemove);
 
+		public abstract void RenameCollection(int collectionIndexToRename, string newName);
+
 		public abstract void RemoveItem(int itemIndexToRemove);
+
+		public abstract void RenameItem(int itemIndexToRename, string newName);
 
 		#endregion Abstract Methods
 

@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public abstract void Edit();
 
 		public abstract void Export();
-
+		
 		public abstract void RemoveFromCollection();
 
 		protected abstract SlideWidget GetItemActionButtons();

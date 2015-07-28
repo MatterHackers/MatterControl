@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (noContentFieldDescription != null)
 			{
-				if (Text == "" || !ContainsFocus)
+				if (Text == "")
 				{
 					noContentFieldDescription.Visible = true;
 				}
