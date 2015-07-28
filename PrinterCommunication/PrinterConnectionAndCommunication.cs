@@ -1065,10 +1065,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 
 			double tempBeingSet = 0;
-			if (GCodeFile.GetFirstNumberAfter("S", foundStringEventArgs.LineToCheck, ref tempBeingSet))
+			if (GCodeFile.GetFirstNumberAfter("S", foundStringEventArgs.LineToCheck, out tempBeingSet))
 			{
 				double exturderIndex = 0;
-				if (GCodeFile.GetFirstNumberAfter("T", foundStringEventArgs.LineToCheck, ref exturderIndex))
+				if (GCodeFile.GetFirstNumberAfter("T", foundStringEventArgs.LineToCheck, out exturderIndex))
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					int extruderIndex0Based = Math.Min((int)exturderIndex, MAX_EXTRUDERS - 1);
@@ -1608,9 +1608,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			string lineToParse = foundStringEventArgs.LineToCheck;
 			Vector3 positionRead = Vector3.Zero;
-			GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref positionRead.x);
-			GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref positionRead.y);
-			GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref positionRead.z);
+			GCodeFile.GetFirstNumberAfter("X:", lineToParse, out positionRead.x);
+			GCodeFile.GetFirstNumberAfter("Y:", lineToParse, out positionRead.y);
+			GCodeFile.GetFirstNumberAfter("Z:", lineToParse, out positionRead.z);
 
 			// The first position read is the target position.
 			lastReportedPosition = positionRead;
@@ -1622,13 +1622,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (secondXPosition != -1)
 			{
 				Vector3 currentPositionRead = Vector3.Zero;
-				GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref currentPositionRead.x, secondXPosition - 1);
-				GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref currentPositionRead.y, secondXPosition - 1);
-				GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref currentPositionRead.z, secondXPosition - 1);
+				GCodeFile.GetFirstNumberAfter("X:", lineToParse, out currentPositionRead.x, secondXPosition - 1);
+				GCodeFile.GetFirstNumberAfter("Y:", lineToParse, out currentPositionRead.y, secondXPosition - 1);
+				GCodeFile.GetFirstNumberAfter("Z:", lineToParse, out currentPositionRead.z, secondXPosition - 1);
 
 				lastReportedPosition = currentPositionRead;
 			}
-			#endif
+#endif
 
 			if (currentDestination != positionRead)
 			{
@@ -1649,7 +1649,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			string temperatureString = foundStringEventArgs.LineToCheck;
 			{
 				double readExtruderTemp = 0;
-				if (GCodeFile.GetFirstNumberAfter("T:", temperatureString, ref readExtruderTemp))
+				if (GCodeFile.GetFirstNumberAfter("T:", temperatureString, out readExtruderTemp))
 				{
 					if (actualExtruderTemperature[0] != readExtruderTemp)
 					{
@@ -1661,7 +1661,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				for (int extruderIndex = 0; extruderIndex < MAX_EXTRUDERS; extruderIndex++)
 				{
 					string multiExtruderCheck = "T{0}:".FormatWith(extruderIndex);
-					if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, ref readExtruderTemp))
+					if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, out readExtruderTemp))
 					{
 						if (actualExtruderTemperature[extruderIndex] != readExtruderTemp)
 						{
@@ -1677,7 +1677,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			{
 				double readBedTemp = 0;
-				if (GCodeFile.GetFirstNumberAfter("B:", temperatureString, ref readBedTemp))
+				if (GCodeFile.GetFirstNumberAfter("B:", temperatureString, out readBedTemp))
 				{
 					if (actualBedTemperature != readBedTemp)
 					{
@@ -2099,7 +2099,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			lineBeingSent = lineBeingSent.ToUpper().Trim();
 			if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
 			{
-				if (GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref gcodeRequestedExtrusionPosition))
+				if (GCodeFile.GetFirstNumberAfter("E", lineBeingSent, out gcodeRequestedExtrusionPosition))
 				{
 					double delta = gcodeRequestedExtrusionPosition - previousGcodeRequestedExtrusionPosition;
 					if (extruderMode == PrinterMachineInstruction.MovementTypes.Relative)
@@ -2114,7 +2114,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else if (lineBeingSent.StartsWith("G92"))
 			{
-				if (GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref gcodeRequestedExtrusionPosition))
+				if (GCodeFile.GetFirstNumberAfter("E", lineBeingSent, out gcodeRequestedExtrusionPosition))
 				{
 					previousGcodeRequestedExtrusionPosition = gcodeRequestedExtrusionPosition;
 					currentActualExtrusionPosition = gcodeRequestedExtrusionPosition;
@@ -2132,7 +2132,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
 				{
 					double feedRate = 0;
-					if (GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate))
+					if (GCodeFile.GetFirstNumberAfter("F", lineBeingSent, out feedRate))
 					{
 						lineBeingSent = GCodeFile.ReplaceNumberAfter('F', lineBeingSent, feedRate * FeedRateRatio);
 					}
@@ -2403,12 +2403,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					newDestination = Vector3.Zero;
 				}
 
-				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.x);
-				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.y);
-				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.z);
+				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, out newDestination.x);
+				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, out newDestination.y);
+				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, out newDestination.z);
 
-				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentExtruderDestination);
-				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentFeedRate);
+				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, out currentExtruderDestination);
+				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, out currentFeedRate);
 
 				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 				{
