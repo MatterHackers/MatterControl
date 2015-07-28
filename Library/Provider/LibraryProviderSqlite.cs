@@ -88,12 +88,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RenameCollection(int collectionIndexToRename, string newName)
 		{
-			throw new NotImplementedException();
+			childCollections[collectionIndexToRename].Name = newName;
+			childCollections[collectionIndexToRename].Commit();
+			LoadLibraryItems();
 		}
 
 		public override void RenameItem(int itemIndexToRename, string newName)
 		{
-			throw new NotImplementedException();
+			printItems[itemIndexToRename].PrintItem.Name = newName;
+			printItems[itemIndexToRename].PrintItem.Commit();
+			LoadLibraryItems();
 		}
 
 		public static string StaticProviderKey
