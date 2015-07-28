@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		public bool isActivePrint = false;
 		LibraryProvider libraryProvider;
-		private int itemIndex;
+		public int ItemIndex { get; private set; }
 		double thumbnailWidth = 0;
 
 		public PrintItemWrapper printItemInstance = null;
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.ItemName = libraryProvider.GetPrintItemName(itemIndex);
 			this.libraryProvider = libraryProvider;
-			this.itemIndex = itemIndex;
+			this.ItemIndex = itemIndex;
 
 			CreateGuiElements();
 
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			get 
 			{
-				return libraryProvider.IsItemProtected(itemIndex);
+				return libraryProvider.IsItemProtected(ItemIndex);
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (printItemInstance == null)
 			{
-				printItemInstance = await libraryProvider.GetPrintItemWrapperAsync(this.itemIndex, ReportProgressRatio);
+				printItemInstance = await libraryProvider.GetPrintItemWrapperAsync(this.ItemIndex, ReportProgressRatio);
 			}
 
 			return printItemInstance;
@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public async override void RemoveFromCollection()
 		{
-			LibraryDataView.CurrentLibraryProvider.RemoveItem(itemIndex);
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(ItemIndex);
 		}
 
 		protected override SlideWidget GetItemActionButtons()
@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		protected async override void RemoveThisFromPrintLibrary()
 		{
 			// TODO: The LibraryProvider does not need a printitemwrapper to remove an item! Why not an interger like the others?
-			LibraryDataView.CurrentLibraryProvider.RemoveItem(itemIndex);
+			LibraryDataView.CurrentLibraryProvider.RemoveItem(ItemIndex);
 		}
 
 		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)

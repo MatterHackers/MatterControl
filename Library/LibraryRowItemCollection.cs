@@ -48,12 +48,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		LibraryProvider parentProvider;
 		PrintItemCollection printItemCollection;
-		int collectionIndex;
+		public int CollectionIndex { get; private set; }
 
 		public LibraryRowItemCollection(PrintItemCollection collection, int collectionIndex, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
-			this.collectionIndex = collectionIndex;
+			this.CollectionIndex = collectionIndex;
 			this.parentProvider = parentProvider;
 			this.printItemCollection = collection;
 			this.ItemName = printItemCollection.Name;
@@ -85,12 +85,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void RemoveFromCollection()
 		{
-			int collectionItemCollectionCount = LibraryDataView.CurrentLibraryProvider.GetCollectionChildCollectionCount(collectionIndex);
-			int collectionItemItemCount = LibraryDataView.CurrentLibraryProvider.GetCollectionItemCount(collectionIndex);
+			int collectionItemCollectionCount = LibraryDataView.CurrentLibraryProvider.GetCollectionChildCollectionCount(CollectionIndex);
+			int collectionItemItemCount = LibraryDataView.CurrentLibraryProvider.GetCollectionItemCount(CollectionIndex);
 
 			if (collectionItemCollectionCount > 0 || collectionItemItemCount > 0)
 			{
-				string message = collectionNotEmtyMessage.FormatWith(LibraryDataView.CurrentLibraryProvider.GetCollectionItem(collectionIndex).Name);
+				string message = collectionNotEmtyMessage.FormatWith(LibraryDataView.CurrentLibraryProvider.GetCollectionItem(CollectionIndex).Name);
 				UiThread.RunOnIdle(() =>
 				{
 					// Let the user know this collection is not empty and check if they want to delete it.
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 			else
 			{
-				LibraryDataView.CurrentLibraryProvider.RemoveCollection(collectionIndex);
+				LibraryDataView.CurrentLibraryProvider.RemoveCollection(CollectionIndex);
 			}
 		}
 
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (messageBoxResponse)
 			{
-				LibraryDataView.CurrentLibraryProvider.RemoveCollection(collectionIndex);
+				LibraryDataView.CurrentLibraryProvider.RemoveCollection(CollectionIndex);
 			}
 		}
 

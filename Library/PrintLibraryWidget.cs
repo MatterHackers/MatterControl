@@ -281,9 +281,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						if (renameItemWindow == null)
 						{
-							string currentName = "currentName";
+							LibraryRowItem rowItem = libraryDataView.SelectedItems[0];
+							LibraryRowItemPart partItem = rowItem as LibraryRowItemPart;
+							LibraryRowItemCollection collectionItem = rowItem as LibraryRowItemCollection;
+
+							string currentName = libraryDataView.SelectedItems[0].ItemName;
+
 							renameItemWindow = new RenameItemWindow(currentName, (returnInfo) =>
-							{								
+							{
+								if (partItem != null)
+								{
+									LibraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
+								}
+								else if (collectionItem != null)
+								{
+									LibraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
+								}
+
+								libraryDataView.SelectedItems.Clear();
 							});
 
 							renameItemWindow.Closed += (sender2, e2) => { renameItemWindow = null; };
