@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			base.OnDraw(graphics2D);
 
-			if (this.isSelectedItem)
+			if (this.IsSelectedItem)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = RGBA_Bytes.White;
@@ -318,15 +318,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 			else
 			{
-				if (this.isSelectedItem == false)
+				if (this.IsSelectedItem == false)
 				{
-					this.isSelectedItem = true;
 					this.selectionCheckBox.Checked = true;
 					libraryDataView.SelectedItems.Add(this);
 				}
 				else
 				{
-					this.isSelectedItem = false;
 					this.selectionCheckBox.Checked = false;
 					libraryDataView.SelectedItems.Remove(this);
 				}
@@ -411,12 +409,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (selectionCheckBox.Checked == true)
 			{
-				this.isSelectedItem = true;
 				libraryDataView.SelectedItems.Add(this);
 			}
 			else
 			{
-				this.isSelectedItem = false;
 				libraryDataView.SelectedItems.Remove(this);
 			}
 		}

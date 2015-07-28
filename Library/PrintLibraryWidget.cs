@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private static CreateFolderWindow createFolderWindow = null;
 		private static RenameItemWindow renameItemWindow = null;
 		private static TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
+		private static TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
 		private FlowLayoutWidget breadCrumbDisplayHolder;
@@ -162,8 +163,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				//allControls.AddChild(navigationPanel);
 				allControls.AddChild(searchPanel);
-				allControls.AddChild(breadCrumbDisplayHolder);
 				allControls.AddChild(itemOperationButtons);
+				allControls.AddChild(breadCrumbDisplayHolder);
 				libraryDataView = new LibraryDataView();
 				allControls.AddChild(libraryDataView);
 				allControls.AddChild(buttonPanel);
@@ -272,7 +273,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Button renameFromLibraryButton = editButtonFactory.Generate("Rename".Localize());
 				renameFromLibraryButton.Margin = new BorderDouble(3, 0);
-				editButtonsEnableData.Add(new ButtonEnableData(true, false));
+				editButtonsEnableData.Add(new ButtonEnableData(false, false));
 				itemOperationButtons.AddChild(renameFromLibraryButton);
 
 				renameFromLibraryButton.Click += (sender, e) =>
@@ -325,7 +326,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			editButtonsEnableData.Add(new ButtonEnableData(true, true));
 			itemOperationButtons.AddChild(addToQueueButton);
 
-			itemOperationButtons.Visible = false;
 			editButtonFactory.FixedWidth = oldWidth;
 		}
 
@@ -340,6 +340,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public void SetBreadCrumbs(object sender, EventArgs e)
 		{
+			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			navigationButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			navigationButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			navigationButtonFactory.FixedHeight = 22 * TextWidget.GlobalPointSizeScaleRatio;
+
 			breadCrumbDisplayHolder.CloseAndRemoveAllChildren();
 			LibraryProvider currentProvider = LibraryDataView.CurrentLibraryProvider;
 			bool first = true;
@@ -361,8 +367,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					breadCrumbDisplayHolder.AddChild(separator);
 				}
 
-				Button installUpdateLink = textImageButtonFactory.Generate(localCurrentProvider.Name);
-				installUpdateLink.Click += (sender2, e2) =>
+				Button gotoProviderButton = navigationButtonFactory.Generate(localCurrentProvider.Name);
+				gotoProviderButton.Click += (sender2, e2) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
@@ -370,7 +376,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						libraryDataView.RebuildView();
 					});
 				};
-				breadCrumbDisplayHolder.AddChild(installUpdateLink);
+				breadCrumbDisplayHolder.AddChild(gotoProviderButton);
 				first = false;
 			}
 
@@ -421,9 +427,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
 			libraryDataView.EditMode = true;
-			itemOperationButtons.Visible = true;
-			breadCrumbDisplayHolder.Visible = false;
-			SetEditButtonsStates();
 		}
 
 		private void leaveEditModeButtonClick(object sender, EventArgs e)
@@ -431,9 +434,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
 			libraryDataView.EditMode = false;
-			itemOperationButtons.Visible = false;
-			breadCrumbDisplayHolder.Visible = true;
-			SetEditButtonsStates();
 		}
 
 		private void searchButtonClick(object sender, EventArgs e)
@@ -463,7 +463,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			for(int buttonIndex=0; buttonIndex<itemOperationButtons.Children.Count; buttonIndex++)
 			{
-				bool enabledStateToSet = (selectedCount > 0 && libraryDataView.EditMode);
+				bool enabledStateToSet = (selectedCount > 0);
 				var child = itemOperationButtons.Children[buttonIndex];
 				var button = child as Button;
 				if (button != null)

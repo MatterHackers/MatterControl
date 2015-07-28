@@ -39,7 +39,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public abstract class LibraryRowItem : GuiWidget
 	{
-		public bool isSelectedItem = false;
+		public bool IsSelectedItem
+		{
+			get
+			{
+				return libraryDataView.SelectedItems.Contains(this);
+			}
+		}
 		public CheckBox selectionCheckBox;
 		public RGBA_Bytes WidgetBackgroundColor;
 		public RGBA_Bytes WidgetTextColor;
@@ -47,10 +53,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		protected TextWidget partLabel;
 		protected SlideWidget rightButtonOverlay;
 		protected GuiWidget selectionCheckBoxContainer;
-		private bool editMode = false;
 		private bool isHoverItem = false;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		private ConditionalClickWidget primaryClickContainer;
 		private GuiWidget thumbnailWidget;
 
 		private event EventHandler unregisterEvents;
@@ -62,18 +66,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		public string ItemName { get; protected set; }
-
-		public bool EditMode
-		{
-			get { return editMode; }
-			set
-			{
-				if (this.editMode != value)
-				{
-					this.editMode = value;
-				}
-			}
-		}
 
 		public bool IsHoverItem
 		{
@@ -110,6 +102,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (this.libraryDataView.EditMode)
 			{
+				this.selectionCheckBox.Checked = this.IsSelectedItem;
 				selectionCheckBoxContainer.Visible = true;
 				rightButtonOverlay.Visible = false;
 			}
@@ -120,7 +113,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			base.OnDraw(graphics2D);
 
-			if (this.isSelectedItem)
+			if (this.IsSelectedItem)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = RGBA_Bytes.White;
@@ -199,13 +192,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				primaryContainer.AddChild(primaryFlow);
 
-				// The ConditionalClickWidget supplies a user driven Enabled property based on a delegate of your choosing
-				primaryClickContainer = new ConditionalClickWidget(() => libraryDataView.EditMode);
-				primaryClickContainer.HAnchor = HAnchor.ParentLeftRight;
-				primaryClickContainer.VAnchor = VAnchor.ParentBottomTop;
-
-				primaryContainer.AddChild(primaryClickContainer);
-
 				rightButtonOverlay = GetItemActionButtons();
 				rightButtonOverlay.Visible = false;
 
@@ -236,7 +222,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void AddHandlers()
 		{
 			//ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
-			primaryClickContainer.Click += onLibraryItemClick;
 			GestureFling += (object sender, FlingEventArgs eventArgs) =>
 			{
 				if (!this.libraryDataView.EditMode)
@@ -252,7 +237,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				this.Invalidate();
 			};
-			//selectionCheckBox.CheckedStateChanged += selectionCheckBox_CheckedStateChanged;
 		}
 
 		private void onAddLinkClick(object sender, EventArgs e)
@@ -267,50 +251,40 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		private void onLibraryItemClick(object sender, EventArgs e)
-		{
-			if (this.libraryDataView.EditMode == false)
-			{
-				//UiThread.RunOnIdle((state) =>
-				//{
-				//    openPartView(state);
-				//});
-			}
-			else
-			{
-				if (this.isSelectedItem == false)
-				{
-					this.isSelectedItem = true;
-					this.selectionCheckBox.Checked = true;
-					libraryDataView.SelectedItems.Add(this);
-				}
-				else
-				{
-					this.isSelectedItem = false;
-					this.selectionCheckBox.Checked = false;
-					libraryDataView.SelectedItems.Remove(this);
-				}
-			}
-		}
-
 		private void onThemeChanged(object sender, EventArgs e)
 		{
 			//Set background and text color to new theme
 			this.Invalidate();
 		}
 
-		private void selectionCheckBox_CheckedStateChanged(object sender, EventArgs e)
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (selectionCheckBox.Checked == true)
+			if (this.libraryDataView.EditMode)
 			{
-				this.isSelectedItem = true;
-				libraryDataView.SelectedItems.Add(this);
+				if (this.IsSelectedItem)
+				{
+					libraryDataView.SelectedItems.Remove(this);
+				}
+				else
+				{
+					libraryDataView.SelectedItems.Add(this);
+				}
 			}
 			else
 			{
-				this.isSelectedItem = false;
-				libraryDataView.SelectedItems.Remove(this);
+				// we only have single selection
+				if (this.IsSelectedItem)
+				{
+					// It is aleady selected, do nothing.
+				}
+				else
+				{
+					libraryDataView.SelectedItems.Clear();
+					libraryDataView.SelectedItems.Add(this);
+				}
 			}
+
+			base.OnMouseDown(mouseEvent);
 		}
 
 		private void SetDisplayAttributes()
