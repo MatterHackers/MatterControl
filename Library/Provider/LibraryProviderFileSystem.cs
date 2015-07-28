@@ -84,6 +84,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override void RenameItem(int itemIndexToRename, string newName)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override int ItemCount
 		{
 			get
@@ -181,13 +186,31 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new LibraryProviderFileSystem(Path.Combine(rootPath, collection.Key), collection.Name, this);
 		}
 
+		public override void RenameCollection(int collectionIndexToRename, string newName)
+		{
+			string sourceDir = Path.Combine(rootPath, currentDirectoryDirectories[collectionIndexToRename]);
+			if (Directory.Exists(sourceDir))
+			{
+				string destDir = Path.Combine(Path.GetDirectoryName(sourceDir), sourceDir);
+				Directory.Move(sourceDir, destDir);
+				Stopwatch time = Stopwatch.StartNew();
+				// Wait for up to some amount of time for the directory to be gone.
+				while (Directory.Exists(destDir)
+					&& time.ElapsedMilliseconds < 100)
+				{
+					Thread.Sleep(1); // make sure we are not eating all the cpu time.
+				}
+				GetFilesAndCollectionsInCurrentDirectory();
+			}
+		}
+
 		public override void RemoveCollection(int collectionIndexToRemove)
 		{
 			string directoryPath = Path.Combine(rootPath, currentDirectoryDirectories[collectionIndexToRemove]);
 			if (Directory.Exists(directoryPath))
 			{
-				Stopwatch time = Stopwatch.StartNew();
 				Directory.Delete(directoryPath, true);
+				Stopwatch time = Stopwatch.StartNew();
 				// Wait for up to some amount of time for the directory to be gone.
 				while (Directory.Exists(directoryPath)
 					&& time.ElapsedMilliseconds < 100)

@@ -32,6 +32,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.PolygonMesh;
@@ -46,26 +47,22 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
-	public class LibraryProviderSQLite : LibraryProvider
+	public class LibraryProviderHistory : LibraryProvider
 	{
-		private static LibraryProviderSQLite instance = null;
+		private static LibraryProviderHistory instance = null;
 		private PrintItemCollection baseLibraryCollection;
 
 		private List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 		private string keywordFilter = string.Empty;
 
-		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
+		EventHandler unregisterEvent;
 
-		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
+		public LibraryProviderHistory(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
 			: base(parentLibraryProvider)
 		{
-			if (baseLibraryCollection == null)
-			{
-				baseLibraryCollection = GetRootLibraryCollection2(this);
-			}
-
 			this.baseLibraryCollection = baseLibraryCollection;
-			LoadLibraryItems();
+
+			//PrintHistoryData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
 		}
 
 		public static LibraryProvider Instance
@@ -74,7 +71,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderSQLite(null, null);
+					instance = new LibraryProviderHistory(null, null);
 				}
 
 				return instance;
@@ -83,7 +80,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override string GetPrintItemName(int itemIndex)
 		{
-			return printItems[itemIndex].Name;
+			return "item";
+			//return PrintHistoryData.Instance.GetHistoryItem(itemIndex);
 		}
 
 		public override void RenameCollection(int collectionIndexToRename, string newName)
@@ -100,7 +98,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "LibraryProviderSqliteKey";
+				return "LibraryProviderHistoryKey";
 			}
 		}
 
@@ -117,7 +115,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return childCollections.Count;
+				return 0;
 			}
 		}
 
@@ -125,7 +123,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return printItems.Count;
+				return 10;
+				//return PrintHistoryData.Instance.Count;
 			}
 		}
 
@@ -146,7 +145,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "Local Library";
+				return "Print History";
 			}
 		}
 
@@ -164,38 +163,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				return StaticProviderKey;
 			}
-		}
-
-		public static IEnumerable<PrintItem> GetAllPrintItemsRecursive()
-		{
-			// NOTE: We are making the assumption that everything is reference if it does not have a 0 in eth PrintItemCollectionID.
-			string query = "SELECT * FROM PrintItem WHERE PrintItemCollectionID != 0;";
-			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
-			return result;
-		}
-
-		static PrintItemCollection GetRootLibraryCollection2(LibraryProviderSQLite rootLibrary)
-		{
-			// Attempt to initialize the library from the Datastore if null
-			PrintItemCollection rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
-
-			// If the _library collection is still missing, create and populate it with default content
-			if (rootLibraryCollection == null)
-			{
-				rootLibraryCollection = new PrintItemCollection();
-				rootLibraryCollection.Name = "_library";
-				rootLibraryCollection.Commit();
-
-				// Preload library with Oem supplied list of default parts
-				string[] itemsToAdd = SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
-				if (itemsToAdd.Length > 0)
-				{
-					// Import any files sync'd to disk into the library, then add them to the queue
-					rootLibrary.AddFilesToLibrary(itemsToAdd);
-				}
-			}
-
-			return rootLibraryCollection;
 		}
 
 		static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
@@ -227,74 +194,20 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			printItemWrapper.OnFileHasChanged();
 		}
 
-		public static string[] SyncCalibrationFilesToDisk(List<string> calibrationPrintFileNames)
-		{
-			// Ensure the CalibrationParts directory exists to store/import the files from disk
-			string tempPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "calibration-parts");
-			Directory.CreateDirectory(tempPath);
-
-			// Build a list of temporary files that should be imported into the library
-			return calibrationPrintFileNames.Where(fileName =>
-			{
-				// Filter out items that already exist in the library
-				LibraryProviderSQLite rootLibrary = new LibraryProviderSQLite(null, null);
-				return rootLibrary.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
-			}).Select(fileName =>
-			{
-				// Copy calibration prints from StaticData to the filesystem before importing into the library
-				string tempFile = Path.Combine(tempPath, Path.GetFileName(fileName));
-				using (FileStream outstream = File.OpenWrite(tempFile))
-				using (Stream instream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "SampleParts", fileName)))
-				{
-					instream.CopyTo(outstream);
-				}
-
-				// Project the new filename to the output
-				return tempFile;
-			}).ToArray();
-		}
-
 		public override void AddCollectionToLibrary(string collectionName)
 		{
-			PrintItemCollection newCollection = new PrintItemCollection(collectionName, "");
-			newCollection.ParentCollectionID = baseLibraryCollection.Id;
-			newCollection.Commit();
-			LoadLibraryItems();
 		}
 
 		public override void AddItem(PrintItemWrapper itemToAdd)
 		{
-			if (itemToAdd != null && itemToAdd.FileLocation != null)
-			{
-				// create enough info to show that we have items pending (maybe use names from this file list for them)
-				// refresh the display to show the pending items
-				//LibraryProvider.OnDataReloaded(null);
-
-				Task.Run(() => loadFilesIntoLibraryBackgoundWorker_DoWork(new string[] { itemToAdd.FileLocation }));
-
-				if (baseLibraryCollection != null)
-				{
-					LoadLibraryItems();
-					OnDataReloaded(null);
-				}
-			}
+			throw new NotImplementedException();
+			//PrintHistoryData.Instance.AddItem(itemToAdd);
 		}
 
 		public void AddItem(PrintItemWrapper item, int indexToInsert = -1)
 		{
-			if (indexToInsert == -1)
-			{
-				indexToInsert = printItems.Count;
-			}
-			printItems.Insert(indexToInsert, item);
-			// Check if the collection we are adding to is the the currently visible collection.
-			List<ProviderLocatorNode> currentDisplayedCollection = GetProviderLocator();
-			if (currentDisplayedCollection.Count > 0 && currentDisplayedCollection[0].Key == LibraryProviderSQLite.StaticProviderKey)
-			{
-				//OnItemAdded(new IndexArgs(indexToInsert));
-			}
-			item.PrintItem.PrintItemCollectionID = baseLibraryCollection.Id;
-			item.PrintItem.Commit();
+			throw new NotImplementedException();
+			//PrintHistoryData.Instance.AddItem(item, indexToInsert);
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -304,68 +217,27 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index, ReportProgressRatio reportProgress = null)
 		{
-			if (index >= 0 && index < printItems.Count)
-			{
-				return printItems[index];
-			}
-
-			return null;
+			throw new NotImplementedException();
+			//return PrintHistoryData.Instance.GetPrintItemWrapper(index);
 		}
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			return new LibraryProviderSQLite(collection, this);
-		}
-
-		void LoadLibraryItems()
-		{
-			printItems.Clear();
-			IEnumerable<PrintItem> partFiles = GetLibraryItems(KeywordFilter);
-			if (partFiles != null)
-			{
-				foreach (PrintItem part in partFiles)
-				{
-					PrintItemWrapper item = new PrintItemWrapper(part, this);
-					printItems.Add(item);
-				}
-			}
-
-			childCollections.Clear();
-			GetChildCollections();
-			IEnumerable<PrintItemCollection> collections = GetChildCollections();
-			if(collections != null)
-			{
-				childCollections.AddRange(collections);
-			}
-
-			OnDataReloaded(null);
+			return new LibraryProviderHistory(collection, this);
 		}
 
 		public override void RemoveCollection(int collectionIndexToRemove)
 		{
-			childCollections[collectionIndexToRemove].Delete();
-			LoadLibraryItems();
-			OnDataReloaded(null);
 		}
 
 		public override void RemoveItem(int itemToRemoveIndex)
 		{
-			if (itemToRemoveIndex < 0)
-			{
-				// It may be possible to have the same item in the remove list twice.
-				// so if it is not in the PrintItems then ignore it.
-				return;
-			}
-	
-			// and remove it from the data base
-			printItems[itemToRemoveIndex].Delete();
-
-			printItems.RemoveAt(itemToRemoveIndex);
-
+			throw new NotImplementedException();
+			//PrintHistoryData.Instance.RemoveAt(itemToRemoveIndex);
 			OnDataReloaded(null);
 		}
 
-		private static void AddStlOrGcode(LibraryProviderSQLite libraryToAddTo, string loadedFileName, string extension)
+		private static void AddStlOrGcode(LibraryProviderHistory libraryToAddTo, string loadedFileName, string extension)
 		{
 			PrintItem printItem = new PrintItem();
 			printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);

@@ -68,6 +68,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public LibraryDataView()
 		{
+			currentLibraryProvider = LibraryProviderSelector.Instance;
+			currentLibraryProvider.DataReloaded += LibraryDataReloaded;
+
 			if (libraryDataViewInstance != null)
 			{
 				throw new Exception("There should only ever be one of these, Lars.");
@@ -97,7 +100,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public event HoverValueChangedEventHandler HoverValueChanged;
 
-		public event Action<object, EventArgs> SelectedValueChanged;
+		public event Action<object, EventArgs> SelectedIndexChanged;
 
 		private event EventHandler unregisterEvents;
 
@@ -105,11 +108,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			get
 			{
-				if (currentLibraryProvider == null)
-				{
-					currentLibraryProvider = LibraryProviderSelector.Instance;
-				}
-
 				return currentLibraryProvider;
 			}
 
@@ -371,9 +369,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public void OnSelectedIndexChanged()
 		{
 			Invalidate();
-			if (SelectedValueChanged != null)
+			if (SelectedIndexChanged != null)
 			{
-				SelectedValueChanged(this, null);
+				SelectedIndexChanged(this, null);
 			}
 		}
 

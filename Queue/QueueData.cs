@@ -204,6 +204,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return itemNames.ToArray();
 		}
 
+		public string GetItemName(int itemIndex)
+		{
+			return PrintItems[itemIndex].Name;
+		}
+
 		private bool gotBeginFileList = false;
 
 		private event EventHandler unregisterEvents;
