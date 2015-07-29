@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.FixedHeight = 22 * TextWidget.GlobalPointSizeScaleRatio;
+			navigationButtonFactory.Margin = new BorderDouble(10, 0);
 
 			breadCrumbDisplayHolder.CloseAndRemoveAllChildren();
 			LibraryProvider currentProvider = LibraryDataView.CurrentLibraryProvider;
@@ -363,11 +363,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
 					separator.VAnchor = VAnchor.ParentCenter;
-					separator.Margin = new BorderDouble(3, 0);
+					separator.Margin = new BorderDouble(0);
 					breadCrumbDisplayHolder.AddChild(separator);
 				}
 
 				Button gotoProviderButton = navigationButtonFactory.Generate(localCurrentProvider.Name);
+				gotoProviderButton.Margin = new BorderDouble(3, 0);
 				gotoProviderButton.Click += (sender2, e2) =>
 				{
 					UiThread.RunOnIdle(() =>

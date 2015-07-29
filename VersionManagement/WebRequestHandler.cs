@@ -48,21 +48,47 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 	public class WebRequestBase<ResponseType> where ResponseType : class
 	{
-		protected string uri;
 		protected Dictionary<string, string> requestValues;
-
-		public event EventHandler<ResponseSuccessEventArgs<ResponseType>> RequestSucceeded;
-
-		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
+		protected string uri;
+		public WebRequestBase()
+		{
+			requestValues = new Dictionary<string, string>();
+		}
 
 		public event EventHandler RequestComplete;
 
-		protected void OnRequestSuceeded(ResponseType responseItem)
+		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
+
+		public event EventHandler<ResponseSuccessEventArgs<ResponseType>> RequestSucceeded;
+		public static void Request(string requestUrl, string[] requestStringPairs)
 		{
-			if (RequestSucceeded != null)
+			WebRequestBase<ResponseType> tempRequest = new WebRequestBase<ResponseType>();
+
+			tempRequest.uri = requestUrl;
+			for (int i = 0; i < requestStringPairs.Length; i += 2)
 			{
-				RequestSucceeded(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
+				tempRequest.requestValues[requestStringPairs[i]] = requestStringPairs[i + 1];
 			}
+
+			tempRequest.Request();
+		}
+
+		public virtual void ProcessErrorResponse(JsonResponseDictionary responseValues)
+		{
+			string errorMessage = responseValues.get("ErrorMessage");
+			if (errorMessage != null)
+			{
+				Console.WriteLine(string.Format("Request Failed: {0}", errorMessage));
+			}
+			else
+			{
+				Console.WriteLine(string.Format("Request Failed: Unknown Reason"));
+			}
+		}
+
+		public async void Request()
+		{
+			await Task.Run((Action)SendRequest);
 		}
 
 		//This gets called after failure or success
@@ -82,11 +108,13 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 		}
 
-		public WebRequestBase()
+		protected void OnRequestSuceeded(ResponseType responseItem)
 		{
-			requestValues = new Dictionary<string, string>();
+			if (RequestSucceeded != null)
+			{
+				RequestSucceeded(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
+			}
 		}
-		
 		protected void SendRequest()
 		{
 			RequestManager requestManager = new RequestManager();
@@ -122,6 +150,34 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 			OnRequestComplete();
 		}
+	}
+
+	public class WebRequestBase
+	{
+		protected Dictionary<string, string> requestValues;
+		protected string uri;
+		public WebRequestBase()
+		{
+			requestValues = new Dictionary<string, string>();
+		}
+
+		public event EventHandler RequestComplete;
+
+		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
+
+		public event EventHandler RequestSucceeded;
+		public static void Request(string requestUrl, string[] requestStringPairs)
+		{
+			WebRequestBase tempRequest = new WebRequestBase();
+
+			tempRequest.uri = requestUrl;
+			for (int i = 0; i < requestStringPairs.Length; i += 2)
+			{
+				tempRequest.requestValues[requestStringPairs[i]] = requestStringPairs[i + 1];
+			}
+
+			tempRequest.Request();
+		}
 
 		public virtual void ProcessErrorResponse(JsonResponseDictionary responseValues)
 		{
@@ -136,29 +192,22 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 		}
 
-		public async void Request()
+		public virtual void ProcessSuccessResponse(JsonResponseDictionary responseValues)
 		{
-			await Task.Run((Action)SendRequest);
+			//Do Stuff
 		}
-	}
 
-	public class WebRequestBase
-	{
-		protected string uri;
-		protected Dictionary<string, string> requestValues;
-
-		public event EventHandler RequestSucceeded;
-
-		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
-
-		public event EventHandler RequestComplete;
-
-		protected void OnRequestSuceeded()
+		public virtual void Request()
 		{
-			if (RequestSucceeded != null)
-			{
-				RequestSucceeded(this, null);
-			}
+			BackgroundWorker doRequestWorker = new BackgroundWorker();
+			doRequestWorker.DoWork += new DoWorkEventHandler(SendRequest);
+			doRequestWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ProcessResponse);
+			doRequestWorker.RunWorkerAsync();
+		}
+
+		protected virtual string getJsonToSend()
+		{
+			return SerializeObject(requestValues);
 		}
 
 		//This gets called after failure or success
@@ -178,19 +227,36 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 		}
 
-		public WebRequestBase()
+		protected void OnRequestSuceeded()
 		{
-			requestValues = new Dictionary<string, string>();
+			if (RequestSucceeded != null)
+			{
+				RequestSucceeded(this, null);
+			}
 		}
-
-		protected virtual string getJsonToSend()
+		protected virtual void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
 		{
-			return SerializeObject(requestValues);
-		}
+			JsonResponseDictionary responseValues = e.Result as JsonResponseDictionary;
+			if (responseValues != null)
+			{
+				string requestSuccessStatus = responseValues.get("Status");
+				if (responseValues != null && requestSuccessStatus != null && requestSuccessStatus == "success")
+				{
+					ProcessSuccessResponse(responseValues);
+					OnRequestSuceeded();
+				}
+				else
+				{
+					ProcessErrorResponse(responseValues);
+					OnRequestFailed(responseValues);
+				}
 
-		protected string SerializeObject(object requestObject)
-		{
-			return Newtonsoft.Json.JsonConvert.SerializeObject(requestObject);
+				OnRequestComplete();
+			}
+			else
+			{
+				// Don't do anything, there was no respones.
+			}
 		}
 
 		protected virtual void SendRequest(object sender, DoWorkEventArgs e)
@@ -217,7 +283,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 					responseValues = JsonConvert.DeserializeObject<JsonResponseDictionary>(requestManager.LastResponse);
 
 					string errorMessage;
-					if(responseValues.TryGetValue("ErrorMessage", out errorMessage) && errorMessage.IndexOf("expired session") != -1)
+					if (responseValues.TryGetValue("ErrorMessage", out errorMessage) && errorMessage.IndexOf("expired session") != -1)
 					{
 						// TODO: Map more error conditions (beyond just session expired) to CredentialsInvalid status
 						UserSettings.Instance.set("CredentialsInvalid", "true");
@@ -239,68 +305,9 @@ namespace MatterHackers.MatterControl.VersionManagement
 			e.Result = responseValues;
 		}
 
-		protected virtual void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
+		protected string SerializeObject(object requestObject)
 		{
-			JsonResponseDictionary responseValues = e.Result as JsonResponseDictionary;
-			if (responseValues != null)
-			{
-				string requestSuccessStatus = responseValues.get("Status");
-				if (responseValues != null && requestSuccessStatus != null && requestSuccessStatus == "success")
-				{
-					ProcessSuccessResponse(responseValues);
-					OnRequestSuceeded();
-				}
-				else
-				{
-					ProcessErrorResponse(responseValues);
-					OnRequestFailed(responseValues);
-				}
-
-				OnRequestComplete();
-			}
-			else
-			{
-				// Don't do anything, there was no respones.
-			}
-		}
-
-		public virtual void ProcessSuccessResponse(JsonResponseDictionary responseValues)
-		{
-			//Do Stuff
-		}
-
-		public virtual void ProcessErrorResponse(JsonResponseDictionary responseValues)
-		{
-			string errorMessage = responseValues.get("ErrorMessage");
-			if (errorMessage != null)
-			{
-				Console.WriteLine(string.Format("Request Failed: {0}", errorMessage));
-			}
-			else
-			{
-				Console.WriteLine(string.Format("Request Failed: Unknown Reason"));
-			}
-		}
-
-		public virtual void Request()
-		{
-			BackgroundWorker doRequestWorker = new BackgroundWorker();
-			doRequestWorker.DoWork += new DoWorkEventHandler(SendRequest);
-			doRequestWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ProcessResponse);
-			doRequestWorker.RunWorkerAsync();
-		}
-
-		public static void Request(string requestUrl, string[] requestStringPairs)
-		{
-			WebRequestBase tempRequest = new WebRequestBase();
-
-			tempRequest.uri = requestUrl;
-			for (int i = 0; i < requestStringPairs.Length; i += 2)
-			{
-				tempRequest.requestValues[requestStringPairs[i]] = requestStringPairs[i + 1];
-			}
-
-			tempRequest.Request();
+			return Newtonsoft.Json.JsonConvert.SerializeObject(requestObject);
 		}
 	}
 }
