@@ -3,7 +3,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
@@ -14,14 +13,14 @@ namespace MatterHackers.MatterControl
 	public class SaveAsWindow : SystemWindow
 	{
 		private Action<SaveAsReturnInfo> functionToCallOnSaveAs;
+		private LibraryProvider selectedLibraryProvider;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
-		private LibraryProvider selectedLibraryProvider;
 
 		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, LibraryProvider startingLibraryProvider)
-			: base(480, 250)
+			: base(480, 450)
 		{
-			Title = "MatterControl - Save As";
+			Title = "MatterControl - " + "Save As".Localize();
 			AlwaysOnTopOfMain = true;
 
 			selectedLibraryProvider = startingLibraryProvider;
@@ -41,7 +40,7 @@ namespace MatterHackers.MatterControl
 
 			//Creates Text and adds into header
 			{
-				string saveAsLabel = "Save New Design to Queue".Localize() + ":";
+				string saveAsLabel = "Save New Design".Localize() + ":";
 				TextWidget elementHeader = new TextWidget(saveAsLabel, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				elementHeader.HAnchor = HAnchor.ParentLeftRight;
@@ -61,26 +60,56 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
-			string fileNameLabel = "Design Name".Localize();
-			TextWidget textBoxHeader = new TextWidget(fileNameLabel, pointSize: 12);
-			textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textBoxHeader.Margin = new BorderDouble(5);
-			textBoxHeader.HAnchor = HAnchor.ParentLeft;
+			// put in the area to pick the provider to save to
+			{
+				string providerToSaveToLabel = "Save Location".Localize();
+				TextWidget textBoxHeader = new TextWidget(providerToSaveToLabel, pointSize: 12);
+				textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				textBoxHeader.Margin = new BorderDouble(5);
+				textBoxHeader.HAnchor = HAnchor.ParentLeft;
 
-			string fileNameLabelFull = "Enter the name of your design.".Localize(); ;
-			TextWidget textBoxHeaderFull = new TextWidget(fileNameLabelFull, pointSize: 9);
-			textBoxHeaderFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textBoxHeaderFull.Margin = new BorderDouble(5);
-			textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
+				string chooseLocationLabelFull = "Choose the location to save to.".Localize(); ;
+				TextWidget textBoxHeaderFull = new TextWidget(chooseLocationLabelFull, pointSize: 9);
+				textBoxHeaderFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				textBoxHeaderFull.Margin = new BorderDouble(5);
+				textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
 
-			//Adds text box and check box to the above container
-			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize());
-			textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
-			textToAddWidget.Margin = new BorderDouble(5);
+				//Adds text box and check box to the above container
+				GuiWidget chooseWindow = new GuiWidget(10, 200);
+				chooseWindow.HAnchor = HAnchor.ParentLeftRight;
+				chooseWindow.Margin = new BorderDouble(5);
+				chooseWindow.BackgroundColor = RGBA_Bytes.White;
 
-			middleRowContainer.AddChild(textBoxHeader);
-			middleRowContainer.AddChild(textBoxHeaderFull);
-			middleRowContainer.AddChild(textToAddWidget);
+				middleRowContainer.AddChild(textBoxHeader);
+				middleRowContainer.AddChild(textBoxHeaderFull);
+				middleRowContainer.AddChild(chooseWindow);
+			}
+
+			// put in the area to type in the new name
+			{
+				string fileNameLabel = "Design Name".Localize();
+				TextWidget textBoxHeader = new TextWidget(fileNameLabel, pointSize: 12);
+				textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				textBoxHeader.Margin = new BorderDouble(5);
+				textBoxHeader.HAnchor = HAnchor.ParentLeft;
+
+				string fileNameLabelFull = "Enter the name of your design.".Localize(); ;
+				TextWidget textBoxHeaderFull = new TextWidget(fileNameLabelFull, pointSize: 9);
+				textBoxHeaderFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				textBoxHeaderFull.Margin = new BorderDouble(5);
+				textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
+
+				//Adds text box and check box to the above container
+				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize());
+				textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
+				textToAddWidget.Margin = new BorderDouble(5);
+				textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
+
+				middleRowContainer.AddChild(textBoxHeader);
+				middleRowContainer.AddChild(textBoxHeaderFull);
+				middleRowContainer.AddChild(textToAddWidget);
+			}
+
 			middleRowContainer.AddChild(new HorizontalSpacer());
 			topToBottom.AddChild(middleRowContainer);
 
@@ -98,7 +127,6 @@ namespace MatterHackers.MatterControl
 			buttonRow.AddChild(saveAsButton);
 
 			saveAsButton.Click += new EventHandler(saveAsButton_Click);
-			textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 			//Adds SaveAs and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -115,6 +143,8 @@ namespace MatterHackers.MatterControl
 			topToBottom.AddChild(buttonRow);
 
 			ShowAsSystemWindow();
+
+			UiThread.RunOnIdle(textToAddWidget.Focus);
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)
