@@ -212,6 +212,17 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			return false;
 		}
+
+		public LibraryProvider GetRootProvider()
+		{
+			LibraryProvider parent = this;
+			while (parent != null)
+			{
+				parent = parent.ParentLibraryProvider;
+			}
+
+			return parent;
+		}
 	}
 
 	public class ProviderLocatorNode

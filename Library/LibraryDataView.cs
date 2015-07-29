@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public LibraryDataView()
 		{
-			currentLibraryProvider = LibraryProviderSelector.Instance;
+			currentLibraryProvider = new LibraryProviderSelector();
 			currentLibraryProvider.DataReloaded += LibraryDataReloaded;
 
 			if (libraryDataViewInstance != null)

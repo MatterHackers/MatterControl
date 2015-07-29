@@ -339,7 +339,11 @@ namespace MatterHackers.MatterControl
 		public void SwitchToPurchasedLibrary()
 		{
 			// Switch to the purchased library
-			LibraryDataView.CurrentLibraryProvider = LibraryProviderSelector.Instance.PurchasedLibrary;
+			LibraryProviderSelector libraryProviderSelector  = LibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
+			if(libraryProviderSelector != null)
+			{
+				LibraryDataView.CurrentLibraryProvider = libraryProviderSelector.PurchasedLibrary;
+			}
 		}
 
 		public void ChangeCloudSyncStatus(bool userAuthenticated)

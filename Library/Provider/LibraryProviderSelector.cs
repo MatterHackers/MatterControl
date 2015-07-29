@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSelector : LibraryProvider
 	{
-		private static LibraryProviderSelector instance = null;
 		private List<LibraryProvider> libraryProviders = new List<LibraryProvider>();
 
 		internal LibraryProvider PurchasedLibrary { get; private set; }
@@ -55,7 +54,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		List<ImageBuffer> folderImagesForChildren = new List<ImageBuffer>();
 
-		private LibraryProviderSelector()
+		public LibraryProviderSelector()
 			: base(null)
 		{
 
@@ -146,28 +145,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			UiThread.RunOnIdle(FilterProviders, 1);
 		}
 
-		public static LibraryProviderSelector Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new LibraryProviderSelector();
-				}
-
-				return instance;
-			}
-		}
-
 		#region Overriden Abstract Methods
-
-		public static string LibraryProviderSelectorKey
-		{
-			get
-			{
-				return "ProviderSelectorKey";
-			}
-		}
 
 		public override int CollectionCount
 		{
@@ -223,7 +201,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return LibraryProviderSelectorKey;
+				return "ProviderSelectorKey";
 			}
 		}
 

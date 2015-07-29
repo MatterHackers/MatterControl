@@ -184,7 +184,7 @@
   {
     "SlicerConfigName": "external_perimeter_speed",
     "PresentationName": "Outside Perimeter",
-    "HelpText": "The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Perimeters speed.",
+    "HelpText": "The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.",
     "DataEditType": "DOUBLE_OR_PERCENT",
     "ExtraSettings": "mm/s or %"
   },

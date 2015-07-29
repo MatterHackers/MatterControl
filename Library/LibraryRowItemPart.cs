@@ -117,6 +117,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void AddLoadingProgressBar()
 		{
 			processingProgressControl = new ProgressBar(ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5);
+			processingProgressControl.BackgroundColor = RGBA_Bytes.White;
 			processingProgressControl.VAnchor = VAnchor.ParentBottom;
 			processingProgressControl.HAnchor = HAnchor.ParentLeft;
 			processingProgressControl.Margin = new BorderDouble(thumbnailWidth + 3, 3, 3, 3);
