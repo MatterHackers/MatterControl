@@ -61,15 +61,17 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
 
-			// This is test code for how to add these when we get to it
-			// put in the queue provider
-			libraryProviders.Add(new LibraryProviderQueue(null, this));
-			AddFolderImage("queue_folder.png");
+			if (false)
+			{
+				// This is test code for how to add these when we get to it
+				// put in the queue provider
+				libraryProviders.Add(new LibraryProviderQueue(null, this));
+				AddFolderImage("queue_folder.png");
 
-			// put in the queue provider
-			libraryProviders.Add(new LibraryProviderHistory(null, this));
-			AddFolderImage("queue_folder.png");
-			// */
+				// put in the queue provider
+				libraryProviders.Add(new LibraryProviderHistory(null, this));
+				AddFolderImage("queue_folder.png");
+			}
 
 			// put in the sqlite provider
 			libraryProviders.Add(new LibraryProviderSQLite(null, this));
