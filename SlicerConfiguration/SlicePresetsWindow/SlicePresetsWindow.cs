@@ -86,7 +86,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.RemoveAllChildren();
 			this.AddChild(slicePresetWidget);
 			this.Invalidate();
-		}
+
+            ApplicationController.Instance.ReloadAdvancedControlsPanel();		
+        }
 
 		public void ChangeToSlicePresetFromID(int collectionId)
 		{
