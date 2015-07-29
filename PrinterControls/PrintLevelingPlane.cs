@@ -82,9 +82,9 @@ namespace MatterHackers.MatterControl
 				&& lineBeingSent[2] == ' ')
 			{
 				double extruderDelta = 0;
-				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, out extruderDelta);
+				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
 				double feedRate = 0;
-				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, out feedRate);
+				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
 
 				string newLine = "G1 ";
 
@@ -94,9 +94,9 @@ namespace MatterHackers.MatterControl
 					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 					{
 						Vector3 relativeMove = Vector3.Zero;
-						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, out relativeMove.x);
-						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, out relativeMove.y);
-						GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, out relativeMove.z);
+						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
+						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
+						GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref relativeMove.z);
 						outPosition = PrintLevelingPlane.Instance.ApplyLevelingRotation(relativeMove);
 					}
 
