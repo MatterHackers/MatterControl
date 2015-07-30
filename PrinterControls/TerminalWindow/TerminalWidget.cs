@@ -141,6 +141,8 @@ namespace MatterHackers.MatterControl
 					manualCommandTextEdit.ActualTextEditWidget.EnterPressed += new KeyEventHandler(manualCommandTextEdit_EnterPressed);
 					manualCommandTextEdit.ActualTextEditWidget.KeyDown += new KeyEventHandler(manualCommandTextEdit_KeyDown);
 					manualEntryLayout.AddChild(manualCommandTextEdit);
+
+					UiThread.RunOnIdle(manualCommandTextEdit.Focus);
 				}
 
 				manualEntryTopToBottomLayout.AddChild(manualEntryLayout);

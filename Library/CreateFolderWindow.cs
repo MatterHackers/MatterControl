@@ -102,18 +102,7 @@ namespace MatterHackers.MatterControl
 			topToBottom.AddChild(buttonRow);
 
 			ShowAsSystemWindow();
-		}
-
-		bool firstDraw = true;
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (firstDraw)
-			{
-				folderNameWidget.Focus();
-
-				firstDraw = false;
-			}
-			base.OnDraw(graphics2D);
+			UiThread.RunOnIdle(folderNameWidget.Focus);
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)

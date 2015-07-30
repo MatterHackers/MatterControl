@@ -110,9 +110,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override bool Focus()
+		public override void Focus()
 		{
-			return actuallTextEditWidget.Focus();
+			actuallTextEditWidget.Focus();
 		}
 
 		public bool SelectAllOnFocus

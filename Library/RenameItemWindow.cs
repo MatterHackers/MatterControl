@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl
 	{
 		private Action<RenameItemReturnInfo> functionToCallToCreateNamedFolder;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		private MHTextEditWidget folderNameWidget;
+		private MHTextEditWidget saveAsNameWidget;
 
 		public class RenameItemReturnInfo
 		{
@@ -72,12 +72,12 @@ namespace MatterHackers.MatterControl
 			textBoxHeader.HAnchor = HAnchor.ParentLeft;
 
 			//Adds text box and check box to the above container
-			folderNameWidget = new MHTextEditWidget(currentItemName, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter New Name Here".Localize());
-			folderNameWidget.HAnchor = HAnchor.ParentLeftRight;
-			folderNameWidget.Margin = new BorderDouble(5);
+			saveAsNameWidget = new MHTextEditWidget(currentItemName, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter New Name Here".Localize());
+			saveAsNameWidget.HAnchor = HAnchor.ParentLeftRight;
+			saveAsNameWidget.Margin = new BorderDouble(5);
 
 			middleRowContainer.AddChild(textBoxHeader);
-			middleRowContainer.AddChild(folderNameWidget);
+			middleRowContainer.AddChild(saveAsNameWidget);
 			middleRowContainer.AddChild(new HorizontalSpacer());
 			topToBottom.AddChild(middleRowContainer);
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
 			buttonRow.AddChild(renameItemButton);
 
 			renameItemButton.Click += new EventHandler(renameItemButton_Click);
-			folderNameWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
+			saveAsNameWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 			//Adds Create and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -119,8 +119,11 @@ namespace MatterHackers.MatterControl
 		{
 			if (firstDraw)
 			{
-				folderNameWidget.Focus();
-				folderNameWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
+				UiThread.RunOnIdle(() =>
+				{
+					saveAsNameWidget.Focus();
+					saveAsNameWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
+				});
 
 				firstDraw = false;
 			}
@@ -139,7 +142,7 @@ namespace MatterHackers.MatterControl
 
 		private void SubmitForm()
 		{
-			string newName = folderNameWidget.ActualTextEditWidget.Text;
+			string newName = saveAsNameWidget.ActualTextEditWidget.Text;
 			if (newName != "")
 			{
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");

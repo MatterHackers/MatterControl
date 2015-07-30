@@ -3442,3 +3442,12 @@ Translated:Enter New Name Here
 English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
 Translated:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
 
+English:Save New Design
+Translated:Save New Design
+
+English:Save Location
+Translated:Save Location
+
+English:Choose the location to save to.
+Translated:Choose the location to save to.
+
