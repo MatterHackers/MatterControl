@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					printerListContainer.VAnchor = VAnchor.FitToChildren;
 					printerListContainer.Padding = new BorderDouble(3);
 					printerListContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-                    printerListContainer.DebugShowBounds = true;
+                   
 
 					//Get a list of printer records and add them to radio button list
 					foreach (Printer printer in GetAllPrinters())
