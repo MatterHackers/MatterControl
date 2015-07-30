@@ -184,6 +184,34 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					partLabel.MinimumSize = new Vector2(1, 18);
 					partLabel.VAnchor = VAnchor.ParentCenter;
 					middleColumn.AddChild(partLabel);
+
+					middleColumn.MouseDown += (sender, e) =>
+					{
+						if (this.libraryDataView.EditMode)
+						{
+							if (this.IsSelectedItem)
+							{
+								libraryDataView.SelectedItems.Remove(this);
+							}
+							else
+							{
+								libraryDataView.SelectedItems.Add(this);
+							}
+						}
+						else
+						{
+							// we only have single selection
+							if (this.IsSelectedItem)
+							{
+								// It is aleady selected, do nothing.
+							}
+							else
+							{
+								libraryDataView.SelectedItems.Clear();
+								libraryDataView.SelectedItems.Add(this);
+							}
+						}
+					};
 				}
 				primaryFlow.AddChild(selectionCheckBoxContainer);
 
@@ -221,6 +249,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void AddHandlers()
 		{
+			MouseEnterBounds += (sender, e) =>
+			{
+				IsHoverItem = true;
+			};
+			MouseLeaveBounds += (sender, e) =>
+			{
+				IsHoverItem = false;
+			};
 			//ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
 			GestureFling += (object sender, FlingEventArgs eventArgs) =>
 			{
@@ -255,36 +291,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			//Set background and text color to new theme
 			this.Invalidate();
-		}
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			if (this.libraryDataView.EditMode)
-			{
-				if (this.IsSelectedItem)
-				{
-					libraryDataView.SelectedItems.Remove(this);
-				}
-				else
-				{
-					libraryDataView.SelectedItems.Add(this);
-				}
-			}
-			else
-			{
-				// we only have single selection
-				if (this.IsSelectedItem)
-				{
-					// It is aleady selected, do nothing.
-				}
-				else
-				{
-					libraryDataView.SelectedItems.Clear();
-					libraryDataView.SelectedItems.Add(this);
-				}
-			}
-
-			base.OnMouseDown(mouseEvent);
 		}
 
 		private void SetDisplayAttributes()
