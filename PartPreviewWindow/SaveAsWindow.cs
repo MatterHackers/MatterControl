@@ -2,10 +2,13 @@
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.CustomWidgets.LibrarySelector;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MatterHackers.MatterControl
@@ -17,13 +20,16 @@ namespace MatterHackers.MatterControl
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
 
-		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, LibraryProvider startingLibraryProvider)
+		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator)
 			: base(480, 450)
 		{
 			Title = "MatterControl - " + "Save As".Localize();
 			AlwaysOnTopOfMain = true;
 
-			selectedLibraryProvider = startingLibraryProvider;
+			selectedLibraryProvider = new LibraryProviderSelector((LibraryProvider libraryProvider) =>
+			{
+				selectedLibraryProvider = libraryProvider;
+			});
 
 			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
@@ -75,10 +81,13 @@ namespace MatterHackers.MatterControl
 				textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
 
 				//Adds text box and check box to the above container
-				GuiWidget chooseWindow = new GuiWidget(10, 200);
+				GuiWidget chooseWindow = new GuiWidget(10, 30);
 				chooseWindow.HAnchor = HAnchor.ParentLeftRight;
+				chooseWindow.VAnchor = VAnchor.ParentBottomTop;
 				chooseWindow.Margin = new BorderDouble(5);
-				chooseWindow.BackgroundColor = RGBA_Bytes.White;
+				chooseWindow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+				chooseWindow.Padding = new BorderDouble(3);
+				chooseWindow.AddChild(new LibrarySelectorWidget());
 
 				middleRowContainer.AddChild(textBoxHeader);
 				middleRowContainer.AddChild(textBoxHeaderFull);

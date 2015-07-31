@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.CustomWidgets.LibrarySelector;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh.Processors;
@@ -59,10 +60,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private static CreateFolderWindow createFolderWindow = null;
 		private static RenameItemWindow renameItemWindow = null;
 		private static TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		private static TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory();
 		private TextImageButtonFactory editButtonFactory = new TextImageButtonFactory();
 		private TextWidget navigationLabel;
-		private FlowLayoutWidget breadCrumbDisplayHolder;
 
 		private FlowLayoutWidget itemOperationButtons;
 		private List<ButtonEnableData> editButtonsEnableData = new List<ButtonEnableData>();
@@ -74,8 +73,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private MHTextEditWidget searchInput;
 		private LibraryDataView libraryDataView;
 
+		static PrintLibraryWidget currentPrintLibraryWidget;
+
 		public PrintLibraryWidget()
 		{
+			currentPrintLibraryWidget = this;
 			SetDisplayAttributes();
 
 			textImageButtonFactory.borderWidth = 0;
@@ -159,13 +161,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
                 AddLibraryButtonElements();
 				CreateEditBarButtons();
 
-				breadCrumbDisplayHolder = new FlowLayoutWidget();
-
 				//allControls.AddChild(navigationPanel);
 				allControls.AddChild(searchPanel);
 				allControls.AddChild(itemOperationButtons);
-				allControls.AddChild(breadCrumbDisplayHolder);
+
 				libraryDataView = new LibraryDataView();
+
+				FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider);
+				allControls.AddChild(breadCrumbWidget);
+
+				libraryDataView.ChangedCurrentLibraryProvider2 += breadCrumbWidget.SetBreadCrumbs;
+	
 				allControls.AddChild(libraryDataView);
 				allControls.AddChild(buttonPanel);
 			}
@@ -174,7 +180,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AddChild(allControls);
 
 			AddHandlers();
-			SetBreadCrumbs(null, null);
 		}
 
         private static void AddLibraryButtonElements()
@@ -203,7 +208,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						createFolderWindow = new CreateFolderWindow((returnInfo) =>
 						{
-							LibraryDataView.CurrentLibraryProvider.AddCollectionToLibrary(returnInfo.newName);
+							currentPrintLibraryWidget.libraryDataView.CurrentLibraryProvider.AddCollectionToLibrary(returnInfo.newName);
 						});
 						createFolderWindow.Closed += (sender2, e2) => { createFolderWindow = null; };
 					}
@@ -292,11 +297,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							{
 								if (partItem != null)
 								{
-									LibraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
+									libraryDataView.CurrentLibraryProvider.RenameItem(partItem.ItemIndex, returnInfo.newName);
 								}
 								else if (collectionItem != null)
 								{
-									LibraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
+									libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
 								}
 
 								libraryDataView.SelectedItems.Clear();
@@ -335,73 +340,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			libraryDataView.SelectedItems.OnAdd += onLibraryItemsSelected;
 			libraryDataView.SelectedItems.OnRemove += onLibraryItemsSelected;
-			LibraryDataView.ChangedCurrentLibraryProvider.RegisterEvent(SetBreadCrumbs, ref unregisterEvents);
-		}
-
-		public void SetBreadCrumbs(object sender, EventArgs e)
-		{
-			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			navigationButtonFactory.Margin = new BorderDouble(10, 0);
-
-			breadCrumbDisplayHolder.CloseAndRemoveAllChildren();
-			LibraryProvider currentProvider = LibraryDataView.CurrentLibraryProvider;
-			bool first = true;
-			List<LibraryProvider> providerList = new List<LibraryProvider>();
-			while(currentProvider != null)
-			{
-				providerList.Add(currentProvider);
-				currentProvider = currentProvider.ParentLibraryProvider;
-			}
-
-			for (int i = providerList.Count - 1; i >= 0; i--)
-			{
-				LibraryProvider localCurrentProvider = providerList[i];
-				if (!first)
-				{
-					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
-					separator.VAnchor = VAnchor.ParentCenter;
-					separator.Margin = new BorderDouble(0);
-					breadCrumbDisplayHolder.AddChild(separator);
-				}
-
-				Button gotoProviderButton = navigationButtonFactory.Generate(localCurrentProvider.Name);
-				gotoProviderButton.Margin = new BorderDouble(3, 0);
-				gotoProviderButton.Click += (sender2, e2) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						LibraryDataView.CurrentLibraryProvider = localCurrentProvider;
-						libraryDataView.RebuildView();
-					});
-				};
-				breadCrumbDisplayHolder.AddChild(gotoProviderButton);
-				first = false;
-			}
-
-			// while all the buttons don't fit in the control
-			if (breadCrumbDisplayHolder.Parent.Width > 0
-				&& breadCrumbDisplayHolder.Children.Count > 4
-				&& breadCrumbDisplayHolder.GetChildrenBoundsIncludingMargins().Width > breadCrumbDisplayHolder.Parent.Width)
-			{
-				// lets take out the > and put in a ...
-				breadCrumbDisplayHolder.RemoveChild(1);
-					GuiWidget separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor);
-					separator.VAnchor = VAnchor.ParentCenter;
-					separator.Margin = new BorderDouble(3, 0);
-					breadCrumbDisplayHolder.AddChild(separator, 1);
-
-				while (breadCrumbDisplayHolder.GetChildrenBoundsIncludingMargins().Width > breadCrumbDisplayHolder.Parent.Width
-					&& breadCrumbDisplayHolder.Children.Count > 4)
-				{
-					breadCrumbDisplayHolder.RemoveChild(3);
-					breadCrumbDisplayHolder.RemoveChild(2);
-				}
-			}
-
-			libraryDataView.ClearSelectedItems();
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -440,7 +378,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void searchButtonClick(object sender, EventArgs e)
 		{
 			string searchText = searchInput.Text.Trim();
-			LibraryDataView.CurrentLibraryProvider.KeywordFilter = searchText;
+			libraryDataView.CurrentLibraryProvider.KeywordFilter = searchText;
 			libraryDataView.ClearSelectedItems();
 		}
 
@@ -572,7 +510,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnDragDrop(FileDropEventArgs fileDropEventArgs)
 		{
-			LibraryDataView.CurrentLibraryProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
+			libraryDataView.CurrentLibraryProvider.AddFilesToLibrary(fileDropEventArgs.DroppedFiles);
 
 			base.OnDragDrop(fileDropEventArgs);
 		}
@@ -587,7 +525,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (openParams.FileNames != null)
 			{
-				LibraryDataView.CurrentLibraryProvider.AddFilesToLibrary(openParams.FileNames, null);
+				currentPrintLibraryWidget.libraryDataView.CurrentLibraryProvider.AddFilesToLibrary(openParams.FileNames, null);
 			}
 		}
 	}
