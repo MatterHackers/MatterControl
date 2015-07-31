@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			LibraryProvider currentProvider = null;
 			if (libraryDataViewEvent != null)
 			{
-				currentProvider = libraryDataViewEvent.LibraryDataView.CurrentLibraryProvider;
+				currentProvider = libraryDataViewEvent.LibraryProvider;
 			}
 			bool first = true;
 			List<LibraryProvider> providerList = new List<LibraryProvider>();

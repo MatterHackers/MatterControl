@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
@@ -40,11 +41,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 {
 	public class LibraryDataViewEventArgs : EventArgs
 	{
-		public LibraryDataView LibraryDataView { get; set; }
+		public LibraryProvider LibraryProvider { get; set; }
 
-		public LibraryDataViewEventArgs(LibraryDataView libraryDataView)
+		public LibraryDataViewEventArgs(LibraryProvider libraryProvider)
 		{
-			this.LibraryDataView = libraryDataView;
+			this.LibraryProvider = libraryProvider;
 		}
 	}
 }

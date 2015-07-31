@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					if (ChangedCurrentLibraryProvider2 != null)
 					{
-						ChangedCurrentLibraryProvider2(null, null);
+						ChangedCurrentLibraryProvider2(null, new LibraryDataViewEventArgs(value));
 					}
 				}
 			}

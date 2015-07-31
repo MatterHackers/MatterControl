@@ -162,7 +162,7 @@
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
-    <Compile Include="CustomWidgets\LibrarySelector\DataViewEventArgs.cs" />
+    <Compile Include="CustomWidgets\LibrarySelector\LibraryProviderEventArgs.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItem - Copy.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\FolderBreadCrumbWidget.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\LibrarySelectorRowItemCollection.cs" />
