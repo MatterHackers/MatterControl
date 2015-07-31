@@ -546,7 +546,7 @@ namespace MatterHackers.MatterControl
 
 				TerminalWindow.ShowIfLeftOpen();
 
-				new SaveAsWindow(null, null);
+				//new SaveAsWindow(null, null);
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);

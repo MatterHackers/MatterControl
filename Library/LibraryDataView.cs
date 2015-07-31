@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private bool settingLocalBounds = false;
 
-		public event EventHandler<LibraryDataViewEventArgs> ChangedCurrentLibraryProvider;
+		public event Action<LibraryProvider> ChangedCurrentLibraryProvider;
 
 		private static LibraryDataView libraryDataViewInstance = null;
 
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					if (ChangedCurrentLibraryProvider != null)
 					{
-						ChangedCurrentLibraryProvider(null, new LibraryDataViewEventArgs(value));
+						ChangedCurrentLibraryProvider(value);
 					}
 
 					UiThread.RunOnIdle(RebuildView);

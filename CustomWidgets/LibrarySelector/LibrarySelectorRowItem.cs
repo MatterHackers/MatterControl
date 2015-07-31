@@ -231,21 +231,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			AddHandlers();
 		}
 
-		#region Abstract Functions
-
-		public abstract void AddToQueue();
-
-		public abstract void Edit();
-
-		public abstract void Export();
-		
-		public abstract void RemoveFromCollection();
-
 		protected abstract SlideWidget GetItemActionButtons();
-
-		protected abstract void RemoveThisFromPrintLibrary();
-
-		#endregion Abstract Functions
 
 		private void AddHandlers()
 		{

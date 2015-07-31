@@ -47,10 +47,10 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 		public FolderBreadCrumbWidget(Action<LibraryProvider> SwitchToLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
 			this.SwitchToLibraryProvider = SwitchToLibraryProvider;
-			UiThread.RunOnIdle(() => SetBreadCrumbs(null, new LibraryDataViewEventArgs(currentLibraryProvider)));
+			UiThread.RunOnIdle(() => SetBreadCrumbs(currentLibraryProvider));
 		}
 
-		public void SetBreadCrumbs(object sender, LibraryDataViewEventArgs currentLibraryProviderEvent)
+		public void SetBreadCrumbs(LibraryProvider currentLibraryProvider)
 		{
 			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -59,17 +59,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			navigationButtonFactory.Margin = new BorderDouble(10, 0);
 
 			this.CloseAndRemoveAllChildren();
-			LibraryProvider currentProvider = null;
-			if (currentLibraryProviderEvent != null)
-			{
-				currentProvider = currentLibraryProviderEvent.LibraryProvider;
-			}
 
 			List<LibraryProvider> parentProviderList = new List<LibraryProvider>();
-			while (currentProvider != null)
+			while (currentLibraryProvider != null)
 			{
-				parentProviderList.Add(currentProvider);
-				currentProvider = currentProvider.ParentLibraryProvider;
+				parentProviderList.Add(currentLibraryProvider);
+				currentLibraryProvider = currentLibraryProvider.ParentLibraryProvider;
 			}
 
 			bool first = true;

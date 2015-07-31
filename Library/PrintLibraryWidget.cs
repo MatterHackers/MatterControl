@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private TextWidget navigationLabel;
 
 		private FlowLayoutWidget itemOperationButtons;
+		private FolderBreadCrumbWidget breadCrumbWidget;
 		private List<ButtonEnableData> editButtonsEnableData = new List<ButtonEnableData>();
 
 		private static Button addToLibraryButton;
@@ -166,7 +167,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				allControls.AddChild(itemOperationButtons);
 
 				libraryDataView = new LibraryDataView();
-				FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
+				breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
 				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
 				allControls.AddChild(breadCrumbWidget);
@@ -247,6 +248,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void CreateEditBarButtons()
 		{
 			itemOperationButtons = new FlowLayoutWidget();
+			itemOperationButtons.Visible = false;
 			itemOperationButtons.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 			itemOperationButtons.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 			double oldWidth = editButtonFactory.FixedWidth;
@@ -362,6 +364,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void enterEditModeButtonClick(object sender, EventArgs e)
 		{
+			breadCrumbWidget.Visible = false;
+			itemOperationButtons.Visible = true;
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
 			libraryDataView.EditMode = true;
@@ -369,6 +373,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void leaveEditModeButtonClick(object sender, EventArgs e)
 		{
+			breadCrumbWidget.Visible = true;
+			itemOperationButtons.Visible = false;
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
 			libraryDataView.EditMode = false;
