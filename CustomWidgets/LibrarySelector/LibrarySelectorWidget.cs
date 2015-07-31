@@ -31,7 +31,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets.LibrarySelector;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
@@ -39,11 +38,11 @@ using MatterHackers.VectorMath;
 using System;
 using System.IO;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 {
-	public class LibraryDataView : ScrollableWidget
+	public class LibrarySelectorWidget : ScrollableWidget
 	{
-		public SelectedListItems<LibraryRowItem> SelectedItems = new SelectedListItems<LibraryRowItem>();
+		public SelectedListItems<LibrarySelectorRowItem> SelectedItems = new SelectedListItems<LibrarySelectorRowItem>();
 
 		protected FlowLayoutWidget topToBottomItemList;
 
@@ -65,21 +64,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public event EventHandler<LibraryDataViewEventArgs> ChangedCurrentLibraryProvider2;
 
-		private static LibraryDataView libraryDataViewInstance = null;
-
-		public LibraryDataView()
+		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
 		{
-			// let the application controler know about this window so it can use it to switch library providers if it needs to.
-			ApplicationController.Instance.currentLibraryDataView = this;
+			this.currentLibraryProvider = libraryProvider;
+		}
 
+		public LibrarySelectorWidget()
+		{
 			currentLibraryProvider = new LibraryProviderSelector(SetCurrentLibraryProvider);
 			currentLibraryProvider.DataReloaded += LibraryDataReloaded;
-
-			if (libraryDataViewInstance != null)
-			{
-				throw new Exception("There should only ever be one of these, Lars.");
-			}
-			libraryDataViewInstance = this;
 
 			// set the display attributes
 			{
@@ -106,11 +99,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private event EventHandler unregisterEvents;
 
-		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
-		{
-			this.currentLibraryProvider = libraryProvider;
-		}
-
 		public LibraryProvider CurrentLibraryProvider
 		{
 			get
@@ -123,9 +111,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				if (currentLibraryProvider != value)
 				{
 					// unhook the update we were getting
-					currentLibraryProvider.DataReloaded -= libraryDataViewInstance.LibraryDataReloaded;
+					currentLibraryProvider.DataReloaded -= this.LibraryDataReloaded;
 					// and hook the new one
-					value.DataReloaded += libraryDataViewInstance.LibraryDataReloaded;
+					value.DataReloaded += this.LibraryDataReloaded;
 
 					bool isChildOfCurrent = value.ParentLibraryProvider == currentLibraryProvider;
 
@@ -231,7 +219,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public void ClearSelectedItems()
 		{
-			foreach (LibraryRowItem item in SelectedItems)
+			foreach (LibrarySelectorRowItem item in SelectedItems)
 			{
 				item.selectionCheckBox.Checked = false;
 			}
@@ -247,7 +235,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				unregisterEvents(this, null);
 			}
 			base.OnClosed(e);
-			libraryDataViewInstance = null;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -314,7 +301,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public void RemoveSelectedItems()
 		{
-			foreach (LibraryRowItem item in SelectedItems)
+			foreach (LibrarySelectorRowItem item in SelectedItems)
 			{
 				throw new NotImplementedException();
 				//item.RemoveFromParentCollection();
@@ -363,22 +350,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
+				LibrarySelectorRowItem queueItem = new LibrarySelectorRowItemCollection(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
 				AddListItemToTopToBottom(queueItem);
 			}
 
 			for (int i = 0; i < provider.CollectionCount; i++)
 			{
 				PrintItemCollection item = provider.GetCollectionItem(i);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
-				AddListItemToTopToBottom(queueItem);
-			}
-
-			for (int i = 0; i < provider.ItemCount; i++)
-			{
-				GuiWidget thumbnailWidget = provider.GetItemThumbnail(i);
-				LibraryRowItem queueItem = new LibraryRowItemPart(provider, i, this, thumbnailWidget);
-
+				LibrarySelectorRowItem queueItem = new LibrarySelectorRowItemCollection(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
 				AddListItemToTopToBottom(queueItem);
 			}
 		}

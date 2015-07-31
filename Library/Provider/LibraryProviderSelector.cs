@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSelector : LibraryProvider
 	{
+		Action<LibraryProvider> setCurrentLibraryProvider;
 		private List<LibraryProvider> libraryProviders = new List<LibraryProvider>();
 
 		internal LibraryProvider PurchasedLibrary { get; private set; }
@@ -54,9 +55,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		List<ImageBuffer> folderImagesForChildren = new List<ImageBuffer>();
 
-		public LibraryProviderSelector()
+		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider)
 			: base(null)
 		{
+			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
 
 			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
 
@@ -138,7 +140,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			if(e != null && !e.IsAuthenticated)
 			{
 				// Switch to the purchased library
-				LibraryDataView.CurrentLibraryProvider = this;
+				setCurrentLibraryProvider(this);
 			}
 
 			// Refresh state

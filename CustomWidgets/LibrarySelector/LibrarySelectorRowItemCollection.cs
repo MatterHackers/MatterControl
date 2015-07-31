@@ -42,15 +42,15 @@ using System;
 using System.Globalization;
 using System.IO;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 {
-	public class LibraryRowItemCollection : LibraryRowItem
+	public class LibrarySelectorRowItemCollection : LibrarySelectorRowItem
 	{
 		LibraryProvider parentProvider;
 		PrintItemCollection printItemCollection;
 		public int CollectionIndex { get; private set; }
 
-		public LibraryRowItemCollection(PrintItemCollection collection, int collectionIndex, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
+		public LibrarySelectorRowItemCollection(PrintItemCollection collection, int collectionIndex, LibrarySelectorWidget libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
 			this.CollectionIndex = collectionIndex;

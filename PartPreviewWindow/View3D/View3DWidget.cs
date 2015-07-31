@@ -1392,7 +1392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (saveAsWindow == null)
 				{
-					saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider);
+					saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider.GetProviderLocator());
 					saveAsWindow.Closed += (sender2, e2) =>
 					{
 						saveAsWindow = null;
@@ -2045,7 +2045,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (saveAsWindow == null)
 			{
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider);
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider.GetProviderLocator());
 				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
 			}
 			else
