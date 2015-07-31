@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double gcodeRequestedExtrusionPosition = 0;
 
-		private string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nIt is recommendended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize();
+		private string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize();
 
 		private string itemNotFoundMessage = "Item not found".Localize();
 
