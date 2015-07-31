@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 							}
 							else
 							{
-								libraryDataView.SelectedItems.Clear();
+								libraryDataView.ClearSelectedItems();
 								libraryDataView.SelectedItems.Add(this);
 							}
 						}

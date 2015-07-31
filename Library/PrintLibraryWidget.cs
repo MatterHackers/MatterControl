@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
 								}
 
-								libraryDataView.SelectedItems.Clear();
+								libraryDataView.ClearSelectedItems();
 							});
 
 							renameItemWindow.Closed += (sender2, e2) => { renameItemWindow = null; };

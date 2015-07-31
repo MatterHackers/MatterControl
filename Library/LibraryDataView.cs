@@ -57,8 +57,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
 
-		private int selectedIndex = -1;
-
 		private bool settingLocalBounds = false;
 
 		public event Action<LibraryProvider> ChangedCurrentLibraryProvider;
@@ -100,8 +98,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public event HoverValueChangedEventHandler HoverValueChanged;
 
-		public event Action<object, EventArgs> SelectedIndexChanged;
-
 		private event EventHandler unregisterEvents;
 
 		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
@@ -142,6 +138,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						ChangedCurrentLibraryProvider(value);
 					}
+
+					ClearSelectedItems();
 
 					UiThread.RunOnIdle(RebuildView);
 				}
@@ -220,15 +218,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
 		}
 
-		public void ClearSelected()
-		{
-			if (selectedIndex != -1)
-			{
-				selectedIndex = -1;
-				OnSelectedIndexChanged();
-			}
-		}
-
 		public void ClearSelectedItems()
 		{
 			foreach (LibraryRowItem item in SelectedItems)
@@ -279,15 +268,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseUp(mouseEvent);
-		}
-
-		public void OnSelectedIndexChanged()
-		{
-			Invalidate();
-			if (SelectedIndexChanged != null)
-			{
-				SelectedIndexChanged(this, null);
-			}
 		}
 
 		public void RebuildView()
