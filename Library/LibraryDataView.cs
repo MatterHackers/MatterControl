@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private bool settingLocalBounds = false;
 
-		public event EventHandler<LibraryDataViewEventArgs> ChangedCurrentLibraryProvider2;
+		public event EventHandler<LibraryDataViewEventArgs> ChangedCurrentLibraryProvider;
 
 		private static LibraryDataView libraryDataViewInstance = null;
 
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
 		{
-			this.currentLibraryProvider = libraryProvider;
+			this.CurrentLibraryProvider = libraryProvider;
 		}
 
 		public LibraryProvider CurrentLibraryProvider
@@ -140,10 +140,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					currentLibraryProvider = value;
 
-					if (ChangedCurrentLibraryProvider2 != null)
+					if (ChangedCurrentLibraryProvider != null)
 					{
-						ChangedCurrentLibraryProvider2(null, new LibraryDataViewEventArgs(value));
+						ChangedCurrentLibraryProvider(null, new LibraryDataViewEventArgs(value));
 					}
+
+					UiThread.RunOnIdle(RebuildView);
 				}
 			}
 		}
@@ -347,8 +349,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					this.CurrentLibraryProvider = parentProvider;
 				}
-
-				UiThread.RunOnIdle(RebuildView);
 			};
 
 			return clickThumbnail;

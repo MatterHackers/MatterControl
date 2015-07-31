@@ -26,10 +26,7 @@ namespace MatterHackers.MatterControl
 			Title = "MatterControl - " + "Save As".Localize();
 			AlwaysOnTopOfMain = true;
 
-			selectedLibraryProvider = new LibraryProviderSelector((LibraryProvider libraryProvider) =>
-			{
-				selectedLibraryProvider = libraryProvider;
-			});
+			selectedLibraryProvider = new LibraryProviderSelector(ChangeLibraryProvider);
 
 			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
@@ -65,6 +62,10 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.Padding = new BorderDouble(5);
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
+
+			// put in the bread crumb widget
+			FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(ChangeLibraryProvider, selectedLibraryProvider);
+			middleRowContainer.AddChild(breadCrumbWidget);
 
 			// put in the area to pick the provider to save to
 			{
@@ -154,6 +155,11 @@ namespace MatterHackers.MatterControl
 			ShowAsSystemWindow();
 
 			UiThread.RunOnIdle(textToAddWidget.Focus);
+		}
+
+		void ChangeLibraryProvider(LibraryProvider libraryProvider)
+		{
+			selectedLibraryProvider = libraryProvider;
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)

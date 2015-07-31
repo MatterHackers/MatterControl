@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			{
 				IsHoverItem = false;
 			};
-			//ActiveTheme.Instance.ThemeChanged.RegisterEvent(onThemeChanged, ref unregisterEvents);
+
 			GestureFling += (object sender, FlingEventArgs eventArgs) =>
 			{
 				if (!this.libraryDataView.EditMode)
@@ -275,18 +275,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			};
 		}
 
-		private void onAddLinkClick(object sender, EventArgs e)
-		{
-		}
-
-		private void onConfirmRemove(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				libraryDataView.RemoveChild(this);
-			}
-		}
-
 		private void onThemeChanged(object sender, EventArgs e)
 		{
 			//Set background and text color to new theme
@@ -295,7 +283,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		private void SetDisplayAttributes()
 		{
-			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
 			{

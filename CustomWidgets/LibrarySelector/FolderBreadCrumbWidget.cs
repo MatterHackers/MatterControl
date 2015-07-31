@@ -44,10 +44,10 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 		private static TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory();
 		Action<LibraryProvider> setCurrentLibraryProvider;
 
-		public FolderBreadCrumbWidget(Action<LibraryProvider> setCurrentLibraryProvider)
+		public FolderBreadCrumbWidget(Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider startingLibraryProvider)
 		{
 			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
-			UiThread.RunOnIdle(() => SetBreadCrumbs(null, null));
+			UiThread.RunOnIdle(() => SetBreadCrumbs(null, new LibraryDataViewEventArgs(startingLibraryProvider)));
 		}
 
 		public void SetBreadCrumbs(object sender, LibraryDataViewEventArgs libraryDataViewEvent)

@@ -158,8 +158,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				libraryDataView.CurrentLibraryProvider = parentProvider;
 			}
-
-			UiThread.RunOnIdle(libraryDataView.RebuildView);
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
