@@ -166,14 +166,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				allControls.AddChild(itemOperationButtons);
 
 				libraryDataView = new LibraryDataView();
+				FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
+				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
-				FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider);
 				allControls.AddChild(breadCrumbWidget);
 
-				UiThread.RunOnIdle(breadCrumbWidget.SetBreadCrumbs);
-
-				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
-	
 				allControls.AddChild(libraryDataView);
 				allControls.AddChild(buttonPanel);
 			}

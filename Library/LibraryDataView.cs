@@ -55,8 +55,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private RGBA_Bytes hoverColor = new RGBA_Bytes(204, 204, 204, 255);
 
-		private int hoverIndex = -1;
-
 		private RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
 
 		private int selectedIndex = -1;
