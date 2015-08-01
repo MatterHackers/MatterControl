@@ -133,11 +133,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				if (lineBeingSent.Contains("X") || lineBeingSent.Contains("Y") || lineBeingSent.Contains("Z"))
 				{
-					double angleToPoint = Math.Atan2(currentDestination.y, currentDestination.x);
-				
 					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
-					Vector3 outPosition = GetPositionWithZOffset(currentDestination, angleToPoint, levelingData);
+					Vector3 outPosition = GetPositionWithZOffset(currentDestination, levelingData);
 		
 					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 					{
@@ -169,9 +167,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return lineBeingSent;
 		}
 
-		private static Vector3 GetPositionWithZOffset(Vector3 currentDestination, double angleToPoint, PrintLevelingData levelingData)
+		private static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData)
 		{
-			double ratioToRadius = currentDestination.Length / levelingData.SampledPositions[0].x;
+			double angleToPoint = Math.Atan2(currentDestination.y, currentDestination.x);
+
+			if (angleToPoint < 0)
+			{
+				angleToPoint += MathHelper.Tau;
+			}
+
+			double ratioToRadius = Math.Min(1, Math.Max(0, new Vector3(currentDestination.x, currentDestination.y, 0).Length / levelingData.SampledPositions[0].x));
 
 			double oneSegmentAngle = MathHelper.Tau / 6;
 			int firstIndex = (int)(angleToPoint / oneSegmentAngle);
@@ -181,7 +186,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				lastIndex = 0;
 			}
 
-			double ratioToLast = (angleToPoint - firstIndex * oneSegmentAngle) / oneSegmentAngle;
+			double ratioToLast = Math.Min(1, Math.Max(0, (angleToPoint - firstIndex * oneSegmentAngle) / oneSegmentAngle));
 
 			double firstZ = levelingData.SampledPositions[firstIndex].z;
 			double lastZ = levelingData.SampledPositions[lastIndex].z;

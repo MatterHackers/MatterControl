@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		private void Commit()
+		public void Commit()
 		{
 			if (!activelyLoading)
 			{

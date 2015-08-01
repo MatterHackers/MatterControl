@@ -91,6 +91,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingData.SampledPositions.Add(probePositions[i].position - paperWidth);
 			}
 
+			levelingData.Commit();
+
+
 			ActivePrinterProfile.Instance.DoPrintLeveling = true;
 			base.PageIsBecomingActive();
 		}
