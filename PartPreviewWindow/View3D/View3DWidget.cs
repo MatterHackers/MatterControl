@@ -1917,10 +1917,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (returnInfo != null)
 			{
-				throw new NotImplementedException();
-
 				if (returnInfo.printItemWrapper.SourceLibraryProvider != null)
 				{
+					returnInfo.printItemWrapper.SourceLibraryProvider.AddItem(returnInfo.printItemWrapper);
 					throw new NotImplementedException();
 					// save this part to correct library provider
 				}
@@ -2045,7 +2044,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (saveAsWindow == null)
 			{
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider.GetProviderLocator());
+				List<ProviderLocatorNode> providerLocator = null;
+				if (printItemWrapper.SourceLibraryProvider != null)
+				{
+					providerLocator = printItemWrapper.SourceLibraryProvider.GetProviderLocator();
+				}
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator);
 				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
 			}
 			else
