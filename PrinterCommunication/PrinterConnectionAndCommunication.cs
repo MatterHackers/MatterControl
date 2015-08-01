@@ -1291,7 +1291,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							break;
 
 						case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-							if (levelingData.SampledPositions.Count == 0)
+							if (levelingData.SampledPositions.Count != 7) // different criteria for what is not initialized
 							{
 								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
 								return;

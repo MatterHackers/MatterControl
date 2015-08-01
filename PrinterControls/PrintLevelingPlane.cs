@@ -2,7 +2,6 @@
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.VectorMath;
 using System;
-using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
@@ -73,7 +72,7 @@ namespace MatterHackers.MatterControl
 
 				string newLine = "G1 ";
 
-				if (lineBeingSent.Contains('X') || lineBeingSent.Contains('Y') || lineBeingSent.Contains('Z'))
+				if (lineBeingSent.Contains("X") || lineBeingSent.Contains("Y") || lineBeingSent.Contains("Z"))
 				{
 					Vector3 outPosition = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination);
 					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
