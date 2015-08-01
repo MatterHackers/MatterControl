@@ -419,7 +419,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					if (this.queueDataView.SelectedItems.Count > 0
 						|| !this.queueDataView.SelectedItems.Contains(selectedItem))
 					{
-						this.queueDataView.SelectedItems.Clear();
+						this.queueDataView.ClearSelectedItems();
 						this.queueDataView.SelectedItems.Add(selectedItem);
 					}
 				}
@@ -645,7 +645,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				item.DeletePartFromQueue();
 			}
 
-			this.queueDataView.SelectedItems.Clear();
+			this.queueDataView.ClearSelectedItems();
 		}
 
 		private bool removeMenu_Selected()

@@ -55,15 +55,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private RGBA_Bytes hoverColor = new RGBA_Bytes(204, 204, 204, 255);
 
-		private int hoverIndex = -1;
-
 		private RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
-
-		private int selectedIndex = -1;
 
 		private bool settingLocalBounds = false;
 
-		public event EventHandler<LibraryDataViewEventArgs> ChangedCurrentLibraryProvider2;
+		public event Action<LibraryProvider> ChangedCurrentLibraryProvider;
 
 		private static LibraryDataView libraryDataViewInstance = null;
 
@@ -102,13 +98,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public event HoverValueChangedEventHandler HoverValueChanged;
 
-		public event Action<object, EventArgs> SelectedIndexChanged;
-
 		private event EventHandler unregisterEvents;
 
 		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
 		{
-			this.currentLibraryProvider = libraryProvider;
+			this.CurrentLibraryProvider = libraryProvider;
 		}
 
 		public LibraryProvider CurrentLibraryProvider
@@ -140,10 +134,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					currentLibraryProvider = value;
 
-					if (ChangedCurrentLibraryProvider2 != null)
+					if (ChangedCurrentLibraryProvider != null)
 					{
-						ChangedCurrentLibraryProvider2(null, new LibraryDataViewEventArgs(value));
+						ChangedCurrentLibraryProvider(value);
 					}
+
+					ClearSelectedItems();
+
+					UiThread.RunOnIdle(RebuildView);
 				}
 			}
 		}
@@ -220,15 +218,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
 		}
 
-		public void ClearSelected()
-		{
-			if (selectedIndex != -1)
-			{
-				selectedIndex = -1;
-				OnSelectedIndexChanged();
-			}
-		}
-
 		public void ClearSelectedItems()
 		{
 			foreach (LibraryRowItem item in SelectedItems)
@@ -279,15 +268,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseUp(mouseEvent);
-		}
-
-		public void OnSelectedIndexChanged()
-		{
-			Invalidate();
-			if (SelectedIndexChanged != null)
-			{
-				SelectedIndexChanged(this, null);
-			}
 		}
 
 		public void RebuildView()
@@ -347,8 +327,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					this.CurrentLibraryProvider = parentProvider;
 				}
-
-				UiThread.RunOnIdle(RebuildView);
 			};
 
 			return clickThumbnail;

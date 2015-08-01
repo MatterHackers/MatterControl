@@ -68,84 +68,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			get { return false; }
 		}
 
-		public override void Export()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void Edit()
-		{
-			throw new NotImplementedException();
-		}
-
-		private static readonly string collectionNotEmtyMessage = "The folder '{0}' is not empty.\n\nWould you like to delete it anyway?".Localize();
-		private static readonly string collectionNotEmtyTitle = "Delete folder?".Localize();
-		private static readonly string deleteNow = "Delete".Localize();
-		private static readonly string doNotDelete = "Cancel".Localize();
-
-		public override void RemoveFromCollection()
-		{
-			int collectionItemCollectionCount = libraryDataView.CurrentLibraryProvider.GetCollectionChildCollectionCount(CollectionIndex);
-			int collectionItemItemCount = libraryDataView.CurrentLibraryProvider.GetCollectionItemCount(CollectionIndex);
-
-			if (collectionItemCollectionCount > 0 || collectionItemItemCount > 0)
-			{
-				string message = collectionNotEmtyMessage.FormatWith(libraryDataView.CurrentLibraryProvider.GetCollectionItem(CollectionIndex).Name);
-				UiThread.RunOnIdle(() =>
-				{
-					// Let the user know this collection is not empty and check if they want to delete it.
-					StyledMessageBox.ShowMessageBox(ProcessDialogResponse, message, collectionNotEmtyTitle, StyledMessageBox.MessageType.YES_NO, deleteNow, doNotDelete);
-				});
-			}
-			else
-			{
-				libraryDataView.CurrentLibraryProvider.RemoveCollection(CollectionIndex);
-			}
-		}
-
 		private void ProcessDialogResponse(bool messageBoxResponse)
 		{
 			if (messageBoxResponse)
 			{
 				libraryDataView.CurrentLibraryProvider.RemoveCollection(CollectionIndex);
 			}
-		}
-
-		public override void AddToQueue()
-		{
-			throw new NotImplementedException();
-		}
-
-		private ConditionalClickWidget primaryClickContainer;
-
-		protected override SlideWidget GetItemActionButtons()
-		{
-			SlideWidget buttonContainer = new SlideWidget();
-			buttonContainer.VAnchor = VAnchor.ParentBottomTop;
-
-			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
-
-			TextWidget openLabel = new TextWidget("Open".Localize());
-			openLabel.TextColor = RGBA_Bytes.White;
-			openLabel.VAnchor = VAnchor.ParentCenter;
-			openLabel.HAnchor = HAnchor.ParentCenter;
-
-			FatFlatClickWidget openButton = new FatFlatClickWidget(openLabel);
-			openButton.VAnchor = VAnchor.ParentBottomTop;
-			openButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-			openButton.Width = 100;
-			openButton.Click += (sender, e) =>
-			{
-				ChangeCollection();
-			};
-
-			buttonFlowContainer.AddChild(openButton);
-
-			buttonContainer.AddChild(buttonFlowContainer);
-			buttonContainer.Width = 100;
-
-			return buttonContainer;
 		}
 
 		private void ChangeCollection()
@@ -181,18 +109,34 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 		}
 
-		private void onAddLinkClick(object sender, EventArgs e)
+		protected override SlideWidget GetItemActionButtons()
 		{
-		}
+			SlideWidget buttonContainer = new SlideWidget();
+			buttonContainer.VAnchor = VAnchor.ParentBottomTop;
 
-		protected override void RemoveThisFromPrintLibrary()
-		{
-			throw new NotImplementedException();
-		}
+			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
 
-		private void onRemoveLinkClick(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(RemoveThisFromPrintLibrary);
+			TextWidget openLabel = new TextWidget("Open".Localize());
+			openLabel.TextColor = RGBA_Bytes.White;
+			openLabel.VAnchor = VAnchor.ParentCenter;
+			openLabel.HAnchor = HAnchor.ParentCenter;
+
+			FatFlatClickWidget openButton = new FatFlatClickWidget(openLabel);
+			openButton.VAnchor = VAnchor.ParentBottomTop;
+			openButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+			openButton.Width = 100;
+			openButton.Click += (sender, e) =>
+			{
+				ChangeCollection();
+			};
+
+			buttonFlowContainer.AddChild(openButton);
+
+			buttonContainer.AddChild(buttonFlowContainer);
+			buttonContainer.Width = 100;
+
+			return buttonContainer;
 		}
 
 		private void onThemeChanged(object sender, EventArgs e)

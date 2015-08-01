@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private TextWidget navigationLabel;
 
 		private FlowLayoutWidget itemOperationButtons;
+		private FolderBreadCrumbWidget breadCrumbWidget;
 		private List<ButtonEnableData> editButtonsEnableData = new List<ButtonEnableData>();
 
 		private static Button addToLibraryButton;
@@ -166,12 +167,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				allControls.AddChild(itemOperationButtons);
 
 				libraryDataView = new LibraryDataView();
+				breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
+				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
-				FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider);
 				allControls.AddChild(breadCrumbWidget);
 
-				libraryDataView.ChangedCurrentLibraryProvider2 += breadCrumbWidget.SetBreadCrumbs;
-	
 				allControls.AddChild(libraryDataView);
 				allControls.AddChild(buttonPanel);
 			}
@@ -248,6 +248,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void CreateEditBarButtons()
 		{
 			itemOperationButtons = new FlowLayoutWidget();
+			itemOperationButtons.Visible = false;
 			itemOperationButtons.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 			itemOperationButtons.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 			double oldWidth = editButtonFactory.FixedWidth;
@@ -304,7 +305,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									libraryDataView.CurrentLibraryProvider.RenameCollection(collectionItem.CollectionIndex, returnInfo.newName);
 								}
 
-								libraryDataView.SelectedItems.Clear();
+								libraryDataView.ClearSelectedItems();
 							});
 
 							renameItemWindow.Closed += (sender2, e2) => { renameItemWindow = null; };
@@ -363,6 +364,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void enterEditModeButtonClick(object sender, EventArgs e)
 		{
+			breadCrumbWidget.Visible = false;
+			itemOperationButtons.Visible = true;
 			enterEditModeButton.Visible = false;
 			leaveEditModeButton.Visible = true;
 			libraryDataView.EditMode = true;
@@ -370,6 +373,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void leaveEditModeButtonClick(object sender, EventArgs e)
 		{
+			breadCrumbWidget.Visible = true;
+			itemOperationButtons.Visible = false;
 			enterEditModeButton.Visible = true;
 			leaveEditModeButton.Visible = false;
 			libraryDataView.EditMode = false;

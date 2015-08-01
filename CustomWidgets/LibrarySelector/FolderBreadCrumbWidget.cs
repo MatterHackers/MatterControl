@@ -42,15 +42,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 	public class FolderBreadCrumbWidget : FlowLayoutWidget
 	{
 		private static TextImageButtonFactory navigationButtonFactory = new TextImageButtonFactory();
-		Action<LibraryProvider> setCurrentLibraryProvider;
+		Action<LibraryProvider> SwitchToLibraryProvider;
 
-		public FolderBreadCrumbWidget(Action<LibraryProvider> setCurrentLibraryProvider)
+		public FolderBreadCrumbWidget(Action<LibraryProvider> SwitchToLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
-			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
-			UiThread.RunOnIdle(() => SetBreadCrumbs(null, null));
+			this.SwitchToLibraryProvider = SwitchToLibraryProvider;
+			UiThread.RunOnIdle(() => SetBreadCrumbs(currentLibraryProvider));
 		}
 
-		public void SetBreadCrumbs(object sender, LibraryDataViewEventArgs libraryDataViewEvent)
+		public void SetBreadCrumbs(LibraryProvider currentLibraryProvider)
 		{
 			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -59,22 +59,18 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			navigationButtonFactory.Margin = new BorderDouble(10, 0);
 
 			this.CloseAndRemoveAllChildren();
-			LibraryProvider currentProvider = null;
-			if (libraryDataViewEvent != null)
+
+			List<LibraryProvider> parentProviderList = new List<LibraryProvider>();
+			while (currentLibraryProvider != null)
 			{
-				currentProvider = libraryDataViewEvent.LibraryProvider;
-			}
-			bool first = true;
-			List<LibraryProvider> providerList = new List<LibraryProvider>();
-			while (currentProvider != null)
-			{
-				providerList.Add(currentProvider);
-				currentProvider = currentProvider.ParentLibraryProvider;
+				parentProviderList.Add(currentLibraryProvider);
+				currentLibraryProvider = currentLibraryProvider.ParentLibraryProvider;
 			}
 
-			for (int i = providerList.Count - 1; i >= 0; i--)
+			bool first = true;
+			for (int i = parentProviderList.Count - 1; i >= 0; i--)
 			{
-				LibraryProvider localCurrentProvider = providerList[i];
+				LibraryProvider parentLibraryProvider = parentProviderList[i];
 				if (!first)
 				{
 					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
@@ -83,13 +79,13 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					this.AddChild(separator);
 				}
 
-				Button gotoProviderButton = navigationButtonFactory.Generate(localCurrentProvider.Name);
+				Button gotoProviderButton = navigationButtonFactory.Generate(parentLibraryProvider.Name);
 				gotoProviderButton.Margin = new BorderDouble(3, 0);
 				gotoProviderButton.Click += (sender2, e2) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						setCurrentLibraryProvider(localCurrentProvider);
+						SwitchToLibraryProvider(parentLibraryProvider);
 					});
 				};
 				this.AddChild(gotoProviderButton);

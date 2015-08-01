@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 							else
 							{
-								libraryDataView.SelectedItems.Clear();
+								libraryDataView.ClearSelectedItems();
 								libraryDataView.SelectedItems.Add(this);
 							}
 						}

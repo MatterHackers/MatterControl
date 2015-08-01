@@ -16,20 +16,18 @@ namespace MatterHackers.MatterControl
 	public class SaveAsWindow : SystemWindow
 	{
 		private Action<SaveAsReturnInfo> functionToCallOnSaveAs;
-		private LibraryProvider selectedLibraryProvider;
+		private LibraryProvider currentLibraryProvider;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
+		LibrarySelectorWidget librarySelectorWidget;
+
+		public event EventHandler<LibraryDataViewEventArgs> ChangedCurrentLibraryProvider;
 
 		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator)
 			: base(480, 450)
 		{
 			Title = "MatterControl - " + "Save As".Localize();
 			AlwaysOnTopOfMain = true;
-
-			selectedLibraryProvider = new LibraryProviderSelector((LibraryProvider libraryProvider) =>
-			{
-				selectedLibraryProvider = libraryProvider;
-			});
 
 			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 
@@ -66,6 +64,10 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
+			// put in the bread crumb widget
+			FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(SetCurrentLibraryProvider, CurrentLibraryProvider);
+			middleRowContainer.AddChild(breadCrumbWidget);
+
 			// put in the area to pick the provider to save to
 			{
 				string providerToSaveToLabel = "Save Location".Localize();
@@ -87,7 +89,8 @@ namespace MatterHackers.MatterControl
 				chooseWindow.Margin = new BorderDouble(5);
 				chooseWindow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				chooseWindow.Padding = new BorderDouble(3);
-				chooseWindow.AddChild(new LibrarySelectorWidget());
+				librarySelectorWidget = new LibrarySelectorWidget();
+				chooseWindow.AddChild(librarySelectorWidget);
 
 				middleRowContainer.AddChild(textBoxHeader);
 				middleRowContainer.AddChild(textBoxHeaderFull);
@@ -153,7 +156,48 @@ namespace MatterHackers.MatterControl
 
 			ShowAsSystemWindow();
 
+			CurrentLibraryProvider = new LibraryProviderSelector(SetCurrentLibraryProvider);
+
 			UiThread.RunOnIdle(textToAddWidget.Focus);
+		}
+
+		public LibraryProvider CurrentLibraryProvider
+		{
+			get
+			{
+				return currentLibraryProvider;
+			}
+
+			set
+			{
+				if (currentLibraryProvider != value)
+				{
+					// unhook the update we were getting
+					//currentLibraryProvider.DataReloaded -= libraryDataViewInstance.LibraryDataReloaded;
+					// and hook the new one
+					//value.DataReloaded += libraryDataViewInstance.LibraryDataReloaded;
+
+					bool isChildOfCurrent = value.ParentLibraryProvider == currentLibraryProvider;
+
+					// Dispose of all children below this one.
+					while (!isChildOfCurrent && currentLibraryProvider != value
+						&& currentLibraryProvider.ParentLibraryProvider != null)
+					{
+						LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
+						currentLibraryProvider.Dispose();
+						currentLibraryProvider = parent;
+					}
+
+					currentLibraryProvider = value;
+
+					UiThread.RunOnIdle(librarySelectorWidget.RebuildView);
+				}
+			}
+		}
+
+		void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
+		{
+			CurrentLibraryProvider = libraryProvider;
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)
@@ -174,7 +218,7 @@ namespace MatterHackers.MatterControl
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
 				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, selectedLibraryProvider);
+				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, CurrentLibraryProvider);
 				functionToCallOnSaveAs(returnInfo);
 				CloseOnIdle();
 			}
