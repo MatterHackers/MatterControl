@@ -215,6 +215,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 									case PrintLevelingData.LevelingSystem.Probe7PointRadial:
 										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
 										break;
+
+									default:
+										throw new NotImplementedException();
 								}
 							}
 							unleveledGCode.Save(outputPathAndName);

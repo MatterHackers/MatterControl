@@ -1275,13 +1275,32 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 				if (levelingData != null
-					&& levelingData.NeedsPrintLeveling
-					&& levelingData.SampledPosition0.z == 0
-					&& levelingData.SampledPosition1.z == 0
-					&& levelingData.SampledPosition2.z == 0)
+					&& levelingData.NeedsPrintLeveling)
 				{
-					LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
-					return;
+					switch (levelingData.CurrentPrinterLevelingSystem)
+					{
+						case PrintLevelingData.LevelingSystem.Probe2Points:
+						case PrintLevelingData.LevelingSystem.Probe3Points:
+							if (levelingData.SampledPosition0.z == 0
+								&& levelingData.SampledPosition1.z == 0
+								&& levelingData.SampledPosition2.z == 0)
+							{
+								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+								return;
+							}
+							break;
+
+						case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+							if (levelingData.SampledPositions.Count == 0)
+							{
+								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+								return;
+							}
+							break;
+
+						default:
+							throw new NotImplementedException();
+					}
 				}
 
 				if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
@@ -2660,6 +2679,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
 						linesToWrite = LevelWizard7PointRadial.ProcessCommand(lineBeingSent);
 						break;
+
+					default:
+						throw new NotImplementedException();
 				}
 
 				lineBeingSent = linesToWrite[0];

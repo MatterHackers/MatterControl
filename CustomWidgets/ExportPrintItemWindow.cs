@@ -322,6 +322,9 @@ namespace MatterHackers.MatterControl
 									instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
 									linesToWrite = LevelWizard7PointRadial.ProcessCommand(instruction.Line);
 									break;
+
+								default:
+									throw new NotImplementedException();
 							}
 
 							instruction.Line = linesToWrite[0];
