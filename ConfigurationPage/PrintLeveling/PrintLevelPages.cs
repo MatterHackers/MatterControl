@@ -63,9 +63,33 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-			levelingData.sampledPosition0 = probePositions[0].position - paperWidth;
-			levelingData.sampledPosition1 = probePositions[1].position - paperWidth;
-			levelingData.sampledPosition2 = probePositions[2].position - paperWidth;
+			levelingData.SampledPosition0 = probePositions[0].position - paperWidth;
+			levelingData.SampledPosition1 = probePositions[1].position - paperWidth;
+			levelingData.SampledPosition2 = probePositions[2].position - paperWidth;
+
+			ActivePrinterProfile.Instance.DoPrintLeveling = true;
+			base.PageIsBecomingActive();
+		}
+	}
+
+	public class LastPage7PointRadialInstructions : InstructionsPage
+	{
+		private ProbePosition[] probePositions;
+
+		public LastPage7PointRadialInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
+			: base(pageDescription, instructionsText)
+		{
+			this.probePositions = probePositions;
+		}
+
+		public override void PageIsBecomingActive()
+		{
+			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+			levelingData.SampledPositions.Clear();
+			for (int i = 0; i < probePositions.Length; i++)
+			{
+				levelingData.SampledPositions.Add(probePositions[i].position - paperWidth);
+			}
 
 			ActivePrinterProfile.Instance.DoPrintLeveling = true;
 			base.PageIsBecomingActive();
@@ -161,12 +185,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// auto back probe
 			Vector3 probeOffset2 = probePositions[4].position;
 
-			levelingData.sampledPosition0 = userBedSample0 - paperWidth;
-			levelingData.sampledPosition1 = userBedSample1 - paperWidth;
-			levelingData.sampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0 - paperWidth;
+			levelingData.SampledPosition0 = userBedSample0 - paperWidth;
+			levelingData.SampledPosition1 = userBedSample1 - paperWidth;
+			levelingData.SampledPosition2 = probeOffset2 - probeOffset0 + userBedSample0 - paperWidth;
 
-			levelingData.probeOffset0 = probeOffset0 - paperWidth;
-			levelingData.probeOffset1 = probeOffset1 - paperWidth;
+			levelingData.ProbeOffset0 = probeOffset0 - paperWidth;
+			levelingData.ProbeOffset1 = probeOffset1 - paperWidth;
 
 			ActivePrinterProfile.Instance.DoPrintLeveling = true;
 			base.PageIsBecomingActive();

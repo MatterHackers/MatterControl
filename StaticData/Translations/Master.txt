@@ -3451,3 +3451,9 @@ Translated:Save Location
 English:Choose the location to save to.
 Translated:Choose the location to save to.
 
+English:Sample the bed at seven points
+Translated:Sample the bed at seven points
+
+English:You should be done in about 5 minutes.
+Translated:You should be done in about 5 minutes.
+

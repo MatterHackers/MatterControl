@@ -343,9 +343,9 @@ namespace MatterHackers.MatterControl
 					{
 						PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 						PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-							levelingData.sampledPosition0,
-							levelingData.sampledPosition1,
-							levelingData.sampledPosition2,
+							levelingData.SampledPosition0,
+							levelingData.SampledPosition1,
+							levelingData.SampledPosition2,
 							ActiveSliceSettings.Instance.PrintCenter);
 					}
 				}

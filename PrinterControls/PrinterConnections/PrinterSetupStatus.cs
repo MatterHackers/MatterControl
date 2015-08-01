@@ -142,13 +142,21 @@ namespace MatterHackers.MatterControl
 			string needsPrintLeveling;
 			if (settingsDict.TryGetValue("needs_print_leveling", out needsPrintLeveling))
 			{
-				levelingData.needsPrintLeveling = true;
+				levelingData.NeedsPrintLeveling = true;
 			}
 
 			string printLevelingType;
 			if (settingsDict.TryGetValue("print_leveling_type", out printLevelingType))
 			{
-				levelingData.levelingSystem = PrintLevelingData.LevelingSystem.Probe2Points;
+				PrintLevelingData.LevelingSystem result;
+				if(Enum.TryParse<PrintLevelingData.LevelingSystem>(printLevelingType, out result))
+				{
+					levelingData.CurrentPrinterLevelingSystem = result;
+				}
+				else
+				{
+					levelingData.CurrentPrinterLevelingSystem = PrintLevelingData.LevelingSystem.Probe2Points;
+				}
 			}
 
 			string defaultSliceEngine;

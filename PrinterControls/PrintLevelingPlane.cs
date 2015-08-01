@@ -48,21 +48,6 @@ namespace MatterHackers.MatterControl
 			makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.x, bedCenter.y, 0);//distanceToPlaneAtBedCenter);
 
 			bedLevelMatrix = Matrix4X4.Invert(makePointsFlatMatrix);
-
-			{
-				// test that the points come back as 0 zs
-				Vector3 outPosition0 = Vector3.TransformPosition(position0, makePointsFlatMatrix);
-				Vector3 outPosition1 = Vector3.TransformPosition(position1, makePointsFlatMatrix);
-				Vector3 outPosition2 = Vector3.TransformPosition(position2, makePointsFlatMatrix);
-
-				Vector3 printPosition0 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(0), 0);
-				Vector3 printPosition1 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(1), 0);
-				Vector3 printPosition2 = new Vector3(LevelWizardBase.GetPrintLevelPositionToSample(2), 0);
-
-				Vector3 leveledPositon0 = Vector3.TransformPosition(printPosition0, bedLevelMatrix);
-				Vector3 leveledPositon1 = Vector3.TransformPosition(printPosition1, bedLevelMatrix);
-				Vector3 leveledPositon2 = Vector3.TransformPosition(printPosition2, bedLevelMatrix);
-			}
 		}
 
 		public Vector3 ApplyLeveling(Vector3 inPosition)
@@ -116,16 +101,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return lineBeingSent;
-		}
-
-		public void ApplyLeveling(GCodeFile unleveledGCode)
-		{
-			for (int i = 0; i < unleveledGCode.LineCount; i++)
-			{
-				PrinterMachineInstruction instruction = unleveledGCode.Instruction(i);
-				Vector3 currentDestination = instruction.Position;
-				instruction.Line = ApplyLeveling(currentDestination, instruction.movementType, instruction.Line);
-			}
 		}
 	}
 }

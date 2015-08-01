@@ -10,6 +10,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -296,24 +297,30 @@ namespace MatterHackers.MatterControl
 				GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(source);
 				if (applyLeveling.Checked)
 				{
-					PrintLevelingPlane.Instance.ApplyLeveling(unleveledGCode);
-
 					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 					if (levelingData != null)
 					{
 						for (int lineIndex = 0; lineIndex < unleveledGCode.LineCount; lineIndex++)
 						{
 							PrinterMachineInstruction instruction = unleveledGCode.Instruction(lineIndex);
+							Vector3 currentDestination = instruction.Position;
 
 							List<string> linesToWrite = null;
-							switch (levelingData.levelingSystem)
+							switch (levelingData.CurrentPrinterLevelingSystem)
 							{
 								case PrintLevelingData.LevelingSystem.Probe2Points:
+									instruction.Line = LevelWizard2Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
 									linesToWrite = LevelWizard2Point.ProcessCommand(instruction.Line);
 									break;
 
 								case PrintLevelingData.LevelingSystem.Probe3Points:
+									instruction.Line = LevelWizard3Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
 									linesToWrite = LevelWizard3Point.ProcessCommand(instruction.Line);
+									break;
+
+								case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+									instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+									linesToWrite = LevelWizard7PointRadial.ProcessCommand(instruction.Line);
 									break;
 							}
 
