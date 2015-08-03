@@ -3496,3 +3496,21 @@ Translated:Probe Offset
 English:Probe Z Offset
 Translated:Probe Z Offset
 
+English:There is a recommended update available for MatterControl. Would you like to download it now?
+Translated:There is a recommended update available for MatterControl. Would you like to download it now?
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+
+English:This printer requires print leveling to run correctly.
+Translated:This printer requires print leveling to run correctly.
+
+English:Require Leveling To Print
+Translated:Require Leveling To Print
+
+English:Oops! You cannot restart while a print is active.
+Translated:Oops! You cannot restart while a print is active.
+
+English:Unable to restart
+Translated:Unable to restart
+
