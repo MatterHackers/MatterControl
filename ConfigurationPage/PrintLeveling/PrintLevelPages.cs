@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static string setZHeightCoarseInstruction1 = LocalizedString.Get("Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.");
 
 		private static string setZHeightCourseInstructTextOne = "Place the paper under the extruder".Localize();
-		private static string setZHeightCourseInstructTextTwo = "Using the above contols".Localize();
+		private static string setZHeightCourseInstructTextTwo = "Using the above controls".Localize();
 		private static string setZHeightCourseInstructTextThree = LocalizedString.Get("Press [Z-] until there is resistance to moving the paper");
 		private static string setZHeightCourseInstructTextFour = LocalizedString.Get("Press [Z+] once to release the paper");
 		private static string setZHeightCourseInstructTextFive = LocalizedString.Get("Finally click 'Next' to continue.");

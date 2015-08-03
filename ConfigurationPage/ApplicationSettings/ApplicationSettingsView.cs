@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
 
@@ -43,11 +44,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private Button languageRestartButton;
 		private Button configureUpdateFeedButton;
         public StyledDropDownList releaseOptionsDropList;
+        private string cannotRestartWhilePrintIsActiveMessage; 
+        private string cannotRestartWhileActive;
+
         
 
 		public ApplicationSettingsWidget()
 			: base("Application Settings".Localize())
 		{
+
+
+            cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
+            cannotRestartWhileActive = "Unable to restart".Localize();
 
 			mainContainer.AddChild(new HorizontalLine(separatorLineColor));
 			mainContainer.AddChild(GetLanguageControl());
@@ -189,7 +197,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			displayControlRestartButton.Margin = new BorderDouble(right: 6);
 			displayControlRestartButton.Click += (sender, e) =>
 			{
-				RestartApplication();
+                if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+                {
+                    StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
+                }
+                else
+                {
+                    RestartApplication();
+                }
+				
 			};
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -291,9 +307,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			languageRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			languageRestartButton.Visible = false;
 			languageRestartButton.Margin = new BorderDouble(right: 6);
+
 			languageRestartButton.Click += (sender, e) =>
 			{
-				RestartApplication();
+
+                if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+                {
+                    StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
+                }
+                else
+                {
+                    RestartApplication();
+                }
 			};
 
 			buttonRow.AddChild(settingsLabel);
