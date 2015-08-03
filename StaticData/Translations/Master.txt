@@ -3457,3 +3457,42 @@ Translated:Sample the bed at seven points
 English:You should be done in about 5 minutes.
 Translated:You should be done in about 5 minutes.
 
+English:The print leveling alogrithm to use.
+Translated:The print leveling alogrithm to use.
+
+English:The print leveling sampling mothod to use.
+Translated:The print leveling sampling mothod to use.
+
+English:This gcode will be run prior to starting bed probing.
+Translated:This gcode will be run prior to starting bed probing.
+
+English:This gcode will be run after finishing bed probing.
+Translated:This gcode will be run after finishing bed probing.
+
+English:The width of the paper (or other calibration device) used when doing manual bed probing.
+Translated:The width of the paper (or other calibration device) used when doing manual bed probing.
+
+English:The offset of the probe relative to the extruder.
+Translated:The offset of the probe relative to the extruder.
+
+English:The z offset of the probe relative to the extruder.
+Translated:The z offset of the probe relative to the extruder.
+
+English:Print Leveling
+Translated:Print Leveling
+
+English:Leveling Solution
+Translated:Leveling Solution
+
+English:Leveling Method
+Translated:Leveling Method
+
+English:Manual Probe Paper Width
+Translated:Manual Probe Paper Width
+
+English:Probe Offset
+Translated:Probe Offset
+
+English:Probe Z Offset
+Translated:Probe Z Offset
+

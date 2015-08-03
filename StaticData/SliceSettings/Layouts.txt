@@ -269,6 +269,19 @@ Advanced
       Advanced
         use_firmware_retraction
         vibration_limit
+    Print Leveling
+      Machine Settings
+        print_leveling_solution
+        print_leveling_method
+      G-Code Deploy Bed Probe
+        deploy_bed_probe_gcode
+      G-Code Retract Bed Probe
+        retract_bed_probe_gcode
+      Prob Settings
+        manual_probe_paper_width
+        probe_xy_offset
+        probe_z_offset
+      Options
     Custom G-Code
       Start G-Code
         start_gcode

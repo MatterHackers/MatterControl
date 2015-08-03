@@ -100,7 +100,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new VisibleButNotMappedToEngine("has_sd_card_reader"),
             new VisibleButNotMappedToEngine("z_can_be_negative"),
 
-            new ScaledSingleNumber("objectSink", "bottom_clip_amount", 1000),
+			new VisibleButNotMappedToEngine("print_leveling_solution"),
+			new VisibleButNotMappedToEngine("print_leveling_method"),
+			new VisibleButNotMappedToEngine("deploy_bed_probe_gcode"),
+			new VisibleButNotMappedToEngine("retract_bed_probe_gcode"),
+			new VisibleButNotMappedToEngine("manual_probe_paper_width"),
+			new VisibleButNotMappedToEngine("probe_xy_offset"),
+			new VisibleButNotMappedToEngine("probe_z_offset"),
+
+			new ScaledSingleNumber("objectSink", "bottom_clip_amount", 1000),
 
             new MapItem("fanSpeedMin", "max_fan_speed"),
             new MapItem("fanSpeedMax", "min_fan_speed"),

@@ -498,6 +498,55 @@
     "ExtraSettings": "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC"
   },
   {
+    "SlicerConfigName": "print_leveling_solution",
+    "PresentationName": "Leveling Solution",
+    "HelpText": "The print leveling alogrithm to use.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "3 Point Plane,2 Point Plane,7 Point Disk"
+  },
+  {
+    "SlicerConfigName": "print_leveling_method",
+    "PresentationName": "Leveling Method",
+    "HelpText": "The print leveling sampling mothod to use.",
+    "DataEditType": "LIST",
+    "ExtraSettings": "Manual,Use Z Limit Switch,Probe With G30"
+  },
+  {
+    "SlicerConfigName": "deploy_bed_probe_gcode",
+    "PresentationName": "Deploy Bed Probe G-Code",
+    "HelpText": "This gcode will be run prior to starting bed probing.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "retract_bed_probe_gcode",
+    "PresentationName": "Retract Bed Probe G-Code",
+    "HelpText": "This gcode will be run after finishing bed probing.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ExtraSettings": ""
+  },
+  {
+    "SlicerConfigName": "manual_probe_paper_width",
+    "PresentationName": "Manual Probe Paper Width",
+    "HelpText": "The width of the paper (or other calibration device) used when doing manual bed probing.",
+    "DataEditType": "DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "probe_xy_offset",
+    "PresentationName": "Probe Offset",
+    "HelpText": "The offset of the probe relative to the extruder.",
+    "DataEditType": "VECTOR2",
+    "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "probe_z_offset",
+    "PresentationName": "Probe Z Offset",
+    "HelpText": "The z offset of the probe relative to the extruder.",
+    "DataEditType": "DOUBLE",
+    "ExtraSettings": "mm"
+  },
+  {
     "SlicerConfigName": "layer_gcode",
     "PresentationName": "Layer Change G-Code",
     "HelpText": "This gcode will be inserted right after the change in z height for the next layer.",
