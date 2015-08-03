@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				this.AnchorAll();
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 				this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
+               
 
 				GuiWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				mainContainer.AnchorAll();
@@ -117,9 +118,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				//ListBox printerListContainer = new ListBox();
 				{
 					printerListContainer.HAnchor = HAnchor.ParentLeftRight;
-					printerListContainer.VAnchor = VAnchor.ParentBottomTop;
+					printerListContainer.VAnchor = VAnchor.FitToChildren;
 					printerListContainer.Padding = new BorderDouble(3);
 					printerListContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+                   
 
 					//Get a list of printer records and add them to radio button list
 					foreach (Printer printer in GetAllPrinters())
@@ -165,9 +167,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					buttonContainer.AddChild(closeButton);
 				}
 
+                ScrollableWidget printerListScrollArea = new ScrollableWidget(true);
+                printerListScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+                printerListScrollArea.AnchorAll();
+                printerListScrollArea.AddChild(printerListContainer);
+
 				mainContainer.AddChild(headerRow);
 				mainContainer.AddChild(editButtonRow);
-				mainContainer.AddChild(printerListContainer);
+                mainContainer.AddChild(printerListScrollArea);
 				mainContainer.AddChild(buttonContainer);
 
 				this.AddChild(mainContainer);

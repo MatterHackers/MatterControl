@@ -834,7 +834,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string error = "First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
 					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetActiveValue("first_layer_extrusion_width"), NozzleDiameter);
-					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'".Localize();
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
@@ -843,7 +843,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string error = "First Layer Extrusion Width' must be greater than 0.".Localize();
 					string details = string.Format("First Layer Extrusion Width = {0}".Localize(), GetActiveValue("first_layer_extrusion_width"));
-					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'".Localize();
+					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
 					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}

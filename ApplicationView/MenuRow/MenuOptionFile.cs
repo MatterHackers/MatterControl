@@ -5,6 +5,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
+using System.Collections.Generic;
 using MatterHackers.VectorMath;
 using System;
 using System.IO;
@@ -51,7 +52,22 @@ namespace MatterHackers.MatterControl
 						{
 							foreach (string loadedFileName in openParams.FileNames)
 							{
-								QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
+                                if (Path.GetExtension(loadedFileName).ToUpper() == ".ZIP")
+                                {
+                                    ProjectFileHandler project = new ProjectFileHandler(null);
+                                    List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+                                    if (partFiles != null)
+                                    {
+                                        foreach (PrintItem part in partFiles)
+                                        {
+                                            QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
+                                }
 							}
 						}
 					});
