@@ -23,10 +23,16 @@ namespace MatterHackers.MatterControl
 		{
 			return new TupleList<string, Func<bool>>
             {
-                {LocalizedString.Get("Add Printer"), addPrinter_Click},
-                {LocalizedString.Get("Add File"), importFile_Click},
-				{LocalizedString.Get("Exit"), exit_Click},
+                {"Add Printer".Localize(), addPrinter_Click},
+                {"Add File".Localize(), importFile_Click},
+				{"------------------------", nothing_Click},
+				{"Exit".Localize(), exit_Click},
             };
+		}
+
+		private bool nothing_Click()
+		{
+			return true;
 		}
 
 		private bool addPrinter_Click()

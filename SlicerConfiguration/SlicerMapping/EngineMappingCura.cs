@@ -101,12 +101,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new VisibleButNotMappedToEngine("z_can_be_negative"),
 
 			new VisibleButNotMappedToEngine("print_leveling_solution"),
-			new VisibleButNotMappedToEngine("print_leveling_method"),
-			new VisibleButNotMappedToEngine("deploy_bed_probe_gcode"),
-			new VisibleButNotMappedToEngine("retract_bed_probe_gcode"),
+			new VisibleButNotMappedToEngine("print_leveling_required_to_print"),
+			//new VisibleButNotMappedToEngine("print_leveling_method"),
 			new VisibleButNotMappedToEngine("manual_probe_paper_width"),
-			new VisibleButNotMappedToEngine("probe_xy_offset"),
-			new VisibleButNotMappedToEngine("probe_z_offset"),
 
 			new ScaledSingleNumber("objectSink", "bottom_clip_amount", 1000),
 

@@ -36,9 +36,6 @@ namespace MatterHackers.MatterControl
 {
 	public class InstructionsPage : WizardPage
 	{
-		// a sheet of paper is .1 mm, we need to subtract that.
-		protected static Vector3 paperWidth = new Vector3(0, 0, .1);
-
 		protected FlowLayoutWidget topToBottomControls;
 
 		public InstructionsPage(string pageDescription, string instructionsText)

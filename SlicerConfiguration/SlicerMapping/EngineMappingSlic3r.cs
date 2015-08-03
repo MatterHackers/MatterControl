@@ -75,6 +75,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					hideItems.Add("wipe_shield_distance");
 					hideItems.Add("heat_extruder_before_homing");
 					hideItems.Add("extruders_share_temperature");
+					hideItems.Add("print_leveling_method");
+
 				}
 				return instance;
 			}

@@ -1,4 +1,5 @@
 ﻿using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -13,10 +14,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static Printer activePrinter = null;
 
 		private static PrintLevelingData instance = null;
-
-		private LevelingSystem levelingSystemPrivate = LevelingSystem.Probe3Points;
-
-		private bool needsPrintLevelingPrivate;
 
 		private Vector3 probeOffset0Private;
 
@@ -35,28 +32,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public LevelingSystem CurrentPrinterLevelingSystem
 		{
-			get { return levelingSystemPrivate; }
-			set
+			get 
 			{
-				if (value != levelingSystemPrivate)
+				switch (ActiveSliceSettings.Instance.GetActiveValue("print_leveling_solution"))
 				{
-					levelingSystemPrivate = value;
-					Commit();
+					case "2 Point Plane":
+						return LevelingSystem.Probe2Points;
+
+					case "7 Point Disk":
+						return LevelingSystem.Probe7PointRadial;
+
+					case "3 Point Plane":
+					default:
+						return LevelingSystem.Probe3Points;
 				}
 			}
 		}
 
 		public bool NeedsPrintLeveling
 		{
-			get { return needsPrintLevelingPrivate; }
-			set
-			{
-				if (needsPrintLevelingPrivate != value)
-				{
-					needsPrintLevelingPrivate = value;
-					Commit();
-				}
-			}
+			get { return ActiveSliceSettings.Instance.GetActiveValue("print_leveling_required_to_print") == "1"; }
 		}
 
 		public Vector3 ProbeOffset0

@@ -137,28 +137,6 @@ namespace MatterHackers.MatterControl
 				ActivePrinter.BaudRate = baudRate;
 			}
 
-			// Check if we need to run the print level wizard before printing
-			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinter);
-			string needsPrintLeveling;
-			if (settingsDict.TryGetValue("needs_print_leveling", out needsPrintLeveling))
-			{
-				levelingData.NeedsPrintLeveling = true;
-			}
-
-			string printLevelingType;
-			if (settingsDict.TryGetValue("print_leveling_type", out printLevelingType))
-			{
-				PrintLevelingData.LevelingSystem result;
-				if(Enum.TryParse<PrintLevelingData.LevelingSystem>(printLevelingType, out result))
-				{
-					levelingData.CurrentPrinterLevelingSystem = result;
-				}
-				else
-				{
-					levelingData.CurrentPrinterLevelingSystem = PrintLevelingData.LevelingSystem.Probe2Points;
-				}
-			}
-
 			string defaultSliceEngine;
 			if (settingsDict.TryGetValue("default_slice_engine", out defaultSliceEngine))
 			{
