@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 
@@ -63,6 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.ProbePaperWidth);
 			levelingData.SampledPosition0 = probePositions[0].position - paperWidth;
 			levelingData.SampledPosition1 = probePositions[1].position - paperWidth;
 			levelingData.SampledPosition2 = probePositions[2].position - paperWidth;
@@ -86,6 +88,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 			levelingData.SampledPositions.Clear();
+			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.ProbePaperWidth);
 			for (int i = 0; i < probePositions.Length; i++)
 			{
 				levelingData.SampledPositions.Add(probePositions[i].position - paperWidth);
@@ -187,6 +190,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// auto back probe
 			Vector3 probeOffset2 = probePositions[4].position;
+
+			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.ProbePaperWidth);
 
 			levelingData.SampledPosition0 = userBedSample0 - paperWidth;
 			levelingData.SampledPosition1 = userBedSample1 - paperWidth;

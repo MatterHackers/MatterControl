@@ -300,6 +300,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public double ProbePaperWidth
+		{
+			get
+			{
+				return int.Parse(GetActiveValue("manual_probe_paper_width"));
+			}
+		}
+
+
 		public bool RaftEnabled
 		{
 			get
