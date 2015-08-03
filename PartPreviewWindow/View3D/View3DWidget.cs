@@ -1367,48 +1367,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return buttonRightPanel;
 		}
 
-		private FlowLayoutWidget CreateSaveButtons()
-		{
-			FlowLayoutWidget saveButtons = new FlowLayoutWidget();
-
-			//Create Save Button
-			double oldWidth = whiteButtonFactory.FixedWidth;
-			whiteButtonFactory.FixedWidth = 56 * TextWidget.GlobalPointSizeScaleRatio;
-			Button saveButton = whiteButtonFactory.Generate("Save".Localize(), centerText: true);
-			saveButton.Cursor = Cursors.Hand;
-			saveButtons.AddChild(saveButton);
-			saveButton.Click += (sender, e) =>
-			{
-				MergeAndSavePartsToCurrentMeshFile();
-			};
-
-			//Create Save As Button
-			whiteButtonFactory.FixedWidth = SideBarButtonWidth - whiteButtonFactory.FixedWidth - 2;
-			Button saveAsButton = whiteButtonFactory.Generate("Save As".Localize(), centerText: true);
-			whiteButtonFactory.FixedWidth = oldWidth;
-			saveAsButton.Cursor = Cursors.Hand;
-			saveButtons.AddChild(saveAsButton);
-			saveAsButton.Click += (sender, e) =>
-			{
-				if (saveAsWindow == null)
-				{
-					saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider.GetProviderLocator());
-					saveAsWindow.Closed += (sender2, e2) =>
-					{
-						saveAsWindow = null;
-					};
-				}
-				else
-				{
-					saveAsWindow.BringToFront();
-				}
-			};
-
-			saveButtons.Visible = false;
-
-			return saveButtons;
-		}
-
 		private DropDownMenu CreateScaleDropDownMenu()
 		{
 			DropDownMenu presetScaleMenu = new DropDownMenu("", Direction.Down);
@@ -1917,11 +1875,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (returnInfo != null)
 			{
-				throw new NotImplementedException();
-
 				if (returnInfo.printItemWrapper.SourceLibraryProvider != null)
 				{
-					throw new NotImplementedException();
+					returnInfo.printItemWrapper.SourceLibraryProvider.AddItem(returnInfo.printItemWrapper);
 					// save this part to correct library provider
 				}
 				else // there is no library provider so save it to the queue
@@ -2045,7 +2001,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (saveAsWindow == null)
 			{
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, printItemWrapper.SourceLibraryProvider.GetProviderLocator());
+				List<ProviderLocatorNode> providerLocator = null;
+				if (printItemWrapper.SourceLibraryProvider != null)
+				{
+					providerLocator = printItemWrapper.SourceLibraryProvider.GetProviderLocator();
+				}
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator);
 				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
 			}
 			else

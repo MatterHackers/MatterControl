@@ -33,32 +33,38 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard3Point : LevelWizardBase
+	public class LevelWizard7PointRadial : LevelWizardBase
 	{
 		private string pageOneStepText = "Print Leveling Overview".Localize();
 		private string pageOneInstructionsTextOne = LocalizedString.Get("Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.");
 		private string pageOneInstructionsTextTwo = LocalizedString.Get("'Home' the printer");
-		private string pageOneInstructionsTextThree = LocalizedString.Get("Sample the bed at three points");
+		private string pageOneInstructionsTextThree = LocalizedString.Get("Sample the bed at seven points");
 		private string pageOneInstructionsTextFour = LocalizedString.Get("Turn auto leveling on");
-		private string pageOneInstructionsText5 = LocalizedString.Get("You should be done in about 3 minutes.");
+		private string pageOneInstructionsText5 = LocalizedString.Get("You should be done in about 5 minutes.");
 		private string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extrude is clean.");
 		private string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
 
-		public LevelWizard3Point(LevelWizardBase.RuningState runningState)
+		public LevelWizard7PointRadial(LevelWizardBase.RuningState runningState)
 			: base(500, 370, 9)
 		{
 			bool allowLessThanZero = ActiveSliceSettings.Instance.GetActiveValue("z_can_be_negative") == "1";
 			string printLevelWizardTitle = LocalizedString.Get("MatterControl");
 			string printLevelWizardTitleFull = LocalizedString.Get("Print Leveling Wizard");
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
-			ProbePosition[] probePositions = new ProbePosition[3];
+			ProbePosition[] probePositions = new ProbePosition[7];
 			probePositions[0] = new ProbePosition();
 			probePositions[1] = new ProbePosition();
 			probePositions[2] = new ProbePosition();
+			probePositions[3] = new ProbePosition();
+			probePositions[4] = new ProbePosition();
+			probePositions[5] = new ProbePosition();
+			probePositions[6] = new ProbePosition();
 
 			printLevelWizard = new WizardControl();
 			AddChild(printLevelWizard);
@@ -80,35 +86,117 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = LocalizedString.Get("Medium Precision");
 			string highPrecisionLabel = LocalizedString.Get("High Precision");
 
-			Vector2 probeBackCenter = LevelWizardBase.GetPrintLevelPositionToSample(0);
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeBackCenter, 10), string.Format("{0} {1} 1 - {2}", GetStepString(), positionLabel, lowPrecisionLabel), probePositions[0], allowLessThanZero));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 1 - {2}", GetStepString(), positionLabel, medPrecisionLabel), probePositions[0], allowLessThanZero));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 1 - {2}", GetStepString(), positionLabel, highPrecisionLabel), probePositions[0], allowLessThanZero));
+			double bedRadius = ActiveSliceSettings.Instance.BedSize.x / 2;
 
-			Vector2 probeFrontLeft = LevelWizardBase.GetPrintLevelPositionToSample(1);
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontLeft, 10), string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabel, lowPrecisionLabel), probePositions[1], allowLessThanZero));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabel, medPrecisionLabel), probePositions[1], allowLessThanZero));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 2 - {2}", GetStepString(), positionLabel, highPrecisionLabel), probePositions[1], allowLessThanZero));
-
-			Vector2 probeFrontRight = LevelWizardBase.GetPrintLevelPositionToSample(2);
-			printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probeFrontRight, 10), string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabel, lowPrecisionLabel), probePositions[2], allowLessThanZero));
-			printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabel, medPrecisionLabel), probePositions[2], allowLessThanZero));
-			printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} 3 - {2}", GetStepString(), positionLabel, highPrecisionLabel), probePositions[2], allowLessThanZero));
+			double startProbeHeight = 5;
+			for (int i = 0; i < 7; i++)
+			{
+				Vector2 probePosition = GetPrintLevelPositionToSample(i, bedRadius);
+				printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, lowPrecisionLabel), probePositions[i], allowLessThanZero));
+				printLevelWizard.AddPage(new GetFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, medPrecisionLabel), probePositions[i], allowLessThanZero));
+				printLevelWizard.AddPage(new GetUltraFineBedHeight(string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, highPrecisionLabel), probePositions[i], allowLessThanZero));
+			}
 
 			string doneInstructions = string.Format("{0}\n\n\t• {1}\n\n{2}", doneInstructionsText, doneInstructionsTextTwo, doneInstructionsTextThree);
-			printLevelWizard.AddPage(new LastPage3PointInstructions("Done".Localize(), doneInstructions, probePositions));
+			printLevelWizard.AddPage(new LastPage7PointRadialInstructions("Done".Localize(), doneInstructions, probePositions));
 		}
 
-		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+		public static Vector2 GetPrintLevelPositionToSample(int index, double radius)
 		{
+			if (index < 6)
+			{
+				Vector2 postion = new Vector2(radius, 0);
+				postion.Rotate(MathHelper.Tau / 6 * index);
+				return postion;
+			}
+			else
+			{
+				return new Vector2(0, 0);
+			}
+		}
+
+		internal static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+		{
+			// old ref code
 			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null
 				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
-				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
+				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
+				&& lineBeingSent.Length > 2
+				&& lineBeingSent[2] == ' ')
 			{
-				lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent);
+				double extruderDelta = 0;
+				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
+				double feedRate = 0;
+				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
+
+				StringBuilder newLine = new StringBuilder("G1 ");
+
+				if (lineBeingSent.Contains("X") || lineBeingSent.Contains("Y") || lineBeingSent.Contains("Z"))
+				{
+					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+
+					Vector3 outPosition = GetPositionWithZOffset(currentDestination, levelingData);
+		
+					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
+					{
+						Vector3 relativeMove = Vector3.Zero;
+						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
+						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
+						GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref relativeMove.z);
+						outPosition = PrintLevelingPlane.Instance.ApplyLevelingRotation(relativeMove);
+					}
+
+					newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z));
+				}
+
+				if (extruderDelta != 0)
+				{
+					newLine = newLine.Append(String.Format(" E{0:0.###}", extruderDelta));
+				}
+
+				if (feedRate != 0)
+				{
+					newLine = newLine.Append(String.Format(" F{0:0.##}", feedRate));
+				}
+
+				lineBeingSent = newLine.ToString();
+
+				return lineBeingSent;
 			}
 
 			return lineBeingSent;
+		}
+
+		private static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData)
+		{
+			double angleToPoint = Math.Atan2(currentDestination.y, currentDestination.x);
+
+			if (angleToPoint < 0)
+			{
+				angleToPoint += MathHelper.Tau;
+			}
+
+			double ratioToRadius = Math.Min(1, Math.Max(0, new Vector3(currentDestination.x, currentDestination.y, 0).Length / levelingData.SampledPositions[0].x));
+
+			double oneSegmentAngle = MathHelper.Tau / 6;
+			int firstIndex = (int)(angleToPoint / oneSegmentAngle);
+			int lastIndex = firstIndex + 1;
+			if (lastIndex == 6)
+			{
+				lastIndex = 0;
+			}
+
+			double ratioToLast = Math.Min(1, Math.Max(0, (angleToPoint - firstIndex * oneSegmentAngle) / oneSegmentAngle));
+
+			double firstZ = levelingData.SampledPositions[firstIndex].z;
+			double lastZ = levelingData.SampledPositions[lastIndex].z;
+			double centerZ = levelingData.SampledPositions[6].z;
+
+			double zAtRadius = lastZ * ratioToLast + firstZ * (1-ratioToLast);
+
+			double zBetweenCenterAndRadius = zAtRadius * ratioToRadius + centerZ * (1 - ratioToRadius);
+
+			return new Vector3(currentDestination.x, currentDestination.y, currentDestination.z + zBetweenCenterAndRadius);
 		}
 
 		public static List<string> ProcessCommand(string lineBeingSent)

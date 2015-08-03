@@ -2,6 +2,7 @@
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -9,87 +10,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private static bool activelyLoading = false;
 
-		[JsonConverter(typeof(StringEnumConverter))]
-		public enum LevelingSystem { Probe3Points, Probe2Points }
+		private static Printer activePrinter = null;
 
-		private Vector3 sampledPosition0Private;
-
-		public Vector3 sampledPosition0
-		{
-			get { return sampledPosition0Private; }
-			set
-			{
-				if (sampledPosition0Private != value)
-				{
-					sampledPosition0Private = value;
-					Commit();
-				}
-			}
-		}
-
-		private Vector3 probeOffset0Private;
-
-		public Vector3 probeOffset0
-		{
-			get { return probeOffset0Private; }
-			set
-			{
-				if (probeOffset0Private != value)
-				{
-					probeOffset0Private = value;
-					Commit();
-				}
-			}
-		}
-
-		private Vector3 probeOffset1Private;
-
-		public Vector3 probeOffset1
-		{
-			get { return probeOffset1Private; }
-			set
-			{
-				if (probeOffset1Private != value)
-				{
-					probeOffset1Private = value;
-					Commit();
-				}
-			}
-		}
-
-		private Vector3 sampledPosition1Private;
-
-		public Vector3 sampledPosition1
-		{
-			get { return sampledPosition1Private; }
-			set
-			{
-				if (sampledPosition1Private != value)
-				{
-					sampledPosition1Private = value;
-					Commit();
-				}
-			}
-		}
-
-		private Vector3 sampledPosition2Private;
-
-		public Vector3 sampledPosition2
-		{
-			get { return sampledPosition2Private; }
-			set
-			{
-				if (sampledPosition2Private != value)
-				{
-					sampledPosition2Private = value;
-					Commit();
-				}
-			}
-		}
+		private static PrintLevelingData instance = null;
 
 		private LevelingSystem levelingSystemPrivate = LevelingSystem.Probe3Points;
 
-		public LevelingSystem levelingSystem
+		private bool needsPrintLevelingPrivate;
+
+		private Vector3 probeOffset0Private;
+
+		private Vector3 probeOffset1Private;
+
+		private Vector3 sampledPosition0Private;
+
+		private Vector3 sampledPosition1Private;
+
+		private Vector3 sampledPosition2Private;
+
+		[JsonConverter(typeof(StringEnumConverter))]
+		public enum LevelingSystem { Probe3Points, Probe2Points, Probe7PointRadial }
+
+		public List<Vector3> SampledPositions = new List<Vector3>();
+
+		public LevelingSystem CurrentPrinterLevelingSystem
 		{
 			get { return levelingSystemPrivate; }
 			set
@@ -102,9 +46,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		private bool needsPrintLevelingPrivate;
-
-		public bool needsPrintLeveling
+		public bool NeedsPrintLeveling
 		{
 			get { return needsPrintLevelingPrivate; }
 			set
@@ -117,22 +59,70 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		private void Commit()
+		public Vector3 ProbeOffset0
 		{
-			if (!activelyLoading)
+			get { return probeOffset0Private; }
+			set
 			{
-				string newLevelingInfo = Newtonsoft.Json.JsonConvert.SerializeObject(this);
-
-				// clear the legacy value
-				activePrinter.PrintLevelingProbePositions = "";
-				// set the new value
-				activePrinter.PrintLevelingJsonData = newLevelingInfo;
-				activePrinter.Commit();
+				if (probeOffset0Private != value)
+				{
+					probeOffset0Private = value;
+					Commit();
+				}
 			}
 		}
 
-		private static Printer activePrinter = null;
-		private static PrintLevelingData instance = null;
+		public Vector3 ProbeOffset1
+		{
+			get { return probeOffset1Private; }
+			set
+			{
+				if (probeOffset1Private != value)
+				{
+					probeOffset1Private = value;
+					Commit();
+				}
+			}
+		}
+
+		public Vector3 SampledPosition0
+		{
+			get { return sampledPosition0Private; }
+			set
+			{
+				if (sampledPosition0Private != value)
+				{
+					sampledPosition0Private = value;
+					Commit();
+				}
+			}
+		}
+
+		public Vector3 SampledPosition1
+		{
+			get { return sampledPosition1Private; }
+			set
+			{
+				if (sampledPosition1Private != value)
+				{
+					sampledPosition1Private = value;
+					Commit();
+				}
+			}
+		}
+
+		public Vector3 SampledPosition2
+		{
+			get { return sampledPosition2Private; }
+			set
+			{
+				if (sampledPosition2Private != value)
+				{
+					sampledPosition2Private = value;
+					Commit();
+				}
+			}
+		}
 
 		public static PrintLevelingData GetForPrinter(Printer printer)
 		{
@@ -152,7 +142,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (jsonData != null)
 			{
 				activelyLoading = true;
-				instance = (PrintLevelingData)Newtonsoft.Json.JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
+				instance = Newtonsoft.Json.JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
 				activelyLoading = false;
 			}
 			else if (depricatedPositionsCsv3ByXYZ != null)
@@ -163,6 +153,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			else
 			{
 				instance = new PrintLevelingData();
+			}
+		}
+
+		public void Commit()
+		{
+			if (!activelyLoading)
+			{
+				string newLevelingInfo = Newtonsoft.Json.JsonConvert.SerializeObject(this);
+
+				// clear the legacy value
+				activePrinter.PrintLevelingProbePositions = "";
+				// set the new value
+				activePrinter.PrintLevelingJsonData = newLevelingInfo;
+				activePrinter.Commit();
 			}
 		}
 

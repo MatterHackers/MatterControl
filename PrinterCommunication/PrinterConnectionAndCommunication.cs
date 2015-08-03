@@ -913,13 +913,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		private Printer ActivePrinter
+		public Printer ActivePrinter
 		{
 			get
 			{
 				return ActivePrinterProfile.Instance.ActivePrinter;
 			}
-			set
+			private set
 			{
 				ActivePrinterProfile.Instance.ActivePrinter = value;
 			}
@@ -1275,13 +1275,32 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 				if (levelingData != null
-					&& levelingData.needsPrintLeveling
-					&& levelingData.sampledPosition0.z == 0
-					&& levelingData.sampledPosition1.z == 0
-					&& levelingData.sampledPosition2.z == 0)
+					&& levelingData.NeedsPrintLeveling)
 				{
-					LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
-					return;
+					switch (levelingData.CurrentPrinterLevelingSystem)
+					{
+						case PrintLevelingData.LevelingSystem.Probe2Points:
+						case PrintLevelingData.LevelingSystem.Probe3Points:
+							if (levelingData.SampledPosition0.z == 0
+								&& levelingData.SampledPosition1.z == 0
+								&& levelingData.SampledPosition2.z == 0)
+							{
+								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+								return;
+							}
+							break;
+
+						case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+							if (levelingData.SampledPositions.Count != 7) // different criteria for what is not initialized
+							{
+								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+								return;
+							}
+							break;
+
+						default:
+							throw new NotImplementedException();
+					}
 				}
 
 				if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
@@ -2640,27 +2659,29 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string RunPrintLevelingTranslations(string lineBeingSent)
 		{
-			if (ActivePrinter != null
-				&& ActivePrinter.DoPrintLeveling
-				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
-			{
-				string inputLine = lineBeingSent;
-				lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, inputLine);
-			}
-
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 			if (levelingData != null)
 			{
 				List<string> linesToWrite = null;
-				switch (levelingData.levelingSystem)
+				switch (levelingData.CurrentPrinterLevelingSystem)
 				{
 					case PrintLevelingData.LevelingSystem.Probe2Points:
+						lineBeingSent = LevelWizard2Point.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
 						linesToWrite = LevelWizard2Point.ProcessCommand(lineBeingSent);
 						break;
 
 					case PrintLevelingData.LevelingSystem.Probe3Points:
+						lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
 						linesToWrite = LevelWizard3Point.ProcessCommand(lineBeingSent);
 						break;
+
+					case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
+						linesToWrite = LevelWizard7PointRadial.ProcessCommand(lineBeingSent);
+						break;
+
+					default:
+						throw new NotImplementedException();
 				}
 
 				lineBeingSent = linesToWrite[0];

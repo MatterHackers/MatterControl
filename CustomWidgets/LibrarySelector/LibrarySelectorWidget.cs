@@ -60,8 +60,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		private bool settingLocalBounds = false;
 
-		public event EventHandler<LibraryDataViewEventArgs> ChangedCurrentLibraryProvider2;
-
 		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
 		{
 			this.currentLibraryProvider = libraryProvider;
@@ -125,11 +123,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					}
 
 					currentLibraryProvider = value;
-
-					if (ChangedCurrentLibraryProvider2 != null)
-					{
-						ChangedCurrentLibraryProvider2(null, null);
-					}
 				}
 			}
 		}
@@ -217,10 +210,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		public void ClearSelectedItems()
 		{
-			foreach (LibrarySelectorRowItem item in SelectedItems)
-			{
-				item.selectionCheckBox.Checked = false;
-			}
 			this.SelectedItems.Clear();
 		}
 
@@ -348,14 +337,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-				LibrarySelectorRowItem queueItem = new LibrarySelectorRowItemCollection(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
+				LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
 				AddListItemToTopToBottom(queueItem);
 			}
 
 			for (int i = 0; i < provider.CollectionCount; i++)
 			{
 				PrintItemCollection item = provider.GetCollectionItem(i);
-				LibrarySelectorRowItem queueItem = new LibrarySelectorRowItemCollection(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
+				LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
 				AddListItemToTopToBottom(queueItem);
 			}
 		}

@@ -29,9 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -181,6 +183,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 
+					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
+
 					// now copy all the gcode to the path given
 					for (int i = 0; i < savedGCodeFileNames.Count; i++)
 					{
@@ -192,7 +196,30 @@ namespace MatterHackers.MatterControl.PrintQueue
 						if (ActivePrinterProfile.Instance.DoPrintLeveling)
 						{
 							GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(savedGcodeFileName);
-							PrintLevelingPlane.Instance.ApplyLeveling(unleveledGCode);
+
+							for (int j = 0; j < unleveledGCode.LineCount; j++)
+							{
+								PrinterMachineInstruction instruction = unleveledGCode.Instruction(j);
+								Vector3 currentDestination = instruction.Position;
+
+								switch (levelingData.CurrentPrinterLevelingSystem)
+								{
+									case PrintLevelingData.LevelingSystem.Probe2Points:
+										instruction.Line = LevelWizard2Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										break;
+
+									case PrintLevelingData.LevelingSystem.Probe3Points:
+										instruction.Line = LevelWizard3Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										break;
+
+									case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										break;
+
+									default:
+										throw new NotImplementedException();
+								}
+							}
 							unleveledGCode.Save(outputPathAndName);
 						}
 						else

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
@@ -111,6 +112,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static Vector3 probeRead0;
 		private static Vector3 probeRead1;
 		private static Vector3 probeRead2;
+
+		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+		{
+			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null
+				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
+				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
+			{
+				lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent);
+			}
+
+			return lineBeingSent;
+		}
 
 		public static List<string> ProcessCommand(string lineBeingSent)
 		{
@@ -239,8 +252,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// position 0 does not change as it is the distance from the switch trigger to the extruder tip.
 			//levelingData.sampledPosition0 = levelingData.sampledPosition0;
-			levelingData.sampledPosition1 = levelingData.sampledPosition0 + probeRead1;
-			levelingData.sampledPosition2 = levelingData.sampledPosition0 + probeRead2;
+			levelingData.SampledPosition1 = levelingData.SampledPosition0 + probeRead1;
+			levelingData.SampledPosition2 = levelingData.SampledPosition0 + probeRead2;
 
 			ActivePrinterProfile.Instance.DoPrintLeveling = true;
 		}

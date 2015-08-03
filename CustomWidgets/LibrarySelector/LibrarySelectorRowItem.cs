@@ -30,39 +30,129 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.VectorMath;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 {
-	public abstract class LibrarySelectorRowItem : GuiWidget
+	public class LibrarySelectorRowItem : GuiWidget
 	{
-		public bool IsSelectedItem
-		{
-			get
-			{
-				return libraryDataView.SelectedItems.Contains(this);
-			}
-		}
-		public CheckBox selectionCheckBox;
+		LibraryProvider parentProvider;
+		PrintItemCollection printItemCollection;
+		public int CollectionIndex { get; private set; }
+
 		public RGBA_Bytes WidgetBackgroundColor;
 		public RGBA_Bytes WidgetTextColor;
-		protected LibrarySelectorWidget libraryDataView;
 		protected TextWidget partLabel;
 		protected SlideWidget rightButtonOverlay;
-		protected GuiWidget selectionCheckBoxContainer;
 		private bool isHoverItem = false;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private GuiWidget thumbnailWidget;
 
 		private event EventHandler unregisterEvents;
 
-		public LibrarySelectorRowItem(LibrarySelectorWidget libraryDataView, GuiWidget thumbnailWidget)
+		public LibrarySelectorWidget libraryDataView { get; private set; }
+
+		public LibrarySelectorRowItem(PrintItemCollection collection, int collectionIndex, LibrarySelectorWidget libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
 		{
 			this.thumbnailWidget = thumbnailWidget;
 			this.libraryDataView = libraryDataView;
+
+			this.CollectionIndex = collectionIndex;
+			this.parentProvider = parentProvider;
+			this.printItemCollection = collection;
+			this.ItemName = printItemCollection.Name;
+
+			CreateGuiElements();
+		}
+
+		public PrintItemCollection PrintItemCollection { get { return printItemCollection; } }
+
+		public bool Protected
+		{
+			get { return false; }
+		}
+
+		private void ProcessDialogResponse(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
+				libraryDataView.CurrentLibraryProvider.RemoveCollection(CollectionIndex);
+			}
+		}
+
+		private void ChangeCollection()
+		{
+			if (parentProvider == null)
+			{
+				libraryDataView.CurrentLibraryProvider = libraryDataView.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+			}
+			else
+			{
+				libraryDataView.CurrentLibraryProvider = parentProvider;
+			}
+
+			UiThread.RunOnIdle(libraryDataView.RebuildView);
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Clicks == 2)
+			{
+				UiThread.RunOnIdle(ChangeCollection);
+			}
+			base.OnMouseDown(mouseEvent);
+		}
+
+		private void SetDisplayAttributes()
+		{
+			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			this.Height = 50 * TextWidget.GlobalPointSizeScaleRatio;
+
+			this.Padding = new BorderDouble(0);
+			this.Margin = new BorderDouble(6, 0, 6, 6);
+		}
+
+		protected SlideWidget GetItemActionButtons()
+		{
+			SlideWidget buttonContainer = new SlideWidget();
+			buttonContainer.VAnchor = VAnchor.ParentBottomTop;
+
+			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
+
+			TextWidget openLabel = new TextWidget("Open".Localize());
+			openLabel.TextColor = RGBA_Bytes.White;
+			openLabel.VAnchor = VAnchor.ParentCenter;
+			openLabel.HAnchor = HAnchor.ParentCenter;
+
+			FatFlatClickWidget openButton = new FatFlatClickWidget(openLabel);
+			openButton.VAnchor = VAnchor.ParentBottomTop;
+			openButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+			openButton.Width = 100;
+			openButton.Click += (sender, e) =>
+			{
+				ChangeCollection();
+			};
+
+			buttonFlowContainer.AddChild(openButton);
+
+			buttonContainer.AddChild(buttonFlowContainer);
+			buttonContainer.Width = 100;
+
+			return buttonContainer;
+		}
+
+		private void onThemeChanged(object sender, EventArgs e)
+		{
+			//Set background and text color to new theme
+			this.Invalidate();
 		}
 
 		public string ItemName { get; protected set; }
@@ -75,7 +165,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				if (this.isHoverItem != value)
 				{
 					this.isHoverItem = value;
-					if (value == true && !this.libraryDataView.EditMode)
+					if (value == true)
 					{
 						this.rightButtonOverlay.SlideIn();
 					}
@@ -86,8 +176,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				}
 			}
 		}
-
-		public abstract bool Protected { get; }
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -100,33 +188,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (this.libraryDataView.EditMode)
-			{
-				this.selectionCheckBox.Checked = this.IsSelectedItem;
-				selectionCheckBoxContainer.Visible = true;
-				rightButtonOverlay.Visible = false;
-			}
-			else
-			{
-				selectionCheckBoxContainer.Visible = false;
-			}
-
 			base.OnDraw(graphics2D);
-
-			if (this.IsSelectedItem)
-			{
-				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.partLabel.TextColor = RGBA_Bytes.White;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
-			}
-			else if (this.IsHoverItem)
+			
+			if (this.IsHoverItem)
 			{
 				RectangleDouble Bounds = LocalBounds;
 				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
 				this.BackgroundColor = RGBA_Bytes.White;
 				this.partLabel.TextColor = RGBA_Bytes.Black;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
 
 				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
 			}
@@ -134,7 +204,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			{
 				this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
 				this.partLabel.TextColor = RGBA_Bytes.Black;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
 			}
 		}
 
@@ -164,16 +233,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				primaryFlow.HAnchor = HAnchor.ParentLeftRight;
 				primaryFlow.VAnchor = VAnchor.ParentBottomTop;
 
-				selectionCheckBoxContainer = new GuiWidget();
-				selectionCheckBoxContainer.VAnchor = VAnchor.ParentBottomTop;
-				selectionCheckBoxContainer.Width = 40;
-				selectionCheckBoxContainer.Visible = false;
-				selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
-				selectionCheckBox = new CheckBox("");
-				selectionCheckBox.VAnchor = VAnchor.ParentCenter;
-				selectionCheckBox.HAnchor = HAnchor.ParentCenter;
-				selectionCheckBoxContainer.AddChild(selectionCheckBox);
-
 				GuiWidget middleColumn = new GuiWidget(0.0, 0.0);
 				middleColumn.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 				middleColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
@@ -184,36 +243,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					partLabel.MinimumSize = new Vector2(1, 18);
 					partLabel.VAnchor = VAnchor.ParentCenter;
 					middleColumn.AddChild(partLabel);
-
-					middleColumn.MouseDown += (sender, e) =>
-					{
-						if (this.libraryDataView.EditMode)
-						{
-							if (this.IsSelectedItem)
-							{
-								libraryDataView.SelectedItems.Remove(this);
-							}
-							else
-							{
-								libraryDataView.SelectedItems.Add(this);
-							}
-						}
-						else
-						{
-							// we only have single selection
-							if (this.IsSelectedItem)
-							{
-								// It is aleady selected, do nothing.
-							}
-							else
-							{
-								libraryDataView.ClearSelectedItems();
-								libraryDataView.SelectedItems.Add(this);
-							}
-						}
-					};
 				}
-				primaryFlow.AddChild(selectionCheckBoxContainer);
 
 				primaryFlow.AddChild(thumbnailWidget);
 				primaryFlow.AddChild(middleColumn);
@@ -230,8 +260,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			AddHandlers();
 		}
-
-		protected abstract SlideWidget GetItemActionButtons();
 
 		private void AddHandlers()
 		{
@@ -259,28 +287,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				}
 				this.Invalidate();
 			};
-		}
-
-		private void onThemeChanged(object sender, EventArgs e)
-		{
-			//Set background and text color to new theme
-			this.Invalidate();
-		}
-
-		private void SetDisplayAttributes()
-		{
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			if (ActiveTheme.Instance.DisplayMode == ActiveTheme.ApplicationDisplayType.Touchscreen)
-			{
-				this.Height = 65;
-			}
-			else
-			{
-				this.Height = 50;
-			}
-
-			this.Padding = new BorderDouble(0);
-			this.Margin = new BorderDouble(6, 0, 6, 6);
 		}
 	}
 }

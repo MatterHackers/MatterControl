@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
 			LevelWizardBase printLevelWizardWindow;
-			switch (levelingData.levelingSystem)
+			switch (levelingData.CurrentPrinterLevelingSystem)
 			{
 				case PrintLevelingData.LevelingSystem.Probe2Points:
 					printLevelWizardWindow = new LevelWizard2Point(runningState);
@@ -151,6 +151,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				case PrintLevelingData.LevelingSystem.Probe3Points:
 					printLevelWizardWindow = new LevelWizard3Point(runningState);
+					break;
+
+				case PrintLevelingData.LevelingSystem.Probe7PointRadial:
+					printLevelWizardWindow = new LevelWizard7PointRadial(runningState);
 					break;
 
 				default:

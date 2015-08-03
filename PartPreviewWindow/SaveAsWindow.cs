@@ -64,8 +64,10 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
+			librarySelectorWidget = new LibrarySelectorWidget();
+
 			// put in the bread crumb widget
-			FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(SetCurrentLibraryProvider, CurrentLibraryProvider);
+			FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget.SetCurrentLibraryProvider, librarySelectorWidget.CurrentLibraryProvider);
 			middleRowContainer.AddChild(breadCrumbWidget);
 
 			// put in the area to pick the provider to save to
@@ -89,7 +91,6 @@ namespace MatterHackers.MatterControl
 				chooseWindow.Margin = new BorderDouble(5);
 				chooseWindow.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				chooseWindow.Padding = new BorderDouble(3);
-				librarySelectorWidget = new LibrarySelectorWidget();
 				chooseWindow.AddChild(librarySelectorWidget);
 
 				middleRowContainer.AddChild(textBoxHeader);
@@ -156,48 +157,7 @@ namespace MatterHackers.MatterControl
 
 			ShowAsSystemWindow();
 
-			CurrentLibraryProvider = new LibraryProviderSelector(SetCurrentLibraryProvider);
-
 			UiThread.RunOnIdle(textToAddWidget.Focus);
-		}
-
-		public LibraryProvider CurrentLibraryProvider
-		{
-			get
-			{
-				return currentLibraryProvider;
-			}
-
-			set
-			{
-				if (currentLibraryProvider != value)
-				{
-					// unhook the update we were getting
-					//currentLibraryProvider.DataReloaded -= libraryDataViewInstance.LibraryDataReloaded;
-					// and hook the new one
-					//value.DataReloaded += libraryDataViewInstance.LibraryDataReloaded;
-
-					bool isChildOfCurrent = value.ParentLibraryProvider == currentLibraryProvider;
-
-					// Dispose of all children below this one.
-					while (!isChildOfCurrent && currentLibraryProvider != value
-						&& currentLibraryProvider.ParentLibraryProvider != null)
-					{
-						LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
-						currentLibraryProvider.Dispose();
-						currentLibraryProvider = parent;
-					}
-
-					currentLibraryProvider = value;
-
-					UiThread.RunOnIdle(librarySelectorWidget.RebuildView);
-				}
-			}
-		}
-
-		void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
-		{
-			CurrentLibraryProvider = libraryProvider;
 		}
 
 		private void ActualTextEditWidget_EnterPressed(object sender, KeyEventArgs keyEvent)
@@ -218,7 +178,7 @@ namespace MatterHackers.MatterControl
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
 				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, CurrentLibraryProvider);
+				SaveAsReturnInfo returnInfo = new SaveAsReturnInfo(newName, fileNameAndPath, librarySelectorWidget.CurrentLibraryProvider);
 				functionToCallOnSaveAs(returnInfo);
 				CloseOnIdle();
 			}
@@ -238,7 +198,6 @@ namespace MatterHackers.MatterControl
 				PrintItem printItem = new PrintItem();
 				printItem.Name = newName;
 				printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
-				throw new NotImplementedException();
 
 				printItemWrapper = new PrintItemWrapper(printItem, destinationLibraryProvider);
 			}
