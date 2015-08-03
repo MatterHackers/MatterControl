@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
 			{
 				string extension = Path.GetExtension(droppedFileName).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(extension)
+				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					|| extension == ".GCODE")
 				{
 					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(droppedFileName), Path.GetFullPath(droppedFileName))));
@@ -376,7 +376,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			foreach (string file in fileDropEventArgs.DroppedFiles)
 			{
 				string extension = Path.GetExtension(file).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(extension)
+				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					|| extension == ".GCODE"
 					|| extension == ".ZIP")
 				{
@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			foreach (string file in fileDropEventArgs.DroppedFiles)
 			{
 				string extension = Path.GetExtension(file).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(extension)
+				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					|| extension == ".GCODE"
 					|| extension == ".ZIP")
 				{

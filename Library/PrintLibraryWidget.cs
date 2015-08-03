@@ -488,7 +488,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			foreach (string file in fileDropEventArgs.DroppedFiles)
 			{
 				string extension = Path.GetExtension(file).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(extension)
+				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					|| extension == ".GCODE"
 					|| extension == ".ZIP")
 				{
@@ -503,11 +503,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			foreach (string file in fileDropEventArgs.DroppedFiles)
 			{
 				string extension = Path.GetExtension(file).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(extension)
+				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					|| extension == ".GCODE"
 					|| extension == ".ZIP")
 				{
 					fileDropEventArgs.AcceptDrop = true;
+					break;
 				}
 			}
 			base.OnDragOver(fileDropEventArgs);

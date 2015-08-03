@@ -24,7 +24,8 @@ namespace MatterHackers.MatterControl
 			return new TupleList<string, Func<bool>>
             {
                 {"Add Printer".Localize(), addPrinter_Click},
-                {"Add File".Localize(), importFile_Click},
+                {"Add File To Queue".Localize(), importFile_Click},
+				{"Add Folder To Library".Localize(), addFolderToLibrar_Click},
 				{"------------------------", nothing_Click},
 				{"Exit".Localize(), exit_Click},
             };
@@ -32,6 +33,12 @@ namespace MatterHackers.MatterControl
 
 		private bool nothing_Click()
 		{
+			return true;
+		}
+
+		private bool addFolderToLibrar_Click()
+		{
+			//AddCollectionToLibrary(string collectionName);
 			return true;
 		}
 

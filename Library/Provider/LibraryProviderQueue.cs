@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			printItem.PrintItemCollectionID = libraryToAddTo.baseLibraryCollection.Id;
 			printItem.Commit();
 
-			if (MeshFileIo.ValidFileExtensions().Contains(extension))
+			if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
 			{
 				List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
 
@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			foreach (string loadedFileName in fileList)
 			{
 				string extension = Path.GetExtension(loadedFileName).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(extension)
+				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					|| extension == ".GCODE"
 					|| extension == ".ZIP")
 				{

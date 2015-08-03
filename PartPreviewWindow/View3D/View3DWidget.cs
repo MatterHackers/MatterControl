@@ -517,7 +517,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (string droppedFileName in fileDropEventArgs.DroppedFiles)
 				{
 					string extension = Path.GetExtension(droppedFileName).ToLower();
-					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
+					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						pendingPartsToLoad.Add(droppedFileName);
 					}
@@ -547,7 +547,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
 					string extension = Path.GetExtension(file).ToLower();
-					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
+					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						fileDropEventArgs.AcceptDrop = true;
 					}
@@ -563,7 +563,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (string file in fileDropEventArgs.DroppedFiles)
 				{
 					string extension = Path.GetExtension(file).ToLower();
-					if (ApplicationSettings.OpenDesignFileParams.Contains(extension))
+					if (extension != "" && ApplicationSettings.OpenDesignFileParams.Contains(extension))
 					{
 						fileDropEventArgs.AcceptDrop = true;
 					}
@@ -1648,7 +1648,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					string loadedFileName = filesToLoadIncludingZips[i];
 					string extension = Path.GetExtension(loadedFileName).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
 					{
 						filesToLoad.Add(loadedFileName);
 					}
