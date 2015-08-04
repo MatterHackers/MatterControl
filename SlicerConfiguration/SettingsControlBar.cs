@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.HAnchor |= HAnchor.ParentLeftRight;
 			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-			this.Padding = new BorderDouble(8);
+			this.Padding = new BorderDouble(8, 12, 8, 8);
 		}
 
 		private void AddChildElements()
