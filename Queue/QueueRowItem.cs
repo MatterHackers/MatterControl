@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private string alsoRemoveFromSdCardMessage = "Would you also like to remove this file from the Printer's SD Card?".Localize();
 
-		private string alsoRemoveFromSdCardTitle = "Remove From Printer's SD Card?";
+		private string alsoRemoveFromSdCardTitle = "Remove From Printer's SD Card?".Localize();
 
 		private ConditionalClickWidget conditionalClickContainer;
 
@@ -82,7 +82,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private FatFlatClickWidget viewButton;
 
+        private FatFlatClickWidget prioritizeButton;
+
 		private TextWidget viewButtonLabel;
+
+        private TextWidget prioritizeButtonLabel;
 
 		private PartPreviewMainWindow viewingWindow;
 
@@ -395,11 +399,24 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			viewButton.Click += onViewPartClick;
 
+            prioritizeButtonLabel = new TextWidget("Prioritize".Localize());
+            prioritizeButtonLabel.TextColor = RGBA_Bytes.White;
+            prioritizeButtonLabel.VAnchor = VAnchor.ParentCenter;
+            prioritizeButtonLabel.HAnchor = HAnchor.ParentCenter;
+
+            prioritizeButton = new FatFlatClickWidget(prioritizeButtonLabel);
+            prioritizeButton.VAnchor = VAnchor.ParentBottomTop;
+            prioritizeButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+            prioritizeButton.Width = 100;
+
+            prioritizeButton.Click += onPrioritizePartClick;
+
 			buttonFlowContainer.AddChild(viewButton);
 			buttonFlowContainer.AddChild(removeButton);
+            buttonFlowContainer.AddChild(prioritizeButton);
 
 			buttonContainer.AddChild(buttonFlowContainer);
-			buttonContainer.Width = 200;
+			buttonContainer.Width = 300;
 			//buttonContainer.Width = 100;
 
 			return buttonContainer;
@@ -447,6 +464,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 				OpenPartViewWindow(View3DWidget.OpenMode.Viewing);
 			});
 		}
+
+        private void onPrioritizePartClick(object sender, EventArgs e)
+        {
+            int swapindexA = QueueData.Instance.SelectedIndex;
+            int swapindexB = swapindexA - 1;
+            if (swapindexB < 0)
+            {
+                swapindexB = 0;
+            }
+            QueueData.Instance.SwapItemsOnIdle(swapindexA, swapindexB);
+            //UiThread.RunOnIdle( SwapItems, new SwapIndexArgs(1, 2));
+            this.actionButtonContainer.SlideOut();
+            //TODO: Change queue
+        }
 
 		private void OpenExportWindow()
 		{

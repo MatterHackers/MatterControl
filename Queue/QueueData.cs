@@ -126,15 +126,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 				PrintItems[indexA] = PrintItems[indexB];
 				PrintItems[indexB] = hold;
 
-				OnOrderChanged(null);
+				OnOrderChanged(new SwapIndexArgs(indexA, indexB));
 
 				SaveDefaultQueue();
 			}
 		}
 
-		public void OnOrderChanged(EventArgs e)
+		public void OnOrderChanged(SwapIndexArgs e)
 		{
 			OrderChanged.CallEvents(this, e);
+            //SaveDefaultQueue();
 		}
 
 		public void RemoveIndexOnIdle(int index)
@@ -170,6 +171,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void OnItemRemoved(EventArgs e)
 		{
+
 			ItemRemoved.CallEvents(this, e);
 		}
 

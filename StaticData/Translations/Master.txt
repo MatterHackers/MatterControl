@@ -3376,3 +3376,9 @@ Translated:Library (cloud)
 English:Purchased
 Translated:Purchased
 
+English:Prioritize
+Translated:Prioritize
+
+English:Remove From Printer's SD Card?
+Translated:Remove From Printer's SD Card?
+
