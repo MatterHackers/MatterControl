@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					PrintItemWrapper printItemWrapper = new PrintItemWrapper(part);
 					string extension = Path.GetExtension(part.FileLocation).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(extension))
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
 					{
 						SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
 						printItemWrapper.SlicingDone += sliceItem_Done;

@@ -3514,3 +3514,12 @@ Translated:Oops! You cannot restart while a print is active.
 English:Unable to restart
 Translated:Unable to restart
 
+English:Add File To Queue
+Translated:Add File To Queue
+
+English:Add Folder To Library
+Translated:Add Folder To Library
+
+English:Using the above controls
+Translated:Using the above controls
+
