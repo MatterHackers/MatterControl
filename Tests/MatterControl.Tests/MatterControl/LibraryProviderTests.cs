@@ -123,7 +123,7 @@ namespace MatterControl.Tests
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
 			Datastore.Instance.Initialize();
-			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null);
+			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, "Local Library");
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 			Thread.Sleep(3000); // wait for the library to finish initializing
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
