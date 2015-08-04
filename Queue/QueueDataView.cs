@@ -427,8 +427,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 		}
 
 		private void QueueOrderChanged(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
+        {
+            SwapIndexArgs swapIndexArgs = e as SwapIndexArgs;
+            topToBottomItemList.SwapChild(swapIndexArgs.indexA, swapIndexArgs.indexB);
+            EnsureSelection();
+            SelectedIndex = swapIndexArgs.indexB;
 		}
 
 		private bool firstDraw = true;

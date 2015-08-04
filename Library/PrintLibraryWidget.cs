@@ -349,6 +349,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			leaveEditModeButton.Visible = true;
 			libraryDataView.EditMode = true;
 			itemOperationButtons.Visible = true;
+			breadCrumbDisplayHolder.Visible = false;
 			SetEditButtonsStates();
 		}
 
@@ -358,6 +359,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			leaveEditModeButton.Visible = false;
 			libraryDataView.EditMode = false;
 			itemOperationButtons.Visible = false;
+			breadCrumbDisplayHolder.Visible = true;
 			SetEditButtonsStates();
 		}
 

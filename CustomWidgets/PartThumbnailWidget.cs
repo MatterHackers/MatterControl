@@ -547,17 +547,15 @@ namespace MatterHackers.MatterControl
 			if (partPreviewWindow == null)
 			{
 				partPreviewWindow = new PartPreviewMainWindow(this.PrintItem, autoRotate);
-				partPreviewWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
+				partPreviewWindow.Closed += (object sender, EventArgs e) =>
+				{
+					this.partPreviewWindow = null;
+				};
 			}
 			else
 			{
 				partPreviewWindow.BringToFront();
 			}
-		}
-
-		private void PartPreviewWindow_Closed(object sender, EventArgs e)
-		{
-			this.partPreviewWindow = null;
 		}
 
 		private bool SetImageFast()
