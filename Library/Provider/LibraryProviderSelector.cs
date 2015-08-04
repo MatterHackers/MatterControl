@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			// put in the sqlite provider
-			libraryProviders.Add(new LibraryProviderSQLite(null, this));
+			libraryProviders.Add(new LibraryProviderSQLite(null, this, "Local Library"));
 			AddFolderImage("library_folder.png");
 
 			// Check for LibraryProvider factories and put them in the list too.

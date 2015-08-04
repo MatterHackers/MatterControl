@@ -56,9 +56,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
 
-		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
+		string visibleName;
+
+		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider, string visibleName)
 			: base(parentLibraryProvider)
 		{
+			this.visibleName = visibleName;
+
 			if (baseLibraryCollection == null)
 			{
 				baseLibraryCollection = GetRootLibraryCollection2(this);
@@ -74,7 +78,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderSQLite(null, null);
+					instance = new LibraryProviderSQLite(null, null, "Local Library");
 				}
 
 				return instance;
@@ -150,7 +154,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "Local Library";
+				return visibleName;
 			}
 		}
 
@@ -241,7 +245,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return calibrationPrintFileNames.Where(fileName =>
 			{
 				// Filter out items that already exist in the library
-				LibraryProviderSQLite rootLibrary = new LibraryProviderSQLite(null, null);
+				LibraryProviderSQLite rootLibrary = new LibraryProviderSQLite(null, null, "Local Library");
 				return rootLibrary.GetLibraryItems(Path.GetFileNameWithoutExtension(fileName)).Count() <= 0;
 			}).Select(fileName =>
 			{
@@ -266,7 +270,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			LoadLibraryItems();
 		}
 
-		public override void AddItem(PrintItemWrapper itemToAdd)
+		public async override void AddItem(PrintItemWrapper itemToAdd)
 		{
 			if (itemToAdd != null && itemToAdd.FileLocation != null)
 			{
@@ -274,7 +278,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				// refresh the display to show the pending items
 				//LibraryProvider.OnDataReloaded(null);
 
-				Task.Run(() => loadFilesIntoLibraryBackgoundWorker_DoWork(new string[] { itemToAdd.FileLocation }));
+				await Task.Run(() => AddStlOrGcode(this, itemToAdd.FileLocation, itemToAdd.Name));
 
 				if (baseLibraryCollection != null)
 				{
@@ -318,7 +322,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			return new LibraryProviderSQLite(collection, this);
+			return new LibraryProviderSQLite(collection, this, collection.Name);
 		}
 
 		void LoadLibraryItems()
@@ -369,10 +373,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			OnDataReloaded(null);
 		}
 
-		private static void AddStlOrGcode(LibraryProviderSQLite libraryToAddTo, string loadedFileName, string extension)
+		private static void AddStlOrGcode(LibraryProviderSQLite libraryToAddTo, string loadedFileName, string displayName)
 		{
+			string extension = Path.GetExtension(loadedFileName).ToUpper();
+
 			PrintItem printItem = new PrintItem();
-			printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
+			printItem.Name = displayName;
 			printItem.FileLocation = Path.GetFullPath(loadedFileName);
 			printItem.PrintItemCollectionID = libraryToAddTo.baseLibraryCollection.Id;
 			printItem.Commit();
@@ -447,35 +453,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
 			return result;
-		}
-
-		private void loadFilesIntoLibraryBackgoundWorker_DoWork(IList<string> fileList)
-		{
-			foreach (string loadedFileName in fileList)
-			{
-				string extension = Path.GetExtension(loadedFileName).ToUpper();
-				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-					|| extension == ".GCODE"
-					|| extension == ".ZIP")
-				{
-					if (extension == ".ZIP")
-					{
-						ProjectFileHandler project = new ProjectFileHandler(null);
-						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
-						if (partFiles != null)
-						{
-							foreach (PrintItem part in partFiles)
-							{
-								AddStlOrGcode(this, part.FileLocation, Path.GetExtension(part.FileLocation).ToUpper());
-							}
-						}
-					}
-					else
-					{
-						AddStlOrGcode(this, loadedFileName, extension);
-					}
-				}
-			}
 		}
 	}
 }
