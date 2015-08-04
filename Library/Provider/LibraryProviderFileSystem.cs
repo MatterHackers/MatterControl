@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			string destPath = rootPath;
 
-			CopyFile(itemToAdd.FileLocation, destPath);
+			itemToAdd.FileLocation = CopyFile(itemToAdd.FileLocation, itemToAdd.Name, destPath);
 
 			GetFilesAndCollectionsInCurrentDirectory();
 		}
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			GetFilesAndCollectionsInCurrentDirectory();
 		}
 
-		private static void CopyFile(string file, string destPath)
+		private static string CopyFile(string sourceFile, string destFileName, string destPath)
 		{
 			// make sure the directory exists
 			try
@@ -258,13 +258,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			// save it to the root directory
-			string outputFileName = Path.Combine(destPath, Path.GetFileName(file));
+			string outputFileName = Path.Combine(destPath, destFileName);
+			outputFileName = Path.ChangeExtension(outputFileName, Path.GetExtension(sourceFile));
 			// and copy the file
 			try
 			{
 				if (!File.Exists(outputFileName))
 				{
-					File.Copy(file, outputFileName);
+					File.Copy(sourceFile, outputFileName);
 				}
 				else // make a new file and append a number so that we are not destructive
 				{
@@ -289,12 +290,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						numberToAppend++;
 						fileNameToUse = Path.Combine(directory, fileNameWithoutExtension + " " + numberToAppend.ToString() + extension);
 					}
-					File.Copy(file, fileNameToUse);
+					File.Copy(sourceFile, fileNameToUse);
 				}
 			}
 			catch (Exception e)
 			{
 			}
+
+			return outputFileName;
 		}
 
 		private void DiretoryContentsChanged(object sender, EventArgs e)
