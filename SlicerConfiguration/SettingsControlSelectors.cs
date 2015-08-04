@@ -65,12 +65,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+			this.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			GuiWidget accentBar = new GuiWidget(1, 5);
+			GuiWidget accentBar = new GuiWidget(7, 5);
 			accentBar.BackgroundColor = accentColor;
 			accentBar.HAnchor = HAnchor.ParentLeftRight;
+
 
 			TextWidget labelText = new TextWidget(LocalizedString.Get(label).ToUpper());
 			labelText.TextColor = ActiveTheme.Instance.PrimaryTextColor;
