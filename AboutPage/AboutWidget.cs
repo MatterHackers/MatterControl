@@ -63,11 +63,16 @@ namespace MatterHackers.MatterControl
 			customInfoTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
 			customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
 
+			if (ActiveTheme.Instance.IsTouchScreen)
+			{
+				customInfoTopToBottom.AddChild(new UpdateControlView());
+			}
+
 			//AddMatterHackersInfo(customInfoTopToBottom);
 			customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
 
 			string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
-			string htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
+			string htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile); 
 
 #if false // test
 			{

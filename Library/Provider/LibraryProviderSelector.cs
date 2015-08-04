@@ -106,10 +106,12 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			firstAddedDirectoryIndex = libraryProviders.Count;
 
+#if !__ANDROID__
 			MenuOptionFile.CurrentMenuOptionFile.AddLocalFolderToLibrary += (sender, e) =>
 			{
 				AddCollectionToLibrary(e.Data);
 			};
+#endif
 
 			this.FilterProviders();
 		}
