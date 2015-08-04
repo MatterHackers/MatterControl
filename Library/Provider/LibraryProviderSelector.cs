@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		List<ImageBuffer> folderImagesForChildren = new List<ImageBuffer>();
 
+		int firstAddedDirectoryIndex;
+
 		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider)
 			: base(null)
 		{
@@ -102,6 +104,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				AddFolderImage("download_folder.png");
 			}
 
+			firstAddedDirectoryIndex = libraryProviders.Count;
+
+			MenuOptionFile.CurrentMenuOptionFile.AddLocalFolderToLibrary += (sender, e) =>
+			{
+				AddCollectionToLibrary(e.Data);
+			};
+
 			this.FilterProviders();
 		}
 
@@ -124,7 +133,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RenameCollection(int collectionIndexToRename, string newName)
 		{
-			throw new NotImplementedException();
+			if (collectionIndexToRename >= firstAddedDirectoryIndex
+				&& libraryProviders[collectionIndexToRename].Name != newName)
+			{
+				LibraryProviderFileSystem addedProvider = libraryProviders[collectionIndexToRename] as LibraryProviderFileSystem;
+				if (addedProvider != null)
+				{
+					addedProvider.ChangeName(newName);
+					UiThread.RunOnIdle(() => OnDataReloaded(null));
+				}
+			}
 		}
 
 		public override void RenameItem(int itemIndexToRename, string newName)
@@ -254,7 +272,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RemoveCollection(int collectionIndexToRemove)
 		{
-			throw new NotImplementedException();
+			libraryProviders.RemoveAt(collectionIndexToRemove);
+
+			UiThread.RunOnIdle(() => OnDataReloaded(null));
 		}
 
 		public override void RemoveItem(int itemToRemoveIndex)

@@ -14,9 +14,17 @@ namespace MatterHackers.MatterControl
 {
 	public class MenuOptionFile : MenuBase
 	{
+		private static CreateFolderWindow createFolderWindow = null;
+
+		public static MenuOptionFile CurrentMenuOptionFile = null;
+
+		public event EventHandler<StringEventArgs> AddLocalFolderToLibrary;
+		public EventHandler RedeemDesignCode;
+
 		public MenuOptionFile()
 			: base("File".Localize())
 		{
+			CurrentMenuOptionFile = this;
 		}
 
 		override protected TupleList<string, Func<bool>> GetMenuItems()
@@ -25,7 +33,8 @@ namespace MatterHackers.MatterControl
             {
                 {"Add Printer".Localize(), addPrinter_Click},
                 {"Add File To Queue".Localize(), importFile_Click},
-				{"Add Folder To Library".Localize(), addFolderToLibrar_Click},
+				{"Add Local Folder To Library".Localize(), addFolderToLibrar_Click},
+				{"Redeem Design Code".Localize(), redeemDesignCode_Click},
 				{"------------------------", nothing_Click},
 				{"Exit".Localize(), exit_Click},
             };
@@ -36,9 +45,33 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
+		private bool redeemDesignCode_Click()
+		{
+			if (RedeemDesignCode != null)
+			{
+				RedeemDesignCode(this, null);
+			}
+
+			return true;
+		}
+
 		private bool addFolderToLibrar_Click()
 		{
-			//AddCollectionToLibrary(string collectionName);
+			if (AddLocalFolderToLibrary != null)
+			{
+				if (createFolderWindow == null)
+				{
+					createFolderWindow = new CreateFolderWindow((returnInfo) =>
+					{
+						AddLocalFolderToLibrary(this, new StringEventArgs(returnInfo.newName));
+					});
+					createFolderWindow.Closed += (sender2, e2) => { createFolderWindow = null; };
+				}
+				else
+				{
+					createFolderWindow.BringToFront();
+				}
+			}
 			return true;
 		}
 

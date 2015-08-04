@@ -3523,3 +3523,9 @@ Translated:Add Folder To Library
 English:Using the above controls
 Translated:Using the above controls
 
+English:Add Local Folder To Library
+Translated:Add Local Folder To Library
+
+English:Redeem Design Code
+Translated:Redeem Design Code
+

@@ -127,6 +127,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public void ChangeName(string newName)
+		{
+			description = newName;
+		}
+
 		public override string Name { get { return description; } }
 
 		public override string ProviderData
