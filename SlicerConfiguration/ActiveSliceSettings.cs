@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return int.Parse(GetActiveValue("manual_probe_paper_width"));
+				return double.Parse(GetActiveValue("manual_probe_paper_width"));
 			}
 		}
 

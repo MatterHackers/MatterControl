@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
 
 		public LevelWizard7PointRadial(LevelWizardBase.RuningState runningState)
-			: base(500, 370, 9)
+			: base(500, 370, 21)
 		{
 			bool allowLessThanZero = ActiveSliceSettings.Instance.GetActiveValue("z_can_be_negative") == "1";
 			string printLevelWizardTitle = LocalizedString.Get("MatterControl");
