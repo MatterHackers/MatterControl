@@ -176,8 +176,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				angleToPoint += MathHelper.Tau;
 			}
 
-			double ratioToRadius = Math.Min(1, Math.Max(0, new Vector3(currentDestination.x, currentDestination.y, 0).Length / levelingData.SampledPositions[0].x));
-
 			double oneSegmentAngle = MathHelper.Tau / 6;
 			int firstIndex = (int)(angleToPoint / oneSegmentAngle);
 			int lastIndex = firstIndex + 1;
@@ -186,17 +184,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				lastIndex = 0;
 			}
 
-			double ratioToLast = Math.Min(1, Math.Max(0, (angleToPoint - firstIndex * oneSegmentAngle) / oneSegmentAngle));
+			Plane currentPlane = new Plane(levelingData.SampledPositions[firstIndex], levelingData.SampledPositions[lastIndex], levelingData.SampledPositions[6]);
 
-			double firstZ = levelingData.SampledPositions[firstIndex].z;
-			double lastZ = levelingData.SampledPositions[lastIndex].z;
-			double centerZ = levelingData.SampledPositions[6].z;
+			double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
 
-			double zAtRadius = lastZ * ratioToLast + firstZ * (1-ratioToLast);
-
-			double zBetweenCenterAndRadius = zAtRadius * ratioToRadius + centerZ * (1 - ratioToRadius);
-
-			return new Vector3(currentDestination.x, currentDestination.y, currentDestination.z + zBetweenCenterAndRadius);
+			currentDestination.z = hitDistance;
+			return currentDestination;
 		}
 
 		public static List<string> ProcessCommand(string lineBeingSent)
