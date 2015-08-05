@@ -47,6 +47,22 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
+	public class LibraryProviderHistoryCreator : ILibraryCreator
+	{
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		{
+			return new LibraryProviderHistory(null, parentLibraryProvider);
+		}
+
+		public string ProviderKey
+		{
+			get
+			{
+				return LibraryProviderHistory.StaticProviderKey;
+			}
+		}
+	}
+
 	public class LibraryProviderHistory : LibraryProvider
 	{
 		private static LibraryProviderHistory instance = null;

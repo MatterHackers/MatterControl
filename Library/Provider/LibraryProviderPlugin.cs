@@ -37,11 +37,23 @@ using System.ComponentModel;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
-	public class LibraryProviderPlugin
+	public interface ILibraryCreator
+	{
+		LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider);
+
+		string ProviderKey { get; }
+	}
+
+	public class LibraryProviderPlugin : ILibraryCreator
 	{
 		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
 		{
 			throw new NotImplementedException();
+		}
+
+		public virtual string ProviderKey
+		{
+			get { throw new NotImplementedException(); } 
 		}
 
 		public virtual ImageBuffer GetFolderImage()

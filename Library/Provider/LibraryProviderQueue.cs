@@ -46,6 +46,22 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
+	public class LibraryProviderQueueCreator : ILibraryCreator
+	{
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		{
+			return new LibraryProviderQueue(null, parentLibraryProvider);
+		}
+
+		public string ProviderKey
+		{
+			get
+			{
+				return LibraryProviderQueue.StaticProviderKey;
+			}
+		}
+	}
+
 	public class LibraryProviderQueue : LibraryProvider
 	{
 		private static LibraryProviderQueue instance = null;

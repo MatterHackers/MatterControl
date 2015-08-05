@@ -47,9 +47,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	public class LibraryProviderSelector : LibraryProvider
 	{
 		Action<LibraryProvider> setCurrentLibraryProvider;
-		private List<LibraryProvider> libraryProviders = new List<LibraryProvider>();
+		private List<ILibraryCreator> libraryCreators = new List<ILibraryCreator>();
 
-		internal LibraryProvider PurchasedLibrary { get; private set; }
+		private ILibraryCreator PurchasedLibraryCreator { get; set; }
 
 		private event EventHandler unregisterEvents;
 
@@ -68,16 +68,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				// This is test code for how to add these when we get to it
 				// put in the queue provider
-				libraryProviders.Add(new LibraryProviderQueue(null, this));
+				libraryCreators.Add(new LibraryProviderQueueCreator());
 				AddFolderImage("queue_folder.png");
 
 				// put in the queue provider
-				libraryProviders.Add(new LibraryProviderHistory(null, this));
+				libraryCreators.Add(new LibraryProviderHistoryCreator());
 				AddFolderImage("queue_folder.png");
 			}
 
 			// put in the sqlite provider
-			libraryProviders.Add(new LibraryProviderSQLite(null, this, "Local Library"));
+			libraryCreators.Add(new LibraryProviderSQLiteCreator());
 			AddFolderImage("library_folder.png");
 
 			// Check for LibraryProvider factories and put them in the list too.
@@ -85,14 +85,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			foreach (LibraryProviderPlugin libraryProviderPlugin in libraryProviderPlugins.Plugins)
 			{
 				// This coupling is required to navigate to the Purchased folder after redemption or purchase updates
-				var pluginProvider = libraryProviderPlugin.CreateLibraryProvider(this);
-				if (pluginProvider.ProviderKey == "LibraryProviderPurchasedKey")
-				{
-					this.PurchasedLibrary = pluginProvider;
-				}
-
-				libraryProviders.Add(pluginProvider);
+				libraryCreators.Add(libraryProviderPlugin);
 				folderImagesForChildren.Add(libraryProviderPlugin.GetFolderImage());
+
+				if (libraryProviderPlugin.ProviderKey == "LibraryProviderPurchasedKey")
+				{
+					this.PurchasedLibraryCreator = libraryProviderPlugin;
+				}
 			}
 
 			// and any directory providers (sd card provider, etc...)
@@ -100,11 +99,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 			if (Directory.Exists(downloadsDirectory))
 			{
-				libraryProviders.Add(new LibraryProviderFileSystem(downloadsDirectory, "Downloads", this));
+				libraryCreators.Add(new LibraryProviderFileSystemCreator(downloadsDirectory, "Downloads"));
 				AddFolderImage("download_folder.png");
 			}
 
-			firstAddedDirectoryIndex = libraryProviders.Count;
+			firstAddedDirectoryIndex = libraryCreators.Count;
 
 #if !__ANDROID__
 			MenuOptionFile.CurrentMenuOptionFile.AddLocalFolderToLibrary += (sender, e) =>
@@ -135,13 +134,13 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RenameCollection(int collectionIndexToRename, string newName)
 		{
-			if (collectionIndexToRename >= firstAddedDirectoryIndex
-				&& libraryProviders[collectionIndexToRename].Name != newName)
+			if (collectionIndexToRename >= firstAddedDirectoryIndex)
 			{
-				LibraryProviderFileSystem addedProvider = libraryProviders[collectionIndexToRename] as LibraryProviderFileSystem;
-				if (addedProvider != null)
+				LibraryProviderFileSystemCreator fileSystemLibraryCreator = libraryCreators[collectionIndexToRename] as LibraryProviderFileSystemCreator;
+				if(fileSystemLibraryCreator != null 
+					&& fileSystemLibraryCreator.Description != newName)
 				{
-					addedProvider.ChangeName(newName);
+					fileSystemLibraryCreator.Description = newName;
 					UiThread.RunOnIdle(() => OnDataReloaded(null));
 				}
 			}
@@ -173,7 +172,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return this.libraryProviders.Count;
+				return this.libraryCreators.Count;
 			}
 		}
 
@@ -232,7 +231,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			UiThread.RunOnIdle(() =>
 			FileDialog.SelectFolderDialog(new SelectFolderDialogParams("Select Folder"), (SelectFolderDialogParams folderParams) =>
 			{
-				libraryProviders.Add(new LibraryProviderFileSystem(folderParams.FolderPath, collectionName, this));
+				libraryCreators.Add(new LibraryProviderFileSystemCreator(folderParams.FolderPath, collectionName));
 				AddFolderImage("folder.png");
 				UiThread.RunOnIdle(() => OnDataReloaded(null));
 			}));
@@ -242,7 +241,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			if (Directory.Exists(itemToAdd.FileLocation))
 			{
-				libraryProviders.Add(new LibraryProviderFileSystem(itemToAdd.FileLocation, Path.GetFileName(itemToAdd.FileLocation), this));
+				libraryCreators.Add(new LibraryProviderFileSystemCreator(itemToAdd.FileLocation, Path.GetFileName(itemToAdd.FileLocation)));
 				AddFolderImage("folder.png");
 				UiThread.RunOnIdle(() => OnDataReloaded(null));
 			}
@@ -250,7 +249,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
-			LibraryProvider provider = libraryProviders[collectionIndex];
+			LibraryProvider provider = libraryCreators[collectionIndex].CreateLibraryProvider(this);
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
@@ -261,11 +260,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			foreach (LibraryProvider libraryProvider in libraryProviders)
+			foreach (ILibraryCreator libraryCreator in libraryCreators)
 			{
-				if (collection.Key == libraryProvider.ProviderKey)
+				if (collection.Key == libraryCreator.ProviderKey)
 				{
-					return libraryProvider;
+					return libraryCreator.CreateLibraryProvider(this);
 				}
 			}
 
@@ -274,7 +273,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RemoveCollection(int collectionIndexToRemove)
 		{
-			libraryProviders.RemoveAt(collectionIndexToRemove);
+			libraryCreators.RemoveAt(collectionIndexToRemove);
 
 			UiThread.RunOnIdle(() => OnDataReloaded(null));
 		}
@@ -285,5 +284,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 
 		#endregion Overriden Abstract Methods
+
+		public LibraryProvider GetPurchasedLibrary()
+		{
+			return PurchasedLibraryCreator.CreateLibraryProvider(this);
+		}
 	}
 }

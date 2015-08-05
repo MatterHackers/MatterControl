@@ -40,10 +40,33 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
+	public class LibraryProviderFileSystemCreator : ILibraryCreator
+	{
+		string rootPath;
+		public string Description { get; set; }
+
+		public LibraryProviderFileSystemCreator(string rootPath, string description)
+		{
+			this.rootPath = rootPath;
+			this.Description = description;
+		}
+
+		public string ProviderKey
+		{
+			get
+			{
+				return "FileSystem_" + rootPath + "_Key";
+			}
+		}
+
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		{
+			return new LibraryProviderFileSystem(rootPath, Description, parentLibraryProvider);
+		}
+	}
+
 	public class LibraryProviderFileSystem : LibraryProvider
 	{
-		public string key;
-		private static int keyCount = 0;
 		private string currentDirectory = ".";
 		private List<string> currentDirectoryDirectories = new List<string>();
 		private List<string> currentDirectoryFiles = new List<string>();
@@ -57,9 +80,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			this.description = description;
 			this.rootPath = rootPath;
-
-			key = keyCount.ToString();
-			keyCount++;
 
 			directoryWatcher.Path = rootPath;
 
@@ -143,7 +163,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			get
 			{
-				return "FileSystem_" + key.ToString() + "_Key";
+				return "FileSystem_" + rootPath + "_Key";
 			}
 		}
 

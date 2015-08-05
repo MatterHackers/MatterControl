@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl
 			LibraryProviderSelector libraryProviderSelector = currentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
 			if(libraryProviderSelector != null)
 			{
-				currentLibraryDataView.CurrentLibraryProvider = libraryProviderSelector.PurchasedLibrary;
+				currentLibraryDataView.CurrentLibraryProvider = libraryProviderSelector.GetPurchasedLibrary();
 			}
 		}
 
