@@ -49,6 +49,12 @@ namespace MatterControl.Tests.MatterControl
 				outPosition = LevelWizard7PointRadial.GetPositionWithZOffset(new Vector3(currentTestPoint, 0), levelingData);
 				Assert.AreEqual(outPosition.z, midPoint.z, .001);
 
+				// test mid point between samples with offset
+				Vector3 midPointWithOffset = (levelingData.SampledPositions[curPoint] + levelingData.SampledPositions[nextPoint]) / 2 + new Vector3(0, 0, 3);
+				currentTestPoint = new Vector2(midPointWithOffset.x, midPointWithOffset.y);
+				outPosition = LevelWizard7PointRadial.GetPositionWithZOffset(new Vector3(currentTestPoint, 3), levelingData);
+				Assert.AreEqual(outPosition.z, midPointWithOffset.z, .001);
+
 				// test 1/2 angles (mid way between samples on radius)
 				currentTestPoint = new Vector2(radius, 0);
 				currentTestPoint.Rotate(MathHelper.Tau / 6 * (curPoint + .5));

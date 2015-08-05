@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
 
-			currentDestination.z = hitDistance;
+			currentDestination.z += hitDistance;
 			return currentDestination;
 		}
 
