@@ -169,12 +169,19 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
                 ScrollableWidget printerListScrollArea = new ScrollableWidget(true);
                 printerListScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-                printerListScrollArea.AnchorAll();
+				printerListScrollArea.AnchorAll();
                 printerListScrollArea.AddChild(printerListContainer);
+
+				FlowLayoutWidget printerListScrollContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				printerListScrollContainer.HAnchor = HAnchor.ParentLeftRight;
+				printerListScrollContainer.VAnchor = VAnchor.ParentBottomTop;
+				printerListScrollContainer.Padding = new BorderDouble(3);
+				printerListScrollContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 
 				mainContainer.AddChild(headerRow);
 				mainContainer.AddChild(editButtonRow);
-                mainContainer.AddChild(printerListScrollArea);
+				mainContainer.AddChild(printerListScrollContainer);
+                printerListScrollContainer.AddChild(printerListScrollArea);
 				mainContainer.AddChild(buttonContainer);
 
 				this.AddChild(mainContainer);
