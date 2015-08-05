@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private Vector3 sampledPosition2Private;
 
 		[JsonConverter(typeof(StringEnumConverter))]
-		public enum LevelingSystem { Probe3Points, Probe2Points, Probe7PointRadial }
+		public enum LevelingSystem { Probe3Points, Probe2Points, Probe7PointRadial, Probe13PointRadial }
 
 		public List<Vector3> SampledPositions = new List<Vector3>();
 
@@ -41,6 +41,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 					case "7 Point Disk":
 						return LevelingSystem.Probe7PointRadial;
+
+					case "13 Point Disk":
+						return LevelingSystem.Probe13PointRadial;
 
 					case "3 Point Plane":
 					default:

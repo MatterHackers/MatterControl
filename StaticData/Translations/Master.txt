@@ -3529,3 +3529,6 @@ Translated:Add Local Folder To Library
 English:Redeem Design Code
 Translated:Redeem Design Code
 
+English:You should be done in about 6 minutes.
+Translated:You should be done in about 6 minutes.
+

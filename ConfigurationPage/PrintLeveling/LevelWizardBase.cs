@@ -157,6 +157,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printLevelWizardWindow = new LevelWizard7PointRadial(runningState);
 					break;
 
+				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+					printLevelWizardWindow = new LevelWizard13PointRadial(runningState);
+					break;
+
 				default:
 					throw new NotImplementedException();
 			}

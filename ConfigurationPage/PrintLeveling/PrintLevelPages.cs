@@ -74,11 +74,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	public class LastPage7PointRadialInstructions : InstructionsPage
+	public class LastPageRadialInstructions : InstructionsPage
 	{
 		private ProbePosition[] probePositions;
 
-		public LastPage7PointRadialInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
+		public LastPageRadialInstructions(string pageDescription, string instructionsText, ProbePosition[] probePositions)
 			: base(pageDescription, instructionsText)
 		{
 			this.probePositions = probePositions;

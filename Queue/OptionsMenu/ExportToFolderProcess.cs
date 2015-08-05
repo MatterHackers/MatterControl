@@ -216,6 +216,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
 										break;
 
+									case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+										instruction.Line = LevelWizard13PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										break;
+
 									default:
 										throw new NotImplementedException();
 								}

@@ -1298,6 +1298,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							}
 							break;
 
+						case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+							if (levelingData.SampledPositions.Count != 13) // different criteria for what is not initialized
+							{
+								LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.InitialStartupCalibration);
+								return;
+							}
+							break;
+
 						default:
 							throw new NotImplementedException();
 					}
@@ -2678,6 +2686,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					case PrintLevelingData.LevelingSystem.Probe7PointRadial:
 						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
 						linesToWrite = LevelWizard7PointRadial.ProcessCommand(lineBeingSent);
+						break;
+
+					case PrintLevelingData.LevelingSystem.Probe13PointRadial:
+						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, currentDestination, movementMode);
+						linesToWrite = LevelWizard13PointRadial.ProcessCommand(lineBeingSent);
 						break;
 
 					default:
