@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -41,10 +42,10 @@ namespace MatterHackers.MatterControl
 	{
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-		private Vector3[] positions = new Vector3[3];
+		private List<Vector3> positions = new List<Vector3>();
 
 		public EditLevelingSettingsWindow()
-			: base(400, 200)
+			: base(400, 370)
 		{
 			Title = LocalizedString.Get("Leveling Settings".Localize());
 
@@ -87,12 +88,22 @@ namespace MatterHackers.MatterControl
 
 			// put in the movement edit controls
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
-			positions[0] = levelingData.SampledPosition0;
-			positions[1] = levelingData.SampledPosition1;
-			positions[2] = levelingData.SampledPosition2;
+			if (levelingData.SampledPositions.Count > 0)
+			{
+				for (int i = 0; i < levelingData.SampledPositions.Count; i++)
+				{
+					positions.Add(levelingData.SampledPositions[i]);
+				}
+			}
+			else
+			{
+				positions.Add(levelingData.SampledPosition0);
+				positions.Add(levelingData.SampledPosition1);
+				positions.Add(levelingData.SampledPosition2);
+			}
 
 			int tab_index = 0;
-			for (int row = 0; row < 3; row++)
+			for (int row = 0; row < levelingData.SampledPositions.Count; row++)
 			{
 				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
 				leftRightEdit.Padding = new BorderDouble(3);
@@ -130,7 +141,9 @@ namespace MatterHackers.MatterControl
 					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], allowNegatives: true, allowDecimals: true, minValue: minValue, pixelWidth: 60, tabIndex: tab_index++);
 					valueEdit.ActuallNumberEdit.InternalTextEditWidget.EditComplete += (sender, e) =>
 					{
-						positions[linkCompatibleRow][linkCompatibleAxis] = valueEdit.ActuallNumberEdit.Value;
+						Vector3 position = positions[linkCompatibleRow];
+						position[linkCompatibleAxis] = valueEdit.ActuallNumberEdit.Value;
+						positions[linkCompatibleRow] = position;
 					};
 
 					valueEdit.Margin = new BorderDouble(3);
@@ -181,15 +194,27 @@ namespace MatterHackers.MatterControl
 		{
 			PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
-			levelingData.SampledPosition0 = positions[0];
-			levelingData.SampledPosition1 = positions[1];
-			levelingData.SampledPosition2 = positions[2];
+			if (levelingData.SampledPositions.Count > 0)
+			{
+				for (int i = 0; i < levelingData.SampledPositions.Count; i++)
+				{
+					levelingData.SampledPositions[i] = positions[i];
+				}
 
-			PrintLevelingPlane.Instance.SetPrintLevelingEquation(
-				levelingData.SampledPosition0,
-				levelingData.SampledPosition1,
-				levelingData.SampledPosition2,
-				ActiveSliceSettings.Instance.PrintCenter);
+				levelingData.Commit();
+			}
+			else
+			{
+				levelingData.SampledPosition0 = positions[0];
+				levelingData.SampledPosition1 = positions[1];
+				levelingData.SampledPosition2 = positions[2];
+
+				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
+					levelingData.SampledPosition0,
+					levelingData.SampledPosition1,
+					levelingData.SampledPosition2,
+					ActiveSliceSettings.Instance.PrintCenter);
+			}
 
 			Close();
 		}
