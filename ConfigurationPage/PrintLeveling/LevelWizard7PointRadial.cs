@@ -115,9 +115,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		internal static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
 		{
-			// old ref code
 			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null
 				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
@@ -139,6 +138,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		
 					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 					{
+						// TODO: this is not correct for 7 point leveling
 						Vector3 relativeMove = Vector3.Zero;
 						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
 						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return lineBeingSent;
 		}
 
-		private static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData)
+		public static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData)
 		{
 			double angleToPoint = Math.Atan2(currentDestination.y, currentDestination.x);
 
@@ -175,8 +175,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				angleToPoint += MathHelper.Tau;
 			}
-
-			double ratioToRadius = Math.Min(1, Math.Max(0, new Vector3(currentDestination.x, currentDestination.y, 0).Length / levelingData.SampledPositions[0].x));
 
 			double oneSegmentAngle = MathHelper.Tau / 6;
 			int firstIndex = (int)(angleToPoint / oneSegmentAngle);
@@ -186,17 +184,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				lastIndex = 0;
 			}
 
-			double ratioToLast = Math.Min(1, Math.Max(0, (angleToPoint - firstIndex * oneSegmentAngle) / oneSegmentAngle));
+			Plane currentPlane = new Plane(levelingData.SampledPositions[firstIndex], levelingData.SampledPositions[lastIndex], levelingData.SampledPositions[6]);
 
-			double firstZ = levelingData.SampledPositions[firstIndex].z;
-			double lastZ = levelingData.SampledPositions[lastIndex].z;
-			double centerZ = levelingData.SampledPositions[6].z;
+			double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
 
-			double zAtRadius = lastZ * ratioToLast + firstZ * (1-ratioToLast);
-
-			double zBetweenCenterAndRadius = zAtRadius * ratioToRadius + centerZ * (1 - ratioToRadius);
-
-			return new Vector3(currentDestination.x, currentDestination.y, currentDestination.z + zBetweenCenterAndRadius);
+			currentDestination.z += hitDistance;
+			return currentDestination;
 		}
 
 		public static List<string> ProcessCommand(string lineBeingSent)
