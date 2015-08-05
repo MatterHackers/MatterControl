@@ -39,32 +39,31 @@ using System.Text;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelWizard7PointRadial : LevelWizardBase
+	public class LevelWizard13PointRadial : LevelWizardBase
 	{
 		private string pageOneStepText = "Print Leveling Overview".Localize();
 		private string pageOneInstructionsTextOne = LocalizedString.Get("Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.");
 		private string pageOneInstructionsTextTwo = LocalizedString.Get("'Home' the printer");
 		private string pageOneInstructionsTextThree = LocalizedString.Get("Sample the bed at seven points");
 		private string pageOneInstructionsTextFour = LocalizedString.Get("Turn auto leveling on");
-		private string pageOneInstructionsText5 = LocalizedString.Get("You should be done in about 5 minutes.");
+		private string pageOneInstructionsText5 = LocalizedString.Get("You should be done in about 6 minutes.");
 		private string pageOneInstructionsText6 = LocalizedString.Get("Note: Be sure the tip of the extrude is clean.");
 		private string pageOneInstructionsText7 = LocalizedString.Get("Click 'Next' to continue.");
 
-		public LevelWizard7PointRadial(LevelWizardBase.RuningState runningState)
-			: base(500, 370, 21)
+		static readonly int numberOfRadialSamples = 12;
+
+		public LevelWizard13PointRadial(LevelWizardBase.RuningState runningState)
+			: base(500, 370, (numberOfRadialSamples + 1)*3)
 		{
 			bool allowLessThanZero = ActiveSliceSettings.Instance.GetActiveValue("z_can_be_negative") == "1";
 			string printLevelWizardTitle = LocalizedString.Get("MatterControl");
 			string printLevelWizardTitleFull = LocalizedString.Get("Print Leveling Wizard");
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
-			ProbePosition[] probePositions = new ProbePosition[7];
-			probePositions[0] = new ProbePosition();
-			probePositions[1] = new ProbePosition();
-			probePositions[2] = new ProbePosition();
-			probePositions[3] = new ProbePosition();
-			probePositions[4] = new ProbePosition();
-			probePositions[5] = new ProbePosition();
-			probePositions[6] = new ProbePosition();
+			ProbePosition[] probePositions = new ProbePosition[numberOfRadialSamples+1];
+			for (int i = 0; i < probePositions.Length; i++)
+			{
+				probePositions[i] = new ProbePosition();
+			}
 
 			printLevelWizard = new WizardControl();
 			AddChild(printLevelWizard);
@@ -89,7 +88,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double bedRadius = Math.Min(ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y) / 2;
 
 			double startProbeHeight = 5;
-			for (int i = 0; i < 7; i++)
+			for (int i = 0; i < numberOfRadialSamples+1; i++)
 			{
 				Vector2 probePosition = GetPrintLevelPositionToSample(i, bedRadius);
 				printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", GetStepString(), positionLabel, i + 1, lowPrecisionLabel), probePositions[i], allowLessThanZero));
@@ -103,10 +102,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public static Vector2 GetPrintLevelPositionToSample(int index, double radius)
 		{
-			if (index < 6)
+			if (index < numberOfRadialSamples)
 			{
 				Vector2 position = new Vector2(radius, 0);
-				position.Rotate(MathHelper.Tau / 6 * index);
+				position.Rotate(MathHelper.Tau / numberOfRadialSamples * index);
 				position += ActiveSliceSettings.Instance.BedCenter;
 				return position;
 			}
@@ -139,7 +138,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		
 					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 					{
-						// TODO: this is not correct for 7 point leveling
+						// TODO: this is not correct for 13 point leveling
 						Vector3 relativeMove = Vector3.Zero;
 						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
 						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
@@ -179,15 +178,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				angleToPoint += MathHelper.Tau;
 			}
 
-			double oneSegmentAngle = MathHelper.Tau / 6;
+			double oneSegmentAngle = MathHelper.Tau / numberOfRadialSamples;
 			int firstIndex = (int)(angleToPoint / oneSegmentAngle);
 			int lastIndex = firstIndex + 1;
-			if (lastIndex == 6)
+			if (lastIndex == numberOfRadialSamples)
 			{
 				lastIndex = 0;
 			}
 
-			Plane currentPlane = new Plane(levelingData.SampledPositions[firstIndex], levelingData.SampledPositions[lastIndex], levelingData.SampledPositions[6]);
+			Plane currentPlane = new Plane(levelingData.SampledPositions[firstIndex], levelingData.SampledPositions[lastIndex], levelingData.SampledPositions[numberOfRadialSamples]);
 
 			double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
 
