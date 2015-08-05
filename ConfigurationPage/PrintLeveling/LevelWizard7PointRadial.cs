@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = LocalizedString.Get("Medium Precision");
 			string highPrecisionLabel = LocalizedString.Get("High Precision");
 
-			double bedRadius = ActiveSliceSettings.Instance.BedSize.x / 2;
+			double bedRadius = Math.Min(ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y) / 2;
 
 			double startProbeHeight = 5;
 			for (int i = 0; i < 7; i++)
@@ -105,9 +105,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (index < 6)
 			{
-				Vector2 postion = new Vector2(radius, 0);
-				postion.Rotate(MathHelper.Tau / 6 * index);
-				return postion;
+				Vector2 position = new Vector2(radius, 0);
+				position.Rotate(MathHelper.Tau / 6 * index);
+				position += ActiveSliceSettings.Instance.BedCenter;
+				return position;
 			}
 			else
 			{
