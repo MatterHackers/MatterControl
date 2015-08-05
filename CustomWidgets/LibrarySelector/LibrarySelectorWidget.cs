@@ -60,9 +60,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		private bool settingLocalBounds = false;
 
+		public event Action<LibraryProvider> ChangedCurrentLibraryProvider;
+
 		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
 		{
-			this.currentLibraryProvider = libraryProvider;
+			this.CurrentLibraryProvider = libraryProvider;
+			UiThread.RunOnIdle(RebuildView);
 		}
 
 		public LibrarySelectorWidget()
@@ -123,6 +126,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 					}
 
 					currentLibraryProvider = value;
+
+					if (ChangedCurrentLibraryProvider != null)
+					{
+						ChangedCurrentLibraryProvider(value);
+					}
 				}
 			}
 		}

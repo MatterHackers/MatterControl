@@ -70,20 +70,10 @@ namespace MatterHackers.MatterControl
 			FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget.SetCurrentLibraryProvider, librarySelectorWidget.CurrentLibraryProvider);
 			middleRowContainer.AddChild(breadCrumbWidget);
 
+			librarySelectorWidget.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
+
 			// put in the area to pick the provider to save to
 			{
-				string providerToSaveToLabel = "Save Location".Localize();
-				TextWidget textBoxHeader = new TextWidget(providerToSaveToLabel, pointSize: 12);
-				textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				textBoxHeader.Margin = new BorderDouble(5);
-				textBoxHeader.HAnchor = HAnchor.ParentLeft;
-
-				string chooseLocationLabelFull = "Choose the location to save to.".Localize(); ;
-				TextWidget textBoxHeaderFull = new TextWidget(chooseLocationLabelFull, pointSize: 9);
-				textBoxHeaderFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				textBoxHeaderFull.Margin = new BorderDouble(5);
-				textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
-
 				//Adds text box and check box to the above container
 				GuiWidget chooseWindow = new GuiWidget(10, 30);
 				chooseWindow.HAnchor = HAnchor.ParentLeftRight;
@@ -93,8 +83,6 @@ namespace MatterHackers.MatterControl
 				chooseWindow.Padding = new BorderDouble(3);
 				chooseWindow.AddChild(librarySelectorWidget);
 
-				middleRowContainer.AddChild(textBoxHeader);
-				middleRowContainer.AddChild(textBoxHeaderFull);
 				middleRowContainer.AddChild(chooseWindow);
 			}
 
@@ -106,12 +94,6 @@ namespace MatterHackers.MatterControl
 				textBoxHeader.Margin = new BorderDouble(5);
 				textBoxHeader.HAnchor = HAnchor.ParentLeft;
 
-				string fileNameLabelFull = "Enter the name of your design.".Localize(); ;
-				TextWidget textBoxHeaderFull = new TextWidget(fileNameLabelFull, pointSize: 9);
-				textBoxHeaderFull.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				textBoxHeaderFull.Margin = new BorderDouble(5);
-				textBoxHeaderFull.HAnchor = HAnchor.ParentLeftRight;
-
 				//Adds text box and check box to the above container
 				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize());
 				textToAddWidget.HAnchor = HAnchor.ParentLeftRight;
@@ -119,7 +101,6 @@ namespace MatterHackers.MatterControl
 				textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
 				middleRowContainer.AddChild(textBoxHeader);
-				middleRowContainer.AddChild(textBoxHeaderFull);
 				middleRowContainer.AddChild(textToAddWidget);
 			}
 
