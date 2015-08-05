@@ -170,7 +170,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData)
 		{
-			double angleToPoint = Math.Atan2(currentDestination.y, currentDestination.x);
+			Vector2 destinationFromCenter = new Vector2(currentDestination) - ActiveSliceSettings.Instance.BedCenter;
+
+			double angleToPoint = Math.Atan2(destinationFromCenter.y, destinationFromCenter.x);
 
 			if (angleToPoint < 0)
 			{
