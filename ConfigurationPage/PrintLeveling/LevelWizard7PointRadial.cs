@@ -115,9 +115,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		internal static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
 		{
-			// old ref code
 			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null
 				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
@@ -139,6 +138,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		
 					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 					{
+						// TODO: this is not correct for 7 point leveling
 						Vector3 relativeMove = Vector3.Zero;
 						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
 						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return lineBeingSent;
 		}
 
-		private static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData)
+		public static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData)
 		{
 			double angleToPoint = Math.Atan2(currentDestination.y, currentDestination.x);
 
