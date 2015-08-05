@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			int tab_index = 0;
-			for (int row = 0; row < levelingData.SampledPositions.Count; row++)
+			for (int row = 0; row < positions.Count; row++)
 			{
 				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
 				leftRightEdit.Padding = new BorderDouble(3);
