@@ -61,11 +61,14 @@ namespace MatterHackers.MatterControl
 			{
 				if (createFolderWindow == null)
 				{
-					createFolderWindow = new CreateFolderWindow((returnInfo) =>
+					UiThread.RunOnIdle(() =>
 					{
-						AddLocalFolderToLibrary(this, new StringEventArgs(returnInfo.newName));
+						createFolderWindow = new CreateFolderWindow((returnInfo) =>
+						{
+							AddLocalFolderToLibrary(this, new StringEventArgs(returnInfo.newName));
+						});
+						createFolderWindow.Closed += (sender2, e2) => { createFolderWindow = null; };
 					});
-					createFolderWindow.Closed += (sender2, e2) => { createFolderWindow = null; };
 				}
 				else
 				{
