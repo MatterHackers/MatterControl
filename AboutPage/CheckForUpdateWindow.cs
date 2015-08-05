@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl.AboutPage
         TextWidget alphaInfoLabel;
         TextWidget betaInfoLabel;
         TextWidget updateChannelLabel;
+		TextWidget currentBuildInfo;
 
         public CheckForUpdateWindow()
             : base (540, 350)
@@ -93,6 +94,14 @@ namespace MatterHackers.MatterControl.AboutPage
 
             releaseOptionsDropList.SelectedValue = UserSettings.Instance.get("UpdateFeedType");
             releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
+
+			string currentBuildNo = VersionInfo.Instance.BuildVersion;
+			string currentBuildInfoLabel = String.Format("Current Build : {0}", currentBuildNo);
+			currentBuildInfo = new TextWidget(currentBuildInfoLabel.Localize());
+			currentBuildInfo.HAnchor = HAnchor.ParentLeftRight;
+			currentBuildInfo.Margin = new BorderDouble(left: 5,bottom: 15, top: 20);
+			currentBuildInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			
 
             FlowLayoutWidget additionalInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
             additionalInfoContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -156,14 +165,17 @@ namespace MatterHackers.MatterControl.AboutPage
                 });
             };
 
+
             mainLabelContainer.AddChild(checkUpdateLabel);
             topToBottom.AddChild(mainLabelContainer);
             topToBottom.AddChild(updateStatusWidget);
+			topToBottom.AddChild(currentBuildInfo);
             currentFeedAndDropDownContainer.AddChild(feedLabel);
             currentFeedAndDropDownContainer.AddChild(whatsThisLink);
             currentFeedAndDropDownContainer.AddChild(new HorizontalSpacer());
             currentFeedAndDropDownContainer.AddChild(releaseOptionsDropList);
             topToBottom.AddChild(currentFeedAndDropDownContainer);
+			
             topToBottom.AddChild(additionalInfoContainer);
             buttonContainer.AddChild(new HorizontalSpacer());
             buttonContainer.AddChild(closeButton);
