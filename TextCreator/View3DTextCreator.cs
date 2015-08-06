@@ -242,6 +242,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			// set the view to be a good angle and distance
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Scale = .06;
 			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .02, 0, 0)));
+			meshViewerWidget.TrackballTumbleWidget.TrackBallController.Translate(-new Vector3(bedCenter));
 
 			AddHandlers();
 			UnlockEditControls();
@@ -261,6 +262,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				LockEditControls();
 
 				await Task.Run(() => insertTextBackgroundWorker_DoWork(text));
+
+				// offset them to the centor of the bed
+				for (int i = 0; i < asynchMeshGroups.Count; i++)
+				{
+					ScaleRotateTranslate translate = asynchMeshGroupTransforms[i];
+					translate.translation *= Matrix4X4.CreateTranslation(new Vector3(meshViewerWidget.BedCenter, 0));
+					asynchMeshGroupTransforms[i] = translate;
+				}
 
 				UnlockEditControls();
 				PullMeshDataFromAsynchLists();
@@ -469,7 +478,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				Mesh connectionLine = PlatonicSolids.CreateCube(xSize, ySize, zSize);
 				meshesList.Add(new MeshGroup(connectionLine));
 				platingDataList.Add(new PlatingMeshGroupData());
-				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, ySize / 2 - ySize * 2 / 3, zSize / 2));
+				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2 + meshViewerWidget.BedCenter.x, ySize / 2 - ySize * 2 / 3 + meshViewerWidget.BedCenter.y, zSize / 2));
 				PlatingHelper.CreateITraceableForMeshGroup(platingDataList, meshesList, meshesList.Count - 1, null);
 			}
 		}

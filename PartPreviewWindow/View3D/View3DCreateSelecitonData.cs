@@ -116,7 +116,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					LoadAndAddPartsToPlate(pendingPartsToLoad.ToArray());
 				}
+				else
+				{
+					if (!PartsAreInPrintVolume())
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox((doCentering) =>
+							{
+								if (doCentering)
+								{
+									AutoArrangePartsInBackground();
+								}
+							}, PartsNotPrintableMessage, PartsNotPrintableTitle, StyledMessageBox.MessageType.YES_NO, "Center on Bed", "Cancel");
+						});
+					}
+				}
 			}
 		}
+
+		static string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?";
+		static string PartsNotPrintableTitle = "Parts not in print area";
 	}
 }

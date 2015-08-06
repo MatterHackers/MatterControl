@@ -13,24 +13,22 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget middleRowContainer;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-		public delegate void MessageBoxDelegate(bool response);
-
-		private MessageBoxDelegate responseCallback;
+		private Action<bool> responseCallback;
 
 		public enum MessageType { OK, YES_NO };
 
-		public static void ShowMessageBox(MessageBoxDelegate callback, String message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string no = "")
+		public static void ShowMessageBox(Action<bool> callback, String message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string no = "")
 		{
 			ShowMessageBox(callback, message, caption, null, messageType, yesOk, no);
 		}
 
-		public static void ShowMessageBox(MessageBoxDelegate callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string no = "")
+		public static void ShowMessageBox(Action<bool> callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string no = "")
 		{
 			StyledMessageBox messageBox = new StyledMessageBox(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, no);
 			messageBox.ShowAsSystemWindow();
 		}
 
-		public StyledMessageBox(MessageBoxDelegate callback, String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string no)
+		public StyledMessageBox(Action<bool> callback, String message, string windowTitle, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string no)
 			: base(width, height)
 		{
 			responseCallback = callback;

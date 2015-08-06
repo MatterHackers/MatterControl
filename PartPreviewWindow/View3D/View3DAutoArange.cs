@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -148,6 +149,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					return;
 				}
+
+				// offset them to the centor of the bed
+				for (int i = 0; i < asynchMeshGroups.Count; i++)
+				{
+					ScaleRotateTranslate translate = asynchMeshGroupTransforms[i];
+					translate.translation *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.BedCenter, 0));
+					asynchMeshGroupTransforms[i] = translate;
+				}
+
 				UnlockEditControls();
 				PartHasBeenChanged();
 

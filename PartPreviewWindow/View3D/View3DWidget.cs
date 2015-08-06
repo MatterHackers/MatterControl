@@ -679,45 +679,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 		}
 
-		private static bool PartShouldBeCentered(PrintItemWrapper printItemWrapper)
-		{
-			if (!ActiveSliceSettings.Instance.CenterOnBed())
-			{
-				return false;
-			}
-
-			if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
-			{
-				if (File.Exists(printItemWrapper.FileLocation))
-				{
-					try
-					{
-						using (Stream uncompressedFileStream = File.OpenRead(printItemWrapper.FileLocation))
-						{
-							using (Stream fileStream = AmfProcessing.GetCompressedStreamIfRequired(uncompressedFileStream))
-							{
-								// read up the first 32k and make sure it says the file was created my MatterControl
-								int bufferSize = 32000;
-								byte[] buffer = new byte[bufferSize];
-								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
-								string startingContent = System.Text.Encoding.UTF8.GetString(buffer);
-								if (startingContent.Contains("BedPosition") && startingContent.Contains("Absolute"))
-								{
-									return false;
-								}
-							}
-						}
-					}
-					catch (Exception)
-					{
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
 		private void AddHandlers()
 		{
 			expandViewOptions.CheckedStateChanged += expandViewOptions_CheckedStateChanged;
@@ -1144,19 +1105,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printItemWrapper.FileHasChanged -= ReloadMeshIfChangeExternaly;
 				printItemWrapper.FileHasChanged += ReloadMeshIfChangeExternaly;
 
-				// Controls if the part should be automattically centered. Ideally, we should autocenter any time a user has
-				// not moved parts around on the bed (as we do now) but skip autocentering if the user has moved and placed
-				// parts themselves. For now, simply make that determination to allow testing of the proposed change and convey
-				// when we would want to autocenter (i.e. autocenter when part was loaded outside of the new closed loop system)
-				MeshVisualizer.MeshViewerWidget.CenterPartAfterLoad centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DO;
-				if (!PartShouldBeCentered(printItemWrapper))
-				{
-					centerOnBed = MeshViewerWidget.CenterPartAfterLoad.DONT;
-				}
-
 				// don't load the mesh until we get all the rest of the interface built
 				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
-				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, centerOnBed);
+				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
 			}
 
 			partHasBeenEdited = false;
@@ -1974,10 +1925,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			SelectionChanged(this, null);
 
-			if (openMode == OpenMode.Editing)
+			if (openMode == OpenMode.Editing
+				|| !PartsAreInPrintVolume())
 			{
 				UiThread.RunOnIdle(EnterEditAndCreateSelectionData);
 			}
+		}
+
+		private bool PartsAreInPrintVolume()
+		{
+			AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
+			bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
+			RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y);
+			bedRect.Offset(ActiveSliceSettings.Instance.BedCenter - ActiveSliceSettings.Instance.BedSize/2);
+
+			bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
+
+			return onBed && inBounds;
 		}
 
 		private void OpenExportWindow()

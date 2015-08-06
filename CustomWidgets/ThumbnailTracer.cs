@@ -295,7 +295,6 @@ namespace MatterHackers.RayTracer
 			return totalMeshBounds;
 		}
 
-
 		private void AddTestMesh(List<MeshGroup> meshGroups)
 		{
 			if (meshGroups != null)
