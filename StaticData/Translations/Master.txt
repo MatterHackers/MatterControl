@@ -3532,3 +3532,6 @@ Translated:Redeem Design Code
 English:You should be done in about 6 minutes.
 Translated:You should be done in about 6 minutes.
 
+English:Enter Share Code
+Translated:Enter Share Code
+
