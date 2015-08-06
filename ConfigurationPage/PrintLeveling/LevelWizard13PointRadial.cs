@@ -102,16 +102,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public static Vector2 GetPrintLevelPositionToSample(int index, double radius)
 		{
+			Vector2 bedCenter = ActiveSliceSettings.Instance.BedCenter;
 			if (index < numberOfRadialSamples)
 			{
 				Vector2 position = new Vector2(radius, 0);
 				position.Rotate(MathHelper.Tau / numberOfRadialSamples * index);
-				position += ActiveSliceSettings.Instance.BedCenter;
+				position += bedCenter;
 				return position;
 			}
 			else
 			{
-				return new Vector2(0, 0);
+				return bedCenter;
 			}
 		}
 
