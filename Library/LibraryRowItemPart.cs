@@ -56,8 +56,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public int ItemIndex { get; private set; }
 		double thumbnailWidth = 0;
 
-		public PrintItemWrapper printItemInstance = null;
-
 		private ExportPrintItemWindow exportingWindow;
 		private PartPreviewMainWindow viewingWindow;
 
@@ -90,12 +88,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public async Task<PrintItemWrapper> GetPrintItemWrapperAsync()
 		{
-			if (printItemInstance == null)
-			{
-				printItemInstance = await libraryProvider.GetPrintItemWrapperAsync(this.ItemIndex, ReportProgressRatio);
-			}
-
-			return printItemInstance;
+			return await libraryProvider.GetPrintItemWrapperAsync(this.ItemIndex, ReportProgressRatio);
 		}
 
 		void ReportProgressRatio(double progress0To1, string processingState, out bool continueProcessing)
