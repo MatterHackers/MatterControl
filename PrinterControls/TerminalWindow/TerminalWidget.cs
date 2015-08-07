@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl
 
 		public TerminalWidget(bool showInWindow)
 		{
+			this.Name = "TerminalWidget";
 			this.BackgroundColor = backgroundColor;
 			this.Padding = new BorderDouble(5, 0);
 			FlowLayoutWidget topLeftToRightLayout = new FlowLayoutWidget();
@@ -141,8 +142,6 @@ namespace MatterHackers.MatterControl
 					manualCommandTextEdit.ActualTextEditWidget.EnterPressed += new KeyEventHandler(manualCommandTextEdit_EnterPressed);
 					manualCommandTextEdit.ActualTextEditWidget.KeyDown += new KeyEventHandler(manualCommandTextEdit_KeyDown);
 					manualEntryLayout.AddChild(manualCommandTextEdit);
-
-					UiThread.RunOnIdle(manualCommandTextEdit.Focus);
 				}
 
 				manualEntryTopToBottomLayout.AddChild(manualEntryLayout);
@@ -212,6 +211,7 @@ namespace MatterHackers.MatterControl
 			{
 				filterOutput.Checked = UserSettings.Instance.Fields.GetBool(TerminalFilterOutputKey, false);
 				firstDraw = false;
+				UiThread.RunOnIdle(manualCommandTextEdit.Focus);
 			}
 			base.OnDraw(graphics2D);
 		}
