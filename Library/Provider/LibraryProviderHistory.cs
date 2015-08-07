@@ -253,64 +253,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			OnDataReloaded(null);
 		}
 
-		private static void AddStlOrGcode(LibraryProviderHistory libraryToAddTo, string loadedFileName, string extension)
-		{
-			PrintItem printItem = new PrintItem();
-			printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
-			printItem.FileLocation = Path.GetFullPath(loadedFileName);
-			printItem.PrintItemCollectionID = libraryToAddTo.baseLibraryCollection.Id;
-			printItem.Commit();
-
-			if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
-			{
-				List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
-
-				try
-				{
-					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, libraryToAddTo);
-					SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
-					libraryToAddTo.AddItem(printItemWrapper);
-				}
-				catch (System.UnauthorizedAccessException)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						//Do something special when unauthorized?
-						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
-					});
-				}
-				catch
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-					});
-				}
-			}
-			else // it is not a mesh so just add it
-			{
-				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, libraryToAddTo);
-				if (false)
-				{
-					libraryToAddTo.AddItem(printItemWrapper);
-				}
-				else // save a copy to the library and update this to point at it
-				{
-					string sourceFileName = printItem.FileLocation;
-					string newFileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItem.FileLocation));
-					string destFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, newFileName);
-
-					File.Copy(sourceFileName, destFileName, true);
-
-					printItemWrapper.FileLocation = destFileName;
-					printItemWrapper.PrintItem.Commit();
-
-					// let the queue know that the item has changed so it load the correct part
-					libraryToAddTo.AddItem(printItemWrapper);
-				}
-			}
-		}
-
 		private IEnumerable<PrintItemCollection> GetChildCollections()
 		{
 			string query = string.Format("SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
@@ -331,35 +273,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
 			return result;
-		}
-
-		private void loadFilesIntoLibraryBackgoundWorker_DoWork(IList<string> fileList)
-		{
-			foreach (string loadedFileName in fileList)
-			{
-				string extension = Path.GetExtension(loadedFileName).ToUpper();
-				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-					|| extension == ".GCODE"
-					|| extension == ".ZIP")
-				{
-					if (extension == ".ZIP")
-					{
-						ProjectFileHandler project = new ProjectFileHandler(null);
-						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
-						if (partFiles != null)
-						{
-							foreach (PrintItem part in partFiles)
-							{
-								AddStlOrGcode(this, part.FileLocation, Path.GetExtension(part.FileLocation).ToUpper());
-							}
-						}
-					}
-					else
-					{
-						AddStlOrGcode(this, loadedFileName, extension);
-					}
-				}
-			}
 		}
 	}
 }

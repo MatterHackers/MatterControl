@@ -33,6 +33,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -105,9 +106,30 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public void AddFilesToLibrary(IList<string> files, ReportProgressRatio reportProgress = null)
 		{
-			foreach (string file in files)
+			foreach (string loadedFileName in files)
 			{
-				AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(file), file), this));
+				string extension = Path.GetExtension(loadedFileName).ToUpper();
+				if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+					|| extension == ".GCODE"
+					|| extension == ".ZIP")
+				{
+					if (extension == ".ZIP")
+					{
+						ProjectFileHandler project = new ProjectFileHandler(null);
+						List<PrintItem> partFiles = project.ImportFromProjectArchive(loadedFileName);
+						if (partFiles != null)
+						{
+							foreach (PrintItem part in partFiles)
+							{
+								AddItem(new PrintItemWrapper(part, this));
+							}
+						}
+					}
+					else
+					{
+						AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), loadedFileName), this));
+					}
+				}
 			}
 		}
 

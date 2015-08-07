@@ -38,6 +38,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -106,12 +107,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			processingProgressControl.RatioComplete = progress0To1;
+			processingProgressControl.ProcessType = processingState;
+
+			Debug.WriteLine(progress0To1.ToString());
 		}
 
 		ProgressControl processingProgressControl;
 		private void AddLoadingProgressBar()
 		{
-            processingProgressControl = new ProgressControl("Downloading...", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5)
+            processingProgressControl = new ProgressControl("Downloading...".Localize(), ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5)
             {
                 PointSize = 8,
             };
