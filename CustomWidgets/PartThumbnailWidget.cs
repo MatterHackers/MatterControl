@@ -47,7 +47,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-	public class PartThumbnailWidget : ClickWidget, IClickable
+	public class PartThumbnailWidget : ClickWidget
 	{
 		// all the color stuff
 		new public double BorderWidth = 0;
@@ -118,11 +118,39 @@ namespace MatterHackers.MatterControl
 			this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
 
 			// Add Handlers
+			this.Click += DoOnMouseClick;
 			this.MouseEnterBounds += onEnter;
 			this.MouseLeaveBounds += onExit;
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 		}
 
+		private void DoOnMouseClick(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				if (printItem != null)
+				{
+					string pathAndFile = printItem.FileLocation;
+					if (File.Exists(pathAndFile))
+					{
+						bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
+						if (shiftKeyDown)
+						{
+							OpenPartPreviewWindow(View3DWidget.AutoRotate.Disabled);
+						}
+						else
+						{
+							OpenPartPreviewWindow(View3DWidget.AutoRotate.Enabled);
+						}
+					}
+					else
+					{
+						QueueRowItem.ShowCantFindFileMessage(printItem);
+					}
+				}
+			});
+		}
+		
 		public event EventHandler<StringEventArgs> DoneRendering;
 
 		private event EventHandler unregisterEvents;
