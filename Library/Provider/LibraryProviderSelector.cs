@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
-		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex, ReportProgressRatio reportProgress = null)
+		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex)
 		{
 			throw new NotImplementedException("Print items are not allowed at the root level");
 		}

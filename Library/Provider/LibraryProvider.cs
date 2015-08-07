@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
-		public abstract Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex, ReportProgressRatio reportProgress = null);
+		public abstract Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex);
 
 		// TODO: make this asnyc
 		//public abstract Task<LibraryProvider> GetProviderForCollectionAsync(PrintItemCollection collection);
@@ -182,7 +182,31 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return GetProviderForCollection(GetCollectionItem(collectionIndex)).CollectionCount;
 		}
 
-		public virtual int GetCollectionItemCount(int collectionIndex)
+        protected Dictionary<int, ReportProgressRatio> itemReportProgressHandlers = new Dictionary<int, ReportProgressRatio>();
+
+        public void RegisterForProgress(int itemIndex, ReportProgressRatio reportProgress)
+        {
+            if (!itemReportProgressHandlers.ContainsKey(itemIndex))
+            {
+                itemReportProgressHandlers.Add(itemIndex, reportProgress);
+            }
+            else
+            {
+                itemReportProgressHandlers[itemIndex] = reportProgress;
+            }
+        }
+
+        protected ReportProgressRatio GetItemProgressHandler(int itemIndex)
+        {
+            if (!itemReportProgressHandlers.ContainsKey(itemIndex))
+            {
+                return null;
+            }
+
+            return itemReportProgressHandlers[itemIndex];
+        }
+
+        public virtual int GetCollectionItemCount(int collectionIndex)
 		{
 			return GetProviderForCollection(GetCollectionItem(collectionIndex)).ItemCount;
 		}

@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return Path.GetFileName(currentDirectoryFiles[itemIndex]);
 		}
 
-		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex, ReportProgressRatio reportProgress = null)
+		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
 

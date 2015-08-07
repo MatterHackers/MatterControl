@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return childCollections[collectionIndex];
 		}
 
-		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index, ReportProgressRatio reportProgress = null)
+		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
 		{
 			if (index >= 0 && index < printItems.Count)
 			{

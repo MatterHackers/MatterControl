@@ -76,6 +76,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			CreateGuiElements();
 
 			AddLoadingProgressBar();
+
+            libraryProvider.RegisterForProgress(itemIndex, ReportProgressRatio);
 		}
 
 		public override bool Protected
@@ -88,7 +90,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public async Task<PrintItemWrapper> GetPrintItemWrapperAsync()
 		{
-			return await libraryProvider.GetPrintItemWrapperAsync(this.ItemIndex, ReportProgressRatio);
+			return await libraryProvider.GetPrintItemWrapperAsync(this.ItemIndex);
 		}
 
 		void ReportProgressRatio(double progress0To1, string processingState, out bool continueProcessing)
@@ -106,10 +108,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			processingProgressControl.RatioComplete = progress0To1;
 		}
 
-		ProgressBar processingProgressControl;
+		ProgressControl processingProgressControl;
 		private void AddLoadingProgressBar()
 		{
-			processingProgressControl = new ProgressBar(ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5);
+            processingProgressControl = new ProgressControl("Downloading...", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5)
+            {
+                PointSize = 8,
+            };
 			processingProgressControl.BackgroundColor = RGBA_Bytes.White;
 			processingProgressControl.VAnchor = VAnchor.ParentBottom;
 			processingProgressControl.HAnchor = HAnchor.ParentLeft;
