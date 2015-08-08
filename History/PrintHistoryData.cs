@@ -53,31 +53,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 		}
 
-		private List<string> GetLibraryParts()
-		{
-			List<string> libraryFilesToPreload = new List<string>();
-			string setupSettingsPathAndFile = Path.Combine("OEMSettings", "PreloadedLibraryFiles.txt");
-			if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
-			{
-				try
-				{
-					foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
-					{
-						//Ignore commented lines
-						if (!line.StartsWith("#"))
-						{
-							string settingLine = line.Trim();
-							libraryFilesToPreload.Add(settingLine);
-						}
-					}
-				}
-				catch
-				{
-				}
-			}
-			return libraryFilesToPreload;
-		}
-
 		public static readonly int RecordLimit = 20;
 
 		public IEnumerable<DataStorage.PrintTask> GetHistoryItems(int recordCount)

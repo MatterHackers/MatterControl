@@ -63,15 +63,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 	}
 
-	public class LibraryProviderHistory : LibraryProvider
+	public class LibraryProviderHistory : ClassicSqliteStorageProvider
 	{
 		private static LibraryProviderHistory instance = null;
-		private PrintItemCollection baseLibraryCollection;
-
-		private List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
-		private string keywordFilter = string.Empty;
-
-		EventHandler unregisterEvent;
 
 		public LibraryProviderHistory(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
 			: base(parentLibraryProvider)
@@ -118,15 +112,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override bool Visible
-		{
-			get { return true; }
-		}
-
-		public override void Dispose()
-		{
-		}
-
 		public override int CollectionCount
 		{
 			get
@@ -144,32 +129,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string KeywordFilter
-		{
-			get
-			{
-				return keywordFilter;
-			}
-
-			set
-			{
-				keywordFilter = value;
-			}
-		}
-
 		public override string Name
 		{
 			get
 			{
 				return "Print History";
-			}
-		}
-
-		public override string ProviderData
-		{
-			get 
-			{
-				return baseLibraryCollection.Id.ToString();
 			}
 		}
 
@@ -179,35 +143,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				return StaticProviderKey;
 			}
-		}
-
-		static public void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
-		{
-			string[] metaData = { "Created By", "MatterControl" };
-			if (AbsolutePositioned)
-			{
-				metaData = new string[] { "Created By", "MatterControl", "BedPosition", "Absolute" };
-			}
-			if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
-			{
-				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
-			}
-			else // save a copy to the library and update this to point at it
-			{
-				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
-				printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
-
-				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
-
-				printItemWrapper.PrintItem.Commit();
-
-				// let the queue know that the item has changed so it load the correct part
-				QueueData.Instance.SaveDefaultQueue();
-			}
-
-			printItemWrapper.OnFileHasChanged();
 		}
 
 		public override void AddCollectionToLibrary(string collectionName)
@@ -251,28 +186,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 			//PrintHistoryData.Instance.RemoveAt(itemToRemoveIndex);
 			OnDataReloaded(null);
-		}
-
-		private IEnumerable<PrintItemCollection> GetChildCollections()
-		{
-			string query = string.Format("SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
-			IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
-			return result;
-		}
-
-		public IEnumerable<PrintItem> GetLibraryItems(string keyphrase = null)
-		{
-			string query;
-			if (keyphrase == null)
-			{
-				query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
-			}
-			else
-			{
-				query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} AND Name LIKE '%{1}%' ORDER BY Name ASC;", baseLibraryCollection.Id, keyphrase);
-			}
-			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
-			return result;
 		}
 	}
 }

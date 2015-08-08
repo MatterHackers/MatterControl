@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
@@ -48,73 +49,55 @@ namespace MatterHackers.MatterControl
 			return Convert.ToInt32(result);
 		}
 
-		public void LoadCalibrationPrints()
+		public async Task LoadCalibrationPrints()
 		{
 			if (this.ActivePrinter.Make != null && this.ActivePrinter.Model != null)
 			{
 				// Load the calibration file names
 				List<string> calibrationPrintFileNames = LoadCalibrationPartNamesForPrinter(this.ActivePrinter.Make, this.ActivePrinter.Model);
 
-				string[] itemsToAdd = LibraryProviderSQLite.SyncCalibrationFilesToDisk(calibrationPrintFileNames);
-				if (itemsToAdd.Length > 0)
-				{
-					// Import any files sync'd to disk into the library, then add them to the queue
-					LibraryProviderSQLite.Instance.AddFilesToLibrary(itemsToAdd);
-					AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
-				}
-				else
-				{
-					// Otherwise, just ensure the item gets into the queue
-					AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
-				}
-			}
-		}
+				await LibraryProviderSQLite.Instance.EnsureSamplePartsExist(calibrationPrintFileNames);
 
-		private static void AddItemsToQueue(List<string> calibrationPrintFileNames, string[] queueItems)
-		{
-			// After the import has completed, add each of the calibration items into the print queue
-			foreach (string fileName in calibrationPrintFileNames)
-			{
-				string nameOnly = Path.GetFileNameWithoutExtension(fileName);
-				if (queueItems.Contains(nameOnly))
-				{
-					continue;
-				}
+				var queueItems = QueueData.Instance.GetItemNames();
 
-				// If the library item does not exist in the queue, add it
-				foreach (PrintItem libraryItem in ((LibraryProviderSQLite)LibraryProviderSQLite.Instance).GetLibraryItems(nameOnly))
+				// Finally, ensure missing calibration parts are added to the queue if missing
+				foreach (string nameOnly in calibrationPrintFileNames)
 				{
-					if (libraryItem != null)
+					if (queueItems.Contains(nameOnly))
 					{
-						QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
+						continue;
+					}
+
+					// TODO: We add any file named X into the queue? Isn't it possible to have bunch of files named X, in which case we copy all of them at this step?
+
+					// If the library item does not exist in the queue, add it
+					foreach (PrintItem libraryItem in LibraryProviderSQLite.Instance.GetLibraryItems(nameOnly))
+					{
+						if (libraryItem != null)
+						{
+							QueueData.Instance.AddItem(new PrintItemWrapper(libraryItem));
+						}
 					}
 				}
 			}
 		}
+
 
 		private List<string> LoadCalibrationPartNamesForPrinter(string make, string model)
 		{
-			List<string> calibrationFiles = new List<string>();
-			string setupSettingsPathAndFile = Path.Combine("PrinterSettings", make, model, "calibration.ini");
-			if (StaticData.Instance.FileExists(setupSettingsPathAndFile))
+			string filePath = Path.Combine("PrinterSettings", make, model, "calibration.ini");
+			if (StaticData.Instance.FileExists(filePath))
 			{
 				try
 				{
-					foreach (string line in StaticData.Instance.ReadAllLines(setupSettingsPathAndFile))
-					{
-						//Ignore commented lines
-						if (!line.StartsWith("#"))
-						{
-							string settingLine = line.Trim();
-							calibrationFiles.Add(settingLine);
-						}
-					}
+					return StaticData.Instance.ReadAllLines(filePath).Where(l => !l.StartsWith("#")).Select(l => l.Trim()).ToList();
 				}
 				catch
 				{
 				}
 			}
-			return calibrationFiles;
+
+			return new List<string>();
 		}
 
 		public void LoadSetupSettings(string make, string model)
