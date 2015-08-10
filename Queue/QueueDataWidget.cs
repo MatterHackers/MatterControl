@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					// put in the creator button
 					{
 						createButton = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
-						createButton.ToolTipText = "Choose a Create Tool to generate custom parts".Localize();
+						createButton.ToolTipText = "Choose a Create Tool to generate custom designs".Localize();
                         buttonPanel1.AddChild(createButton);
 						createButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createButton.Click += (sender, e) =>
