@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl
 
 		public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, ImageSizes size)
 		{
+            ToolTipText = "Click to Show in 3D View";
 			this.PrintItem = item;
 
 			EnsureCorrectPartExtension();

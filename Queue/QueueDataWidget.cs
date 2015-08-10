@@ -91,7 +91,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
 				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
-				enterEditModeButton.Click += enterEditModeButtonClick;
+                enterEditModeButton.ToolTipText = "Enter Mulit Select Mode";
+                enterEditModeButton.Click += enterEditModeButtonClick;
 
 				leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
 				leaveEditModeButton.Click += leaveEditModeButtonClick;
@@ -155,14 +156,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 				buttonPanel1.MinimumSize = new Vector2(0, 46);
 				{
 					addToQueueButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
-					buttonPanel1.AddChild(addToQueueButton);
+                    addToQueueButton.ToolTipText = "Add a .stl, .amf, .gcode or .zip File To The Queue";
+                    buttonPanel1.AddChild(addToQueueButton);
 					addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
 					addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
 
 					// put in the creator button
 					{
 						createButton = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
-						buttonPanel1.AddChild(createButton);
+                        createButton.ToolTipText = "Choose a Create Tool to Generate Custom Parts";
+                        buttonPanel1.AddChild(createButton);
 						createButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createButton.Click += (sender, e) =>
 						{
