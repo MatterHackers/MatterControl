@@ -3577,3 +3577,6 @@ Translated:Insert an .stl, .amf, .gcode or .zip file
 English:Bring the Window back into this Tab
 Translated:Bring the Window back into this Tab
 
+English:Insert an .stl, .amf or .zip file
+Translated:Insert an .stl, .amf or .zip file
+

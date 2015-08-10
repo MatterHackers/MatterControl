@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				enterEditButtonsContainer = new FlowLayoutWidget();
 				{
 					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
-					addButton.ToolTipText = "Insert an .stl, .amf, .gcode or .zip file".Localize();
+					addButton.ToolTipText = "Insert an .stl, .amf or .zip file".Localize();
 					addButton.Margin = new BorderDouble(right: 0);
 					enterEditButtonsContainer.AddChild(addButton);
 					addButton.Click += (sender, e) =>
@@ -936,11 +936,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MergeAndSavePartsToCurrentMeshFile();
 				return true;
 			});
+			
 			buttonList.Add("Save As", () =>
 			{
 				UiThread.RunOnIdle(OpenSaveAsWindow);
 				return true;
 			});
+
 			SplitButtonFactory splitButtonFactory = new SplitButtonFactory();
 			splitButtonFactory.FixedHeight = 40 * TextWidget.GlobalPointSizeScaleRatio;
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");

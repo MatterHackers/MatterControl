@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			Button saveAsButton = textImageButtonFactory.Generate("Save As".Localize(), centerText: true);
+			Button saveAsButton = textImageButtonFactory.Generate("Save".Localize(), centerText: true);
 			saveAsButton.Visible = true;
 			saveAsButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(saveAsButton);
