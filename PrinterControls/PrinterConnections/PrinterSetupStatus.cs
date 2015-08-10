@@ -61,14 +61,13 @@ namespace MatterHackers.MatterControl
 				var queueItems = QueueData.Instance.GetItemNames();
 
 				// Finally, ensure missing calibration parts are added to the queue if missing
-				foreach (string nameOnly in calibrationPrintFileNames)
+				var filenamesWithoutExtensions = calibrationPrintFileNames.Select(f => Path.GetFileNameWithoutExtension(f));
+				foreach (string nameOnly in filenamesWithoutExtensions)
 				{
 					if (queueItems.Contains(nameOnly))
 					{
 						continue;
 					}
-
-					// TODO: We add any file named X into the queue? Isn't it possible to have bunch of files named X, in which case we copy all of them at this step?
 
 					// If the library item does not exist in the queue, add it
 					foreach (PrintItem libraryItem in LibraryProviderSQLite.Instance.GetLibraryItems(nameOnly))
@@ -81,7 +80,6 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
-
 
 		private List<string> LoadCalibrationPartNamesForPrinter(string make, string model)
 		{
