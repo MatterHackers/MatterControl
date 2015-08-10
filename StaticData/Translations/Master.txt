@@ -3541,3 +3541,36 @@ Translated:Downloading...
 English:Uploading...
 Translated:Uploading...
 
+English:Click to show in 3D View
+Translated:Click to show in 3D View
+
+English:Enter Mulit Select mode
+Translated:Enter Mulit Select mode
+
+English:Add a .stl, .amf, .gcode or .zip File To The Queue
+Translated:Add a .stl, .amf, .gcode or .zip File To The Queue
+
+English:Choose a Create Tool to generate custom parts
+Translated:Choose a Create Tool to generate custom parts
+
+English:Switch to Setings and Manual Controls pannel
+Translated:Switch to Setings and Manual Controls pannel
+
+English:Pop This Tab out into its own Window
+Translated:Pop This Tab out into its own Window
+
+English:Preview layer Tool Paths
+Translated:Preview layer Tool Paths
+
+English:Add a .stl, .amf, .gcode or .zip File to the Queue
+Translated:Add a .stl, .amf, .gcode or .zip File to the Queue
+
+English:Add a .stl, .amf, .gcode or .zip File to the Bed
+Translated:Add a .stl, .amf, .gcode or .zip File to the Bed
+
+English:Add an .stl, .amf, .gcode or .zip file to the Queue
+Translated:Add an .stl, .amf, .gcode or .zip file to the Queue
+
+English:Insert an .stl, .amf, .gcode or .zip file
+Translated:Insert an .stl, .amf, .gcode or .zip file
+

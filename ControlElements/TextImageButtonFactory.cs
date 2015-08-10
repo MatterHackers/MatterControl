@@ -164,12 +164,12 @@ namespace MatterHackers.MatterControl
 		public double FixedHeight = 40;
 		public double ImageSpacing = 0;
 
-		public TooltipButton GenerateTooltipButton(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null)
+		public Button GenerateTooltipButton(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null)
 		{
 			//Create button based on view container widget
 			ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName);
 
-			TooltipButton textImageButton = new TooltipButton(0, 0, buttonViewWidget);
+			Button textImageButton = new Button(0, 0, buttonViewWidget);
 			textImageButton.Margin = new BorderDouble(0);
 			textImageButton.Padding = new BorderDouble(0);
 
@@ -240,8 +240,8 @@ namespace MatterHackers.MatterControl
 
 		private void onEnterTooltipButton(object sender, EventArgs e)
 		{
-			TooltipButton button = (TooltipButton)sender;
-			HelpTextWidget.Instance.ShowHoverText(button.tooltipText);
+			Button button = sender as Button;
+			HelpTextWidget.Instance.ShowHoverText(button.ToolTipText);
 		}
 
 		private void onExitTooltipButton(object sender, EventArgs e)
@@ -506,16 +506,6 @@ namespace MatterHackers.MatterControl
 			RadioButton radioButton = new RadioButton(checkBoxButtonViewWidget);
 			radioButton.Margin = Margin;
 			return radioButton;
-		}
-	}
-
-	public class TooltipButton : Button
-	{
-		public string tooltipText = "";
-
-		public TooltipButton(double x, double y, GuiWidget buttonView)
-			: base(x, y, buttonView)
-		{
 		}
 	}
 }

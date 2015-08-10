@@ -44,6 +44,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -81,7 +82,7 @@ namespace MatterHackers.MatterControl
 
 		public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, ImageSizes size)
 		{
-            ToolTipText = "Click to Show in 3D View";
+			ToolTipText = "Click to show in 3D View".Localize();
 			this.PrintItem = item;
 
 			EnsureCorrectPartExtension();

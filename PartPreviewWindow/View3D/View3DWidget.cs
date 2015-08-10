@@ -173,6 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				enterEditButtonsContainer = new FlowLayoutWidget();
 				{
 					Button addButton = textImageButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
+					addButton.ToolTipText = "Insert an .stl, .amf, .gcode or .zip file".Localize();
 					addButton.Margin = new BorderDouble(right: 0);
 					enterEditButtonsContainer.AddChild(addButton);
 					addButton.Click += (sender, e) =>

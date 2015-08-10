@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				tabControl.AddTab(new PopOutTextTabWidget(partPreview3DView, "3D View Tab", new Vector2(590, 400), tabPointSize));
 				Tab layerViewTab = new PopOutTextTabWidget(layerView, "Layer View Tab", new Vector2(590, 400), tabPointSize);
-				layerViewTab.ToolTipText = "Preview Layer Tool Paths";
+				layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
 				tabControl.AddTab(layerViewTab);
 			}
 

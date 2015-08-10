@@ -19,23 +19,23 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	internal class PrintActionRow : ActionRowBase
 	{
-		private List<TooltipButton> activePrintButtons = new List<TooltipButton>();
-		private TooltipButton addButton;
-		private List<TooltipButton> allPrintButtons = new List<TooltipButton>();
-		private TooltipButton cancelButton;
-		private TooltipButton cancelConnectButton;
+		private List<Button> activePrintButtons = new List<Button>();
+		private Button addButton;
+		private List<Button> allPrintButtons = new List<Button>();
+		private Button cancelButton;
+		private Button cancelConnectButton;
 		private string cancelCurrentPrintMessage = "Cancel the current print?".Localize();
 		private string cancelCurrentPrintTitle = "Cancel Print?".Localize();
-		private TooltipButton connectButton;
-		private TooltipButton resetConnectionButton;
-		private TooltipButton doneWithCurrentPartButton;
-		private TooltipButton pauseButton;
+		private Button connectButton;
+		private Button resetConnectionButton;
+		private Button doneWithCurrentPartButton;
+		private Button pauseButton;
 		private QueueDataView queueDataView;
-		private TooltipButton removeButton;
-		private TooltipButton reprintButton;
-		private TooltipButton resumeButton;
-		private TooltipButton skipButton;
-		private TooltipButton startButton;
+		private Button removeButton;
+		private Button reprintButton;
+		private Button resumeButton;
+		private Button skipButton;
+		private Button startButton;
 		private MatterHackers.MatterControl.TextImageButtonFactory textImageButtonFactory = new MatterHackers.MatterControl.TextImageButtonFactory();
 		private Stopwatch timeSincePrintStarted = new Stopwatch();
 
@@ -62,44 +62,45 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected override void AddChildElements()
 		{
-			addButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Add"), "icon_circle_plus.png");
-			addButton.tooltipText = LocalizedString.Get("Add a file to be printed");
+			addButton = textImageButtonFactory.GenerateTooltipButton("Add".Localize(), "icon_circle_plus.png");
+			addButton.ToolTipText = "Add a file to be printed".Localize();
 			addButton.Margin = new BorderDouble(6, 6, 6, 3);
 
-			startButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(LocalizedString.Get("Print"), "icon_play_32x32.png");
-			startButton.tooltipText = LocalizedString.Get("Begin printing the selected item.");
+			startButton = textImageButtonFactory.GenerateTooltipButton("Print".Localize(), "icon_play_32x32.png");
+			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = new BorderDouble(6, 6, 6, 3);
 
-			string connectButtonText = LocalizedString.Get("Connect");
-			string connectButtonMessage = LocalizedString.Get("Connect to the printer");
-			connectButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(connectButtonText, "icon_power_32x32.png");
-			connectButton.tooltipText = connectButtonMessage;
+			string connectButtonText = "Connect".Localize();
+			string connectButtonMessage = "Connect to the printer".Localize();
+			connectButton = textImageButtonFactory.GenerateTooltipButton(connectButtonText, "icon_power_32x32.png");
+			connectButton.ToolTipText = connectButtonMessage;
 			connectButton.Margin = new BorderDouble(6, 6, 6, 3);
 
 			string resetConnectionButtontText = "Reset".Localize();
 			string resetConnectionButtonMessage = "Reboots the firmware on the controller".Localize();
-			resetConnectionButton = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(resetConnectionButtontText, "e_stop4.png");
-			resetConnectionButton.tooltipText = resetConnectionButtonMessage;
+			resetConnectionButton = textImageButtonFactory.GenerateTooltipButton(resetConnectionButtontText, "e_stop4.png");
+			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
+			resetConnectionButton.ToolTipText = resetConnectionButtonMessage;
 			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);
 
-			string skipButtonText = LocalizedString.Get("Skip");
-			string skipButtonMessage = LocalizedString.Get("Skip the current item and move to the next in queue");
+			string skipButtonText = "Skip".Localize();
+			string skipButtonMessage = "Skip the current item and move to the next in queue".Localize();
 			skipButton = makeButton(skipButtonText, skipButtonMessage);
 
-			string removeButtonText = LocalizedString.Get("Remove");
-			string removeButtonMessage = LocalizedString.Get("Remove current item from queue");
+			string removeButtonText = "Remove".Localize();
+			string removeButtonMessage = "Remove current item from queue".Localize();
 			removeButton = makeButton(removeButtonText, removeButtonMessage);
 
-			string pauseButtonText = LocalizedString.Get("Pause");
-			string pauseButtonMessage = LocalizedString.Get("Pause the current print");
+			string pauseButtonText = "Pause".Localize();
+			string pauseButtonMessage = "Pause the current print".Localize();
 			pauseButton = makeButton(pauseButtonText, pauseButtonMessage);
 
-			string cancelCancelButtonText = LocalizedString.Get("Cancel Connect");
-			string cancelConnectButtonMessage = LocalizedString.Get("Stop trying to connect to the printer.");
+			string cancelCancelButtonText = "Cancel Connect".Localize();
+			string cancelConnectButtonMessage = "Stop trying to connect to the printer.".Localize();
 			cancelConnectButton = makeButton(cancelCancelButtonText, cancelConnectButtonMessage);
 
-			string cancelButtonText = LocalizedString.Get("Cancel");
-			string cancelButtonMessage = LocalizedString.Get("Stop the current print");
+			string cancelButtonText = "Cancel".Localize();
+			string cancelButtonMessage = "Stop the current print".Localize();
 			cancelButton = makeButton(cancelButtonText, cancelButtonMessage);
 
 			string resumeButtonText = "Resume".Localize();
@@ -107,11 +108,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			resumeButton = makeButton(resumeButtonText, resumeButtonMessage);
 
 			string reprintButtonText = "Print Again".Localize();
-			string reprintButtonMessage = LocalizedString.Get("Print current item again");
+			string reprintButtonMessage = "Print current item again".Localize();
 			reprintButton = makeButton(reprintButtonText, reprintButtonMessage);
 
-			string doneCurrentPartButtonText = LocalizedString.Get("Done");
-			string doenCurrentPartButtonMessage = LocalizedString.Get("Move to next print in queue");
+			string doneCurrentPartButtonText = "Done".Localize();
+			string doenCurrentPartButtonMessage = "Move to next print in queue".Localize();
 			doneWithCurrentPartButton = makeButton(doneCurrentPartButtonText, doenCurrentPartButtonMessage);
 
 			this.Margin = new BorderDouble(0, 0, 10, 0);
@@ -178,7 +179,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void DisableActiveButtons()
 		{
-			foreach (TooltipButton button in this.activePrintButtons)
+			foreach (Button button in this.activePrintButtons)
 			{
 				button.Enabled = false;
 			}
@@ -186,7 +187,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void EnableActiveButtons()
 		{
-			foreach (TooltipButton button in this.activePrintButtons)
+			foreach (Button button in this.activePrintButtons)
 			{
 				button.Enabled = true;
 			}
@@ -207,10 +208,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100);
 		}
 
-		protected TooltipButton makeButton(string buttonText, string buttonToolTip = "")
+		protected Button makeButton(string buttonText, string buttonToolTip = "")
 		{
-			TooltipButton button = (TooltipButton)textImageButtonFactory.GenerateTooltipButton(buttonText);
-			button.tooltipText = buttonToolTip;
+			Button button = textImageButtonFactory.GenerateTooltipButton(buttonText);
+			button.ToolTipText = buttonToolTip;
 			button.Margin = new BorderDouble(0, 6, 6, 3);
 			return button;
 		}
@@ -313,7 +314,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void ShowActiveButtons()
 		{
-			foreach (TooltipButton button in this.allPrintButtons)
+			foreach (Button button in this.allPrintButtons)
 			{
 				if (activePrintButtons.IndexOf(button) >= 0)
 				{

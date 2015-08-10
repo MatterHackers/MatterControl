@@ -34,6 +34,7 @@ using MatterHackers.MatterControl;
 using MatterHackers.VectorMath;
 using System;
 using System.IO;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.Agg.UI
 {
@@ -115,7 +116,7 @@ namespace MatterHackers.Agg.UI
 			}
 
 			Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
-			popOut.ToolTipText = "Pop This Tab Out Into Its Own Window";
+			popOut.ToolTipText = "Pop This Tab out into its own Window".Localize();
 			popOut.Click += (sender, e) =>
 			{
 				popOutManager.ShowContentInWindow();
