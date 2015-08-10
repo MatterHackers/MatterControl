@@ -115,6 +115,7 @@ namespace MatterHackers.Agg.UI
 			}
 
 			Button popOut = new Button(0, 0, new ButtonViewStates(new ImageWidget(popOutImage), new ImageWidget(popOutImage), new ImageWidget(popOutImageClick), new ImageWidget(popOutImageClick)));
+			popOut.ToolTipText = "Pop This Tab Out Into Its Own Window";
 			popOut.Click += (sender, e) =>
 			{
 				popOutManager.ShowContentInWindow();
