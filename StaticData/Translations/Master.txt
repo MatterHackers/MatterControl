@@ -3580,3 +3580,18 @@ Translated:Bring the Window back into this Tab
 English:Insert an .stl, .amf or .zip file
 Translated:Insert an .stl, .amf or .zip file
 
+English:Update Channel
+Translated:Update Channel
+
+English:Current Build : Test Build
+Translated:Current Build : Test Build
+
+English:Stable: The current release version of MatterControl (recommended).
+Translated:Stable: The current release version of MatterControl (recommended).
+
+English:Beta: The release candidate version of MatterControl.
+Translated:Beta: The release candidate version of MatterControl.
+
+English:Alpha: The in development version of MatterControl.
+Translated:Alpha: The in development version of MatterControl.
+

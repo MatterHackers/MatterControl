@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl
 			{
 				ApplicationMenuRow.AlwaysShowUpdateStatus = true;
 				UpdateControlData.Instance.CheckForUpdateUserRequested();
+				CheckForUpdateWindow.Show();
 			});
 			return true;
 		}
