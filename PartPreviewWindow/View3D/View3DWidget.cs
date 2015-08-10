@@ -1110,7 +1110,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// don't load the mesh until we get all the rest of the interface built
 				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
-				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation);
+
+				Vector2 bedCenter = new Vector2();
+				MeshViewerWidget.CenterPartAfterLoad doCentering = MeshViewerWidget.CenterPartAfterLoad.DONT;
+
+				if(ActiveSliceSettings.Instance != null 
+				&& ActiveSliceSettings.Instance.CenterOnBed())
+				{
+					doCentering = MeshViewerWidget.CenterPartAfterLoad.DO;
+					bedCenter = ActiveSliceSettings.Instance.BedCenter;
+				}
+
+				meshViewerWidget.LoadMesh(printItemWrapper.FileLocation, doCentering, bedCenter);
 			}
 
 			partHasBeenEdited = false;
@@ -1937,14 +1948,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool PartsAreInPrintVolume()
 		{
-			AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
-			bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
-			RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y);
-			bedRect.Offset(ActiveSliceSettings.Instance.BedCenter - ActiveSliceSettings.Instance.BedSize/2);
+			if (ActiveSliceSettings.Instance != null 
+				&& !ActiveSliceSettings.Instance.CenterOnBed() 
+				&& ActivePrinterProfile.Instance.ActivePrinter != null)
+			{
+				AxisAlignedBoundingBox allBounds = MeshViewerWidget.GetAxisAlignedBoundingBox(MeshGroups);
+				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
+				RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.BedSize.x, ActiveSliceSettings.Instance.BedSize.y);
+				bedRect.Offset(ActiveSliceSettings.Instance.BedCenter - ActiveSliceSettings.Instance.BedSize / 2);
 
-			bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
+				bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
 
-			return onBed && inBounds;
+				return onBed && inBounds;
+			}
+
+			return true;
 		}
 
 		private void OpenExportWindow()

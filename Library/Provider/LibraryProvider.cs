@@ -204,26 +204,43 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return GetProviderForCollection(GetCollectionItem(collectionIndex)).CollectionCount;
 		}
 
-        protected Dictionary<int, ReportProgressRatio> itemReportProgressHandlers = new Dictionary<int, ReportProgressRatio>();
+		public class ProgressPlug
+		{
+			public ReportProgressRatio ProgressOutput;
 
-        public void RegisterForProgress(int itemIndex, ReportProgressRatio reportProgress)
+			public void ProgressInput(double progress0To1, string processingState, out bool continueProcessing)
+			{
+				continueProcessing = true;
+				if (ProgressOutput != null)
+				{
+					ProgressOutput(progress0To1, processingState, out continueProcessing);
+				}
+			}
+		}
+
+		protected Dictionary<int, ProgressPlug> itemReportProgressHandlers = new Dictionary<int, ProgressPlug>();
+
+		public void RegisterForProgress(int itemIndex, ReportProgressRatio reportProgress)
+		{
+			if (!itemReportProgressHandlers.ContainsKey(itemIndex))
+			{
+				itemReportProgressHandlers.Add(itemIndex, new ProgressPlug()
+				{
+					ProgressOutput = reportProgress,
+				});
+			}
+			else
+			{
+				itemReportProgressHandlers[itemIndex].ProgressOutput = reportProgress;
+			}
+		}
+
+        protected ProgressPlug GetItemProgressPlug(int itemIndex)
         {
             if (!itemReportProgressHandlers.ContainsKey(itemIndex))
             {
-                itemReportProgressHandlers.Add(itemIndex, reportProgress);
-            }
-            else
-            {
-                itemReportProgressHandlers[itemIndex] = reportProgress;
-            }
-        }
-
-        protected ReportProgressRatio GetItemProgressHandler(int itemIndex)
-        {
-            if (!itemReportProgressHandlers.ContainsKey(itemIndex))
-            {
-                return null;
-            }
+				itemReportProgressHandlers.Add(itemIndex, new ProgressPlug());
+			}
 
             return itemReportProgressHandlers[itemIndex];
         }
