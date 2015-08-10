@@ -197,6 +197,7 @@ namespace MatterHackers.MatterControl
 			bringBackButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			Button bringBackToTabButton = bringBackButtonFactory.Generate(LocalizedString.Get("Restore"));
+			bringBackToTabButton.ToolTipText = "Bring the Window back into this Tab".Localize();
 			bringBackToTabButton.VAnchor = VAnchor.ParentCenter;
 			bringBackToTabButton.Cursor = Cursors.Hand;
 			bringBackToTabButton.Click += (sender, e) =>

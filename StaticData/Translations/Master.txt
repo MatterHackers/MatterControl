@@ -3574,3 +3574,6 @@ Translated:Add an .stl, .amf, .gcode or .zip file to the Queue
 English:Insert an .stl, .amf, .gcode or .zip file
 Translated:Insert an .stl, .amf, .gcode or .zip file
 
+English:Bring the Window back into this Tab
+Translated:Bring the Window back into this Tab
+

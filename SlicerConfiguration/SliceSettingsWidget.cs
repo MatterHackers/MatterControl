@@ -626,49 +626,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return groupTabs;
 		}
 
-		public class WrappedTextWidget : GuiWidget
-		{
-			private String unwrappedText;
-			private TextWidget textWidget;
-			private double pointSize;
-
-			public WrappedTextWidget(string text, double startingWidth,
-				double pointSize = 12, Justification justification = Justification.Left,
-				RGBA_Bytes textColor = new RGBA_Bytes(), bool ellipsisIfClipped = true, bool underline = false, RGBA_Bytes backgroundColor = new RGBA_Bytes())
-			{
-				this.pointSize = pointSize;
-				textWidget = new TextWidget(text, 0, 0, pointSize, justification, textColor, ellipsisIfClipped, underline, backgroundColor);
-				textWidget.AutoExpandBoundsToText = true;
-				textWidget.HAnchor = HAnchor.ParentLeft;
-				textWidget.VAnchor = VAnchor.ParentCenter;
-				unwrappedText = text;
-				HAnchor = HAnchor.ParentLeftRight;
-				VAnchor = VAnchor.FitToChildren;
-				AddChild(textWidget);
-
-				Width = startingWidth;
-			}
-
-			public override void OnBoundsChanged(EventArgs e)
-			{
-				AdjustTextWrap();
-				base.OnBoundsChanged(e);
-			}
-
-			private void AdjustTextWrap()
-			{
-				if (textWidget != null)
-				{
-					if (Width > 0)
-					{
-						EnglishTextWrapping wrapper = new EnglishTextWrapping(textWidget.Printer.TypeFaceStyle.EmSizeInPoints);
-						string wrappedMessage = wrapper.InsertCRs(unwrappedText, Width);
-						textWidget.Text = wrappedMessage;
-					}
-				}
-			}
-		}
-
 		private void AddInHelpText(FlowLayoutWidget topToBottomSettings, OrganizerSettingsData settingInfo)
 		{
 			FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -854,6 +811,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							int currentValue = 0;
 							int.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit intEditWidget = new MHNumberEdit(currentValue, pixelWidth: intEditWidth, tabIndex: tabIndexForItem++);
+							intEditWidget.ToolTipText = settingData.HelpText;
 							intEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
@@ -871,6 +829,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							double currentValue = 0;
 							double.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowNegatives: true, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
+							doubleEditWidget.ToolTipText = settingData.HelpText;
 							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
@@ -888,6 +847,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							FlowLayoutWidget content = new FlowLayoutWidget();
 
 							MHNumberEdit doubleEditWidget = new MHNumberEdit(0, allowDecimals: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
+							doubleEditWidget.ToolTipText = settingData.HelpText;
 
 							double currentValue = 0;
 							bool ChangesMultipleOtherSettings = settingData.SetSettingsOnChange.Count > 0;
@@ -960,6 +920,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							double currentValue = 0;
 							double.TryParse(sliceSettingValue, out currentValue);
 							MHNumberEdit doubleEditWidget = new MHNumberEdit(currentValue, allowDecimals: true, allowNegatives: true, pixelWidth: doubleEditWidth, tabIndex: tabIndexForItem++);
+							doubleEditWidget.ToolTipText = settingData.HelpText;
 							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								SaveSetting(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
@@ -976,6 +937,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							FlowLayoutWidget content = new FlowLayoutWidget();
 
 							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
+							stringEdit.ToolTipText = settingData.HelpText;
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								TextEditWidget textEditWidget = (TextEditWidget)sender;
@@ -1029,6 +991,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							FlowLayoutWidget content = new FlowLayoutWidget();
 
 							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: doubleEditWidth - 2, tabIndex: tabIndexForItem++);
+							stringEdit.ToolTipText = settingData.HelpText;
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								TextEditWidget textEditWidget = (TextEditWidget)sender;
@@ -1085,6 +1048,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case OrganizerSettingsData.DataEditTypes.CHECK_BOX:
 						{
 							CheckBox checkBoxWidget = new CheckBox("");
+							checkBoxWidget.ToolTipText = settingData.HelpText;
 							checkBoxWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
 							checkBoxWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 							checkBoxWidget.Checked = (sliceSettingValue == "1");
@@ -1107,6 +1071,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case OrganizerSettingsData.DataEditTypes.STRING:
 						{
 							MHTextEditWidget stringEdit = new MHTextEditWidget(sliceSettingValue, pixelWidth: 120, tabIndex: tabIndexForItem++);
+							stringEdit.ToolTipText = settingData.HelpText;
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								SaveSetting(settingData.SlicerConfigName, ((TextEditWidget)sender).Text);
@@ -1132,6 +1097,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case OrganizerSettingsData.DataEditTypes.LIST:
 						{
 							StyledDropDownList selectableOptions = new StyledDropDownList("None", maxHeight: 200);
+							selectableOptions.ToolTipText = settingData.HelpText;
 							selectableOptions.Margin = new BorderDouble();
 
 							string[] listItems = settingData.ExtraSettings.Split(',');
@@ -1158,6 +1124,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case OrganizerSettingsData.DataEditTypes.HARDWARE_PRESENT:
 						{
 							CheckBox checkBoxWidget = new CheckBox("");
+							checkBoxWidget.ToolTipText = settingData.HelpText;
 							checkBoxWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
 							checkBoxWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 							checkBoxWidget.Checked = (sliceSettingValue == "1");
@@ -1189,10 +1156,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							double currentXValue = 0;
 							double.TryParse(xyValueStrings[0], out currentXValue);
 							MHNumberEdit xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+							xEditWidget.ToolTipText = settingData.HelpText;
 
 							double currentYValue = 0;
 							double.TryParse(xyValueStrings[1], out currentYValue);
 							MHNumberEdit yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+							yEditWidget.ToolTipText = settingData.HelpText;
 
 							xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
@@ -1218,7 +1187,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							Vector2 offset = ActiveSliceSettings.Instance.GetOffset(extruderIndex);
 							MHNumberEdit xEditWidget = new MHNumberEdit(offset.x, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+							xEditWidget.ToolTipText = settingData.HelpText;
 							MHNumberEdit yEditWidget = new MHNumberEdit(offset.y, allowDecimals: true, allowNegatives: true, pixelWidth: vectorXYEditWidth, tabIndex: tabIndexForItem++);
+							yEditWidget.ToolTipText = settingData.HelpText;
 							{
 								xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 								{
