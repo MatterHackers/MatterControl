@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 	{
 		private event EventHandler unregisterEvents;
 
-		private Button advancedControlsLinkButton;
+		private Button advancedControlsBackButton;
 		private SliceSettingsWidget sliceSettingsWidget;
 		private EventHandler AdvancedControlsButton_Click;
 		private EventHandler onMouseEnterBoundsPrintQueueLink;
@@ -99,15 +99,16 @@ namespace MatterHackers.MatterControl
 				TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 				advancedControlsButtonFactory.fontSize = 14;
 				advancedControlsButtonFactory.invertImageLocation = false;
-				advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Back"), "icon_arrow_left_32x32.png");
-				advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
-				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
-				advancedControlsLinkButton.Cursor = Cursors.Hand;
-				advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
-				advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsPrintQueueLink);
-				advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsPrintQueueLink);
+				advancedControlsBackButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Back"), "icon_arrow_left_32x32.png");
+				advancedControlsBackButton.ToolTipText = "Switch to Queue, Library and History".Localize();
+				advancedControlsBackButton.Margin = new BorderDouble(right: 3);
+				advancedControlsBackButton.VAnchor = VAnchor.ParentBottom;
+				advancedControlsBackButton.Cursor = Cursors.Hand;
+				advancedControlsBackButton.Click += new EventHandler(AdvancedControlsButton_Click);
+				advancedControlsBackButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsPrintQueueLink);
+				advancedControlsBackButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsPrintQueueLink);
 
-				advancedControls.TabBar.AddChild(advancedControlsLinkButton);
+				advancedControls.TabBar.AddChild(advancedControlsBackButton);
 			}
 
 			GuiWidget hSpacer = new GuiWidget();
@@ -179,11 +180,11 @@ namespace MatterHackers.MatterControl
 			RemoveChild(advancedControlsIndex);
 			advancedControls2.Close();
 
-			if (advancedControlsLinkButton != null)
+			if (advancedControlsBackButton != null)
 			{
-				advancedControlsLinkButton.Click -= new EventHandler(AdvancedControlsButton_Click);
-				advancedControlsLinkButton.MouseEnterBounds -= new EventHandler(onMouseEnterBoundsPrintQueueLink);
-				advancedControlsLinkButton.MouseLeaveBounds -= new EventHandler(onMouseLeaveBoundsPrintQueueLink);
+				advancedControlsBackButton.Click -= new EventHandler(AdvancedControlsButton_Click);
+				advancedControlsBackButton.MouseEnterBounds -= new EventHandler(onMouseEnterBoundsPrintQueueLink);
+				advancedControlsBackButton.MouseLeaveBounds -= new EventHandler(onMouseLeaveBoundsPrintQueueLink);
 			}
 
 			advancedControls2 = CreateNewAdvancedControls(AdvancedControlsButton_Click,

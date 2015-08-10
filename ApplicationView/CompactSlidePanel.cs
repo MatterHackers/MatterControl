@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 
 				advancedControlsButtonFactory.invertImageLocation = true;
 				Button advancedControlsLinkButton = advancedControlsButtonFactory.Generate(LocalizedString.Get("Settings\n& Controls"), "icon_arrow_right_32x32.png");
-                advancedControlsLinkButton.ToolTipText = "Switch to Setings and Manual Controls pannel".Localize();
+                advancedControlsLinkButton.ToolTipText = "Switch to Settings, Controls and Options".Localize();
                 advancedControlsLinkButton.Margin = new BorderDouble(right: 3);
 				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
 				advancedControlsLinkButton.Cursor = Cursors.Hand;
