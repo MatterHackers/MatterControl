@@ -3595,3 +3595,12 @@ Translated:Beta: The release candidate version of MatterControl.
 English:Alpha: The in development version of MatterControl.
 Translated:Alpha: The in development version of MatterControl.
 
+English:Choose a Create Tool to generate custom designs
+Translated:Choose a Create Tool to generate custom designs
+
+English:Switch to Settings, Controls and Options
+Translated:Switch to Settings, Controls and Options
+
+English:Switch to Queue, Library and History
+Translated:Switch to Queue, Library and History
+

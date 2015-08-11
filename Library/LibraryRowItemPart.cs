@@ -115,11 +115,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		ProgressControl processingProgressControl;
 		private void AddLoadingProgressBar()
 		{
-            processingProgressControl = new ProgressControl("Downloading...".Localize(), ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5)
+            processingProgressControl = new ProgressControl("Downloading...".Localize(), RGBA_Bytes.Black, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * TextWidget.GlobalPointSizeScaleRatio), 5)
             {
                 PointSize = 8,
             };
-			processingProgressControl.BackgroundColor = RGBA_Bytes.White;
+			//processingProgressControl.BackgroundColor = RGBA_Bytes.White;
 			processingProgressControl.VAnchor = VAnchor.ParentBottom;
 			processingProgressControl.HAnchor = HAnchor.ParentLeft;
 			processingProgressControl.Margin = new BorderDouble(thumbnailWidth + 3, 3, 3, 3);
