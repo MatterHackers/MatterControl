@@ -64,13 +64,18 @@ namespace MatterHackers.MatterControl.VersionManagement
 		{
 			WebRequestBase<ResponseType> tempRequest = new WebRequestBase<ResponseType>();
 
-			tempRequest.uri = requestUrl;
-			for (int i = 0; i < requestStringPairs.Length; i += 2)
-			{
-				tempRequest.requestValues[requestStringPairs[i]] = requestStringPairs[i + 1];
-			}
+			tempRequest.SetRquestValues(requestUrl, requestStringPairs);
 
 			tempRequest.Request();
+		}
+
+		public void SetRquestValues(string requestUrl, string[] requestStringPairs)
+		{
+			this.uri = requestUrl;
+			for (int i = 0; i < requestStringPairs.Length; i += 2)
+			{
+				this.requestValues[requestStringPairs[i]] = requestStringPairs[i + 1];
+			}
 		}
 
 		public virtual void ProcessErrorResponse(JsonResponseDictionary responseValues)

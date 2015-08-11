@@ -245,9 +245,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
             return itemReportProgressHandlers[itemIndex];
         }
 
-        public virtual int GetCollectionItemCount(int collectionIndex)
+		public virtual int GetCollectionItemCount(int collectionIndex)
 		{
 			return GetProviderForCollection(GetCollectionItem(collectionIndex)).ItemCount;
+		}
+
+		public virtual string StatusMessage
+		{
+			get { return ""; }
 		}
 
 		public virtual ImageBuffer GetCollectionFolderImage(int collectionIndex)

@@ -47,12 +47,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class LibraryRowItemCollection : LibraryRowItem
 	{
 		LibraryProvider parentProvider;
+		LibraryProvider currentProvider;
 		PrintItemCollection printItemCollection;
 		public int CollectionIndex { get; private set; }
 
-		public LibraryRowItemCollection(PrintItemCollection collection, int collectionIndex, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
+		public LibraryRowItemCollection(PrintItemCollection collection, LibraryProvider currentProvider, int collectionIndex, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
 			: base(libraryDataView, thumbnailWidget)
 		{
+			this.currentProvider = currentProvider;
 			this.CollectionIndex = collectionIndex;
 			this.parentProvider = parentProvider;
 			this.printItemCollection = collection;
@@ -85,12 +87,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void RemoveFromCollection()
 		{
-			int collectionItemCollectionCount = libraryDataView.CurrentLibraryProvider.GetCollectionChildCollectionCount(CollectionIndex);
-			int collectionItemItemCount = libraryDataView.CurrentLibraryProvider.GetCollectionItemCount(CollectionIndex);
+			int collectionItemCollectionCount = currentProvider.GetCollectionChildCollectionCount(CollectionIndex);
+			int collectionItemItemCount = currentProvider.GetCollectionItemCount(CollectionIndex);
 
 			if (collectionItemCollectionCount > 0 || collectionItemItemCount > 0)
 			{
-				string message = collectionNotEmtyMessage.FormatWith(libraryDataView.CurrentLibraryProvider.GetCollectionItem(CollectionIndex).Name);
+				string message = collectionNotEmtyMessage.FormatWith(currentProvider.GetCollectionItem(CollectionIndex).Name);
 				UiThread.RunOnIdle(() =>
 				{
 					// Let the user know this collection is not empty and check if they want to delete it.
@@ -99,7 +101,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 			else
 			{
-				libraryDataView.CurrentLibraryProvider.RemoveCollection(CollectionIndex);
+				currentProvider.RemoveCollection(CollectionIndex);
 			}
 		}
 
@@ -107,7 +109,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (messageBoxResponse)
 			{
-				libraryDataView.CurrentLibraryProvider.RemoveCollection(CollectionIndex);
+				currentProvider.RemoveCollection(CollectionIndex);
 			}
 		}
 
@@ -152,7 +154,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (parentProvider == null)
 			{
-				libraryDataView.CurrentLibraryProvider = libraryDataView.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+				libraryDataView.CurrentLibraryProvider = currentProvider.GetProviderForCollection(printItemCollection);
 			}
 			else
 			{

@@ -91,7 +91,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			topToBottomItemList.HAnchor = HAnchor.ParentLeftRight;
 			AddChild(topToBottomItemList);
 
+			this.AddChildToBackground(providerMessageWidget = new TextWidget("")
+			{
+				PointSize = 8,
+				HAnchor = HAnchor.ParentRight,
+				VAnchor = VAnchor.ParentBottom,
+				TextColor = ActiveTheme.Instance.SecondaryTextColor,
+				Margin = new BorderDouble(6),
+				Visible = false,
+				AutoExpandBoundsToText = true,
+			});
+
+
 			AddAllItems();
+		}
+
+		TextWidget providerMessageWidget;
+		public string ProviderMessage
+		{
+			get { return providerMessageWidget.Text; }
+			set
+			{
+				if (value != "")
+				{
+					providerMessageWidget.Text = value;
+					providerMessageWidget.Visible = true;
+				}
+				else
+				{
+					providerMessageWidget.Visible = false;
+				}
+			}
 		}
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
@@ -140,6 +170,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 
 					ClearSelectedItems();
+
+					this.ProviderMessage = value.StatusMessage;
 
 					UiThread.RunOnIdle(RebuildView);
 				}
@@ -341,14 +373,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
+				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, provider, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
 				AddListItemToTopToBottom(queueItem);
 			}
 
 			for (int i = 0; i < provider.CollectionCount; i++)
 			{
 				PrintItemCollection item = provider.GetCollectionItem(i);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
+				LibraryRowItem queueItem = new LibraryRowItemCollection(item, provider, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
 				AddListItemToTopToBottom(queueItem);
 			}
 
