@@ -29,15 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets.LibrarySelector;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.VectorMath;
 using System;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -47,21 +43,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		protected FlowLayoutWidget topToBottomItemList;
 
-		private LibraryProvider currentLibraryProvider;
-
+		private static LibraryDataView libraryDataViewInstance = null;
 		private RGBA_Bytes baseColor = new RGBA_Bytes(255, 255, 255);
-
+		private LibraryProvider currentLibraryProvider;
 		private bool editMode = false;
 
 		private RGBA_Bytes hoverColor = new RGBA_Bytes(204, 204, 204, 255);
 
+		private GuiWidget providerMessageContainer;
+		private TextWidget providerMessageWidget;
 		private RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
 
 		private bool settingLocalBounds = false;
-
-		public event Action<LibraryProvider> ChangedCurrentLibraryProvider;
-
-		private static LibraryDataView libraryDataViewInstance = null;
 
 		public LibraryDataView()
 		{
@@ -91,49 +84,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			topToBottomItemList.HAnchor = HAnchor.ParentLeftRight;
 			AddChild(topToBottomItemList);
 
-			this.AddChildToBackground(providerMessageWidget = new TextWidget("")
+			AddAllItems();
+
+			providerMessageWidget = new TextWidget("")
 			{
 				PointSize = 8,
 				HAnchor = HAnchor.ParentRight,
 				VAnchor = VAnchor.ParentBottom,
 				TextColor = ActiveTheme.Instance.SecondaryTextColor,
 				Margin = new BorderDouble(6),
-				Visible = false,
 				AutoExpandBoundsToText = true,
-			});
+			};
 
-
-			AddAllItems();
-		}
-
-		TextWidget providerMessageWidget;
-		public string ProviderMessage
-		{
-			get { return providerMessageWidget.Text; }
-			set
+			providerMessageContainer = new GuiWidget()
 			{
-				if (value != "")
-				{
-					providerMessageWidget.Text = value;
-					providerMessageWidget.Visible = true;
-				}
-				else
-				{
-					providerMessageWidget.Visible = false;
-				}
-			}
+				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryBackgroundColor, 220),
+				Visible = false,
+			};
+
+			providerMessageContainer.AddChild(providerMessageWidget);
+			this.AddChildToBackground(providerMessageContainer, -1);
 		}
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
 
+		public event Action<LibraryProvider, LibraryProvider> ChangedCurrentLibraryProvider;
+
 		public event HoverValueChangedEventHandler HoverValueChanged;
 
 		private event EventHandler unregisterEvents;
-
-		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
-		{
-			this.CurrentLibraryProvider = libraryProvider;
-		}
 
 		public LibraryProvider CurrentLibraryProvider
 		{
@@ -162,11 +143,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						currentLibraryProvider = parent;
 					}
 
+					LibraryProvider previousLibraryProvider = currentLibraryProvider;
 					currentLibraryProvider = value;
 
 					if (ChangedCurrentLibraryProvider != null)
 					{
-						ChangedCurrentLibraryProvider(value);
+						ChangedCurrentLibraryProvider(previousLibraryProvider, value);
 					}
 
 					ClearSelectedItems();
@@ -227,6 +209,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						TopLeftOffset = currentTopLeftOffset;
 					}
 					settingLocalBounds = false;
+				}
+			}
+		}
+
+		public string ProviderMessage
+		{
+			get { return providerMessageWidget.Text; }
+			set
+			{
+				if (value != "")
+				{
+					providerMessageWidget.Text = value;
+					providerMessageContainer.Visible = true;
+				}
+				else
+				{
+					providerMessageContainer.Visible = false;
 				}
 			}
 		}
@@ -331,6 +330,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				throw new NotImplementedException();
 				//item.RemoveFromParentCollection();
 			}
+		}
+
+		public void SetCurrentLibraryProvider(LibraryProvider libraryProvider)
+		{
+			this.CurrentLibraryProvider = libraryProvider;
 		}
 
 		protected GuiWidget GetThumbnailWidget(LibraryProvider parentProvider, PrintItemCollection printItemCollection, ImageBuffer imageBuffer)

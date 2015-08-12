@@ -47,10 +47,10 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 		public FolderBreadCrumbWidget(Action<LibraryProvider> SwitchToLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
 			this.SwitchToLibraryProvider = SwitchToLibraryProvider;
-			UiThread.RunOnIdle(() => SetBreadCrumbs(currentLibraryProvider));
+			UiThread.RunOnIdle(() => SetBreadCrumbs(null, currentLibraryProvider));
 		}
 
-		public void SetBreadCrumbs(LibraryProvider currentLibraryProvider)
+		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
 			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;

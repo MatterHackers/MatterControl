@@ -125,7 +125,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					searchInput.HAnchor = HAnchor.ParentLeftRight;
 					searchInput.VAnchor = VAnchor.ParentCenter;
 					searchInput.ActualTextEditWidget.EnterPressed += new KeyEventHandler(searchInputEnterPressed);
-					searchInput.ActualTextEditWidget.KeyUp += searchInputKeyUp;
 
 					double oldWidth = editButtonFactory.FixedWidth;
 					editButtonFactory.FixedWidth = 0;
@@ -170,6 +169,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				breadCrumbWidget = new FolderBreadCrumbWidget(libraryDataView.SetCurrentLibraryProvider, libraryDataView.CurrentLibraryProvider);
 				libraryDataView.ChangedCurrentLibraryProvider += breadCrumbWidget.SetBreadCrumbs;
 
+				libraryDataView.ChangedCurrentLibraryProvider += ClearSearchWidget;
+
 				allControls.AddChild(breadCrumbWidget);
 
 				allControls.AddChild(libraryDataView);
@@ -180,6 +181,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AddChild(allControls);
 
 			AddHandlers();
+		}
+
+		private void ClearSearchWidget(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
+		{
+			previousLibraryProvider.KeywordFilter = "";
+			searchInput.Text = "";
 		}
 
         private static void AddLibraryButtonElements()
@@ -352,11 +359,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			base.OnClosed(e);
 		}
 
-		private void searchInputKeyUp(object sender, KeyEventArgs keyEvent)
-		{
-			searchButtonClick(null, null);
-		}
-
 		private void searchInputEnterPressed(object sender, KeyEventArgs keyEvent)
 		{
 			searchButtonClick(null, null);
@@ -382,9 +384,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void searchButtonClick(object sender, EventArgs e)
 		{
-			string searchText = searchInput.Text.Trim();
-			libraryDataView.CurrentLibraryProvider.KeywordFilter = searchText;
-			libraryDataView.ClearSelectedItems();
+			UiThread.RunOnIdle(() =>
+			{
+				string searchText = searchInput.Text.Trim();
+
+				libraryDataView.CurrentLibraryProvider.KeywordFilter = searchText;
+			});
 		}
 
 		private void addToQueueButton_Click(object sender, EventArgs e)
@@ -455,9 +460,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			libraryDataView.ClearSelectedItems();
 		}
 
-		private ExportPrintItemWindow exportingWindow;
-		private bool exportingWindowIsOpen = false;
-
 		private void exportButton_Click(object sender, EventArgs e)
 		{
 			//Open export options
@@ -476,11 +478,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
 				libraryItem.Edit();
 			}
-		}
-
-		private void ExportQueueItemWindow_Closed(object sender, EventArgs e)
-		{
-			this.exportingWindowIsOpen = false;
 		}
 
 		public override void OnDragEnter(FileDropEventArgs fileDropEventArgs)
