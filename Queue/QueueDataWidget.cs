@@ -180,6 +180,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						if (OemSettings.Instance.ShowShopButton)
 						{
 							shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), "icon_shopping_cart_32x32.png");
+							shopButton.ToolTipText = "Shop online for printing materials".Localize();
 							buttonPanel1.AddChild(shopButton);
 							shopButton.Margin = new BorderDouble(0, 0, 3, 0);
 							shopButton.Click += (sender, e) =>

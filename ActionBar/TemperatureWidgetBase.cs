@@ -38,8 +38,8 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	internal class TemperatureWidgetBase : GuiWidget
 	{
-		protected TextWidget indicatorTextWidget;
-		protected TextWidget labelTextWidget;
+		protected TextWidget currentTempIndicator;
+		protected TextWidget temperatureTypeName;
 		protected Button preheatButton;
 
 		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
@@ -51,13 +51,13 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			get
 			{
-				return indicatorTextWidget.Text;
+				return currentTempIndicator.Text;
 			}
 			set
 			{
-				if (indicatorTextWidget.Text != value)
+				if (currentTempIndicator.Text != value)
 				{
-					indicatorTextWidget.Text = value;
+					currentTempIndicator.Text = value;
 				}
 			}
 		}
@@ -72,35 +72,22 @@ namespace MatterHackers.MatterControl.ActionBar
 			whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
 			whiteButtonFactory.normalTextColor = RGBA_Bytes.DarkGray;
 
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.AnchorAll();
-
 			this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
 			this.Margin = new BorderDouble(0, 2) * TextWidget.GlobalPointSizeScaleRatio;
 
-			GuiWidget labelContainer = new GuiWidget();
-			labelContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			labelContainer.Height = 18 * TextWidget.GlobalPointSizeScaleRatio;
+			temperatureTypeName = new TextWidget("", pointSize: 8);
+			temperatureTypeName.AutoExpandBoundsToText = true;
+			temperatureTypeName.HAnchor = HAnchor.ParentCenter;
+			temperatureTypeName.VAnchor = VAnchor.ParentTop;
+			temperatureTypeName.Margin = new BorderDouble(0, 3);
+			temperatureTypeName.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
+			temperatureTypeName.Visible = false;
 
-			labelTextWidget = new TextWidget("", pointSize: 8);
-			labelTextWidget.AutoExpandBoundsToText = true;
-			labelTextWidget.HAnchor = HAnchor.ParentCenter;
-			labelTextWidget.VAnchor = VAnchor.ParentCenter;
-			labelTextWidget.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
-			labelTextWidget.Visible = false;
-
-			labelContainer.AddChild(labelTextWidget);
-
-			GuiWidget indicatorContainer = new GuiWidget();
-			indicatorContainer.AnchorAll();
-
-			indicatorTextWidget = new TextWidget(textValue, pointSize: 11);
-			indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-			indicatorTextWidget.HAnchor = HAnchor.ParentCenter;
-			indicatorTextWidget.VAnchor = VAnchor.ParentCenter;
-			indicatorTextWidget.AutoExpandBoundsToText = true;
-
-			indicatorContainer.AddChild(indicatorTextWidget);
+			currentTempIndicator = new TextWidget(textValue, pointSize: 11);
+			currentTempIndicator.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+			currentTempIndicator.HAnchor = HAnchor.ParentCenter;
+			currentTempIndicator.VAnchor = VAnchor.ParentCenter;
+			currentTempIndicator.AutoExpandBoundsToText = true;
 
 			GuiWidget buttonContainer = new GuiWidget();
 			buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
@@ -112,11 +99,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			buttonContainer.AddChild(preheatButton);
 
-			container.AddChild(labelContainer);
-			container.AddChild(indicatorContainer);
-			container.AddChild(buttonContainer);
+			this.AddChild(temperatureTypeName);
+			this.AddChild(currentTempIndicator);
+			this.AddChild(buttonContainer);
 
-			this.AddChild(container);
 			ActiveTheme.Instance.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
 
 			this.MouseEnterBounds += onEnterBounds;
@@ -135,13 +121,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public void ThemeChanged(object sender, EventArgs e)
 		{
-			this.indicatorTextWidget.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+			this.currentTempIndicator.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
 			this.Invalidate();
 		}
 
 		private void onEnterBounds(Object sender, EventArgs e)
 		{
-			labelTextWidget.Visible = true;
+			temperatureTypeName.Visible = true;
 			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
 			{
 				preheatButton.Visible = true;
@@ -150,7 +136,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void onLeaveBounds(Object sender, EventArgs e)
 		{
-			labelTextWidget.Visible = false;
+			temperatureTypeName.Visible = false;
 			preheatButton.Visible = false;
 		}
 

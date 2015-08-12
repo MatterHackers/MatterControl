@@ -199,6 +199,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
             // the add button
 			{
 				addToLibraryButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+				addToLibraryButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Library".Localize();
 				buttonPanel.AddChild(addToLibraryButton);
 				addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
 				addToLibraryButton.Click += (sender, e) => UiThread.RunOnIdle(importToLibraryloadFile_ClickOnIdle);
