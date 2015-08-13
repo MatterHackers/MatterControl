@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				for (int i = 0; i < asynchMeshGroups.Count; i++)
 				{
 					ScaleRotateTranslate translate = asynchMeshGroupTransforms[i];
-					translate.translation *= Matrix4X4.CreateTranslation(new Vector3(meshViewerWidget.BedCenter, 0));
+					translate.translation *= Matrix4X4.CreateTranslation(new Vector3(MeshViewerWidget.BedCenter, 0));
 					asynchMeshGroupTransforms[i] = translate;
 				}
 
@@ -478,7 +478,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				Mesh connectionLine = PlatonicSolids.CreateCube(xSize, ySize, zSize);
 				meshesList.Add(new MeshGroup(connectionLine));
 				platingDataList.Add(new PlatingMeshGroupData());
-				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2 + meshViewerWidget.BedCenter.x, ySize / 2 - ySize * 2 / 3 + meshViewerWidget.BedCenter.y, zSize / 2));
+				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2 + MeshViewerWidget.BedCenter.x, ySize / 2 - ySize * 2 / 3 + MeshViewerWidget.BedCenter.y, zSize / 2));
 				PlatingHelper.CreateITraceableForMeshGroup(platingDataList, meshesList, meshesList.Count - 1, null);
 			}
 		}
