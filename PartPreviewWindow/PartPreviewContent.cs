@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Reload(PrintItemWrapper printItem)
 		{
-			this.RemoveAllChildren();
+			this.CloseAndRemoveAllChildren();
 			this.Load(printItem);
 		}
 
