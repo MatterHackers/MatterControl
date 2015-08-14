@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider)
 			: base(null)
 		{
+			this.Name = "Home".Localize();
+
 			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
 
 			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
@@ -176,11 +178,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override bool Visible
-		{
-			get { return true; }
-		}
-
 		public override void Dispose()
 		{
 		}
@@ -203,19 +200,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			set
 			{
 			}
-		}
-
-		public override string Name
-		{
-			get
-			{
-				return "Home".Localize();
-			}
-		}
-
-		public override string ProviderData
-		{
-			get { return ""; }
 		}
 
 		public override string ProviderKey

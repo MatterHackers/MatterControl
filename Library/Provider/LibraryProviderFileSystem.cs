@@ -70,15 +70,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string currentDirectory = ".";
 		private List<string> currentDirectoryDirectories = new List<string>();
 		private List<string> currentDirectoryFiles = new List<string>();
-		private string description;
 		private FileSystemWatcher directoryWatcher = new FileSystemWatcher();
 		private string keywordFilter = string.Empty;
 		private string rootPath;
 
-		public LibraryProviderFileSystem(string rootPath, string description, LibraryProvider parentLibraryProvider)
+		public LibraryProviderFileSystem(string rootPath, string name, LibraryProvider parentLibraryProvider)
 			: base(parentLibraryProvider)
 		{
-			this.description = description;
+			this.Name = name;
 			this.rootPath = rootPath;
 
 			directoryWatcher.Path = rootPath;
@@ -149,14 +148,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public void ChangeName(string newName)
 		{
-			description = newName;
-		}
-
-		public override string Name { get { return description; } }
-
-		public override string ProviderData
-		{
-			get { return rootPath; }
+			this.Name = newName;
 		}
 
 		public override string ProviderKey
@@ -165,11 +157,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				return "FileSystem_" + rootPath + "_Key";
 			}
-		}
-
-		public override bool Visible
-		{
-			get { return true; }
 		}
 
 		public override void AddCollectionToLibrary(string collectionName)

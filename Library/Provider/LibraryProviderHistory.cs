@@ -63,16 +63,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 	}
 
-	public class LibraryProviderHistory : ClassicSqliteStorageProvider
+	public class LibraryProviderHistory : LibraryProvider
 	{
 		private static LibraryProviderHistory instance = null;
 
 		public LibraryProviderHistory(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
 			: base(parentLibraryProvider)
 		{
-			this.baseLibraryCollection = baseLibraryCollection;
-
 			//PrintHistoryData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
+			this.Name = "Print History";
 		}
 
 		public static LibraryProvider Instance
@@ -129,14 +128,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override string Name
-		{
-			get
-			{
-				return "Print History";
-			}
-		}
-
 		public override string ProviderKey
 		{
 			get
@@ -163,7 +154,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
-			return childCollections[collectionIndex];
+			throw new NotImplementedException();
 		}
 
 		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)

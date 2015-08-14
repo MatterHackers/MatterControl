@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 	}
 
-	public class LibraryProviderQueue : ClassicSqliteStorageProvider
+	public class LibraryProviderQueue : LibraryProvider
 	{
 		private static LibraryProviderQueue instance = null;
 
@@ -71,9 +71,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public LibraryProviderQueue(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
 			: base(parentLibraryProvider)
 		{
-			this.baseLibraryCollection = baseLibraryCollection;
-
 			QueueData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
+			this.Name = "Print Queue";
 		}
 
 		public static LibraryProvider Instance
@@ -87,6 +86,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 				return instance;
 			}
+		}
+
+		public override int GetCollectionItemCount(int collectionIndex)
+		{
+			return base.GetCollectionItemCount(collectionIndex);
+		}
+
+		public override PrintItemCollection GetCollectionItem(int collectionIndex)
+		{
+			throw new NotImplementedException();
 		}
 
 		public override string GetPrintItemName(int itemIndex)
@@ -125,14 +134,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			get
 			{
 				return QueueData.Instance.Count;
-			}
-		}
-
-		public override string Name
-		{
-			get
-			{
-				return "Print Queue";
 			}
 		}
 
