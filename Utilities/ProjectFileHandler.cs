@@ -240,29 +240,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void OpenFromDialog()
-		{
-			OpenFileDialogParams openParams = new OpenFileDialogParams("Zip file|*.zip");
-			FileDialog.OpenFileDialog(openParams, onProjectArchiveLoad);
-		}
-
-		private void onProjectArchiveLoad(OpenFileDialogParams openParams)
-		{
-			List<PrintItem> partFiles;
-			if (openParams.FileNames != null)
-			{
-				string loadedFileName = openParams.FileName;
-				partFiles = ImportFromProjectArchive(loadedFileName);
-				if (partFiles != null)
-				{
-					foreach (PrintItem part in partFiles)
-					{
-						QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(part.Name, part.FileLocation)));
-					}
-				}
-			}
-		}
-
 		public List<PrintItem> ImportFromProjectArchive(string loadedFileName = null)
 		{
 			if (loadedFileName == null)
@@ -270,10 +247,14 @@ namespace MatterHackers.MatterControl
 				loadedFileName = defaultProjectPathAndFileName;
 			}
 
-			if (System.IO.File.Exists(loadedFileName))
+			if (!System.IO.File.Exists(loadedFileName))
 			{
-				FileStream fs = File.OpenRead(loadedFileName);
-				ZipArchive zip = new ZipArchive(fs);
+				return null;
+			}
+
+			using (FileStream fs = File.OpenRead(loadedFileName))
+			using (ZipArchive zip = new ZipArchive(fs))
+			{
 				int projectHashCode = zip.GetHashCode();
 
 				//If the temp folder doesn't exist - create it, otherwise clear it
@@ -351,10 +332,6 @@ namespace MatterHackers.MatterControl
 				}
 
 				return printItemList;
-			}
-			else
-			{
-				return null;
 			}
 		}
 

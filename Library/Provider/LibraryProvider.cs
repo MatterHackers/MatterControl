@@ -33,6 +33,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,158 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
+
+	public abstract class ClassicSqliteStorageProvider : LibraryProvider
+	{
+		private string keywordFilter = string.Empty;
+
+		protected PrintItemCollection baseLibraryCollection;
+
+		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
+
+		public ClassicSqliteStorageProvider(LibraryProvider parentLibraryProvider)
+			: base(parentLibraryProvider)
+		{
+
+		}
+
+		protected virtual void AddStlOrGcode(string loadedFileName, string displayName)
+		{
+			string extension = Path.GetExtension(loadedFileName).ToUpper();
+
+			PrintItem printItem = new PrintItem();
+			printItem.Name = displayName;
+			printItem.FileLocation = Path.GetFullPath(loadedFileName);
+			printItem.PrintItemCollectionID = this.baseLibraryCollection.Id;
+			printItem.Commit();
+
+			if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
+			{
+				List<MeshGroup> meshToConvertAndSave = MeshFileIo.Load(loadedFileName);
+
+				try
+				{
+					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, this);
+					SaveToLibraryFolder(printItemWrapper, meshToConvertAndSave, false);
+				}
+				catch (System.UnauthorizedAccessException)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						//Do something special when unauthorized?
+						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
+					});
+				}
+				catch
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+					});
+				}
+			}
+			else // it is not a mesh so just add it
+			{
+				PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem, this);
+				string sourceFileName = printItem.FileLocation;
+				string newFileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItem.FileLocation));
+				string destFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, newFileName);
+
+				File.Copy(sourceFileName, destFileName, true);
+
+				printItemWrapper.FileLocation = destFileName;
+				printItemWrapper.PrintItem.Commit();
+			}
+		}
+
+		protected static void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
+		{
+			string[] metaData = { "Created By", "MatterControl" };
+			if (AbsolutePositioned)
+			{
+				metaData = new string[] { "Created By", "MatterControl", "BedPosition", "Absolute" };
+			}
+
+			if (printItemWrapper.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
+			{
+				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
+			}
+			else // save a copy to the library and update this to point at it
+			{
+				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
+				printItemWrapper.FileLocation = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
+
+				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+				MeshFileIo.Save(meshGroups, printItemWrapper.FileLocation, outputInfo);
+
+				printItemWrapper.PrintItem.Commit();
+
+				// let the queue know that the item has changed so it load the correct part
+				QueueData.Instance.SaveDefaultQueue();
+			}
+
+			printItemWrapper.OnFileHasChanged();
+		}
+
+		public override PrintItemCollection GetCollectionItem(int collectionIndex)
+		{
+			return childCollections[collectionIndex];
+		}
+
+		public override bool Visible
+		{
+			get { return true; }
+		}
+
+		public override void Dispose()
+		{
+		}
+
+		public override string ProviderData
+		{
+			get
+			{
+				return baseLibraryCollection.Id.ToString();
+			}
+		}
+
+		public override string KeywordFilter
+		{
+			get
+			{
+				return keywordFilter;
+			}
+
+			set
+			{
+				keywordFilter = value;
+			}
+		}
+
+		protected IEnumerable<PrintItemCollection> GetChildCollections()
+		{
+			string query = string.Format("SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
+			IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
+			return result;
+		}
+
+		public IEnumerable<PrintItem> GetLibraryItems(string keyphrase = null)
+		{
+			string query;
+			if (keyphrase == null)
+			{
+				query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
+			}
+			else
+			{
+				query = string.Format("SELECT * FROM PrintItem WHERE PrintItemCollectionID = {0} AND Name LIKE '%{1}%' ORDER BY Name ASC;", baseLibraryCollection.Id, keyphrase);
+			}
+			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
+			return result;
+		}
+	}
+
 	public abstract class LibraryProvider : IDisposable
 	{
 		public event EventHandler DataReloaded;
