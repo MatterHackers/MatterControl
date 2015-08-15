@@ -116,7 +116,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+        static Vector3 lastDestinationWithLevelingApplied = new Vector3();
+        public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
 		{
 			if (PrinterConnectionAndCommunication.Instance.ActivePrinter != null
 				&& PrinterConnectionAndCommunication.Instance.ActivePrinter.DoPrintLeveling
@@ -139,15 +140,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		
 					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 					{
-						// TODO: this is not correct for 13 point leveling
-						Vector3 relativeMove = Vector3.Zero;
-						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
-						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
-						GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref relativeMove.z);
-						outPosition = PrintLevelingPlane.Instance.ApplyLevelingRotation(relativeMove);
-					}
+                        Vector3 startPosition = GetPositionWithZOffset(lastDestinationWithLevelingApplied, levelingData, ActiveSliceSettings.Instance.BedCenter);
+                        outPosition -= startPosition;
+                    }
 
-					newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z));
+                    lastDestinationWithLevelingApplied = outPosition;
+
+                    newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z));
 				}
 
 				if (extruderDelta != 0)

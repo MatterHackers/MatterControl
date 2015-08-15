@@ -71,8 +71,15 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(outPosition.z, (levelingData.SampledPositions[curPoint].z + levelingData.SampledPositions[6].z) / 2, .001);
 			}
 
+            // prove that relative offsets work
+            {
+
+            }
+
 			Vector3 outPosition2 = LevelWizard7PointRadial.GetPositionWithZOffset(Vector3.Zero, levelingData, bedCenter);
 			Assert.AreEqual(outPosition2.z, levelingData.SampledPositions[6].z, .001);
 		}
+
+        // TODO: do all the same tests for 13 point leveling.
     }
 }
