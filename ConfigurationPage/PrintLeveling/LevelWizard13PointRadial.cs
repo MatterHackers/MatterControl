@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					PrintLevelingData levelingData = PrintLevelingData.GetForPrinter(ActivePrinterProfile.Instance.ActivePrinter);
 
-					Vector3 outPosition = GetPositionWithZOffset(currentDestination, levelingData);
+					Vector3 outPosition = GetPositionWithZOffset(currentDestination, levelingData, ActiveSliceSettings.Instance.BedCenter);
 		
 					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
 					{
@@ -167,9 +167,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return lineBeingSent;
 		}
 
-		public static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData)
+		public static Vector3 GetPositionWithZOffset(Vector3 currentDestination, PrintLevelingData levelingData, Vector2 bedCenter)
 		{
-			Vector2 destinationFromCenter = new Vector2(currentDestination) - ActiveSliceSettings.Instance.BedCenter;
+			Vector2 destinationFromCenter = new Vector2(currentDestination) - bedCenter;
 
 			double angleToPoint = Math.Atan2(destinationFromCenter.y, destinationFromCenter.x);
 
