@@ -255,12 +255,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 		}
 
-		private void NextButton_Click(object sender, EventArgs mouseEvent)
+		private async void NextButton_Click(object sender, EventArgs mouseEvent)
 		{
 			bool canContinue = this.OnSave();
 			if (canContinue)
 			{
-				this.currentPrinterSetupStatus.LoadCalibrationPrints();
+				await this.currentPrinterSetupStatus.LoadCalibrationPrints();
 				UiThread.RunOnIdle(MoveToNextWidget);
 			}
 		}

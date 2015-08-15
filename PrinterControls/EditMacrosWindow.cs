@@ -323,6 +323,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			Button addMacroButton = textImageButtonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+			addMacroButton.ToolTipText = "Add an new Macro".Localize();
 			addMacroButton.Click += new EventHandler(addMacro_Click);
 
 			Button cancelPresetsButton = textImageButtonFactory.Generate(LocalizedString.Get("Close"));

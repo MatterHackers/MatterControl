@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl
 			linkButtonFactory.fontSize = 8;
 
 			Button signInLink = linkButtonFactory.Generate("(Sign Out)");
+			signInLink.ToolTipText = "Sign in to your MatterControl account".Localize();
 			signInLink.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			signInLink.Margin = new BorderDouble(top: 0);
 

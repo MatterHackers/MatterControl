@@ -123,6 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			container.HAnchor = HAnchor.ParentLeftRight;
 
 			Button addPresetButton = buttonFactory.Generate(LocalizedString.Get("Add"), "icon_circle_plus.png");
+			addPresetButton.ToolTipText = "Add a new Material Preset".Localize();
 			addPresetButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -132,6 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			importPresetButton = buttonFactory.Generate(LocalizedString.Get("Import"));
+			importPresetButton.ToolTipText = "Import an existing Material Preset".Localize();
 
 			Button closeButton = buttonFactory.Generate(LocalizedString.Get("Close"));
 			closeButton.Click += (sender, e) =>

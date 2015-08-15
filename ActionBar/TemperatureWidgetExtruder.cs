@@ -41,9 +41,12 @@ namespace MatterHackers.MatterControl.ActionBar
 		public TemperatureWidgetExtruder()
 			: base("150.3°")
 		{
-			labelTextWidget.Text = "Extruder";
+			temperatureTypeName.Text = "Extruder";
 			AddHandlers();
 			setToCurrentTemperature();
+
+			ToolTipText = "Current extruder temperature".Localize();
+			preheatButton.ToolTipText = "Preheat the Extruder".Localize();
 		}
 
 		private event EventHandler unregisterEvents;

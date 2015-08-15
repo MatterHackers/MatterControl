@@ -3604,3 +3604,42 @@ Translated:Switch to Settings, Controls and Options
 English:Switch to Queue, Library and History
 Translated:Switch to Queue, Library and History
 
+English:Sign in to your MatterControl account
+Translated:Sign in to your MatterControl account
+
+English:Connect to the currently selected printer
+Translated:Connect to the currently selected printer
+
+English:Disconnect from current printer
+Translated:Disconnect from current printer
+
+English:Select a printer
+Translated:Select a printer
+
+English:Current extruder temperature
+Translated:Current extruder temperature
+
+English:Preheat the Extruder
+Translated:Preheat the Extruder
+
+English:Current bed temperature
+Translated:Current bed temperature
+
+English:Preheat the Bed
+Translated:Preheat the Bed
+
+English:Shop online for printing materials
+Translated:Shop online for printing materials
+
+English:Add an .stl, .amf, .gcode or .zip file to the Library
+Translated:Add an .stl, .amf, .gcode or .zip file to the Library
+
+English:Open your dashboard in a web browser
+Translated:Open your dashboard in a web browser
+
+English:Sign out of your MatterControl account
+Translated:Sign out of your MatterControl account
+
+English:Add a new Printer Profile
+Translated:Add a new Printer Profile
+

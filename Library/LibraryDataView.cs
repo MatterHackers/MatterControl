@@ -125,38 +125,35 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			set
 			{
-				if (currentLibraryProvider != value)
+				// unhook the update we were getting
+				currentLibraryProvider.DataReloaded -= libraryDataViewInstance.LibraryDataReloaded;
+				// and hook the new one
+				value.DataReloaded += libraryDataViewInstance.LibraryDataReloaded;
+
+				bool isChildOfCurrent = value.ParentLibraryProvider == currentLibraryProvider;
+
+				// Dispose of all children below this one.
+				while (!isChildOfCurrent && currentLibraryProvider != value
+					&& currentLibraryProvider.ParentLibraryProvider != null)
 				{
-					// unhook the update we were getting
-					currentLibraryProvider.DataReloaded -= libraryDataViewInstance.LibraryDataReloaded;
-					// and hook the new one
-					value.DataReloaded += libraryDataViewInstance.LibraryDataReloaded;
-
-					bool isChildOfCurrent = value.ParentLibraryProvider == currentLibraryProvider;
-
-					// Dispose of all children below this one.
-					while (!isChildOfCurrent && currentLibraryProvider != value
-						&& currentLibraryProvider.ParentLibraryProvider != null)
-					{
-						LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
-						currentLibraryProvider.Dispose();
-						currentLibraryProvider = parent;
-					}
-
-					LibraryProvider previousLibraryProvider = currentLibraryProvider;
-					currentLibraryProvider = value;
-
-					if (ChangedCurrentLibraryProvider != null)
-					{
-						ChangedCurrentLibraryProvider(previousLibraryProvider, value);
-					}
-
-					ClearSelectedItems();
-
-					this.ProviderMessage = value.StatusMessage;
-
-					UiThread.RunOnIdle(RebuildView);
+					LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
+					currentLibraryProvider.Dispose();
+					currentLibraryProvider = parent;
 				}
+
+				LibraryProvider previousLibraryProvider = currentLibraryProvider;
+				currentLibraryProvider = value;
+
+				if (ChangedCurrentLibraryProvider != null)
+				{
+					ChangedCurrentLibraryProvider(previousLibraryProvider, value);
+				}
+
+				ClearSelectedItems();
+
+				this.ProviderMessage = value.StatusMessage;
+
+				UiThread.RunOnIdle(RebuildView);
 			}
 		}
 

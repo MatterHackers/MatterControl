@@ -101,6 +101,11 @@ namespace MatterHackers.MatterControl
 
 		public static void DeleteCacheData()
 		{
+			if(LibraryProviderSQLite.Instance.PreloadingCalibrationFiles)
+			{
+				return;
+			}
+
 			// delete everything in the GCodeOutputPath
 			//   AppData\Local\MatterControl\data\gcode
 			// delete everything in the temp data that is not in use
@@ -213,7 +218,8 @@ namespace MatterHackers.MatterControl
 					case ".STL":
 					case ".AMF":
 					case ".GCODE":
-						if (referencedPrintItemsFilePaths.Contains(file))
+						// 
+						if (referencedPrintItemsFilePaths.Contains(file) || LibraryProviderSQLite.Instance.PreloadingCalibrationFiles && Path.GetDirectoryName(file).Contains("calibration-parts"))
 						{
 							contentCount++;
 						}

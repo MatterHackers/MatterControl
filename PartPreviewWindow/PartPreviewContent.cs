@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Reload(PrintItemWrapper printItem)
 		{
-			this.RemoveAllChildren();
+			this.CloseAndRemoveAllChildren();
 			this.Load(printItem);
 		}
 
@@ -108,11 +108,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				autoRotate3DView,
 				openMode);
 
-			partPreviewView.Closed += (sender, e) =>
-			{
-				Close();
-			};
-
 			TabPage partPreview3DView = new TabPage(partPreviewView, part3DViewLabelFull);
 
 			// put in the gcode view
@@ -127,10 +122,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ActiveSliceSettings.Instance.BedCenter,
 				ActiveSliceSettings.Instance.BedShape, gcodeWindowMode);
 
-			viewGcodeBasic.Closed += (sender, e) =>
+			if (windowMode == View3DWidget.WindowMode.StandAlone)
 			{
-				Close();
-			};
+				partPreviewView.Closed += (sender, e) =>
+				{
+					Close();
+				};
+				viewGcodeBasic.Closed += (sender, e) =>
+				{
+					Close();
+				};
+			}
 
 			layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View").ToUpper());
 

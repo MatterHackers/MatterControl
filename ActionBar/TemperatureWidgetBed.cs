@@ -40,9 +40,11 @@ namespace MatterHackers.MatterControl.ActionBar
 		public TemperatureWidgetBed()
 			: base("150.3°")
 		{
-			labelTextWidget.Text = "Print Bed";
+			temperatureTypeName.Text = "Print Bed";
 			AddHandlers();
 			setToCurrentTemperature();
+			ToolTipText = "Current bed temperature".Localize();
+			preheatButton.ToolTipText = "Preheat the Bed".Localize();
 		}
 
 		private event EventHandler unregisterEvents;

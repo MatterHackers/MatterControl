@@ -246,6 +246,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			ButtonViewStates buttonView = new ButtonViewStates(buttonWidgetNormal, buttonWidgetHover, buttonWidgetPressed, buttonWidgetDisabled);
 			buttonView.HAnchor = HAnchor.ParentLeftRight;
 
+			this.ToolTipText = "Select a printer".Localize();
+
 			Margin = DefaultMargin;
 
 			OriginRelativeParent = new Vector2(0, 0);

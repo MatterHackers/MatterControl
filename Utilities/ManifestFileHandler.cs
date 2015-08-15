@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -98,22 +99,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void SaveAs()
-		//Opens Save file dialog and outputs current queue as a project
-		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save Project|*.mcp");
-
-			FileDialog.SaveFileDialog(saveParams, onSaveFileSelected);
-		}
-
-		private void onSaveFileSelected(SaveFileDialogParams saveParams)
-		{
-			if (saveParams.FileName != null)
-			{
-				ExportToJson(saveParams.FileName);
-			}
-		}
-
 		private static string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
 		private static string defaultPathAndFileName = applicationDataPath + "/data/default.mcp";
 
@@ -128,49 +113,31 @@ namespace MatterHackers.MatterControl
 			{
 				Directory.CreateDirectory(applicationDataPath + "/data/");
 			}
-			FileStream fs = new FileStream(savedFileName, FileMode.Create);
-			StreamWriter sw = new System.IO.StreamWriter(fs);
-			sw.Write(jsonString);
-			sw.Close();
+
+			File.WriteAllText(savedFileName, jsonString);
 		}
 
-		public void OpenFromDialog()
+		public List<PrintItem> ImportFromJson(string filePath = null)
 		{
-			OpenFileDialogParams openParams = new OpenFileDialogParams("Select a Project file|*.mcp");
-			FileDialog.OpenFileDialog(openParams, onManifestFileLoad);
-		}
-
-		private void onManifestFileLoad(OpenFileDialogParams openParams)
-		{
-			if (openParams.FileName != null)
+			if (filePath == null)
 			{
-				string loadedFileName = openParams.FileName;
-				List<PrintItem> printItems = ImportFromJson(loadedFileName);
-			}
-		}
-
-		public List<PrintItem> ImportFromJson(string loadedFileName = null)
-		{
-			if (loadedFileName == null)
-			{
-				loadedFileName = defaultPathAndFileName;
+				filePath = defaultPathAndFileName;
 			}
 
-			if (System.IO.File.Exists(loadedFileName))
-			{
-				StreamReader sr = new System.IO.StreamReader(loadedFileName);
-				ManifestFile newProject = (ManifestFile)Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd(), typeof(ManifestFile));
-				sr.Close();
-				if (newProject == null)
-				{
-					return new List<PrintItem>();
-				}
-				return newProject.ProjectFiles;
-			}
-			else
+			if (!System.IO.File.Exists(filePath))
 			{
 				return null;
 			}
+
+			string json = File.ReadAllText(filePath);
+
+			ManifestFile newProject = JsonConvert.DeserializeObject<ManifestFile>(json);
+			if (newProject == null)
+			{
+				return new List<PrintItem>();
+			}
+
+			return newProject.ProjectFiles;
 		}
 	}
 }

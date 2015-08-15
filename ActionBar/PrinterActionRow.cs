@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			string connectString = "Connect".Localize().ToUpper();
 			connectPrinterButton = actionBarButtonFactory.Generate(connectString, "icon_power_32x32.png");
+			connectPrinterButton.ToolTipText = "Connect to the currently selected printer".Localize();
 			if (ApplicationController.Instance.WidescreenMode)
 			{
 				connectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);
@@ -82,6 +83,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			string disconnectString = "Disconnect".Localize().ToUpper();
 			disconnectPrinterButton = actionBarButtonFactory.Generate(disconnectString, "icon_power_32x32.png");
+			disconnectPrinterButton.ToolTipText = "Disconnect from current printer".Localize();
 			if (ApplicationController.Instance.WidescreenMode)
 			{
 				disconnectPrinterButton.Margin = new BorderDouble(0, 0, 3, 3);

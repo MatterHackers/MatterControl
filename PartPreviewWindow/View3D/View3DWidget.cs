@@ -1793,7 +1793,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
 
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			BackgroundWorker backgroundWorker = (BackgroundWorker)sender;
 			try
 			{
 				// push all the transforms into the meshes

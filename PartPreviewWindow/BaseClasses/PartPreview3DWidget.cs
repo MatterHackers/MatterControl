@@ -104,18 +104,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
+		static ImageBuffer wattermarkImage = null;
 		protected void PutOemImageOnBed()
 		{
 			// this is to add an image to the bed
 			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
 			if (allowAutoRotate && StaticData.Instance.FileExists(imagePathAndFile))
 			{
-				ImageBuffer wattermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
+				if (wattermarkImage == null)
+				{
+					wattermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
+				}
 
-				ImageBuffer bedImage = meshViewerWidget.BedImage;
+				ImageBuffer bedImage = MeshViewerWidget.BedImage;
 				Graphics2D bedGraphics = bedImage.NewGraphics2D();
-				bedGraphics.Render(wattermarkImage,
-					new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height) / 2));
+				bedGraphics.Render(wattermarkImage, new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height) / 2));
 			}
 		}
 

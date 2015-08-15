@@ -33,6 +33,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public abstract class LibraryProvider : IDisposable
 	{
-		public event EventHandler DataReloaded;
+		protected Dictionary<int, ProgressPlug> itemReportProgressHandlers = new Dictionary<int, ProgressPlug>();
+
 		private LibraryProvider parentLibraryProvider = null;
 
 		public LibraryProvider(LibraryProvider parentLibraryProvider)
@@ -51,26 +53,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			this.parentLibraryProvider = parentLibraryProvider;
 		}
 
+		public event EventHandler DataReloaded;
+
 		public LibraryProvider ParentLibraryProvider { get { return parentLibraryProvider; } }
 
 		#region Member Methods
 
-		public bool HasParent
-		{
-			get
-			{
-				if (this.ParentLibraryProvider != null)
-				{
-					return true;
-				}
+		private static ImageBuffer normalFolderImage = null;
 
-				return false;
-			}
-		}
+		private static ImageBuffer upFolderImage = null;
 
-		public abstract bool Visible { get; }
-
-		static ImageBuffer normalFolderImage = null;
 		public static ImageBuffer NormalFolderImage
 		{
 			get
@@ -87,7 +79,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		static ImageBuffer upFolderImage = null;
 		public static ImageBuffer UpFolderImage
 		{
 			get
@@ -101,6 +92,19 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 
 				return upFolderImage;
+			}
+		}
+
+		public bool HasParent
+		{
+			get
+			{
+				if (this.ParentLibraryProvider != null)
+				{
+					return true;
+				}
+
+				return false;
 			}
 		}
 
@@ -142,7 +146,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				providerLocator.AddRange(ParentLibraryProvider.GetProviderLocator());
 			}
 
-			providerLocator.Add(new ProviderLocatorNode(ProviderKey, Name, ProviderData));
+			providerLocator.Add(new ProviderLocatorNode(ProviderKey, Name));
 
 			return providerLocator;
 		}
@@ -155,19 +159,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract int ItemCount { get; }
 
-		public abstract string KeywordFilter { get; set; }
-
-		public abstract string Name { get; }
-
-		public abstract string ProviderData { get; }
-
 		public abstract string ProviderKey { get; }
 
 		public abstract void AddCollectionToLibrary(string collectionName);
 
 		public abstract void AddItem(PrintItemWrapper itemToAdd);
-
-		public abstract void Dispose();
 
 		public abstract PrintItemCollection GetCollectionItem(int collectionIndex);
 
@@ -179,9 +175,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public abstract void RemoveCollection(int collectionIndexToRemove);
 
-		public abstract void RenameCollection(int collectionIndexToRename, string newName);
-
 		public abstract void RemoveItem(int itemIndexToRemove);
+
+		public abstract void RenameCollection(int collectionIndexToRename, string newName);
 
 		public abstract void RenameItem(int itemIndexToRename, string newName);
 
@@ -199,26 +195,65 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		#endregion Static Methods
 
+		public virtual string KeywordFilter { get; set; }
+
+		public virtual string StatusMessage
+		{
+			get { return ""; }
+		}
+
+		public virtual void Dispose()
+		{
+		}
+
 		public virtual int GetCollectionChildCollectionCount(int collectionIndex)
 		{
 			return GetProviderForCollection(GetCollectionItem(collectionIndex)).CollectionCount;
 		}
 
-		public class ProgressPlug
+		public virtual ImageBuffer GetCollectionFolderImage(int collectionIndex)
 		{
-			public ReportProgressRatio ProgressOutput;
-
-			public void ProgressInput(double progress0To1, string processingState, out bool continueProcessing)
-			{
-				continueProcessing = true;
-				if (ProgressOutput != null)
-				{
-					ProgressOutput(progress0To1, processingState, out continueProcessing);
-				}
-			}
+			return NormalFolderImage;
 		}
 
-		protected Dictionary<int, ProgressPlug> itemReportProgressHandlers = new Dictionary<int, ProgressPlug>();
+		public virtual int GetCollectionItemCount(int collectionIndex)
+		{
+			return GetProviderForCollection(GetCollectionItem(collectionIndex)).ItemCount;
+		}
+
+		public virtual GuiWidget GetItemThumbnail(int printItemIndex)
+		{
+			var printItemWrapper = GetPrintItemWrapperAsync(printItemIndex).Result;
+			return new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
+		}
+
+		public virtual string GetPrintItemName(int itemIndex)
+		{
+			return "";
+		}
+
+		public LibraryProvider GetRootProvider()
+		{
+			LibraryProvider parent = this;
+			while (parent != null)
+			{
+				parent = parent.ParentLibraryProvider;
+			}
+
+			return parent;
+		}
+
+		public string Name { get; protected set; }
+
+		public virtual bool IsItemProtected(int itemIndex)
+		{
+			return false;
+		}
+
+		public virtual bool IsItemReadOnly(int itemIndex)
+		{
+			return false;
+		}
 
 		public void RegisterForProgress(int itemIndex, ReportProgressRatio reportProgress)
 		{
@@ -235,61 +270,28 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-        protected ProgressPlug GetItemProgressPlug(int itemIndex)
-        {
-            if (!itemReportProgressHandlers.ContainsKey(itemIndex))
-            {
+		protected ProgressPlug GetItemProgressPlug(int itemIndex)
+		{
+			if (!itemReportProgressHandlers.ContainsKey(itemIndex))
+			{
 				itemReportProgressHandlers.Add(itemIndex, new ProgressPlug());
 			}
 
-            return itemReportProgressHandlers[itemIndex];
-        }
-
-		public virtual int GetCollectionItemCount(int collectionIndex)
-		{
-			return GetProviderForCollection(GetCollectionItem(collectionIndex)).ItemCount;
+			return itemReportProgressHandlers[itemIndex];
 		}
 
-		public virtual string StatusMessage
+		public class ProgressPlug
 		{
-			get { return ""; }
-		}
+			public ReportProgressRatio ProgressOutput;
 
-		public virtual ImageBuffer GetCollectionFolderImage(int collectionIndex)
-		{
-			return NormalFolderImage;
-		}
-
-		public virtual GuiWidget GetItemThumbnail(int printItemIndex)
-		{
-			var printItemWrapper = GetPrintItemWrapperAsync(printItemIndex).Result;
-			return new PartThumbnailWidget(printItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
-		}
-
-		public virtual string GetPrintItemName(int itemIndex)
-		{
-			return "";
-		}
-
-		public virtual bool IsItemProtected(int itemIndex)
-		{
-			return false;
-		}
-
-		public virtual bool IsItemReadOnly(int itemIndex)
-		{
-			return false;
-		}
-
-		public LibraryProvider GetRootProvider()
-		{
-			LibraryProvider parent = this;
-			while (parent != null)
+			public void ProgressInput(double progress0To1, string processingState, out bool continueProcessing)
 			{
-				parent = parent.ParentLibraryProvider;
+				continueProcessing = true;
+				if (ProgressOutput != null)
+				{
+					ProgressOutput(progress0To1, processingState, out continueProcessing);
+				}
 			}
-
-			return parent;
 		}
 	}
 
@@ -297,13 +299,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		public string Key;
 		public string Name;
-		public string ProviderData;
 
-		public ProviderLocatorNode(string key, string name, string providerData)
+		public ProviderLocatorNode(string key, string name)
 		{
 			this.Key = key;
 			this.Name = name;
-			this.ProviderData = providerData;
 		}
 	}
 }
