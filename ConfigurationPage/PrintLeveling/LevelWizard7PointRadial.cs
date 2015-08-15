@@ -122,10 +122,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					Vector3 delta = outPosition - lastDestinationWithLevelingApplied;
 					lastDestinationWithLevelingApplied = outPosition;
-					outPosition -= delta;
+					outPosition = delta;
 				}
 				else
 				{
+					lastDestinationWithLevelingApplied = outPosition;
 				}
 
                 newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z));

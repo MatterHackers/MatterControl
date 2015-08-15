@@ -137,23 +137,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerView = new TabPage(viewGcodeBasic, LocalizedString.Get("Layer View").ToUpper());
 
 			int tabPointSize = 16;
-			// add the correct tabs based on wether we are stand alone or embeded
-			if (windowMode == View3DWidget.WindowMode.StandAlone || OsInformation.OperatingSystem == OSType.Android)
+            // add the correct tabs based on wether we are stand alone or embeded
+            Tab threeDViewTab;
+            Tab layerViewTab;
+            if (windowMode == View3DWidget.WindowMode.StandAlone || OsInformation.OperatingSystem == OSType.Android)
 			{
-				tabControl.AddTab(new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
-					selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
-				tabControl.AddTab(new SimpleTextTabWidget(layerView, "Layer View Tab", tabPointSize,
-					selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
+                threeDViewTab = new SimpleTextTabWidget(partPreview3DView, "3D View Tab", tabPointSize,
+                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
+                tabControl.AddTab(threeDViewTab);
+                layerViewTab = new SimpleTextTabWidget(layerView, "Layer View Tab", tabPointSize,
+                    selectedTabColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
+                tabControl.AddTab(layerViewTab);
 			}
 			else
 			{
-				tabControl.AddTab(new PopOutTextTabWidget(partPreview3DView, "3D View Tab", new Vector2(590, 400), tabPointSize));
-				Tab layerViewTab = new PopOutTextTabWidget(layerView, "Layer View Tab", new Vector2(590, 400), tabPointSize);
-				layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
+                threeDViewTab = new PopOutTextTabWidget(partPreview3DView, "3D View Tab", new Vector2(590, 400), tabPointSize);
+                tabControl.AddTab(threeDViewTab);
+				layerViewTab = new PopOutTextTabWidget(layerView, "Layer View Tab", new Vector2(590, 400), tabPointSize);
 				tabControl.AddTab(layerViewTab);
 			}
 
-			this.AddChild(tabControl);
+            threeDViewTab.ToolTipText = "Preview 3D Design".Localize();
+            layerViewTab.ToolTipText = "Preview layer Tool Paths".Localize();
+
+            this.AddChild(tabControl);
 		}
 
 		public void SwitchToGcodeView()

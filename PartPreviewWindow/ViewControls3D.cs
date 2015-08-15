@@ -1,9 +1,39 @@
-﻿using MatterHackers.Agg;
+﻿/*
+Copyright (c) 2014, Lars Brubaker
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.IO;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -55,7 +85,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string rotateIconPath = Path.Combine("ViewTransformControls", "rotate.png");
 			rotateButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
-			rotateButton.Margin = new BorderDouble(3);
+            rotateButton.ToolTipText = "Rotate (Ctrl + L. Mouse)".Localize();
+            rotateButton.Margin = new BorderDouble(3);
 			AddChild(rotateButton);
 			rotateButton.Click += (sender, e) =>
 			{
@@ -64,7 +95,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
 			translateButton = textImageButtonFactory.GenerateRadioButton("", translateIconPath);
-			translateButton.Margin = new BorderDouble(3);
+            translateButton.ToolTipText = "Move (Shift + L. Mouse)".Localize();
+            translateButton.Margin = new BorderDouble(3);
 			AddChild(translateButton);
 			translateButton.Click += (sender, e) =>
 			{
@@ -73,7 +105,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
 			scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
-			scaleButton.Margin = new BorderDouble(3);
+            scaleButton.ToolTipText = "Zoom (Alt + L. Mouse)".Localize();
+            scaleButton.Margin = new BorderDouble(3);
 			AddChild(scaleButton);
 			scaleButton.Click += (sender, e) =>
 			{
@@ -87,7 +120,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string partSelectIconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 			partSelectButton = textImageButtonFactory.GenerateRadioButton("", partSelectIconPath);
-			partSelectButton.Margin = new BorderDouble(3);
+            partSelectButton.ToolTipText = "Select Part".Localize();
+            partSelectButton.Margin = new BorderDouble(3);
 			AddChild(partSelectButton);
 			partSelectButton.Click += (sender, e) =>
 			{

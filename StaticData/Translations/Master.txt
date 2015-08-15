@@ -3643,3 +3643,24 @@ Translated:Sign out of your MatterControl account
 English:Add a new Printer Profile
 Translated:Add a new Printer Profile
 
+English:Rotate (Ctrl + L. Mouse)
+Translated:Rotate (Ctrl + L. Mouse)
+
+English:Move (Shift + L. Mouse)
+Translated:Move (Shift + L. Mouse)
+
+English:Zoom (Alt + L. Mouse)
+Translated:Zoom (Alt + L. Mouse)
+
+English:Select Part
+Translated:Select Part
+
+English:Move
+Translated:Move
+
+English:Zoom
+Translated:Zoom
+
+English:Preview 3D Design
+Translated:Preview 3D Design
+
