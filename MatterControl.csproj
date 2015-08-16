@@ -519,5 +519,9 @@
       <Project>{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}</Project>
       <Name>InfInstaller</Name>
     </ProjectReference>
+    <ProjectReference Include="TestRunner\TestRunner.csproj">
+      <Project>{9d193b5c-bef4-44b2-ad6d-597b7a2c52c5}</Project>
+      <Name>TestRunner</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

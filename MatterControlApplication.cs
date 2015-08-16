@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl.OpenGl;
+using MatterHackers.TestRunner;
 using MatterHackers.VectorMath;
 using Mindscape.Raygun4Net;
 using System;
@@ -48,12 +49,13 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-	public class MatterControlApplication : SystemWindow
+    public class MatterControlApplication : SystemWindow
 	{
-		public bool RestartOnClose = false;
+        public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
 		private string[] commandLineArgs = null;
@@ -531,6 +533,7 @@ namespace MatterHackers.MatterControl
 
 			if (firstDraw)
 			{
+                Task.Run((Action)ButtonClickTest);
 				UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
 				firstDraw = false;
@@ -553,7 +556,15 @@ namespace MatterHackers.MatterControl
 			//msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
 		}
 
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
+        private void ButtonClickTest()
+        {
+            TestFramework test = new TestFramework("C:/TestImages");
+            ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
+            test.Wait(2);
+            test.ClickByName("SettingsAndControls");
+        }
+
+        public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			if (GuiWidget.DebugBoundsUnderMouse)
 			{
