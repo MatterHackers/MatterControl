@@ -3664,3 +3664,9 @@ Translated:Zoom
 English:Preview 3D Design
 Translated:Preview 3D Design
 
+English:Rotate (Alt + L. Mouse)
+Translated:Rotate (Alt + L. Mouse)
+
+English:Zoom (Ctrl + L. Mouse)
+Translated:Zoom (Ctrl + L. Mouse)
+
