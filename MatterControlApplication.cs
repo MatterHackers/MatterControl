@@ -533,7 +533,7 @@ namespace MatterHackers.MatterControl
 
 			if (firstDraw)
 			{
-                Task.Run((Action)ButtonClickTest);
+                //Task.Run((Action)ButtonClickTest);
 				UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
 				firstDraw = false;
