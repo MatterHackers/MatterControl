@@ -562,6 +562,8 @@ namespace MatterHackers.MatterControl
             ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
             test.Wait(2);
             test.ClickByName("SettingsAndControls");
+            test.Wait(2);
+            test.ClickImage("BackButton.png");
         }
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)

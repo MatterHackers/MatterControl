@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 using System;
@@ -95,6 +96,38 @@ namespace MatterHackers.TestRunner
                     return true;
                 }
             }
+            return false;
+        }
+
+        public bool ClickImage(string imageName, int xOffset = 0, int yOffset = 0, double upDelaySeconds = .2)
+        {
+            string pathToImage = Path.Combine(imageDirectory, imageName);
+
+            ImageBuffer imageToLookFor = new ImageBuffer();
+            if (ImageIO.LoadImageData(pathToImage, imageToLookFor))
+            {
+                ImageBuffer currentScreen = GetCurrentScreen();
+
+                Vector2 matchPosition;
+                double bestMatch;
+                if (currentScreen.FindLeastSquaresMatch(imageToLookFor, out matchPosition, out bestMatch))
+                {
+                    // TODO: figure out which window the position is in
+                    SystemWindow window = SystemWindow.OpenWindows[0];
+
+                    UiThread.RunOnIdle(() =>
+                    window.OnMouseDown(new MouseEventArgs(MouseButtons.Left, 1,
+                        matchPosition.x + xOffset, matchPosition.y + yOffset,
+                        0)));
+                    Wait(upDelaySeconds);
+                    UiThread.RunOnIdle(() =>
+                    window.OnMouseUp(new MouseEventArgs(MouseButtons.Left, 0,
+                        matchPosition.x + xOffset, matchPosition.y + yOffset,
+                        0)));
+                    return true;
+                }
+            }
+
             return false;
         }
 
