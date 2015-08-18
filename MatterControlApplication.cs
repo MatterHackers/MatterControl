@@ -559,12 +559,14 @@ namespace MatterHackers.MatterControl
         private void ButtonClickTest()
         {
             TestFramework test = new TestFramework("C:/TestImages");
-            ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
             test.Wait(2);
             test.ClickByName("SettingsAndControls");
             test.Wait(2);
-            test.ClickImage("BackButton.png");
-        }
+			test.ClickImage("BackButton.png");
+
+
+			//ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
+		}
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
