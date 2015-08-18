@@ -234,8 +234,11 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 		public void Exit()
 		{
-			this.activeSession.SessionEnd = DateTime.Now;
-			this.activeSession.Commit();
+			if (this.activeSession != null)
+			{
+				this.activeSession.SessionEnd = DateTime.Now;
+				this.activeSession.Commit();
+			}
 			// lets wait a bit to make sure the commit has resolved.
 			Thread.Sleep(100);
 			try

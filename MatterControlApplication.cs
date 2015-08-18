@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl
 {
     public class MatterControlApplication : SystemWindow
 	{
+		public static Action AfterFirstDraw = null;
         public bool RestartOnClose = false;
 		private static readonly Vector2 minSize = new Vector2(600, 600);
 		private static MatterControlApplication instance;
@@ -550,6 +551,11 @@ namespace MatterHackers.MatterControl
 				TerminalWindow.ShowIfLeftOpen();
 
 				//new SaveAsWindow(null, null);
+
+				if (AfterFirstDraw != null)
+				{
+					AfterFirstDraw();
+				}
 			}
 
 			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);

@@ -306,6 +306,7 @@ namespace MatterHackers.Agg.UI
 
 			MenuItem menuItem = new MenuItem(new MenuItemStatesView(normalTextWithMargin, hoverTextWithMargin), value);
 			menuItem.Text = name;
+			menuItem.Name = name + " Menu Item";
 			MenuItems.Add(menuItem);
 		}
 	}

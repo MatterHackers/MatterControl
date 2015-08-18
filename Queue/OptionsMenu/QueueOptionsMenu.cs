@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public QueueOptionsMenu()
 		{
 			MenuDropList = new DropDownMenu("Queue".Localize() + "... ", Direction.Up);
+			MenuDropList.Name = "Queue... Menu";
 			MenuDropList.VAnchor = VAnchor.ParentBottomTop;
 			MenuDropList.BorderWidth = 1;
 			MenuDropList.MenuAsWideAsItems = false;
@@ -96,13 +97,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 			// part sheet export option on mac.
 			if (OsInformation.OperatingSystem == OSType.Windows)
 			{
-				// mac cannot export to pdf
 				menuItems.Add(new Tuple<string, Func<bool>>("Other".Localize(), null));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Create Part Sheet".Localize(), createPartsSheetsButton_Click));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Remove All".Localize(), removeAllFromQueueButton_Click));
 			}
 			else
 			{
+				// mac cannot export to pdf
 				menuItems.Add(new Tuple<string, Func<bool>>("Other".Localize(), null));
 				menuItems.Add(new Tuple<string, Func<bool>>(" Remove All".Localize(), removeAllFromQueueButton_Click));
 			}

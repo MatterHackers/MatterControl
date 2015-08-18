@@ -31,6 +31,9 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
+using MatterHackers.GuiAutomation;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -38,6 +41,38 @@ namespace MatterHackers.MatterControl.UI
 	public class UITests
 	{
 		private static bool saveImagesForDebug = true;
+
+		void RemoveAllFromQueue(AutomationRunner testRunner)
+		{
+			Assert.IsTrue(testRunner.ClickByName("Queue... Menu"));
+			testRunner.Wait(.2);
+			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item"));
+			testRunner.Wait(.2);
+		}
+	
+		[Test]
+		[RequiresSTA]
+		public void UiAutomationTests()
+		{
+			// Run a copy of MatterControl
+			MatterControlApplication.AfterFirstDraw = () =>
+			{
+				Task.Run(() =>
+				{
+					AutomationRunner testRunner = new AutomationRunner("C:/TestImages");
+					testRunner.Wait(2);
+
+					// Now do the actions specific to this test. (replace this for new tests)
+					{
+						RemoveAllFromQueue(testRunner);
+					}
+
+					MatterControlApplication.Instance.CloseOnIdle();
+				});
+			};
+
+			SystemWindow mcWindow = MatterControlApplication.Instance;
+		}
 
 		/// <summary>
 		/// Bug #94150618 - Left margin is not applied on GuiWidget
