@@ -431,6 +431,10 @@
       <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
       <Name>DataConverters3D</Name>
     </ProjectReference>
+    <ProjectReference Include="SubModules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
+      <Project>{e9102310-0029-4d8f-b1e9-88fba6147d45}</Project>
+      <Name>GuiAutomation</Name>
+    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Gui\Gui.csproj">
       <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
       <Name>Gui</Name>
@@ -518,10 +522,6 @@
     <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
       <Project>{990A9AD3-B6A4-407B-9DFC-9C722AF7C9B9}</Project>
       <Name>InfInstaller</Name>
-    </ProjectReference>
-    <ProjectReference Include="TestRunner\TestRunner.csproj">
-      <Project>{9d193b5c-bef4-44b2-ad6d-597b7a2c52c5}</Project>
-      <Name>TestRunner</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
