@@ -39,7 +39,7 @@ using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl.OpenGl;
-using MatterHackers.TestRunner;
+using MatterHackers.GuiAutomation;
 using MatterHackers.VectorMath;
 using Mindscape.Raygun4Net;
 using System;
@@ -533,7 +533,7 @@ namespace MatterHackers.MatterControl
 
 			if (firstDraw)
 			{
-                //Task.Run((Action)ButtonClickTest);
+                //Task.Run((Action)AutomationTest);
 				UiThread.RunOnIdle(DoAutoConnectIfRequired);
 
 				firstDraw = false;
@@ -556,15 +556,17 @@ namespace MatterHackers.MatterControl
 			//msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
 		}
 
-        private void ButtonClickTest()
+        private void AutomationTest()
         {
-            TestFramework test = new TestFramework("C:/TestImages");
-            ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
+            AutomationRunner test = new AutomationRunner("C:/TestImages");
             test.Wait(2);
             test.ClickByName("SettingsAndControls");
             test.Wait(2);
-            test.ClickImage("BackButton.png");
-        }
+			test.ClickImage("BackButton.png");
+
+
+			//ImageIO.SaveImageData("test.png", test.GetCurrentScreen());
+		}
 
         public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
