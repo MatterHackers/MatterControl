@@ -7,3 +7,4 @@ fill_density = 0.2
 fill_pattern = rectilinear
 solid_infill_below_area = 40
 infill_speed = 60
+z_offset = 0
