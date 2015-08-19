@@ -1,11 +1,11 @@
-English:Connect
+﻿English:Connect
 Translated:Connecter
 
 English:Disconnect
 Translated:Déconnecter
 
 English:Status
-Translated:Status
+Translated:Statut
 
 English:Connected
 Translated:Connecté
@@ -38,31 +38,31 @@ English:Skip
 Translated:Passer
 
 English:Skip the current item and move to the next in queue
-Translated:Passer l'élément courent et démarrer le suivant dans la file d'attente
+Translated:Passer l'élément courant et démarrer le suivant dans la file d'attente
 
 English:Remove
-Translated:Suprimer
+Translated:supprimer
 
 English:Remove current item from queue
-Translated:Suprimer l'élément courent de la file d'attente
+Translated:Supprimer l'élément courant de la file d'attente
 
 English:Pause
 Translated:Pause
 
 English:Pause the current print
-Translated:Mettre en Pause l'impression
+Translated:Mettre en pause l'impression
 
 English:Cancel Connect
 Translated:Annuler la connexion
 
 English:Stop trying to connect to the printer.
-Translated:Arréter d'éssayer de se connecter à l'imprimante
+Translated:Arrêter les tentatives de connection à l'imprimante
 
 English:Cancel
 Translated:Annuler
 
 English:Stop the current print
-Translated:Arréter l'impression en cours
+Translated:Arrêter l'impression en cours
 
 English:Resume
 Translated:Reprendre
@@ -74,22 +74,22 @@ English:Reprint
 Translated:Ré-imprimer
 
 English:Print current item again
-Translated:Imprimer l'élément courent une autre fois
+Translated:Imprimer l'élément courant une autre fois
 
 English:Done
-Translated:Finie
+Translated:Fini
 
 English:Move to next print in queue
 Translated:Passer à l'élément suivant dans la file d'attente
 
 English:No printer selected.  Press 'Connect' to choose a printer.
-Translated:Aucune imprimante de sélectionée. Appuyez sur 'Connection' pour choisir une imprimante
+Translated:Aucune imprimante sélectionée. Appuyez sur 'Connection' pour choisir une imprimante
 
 English:Press 'Add' to choose an item to print
 Translated:Appuyez sur 'Ajouter' pour choisir un élement à imprimer
 
 English:No items in the print queue
-Translated:Aucun éléménent dans la file d'impression
+Translated:Aucun élément dans la file d'attente
 
 English:Queued to Print
 Translated:Mis en file d'attente
@@ -116,16 +116,16 @@ English:complete
 Translated:Fin
 
 English:Remove All
-Translated:Suprimer tout
+Translated:Supprimer tout
 
 English:Queue Options
 Translated:Options de la file d'attente
 
 English: Import from Zip
-Translated: Import from Zip
+Translated: Importer d'un fichier Zip
 
 English: Export to Zip
-Translated:Exporter dans un Zip
+Translated:Exporter dans un fichier Zip
 
 English: Export to Folder
 Translated: Exporter dans un dossier
@@ -134,7 +134,7 @@ English:Extra
 Translated:Extra
 
 English: Create Part Sheet
-Translated: Créer une feuille séparé
+Translated: Créer une feuille séparée
 
 English:Search
 Translated:Rechercher
@@ -146,19 +146,19 @@ English:Create
 Translated:Créer
 
 English:Check for Update
-Translated:Rechercher une mise à jours
+Translated:Rechercher une mise à jour
 
 English:Download Update
-Translated:Télécharger une mise à jours
+Translated:Télécharger une mise à jour
 
 English:Install Update
-Translated:Installer la mise à jours
+Translated:Installer la mise à jour
 
 English:There are updates available.
-Translated:Il y a une mise à jours de disponible
+Translated:Une mise à jour est disponible
 
 English:Checking for updates...
-Translated:Recherche de mise à jours...
+Translated:Recherche de mise à jour...
 
 English:MatterControl
 Translated:MatterControl
@@ -179,7 +179,7 @@ English: to help support and improve MatterControl.
 Translated:Pour aider à supporter et améliorer MatterControl.
 
 English:Special thanks to Alessandro Ranellucci for his incredible work on 
-Translated:Remerciements à Alessandro Ranellucci pour son travail formidable
+Translated:Remerciements chaleureux à Alessandro Ranellucci pour son travail formidable sur
 
 English:Slic3r
 Translated:Slic3r
@@ -203,7 +203,7 @@ English:Build: {0} |
 Translated:Build: {0} | 
 
 English:Clear Cache
-Translated:Suprimer le Cache
+Translated:supprimer le Cache
 
 English:Queue
 Translated:File d'attente
@@ -251,16 +251,16 @@ English:reset
 Translated:réinitialiser
 
 English:Apply Scale
-Translated:Appliquer l'agrandissement
+Translated:Appliquer le facteur d'échelle
 
 English:Finding Parts
 Translated:Recherche d'éléments
 
 English:Edit
-Translated:Editer
+Translated:Éditer
 
 English:Delete
-Translated:Suprimer
+Translated:Supprimer
 
 English:Close
 Translated:Fermer
@@ -278,7 +278,7 @@ English:Press 'generate' to view layers
 Translated:Appuyez sur 'générer' pour voir les couches
 
 English:Model
-Translated:Model
+Translated:Modèle
 
 English:Layer
 Translated:Couche
@@ -287,7 +287,7 @@ English:Library
 Translated:Bibliothèque
 
 English:About
-Translated:A propos
+Translated:À propos
 
 English:Advanced\nControls
 Translated:Contrôles\nAvancés
@@ -305,7 +305,7 @@ English:Presets
 Translated:Presets
 
 English:Movement Controls
-Translated:Contrôles de mouvement
+Translated:Contrôles des déplacements
 
 English:ALL
 Translated:TOUT
@@ -380,67 +380,67 @@ English:No Printer Selected
 Translated:Aucune imprimante selectioné
 
 English:No printer is currently selected. Select printer to edit slice settings.
-Translated:Aucune imprimante selectioné. Selectionez une imprimante afin d'éditer les paramètres de slicing.
+Translated:Aucune imprimante selectionnée. Selectionez une imprimante afin d'éditer les paramètres de slicing.
 
 English:Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
-Translated:Essaye de minimiser le nombre de croisement de périmètre. Ceci peut aider à réduire les effects de suintement ou de fils.
+Translated:Tentative de minimiser le nombre de croisement des périmètres. Ceci peut aider à réduire les effects de suintement ou de fils.
 
 English:The shape of the physical print bed.
-Translated:Forme physique du lit d'impréssion.
+Translated:Forme physique du lit d'impression.
 
 English:The size of the print bed.
 Translated:Taille du lit d'impression.
 
 English:The temperature to set the bed to after the first layer has been printed. Set to 0 to eliminate bed temperature commands.
-Translated:Température du lit après que la première couche soit imprimée. Metre à 0 pour suprimer les commande de température du lit.
+Translated:Température du lit après que la première couche soit imprimée. Mettre à 0 pour supprimer les commandes de température pour le lit.
 
 English:How many layers will be solid filled on the bottom surfaces of the object.
 Translated:Combien de couches seront remplies au niveau de la surface inférieur de l'objet.
 
 English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
-Translated:Acceleration pendant le pontage (bridging). Metre à 0 pour désactiver le changement d'accélération.
+Translated:Accélération pendant le pontage (bridging). Mettre à 0 pour désactiver le changement d'accélération.
 
 English:The fan speed to use during bridging.
-Translated:La vitesse du ventillateur pendant le pontage (bridging).
+Translated:La vitesse du ventilateur pendant le pontage (bridging).
 
 English:This controls the ratio of material extruder during bridging. Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
-Translated:Ceci contrôle le ratio de matière extrudé pendant le pontage (bridging). Réduire ce paramètre légèrement peut aider en tirant plus sur le filament. L'utilisation d'un ventilateur peut grandement aider.
+Translated:Ceci contrôle le ratio de matière extrudée pendant le pontage (bridging). Réduire ce paramètre légèrement peut aider en tirant plus sur le filament. L'utilisation d'un ventilateur peut grandement aider.
 
 English:The speed to move when bridging between walls.
-Translated:La vitesse utilisé pendant un pontage (bridging) entre deux paroies.
+Translated:La vitesse utilisée pendant un pontage (bridging) entre deux paroies.
 
 English:The amount of brim that will be drawn around each object. This is useful to ensure that parts stay affixed to the bed.
-Translated:La quantité de bord (brim) dessiné autour de chaque objet. Ceci est utile afin d'être sûr que l'object reste bien collé au lit.
+Translated:La quantité de bord (brim) dessinée autour de chaque objet. Ceci est utile afin d'être sûr que l'object reste bien collé au lit.
 
 English:The height of the printable area. If set to 0 the parts height will not be validated.
-Translated:La hauteur de la surface d'impression. Si 0, la hauteur de l'object sera invalide.
+Translated:La hauteur de la surface d'impression. Si 0, la hauteur de l'objet ne sera pas validée.
 
 English:Each individual part is printed to completion then the extruder is lowered back to the bed and the next part is printed.
-Translated:Chaque object est imprimé individuellement, une fois finie, la tête chauffante passerra à l'objet suivant en recommençant en bas du plateau.
+Translated:Chaque objet est imprimé individuellement, une fois fini, la tête chauffante passera à l'objet suivant en recommençant au ras du plateau.
 
 English:Moves the extruder up off the part to allow cooling.
 Translated:Lève la tête chauffante au dessus de l'object afin de permettre le refroidissement.
 
 English:Turns on and off all cooling settings (all settings below this one).
-Translated:Active ou désactive tous les paramètres de refroidissement(Tous les paramètre en dessous celui là).
+Translated:Active ou désactive tous les paramètres de refroidissement (Tous les paramètres en dessous celui là).
 
 English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
-Translated:Acceleration à utiliser sur tous les mouvements non définis ci-dessus. Utiliser 0 pour désactiver le changement d'accélération de l'imprimante.
+Translated:Accélération à utiliser sur tous les mouvements non définis ci-dessus. Utiliser 0 pour désactiver le changement d'accélération de l'imprimante.
 
 English:The number of layers for which the fan will be forced to remain off.
-Translated:Le nombre de couches pour lesquels le ventilateur restera désactivé.
+Translated:Le nombre de couches pour lesquelles le ventilateur restera désactivé.
 
 English:This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
-Translated:Ce gcode sera inséré à la fin de toutes les sorties automatique du slicer (Les toutes dernières commandes gcode).
+Translated:Ce gcode sera ajouté à la fin de toutes les sorties automatiques du slicer (Les toutes dernières commandes gcode).
 
 English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Perimeters speed.
-Translated:Vitesse utilisé pour imprimer la surface extérieure visible de l'object. Ce paramètre peut être donné explicitement en mm/s ou en utilisant un pourcentage de vitesse de périphérie.
+Translated:Vitesse utilisée pour imprimer la surface extérieure visible de l'object. Ce paramètre peut être donné explicitement en mm/s ou en utilisant un pourcentage de vitesse de périphérie.
 
 English:Normally external perimeters are printed last, this makes them go first.
-Translated:En règle générale, le périmètre extérieur est imprimé en dernier, Ce paramètre permet de l'imprimer en premier.
+Translated:En règle générale, le périmètre extérieur est imprimé en dernier; ce paramètre permet de l'imprimer en premier.
 
 English:Allow slicer to generate extra perimeters when needed for sloping walls.
-Translated:Permet à slic3r de générer un périmètre suplémentaire au besoin pour les paroies pentues.
+Translated:Permet au slicer de générer un périmètre supplémentaire au besoin pour les paroies en angle. ZZZ
 
 English:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
 Translated:Ce paramètre est utilisé pour déterminé l'espacement des objects entre eux lorsque l'impression séparé des objets est utilisé.
@@ -896,19 +896,19 @@ English:Show Retractions
 Translated:Show Retractions
 
 English:Go
-Translated:Go
+Translated:Début
 
 English:start:
-Translated:start:
+Translated:début:
 
 English:end:
-Translated:end:
+Translated:fin:
 
 English:There is a recommended update available.
 Translated:There is a recommended update available.
 
 English:Layer View
-Translated:Layer View
+Translated:Vue des couches
 
 English:Connect to Printer
 Translated:Connect to Printer
@@ -929,7 +929,7 @@ English:Connecting
 Translated:Connecting
 
 English:Status: {0} - {1}
-Translated:Status: {0} - {1}
+Translated:Statut: {0} - {1}
 
 English:edit
 Translated:edit
@@ -1184,16 +1184,16 @@ English:Default
 Translated:Default
 
 English:Acceleration Control
-Translated:Acceleration Control
+Translated:Paramètre d'accélération
 
 English:Skirt Height
-Translated:Skirt Height
+Translated:Hauteur de la jupette
 
 English:Brim Width
-Translated:Brim Width
+Translated:Largeur du rebord
 
 English:Brim
-Translated:Brim
+Translated:Rebord
 
 English:Enforce Support For First
 Translated:Enforce Support For First
@@ -1385,58 +1385,58 @@ English:Temperature (C)
 Translated:Temperature (C)
 
 English:Language Settings
-Translated:Language Settings
+Translated:Paramètre pour la langue
 
 English:Select Model
-Translated:Select Model
+Translated:Choisir un modèle
 
 English:Theme Settings
-Translated:Theme Settings
+Translated:Choix du thème
 
 English:New updates are ready to install.
 Translated:New updates are ready to install.
 
 English:Select Language
-Translated:Select Language
+Translated:Choisir une langue
 
 English:File not found on disk.
 Translated:File not found on disk.
 
 English:Not connected. Press 'Connect' to enable printing.
-Translated:Not connected. Press 'Connect' to enable printing.
+Translated:Déconnecté. Appuyer sur 'Connecter' pour activer l'impression.
 
 English:Loading Parts
-Translated:Loading Parts
+Translated:Chargement des composantes
 
 English:CONNECT
-Translated:CONNECT
+Translated:CONNECTER
 
 English:DISCONNECT
-Translated:DISCONNECT
+Translated:DÉCONNECTER
 
 English:OPTIONS
 Translated:OPTIONS
 
 English:QUEUE
-Translated:QUEUE
+Translated:FILE D'ATTENTE
 
 English:STATUS
-Translated:STATUS
+Translated:STATUT
 
 English:CONTROLS
-Translated:CONTROLS
+Translated:CONTRÔLES
 
 English:SLICE SETTINGS
-Translated:SLICE SETTINGS
+Translated:PARAMÈTRES DE SLICE
 
 English:CONFIGURATION
 Translated:CONFIGURATION
 
 English:MODEL
-Translated:MODEL
+Translated:MODÈLE
 
 English:LAYER
-Translated:LAYER
+Translated:COUCHE
 
 English:DISPLAY
 Translated:DISPLAY
@@ -1445,49 +1445,49 @@ English:PRINT TIME
 Translated:PRINT TIME
 
 English:FILAMENT LENGTH
-Translated:FILAMENT LENGTH
+Translated:LONGUEUR DE FILAMENT
 
 English:FILAMENT VOLUME
-Translated:FILAMENT VOLUME
+Translated:VOLUME DE FILAMENT 
 
 English:WEIGHT
-Translated:WEIGHT
+Translated:POIDS
 
 English:EST. WEIGHT
-Translated:EST. WEIGHT
+Translated:POIDS ESTIMÉ
 
 English:Saving
 Translated:Saving
 
 English:Export File
-Translated:Export File
+Translated:Exporter un fichier
 
 English:File export options
-Translated:File export options
+Translated:Options à l'exportation de fichiers
 
 English:Export as
-Translated:Export as
+Translated:Exporter sous
 
 English:Show file in folder after save
-Translated:Show file in folder after save
+Translated:Afficher le fichier dans le dossier après la sauvegarde
 
 English:HISTORY
-Translated:HISTORY
+Translated:HISTORIQUE
 
 English:LIBRARY
-Translated:LIBRARY
+Translated:BIBLIOTHEQUE
 
 English:Developed By: 
-Translated:Developed By: 
+Translated:Developé par: 
 
 English: to help support MatterControl.
-Translated: to help support MatterControl.
+Translated: pour aider au support de MatterControl.
 
 English:ABOUT
-Translated:ABOUT
+Translated:A PROPOS
 
 English:Oops! Could not find this file
-Translated:Oops! Could not find this file
+Translated:Oops! Fichier introuvable
 
 English:Would you like to remove it from the queue
 Translated:Would you like to remove it from the queue
@@ -1496,19 +1496,19 @@ English:Item not Found
 Translated:Item not Found
 
 English:Yes
-Translated:Yes
+Translated:Oui
 
 English:No
-Translated:No
+Translated:Non
 
 English:History
-Translated:History
+Translated:Historique
 
 English:Slicing Error. Please review your slice settings.
 Translated:Slicing Error. Please review your slice settings.
 
 English:Quality
-Translated:Quality
+Translated:Qualité
 
 English:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
 Translated:First Layer Height' must be less than or equal to the 'Nozzle Diameter'.
@@ -1520,13 +1520,13 @@ English:Center On Bed
 Translated:Center On Bed
 
 English:Center Print
-Translated:Center Print
+Translated:Centrer l'impression
 
 English:Note
 Translated:Note
 
 English:To enable GCode export, select a printer profile.
-Translated:To enable GCode export, select a printer profile.
+Translated:Afin d'exporter du GCode, sélectionner d'abord un profil d'imprimante.
 
 English:The amount to remove from the bottom of the model
 Translated:The amount to remove from the bottom of the model
@@ -1676,7 +1676,7 @@ English:Disconnecting
 Translated:Disconnecting
 
 English:Leveling Settings
-Translated:Leveling Settings
+Translated:Paramètres de nivelage
 
 English:Movement Speeds Presets
 Translated:Movement Speeds Presets
@@ -1748,13 +1748,13 @@ English:Print Leveling Wizard
 Translated:Print Leveling Wizard
 
 English:Back
-Translated:Back
+Translated:Retour
 
 English:Next
-Translated:Next
+Translated:Suivant
 
 English:Low Precision
-Translated:Low Precision
+Translated:Basse précision
 
 English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
 Translated:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
@@ -1871,7 +1871,7 @@ English:if currently connected
 Translated:if currently connected
 
 English:Press
-Translated:Press
+Translated:Appuyer
 
 English:Continue
 Translated:Continue
@@ -1883,19 +1883,19 @@ English:Setup Manual Configuration
 Translated:Setup Manual Configuration
 
 English:or
-Translated:or
+Translated:ou
 
 English:Skip Printer Connection
 Translated:Skip Printer Connection
 
 English:You can either
-Translated:You can either
+Translated:Vous pouvez autrement
 
 English:You can also
-Translated:You can also
+Translated:Vous pouvez aussi
 
 English:Extruder Temperature Settings
-Translated:Extruder Temperature Settings
+Translated:Paramètres de température d'extrusion
 
 English:Temperature Shortcut Presets
 Translated:Temperature Shortcut Presets
@@ -1910,13 +1910,13 @@ English:Max Temp.
 Translated:Max Temp.
 
 English:Bed Temperature Settings
-Translated:Bed Temperature Settings
+Translated:Paramètres de la température du lit
 
 English:Movement Speeds
-Translated:Movement Speeds
+Translated:Vitesses de déplacement
 
 English:Extruder
-Translated:Extruder
+Translated:Extrudeuse
 
 English:Power on and connect printer
 Translated:Power on and connect printer
@@ -1970,13 +1970,13 @@ English:Infill Type
 Translated:Infill Type
 
 English:Release Options
-Translated:Release Options
+Translated:Options
 
 English:No items to select. Press 'Add' to select a file to print.
 Translated:No items to select. Press 'Add' to select a file to print.
 
 English:Unknown
-Translated:Unknown
+Translated:Inconnu
 
 English:Press 'Add' to select an item.
 Translated:Press 'Add' to select an item.
@@ -1997,28 +1997,28 @@ English:Slicing Error.\nPlease review your slice settings.
 Translated:Slicing Error.\nPlease review your slice settings.
 
 English:Special thanks to:
-Translated:Special thanks to:
+Translated:Remerciements chaleureux à:
 
 English:Alessandro Ranellucci for 
-Translated:Alessandro Ranellucci for 
+Translated:Alessandro Ranellucci pour 
 
 English:David Braam and Ultimaker BV for 
-Translated:David Braam and Ultimaker BV for 
+Translated:David Braam et Ultimaker BV pour 
 
 English:To enable GCode export, select a printer profile
 Translated:To enable GCode export, select a printer profile
 
 English:MatterControl: Submit an Issue
-Translated:MatterControl: Submit an Issue
+Translated:MatterControl: Soumettre un problème
 
 English:Submit
-Translated:Submit
+Translated:Soumettre
 
 English:How can we help?
-Translated:How can we help?
+Translated:Comment peut-on contribuer?
 
 English:Submitting your information...
-Translated:Submitting your information...
+Translated:Soumettre vos informations...
 
 English:Question*
 Translated:Question*
@@ -2027,25 +2027,25 @@ English:Briefly describe your question
 Translated:Briefly describe your question
 
 English:Details*
-Translated:Details*
+Translated:Détails*
 
 English:Fill in the details here
-Translated:Fill in the details here
+Translated:Remplir les détails ici
 
 English:Your Email Address*
-Translated:Your Email Address*
+Translated:votre adresse Email*
 
 English:Your Name*
-Translated:Your Name*
+Translated:Votre nom*
 
 English:Version 
 Translated:Version 
 
 English:Developed by:
-Translated:Developed by:
+Translated:Developé par:
 
 English:Send FeedBack
-Translated:Send FeedBack
+Translated:Envoyer vos commentaires
 
 English:Build: 
 Translated:Build: 
@@ -2054,25 +2054,25 @@ English:Update Feed
 Translated:Update Feed
 
 English:File
-Translated:File
+Translated:Fichier
 
 English:Import File
-Translated:Import File
+Translated:Importer Fichier
 
 English:Exit
-Translated:Exit
+Translated:Sortir
 
 English:Help
-Translated:Help
+Translated:Aide
 
 English:Getting Started
-Translated:Getting Started
+Translated:Pour débuter
 
 English:View Help
-Translated:View Help
+Translated:Consulter l'aide
 
 English:Manually Configure Connection
-Translated:Manually Configure Connection
+Translated:Configurer manuellement un connection
 
 English:Skip Connection Setup
 Translated:Skip Connection Setup
@@ -2087,7 +2087,7 @@ English:The 'Serial Port' identifies which connected device is\nyour printer. Ch
 Translated:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
 
 English:Connection succeeded!
-Translated:Connection succeeded!
+Translated:Connection réussie!
 
 English:Oops! Unable to install update.
 Translated:Oops! Unable to install update.
@@ -2114,16 +2114,16 @@ English:Apply
 Translated:Apply
 
 English:Buy Materials
-Translated:Buy Materials
+Translated:Acheter des matériaux
 
 English:Select an STL file
-Translated:Select an STL file
+Translated:Choisir un fichier STL
 
 English:Add File
-Translated:Add File
+Translated:Ajouter un fichier
 
 English:Time
-Translated:Time
+Translated:Temps
 
 English:Press 'Connect' to select a printer.
 Translated:Press 'Connect' to select a printer.
@@ -2366,13 +2366,13 @@ English:File export options:
 Translated:File export options:
 
 English:Report a Bug
-Translated:Report a Bug
+Translated:Reporter un problème
 
 English:About MatterControl
-Translated:About MatterControl
+Translated:À propos de MatterControl
 
 English:Oops! Printer could not be detected 
-Translated:Oops! Printer could not be detected 
+Translated:Oops! L'imprimante n'est pas détectée 
 
 English: Load Files
 Translated: Load Files
@@ -2435,13 +2435,13 @@ English:Send an SMS notification
 Translated:Send an SMS notification
 
 English:Experimental
-Translated:Experimental
+Translated:Expérimental
 
 English:Have MatterControl send you a text message after your print is finished
 Translated:Have MatterControl send you a text message after your print is finished
 
 English:Your Phone Number*
-Translated:Your Phone Number*
+Translated:Votre numéro de téléphone*
 
 English:A U.S. or Canadian mobile phone number
 Translated:A U.S. or Canadian mobile phone number
@@ -2483,10 +2483,10 @@ English:Warning GCode file
 Translated:Warning GCode file
 
 English:Release Notes
-Translated:Release Notes
+Translated:Notes de version
 
 English:More Info
-Translated:More Info
+Translated:Pour plus d'information
 
 English:Go To Status
 Translated:Go To Status
@@ -2639,25 +2639,25 @@ English:Hardware
 Translated:Hardware
 
 English:Search Library
-Translated:Search Library
+Translated:Rechercher dans la Bibliothèque
 
 English:My Library
-Translated:My Library
+Translated:Ma Bibliothèque
 
 English:Add to Library
-Translated:Add to Library
+Translated:Ajouter à la Bibliothèque
 
 English:Group
-Translated:Group
+Translated:Grouper
 
 English:Ungroup
-Translated:Ungroup
+Translated:Dégrouper
 
 English:Align...
-Translated:Align...
+Translated:Aligner...
 
 English:Selection
-Translated:Selection
+Translated:Sélection
 
 English:Entering Editor
 Translated:Entering Editor
@@ -2744,7 +2744,7 @@ English:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
 Translated:'Layer Height' must be less than or equal to the 'Nozzle Diameter'.
 
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
-Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
+Translated:Location: 'Contrôles Avancés' -> 'Slice Settings' -> 'Print' -> 'Layers/Perimeters'
 
 English:Color {0}
 Translated:Color {0}
@@ -2897,10 +2897,10 @@ English:Supported Angles
 Translated:Supported Angles
 
 English:Amount
-Translated:Amount
+Translated:Quantité
 
 English:Settings
-Translated:Settings
+Translated:Paramètres
 
 English:Unsaved Changes
 Translated:Unsaved Changes
@@ -2915,7 +2915,7 @@ English:Simple
 Translated:Simple
 
 English:Intermediate
-Translated:Intermediate
+Translated:Intermédiaire
 
 English:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
 Translated:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
@@ -2930,10 +2930,10 @@ English:Expand Distance
 Translated:Expand Distance
 
 English:Insert
-Translated:Insert
+Translated:Insérer
 
 English:Restore
-Translated:Restore
+Translated:Récupérer
 
 English:WINDOWED MODE: This tab has been moved to a separate window.
 Translated:WINDOWED MODE: This tab has been moved to a separate window.
@@ -3014,7 +3014,7 @@ English:Total Print Time:
 Translated:Total Print Time:
 
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
-Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Speed'
+Translated:Location: 'Contrôles Avancés' -> 'Slice Settings' -> 'Print' -> 'Speed'
 
 English:The '{0}' must be greater than 0.
 Translated:The '{0}' must be greater than 0.
@@ -3026,7 +3026,7 @@ English:Slice Error
 Translated:Slice Error
 
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
-Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Location: 'Contrôles Avancés' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
 
 English:Save Slice Configuration
 Translated:Save Slice Configuration
@@ -3098,7 +3098,7 @@ English:The Fill Density must be between 0 and 1 inclusive.
 Translated:The Fill Density must be between 0 and 1 inclusive.
 
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
-Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
+Translated:Location: 'Contrôles Avancés' -> 'Slice Settings' -> 'Print' -> 'Infill'
 
 English:Inserting Text
 Translated:Inserting Text
@@ -3110,7 +3110,7 @@ English:Reset Connection
 Translated:Reset Connection
 
 English:Reboots the firmware on the controller
-Translated:Reboots the firmware on the controller
+Translated:Redémarre le micro-processeur
 
 English:Please wait. Slicing files {0} of {1}
 Translated:Please wait. Slicing files {0} of {1}
@@ -3149,7 +3149,7 @@ English:Converting image...
 Translated:Converting image...
 
 English:Add To Library
-Translated:Add To Library
+Translated:Ajouter à la Bibliothèque
 
 English:Print Queue
 Translated:Print Queue
@@ -3161,7 +3161,7 @@ English:Standard
 Translated:Standard
 
 English:Connect to the printer
-Translated:Connect to the printer
+Translated:Connecter à l'imprimante
 
 English:Reset
 Translated:Reset
@@ -3170,10 +3170,10 @@ English:Console
 Translated:Console
 
 English:On
-Translated:On
+Translated:Allumé
 
 English:Off
-Translated:Off
+Translated:Éteint
 
 English:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
 Translated:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
@@ -3251,10 +3251,10 @@ English:Features
 Translated:Features
 
 English:Update Available
-Translated:Update Available
+Translated:Mise-à-jour disponible
 
 English:Check For Update
-Translated:Check For Update
+Translated:Vérifier pour la disponibilité d'une mise-à-jour
 
 English:solid_shell
 Translated:solid_shell
@@ -3266,16 +3266,16 @@ English:Up to Date
 Translated:Up to Date
 
 English:Checking For Update
-Translated:Checking For Update
+Translated:Vérification de la disponibilité d'une mise-à-jour en cours
 
 English:Loading Parts...
-Translated:Loading Parts...
+Translated:Chargement de composantes en cours...
 
 English:More
-Translated:More
+Translated:Plus
 
 English:Share
-Translated:Share
+Translated:Partager
 
 English:WARNING: Write Failed!
 Translated:WARNING: Write Failed!
@@ -3293,7 +3293,7 @@ English:Terminal
 Translated:Terminal
 
 English:Settings\n& Controls
-Translated:Settings\n& Controls
+Translated:Paramètres\n& Contrôles
 
 English:Print Area
 Translated:Print Area
@@ -3301,8 +3301,8 @@ Translated:Print Area
 English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
 Translated:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
 
-English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
-Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'First Layer'
+Translated:Location: 'Contrôles Avancés' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'First Layer'
 
 English:First Layer Extrusion Width' must be greater than 0.
 Translated:First Layer Extrusion Width' must be greater than 0.
@@ -3311,22 +3311,22 @@ English:First Layer Extrusion Width = {0}
 Translated:First Layer Extrusion Width = {0}
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
-Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+Translated:Location: 'Paramètres & Contrôles' -> 'Paramètres' -> 'General' -> 'Speed'
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
-Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Location: 'Paramètres & Contrôles' -> 'Paramètres' -> 'Filament' -> 'Filament' -> 'Retraction'
 
-English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
-Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'
+Translated:Location: 'Paramètres & Contrôles' -> 'Paramètres' -> 'Filament' -> 'Extrusion' -> 'First Layer'
 
 English:Open
 Translated:Open
 
 English:Checking For Update...
-Translated:Checking For Update...
+Translated:Vérifie la disponibilité d'une mise-à-jour...
 
 English:Create Folder
-Translated:Create Folder
+Translated:Créer un dossier
 
 English:Redeem
 Translated:Redeem
@@ -3335,29 +3335,29 @@ English:First Layer Height = {0}\nNozzle Diameter = {1}
 Translated:First Layer Height = {0}\nNozzle Diameter = {1}
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
-Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+Translated:Location: 'Paramètres & Contrôles' -> 'Paramètres' -> 'General' -> 'Layers/Surface'
 
 English:Create New Folder:
-Translated:Create New Folder:
+Translated:Créer un nouveau dossier:
 
 English:Folder Name
-Translated:Folder Name
+Translated:Nom du dossier
 
 English:Enter a Folder Name Here
-Translated:Enter a Folder Name Here
+Translated:Entrer le nom du dossier ici
 
 English:Save New Design to Queue
-Translated:Save New Design to Queue
+Translated:Sauver le nouveau design à la queue
 
 English:Design Name
-Translated:Design Name
+Translated:Nom du Design
 
 English:Enter the name of your design.
-Translated:Enter the name of your design.
+Translated:Entrer le nom de votre design.
 
 English:Enter a Design Name Here
-Translated:Enter a Design Name Here
+Translated:Entrer le nom du Design ici
 
 English:Also save to Library
-Translated:Also save to Library
+Translated:Sauver à la Bibliothèque
 
