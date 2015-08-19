@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			}
 		}
 
+		public string AutoCreateModel { get; set; }
+
 		public bool UseSimpleModeByDefault = false;
 
 		public string ThemeColor = "";
