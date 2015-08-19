@@ -3361,3 +3361,309 @@ Translated:Entrer le nom du Design ici
 English:Also save to Library
 Translated:Sauver à la Bibliothèque
 
+English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+Translated:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
+
+English:Home
+Translated:Home
+
+English:The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:The collection you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+
+English:Collection not Empty
+Translated:Collection not Empty
+
+English:Do NOT Delete
+Translated:Do NOT Delete
+
+English:Library (cloud)
+Translated:Library (cloud)
+
+English:Purchased
+Translated:Purchased
+
+English:Session Expired
+Translated:Session Expired
+
+English:Thumbnail Rendering
+Translated:Thumbnail Rendering
+
+English:Flat
+Translated:Flat
+
+English:3D
+Translated:3D
+
+English:Update Status
+Translated:Update Status
+
+English:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+Translated:The folder you are trying to delete '{0}' is not empty. Would you like to delete it anyway?
+
+English:Folder not Empty
+Translated:Folder not Empty
+
+English:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\nWould you like to delete it anyway?
+
+English:Delete folder?
+Translated:Delete folder?
+
+English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+Translated:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
+
+English:Cloud Library
+Translated:Cloud Library
+
+English:Rename
+Translated:Rename
+
+English:Rename Item:
+Translated:Rename Item:
+
+English:New Name
+Translated:New Name
+
+English:Enter New Name Here
+Translated:Enter New Name Here
+
+English:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
+Translated:The speed to print the visible outside edges. This can be set explicitly or as a percentage of the Inside Perimeters speed.
+
+English:Save New Design
+Translated:Save New Design
+
+English:Save Location
+Translated:Save Location
+
+English:Choose the location to save to.
+Translated:Choose the location to save to.
+
+English:Sample the bed at seven points
+Translated:Sample the bed at seven points
+
+English:You should be done in about 5 minutes.
+Translated:You should be done in about 5 minutes.
+
+English:The print leveling alogrithm to use.
+Translated:The print leveling alogrithm to use.
+
+English:The print leveling sampling mothod to use.
+Translated:The print leveling sampling mothod to use.
+
+English:This gcode will be run prior to starting bed probing.
+Translated:This gcode will be run prior to starting bed probing.
+
+English:This gcode will be run after finishing bed probing.
+Translated:This gcode will be run after finishing bed probing.
+
+English:The width of the paper (or other calibration device) used when doing manual bed probing.
+Translated:The width of the paper (or other calibration device) used when doing manual bed probing.
+
+English:The offset of the probe relative to the extruder.
+Translated:The offset of the probe relative to the extruder.
+
+English:The z offset of the probe relative to the extruder.
+Translated:The z offset of the probe relative to the extruder.
+
+English:Print Leveling
+Translated:Print Leveling
+
+English:Leveling Solution
+Translated:Leveling Solution
+
+English:Leveling Method
+Translated:Leveling Method
+
+English:Manual Probe Paper Width
+Translated:Manual Probe Paper Width
+
+English:Probe Offset
+Translated:Probe Offset
+
+English:Probe Z Offset
+Translated:Probe Z Offset
+
+English:There is a recommended update available for MatterControl. Would you like to download it now?
+Translated:There is a recommended update available for MatterControl. Would you like to download it now?
+
+English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+Translated:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
+
+English:This printer requires print leveling to run correctly.
+Translated:This printer requires print leveling to run correctly.
+
+English:Require Leveling To Print
+Translated:Require Leveling To Print
+
+English:Oops! You cannot restart while a print is active.
+Translated:Oops! You cannot restart while a print is active.
+
+English:Unable to restart
+Translated:Unable to restart
+
+English:Add File To Queue
+Translated:Add File To Queue
+
+English:Add Folder To Library
+Translated:Add Folder To Library
+
+English:Using the above controls
+Translated:Using the above controls
+
+English:Add Local Folder To Library
+Translated:Add Local Folder To Library
+
+English:Redeem Design Code
+Translated:Redeem Design Code
+
+English:You should be done in about 6 minutes.
+Translated:You should be done in about 6 minutes.
+
+English:Enter Share Code
+Translated:Enter Share Code
+
+English:Downloading...
+Translated:Downloading...
+
+English:Uploading...
+Translated:Uploading...
+
+English:Click to show in 3D View
+Translated:Click to show in 3D View
+
+English:Enter Mulit Select mode
+Translated:Enter Mulit Select mode
+
+English:Add a .stl, .amf, .gcode or .zip File To The Queue
+Translated:Add a .stl, .amf, .gcode or .zip File To The Queue
+
+English:Choose a Create Tool to generate custom parts
+Translated:Choose a Create Tool to generate custom parts
+
+English:Switch to Setings and Manual Controls pannel
+Translated:Switch to Setings and Manual Controls pannel
+
+English:Pop This Tab out into its own Window
+Translated:Pop This Tab out into its own Window
+
+English:Preview layer Tool Paths
+Translated:Preview layer Tool Paths
+
+English:Add a .stl, .amf, .gcode or .zip File to the Queue
+Translated:Add a .stl, .amf, .gcode or .zip File to the Queue
+
+English:Add a .stl, .amf, .gcode or .zip File to the Bed
+Translated:Add a .stl, .amf, .gcode or .zip File to the Bed
+
+English:Add an .stl, .amf, .gcode or .zip file to the Queue
+Translated:Add an .stl, .amf, .gcode or .zip file to the Queue
+
+English:Insert an .stl, .amf, .gcode or .zip file
+Translated:Insert an .stl, .amf, .gcode or .zip file
+
+English:Bring the Window back into this Tab
+Translated:Bring the Window back into this Tab
+
+English:Insert an .stl, .amf or .zip file
+Translated:Insert an .stl, .amf or .zip file
+
+English:Update Channel
+Translated:Update Channel
+
+English:Current Build : Test Build
+Translated:Current Build : Test Build
+
+English:Stable: The current release version of MatterControl (recommended).
+Translated:Stable: The current release version of MatterControl (recommended).
+
+English:Beta: The release candidate version of MatterControl.
+Translated:Beta: The release candidate version of MatterControl.
+
+English:Alpha: The in development version of MatterControl.
+Translated:Alpha: The in development version of MatterControl.
+
+English:Choose a Create Tool to generate custom designs
+Translated:Choose a Create Tool to generate custom designs
+
+English:Switch to Settings, Controls and Options
+Translated:Switch to Settings, Controls and Options
+
+English:Switch to Queue, Library and History
+Translated:Switch to Queue, Library and History
+
+English:Sign in to your MatterControl account
+Translated:Sign in to your MatterControl account
+
+English:Connect to the currently selected printer
+Translated:Connect to the currently selected printer
+
+English:Disconnect from current printer
+Translated:Disconnect from current printer
+
+English:Select a printer
+Translated:Select a printer
+
+English:Current extruder temperature
+Translated:Current extruder temperature
+
+English:Preheat the Extruder
+Translated:Preheat the Extruder
+
+English:Current bed temperature
+Translated:Current bed temperature
+
+English:Preheat the Bed
+Translated:Preheat the Bed
+
+English:Shop online for printing materials
+Translated:Shop online for printing materials
+
+English:Add an .stl, .amf, .gcode or .zip file to the Library
+Translated:Add an .stl, .amf, .gcode or .zip file to the Library
+
+English:Open your dashboard in a web browser
+Translated:Open your dashboard in a web browser
+
+English:Sign out of your MatterControl account
+Translated:Sign out of your MatterControl account
+
+English:Add a new Printer Profile
+Translated:Add a new Printer Profile
+
+English:Rotate (Ctrl + L. Mouse)
+Translated:Rotate (Ctrl + L. Mouse)
+
+English:Move (Shift + L. Mouse)
+Translated:Move (Shift + L. Mouse)
+
+English:Zoom (Alt + L. Mouse)
+Translated:Zoom (Alt + L. Mouse)
+
+English:Select Part
+Translated:Select Part
+
+English:Move
+Translated:Move
+
+English:Zoom
+Translated:Zoom
+
+English:Preview 3D Design
+Translated:Preview 3D Design
+
+English:Rotate (Alt + L. Mouse)
+Translated:Rotate (Alt + L. Mouse)
+
+English:Zoom (Ctrl + L. Mouse)
+Translated:Zoom (Ctrl + L. Mouse)
+
+English:Qualité
+Translated:Qualité
+
+English:Enter Multi Select mode
+Translated:Enter Multi Select mode
+

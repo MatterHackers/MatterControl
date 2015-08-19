@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
 				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
-				enterEditModeButton.ToolTipText = "Enter Mulit Select mode".Localize();
+				enterEditModeButton.ToolTipText = "Enter Multi Select mode".Localize();
                 enterEditModeButton.Click += enterEditModeButtonClick;
 
 				leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
