@@ -58,10 +58,9 @@ namespace MatterHackers.MatterControl
 				if (itemsToAdd.Length > 0)
 				{
 					// Import any files sync'd to disk into the library, then add them to the queue
-					LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd, null, (sender, e) =>
-						{
-							AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
-						});
+					LibraryData.Instance.LoadFilesIntoLibraryCopyOnly(itemsToAdd);
+					
+					AddItemsToQueue(calibrationPrintFileNames, QueueData.Instance.GetItemNames());
 				}
 				else
 				{

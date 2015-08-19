@@ -184,14 +184,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					libraryCollection = new PrintItemCollection();
 					libraryCollection.Name = "_library";
 					libraryCollection.Commit();
-
-					// Preload library with Oem supplied list of default parts
-					string[] itemsToAdd = LibraryData.SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
-					if (itemsToAdd.Length > 0)
-					{
-						// Import any files sync'd to disk into the library, then add them to the queue
-						LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd);
-					}
 				}
 				return libraryCollection;
 			}
@@ -288,6 +280,34 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		private ReportProgressRatio fileLoadReportProgress = null;
+
+		public void LoadFilesIntoLibraryCopyOnly(string[] fileList)
+		{
+			if (fileList != null && fileList.Length > 0)
+			{
+				foreach (string loadedFileName in fileList)
+				{
+					PrintItem printItem = new PrintItem();
+					printItem.Name = Path.GetFileNameWithoutExtension(loadedFileName);
+					printItem.FileLocation = Path.GetFullPath(loadedFileName);
+					printItem.PrintItemCollectionID = LibraryData.Instance.LibraryCollection.Id;
+					printItem.Commit();
+
+					PrintItemWrapper printItemWrapper = new PrintItemWrapper(printItem);
+					string sourceFileName = printItem.FileLocation;
+					string newFileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(printItem.FileLocation));
+					string destFileName = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, newFileName);
+
+					File.Copy(sourceFileName, destFileName, true);
+
+					printItemWrapper.FileLocation = destFileName;
+					printItemWrapper.PrintItem.Commit();
+
+					// let the queue know that the item has changed so it load the correct part
+					LibraryData.Instance.AddItem(printItemWrapper);
+				}
+			}
+		}
 
 		public void LoadFilesIntoLibrary(IList<string> files, ReportProgressRatio reportProgress = null, RunWorkerCompletedEventHandler callback = null)
 		{
