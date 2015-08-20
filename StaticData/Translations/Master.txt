@@ -3670,3 +3670,6 @@ Translated:Rotate (Alt + L. Mouse)
 English:Zoom (Ctrl + L. Mouse)
 Translated:Zoom (Ctrl + L. Mouse)
 
+English:Enter Multi Select mode
+Translated:Enter Multi Select mode
+

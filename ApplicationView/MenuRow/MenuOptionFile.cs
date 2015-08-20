@@ -24,6 +24,7 @@ namespace MatterHackers.MatterControl
 		public MenuOptionFile()
 			: base("File".Localize())
 		{
+			Name = "File Menu";
 			CurrentMenuOptionFile = this;
 		}
 

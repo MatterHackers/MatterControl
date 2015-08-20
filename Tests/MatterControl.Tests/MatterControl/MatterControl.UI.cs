@@ -46,41 +46,45 @@ namespace MatterHackers.MatterControl.UI
 
 		void RemoveAllFromQueue(AutomationRunner testRunner)
 		{
-			Assert.IsTrue(testRunner.ClickByName("Queue... Menu"));
+			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", secondsToWait: 2));
+			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", secondsToWait: 2));
+		}
+
+		void CloseMatterControl(AutomationRunner testRunner)
+		{
+			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
+			Assert.IsTrue(testRunner.ClickByName("File Menu", secondsToWait: 2));
+			Assert.IsTrue(testRunner.ClickByName("Exit Menu Item", secondsToWait: 2));
 			testRunner.Wait(.2);
-			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item"));
-			testRunner.Wait(.2);
+			if (mcWindowLocal.Parent != null)
+			{
+				mcWindowLocal.CloseOnIdle();
+			}
 		}
 	
 		[Test]
 		[RequiresSTA]
-		public void UiAutomationTests()
+		public void ClearQueueTests()
 		{
 			// Run a copy of MatterControl
-			bool firstDraw = true;
 			MatterControlApplication.AfterFirstDraw = () =>
 			{
-				if (firstDraw)
+				Task.Run(() =>
 				{
-					firstDraw = false;
-					Task.Run(() =>
+					AutomationRunner testRunner = new AutomationRunner("");
+
+					// Now do the actions specific to this test. (replace this for new tests)
 					{
-						AutomationRunner testRunner = new AutomationRunner("");
-						testRunner.Wait(2);
+						RemoveAllFromQueue(testRunner);
+					}
 
-						// Now do the actions specific to this test. (replace this for new tests)
-						{
-							RemoveAllFromQueue(testRunner);
-						}
-
-						MatterControlApplication.Instance.CloseOnIdle();
-					});
-				}
+					CloseMatterControl(testRunner);
+				});
 			};
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", ".."));
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 #endif
 			SystemWindow mcWindow = MatterControlApplication.Instance;
 		}
