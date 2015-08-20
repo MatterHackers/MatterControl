@@ -118,16 +118,16 @@ namespace MatterHackers.MatterControl
 
 			GuiWidget manualPrinterControls = new ManualControlsWidget();
 
-            ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(true);
-            manualPrinterControlsScrollArea.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-            manualPrinterControlsScrollArea.AnchorAll();
-            manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
-
+			/* TODO: Research: putting manualPrinterControls in this scrollable causes it to collapse to 0x0 on reload
+			ScrollableWidget manualPrinterControlsScrollArea = new ScrollableWidget(autoScroll: true);
+			manualPrinterControlsScrollArea.ScrollArea.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			manualPrinterControlsScrollArea.AnchorAll();
+			manualPrinterControlsScrollArea.AddChild(manualPrinterControls);
+			*/
 
 			//Add the tab contents for 'Advanced Controls'
 			string printerControlsLabel = LocalizedString.Get("Controls").ToUpper();
-            manualControlsPage = new TabPage(manualPrinterControlsScrollArea, printerControlsLabel);
-           
+			manualControlsPage = new TabPage(manualPrinterControls, printerControlsLabel);
 
             this.AddTab(new SimpleTextTabWidget(manualControlsPage, "Controls Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
