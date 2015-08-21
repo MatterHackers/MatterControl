@@ -356,7 +356,7 @@ namespace MatterHackers.MatterControl
 			printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 60);
 			plateGraphics.Render(printer, RGBA_Bytes.Black);
 
-			string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 			string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "plateImages");
 			string jpegFileName = Path.Combine(folderToSavePrintsTo, plateNumber.ToString() + ".jpeg");
 

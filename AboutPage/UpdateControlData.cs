@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 #if __ANDROID__
 		static string updateFileLocation = Path.Combine(DataStorage.ApplicationDataStorage.Instance.PublicDataStoragePath, "updates");
 #else
-		private static string applicationDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
+		private static string applicationDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
 		private static string updateFileLocation = Path.Combine(applicationDataPath, "updates");
 #endif
 

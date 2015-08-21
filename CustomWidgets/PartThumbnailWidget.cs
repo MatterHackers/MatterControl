@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl
 
 		private static string ThumbnailPath()
 		{
-			string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 			string folderToSaveThumbnailsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");
 			return folderToSaveThumbnailsTo;
 		}

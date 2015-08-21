@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -57,30 +58,34 @@ namespace MatterControl.Tests
 
 		private event EventHandler unregisterEvents;
 
-		[Test, Ignore("Needs to use a known data set")]
+		[Test]
 		public void LibraryProviderFileSystem_NavigationWorking()
 		{
-			Datastore.Instance.Initialize();
-			Thread.Sleep(3000); // wait for the library to finish initializing
+			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+			string testLibraryDirectory = Path.Combine(downloadsDirectory, "LibraryProviderFileSystemTest");
+			if (Directory.Exists(testLibraryDirectory))
+			{
+				Directory.Delete(testLibraryDirectory, true);
+			}
 
-			LibraryProviderFileSystem testProvider = new LibraryProviderFileSystem(pathToMesh, "TestPath", null);
+			Directory.CreateDirectory(testLibraryDirectory);
+
+			LibraryProviderFileSystem testProvider = new LibraryProviderFileSystem(testLibraryDirectory, "TestPath", null);
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
-			Assert.IsTrue(testProvider.ItemCount == 1, "Start with a new database for these tests.");
+			Assert.IsTrue(testProvider.ItemCount == 0, "Start with a new database for these tests.");
 
 			// create a collection and make sure it is on disk
 			dataReloaded = false; // it has been loaded for the default set of parts
 			string collectionName = "Collection1";
-			string createdDirectory = Path.Combine(pathToMesh, collectionName);
+			string createdDirectory = Path.Combine(testLibraryDirectory, collectionName);
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
 			Assert.IsTrue(dataReloaded == false);
 			testProvider.AddCollectionToLibrary(collectionName);
 			Assert.IsTrue(testProvider.CollectionCount == 1);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(Directory.Exists(createdDirectory));
-
-			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapperAsync(0).Result;
 
 			// add an item works correctly
 			LibraryProvider subProvider = testProvider.GetProviderForCollection(testProvider.GetCollectionItem(0));
@@ -94,7 +99,9 @@ namespace MatterControl.Tests
 
 			// WIP: saving the name incorectly for this location (does not need to be changed).
 			subProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
-			Thread.Sleep(3000); // wait for the add to finihs
+			Thread.Sleep(3000); // wait for the add to finish
+
+			PrintItemWrapper itemAtRoot = subProvider.GetPrintItemWrapperAsync(0).Result;
 
 			Assert.IsTrue(subProvider.ItemCount == 1);
 			Assert.IsTrue(dataReloaded == true);
@@ -117,11 +124,32 @@ namespace MatterControl.Tests
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
+
+			if (Directory.Exists(testLibraryDirectory))
+			{
+				Directory.Delete(testLibraryDirectory, true);
+			}
 		}
 
-		[Test, Ignore("Needs to use a known data set")]
+		[Test]
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
+			string userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
+			string renamedUserDataPath = Path.Combine(Path.GetDirectoryName(userDataPath), "-MatterControl");
+			int testCount = 0;
+			while (Directory.Exists(renamedUserDataPath + testCount.ToString()))
+			{
+				testCount++;
+			}
+			renamedUserDataPath = renamedUserDataPath + testCount.ToString();
+
+			bool undoDataRename = false;
+			if (Directory.Exists(userDataPath))
+			{
+				Directory.Move(userDataPath, renamedUserDataPath);
+				undoDataRename = true;
+			}
+
 			Datastore.Instance.Initialize();
 			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, "Local Library");
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
@@ -147,7 +175,7 @@ namespace MatterControl.Tests
 			Assert.IsTrue(dataReloaded == false);
 
 			testProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
-			Thread.Sleep(3000); // wait for the add to finihs
+			Thread.Sleep(3000); // wait for the add to finish
 
 			Assert.IsTrue(testProvider.ItemCount == 2);
 			Assert.IsTrue(dataReloaded == true);
@@ -159,7 +187,7 @@ namespace MatterControl.Tests
 			// remove item works
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			testProvider.RemoveItem(1);
+			testProvider.RemoveItem(0);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(!NamedItemExists(fileNameWithExtension));
 
@@ -170,6 +198,20 @@ namespace MatterControl.Tests
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
+
+			if (undoDataRename)
+			{
+				Datastore.Instance.Exit();
+				Directory.Delete(userDataPath, true);
+				Stopwatch time = Stopwatch.StartNew();
+				// Wait for up to some amount of time for the directory to be gone.
+				while (Directory.Exists(userDataPath)
+					&& time.ElapsedMilliseconds < 100)
+				{
+					Thread.Sleep(1); // make sure we are not eating all the cpu time.
+				}
+				Directory.Move(renamedUserDataPath, userDataPath);
+			}
 		}
 
 		[SetUp]
@@ -183,7 +225,10 @@ namespace MatterControl.Tests
 		[TearDown]
 		public void TeardownAfterTest()
 		{
-			unregisterEvents(this, null);
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
 		}
 
 		private bool NamedCollectionExists(string nameToLookFor)

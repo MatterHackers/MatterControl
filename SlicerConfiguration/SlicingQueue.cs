@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static string SaveAndGetFilenameForMaterial(MeshGroup extruderMeshGroup, List<int> materialIndexsToSaveInThisSTL)
 		{
 			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".stl");
-			string applicationUserDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 			string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
 			if (!Directory.Exists(folderToSaveStlsTo))
 			{

@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl
 							if (StaticData.Instance.FileExists(infPathAndFileToInstall))
 							{
 								// Ensure the output directory exists
-								string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
+								string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
 								if (!Directory.Exists(destTempPath))
 								{
 									Directory.CreateDirectory(destTempPath);

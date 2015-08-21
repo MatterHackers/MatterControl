@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			PreloadingCalibrationFiles = true;
 
 			// Ensure the CalibrationParts directory exists to store/import the files from disk
-			string tempPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "data", "temp", "calibration-parts");
+			string tempPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "calibration-parts");
 			Directory.CreateDirectory(tempPath);
 
 			var existingLibaryItems = this.GetLibraryItems().Select(i => i.Name);

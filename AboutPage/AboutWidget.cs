@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl
 			// MatterControl\data\gcode
 			RemoveDirectory(DataStorage.ApplicationDataStorage.Instance.GCodeOutputPath);
 
-			string userDataPath = DataStorage.ApplicationDataStorage.Instance.ApplicationUserDataPath;
+			string userDataPath = DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
 			RemoveDirectory(Path.Combine(userDataPath, "updates"));
 
 			HashSet<string> referencedPrintItemsFilePaths = new HashSet<string>();
