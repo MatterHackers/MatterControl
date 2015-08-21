@@ -184,8 +184,6 @@ namespace MatterHackers.MatterControl
 			buttonViewWidget.Height = this.FixedHeight;
 			textImageButton.Height = this.FixedHeight;
 
-			textImageButton.MouseEnterBounds += new EventHandler(onEnterTooltipButton);
-			textImageButton.MouseLeaveBounds += new EventHandler(onExitTooltipButton);
 			return textImageButton;
 		}
 
@@ -236,17 +234,6 @@ namespace MatterHackers.MatterControl
 			groupLableAndEditControl.AddChild(editButton);
 
 			return groupLableAndEditControl;
-		}
-
-		private void onEnterTooltipButton(object sender, EventArgs e)
-		{
-			Button button = sender as Button;
-			HelpTextWidget.Instance.ShowHoverText(button.ToolTipText);
-		}
-
-		private void onExitTooltipButton(object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.HideHoverText();
 		}
 
 		public CheckBox GenerateCheckBoxButton(string label, string normalImageName = null, string normalToPressedImageName = null, string pressedImageName = null, string pressedToNormalImageName = null, string pressedLabel = null)

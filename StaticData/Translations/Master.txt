@@ -3673,3 +3673,9 @@ Translated:Zoom (Ctrl + L. Mouse)
 English:Enter Multi Select mode
 Translated:Enter Multi Select mode
 
+English:Print leveling is enabled.
+Translated:Print leveling is enabled.
+
+English:Edit notification settings
+Translated:Edit notification settings
+

@@ -94,26 +94,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.ShowHoverText("View Manual Printer Controls and Slicing Settings");
-		}
-
-		private void onMouseLeaveBoundsAdvancedControlsLink(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.HideHoverText();
-		}
-
-		private void onMouseEnterBoundsPrintQueueLink(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.ShowHoverText("View Queue and Library");
-		}
-
-		private void onMouseLeaveBoundsPrintQueueLink(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.HideHoverText();
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
 			if (unregisterEvents != null)

@@ -130,7 +130,6 @@
     <Compile Include="ActionBar\ActionBarBaseControls.cs" />
     <Compile Include="ActionBar\ActionBarPlus.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
-    <Compile Include="ActionBar\HelpTextWidget.cs" />
     <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterActionRow.cs" />
     <Compile Include="ActionBar\PrintStatusRow.cs" />

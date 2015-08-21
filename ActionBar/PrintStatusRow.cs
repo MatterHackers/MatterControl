@@ -224,8 +224,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(activePrintStatus);
 			//container.AddChild(activePrintInfo);
 			container.AddChild(printActionRow);
-			container.AddChild(new VerticalSpacer());
-			container.AddChild(new MessageActionRow());
 
 			return container;
 		}
@@ -239,8 +237,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			Button autoLevelButton = imageButtonFactory.Generate(notifyIconPath, notifyHoverIconPath);
 			autoLevelButton.Cursor = Cursors.Hand;
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);
-			autoLevelButton.MouseEnterBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.ShowHoverText("Print leveling is enabled."); };
-			autoLevelButton.MouseLeaveBounds += (sender, mouseEvent) => { HelpTextWidget.Instance.HideHoverText(); };
+			autoLevelButton.ToolTipText = "Print leveling is enabled.".Localize();
 			autoLevelButton.Visible = ActivePrinterProfile.Instance.DoPrintLeveling;
 
 			ActivePrinterProfile.Instance.ActivePrinterChanged.RegisterEvent((sender, e) =>

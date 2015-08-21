@@ -43,20 +43,14 @@ namespace MatterHackers.MatterControl
 		private Button advancedControlsBackButton;
 		private SliceSettingsWidget sliceSettingsWidget;
 		private EventHandler AdvancedControlsButton_Click;
-		private EventHandler onMouseEnterBoundsPrintQueueLink;
-		private EventHandler onMouseLeaveBoundsPrintQueueLink;
 
 		private TabControl advancedControls2;
 
-		public ThirdPanelTabView(EventHandler AdvancedControlsButton_Click = null,
-			EventHandler onMouseEnterBoundsPrintQueueLink = null,
-			EventHandler onMouseLeaveBoundsPrintQueueLink = null)
+		public ThirdPanelTabView(EventHandler AdvancedControlsButton_Click = null)
 		{
 			this.AdvancedControlsButton_Click = AdvancedControlsButton_Click;
-			this.onMouseEnterBoundsPrintQueueLink = onMouseEnterBoundsPrintQueueLink;
-			this.onMouseLeaveBoundsPrintQueueLink = onMouseLeaveBoundsPrintQueueLink;
 
-			advancedControls2 = CreateNewAdvancedControls(AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
+			advancedControls2 = CreateNewAdvancedControls(AdvancedControlsButton_Click);
 
 			AddChild(advancedControls2);
 
@@ -81,7 +75,7 @@ namespace MatterHackers.MatterControl
 
 		private static readonly string ThirdPanelTabView_AdvancedControls_CurrentTab = "ThirdPanelTabView_AdvancedControls_CurrentTab";
 
-		private TabControl CreateNewAdvancedControls(EventHandler AdvancedControlsButton_Click, EventHandler onMouseEnterBoundsPrintQueueLink, EventHandler onMouseLeaveBoundsPrintQueueLink)
+		private TabControl CreateNewAdvancedControls(EventHandler AdvancedControlsButton_Click)
 		{
 			TabControl advancedControls = new TabControl();
 
@@ -105,8 +99,6 @@ namespace MatterHackers.MatterControl
 				advancedControlsBackButton.VAnchor = VAnchor.ParentBottom;
 				advancedControlsBackButton.Cursor = Cursors.Hand;
 				advancedControlsBackButton.Click += new EventHandler(AdvancedControlsButton_Click);
-				advancedControlsBackButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsPrintQueueLink);
-				advancedControlsBackButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsPrintQueueLink);
 
 				advancedControls.TabBar.AddChild(advancedControlsBackButton);
 			}
@@ -183,13 +175,9 @@ namespace MatterHackers.MatterControl
 			if (advancedControlsBackButton != null)
 			{
 				advancedControlsBackButton.Click -= new EventHandler(AdvancedControlsButton_Click);
-				advancedControlsBackButton.MouseEnterBounds -= new EventHandler(onMouseEnterBoundsPrintQueueLink);
-				advancedControlsBackButton.MouseLeaveBounds -= new EventHandler(onMouseLeaveBoundsPrintQueueLink);
 			}
 
-			advancedControls2 = CreateNewAdvancedControls(AdvancedControlsButton_Click,
-				onMouseEnterBoundsPrintQueueLink,
-				onMouseLeaveBoundsPrintQueueLink);
+			advancedControls2 = CreateNewAdvancedControls(AdvancedControlsButton_Click);
 			AddChild(advancedControls2, advancedControlsIndex);
 
 			// This is a hack to make the panel remain on the screen.  It would be great to debug it and understand
