@@ -40,15 +40,15 @@ using System.Threading;
 
 namespace MatterControl.Tests
 {
-	[TestFixture]
-	public class LibraryProviderTests
+	[TestFixture, RunInApplicationDomain]
+	public class LibraryProviderSqliteTests
 	{
 		private bool dataReloaded = false;
 		private string meshFileName = "Box20x20x10.stl";
 		private string meshPathAndFileName;
 		private string pathToMesh = Path.Combine("..", "..", "..", "TestData", "TestMeshes", "LibraryProviderData");
 
-		public LibraryProviderTests()
+		public LibraryProviderSqliteTests()
 		{
 			#if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
@@ -58,64 +58,66 @@ namespace MatterControl.Tests
 
 		private event EventHandler unregisterEvents;
 
-		[Test]
-		public void LibraryProviderFileSystem_NavigationWorking()
+#if !__ANDROID__
+		[Test, RunInApplicationDomain]
+		public void LibraryProviderSqlite_NavigationWorking()
 		{
-			string downloadsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-			string testLibraryDirectory = Path.Combine(downloadsDirectory, "LibraryProviderFileSystemTest");
-			if (Directory.Exists(testLibraryDirectory))
+			string userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
+			string renamedUserDataPath = Path.Combine(Path.GetDirectoryName(userDataPath), "-MatterControl");
+			int testCount = 0;
+			while (Directory.Exists(renamedUserDataPath + testCount.ToString()))
 			{
-				Directory.Delete(testLibraryDirectory, true);
+				testCount++;
+			}
+			renamedUserDataPath = renamedUserDataPath + testCount.ToString();
+
+			bool undoDataRename = false;
+			if (Directory.Exists(userDataPath))
+			{
+				Directory.Move(userDataPath, renamedUserDataPath);
+				undoDataRename = true;
 			}
 
-			Directory.CreateDirectory(testLibraryDirectory);
-
-			LibraryProviderFileSystem testProvider = new LibraryProviderFileSystem(testLibraryDirectory, "TestPath", null);
+			Datastore.Instance.Initialize();
+			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, "Local Library");
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
-
+			Thread.Sleep(3000); // wait for the library to finish initializing
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
-			Assert.IsTrue(testProvider.ItemCount == 0, "Start with a new database for these tests.");
+			Assert.IsTrue(testProvider.ItemCount == 1, "Start with a new database for these tests.");
 
 			// create a collection and make sure it is on disk
 			dataReloaded = false; // it has been loaded for the default set of parts
 			string collectionName = "Collection1";
-			string createdDirectory = Path.Combine(testLibraryDirectory, collectionName);
-			Assert.IsTrue(!Directory.Exists(createdDirectory));
+			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
 			Assert.IsTrue(dataReloaded == false);
 			testProvider.AddCollectionToLibrary(collectionName);
 			Assert.IsTrue(testProvider.CollectionCount == 1);
 			Assert.IsTrue(dataReloaded == true);
-			Assert.IsTrue(Directory.Exists(createdDirectory));
+			Assert.IsTrue(NamedCollectionExists(collectionName)); // assert that the record does exist in the DB
+
+			PrintItemWrapper itemAtRoot = testProvider.GetPrintItemWrapperAsync(0).Result;
 
 			// add an item works correctly
-			LibraryProvider subProvider = testProvider.GetProviderForCollection(testProvider.GetCollectionItem(0));
-			subProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 			dataReloaded = false;
-			//itemAdded = false;
-			string subPathAndFile = Path.Combine(createdDirectory, meshFileName);
-			Assert.IsTrue(!File.Exists(subPathAndFile));
+			Assert.IsTrue(!NamedItemExists(collectionName));
 			Assert.IsTrue(dataReloaded == false);
-			//Assert.IsTrue(itemAdded == false);
 
-			// WIP: saving the name incorectly for this location (does not need to be changed).
-			subProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
+			testProvider.AddFilesToLibrary(new string[] { meshPathAndFileName });
 			Thread.Sleep(3000); // wait for the add to finish
 
-			PrintItemWrapper itemAtRoot = subProvider.GetPrintItemWrapperAsync(0).Result;
-
-			Assert.IsTrue(subProvider.ItemCount == 1);
+			Assert.IsTrue(testProvider.ItemCount == 2);
 			Assert.IsTrue(dataReloaded == true);
-			//Assert.IsTrue(itemAdded == true);
-			Assert.IsTrue(File.Exists(subPathAndFile));
+			string fileNameWithExtension = Path.GetFileNameWithoutExtension(meshPathAndFileName);
+			Assert.IsTrue(NamedItemExists(fileNameWithExtension));
 
 			// make sure the provider locator is correct
 
 			// remove item works
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			subProvider.RemoveItem(0);
+			testProvider.RemoveItem(0);
 			Assert.IsTrue(dataReloaded == true);
-			Assert.IsTrue(!File.Exists(subPathAndFile));
+			Assert.IsTrue(!NamedItemExists(fileNameWithExtension));
 
 			// remove collection gets rid of it
 			dataReloaded = false;
@@ -123,13 +125,23 @@ namespace MatterControl.Tests
 			testProvider.RemoveCollection(0);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
-			Assert.IsTrue(!Directory.Exists(createdDirectory));
+			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
 
-			if (Directory.Exists(testLibraryDirectory))
+			if (undoDataRename)
 			{
-				Directory.Delete(testLibraryDirectory, true);
+				Datastore.Instance.Exit();
+				Directory.Delete(userDataPath, true);
+				Stopwatch time = Stopwatch.StartNew();
+				// Wait for up to some amount of time for the directory to be gone.
+				while (Directory.Exists(userDataPath)
+					&& time.ElapsedMilliseconds < 100)
+				{
+					Thread.Sleep(1); // make sure we are not eating all the cpu time.
+				}
+				Directory.Move(renamedUserDataPath, userDataPath);
 			}
 		}
+#endif
 
 		[SetUp]
 		public void SetupBeforeTest()
