@@ -57,7 +57,7 @@ namespace MatterControl.Tests
 
 		private event EventHandler unregisterEvents;
 
-		[Test, Category("LibraryProviderFileSystem")]
+		[Test, Ignore("Needs to use a known data set")]
 		public void LibraryProviderFileSystem_NavigationWorking()
 		{
 			Datastore.Instance.Initialize();
@@ -119,7 +119,7 @@ namespace MatterControl.Tests
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
 		}
 
-		[Test, Category("LibraryProviderSqlite")]
+		[Test, Ignore("Needs to use a known data set")]
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
 			Datastore.Instance.Initialize();
