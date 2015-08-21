@@ -184,6 +184,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					libraryCollection = new PrintItemCollection();
 					libraryCollection.Name = "_library";
 					libraryCollection.Commit();
+#if !__ANDROID__
+					// Preload library with Oem supplied list of default parts
+					string[] itemsToAdd = LibraryData.SyncCalibrationFilesToDisk(OemSettings.Instance.PreloadedLibraryFiles);
+					if (itemsToAdd.Length > 0)
+					{
+						// Import any files sync'd to disk into the library, then add them to the queue
+						LibraryData.Instance.LoadFilesIntoLibrary(itemsToAdd);
+					}
+#endif
 				}
 				return libraryCollection;
 			}
