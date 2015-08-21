@@ -61,9 +61,8 @@ namespace MatterHackers.MatterControl.UI
 				mcWindowLocal.CloseOnIdle();
 			}
 		}
-	
-		[Test]
-		[RequiresSTA]
+
+		[Test, RequiresSTA, RunInApplicationDomain]
 		public void ClearQueueTests()
 		{
 			// Run a copy of MatterControl
