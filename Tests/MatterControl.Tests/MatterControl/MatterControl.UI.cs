@@ -29,13 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
-using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
-using MatterHackers.GuiAutomation;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.GuiAutomation;
+using NUnit.Framework;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -44,13 +43,13 @@ namespace MatterHackers.MatterControl.UI
 	{
 		private static bool saveImagesForDebug = true;
 
-		void RemoveAllFromQueue(AutomationRunner testRunner)
+		private void RemoveAllFromQueue(AutomationRunner testRunner)
 		{
 			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", secondsToWait: 2));
 			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", secondsToWait: 2));
 		}
 
-		void CloseMatterControl(AutomationRunner testRunner)
+		public static void CloseMatterControl(AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
 			Assert.IsTrue(testRunner.ClickByName("File Menu", secondsToWait: 2));
@@ -88,9 +87,9 @@ namespace MatterHackers.MatterControl.UI
 						Assert.IsTrue(textWidgetMH.Text == "Test Text");
 						containingWindow.CloseOnIdle();
 						testRunner.Wait(.5);
+						
+						CloseMatterControl(testRunner);
 					}
-
-					CloseMatterControl(testRunner);
 				});
 			};
 

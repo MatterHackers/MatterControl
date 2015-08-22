@@ -113,6 +113,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
+				enterEditModeButton.Name = "Library Edit Button";
+
 				leaveEditModeButton.Visible = false;
 
 				FlowLayoutWidget searchPanel = new FlowLayoutWidget();

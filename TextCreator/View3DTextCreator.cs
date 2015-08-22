@@ -465,7 +465,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				}
 
 				double xSize = bounds.XSize;
-				double ySize = sizeScrollBar.Value;
+				double ySize = sizeScrollBar.Value * 3;
 				double zSize = bounds.ZSize / 3;
 				Mesh connectionLine = PlatonicSolids.CreateCube(xSize, ySize, zSize);
 				meshesList.Add(new MeshGroup(connectionLine));
