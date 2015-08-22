@@ -63,6 +63,45 @@ namespace MatterHackers.MatterControl.UI
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
+		public void CreateFolderStarsOutWithTextFiledFocusedAndEditable()
+		{
+			// Run a copy of MatterControl
+			MatterControlApplication.AfterFirstDraw = () =>
+			{
+				Task.Run(() =>
+				{
+					AutomationRunner testRunner = new AutomationRunner();
+
+					// Now do the actions specific to this test. (replace this for new tests)
+					{
+						testRunner.ClickByName("Library Tab");
+						testRunner.ClickByName("Create Folder Button");
+
+						testRunner.Wait(.5);
+						testRunner.Type("Test Text");
+						testRunner.Wait(.5);
+
+						SystemWindow containingWindow;
+						GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
+						MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
+						Assert.IsTrue(textWidgetMH != null);
+						Assert.IsTrue(textWidgetMH.Text == "Test Text");
+						containingWindow.CloseOnIdle();
+						testRunner.Wait(.5);
+					}
+
+					CloseMatterControl(testRunner);
+				});
+			};
+
+#if !__ANDROID__
+			// Set the static data to point to the directory of MatterControl
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+#endif
+			SystemWindow mcWindow = MatterControlApplication.Instance;
+		}
+
+		[Test, RequiresSTA, RunInApplicationDomain]
 		public void ClearQueueTests()
 		{
 			// Run a copy of MatterControl
@@ -70,7 +109,7 @@ namespace MatterHackers.MatterControl.UI
 			{
 				Task.Run(() =>
 				{
-					AutomationRunner testRunner = new AutomationRunner("");
+					AutomationRunner testRunner = new AutomationRunner();
 
 					// Now do the actions specific to this test. (replace this for new tests)
 					{

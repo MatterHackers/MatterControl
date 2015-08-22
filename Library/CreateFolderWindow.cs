@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl
 
 			//Adds text box and check box to the above container
 			folderNameWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Folder Name Here".Localize());
+			folderNameWidget.Name = "Create Folder - Text Input";
 			folderNameWidget.HAnchor = HAnchor.ParentLeftRight;
 			folderNameWidget.Margin = new BorderDouble(5);
 
