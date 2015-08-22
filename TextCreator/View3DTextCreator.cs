@@ -263,14 +263,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 				await Task.Run(() => insertTextBackgroundWorker_DoWork(text));
 
-				// offset them to the centor of the bed
-				for (int i = 0; i < asynchMeshGroups.Count; i++)
-				{
-					ScaleRotateTranslate translate = asynchMeshGroupTransforms[i];
-					translate.translation *= Matrix4X4.CreateTranslation(new Vector3(MeshViewerWidget.BedCenter, 0));
-					asynchMeshGroupTransforms[i] = translate;
-				}
-
 				UnlockEditControls();
 				PullMeshDataFromAsynchLists();
 				saveButton.Visible = true;
@@ -473,12 +465,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				}
 
 				double xSize = bounds.XSize;
-				double ySize = bounds.YSize / 5;
+				double ySize = sizeScrollBar.Value;
 				double zSize = bounds.ZSize / 3;
 				Mesh connectionLine = PlatonicSolids.CreateCube(xSize, ySize, zSize);
 				meshesList.Add(new MeshGroup(connectionLine));
 				platingDataList.Add(new PlatingMeshGroupData());
-				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2 + MeshViewerWidget.BedCenter.x, ySize / 2 - ySize * 2 / 3 + MeshViewerWidget.BedCenter.y, zSize / 2));
+				meshTransforms.Add(ScaleRotateTranslate.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2));
 				PlatingHelper.CreateITraceableForMeshGroup(platingDataList, meshesList, meshesList.Count - 1, null);
 			}
 		}
@@ -625,7 +617,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						{
 							SetWordSize(MeshGroups, MeshGroupTransforms);
 
-							SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
+							//SetWordSpacing(MeshGroups, MeshGroupTransforms, MeshGroupExtraData);
 							RebuildUnderlineIfRequired();
 						};
 					}
@@ -740,12 +732,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
-					Vector3 originPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
+					Vector3 startPosition = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation);
 
 					ScaleRotateTranslate translation = meshTransforms[meshIndex];
-					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(-originPosition.x, 0, 0));
+					translation.translation *= Matrix4X4.CreateTranslation(-startPosition);
 					double newX = platingDataList[meshIndex].xSpacing * spacingScrollBar.Value * lastSizeValue;
-					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0));
+					translation.translation *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(MeshViewerWidget.BedCenter));
 					meshTransforms[meshIndex] = translation;
 				}
 			}
@@ -753,17 +745,29 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private void SetWordSize(List<MeshGroup> meshesList, List<ScaleRotateTranslate> meshTransforms)
 		{
+			Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
 			if (meshesList.Count > 0)
 			{
 				for (int meshIndex = 0; meshIndex < meshesList.Count; meshIndex++)
 				{
+					Vector3 startPositionRelCenter = Vector3.Transform(Vector3.Zero, meshTransforms[meshIndex].translation) - bedCenter;
+
 					// take out the last scale
 					double oldSize = 1.0 / lastSizeValue;
-					ScaleRotateTranslate scale = meshTransforms[meshIndex];
-					scale.scale *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
+					Vector3 unscaledStartPositionRelCenter = startPositionRelCenter * oldSize;
 
 					double newSize = sizeScrollBar.Value;
+					Vector3 endPositionRelCenter = unscaledStartPositionRelCenter * newSize;
+
+					Vector3 deltaPosition = endPositionRelCenter - startPositionRelCenter;
+					
+					// move the part to keep it in the same relative position
+					ScaleRotateTranslate scale = meshTransforms[meshIndex];
+
+					scale.scale *= Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize));
 					scale.scale *= Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize));
+					scale.translation *= Matrix4X4.CreateTranslation(deltaPosition);
+					
 					meshTransforms[meshIndex] = scale;
 				}
 
