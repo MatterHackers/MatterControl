@@ -120,7 +120,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X3GDriver", "..\X3GDriver\X
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Nat", "..\CloudServicesPlugin\Mono.Nat\Mono.Nat.csproj", "{F5D74163-145F-47BF-83DC-D0E07249C6CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiAutomation", "SubModules\agg-sharp\GuiAutomation\GuiAutomation.csproj", "{E9102310-0029-4D8F-B1E9-88FBA6147D45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiAutomation", "Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj", "{E9102310-0029-4D8F-B1E9-88FBA6147D45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

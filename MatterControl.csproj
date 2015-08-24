@@ -430,7 +430,7 @@
       <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
       <Name>DataConverters3D</Name>
     </ProjectReference>
-    <ProjectReference Include="SubModules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
+    <ProjectReference Include="Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
       <Project>{e9102310-0029-4d8f-b1e9-88fba6147d45}</Project>
       <Name>GuiAutomation</Name>
     </ProjectReference>
