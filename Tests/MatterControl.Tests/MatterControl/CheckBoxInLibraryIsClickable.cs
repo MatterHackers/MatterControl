@@ -54,15 +54,15 @@ namespace MatterHackers.MatterControl.UI
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
 					testRunner.ClickByName("Library Tab");
-					testRunner.MoveToByName("Local Library Row Item Collection", secondsToWait: 1);
+					testRunner.Wait(1);
 					SystemWindow systemWindow;
 					GuiWidget rowItem = testRunner.GetWidgetByName("Local Library Row Item Collection", out systemWindow);
-					testRunner.Wait(.5);
+					testRunner.Wait(1);
 
 					SearchRegion rowItemRegion = testRunner.GetRegionByName("Local Library Row Item Collection");
 
 					testRunner.ClickByName("Library Edit Button");
-					testRunner.Wait(.5);
+					testRunner.Wait(1);
 
 					SystemWindow containingWindow;
 					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out containingWindow, searchRegion: rowItemRegion);
@@ -73,6 +73,10 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Row Item Select Checkbox", searchRegion: rowItemRegion);
 					testRunner.Wait(.5);
 					resultsHarness.AddTestResult(checkBoxWidget.Checked == true, "currently checked");
+
+					testRunner.ClickByName("Local Library Row Item Collection");
+					testRunner.Wait(.5);
+					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
 
 					UITests.CloseMatterControl(testRunner);
 				}
@@ -88,7 +92,7 @@ namespace MatterHackers.MatterControl.UI
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 1000);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 3); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
 		}
 	}
 }

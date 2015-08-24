@@ -98,6 +98,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			base.OnClosed(e);
 		}
 
+		void selectionCheckBox_Click(object sender, EventArgs e)
+		{
+			if(this.selectionCheckBox.Checked)
+			{
+				if(!libraryDataView.SelectedItems.Contains(this))
+				{
+					libraryDataView.SelectedItems.Add(this);
+				}
+			}
+			else
+			{
+				if(libraryDataView.SelectedItems.Contains(this))
+				{
+					libraryDataView.SelectedItems.Remove(this);
+				}
+			}
+		}
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (this.libraryDataView.EditMode)
@@ -170,6 +188,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				selectionCheckBoxContainer.Visible = false;
 				selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
 				selectionCheckBox = new CheckBox("");
+				selectionCheckBox.Click += selectionCheckBox_Click;
 				selectionCheckBox.Name = "Row Item Select Checkbox";
 				selectionCheckBox.VAnchor = VAnchor.ParentCenter;
 				selectionCheckBox.HAnchor = HAnchor.ParentCenter;
