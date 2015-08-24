@@ -170,6 +170,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				selectionCheckBoxContainer.Visible = false;
 				selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
 				selectionCheckBox = new CheckBox("");
+				selectionCheckBox.Name = "Row Item Select Checkbox";
 				selectionCheckBox.VAnchor = VAnchor.ParentCenter;
 				selectionCheckBox.HAnchor = HAnchor.ParentCenter;
 				selectionCheckBoxContainer.AddChild(selectionCheckBox);
