@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using MatterHackers.GuiAutomation;
 using MatterHackers.Agg.PlatformAbstract;
 using System.IO;
+using MatterHackers.Agg.UI.Tests;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -46,37 +47,40 @@ namespace MatterHackers.MatterControl.UI
 		public void ClickOnLibraryCheckBoxes()
 		{
 			// Run a copy of MatterControl
-			MatterControlApplication.AfterFirstDraw = () =>
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				Task.Run(() =>
+				AutomationRunner testRunner = new AutomationRunner();
+
+				// Now do the actions specific to this test. (replace this for new tests)
 				{
-					AutomationRunner testRunner = new AutomationRunner();
+					testRunner.ClickByName("Library Tab");
+					testRunner.MoveToByName("Local Library Row Item Collection", secondsToWait: 1);
+					SystemWindow systemWindow;
+					GuiWidget rowItem = testRunner.GetWidgetByName("Local Library Row Item Collection", out systemWindow);
+					testRunner.Wait(.5);
+					testRunner.ClickByName("Open Collection");
 
-					// Now do the actions specific to this test. (replace this for new tests)
-					{
-						testRunner.ClickByName("Library Tab");
-						testRunner.MoveToByName("Local Library Row Item Collection", secondsToWait: 1);
-						SystemWindow systemWindow;
-						GuiWidget rowItem = testRunner.GetWidgetByName("Local Library Row Item Collection", out systemWindow);
-						testRunner.Wait(.5);
-						testRunner.ClickByName("Open Collection", containerWidget: rowItem);
+					testRunner.ClickByName("Library Edit Button");
 
-						testRunner.ClickByName("Library Edit Button");
+					//SystemWindow containingWindow;
+					//GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
+					testRunner.Wait(5);
 
-						//SystemWindow containingWindow;
-						//GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
-						testRunner.Wait(5);
+					UITests.CloseMatterControl(testRunner);
+				}
 
-						UITests.CloseMatterControl(testRunner);
-					}
-				});
 			};
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 #endif
-			SystemWindow mcWindow = MatterControlApplication.Instance;
+			bool showWindow;
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 10);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 0); // make sure we ran all our tests
 		}
 	}
 }

@@ -97,7 +97,10 @@ namespace MatterHackers.MatterControl
 			// initializers run before the class constructor, we need to init the platform specific provider in the static constructor (or write a custom initializer method)
 			//
 			// Initialize a standard file system backed StaticData provider
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
+			if (StaticData.Instance == null) // it may already be initialized by tests
+			{
+				StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
+			}
 		}
 
 		private MatterControlApplication(double width, double height, out bool showWindow)
@@ -353,19 +356,8 @@ namespace MatterHackers.MatterControl
 			{
 				if (instance == null)
 				{
-					// try and open our window matching the last size that we had for it.
-					string windowSize = ApplicationSettings.Instance.get("WindowSize");
-					int width = 1280;
-					int height = 720;
-					if (windowSize != null && windowSize != "")
-					{
-						string[] sizes = windowSize.Split(',');
-						width = Math.Max(int.Parse(sizes[0]), (int)minSize.x + 1);
-						height = Math.Max(int.Parse(sizes[1]), (int)minSize.y + 1);
-					}
-
 					bool showWindow;
-					instance = new MatterControlApplication(width, height, out showWindow);
+					instance = CreateInstance(out showWindow);
 
 					if (showWindow)
 					{
@@ -375,6 +367,24 @@ namespace MatterHackers.MatterControl
 
 				return instance;
 			}
+		}
+
+		public static MatterControlApplication CreateInstance(out bool showWindow)
+		{
+			// try and open our window matching the last size that we had for it.
+			string windowSize = ApplicationSettings.Instance.get("WindowSize");
+			int width = 1280;
+			int height = 720;
+			if (windowSize != null && windowSize != "")
+			{
+				string[] sizes = windowSize.Split(',');
+				width = Math.Max(int.Parse(sizes[0]), (int)minSize.x + 1);
+				height = Math.Max(int.Parse(sizes[1]), (int)minSize.y + 1);
+			}
+
+			instance = new MatterControlApplication(width, height, out showWindow);
+
+			return instance;
 		}
 
 		[STAThread]
