@@ -31,6 +31,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.UI;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -62,24 +63,9 @@ namespace MatterControl.Tests
 		[Test, RunInApplicationDomain]
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
-			string userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
-			string renamedUserDataPath = Path.Combine(Path.GetDirectoryName(userDataPath), "-MatterControl");
-			int testCount = 0;
-			while (Directory.Exists(renamedUserDataPath + testCount.ToString()))
-			{
-				testCount++;
-			}
-			renamedUserDataPath = renamedUserDataPath + testCount.ToString();
+			MatterControlUITests.DataFolderState staticDataState = MatterControlUITests.MakeNewStaticDataForTesting();
 
-			bool undoDataRename = false;
-			if (Directory.Exists(userDataPath))
-			{
-				Directory.Move(userDataPath, renamedUserDataPath);
-				undoDataRename = true;
-			}
-
-			Datastore.Instance.Initialize();
-			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, "Local Library");
+			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 			Thread.Sleep(3000); // wait for the library to finish initializing
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");
@@ -127,19 +113,7 @@ namespace MatterControl.Tests
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
 
-			if (undoDataRename)
-			{
-				Datastore.Instance.Exit();
-				Directory.Delete(userDataPath, true);
-				Stopwatch time = Stopwatch.StartNew();
-				// Wait for up to some amount of time for the directory to be gone.
-				while (Directory.Exists(userDataPath)
-					&& time.ElapsedMilliseconds < 100)
-				{
-					Thread.Sleep(1); // make sure we are not eating all the cpu time.
-				}
-				Directory.Move(renamedUserDataPath, userDataPath);
-			}
+			MatterControlUITests.RestoreStaticDataAfterTesting(staticDataState, true);
 		}
 #endif
 

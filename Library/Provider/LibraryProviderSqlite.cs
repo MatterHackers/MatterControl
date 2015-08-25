@@ -48,9 +48,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSQLiteCreator : ILibraryCreator
 	{
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
-			return new LibraryProviderSQLite(null, parentLibraryProvider, "Local Library");
+			return new LibraryProviderSQLite(null, setCurrentLibraryProvider, parentLibraryProvider, "Local Library");
 		}
 
 		public string ProviderKey
@@ -66,24 +66,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		protected PrintItemCollection baseLibraryCollection;
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
-		private string keywordFilter = string.Empty;
 
 		public ClassicSqliteStorageProvider(LibraryProvider parentLibraryProvider)
 			: base(parentLibraryProvider)
 		{
-		}
-
-		public override string KeywordFilter
-		{
-			get
-			{
-				return keywordFilter;
-			}
-
-			set
-			{
-				keywordFilter = value;
-			}
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -195,20 +181,23 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 	public class LibraryProviderSQLite : ClassicSqliteStorageProvider
 	{
+		Action<LibraryProvider> setCurrentLibraryProvider;
 		public bool PreloadingCalibrationFiles = false;
 
 		private static LibraryProviderSQLite instance = null;
+		private string keywordFilter = string.Empty;
 
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
 
-		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider, string visibleName)
+		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
 			: base(parentLibraryProvider)
 		{
+			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
 			this.Name = visibleName;
 
 			if (baseLibraryCollection == null)
 			{
-				baseLibraryCollection = GetRootLibraryCollection2().Result;
+				baseLibraryCollection = GetRootLibraryCollection().Result;
 			}
 
 			this.baseLibraryCollection = baseLibraryCollection;
@@ -221,7 +210,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderSQLite(null, null, "Local Library");
+					instance = new LibraryProviderSQLite(null, null, null, "Local Library");
 				}
 
 				return instance;
@@ -238,6 +227,59 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			childCollections[collectionIndexToRename].Name = newName;
 			childCollections[collectionIndexToRename].Commit();
 			LoadLibraryItems();
+		}
+
+
+		bool ignoreNextKeywordFilter = false;
+		public override string KeywordFilter
+		{
+			get
+			{
+				return keywordFilter;
+			}
+
+			set
+			{
+				if (ignoreNextKeywordFilter)
+				{
+					ignoreNextKeywordFilter = false;
+					return;
+				}
+
+				PrintItemCollection rootLibraryCollection = GetRootLibraryCollection().Result;
+				if (value != ""
+					&& this.baseLibraryCollection.Id != rootLibraryCollection.Id)
+				{
+					LibraryProviderSQLite currentProvider = this.ParentLibraryProvider as LibraryProviderSQLite;
+					while (currentProvider.ParentLibraryProvider != null
+						&& currentProvider.baseLibraryCollection.Id != rootLibraryCollection.Id)
+					{
+						currentProvider = currentProvider.ParentLibraryProvider as LibraryProviderSQLite;
+					}
+
+					if (currentProvider != null)
+					{
+						currentProvider.KeywordFilter = value;
+						currentProvider.ignoreNextKeywordFilter = true;
+						UiThread.RunOnIdle(() => setCurrentLibraryProvider(currentProvider));
+					}
+				}
+				else // the search only shows for the cloud library root
+				{
+					if (keywordFilter != value)
+					{
+						keywordFilter = value;
+
+						if (keywordFilter != null && keywordFilter != "")
+						{
+						}
+						else
+						{
+							OnDataReloaded(null);
+						}
+					}
+				}
+			}
 		}
 
 		public override void RenameItem(int itemIndexToRename, string newName)
@@ -315,7 +357,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			return new LibraryProviderSQLite(collection, this, collection.Name);
+			return new LibraryProviderSQLite(collection, setCurrentLibraryProvider, this, collection.Name);
 		}
 
 		public override void RemoveCollection(int collectionIndexToRemove)
@@ -392,7 +434,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return result;
 		}
 
-		private async Task<PrintItemCollection> GetRootLibraryCollection2()
+		private async Task<PrintItemCollection> GetRootLibraryCollection()
 		{
 			// Attempt to initialize the library from the Datastore if null
 			PrintItemCollection rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();

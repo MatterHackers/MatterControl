@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
 			return new LibraryProviderFileSystem(rootPath, Description, parentLibraryProvider);
 		}

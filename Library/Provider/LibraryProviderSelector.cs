@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			// If signing out, we need to force selection to this provider
 			if(e != null && !e.IsAuthenticated)
 			{
-				// Switch to the purchased library
+				// Switch to the selector
 				setCurrentLibraryProvider(this);
 			}
 
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
-			LibraryProvider provider = libraryCreators[collectionIndex].CreateLibraryProvider(this);
+			LibraryProvider provider = libraryCreators[collectionIndex].CreateLibraryProvider(this, setCurrentLibraryProvider);
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (collection.Key == libraryCreator.ProviderKey)
 				{
-					return libraryCreator.CreateLibraryProvider(this);
+					return libraryCreator.CreateLibraryProvider(this, setCurrentLibraryProvider);
 				}
 			}
 
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public LibraryProvider GetPurchasedLibrary()
 		{
-			return PurchasedLibraryCreator.CreateLibraryProvider(this);
+			return PurchasedLibraryCreator.CreateLibraryProvider(this, setCurrentLibraryProvider);
 		}
 	}
 }
