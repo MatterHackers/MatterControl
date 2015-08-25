@@ -62,14 +62,33 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		}
 	}
 
-	public abstract class ClassicSqliteStorageProvider : LibraryProvider
+	public class LibraryProviderSQLite : LibraryProvider
 	{
 		protected PrintItemCollection baseLibraryCollection;
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 
-		public ClassicSqliteStorageProvider(LibraryProvider parentLibraryProvider)
+
+		Action<LibraryProvider> setCurrentLibraryProvider;
+		public bool PreloadingCalibrationFiles = false;
+
+		private static LibraryProviderSQLite instance = null;
+		private string keywordFilter = string.Empty;
+
+		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
+
+		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
 			: base(parentLibraryProvider)
 		{
+			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
+			this.Name = visibleName;
+
+			if (baseLibraryCollection == null)
+			{
+				baseLibraryCollection = GetRootLibraryCollection().Result;
+			}
+
+			this.baseLibraryCollection = baseLibraryCollection;
+			LoadLibraryItems();
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -176,32 +195,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			string query = string.Format("SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {0} ORDER BY Name ASC;", baseLibraryCollection.Id);
 			IEnumerable<PrintItemCollection> result = (IEnumerable<PrintItemCollection>)Datastore.Instance.dbSQLite.Query<PrintItemCollection>(query);
 			return result;
-		}
-	}
-
-	public class LibraryProviderSQLite : ClassicSqliteStorageProvider
-	{
-		Action<LibraryProvider> setCurrentLibraryProvider;
-		public bool PreloadingCalibrationFiles = false;
-
-		private static LibraryProviderSQLite instance = null;
-		private string keywordFilter = string.Empty;
-
-		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
-
-		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
-			: base(parentLibraryProvider)
-		{
-			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
-			this.Name = visibleName;
-
-			if (baseLibraryCollection == null)
-			{
-				baseLibraryCollection = GetRootLibraryCollection().Result;
-			}
-
-			this.baseLibraryCollection = baseLibraryCollection;
-			LoadLibraryItems();
 		}
 
 		public static LibraryProviderSQLite Instance
