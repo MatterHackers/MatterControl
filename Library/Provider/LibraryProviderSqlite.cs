@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -36,45 +34,25 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
-	public class LibraryProviderSQLiteCreator : ILibraryCreator
-	{
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
-		{
-			return new LibraryProviderSQLite(null, setCurrentLibraryProvider, parentLibraryProvider, "Local Library");
-		}
-
-		public string ProviderKey
-		{
-			get
-			{
-				return LibraryProviderSQLite.StaticProviderKey;
-			}
-		}
-	}
-
 	public class LibraryProviderSQLite : LibraryProvider
 	{
+		public bool PreloadingCalibrationFiles = false;
 		protected PrintItemCollection baseLibraryCollection;
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 
-
-		Action<LibraryProvider> setCurrentLibraryProvider;
-		public bool PreloadingCalibrationFiles = false;
-
 		private static LibraryProviderSQLite instance = null;
+		private bool ignoreNextKeywordFilter = false;
 		private string keywordFilter = string.Empty;
-
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
+		private Action<LibraryProvider> setCurrentLibraryProvider;
 
 		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
 			: base(parentLibraryProvider)
@@ -89,6 +67,171 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			this.baseLibraryCollection = baseLibraryCollection;
 			LoadLibraryItems();
+		}
+
+		public static LibraryProviderSQLite Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new LibraryProviderSQLite(null, null, null, "Local Library");
+				}
+
+				return instance;
+			}
+		}
+
+		public static string StaticProviderKey
+		{
+			get
+			{
+				return "LibraryProviderSqliteKey";
+			}
+		}
+
+		public override int CollectionCount
+		{
+			get
+			{
+				return childCollections.Count;
+			}
+		}
+
+		public override int ItemCount
+		{
+			get
+			{
+				return printItems.Count;
+			}
+		}
+
+		public override string KeywordFilter
+		{
+			get
+			{
+				return keywordFilter;
+			}
+
+			set
+			{
+				if (ignoreNextKeywordFilter)
+				{
+					ignoreNextKeywordFilter = false;
+					return;
+				}
+
+				PrintItemCollection rootLibraryCollection = GetRootLibraryCollection().Result;
+				if (value != ""
+					&& this.baseLibraryCollection.Id != rootLibraryCollection.Id)
+				{
+					LibraryProviderSQLite currentProvider = this.ParentLibraryProvider as LibraryProviderSQLite;
+					while (currentProvider.ParentLibraryProvider != null
+						&& currentProvider.baseLibraryCollection.Id != rootLibraryCollection.Id)
+					{
+						currentProvider = currentProvider.ParentLibraryProvider as LibraryProviderSQLite;
+					}
+
+					if (currentProvider != null)
+					{
+						currentProvider.KeywordFilter = value;
+						currentProvider.ignoreNextKeywordFilter = true;
+						UiThread.RunOnIdle(() => setCurrentLibraryProvider(currentProvider));
+					}
+				}
+				else // the search only shows for the cloud library root
+				{
+					if (keywordFilter != value)
+					{
+						keywordFilter = value;
+
+						LoadLibraryItems(); 
+						OnDataReloaded(null);
+					}
+				}
+			}
+		}
+
+		public override string ProviderKey
+		{
+			get
+			{
+				return StaticProviderKey;
+			}
+		}
+
+		/// <summary>
+		/// Exposes all PrintItems for use in file purge code in AboutWidget
+		/// </summary>
+		/// <returns>A list of all print items</returns>
+		public static IEnumerable<PrintItem> GetAllPrintItemsRecursive()
+		{
+			// NOTE: We are making the assumption that everything is reference if it does not have a 0 in eth PrintItemCollectionID.
+			string query = "SELECT * FROM PrintItem WHERE PrintItemCollectionID != 0;";
+			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
+			return result;
+		}
+
+		public override void AddCollectionToLibrary(string collectionName)
+		{
+			PrintItemCollection newCollection = new PrintItemCollection(collectionName, "");
+			newCollection.ParentCollectionID = baseLibraryCollection.Id;
+			newCollection.Commit();
+			LoadLibraryItems();
+		}
+
+		public async override void AddItem(PrintItemWrapper itemToAdd)
+		{
+			await AddItemAsync(itemToAdd.Name, itemToAdd.FileLocation, fireDataReloaded: true);
+
+			LoadLibraryItems();
+			OnDataReloaded(null);
+		}
+
+		public async Task AddItemAsync(string fileName, string fileLocation, bool fireDataReloaded)
+		{
+			if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(fileLocation))
+			{
+				await Task.Run(() => AddStlOrGcode(fileLocation, fileName));
+			}
+		}
+
+		public async Task EnsureSamplePartsExist(IEnumerable<string> filenamesToValidate)
+		{
+			PreloadingCalibrationFiles = true;
+
+			// Ensure the CalibrationParts directory exists to store/import the files from disk
+			string tempPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "calibration-parts");
+			Directory.CreateDirectory(tempPath);
+
+			var existingLibaryItems = this.GetLibraryItems().Select(i => i.Name);
+
+			// Build a list of files that need to be imported into the library
+			var missingFiles = filenamesToValidate.Where(fileName => !existingLibaryItems.Contains(fileName, StringComparer.OrdinalIgnoreCase));
+
+			// Create temp files on disk that can be imported into the library
+			var tempFilesToImport = missingFiles.Select(fileName =>
+			{
+				// Copy calibration prints from StaticData to the filesystem before importing into the library
+				string tempFilePath = Path.Combine(tempPath, Path.GetFileName(fileName));
+				using (FileStream outstream = File.OpenWrite(tempFilePath))
+				using (Stream instream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "SampleParts", fileName)))
+				{
+					instream.CopyTo(outstream);
+				}
+
+				// Project the new filename to the output
+				return tempFilePath;
+			}).ToArray();
+
+			// Import any missing files into the library
+			foreach (string file in tempFilesToImport)
+			{
+				// Ensure these operations run in serial rather than in parallel where they stomp on each other when writing to default.mcp
+				await this.AddItemAsync(Path.GetFileNameWithoutExtension(file), file, false);
+			}
+
+			PreloadingCalibrationFiles = false;
 		}
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
@@ -109,6 +252,64 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
 			return result;
+		}
+
+		public override string GetPrintItemName(int itemIndex)
+		{
+			return printItems[itemIndex].Name;
+		}
+
+		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
+		{
+			if (index >= 0 && index < printItems.Count)
+			{
+				return printItems[index];
+			}
+
+			return null;
+		}
+
+		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
+		{
+			return new LibraryProviderSQLite(collection, setCurrentLibraryProvider, this, collection.Name);
+		}
+
+		public override void RemoveCollection(int collectionIndexToRemove)
+		{
+			childCollections[collectionIndexToRemove].Delete();
+			LoadLibraryItems();
+			OnDataReloaded(null);
+		}
+
+		public override void RemoveItem(int itemToRemoveIndex)
+		{
+			if (itemToRemoveIndex < 0)
+			{
+				// It may be possible to have the same item in the remove list twice.
+				// so if it is not in the PrintItems then ignore it.
+				return;
+			}
+
+			// and remove it from the data base
+			printItems[itemToRemoveIndex].Delete();
+
+			printItems.RemoveAt(itemToRemoveIndex);
+
+			OnDataReloaded(null);
+		}
+
+		public override void RenameCollection(int collectionIndexToRename, string newName)
+		{
+			childCollections[collectionIndexToRename].Name = newName;
+			childCollections[collectionIndexToRename].Commit();
+			LoadLibraryItems();
+		}
+
+		public override void RenameItem(int itemIndexToRename, string newName)
+		{
+			printItems[itemIndexToRename].PrintItem.Name = newName;
+			printItems[itemIndexToRename].PrintItem.Commit();
+			LoadLibraryItems();
 		}
 
 		protected static void SaveToLibraryFolder(PrintItemWrapper printItemWrapper, List<MeshGroup> meshGroups, bool AbsolutePositioned)
@@ -197,236 +398,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return result;
 		}
 
-		public static LibraryProviderSQLite Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new LibraryProviderSQLite(null, null, null, "Local Library");
-				}
-
-				return instance;
-			}
-		}
-
-		public override string GetPrintItemName(int itemIndex)
-		{
-			return printItems[itemIndex].Name;
-		}
-
-		public override void RenameCollection(int collectionIndexToRename, string newName)
-		{
-			childCollections[collectionIndexToRename].Name = newName;
-			childCollections[collectionIndexToRename].Commit();
-			LoadLibraryItems();
-		}
-
-
-		bool ignoreNextKeywordFilter = false;
-		public override string KeywordFilter
-		{
-			get
-			{
-				return keywordFilter;
-			}
-
-			set
-			{
-				if (ignoreNextKeywordFilter)
-				{
-					ignoreNextKeywordFilter = false;
-					return;
-				}
-
-				PrintItemCollection rootLibraryCollection = GetRootLibraryCollection().Result;
-				if (value != ""
-					&& this.baseLibraryCollection.Id != rootLibraryCollection.Id)
-				{
-					LibraryProviderSQLite currentProvider = this.ParentLibraryProvider as LibraryProviderSQLite;
-					while (currentProvider.ParentLibraryProvider != null
-						&& currentProvider.baseLibraryCollection.Id != rootLibraryCollection.Id)
-					{
-						currentProvider = currentProvider.ParentLibraryProvider as LibraryProviderSQLite;
-					}
-
-					if (currentProvider != null)
-					{
-						currentProvider.KeywordFilter = value;
-						currentProvider.ignoreNextKeywordFilter = true;
-						UiThread.RunOnIdle(() => setCurrentLibraryProvider(currentProvider));
-					}
-				}
-				else // the search only shows for the cloud library root
-				{
-					if (keywordFilter != value)
-					{
-						keywordFilter = value;
-
-						if (keywordFilter != null && keywordFilter != "")
-						{
-						}
-						else
-						{
-							OnDataReloaded(null);
-						}
-					}
-				}
-			}
-		}
-
-		public override void RenameItem(int itemIndexToRename, string newName)
-		{
-			printItems[itemIndexToRename].PrintItem.Name = newName;
-			printItems[itemIndexToRename].PrintItem.Commit();
-			LoadLibraryItems();
-		}
-
-		public static string StaticProviderKey
-		{
-			get
-			{
-				return "LibraryProviderSqliteKey";
-			}
-		}
-
-		public override int CollectionCount
-		{
-			get
-			{
-				return childCollections.Count;
-			}
-		}
-
-		public override int ItemCount
-		{
-			get
-			{
-				return printItems.Count;
-			}
-		}
-
-		public override string ProviderKey
-		{
-			get
-			{
-				return StaticProviderKey;
-			}
-		}
-
-		public override void AddCollectionToLibrary(string collectionName)
-		{
-			PrintItemCollection newCollection = new PrintItemCollection(collectionName, "");
-			newCollection.ParentCollectionID = baseLibraryCollection.Id;
-			newCollection.Commit();
-			LoadLibraryItems();
-		}
-
-		public async override void AddItem(PrintItemWrapper itemToAdd)
-		{
-			await AddItemAsync(itemToAdd.Name, itemToAdd.FileLocation, fireDataReloaded: true);
-
-			LoadLibraryItems();
-			OnDataReloaded(null);
-		}
-
-		public async Task AddItemAsync(string fileName, string fileLocation, bool fireDataReloaded)
-		{
-			if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(fileLocation))
-			{
-				await Task.Run(() => AddStlOrGcode(fileLocation, fileName));
-			}
-		}
-
-		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int index)
-		{
-			if (index >= 0 && index < printItems.Count)
-			{
-				return printItems[index];
-			}
-
-			return null;
-		}
-
-		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
-		{
-			return new LibraryProviderSQLite(collection, setCurrentLibraryProvider, this, collection.Name);
-		}
-
-		public override void RemoveCollection(int collectionIndexToRemove)
-		{
-			childCollections[collectionIndexToRemove].Delete();
-			LoadLibraryItems();
-			OnDataReloaded(null);
-		}
-
-		public override void RemoveItem(int itemToRemoveIndex)
-		{
-			if (itemToRemoveIndex < 0)
-			{
-				// It may be possible to have the same item in the remove list twice.
-				// so if it is not in the PrintItems then ignore it.
-				return;
-			}
-	
-			// and remove it from the data base
-			printItems[itemToRemoveIndex].Delete();
-
-			printItems.RemoveAt(itemToRemoveIndex);
-
-			OnDataReloaded(null);
-		}
-
-		public async Task EnsureSamplePartsExist(IEnumerable<string> filenamesToValidate)
-		{
-			PreloadingCalibrationFiles = true;
-
-			// Ensure the CalibrationParts directory exists to store/import the files from disk
-			string tempPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "calibration-parts");
-			Directory.CreateDirectory(tempPath);
-
-			var existingLibaryItems = this.GetLibraryItems().Select(i => i.Name);
-
-			// Build a list of files that need to be imported into the library
-			var missingFiles = filenamesToValidate.Where(fileName => !existingLibaryItems.Contains(fileName, StringComparer.OrdinalIgnoreCase));
-
-			// Create temp files on disk that can be imported into the library
-			var tempFilesToImport = missingFiles.Select(fileName =>
-			{
-				// Copy calibration prints from StaticData to the filesystem before importing into the library
-				string tempFilePath = Path.Combine(tempPath, Path.GetFileName(fileName));
-				using (FileStream outstream = File.OpenWrite(tempFilePath))
-				using (Stream instream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "SampleParts", fileName)))
-				{
-					instream.CopyTo(outstream);
-				}
-
-				// Project the new filename to the output
-				return tempFilePath;
-			}).ToArray();
-
-			// Import any missing files into the library
-			foreach (string file in tempFilesToImport)
-			{
-				// Ensure these operations run in serial rather than in parallel where they stomp on each other when writing to default.mcp
-				await this.AddItemAsync(Path.GetFileNameWithoutExtension(file), file, false);
-			}
-
-			PreloadingCalibrationFiles = false;
-		}
-
-		/// <summary>
-		/// Exposes all PrintItems for use in file purge code in AboutWidget
-		/// </summary>
-		/// <returns>A list of all print items</returns>
-		public static IEnumerable<PrintItem> GetAllPrintItemsRecursive()
-		{
-			// NOTE: We are making the assumption that everything is reference if it does not have a 0 in eth PrintItemCollectionID.
-			string query = "SELECT * FROM PrintItem WHERE PrintItemCollectionID != 0;";
-			IEnumerable<PrintItem> result = (IEnumerable<PrintItem>)Datastore.Instance.dbSQLite.Query<PrintItem>(query);
-			return result;
-		}
-
 		private async Task<PrintItemCollection> GetRootLibraryCollection()
 		{
 			// Attempt to initialize the library from the Datastore if null
@@ -472,6 +443,22 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			OnDataReloaded(null);
+		}
+	}
+
+	public class LibraryProviderSQLiteCreator : ILibraryCreator
+	{
+		public string ProviderKey
+		{
+			get
+			{
+				return LibraryProviderSQLite.StaticProviderKey;
+			}
+		}
+
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
+		{
+			return new LibraryProviderSQLite(null, setCurrentLibraryProvider, parentLibraryProvider, "Local Library");
 		}
 	}
 }
