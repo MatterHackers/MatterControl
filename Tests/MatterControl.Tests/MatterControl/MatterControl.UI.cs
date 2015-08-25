@@ -29,13 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
 using NUnit.Framework;
 using System;
-using System.Threading.Tasks;
-using MatterHackers.GuiAutomation;
-using MatterHackers.Agg.PlatformAbstract;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -44,13 +45,13 @@ namespace MatterHackers.MatterControl.UI
 	{
 		private static bool saveImagesForDebug = true;
 
-		void RemoveAllFromQueue(AutomationRunner testRunner)
+		private void RemoveAllFromQueue(AutomationRunner testRunner)
 		{
 			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", secondsToWait: 2));
 			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", secondsToWait: 2));
 		}
 
-		void CloseMatterControl(AutomationRunner testRunner)
+		public static void CloseMatterControl(AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
 			Assert.IsTrue(testRunner.ClickByName("File Menu", secondsToWait: 2));
@@ -63,29 +64,44 @@ namespace MatterHackers.MatterControl.UI
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
-		public void ClearQueueTests()
+		public void CreateFolderStarsOutWithTextFiledFocusedAndEditable()
 		{
 			// Run a copy of MatterControl
-			MatterControlApplication.AfterFirstDraw = () =>
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				Task.Run(() =>
-				{
-					AutomationRunner testRunner = new AutomationRunner("");
+				AutomationRunner testRunner = new AutomationRunner();
 
-					// Now do the actions specific to this test. (replace this for new tests)
-					{
-						RemoveAllFromQueue(testRunner);
-					}
+				// Now do the actions specific to this test. (replace this for new tests)
+				{
+					testRunner.ClickByName("Library Tab");
+					testRunner.ClickByName("Create Folder Button");
+
+					testRunner.Wait(.5);
+					testRunner.Type("Test Text");
+					testRunner.Wait(.5);
+
+					SystemWindow containingWindow;
+					GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
+					MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
+					resultsHarness.AddTestResult(textWidgetMH != null, "Found Text Widget");
+					resultsHarness.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
+					containingWindow.CloseOnIdle();
+					testRunner.Wait(.5);
 
 					CloseMatterControl(testRunner);
-				});
+				}
 			};
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 #endif
-			SystemWindow mcWindow = MatterControlApplication.Instance;
+			bool showWindow;
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 10);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
 
 		/// <summary>

@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.printItemCollection = collection;
 			this.ItemName = printItemCollection.Name;
 
+			this.Name = this.ItemName + " Row Item Collection";
+
 			CreateGuiElements();
 		}
 
@@ -134,6 +136,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			openLabel.HAnchor = HAnchor.ParentCenter;
 
 			FatFlatClickWidget openButton = new FatFlatClickWidget(openLabel);
+			openButton.Name = "Open Collection";
 			openButton.VAnchor = VAnchor.ParentBottomTop;
 			openButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			openButton.Width = 100;

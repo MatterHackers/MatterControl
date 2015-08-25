@@ -113,6 +113,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
+				enterEditModeButton.Name = "Library Edit Button";
+
 				leaveEditModeButton.Visible = false;
 
 				FlowLayoutWidget searchPanel = new FlowLayoutWidget();
@@ -208,6 +210,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// the create folder button
 			{
 				Button createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
+				createFolderButton.Name = "Create Folder Button";
 				buttonPanel.AddChild(createFolderButton);
 				createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
 				createFolderButton.Click += (sender, e) =>

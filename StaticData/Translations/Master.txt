@@ -3679,3 +3679,12 @@ Translated:Print leveling is enabled.
 English:Edit notification settings
 Translated:Edit notification settings
 
+English:Rotate (Alt + Left Mouse)
+Translated:Rotate (Alt + Left Mouse)
+
+English:Move (Shift + Left Mouse)
+Translated:Move (Shift + Left Mouse)
+
+English:Zoom (Ctrl + Left Mouse)
+Translated:Zoom (Ctrl + Left Mouse)
+

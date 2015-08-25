@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MatterControl\LibraryProviderSqliteTests.cs" />
+    <Compile Include="MatterControl\CheckBoxInLibraryIsClickable.cs" />
     <Compile Include="MatterControl\MatterControl.UI.cs" />
     <Compile Include="MatterControl\HtmlParser.cs" />
     <Compile Include="MatterControl\LibraryProviderTests.cs" />
@@ -109,6 +110,10 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86f6aaf2-9b50-40b8-a427-1897d76471c5}</Project>
       <Name>PolygonMesh</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
+      <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
+      <Name>Agg.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
       <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
