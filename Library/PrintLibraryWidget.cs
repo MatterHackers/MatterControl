@@ -188,7 +188,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void ClearSearchWidget(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
 			previousLibraryProvider.KeywordFilter = "";
-			searchInput.Text = "";
+			searchInput.Text = currentLibraryProvider.KeywordFilter;
+			breadCrumbWidget.SetBreadCrumbs(null, currentPrintLibraryWidget.libraryDataView.CurrentLibraryProvider);
 		}
 
         private static void AddLibraryButtonElements()
@@ -393,6 +394,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				string searchText = searchInput.Text.Trim();
 
 				libraryDataView.CurrentLibraryProvider.KeywordFilter = searchText;
+
+				breadCrumbWidget.SetBreadCrumbs(null, currentPrintLibraryWidget.libraryDataView.CurrentLibraryProvider);
 			});
 		}
 

@@ -52,10 +52,13 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
+			LibraryProvider displayingProvider = currentLibraryProvider;
+
 			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			navigationButtonFactory.disabledFillColor = navigationButtonFactory.normalFillColor;
 			navigationButtonFactory.Margin = new BorderDouble(10, 0);
 
 			this.CloseAndRemoveAllChildren();
@@ -66,6 +69,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				parentProviderList.Add(currentLibraryProvider);
 				currentLibraryProvider = currentLibraryProvider.ParentLibraryProvider;
 			}
+
+			bool haveFilterRunning = displayingProvider.KeywordFilter != null && displayingProvider.KeywordFilter != "";
 
 			bool first = true;
 			for (int i = parentProviderList.Count - 1; i >= 0; i--)
@@ -90,6 +95,18 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				};
 				this.AddChild(gotoProviderButton);
 				first = false;
+			}
+
+			if (haveFilterRunning)
+			{
+				GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
+				separator.VAnchor = VAnchor.ParentCenter;
+				separator.Margin = new BorderDouble(0);
+				this.AddChild(separator);
+
+				Button cancelSearch = navigationButtonFactory.Generate("Search Results");
+				cancelSearch.Margin = new BorderDouble(3, 0);
+				this.AddChild(cancelSearch);
 			}
 
 			// while all the buttons don't fit in the control
