@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderHistoryCreator : ILibraryCreator
 	{
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
 			return new LibraryProviderHistory(null, parentLibraryProvider);
 		}

@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderQueueCreator : ILibraryCreator
 	{
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
 			return new LibraryProviderQueue(null, parentLibraryProvider);
 		}

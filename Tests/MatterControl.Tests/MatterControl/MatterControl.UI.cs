@@ -33,15 +33,18 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.DataStorage;
 using NUnit.Framework;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.UI
 {
 	[TestFixture, Category("MatterControl.UI")]
-	public class UITests
+	public class MatterControlUITests
 	{
 		private static bool saveImagesForDebug = true;
 
@@ -167,6 +170,58 @@ namespace MatterHackers.MatterControl.UI
 		{
 			OutputImage(control, "image-control.tga");
 			OutputImage(test, "image-test.tga");
+		}
+
+		public class DataFolderState
+		{
+			internal bool undoDataRename;
+			internal string userDataPath;
+			internal string renamedUserDataPath;
+		}
+
+		public static DataFolderState MakeNewStaticDataForTesting()
+		{
+			DataFolderState state = new DataFolderState();
+			state.userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
+			state.renamedUserDataPath = Path.Combine(Path.GetDirectoryName(state.userDataPath), "-MatterControl");
+			int testCount = 0;
+			while (Directory.Exists(state.renamedUserDataPath + testCount.ToString()))
+			{
+				testCount++;
+			}
+			state.renamedUserDataPath = state.renamedUserDataPath + testCount.ToString();
+
+			state.undoDataRename = false;
+			if (Directory.Exists(state.userDataPath))
+			{
+				Directory.Move(state.userDataPath, state.renamedUserDataPath);
+				state.undoDataRename = true;
+			}
+
+			Datastore.Instance.Initialize();
+
+			return state;
+		}
+
+		public static void RestoreStaticDataAfterTesting(DataFolderState state, bool closeDataBase)
+		{
+			if (state.undoDataRename)
+			{
+				Thread.Sleep(500);
+				if (closeDataBase)
+				{
+					Datastore.Instance.Exit();
+				}
+				Directory.Delete(state.userDataPath, true);
+				Stopwatch time = Stopwatch.StartNew();
+				// Wait for up to some amount of time for the directory to be gone.
+				while (Directory.Exists(state.userDataPath)
+					&& time.ElapsedMilliseconds < 100)
+				{
+					Thread.Sleep(1); // make sure we are not eating all the cpu time.
+				}
+				Directory.Move(state.renamedUserDataPath, state.userDataPath);
+			}
 		}
 	}
 }
