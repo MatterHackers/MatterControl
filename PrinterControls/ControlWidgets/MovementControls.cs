@@ -31,7 +31,9 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using System;
@@ -58,13 +60,21 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private Button homeXButton;
 		private Button homeYButton;
 		private Button homeZButton;
-
+		double borderWidth = 2;
 		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
+		AltGroupBox movementControlsGroupBox;
+		JogControls jogControls;
+		public FlowLayoutWidget manualControlsLayout;
+		public bool hotKeysEnabled = false;
+		private TextImageButtonFactory hotKeyButtonFactory = new TextImageButtonFactory();
+
+		
+		
 
 		protected override void AddChildElements()
 		{
 			Button editButton;
-			AltGroupBox movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement Controls".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
+			movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement Controls".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
 			editButton.Click += (sender, e) =>
 			{
 				if (editManualMovementSettingsWindow == null)
@@ -80,27 +90,40 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			movementControlsGroupBox.Margin = new BorderDouble(0);
 			movementControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			movementControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			movementControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
 			movementControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
 
+			
+
+
+			jogControls = new JogControls(new XYZColors());
+			jogControls.Margin = new BorderDouble(0);
 			{
-				FlowLayoutWidget manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				manualControlsLayout.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 				manualControlsLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
 				manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0) * TextWidget.GlobalPointSizeScaleRatio;
 				{
+
+					FlowLayoutWidget leftToRightContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+
+					
+
 					manualControlsLayout.AddChild(GetHomeButtonBar());
 					manualControlsLayout.AddChild(CreateSeparatorLine());
-					manualControlsLayout.AddChild(new JogControls(new XYZColors()));
+					manualControlsLayout.AddChild(jogControls);
+					//manualControlsLayout.AddChild(leftToRightContainer);
 					manualControlsLayout.AddChild(CreateSeparatorLine());
+					
 					//manualControlsLayout.AddChild(GetManualMoveBar());
 				}
-
+				
 				movementControlsGroupBox.AddChild(manualControlsLayout);
 			}
+			
 			this.AddChild(movementControlsGroupBox);
 		}
+
 
 		private FlowLayoutWidget GetHomeButtonBar()
 		{
@@ -121,19 +144,23 @@ namespace MatterHackers.MatterControl.PrinterControls
 			textImageButtonFactory.normalFillColor = new RGBA_Bytes(180, 180, 180);
 			homeAllButton = textImageButtonFactory.Generate(LocalizedString.Get("ALL"));
 			this.textImageButtonFactory.normalFillColor = oldColor;
+			homeAllButton.ToolTipText = "Home X, Y and Z";
 			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
 			homeAllButton.Click += new EventHandler(homeAll_Click);
 
 			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * TextWidget.GlobalPointSizeScaleRatio;
 			homeXButton = textImageButtonFactory.Generate("X", centerText: true);
+			homeXButton.ToolTipText = "Home X";
 			homeXButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
 			homeXButton.Click += new EventHandler(homeXButton_Click);
 
 			homeYButton = textImageButtonFactory.Generate("Y", centerText: true);
+			homeYButton.ToolTipText = "Home Y";
 			homeYButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
 			homeYButton.Click += new EventHandler(homeYButton_Click);
 
 			homeZButton = textImageButtonFactory.Generate("Z", centerText: true);
+			homeZButton.ToolTipText = "Home Z";
 			homeZButton.Margin = new BorderDouble(0, 0, 6, 0) * TextWidget.GlobalPointSizeScaleRatio;
 			homeZButton.Click += new EventHandler(homeZButton_Click);
 
@@ -147,6 +174,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += new EventHandler(disableMotors_Click);
 
+
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+
 			GuiWidget spacerReleaseShow = new GuiWidget(10 * TextWidget.GlobalPointSizeScaleRatio, 0);
 
 			homeButtonBar.AddChild(homeIconImageWidget);
@@ -157,6 +187,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.AddChild(spacer);
 			homeButtonBar.AddChild(disableMotors);
 			homeButtonBar.AddChild(spacerReleaseShow);
+		
 
 			return homeButtonBar;
 		}
