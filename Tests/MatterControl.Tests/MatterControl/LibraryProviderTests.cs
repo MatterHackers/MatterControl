@@ -83,6 +83,7 @@ namespace MatterControl.Tests
 			Assert.IsTrue(!Directory.Exists(createdDirectory));
 			Assert.IsTrue(dataReloaded == false);
 			testProvider.AddCollectionToLibrary(collectionName);
+			Thread.Sleep(500); // wait for the add to finish
 			Assert.IsTrue(testProvider.CollectionCount == 1);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(Directory.Exists(createdDirectory));
@@ -114,6 +115,7 @@ namespace MatterControl.Tests
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
 			subProvider.RemoveItem(0);
+			Thread.Sleep(500); // wait for the remove to finish
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(!File.Exists(subPathAndFile));
 
@@ -121,6 +123,7 @@ namespace MatterControl.Tests
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
 			testProvider.RemoveCollection(0);
+			Thread.Sleep(500); // wait for the remove to finish
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!Directory.Exists(createdDirectory));

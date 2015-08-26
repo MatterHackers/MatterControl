@@ -110,7 +110,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			}
 
 			// while all the buttons don't fit in the control
-			if (this.Parent.Width > 0
+			if (this.Parent != null
+				&& this.Parent.Width > 0
 				&& this.Children.Count > 4
 				&& this.GetChildrenBoundsIncludingMargins().Width > this.Parent.Width)
 			{

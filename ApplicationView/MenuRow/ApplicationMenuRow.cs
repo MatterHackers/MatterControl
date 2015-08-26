@@ -58,10 +58,11 @@ namespace MatterHackers.MatterControl
 			linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
 			linkButtonFactory.fontSize = 8;
 
-			Button signInLink = linkButtonFactory.Generate("(Sign Out)");
-			signInLink.ToolTipText = "Sign in to your MatterControl account".Localize();
-			signInLink.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			signInLink.Margin = new BorderDouble(top: 0);
+			Button signOutLink = linkButtonFactory.Generate("(Sign Out)");
+			signOutLink.Name = "Authentication Sign Out";
+			signOutLink.ToolTipText = "Sign out of your MatterControl account".Localize();
+			signOutLink.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			signOutLink.Margin = new BorderDouble(top: 0);
 
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
