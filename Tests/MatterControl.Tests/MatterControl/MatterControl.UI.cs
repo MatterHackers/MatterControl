@@ -54,6 +54,14 @@ namespace MatterHackers.MatterControl.UI
 			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", secondsToWait: 2));
 		}
 
+		public static string DefaultTestImages
+		{
+			get
+			{
+				return Path.Combine("..", "..", "..", "TestData", "TestImages");
+			}
+		}
+
 		public static void CloseMatterControl(AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
@@ -72,7 +80,7 @@ namespace MatterHackers.MatterControl.UI
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner();
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
 
 				// Now do the actions specific to this test. (replace this for new tests)
 				{

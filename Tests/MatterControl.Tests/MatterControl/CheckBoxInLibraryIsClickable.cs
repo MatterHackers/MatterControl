@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.UI
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner();
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
 
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
