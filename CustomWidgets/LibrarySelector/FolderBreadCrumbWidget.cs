@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.VectorMath;
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		public FolderBreadCrumbWidget(Action<LibraryProvider> SwitchToLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
+			this.Name = "FolderBreadCrumbWidget";
 			this.SwitchToLibraryProvider = SwitchToLibraryProvider;
 			UiThread.RunOnIdle(() => SetBreadCrumbs(null, currentLibraryProvider));
 		}
@@ -85,6 +87,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				}
 
 				Button gotoProviderButton = navigationButtonFactory.Generate(parentLibraryProvider.Name);
+				gotoProviderButton.Name = "Bread Crumb Button " + parentLibraryProvider.Name;
 				gotoProviderButton.Margin = new BorderDouble(3, 0);
 				gotoProviderButton.Click += (sender2, e2) =>
 				{
@@ -104,9 +107,10 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				separator.Margin = new BorderDouble(0);
 				this.AddChild(separator);
 
-				Button cancelSearch = navigationButtonFactory.Generate("Search Results");
-				cancelSearch.Margin = new BorderDouble(3, 0);
-				this.AddChild(cancelSearch);
+				Button searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
+				searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
+				searchResultsButton.Margin = new BorderDouble(3, 0);
+				this.AddChild(searchResultsButton);
 			}
 
 			// while all the buttons don't fit in the control

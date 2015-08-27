@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public LibraryDataView()
 		{
 			// let the application controler know about this window so it can use it to switch library providers if it needs to.
-			ApplicationController.Instance.currentLibraryDataView = this;
+			ApplicationController.Instance.CurrentLibraryDataView = this;
 
 			currentLibraryProvider = new LibraryProviderSelector(SetCurrentLibraryProvider);
 			currentLibraryProvider.DataReloaded += LibraryDataReloaded;

@@ -133,6 +133,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			openLabel.HAnchor = HAnchor.ParentCenter;
 
 			FatFlatClickWidget openButton = new FatFlatClickWidget(openLabel);
+			openButton.Name = "Open Item";
 			openButton.VAnchor = VAnchor.ParentBottomTop;
 			openButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			openButton.Width = 100;
@@ -239,6 +240,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				middleColumn.Margin = new BorderDouble(10, 6);
 				{
 					partLabel = new TextWidget(this.ItemName.Replace('_', ' '), pointSize: 14);
+					partLabel.Name = "Row Item " + partLabel.Text;
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 18);
 					partLabel.VAnchor = VAnchor.ParentCenter;

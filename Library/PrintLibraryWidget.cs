@@ -123,6 +123,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				searchPanel.Padding = new BorderDouble(0);
 				{
 					searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize());
+					searchInput.Name = "Search Library Edit";
 					searchInput.Margin = new BorderDouble(0, 3, 0, 0);
 					searchInput.HAnchor = HAnchor.ParentLeftRight;
 					searchInput.VAnchor = VAnchor.ParentCenter;
@@ -131,6 +132,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					double oldWidth = editButtonFactory.FixedWidth;
 					editButtonFactory.FixedWidth = 0;
 					Button searchButton = editButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
+					searchButton.Name = "Search Library Button";
 					searchButton.Click += searchButtonClick;
 					editButtonFactory.FixedWidth = oldWidth;
 

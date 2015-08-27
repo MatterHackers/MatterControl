@@ -3688,3 +3688,6 @@ Translated:Move (Shift + Left Mouse)
 English:Zoom (Ctrl + Left Mouse)
 Translated:Zoom (Ctrl + Left Mouse)
 
+English:Search Results
+Translated:Search Results
+

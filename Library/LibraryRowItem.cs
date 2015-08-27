@@ -200,6 +200,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				middleColumn.Margin = new BorderDouble(10, 6);
 				{
 					partLabel = new TextWidget(this.ItemName.Replace('_', ' '), pointSize: 14);
+					partLabel.Name = "Row Item " + partLabel.Text;
 					partLabel.TextColor = WidgetTextColor;
 					partLabel.MinimumSize = new Vector2(1, 18);
 					partLabel.VAnchor = VAnchor.ParentCenter;
