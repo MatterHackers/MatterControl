@@ -459,10 +459,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AnchorAll();
 		}
 
+		public int SortRowItemsOnIndex(LibraryRowItem x, LibraryRowItem y)
+		{
+			int xIndex = libraryDataView.GetItemIndex(x);
+			int yIndex = libraryDataView.GetItemIndex(y);
+
+			return xIndex.CompareTo(yIndex);
+		}
+
 		private void deleteFromLibraryButton_Click(object sender, EventArgs e)
 		{
-			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
+			libraryDataView.SelectedItems.Sort(SortRowItemsOnIndex);
+
+			// remove them last to first
+			for(int i=libraryDataView.SelectedItems.Count-1; i>=0; i--)
 			{
+				LibraryRowItem item = libraryDataView.SelectedItems[i];
 				item.RemoveFromCollection();
 			}
 

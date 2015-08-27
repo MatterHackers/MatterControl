@@ -235,6 +235,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
+		public int GetItemIndex(LibraryRowItem rowItem)
+		{
+			for (int i = 0; i < topToBottomItemList.Children.Count; i++)
+			{
+				if (topToBottomItemList.Children[i] != null
+					&& topToBottomItemList.Children[i].Children.Count > 0
+					&& topToBottomItemList.Children[i].Children[0] == rowItem)
+				{
+					return i;
+				}
+			}
+
+			return -1;
+		}
+
 		public void AddListItemToTopToBottom(GuiWidget child, int indexInChildrenList = -1)
 		{
 			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
