@@ -50,11 +50,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			this.Name = "FolderBreadCrumbWidget";
 			this.SwitchToLibraryProvider = SwitchToLibraryProvider;
 			UiThread.RunOnIdle(() => SetBreadCrumbs(null, currentLibraryProvider));
-		}
-
-		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
-		{
-			LibraryProvider displayingProvider = currentLibraryProvider;
 
 			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -62,6 +57,17 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			navigationButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.disabledFillColor = navigationButtonFactory.normalFillColor;
 			navigationButtonFactory.Margin = new BorderDouble(10, 0);
+			navigationButtonFactory.borderWidth = 0;
+		}
+
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			base.OnBoundsChanged(e);
+		}
+
+		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
+		{
+			LibraryProvider displayingProvider = currentLibraryProvider;
 
 			this.CloseAndRemoveAllChildren();
 
@@ -88,7 +94,14 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 				Button gotoProviderButton = navigationButtonFactory.Generate(parentLibraryProvider.Name);
 				gotoProviderButton.Name = "Bread Crumb Button " + parentLibraryProvider.Name;
-				gotoProviderButton.Margin = new BorderDouble(3, 0);
+				if (first)
+				{
+					gotoProviderButton.Margin = new BorderDouble(0, 0, 3, 0);
+				}
+				else
+				{
+					gotoProviderButton.Margin = new BorderDouble(3, 0);
+				}
 				gotoProviderButton.Click += (sender2, e2) =>
 				{
 					UiThread.RunOnIdle(() =>

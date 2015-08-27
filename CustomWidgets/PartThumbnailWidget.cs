@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl
 
 			this.BackgroundColor = normalBackgroundColor;
 			this.Cursor = Cursors.Hand;
+			this.ToolTipText = "Click to show in 3D View".Localize();
 
 			// set background images
 			if (noThumbnailImage.Width == 0)
