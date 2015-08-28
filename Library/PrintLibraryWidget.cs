@@ -113,6 +113,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					enterEditModeButton.Click += enterEditModeButtonClick;
 				}
 
+				enterEditModeButton.Name = "Library Edit Button";
+
 				leaveEditModeButton.Visible = false;
 
 				FlowLayoutWidget searchPanel = new FlowLayoutWidget();
@@ -121,6 +123,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				searchPanel.Padding = new BorderDouble(0);
 				{
 					searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize());
+					searchInput.Name = "Search Library Edit";
 					searchInput.Margin = new BorderDouble(0, 3, 0, 0);
 					searchInput.HAnchor = HAnchor.ParentLeftRight;
 					searchInput.VAnchor = VAnchor.ParentCenter;
@@ -129,6 +132,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					double oldWidth = editButtonFactory.FixedWidth;
 					editButtonFactory.FixedWidth = 0;
 					Button searchButton = editButtonFactory.Generate(LocalizedString.Get("Search"), centerText: true);
+					searchButton.Name = "Search Library Button";
 					searchButton.Click += searchButtonClick;
 					editButtonFactory.FixedWidth = oldWidth;
 
@@ -186,7 +190,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void ClearSearchWidget(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
 			previousLibraryProvider.KeywordFilter = "";
-			searchInput.Text = "";
+			searchInput.Text = currentLibraryProvider.KeywordFilter;
+			breadCrumbWidget.SetBreadCrumbs(null, currentPrintLibraryWidget.libraryDataView.CurrentLibraryProvider);
 		}
 
         private static void AddLibraryButtonElements()
@@ -208,6 +213,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// the create folder button
 			{
 				Button createFolderButton = textImageButtonFactory.Generate(LocalizedString.Get("Create Folder"));
+				createFolderButton.Name = "Create Folder Button";
 				buttonPanel.AddChild(createFolderButton);
 				createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
 				createFolderButton.Click += (sender, e) =>
@@ -390,6 +396,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				string searchText = searchInput.Text.Trim();
 
 				libraryDataView.CurrentLibraryProvider.KeywordFilter = searchText;
+
+				breadCrumbWidget.SetBreadCrumbs(null, currentPrintLibraryWidget.libraryDataView.CurrentLibraryProvider);
 			});
 		}
 
@@ -451,10 +459,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.AnchorAll();
 		}
 
+		public int SortRowItemsOnIndex(LibraryRowItem x, LibraryRowItem y)
+		{
+			int xIndex = libraryDataView.GetItemIndex(x);
+			int yIndex = libraryDataView.GetItemIndex(y);
+
+			return xIndex.CompareTo(yIndex);
+		}
+
 		private void deleteFromLibraryButton_Click(object sender, EventArgs e)
 		{
-			foreach (LibraryRowItem item in libraryDataView.SelectedItems)
+			libraryDataView.SelectedItems.Sort(SortRowItemsOnIndex);
+
+			// remove them last to first
+			for(int i=libraryDataView.SelectedItems.Count-1; i>=0; i--)
 			{
+				LibraryRowItem item = libraryDataView.SelectedItems[i];
 				item.RemoveFromCollection();
 			}
 

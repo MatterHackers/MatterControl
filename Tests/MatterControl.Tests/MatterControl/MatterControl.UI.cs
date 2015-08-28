@@ -29,28 +29,40 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.UI.Tests;
+using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.DataStorage;
 using NUnit.Framework;
 using System;
-using System.Threading.Tasks;
-using MatterHackers.GuiAutomation;
-using MatterHackers.Agg.PlatformAbstract;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.UI
 {
 	[TestFixture, Category("MatterControl.UI")]
-	public class UITests
+	public class MatterControlUITests
 	{
 		private static bool saveImagesForDebug = true;
 
-		void RemoveAllFromQueue(AutomationRunner testRunner)
+		private void RemoveAllFromQueue(AutomationRunner testRunner)
 		{
 			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", secondsToWait: 2));
 			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", secondsToWait: 2));
 		}
 
-		void CloseMatterControl(AutomationRunner testRunner)
+		public static string DefaultTestImages
+		{
+			get
+			{
+				return Path.Combine("..", "..", "..", "TestData", "TestImages");
+			}
+		}
+
+		public static void CloseMatterControl(AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
 			Assert.IsTrue(testRunner.ClickByName("File Menu", secondsToWait: 2));
@@ -63,29 +75,44 @@ namespace MatterHackers.MatterControl.UI
 		}
 
 		[Test, RequiresSTA, RunInApplicationDomain]
-		public void ClearQueueTests()
+		public void CreateFolderStarsOutWithTextFiledFocusedAndEditable()
 		{
 			// Run a copy of MatterControl
-			MatterControlApplication.AfterFirstDraw = () =>
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				Task.Run(() =>
-				{
-					AutomationRunner testRunner = new AutomationRunner("");
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
 
-					// Now do the actions specific to this test. (replace this for new tests)
-					{
-						RemoveAllFromQueue(testRunner);
-					}
+				// Now do the actions specific to this test. (replace this for new tests)
+				{
+					testRunner.ClickByName("Library Tab");
+					testRunner.ClickByName("Create Folder Button");
+
+					testRunner.Wait(.5);
+					testRunner.Type("Test Text");
+					testRunner.Wait(.5);
+
+					SystemWindow containingWindow;
+					GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
+					MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
+					resultsHarness.AddTestResult(textWidgetMH != null, "Found Text Widget");
+					resultsHarness.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
+					containingWindow.CloseOnIdle();
+					testRunner.Wait(.5);
 
 					CloseMatterControl(testRunner);
-				});
+				}
 			};
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 #endif
-			SystemWindow mcWindow = MatterControlApplication.Instance;
+			bool showWindow;
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 10);
+
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
 
 		/// <summary>
@@ -151,6 +178,58 @@ namespace MatterHackers.MatterControl.UI
 		{
 			OutputImage(control, "image-control.tga");
 			OutputImage(test, "image-test.tga");
+		}
+
+		public class DataFolderState
+		{
+			internal bool undoDataRename;
+			internal string userDataPath;
+			internal string renamedUserDataPath;
+		}
+
+		public static DataFolderState MakeNewStaticDataForTesting()
+		{
+			DataFolderState state = new DataFolderState();
+			state.userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
+			state.renamedUserDataPath = Path.Combine(Path.GetDirectoryName(state.userDataPath), "-MatterControl");
+			int testCount = 0;
+			while (Directory.Exists(state.renamedUserDataPath + testCount.ToString()))
+			{
+				testCount++;
+			}
+			state.renamedUserDataPath = state.renamedUserDataPath + testCount.ToString();
+
+			state.undoDataRename = false;
+			if (Directory.Exists(state.userDataPath))
+			{
+				Directory.Move(state.userDataPath, state.renamedUserDataPath);
+				state.undoDataRename = true;
+			}
+
+			Datastore.Instance.Initialize();
+
+			return state;
+		}
+
+		public static void RestoreStaticDataAfterTesting(DataFolderState state, bool closeDataBase)
+		{
+			if (state.undoDataRename)
+			{
+				Thread.Sleep(500);
+				if (closeDataBase)
+				{
+					Datastore.Instance.Exit();
+				}
+				Directory.Delete(state.userDataPath, true);
+				Stopwatch time = Stopwatch.StartNew();
+				// Wait for up to some amount of time for the directory to be gone.
+				while (Directory.Exists(state.userDataPath)
+					&& time.ElapsedMilliseconds < 100)
+				{
+					Thread.Sleep(1); // make sure we are not eating all the cpu time.
+				}
+				Directory.Move(state.renamedUserDataPath, state.userDataPath);
+			}
 		}
 	}
 }

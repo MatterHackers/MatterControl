@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider)
+		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
 			return new LibraryProviderFileSystem(rootPath, Description, parentLibraryProvider);
 		}
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				if (keywordFilter != value)
 				{
 					keywordFilter = value;
-					GetFilesAndCollectionsInCurrentDirectory();
+					GetFilesAndCollectionsInCurrentDirectory(keywordFilter.Trim() != "");
 				}
 			}
 		}
@@ -315,45 +315,83 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			});
 		}
 
-		private void GetFilesAndCollectionsInCurrentDirectory()
+		private async void GetFilesAndCollectionsInCurrentDirectory(bool recursive = false)
 		{
-			currentDirectoryDirectories.Clear();
-			try
+			List<string> newReadDirectoryDirectories = new List<string>();
+			List<string> newReadDirectoryFiles = new List<string>();
+
+			await Task.Run(() =>
 			{
-				string[] directories = Directory.GetDirectories(Path.Combine(rootPath, currentDirectory));
-				foreach (string directoryName in directories)
+				try
 				{
-					if (keywordFilter.Trim() == string.Empty
-						|| Path.GetFileNameWithoutExtension(directoryName).Contains(keywordFilter))
+					string[] directories = null;
+					if (recursive)
+					{
+						directories = Directory.GetDirectories(Path.Combine(rootPath, currentDirectory), "*.*", SearchOption.AllDirectories);
+					}
+					else
+					{
+						directories = Directory.GetDirectories(Path.Combine(rootPath, currentDirectory));
+					}
+					foreach (string directoryName in directories)
 					{
 						string subPath = directoryName.Substring(rootPath.Length + 1);
-						currentDirectoryDirectories.Add(subPath);
+						newReadDirectoryDirectories.Add(subPath);
 					}
 				}
-			}
-			catch (Exception)
-			{
-			}
-
-			currentDirectoryFiles.Clear();
-			try
-			{
-				string[] files = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
-				foreach (string filename in files)
+				catch (Exception)
 				{
-					if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
+				}
+
+				try
+				{
+					string upperFilter = keywordFilter.ToUpper();
+					string[] files = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
+					foreach (string filename in files)
 					{
-						if (keywordFilter.Trim() == string.Empty
-							|| Path.GetFileNameWithoutExtension(filename).Contains(keywordFilter))
+						if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
 						{
-							currentDirectoryFiles.Add(filename);
+							if (upperFilter.Trim() == string.Empty
+								|| Path.GetFileNameWithoutExtension(filename.ToUpper()).Contains(upperFilter))
+							{
+								newReadDirectoryFiles.Add(filename);
+							}
+						}
+					}
+					if (recursive)
+					{
+						foreach (string directory in newReadDirectoryDirectories)
+						{
+							string subDirectory = Path.Combine(rootPath, directory);
+							string[] subDirectoryFiles = Directory.GetFiles(Path.Combine(rootPath, currentDirectory));
+							foreach (string filename in subDirectoryFiles)
+							{
+								if (ApplicationSettings.LibraryFilterFileExtensions.Contains(Path.GetExtension(filename).ToLower()))
+								{
+									if (keywordFilter.Trim() == string.Empty
+										|| Path.GetFileNameWithoutExtension(filename.ToUpper()).Contains(upperFilter))
+									{
+										newReadDirectoryFiles.Add(filename);
+									}
+								}
+							}
 						}
 					}
 				}
-			}
-			catch (Exception)
+				catch (Exception)
+				{
+				}
+			});
+
+			if (recursive)
 			{
+				currentDirectoryDirectories.Clear();
 			}
+			else
+			{
+				currentDirectoryDirectories = newReadDirectoryDirectories;
+			}
+			currentDirectoryFiles = newReadDirectoryFiles;
 
 			OnDataReloaded(null);
 		}

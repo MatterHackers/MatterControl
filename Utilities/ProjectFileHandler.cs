@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 		private static string archiveStagingFolder = Path.Combine(applicationDataPath, "data", "temp", "project-assembly");
 		private static string defaultManifestPathAndFileName = Path.Combine(archiveStagingFolder, "manifest.json");
 		private static string defaultProjectPathAndFileName = Path.Combine(applicationDataPath, "data", "default.zip");

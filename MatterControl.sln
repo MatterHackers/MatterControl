@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Blend for Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatterControl", "MatterControl.csproj", "{0B8D6F56-BD7F-4426-B858-D9292B084656}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -120,7 +120,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X3GDriver", "..\X3GDriver\X
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Nat", "..\CloudServicesPlugin\Mono.Nat\Mono.Nat.csproj", "{F5D74163-145F-47BF-83DC-D0E07249C6CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiAutomation", "SubModules\agg-sharp\GuiAutomation\GuiAutomation.csproj", "{E9102310-0029-4D8F-B1E9-88FBA6147D45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiAutomation", "Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj", "{E9102310-0029-4D8F-B1E9-88FBA6147D45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudServices.Tests", "..\CloudServicesPlugin\CloudServices.Tests\CloudServices.Tests.csproj", "{66BAFF8D-3079-4912-B100-41140BAF4DDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1107,6 +1109,30 @@ Global
 		{E9102310-0029-4D8F-B1E9-88FBA6147D45}.Release64|x64.Build.0 = Release64|x64
 		{E9102310-0029-4D8F-B1E9-88FBA6147D45}.Release64|x86.ActiveCfg = Release64|Any CPU
 		{E9102310-0029-4D8F-B1E9-88FBA6147D45}.Release64|x86.Build.0 = Release64|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug64|Any CPU.ActiveCfg = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug64|Any CPU.Build.0 = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug64|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug64|Mixed Platforms.Build.0 = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug64|x64.ActiveCfg = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Debug64|x86.ActiveCfg = Debug|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release|x64.ActiveCfg = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release|x86.ActiveCfg = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|Any CPU.ActiveCfg = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|Any CPU.Build.0 = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|Mixed Platforms.Build.0 = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|x64.ActiveCfg = Release|Any CPU
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD}.Release64|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1143,6 +1169,7 @@ Global
 		{26164CC3-29AD-4384-861C-181440934B00} = {4E79BE4E-275E-4901-9173-E9096B7318F0}
 		{F5D74163-145F-47BF-83DC-D0E07249C6CA} = {4E79BE4E-275E-4901-9173-E9096B7318F0}
 		{E9102310-0029-4D8F-B1E9-88FBA6147D45} = {2AB9B589-5C98-4C05-BBEA-F97DAE168EAB}
+		{66BAFF8D-3079-4912-B100-41140BAF4DDD} = {4E79BE4E-275E-4901-9173-E9096B7318F0}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MatterControl.csproj

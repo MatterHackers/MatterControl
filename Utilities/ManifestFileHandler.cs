@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static string applicationDataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
+		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 		private static string defaultPathAndFileName = applicationDataPath + "/data/default.mcp";
 
 		public void ExportToJson(string savedFileName = null)

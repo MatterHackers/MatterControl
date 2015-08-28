@@ -42,21 +42,15 @@ namespace MatterHackers.MatterControl.ActionBar
 			: base("150.3°")
 		{
 			temperatureTypeName.Text = "Extruder";
-			AddHandlers();
 			setToCurrentTemperature();
 
 			ToolTipText = "Current extruder temperature".Localize();
 			preheatButton.ToolTipText = "Preheat the Extruder".Localize();
+
+			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
 		}
 
 		private event EventHandler unregisterEvents;
-
-		private void AddHandlers()
-		{
-			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-			this.MouseEnterBounds += onMouseEnterBounds;
-			this.MouseLeaveBounds += onMouseLeaveBounds;
-		}
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -65,16 +59,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				unregisterEvents(this, null);
 			}
 			base.OnClosed(e);
-		}
-
-		private void onMouseEnterBounds(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("Extruder Temperature"));
-		}
-
-		private void onMouseLeaveBounds(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.HideHoverText();
 		}
 
 		private void setToCurrentTemperature()

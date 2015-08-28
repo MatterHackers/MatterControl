@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 			byte[] raw = e.Result;
 			Stream stream = new MemoryStream(raw);
 			ImageBuffer unScaledImage = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-			ImageIO.LoadImageData(stream, unScaledImage);
+			StaticData.Instance.LoadImageData(stream, unScaledImage);
 			// If the source image (the one we downloaded) is more than twice as big as our dest image.
 			while (unScaledImage.Width > Image.Width * 2)
 			{

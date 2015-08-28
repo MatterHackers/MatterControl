@@ -52,22 +52,4 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 	}
-
-	internal class MessageActionRow : ActionRowBase
-	{
-		protected override void AddChildElements()
-		{
-			if (HelpTextWidget.Instance.Parent != null)
-			{
-				HelpTextWidget.Instance.Parent.RemoveChild(HelpTextWidget.Instance);
-			}
-
-			this.AddChild(HelpTextWidget.Instance);
-		}
-
-		protected override void Initialize()
-		{
-			this.Margin = new BorderDouble(0, 3, 0, 0);
-		}
-	}
 }

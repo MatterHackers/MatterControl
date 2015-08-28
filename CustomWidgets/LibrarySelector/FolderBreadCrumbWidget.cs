@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.VectorMath;
@@ -46,17 +47,27 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 		public FolderBreadCrumbWidget(Action<LibraryProvider> SwitchToLibraryProvider, LibraryProvider currentLibraryProvider)
 		{
+			this.Name = "FolderBreadCrumbWidget";
 			this.SwitchToLibraryProvider = SwitchToLibraryProvider;
 			UiThread.RunOnIdle(() => SetBreadCrumbs(null, currentLibraryProvider));
-		}
 
-		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
-		{
 			navigationButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
 			navigationButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			navigationButtonFactory.disabledFillColor = navigationButtonFactory.normalFillColor;
 			navigationButtonFactory.Margin = new BorderDouble(10, 0);
+			navigationButtonFactory.borderWidth = 0;
+		}
+
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			base.OnBoundsChanged(e);
+		}
+
+		public void SetBreadCrumbs(LibraryProvider previousLibraryProvider, LibraryProvider currentLibraryProvider)
+		{
+			LibraryProvider displayingProvider = currentLibraryProvider;
 
 			this.CloseAndRemoveAllChildren();
 
@@ -66,6 +77,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				parentProviderList.Add(currentLibraryProvider);
 				currentLibraryProvider = currentLibraryProvider.ParentLibraryProvider;
 			}
+
+			bool haveFilterRunning = displayingProvider.KeywordFilter != null && displayingProvider.KeywordFilter != "";
 
 			bool first = true;
 			for (int i = parentProviderList.Count - 1; i >= 0; i--)
@@ -80,7 +93,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				}
 
 				Button gotoProviderButton = navigationButtonFactory.Generate(parentLibraryProvider.Name);
-				gotoProviderButton.Margin = new BorderDouble(3, 0);
+				gotoProviderButton.Name = "Bread Crumb Button " + parentLibraryProvider.Name;
+				if (first)
+				{
+					gotoProviderButton.Margin = new BorderDouble(0, 0, 3, 0);
+				}
+				else
+				{
+					gotoProviderButton.Margin = new BorderDouble(3, 0);
+				}
 				gotoProviderButton.Click += (sender2, e2) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -92,8 +113,22 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 				first = false;
 			}
 
+			if (haveFilterRunning)
+			{
+				GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
+				separator.VAnchor = VAnchor.ParentCenter;
+				separator.Margin = new BorderDouble(0);
+				this.AddChild(separator);
+
+				Button searchResultsButton = navigationButtonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
+				searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
+				searchResultsButton.Margin = new BorderDouble(3, 0);
+				this.AddChild(searchResultsButton);
+			}
+
 			// while all the buttons don't fit in the control
-			if (this.Parent.Width > 0
+			if (this.Parent != null
+				&& this.Parent.Width > 0
 				&& this.Children.Count > 4
 				&& this.GetChildrenBoundsIncludingMargins().Width > this.Parent.Width)
 			{

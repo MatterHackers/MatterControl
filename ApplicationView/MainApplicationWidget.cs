@@ -336,14 +336,14 @@ namespace MatterHackers.MatterControl
 			ReloadAdvancedControlsPanelTrigger.CallEvents(this, null);
 		}
 
-		public LibraryDataView currentLibraryDataView = null;
+		public LibraryDataView CurrentLibraryDataView = null;
 		public void SwitchToPurchasedLibrary()
 		{
 			// Switch to the purchased library
-			LibraryProviderSelector libraryProviderSelector = currentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
+			LibraryProviderSelector libraryProviderSelector = CurrentLibraryDataView.CurrentLibraryProvider.GetRootProvider() as LibraryProviderSelector;
 			if(libraryProviderSelector != null)
 			{
-				currentLibraryDataView.CurrentLibraryProvider = libraryProviderSelector.GetPurchasedLibrary();
+				CurrentLibraryDataView.CurrentLibraryProvider = libraryProviderSelector.GetPurchasedLibrary();
 			}
 		}
 

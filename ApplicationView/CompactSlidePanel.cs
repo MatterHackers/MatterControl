@@ -90,8 +90,6 @@ namespace MatterHackers.MatterControl
 				advancedControlsLinkButton.VAnchor = VAnchor.ParentBottom;
 				advancedControlsLinkButton.Cursor = Cursors.Hand;
 				advancedControlsLinkButton.Click += new EventHandler(AdvancedControlsButton_Click);
-				advancedControlsLinkButton.MouseEnterBounds += new EventHandler(onMouseEnterBoundsAdvancedControlsLink);
-				advancedControlsLinkButton.MouseLeaveBounds += new EventHandler(onMouseLeaveBoundsAdvancedControlsLink);
 
 				GuiWidget hSpacer = new GuiWidget();
 				hSpacer.HAnchor = HAnchor.ParentLeftRight;
@@ -107,7 +105,7 @@ namespace MatterHackers.MatterControl
 			// do the right panel
 			{
 				this.RightPanel.AddChild(new PrintProgressBar());
-				ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView(AdvancedControlsButton_Click, onMouseEnterBoundsPrintQueueLink, onMouseLeaveBoundsPrintQueueLink);
+				ThirdPanelTabView thirdPanelTabView = new ThirdPanelTabView(AdvancedControlsButton_Click);
 				thirdPanelTabView.Name = "For - CompactSlidePanel";
 				this.RightPanel.AddChild(thirdPanelTabView);
 			}
@@ -132,26 +130,6 @@ namespace MatterHackers.MatterControl
 			{
 				this.PanelIndex = 0;
 			}
-		}
-
-		private void onMouseEnterBoundsAdvancedControlsLink(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("View Manual Printer Controls and Slicing Settings"));
-		}
-
-		private void onMouseLeaveBoundsAdvancedControlsLink(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.HideHoverText();
-		}
-
-		private void onMouseEnterBoundsPrintQueueLink(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("View Queue and Library"));
-		}
-
-		private void onMouseLeaveBoundsPrintQueueLink(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.HideHoverText();
 		}
 
 		public override void OnClosed(EventArgs e)

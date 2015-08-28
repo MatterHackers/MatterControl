@@ -41,20 +41,13 @@ namespace MatterHackers.MatterControl.ActionBar
 			: base("150.3°")
 		{
 			temperatureTypeName.Text = "Print Bed";
-			AddHandlers();
 			setToCurrentTemperature();
 			ToolTipText = "Current bed temperature".Localize();
 			preheatButton.ToolTipText = "Preheat the Bed".Localize();
+			PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
 		}
 
 		private event EventHandler unregisterEvents;
-
-		private void AddHandlers()
-		{
-			PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent(onTemperatureRead, ref unregisterEvents);
-			this.MouseEnterBounds += onMouseEnterBounds;
-			this.MouseLeaveBounds += onMouseLeaveBounds;
-		}
 
 		public override void OnClosed(EventArgs e)
 		{
@@ -63,16 +56,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				unregisterEvents(this, null);
 			}
 			base.OnClosed(e);
-		}
-
-		private void onMouseEnterBounds(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.ShowHoverText(LocalizedString.Get("Bed Temperature"));
-		}
-
-		private void onMouseLeaveBounds(Object sender, EventArgs e)
-		{
-			HelpTextWidget.Instance.HideHoverText();
 		}
 
 		private void setToCurrentTemperature()

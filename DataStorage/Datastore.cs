@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		//Describes the location for storing all local application data
 		private static ApplicationDataStorage globalInstance;
-		private readonly string applicationDataFolderName = "MatterControl";
+		private static readonly string applicationDataFolderName = "MatterControl";
 		private readonly string datastoreName = "MatterControl.db";
 		private string applicationPath;
 		public ApplicationDataStorage()
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 			get
 			{
-				string libraryPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationUserDataPath, "Library");
+				string libraryPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Library");
 
 				//Create library path if it doesn't exist
 				DirectoryInfo dir = new DirectoryInfo(libraryPath);
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// Returns the application user data folder
 		/// </summary>
 		/// <returns></returns>
-		public string ApplicationUserDataPath
+		public static string ApplicationUserDataPath
 		{
 			get
 			{

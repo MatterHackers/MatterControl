@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public LibraryDataView()
 		{
 			// let the application controler know about this window so it can use it to switch library providers if it needs to.
-			ApplicationController.Instance.currentLibraryDataView = this;
+			ApplicationController.Instance.CurrentLibraryDataView = this;
 
 			currentLibraryProvider = new LibraryProviderSelector(SetCurrentLibraryProvider);
 			currentLibraryProvider.DataReloaded += LibraryDataReloaded;
@@ -233,6 +233,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				return topToBottomItemList.Children.Count;
 			}
+		}
+
+		public int GetItemIndex(LibraryRowItem rowItem)
+		{
+			for (int i = 0; i < topToBottomItemList.Children.Count; i++)
+			{
+				if (topToBottomItemList.Children[i] != null
+					&& topToBottomItemList.Children[i].Children.Count > 0
+					&& topToBottomItemList.Children[i].Children[0] == rowItem)
+				{
+					return i;
+				}
+			}
+
+			return -1;
 		}
 
 		public void AddListItemToTopToBottom(GuiWidget child, int indexInChildrenList = -1)

@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string rotateIconPath = Path.Combine("ViewTransformControls", "rotate.png");
 			rotateButton = textImageButtonFactory.GenerateRadioButton("", rotateIconPath);
-			rotateButton.ToolTipText = "Rotate (Alt + L. Mouse)".Localize();
+			rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
             rotateButton.Margin = new BorderDouble(3);
 			AddChild(rotateButton);
 			rotateButton.Click += (sender, e) =>
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string translateIconPath = Path.Combine("ViewTransformControls", "translate.png");
 			translateButton = textImageButtonFactory.GenerateRadioButton("", translateIconPath);
-            translateButton.ToolTipText = "Move (Shift + L. Mouse)".Localize();
+			translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
             translateButton.Margin = new BorderDouble(3);
 			AddChild(translateButton);
 			translateButton.Click += (sender, e) =>
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string scaleIconPath = Path.Combine("ViewTransformControls", "scale.png");
 			scaleButton = textImageButtonFactory.GenerateRadioButton("", scaleIconPath);
-            scaleButton.ToolTipText = "Zoom (Ctrl + L. Mouse)".Localize();
+			scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
             scaleButton.Margin = new BorderDouble(3);
 			AddChild(scaleButton);
 			scaleButton.Click += (sender, e) =>
