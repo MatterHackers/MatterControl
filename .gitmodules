@@ -1,6 +1,6 @@
-[submodule "Submodules/MatterSlice"]
-	path = Submodules/MatterSlice
-	url = https://github.com/MatterHackers/MatterSlice.git
 [submodule "Submodules/agg-sharp"]
 	path = Submodules/agg-sharp
 	url = https://github.com/MatterHackers/agg-sharp.git
+[submodule "Submodules/MatterSlice"]
+	path = Submodules/MatterSlice
+	url = git@github.com:gobrien4418/MatterSlice.git
