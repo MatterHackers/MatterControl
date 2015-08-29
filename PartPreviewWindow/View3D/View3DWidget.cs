@@ -1991,8 +1991,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			SelectionChanged(this, null);
 
-			if (openMode == OpenMode.Editing
-				|| !PartsAreInPrintVolume())
+			if (openMode == OpenMode.Editing)
 			{
 				UiThread.RunOnIdle(EnterEditAndCreateSelectionData);
 			}
