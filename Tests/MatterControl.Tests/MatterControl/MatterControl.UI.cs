@@ -192,7 +192,6 @@ namespace MatterHackers.MatterControl.UI
 			DataFolderState state = new DataFolderState();
 			state.userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
 			state.renamedUserDataPath = Path.Combine(Path.GetDirectoryName(state.userDataPath), "-MatterControl");
-			string fullPathToDataContents = Path.Combine("..", "..", "..", "TestData", "TestDatabaseStates", testDBFolderName);
 
 			int testCount = 0;
 			while (Directory.Exists(state.renamedUserDataPath + testCount.ToString()))
@@ -209,8 +208,9 @@ namespace MatterHackers.MatterControl.UI
 				state.undoDataRename = true;
 			}
 
-			if(testDBFolderName != null)
+			if (testDBFolderName != null)
 			{
+				string fullPathToDataContents = Path.Combine("..", "..", "..", "TestData", "TestDatabaseStates", testDBFolderName);
 				CopyTestDataDBFolderToTemporaryMCAppDataDirectory(fullPathToDataContents);
 				state.undoDataRename = true;
 				return state;

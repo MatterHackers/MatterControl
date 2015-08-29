@@ -33,8 +33,14 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(terminalWindowExists1 == false, "Terminal Window does not exist");
 
 					testRunner.ClickByName("Show Terminal Button", 6);
-					bool terminalWindowExists2 = testRunner.WaitForName("Gcode Terminal", 3);
-					resultsHarness.AddTestResult(terminalWindowExists2 == true, "Terminal Window exists after Show Terminal button is clicked");
+		
+					SystemWindow containingWindow;
+					GuiWidget terminalWindow = testRunner.GetWidgetByName("Gcode Terminal", out containingWindow, secondsToWait: 3);
+					resultsHarness.AddTestResult(terminalWindow != null, "Terminal Window exists after Show Terminal button is clicked");
+					containingWindow.CloseOnIdle();
+					testRunner.Wait(.5);
+
+					MatterControlUITests.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -76,6 +82,8 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Configure Notification Settings Button", 6);
 					bool printNotificationsWindowExists2 = testRunner.WaitForName("Notification Options Window", 3);
 					resultsHarness.AddTestResult(printNotificationsWindowExists2 == true, "Print Notifications Window exists after Configure button is clicked");
+
+					MatterControlUITests.CloseMatterControl(testRunner);
 				}
 			};
 

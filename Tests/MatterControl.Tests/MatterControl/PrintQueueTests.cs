@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.UI
 					bool imageExists2 = testRunner.ImageExists("MatterHackersStoreImage.png", 10);
 					resultsHarness.AddTestResult(imageExists2 == true, "Web page is open");
 
+					MatterControlUITests.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -97,10 +98,15 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(pluginWindowExists1 == false, "Plugin window does not exist");
 
 					testRunner.ClickByName("Design Tool Button", 5);
-					//Test that the plugin window does exist after the create button is clicked
-					bool pluginWindowExists = testRunner.WaitForName("Plugin Chooser Window", 10);
-					resultsHarness.AddTestResult(pluginWindowExists == true, "Plugin window does exist");
 
+					//Test that the plugin window does exist after the create button is clicked
+					SystemWindow containingWindow;
+					GuiWidget pluginWindowExists = testRunner.GetWidgetByName("Plugin Chooser Window", out containingWindow, secondsToWait: 3);
+					resultsHarness.AddTestResult(pluginWindowExists != null, "Plugin Chooser Window");
+					pluginWindowExists.CloseOnIdle();
+					testRunner.Wait(.5);
+
+					MatterControlUITests.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -137,9 +143,13 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(exportWindowExists1 == false, "Export window does not exist");
 
 					testRunner.ClickByName("Export Queue Button", 5);
-					bool exportWindowExists2 = testRunner.WaitForName( "Export Window Queue", 10);
-					resultsHarness.AddTestResult(exportWindowExists2 == true, "Export window does exist");
+					SystemWindow containingWindow;
+					GuiWidget exportWindow = testRunner.GetWidgetByName("Export Window Queue", out containingWindow, secondsToWait: 5);
+					resultsHarness.AddTestResult(exportWindow != null, "Export window does exist");
+					exportWindow.CloseOnIdle();
+					testRunner.Wait(.5);
 
+					MatterControlUITests.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -148,8 +158,11 @@ namespace MatterHackers.MatterControl.UI
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 #endif
 			bool showWindow;
+			string testDBFolder = "MC_Three_Queue_Items";
+			MatterControlUITests.DataFolderState staticDataState = MatterControlUITests.MakeNewStaticDataForTesting(testDBFolder);
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 60);
+			MatterControlUITests.RestoreStaticDataAfterTesting(staticDataState, true);
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 
@@ -172,6 +185,8 @@ namespace MatterHackers.MatterControl.UI
 					bool exportButtonExists = testRunner.WaitForName("Export Queue Button", 10);
 					testRunner.Wait(5);
 					resultsHarness.AddTestResult(exportButtonExists == false, "Export button is disabled");
+
+					MatterControlUITests.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -205,9 +220,14 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(partPreviewWindowExists1 == false, "Part Preview Window Does Not Exist");
 
 					testRunner.ClickByName("Queue Item Thumbnail");
-					bool partPreviewWindowExists2 = testRunner.WaitForName("Part Preview Window Thumbnail", 5);
-					resultsHarness.AddTestResult(partPreviewWindowExists2 == true, "Part Preview Window Exists");
- 
+
+					SystemWindow containingWindow;
+					GuiWidget partPreviewWindowExists = testRunner.GetWidgetByName("Part Preview Window Thumbnail", out containingWindow, secondsToWait: 3);
+					resultsHarness.AddTestResult(partPreviewWindowExists != null, "Part Preview Window Exists");
+					partPreviewWindowExists.CloseOnIdle();
+					testRunner.Wait(.5);
+
+					MatterControlUITests.CloseMatterControl(testRunner);
 				}
 			};
 
