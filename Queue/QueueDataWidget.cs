@@ -91,10 +91,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 			FlowLayoutWidget allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
 				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
+				enterEditModeButton.Name = "Queue Edit Button";
 				enterEditModeButton.ToolTipText = "Enter Multi Select mode".Localize();
                 enterEditModeButton.Click += enterEditModeButtonClick;
 
 				leaveEditModeButton = editButtonFactory.Generate("Done".Localize(), centerText: true);
+				leaveEditModeButton.Name = "Queue Done Button";
 				leaveEditModeButton.Click += leaveEditModeButtonClick;
 
 				// make sure the buttons are the same size even when localized
@@ -165,6 +167,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					{
 						createButton = textImageButtonFactory.Generate(LocalizedString.Get("Create"), "icon_creator_white_32x32.png");
 						createButton.ToolTipText = "Choose a Create Tool to generate custom designs".Localize();
+						createButton.Name = "Design Tool Button";
                         buttonPanel1.AddChild(createButton);
 						createButton.Margin = new BorderDouble(0, 0, 3, 0);
 						createButton.Click += (sender, e) =>
@@ -181,6 +184,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						{
 							shopButton = textImageButtonFactory.Generate(LocalizedString.Get("Buy Materials"), "icon_shopping_cart_32x32.png");
 							shopButton.ToolTipText = "Shop online for printing materials".Localize();
+							shopButton.Name = "Buy Materials Button";
 							buttonPanel1.AddChild(shopButton);
 							shopButton.Margin = new BorderDouble(0, 0, 3, 0);
 							shopButton.Click += (sender, e) =>
@@ -225,6 +229,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			this.AddChild(allControls);
 			AddHandlers();
+			SetEditButtonsStates(); 
 
 			//enterEditModeButtonClick(null, null);
 		}
@@ -236,6 +241,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			editButtonFactory.FixedWidth = 0;
 
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
+			exportItemButton.Name = "Export Queue Button";
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += new EventHandler(exportButton_Click);
 			editButtonsEnableData.Add(new ButtonEnableData(false, false));
@@ -609,6 +615,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			if (exportingWindowIsOpen == false)
 			{
 				exportingWindow = new ExportPrintItemWindow(printItem);
+				exportingWindow.Name = "Export Window Queue";
 				this.exportingWindowIsOpen = true;
 				exportingWindow.Closed += (source, e) => this.exportingWindowIsOpen = false;
 				exportingWindow.ShowAsSystemWindow();
@@ -627,6 +634,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			if (pluginChooserWindow == null)
 			{
 				pluginChooserWindow = new PluginChooserWindow();
+				pluginChooserWindow.Name = "Plugin Chooser Window";
 				pluginChooserWindow.Closed += (sender, e) =>
 				{
 					pluginChooserWindow = null;

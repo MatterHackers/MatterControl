@@ -606,6 +606,7 @@ namespace MatterHackers.MatterControl
 			if (partPreviewWindow == null)
 			{
 				partPreviewWindow = new PartPreviewMainWindow(this.PrintItem, autoRotate);
+				partPreviewWindow.Name = "Part Preview Window Thumbnail";
 				partPreviewWindow.Closed += (object sender, EventArgs e) =>
 				{
 					this.partPreviewWindow = null;

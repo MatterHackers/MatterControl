@@ -19,6 +19,7 @@ namespace MatterHackers.MatterControl
 		public MenuOptionSettings()
 			: base("View".Localize())
 		{
+			
 		}
 
 		override protected TupleList<string, Func<bool>> GetMenuItems()

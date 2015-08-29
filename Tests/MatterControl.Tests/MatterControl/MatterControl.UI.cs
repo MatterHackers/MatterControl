@@ -187,16 +187,19 @@ namespace MatterHackers.MatterControl.UI
 			internal string renamedUserDataPath;
 		}
 
-		public static DataFolderState MakeNewStaticDataForTesting()
+		public static DataFolderState MakeNewStaticDataForTesting(string testDBFolderName = null)
 		{
 			DataFolderState state = new DataFolderState();
 			state.userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
 			state.renamedUserDataPath = Path.Combine(Path.GetDirectoryName(state.userDataPath), "-MatterControl");
+			string fullPathToDataContents = Path.Combine("..", "..", "..", "TestData", "TestDatabaseStates", testDBFolderName);
+
 			int testCount = 0;
 			while (Directory.Exists(state.renamedUserDataPath + testCount.ToString()))
 			{
 				testCount++;
 			}
+
 			state.renamedUserDataPath = state.renamedUserDataPath + testCount.ToString();
 
 			state.undoDataRename = false;
@@ -204,6 +207,13 @@ namespace MatterHackers.MatterControl.UI
 			{
 				Directory.Move(state.userDataPath, state.renamedUserDataPath);
 				state.undoDataRename = true;
+			}
+
+			if(testDBFolderName != null)
+			{
+				CopyTestDataDBFolderToTemporaryMCAppDataDirectory(fullPathToDataContents);
+				state.undoDataRename = true;
+				return state;
 			}
 
 			Datastore.Instance.Initialize();
@@ -231,5 +241,24 @@ namespace MatterHackers.MatterControl.UI
 				Directory.Move(state.renamedUserDataPath, state.userDataPath);
 			}
 		}
+
+		public static void CopyTestDataDBFolderToTemporaryMCAppDataDirectory(string testDataDBDirectory)
+		{
+			string matterControlAppDataFolder = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
+			
+			foreach(string folder in Directory.GetDirectories(testDataDBDirectory, "*", SearchOption.AllDirectories))
+			{
+				string directoryToCopyFilesTo = folder.Replace(testDataDBDirectory, matterControlAppDataFolder);
+				Directory.CreateDirectory(directoryToCopyFilesTo);
+			}
+
+			foreach(string fileName in Directory.GetFiles(testDataDBDirectory, "*", SearchOption.AllDirectories))
+			{
+				string newFileFullName = fileName.Replace(testDataDBDirectory, matterControlAppDataFolder);
+				File.Copy(fileName, newFileFullName, true);
+			}
+
+		}
+
 	}
 }

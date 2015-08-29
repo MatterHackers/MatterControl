@@ -228,6 +228,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			gcodeTerminalLabel.VAnchor = VAnchor.ParentCenter;
 
 			openGcodeTerminalButton = textImageButtonFactory.Generate("Show Terminal".Localize().ToUpper());
+			openGcodeTerminalButton.Name = "Show Terminal Button";
 			openGcodeTerminalButton.Click += new EventHandler(openGcodeTerminalButton_Click);
 
 			buttonRow.AddChild(terminalIcon);
