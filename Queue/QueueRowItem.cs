@@ -168,11 +168,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 					selectionCheckBoxContainer.Visible = false;
 					selectionCheckBoxContainer.Margin = new BorderDouble(left: 6);
 					selectionCheckBox = new CheckBox("");
+					selectionCheckBox.Name = "Queue Item Checkbox";
 					selectionCheckBox.VAnchor = VAnchor.ParentCenter;
 					selectionCheckBox.HAnchor = HAnchor.ParentCenter;
 					selectionCheckBoxContainer.AddChild(selectionCheckBox);
 
 					PartThumbnailWidget thumbnailWidget = new PartThumbnailWidget(PrintItemWrapper, "part_icon_transparent_40x40.png", "building_thumbnail_40x40.png", PartThumbnailWidget.ImageSizes.Size50x50);
+					thumbnailWidget.Name = "Queue Item Thumbnail";
 					leftColumn.AddChild(selectionCheckBoxContainer);
 
 					leftColumn.AddChild(thumbnailWidget);

@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 			Title = LocalizedString.Get("MatterControl - Terminal");
 			this.ShowAsSystemWindow();
 			MinimumSize = minSize;
-
+			this.Name = "Gcode Terminal";
 			string desktopPosition = UserSettings.Instance.get(TerminalWindowPositionKey);
 			if (desktopPosition != null && desktopPosition != "")
 			{

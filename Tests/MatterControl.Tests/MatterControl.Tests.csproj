@@ -62,7 +62,9 @@
     <Compile Include="MatterControl\MatterControl.UI.cs" />
     <Compile Include="MatterControl\HtmlParser.cs" />
     <Compile Include="MatterControl\LibraryProviderTests.cs" />
+    <Compile Include="MatterControl\OptionsTabTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
+    <Compile Include="MatterControl\PrintQueueTests.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
     <Compile Include="MatterControl\SetupIniTests.cs" />
     <Compile Include="MatterControl\Slicing\SliceMappingCLassesTets.cs" />

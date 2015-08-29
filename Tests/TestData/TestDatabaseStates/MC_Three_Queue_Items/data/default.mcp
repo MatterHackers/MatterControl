@@ -1,0 +1,36 @@
+{
+  "ProjectFiles": [
+    {
+      "DateAdded": "2015-08-28T13:46:47.5050053-07:00",
+      "FileLocation": "C:\\Users\\Greg\\Desktop\\MatterSliceTestItems\\chichen-itza_pyramid.stl",
+      "Name": "chichen-itza_pyramid",
+      "PrintCount": 0,
+      "PrintItemCollectionID": 0,
+      "ReadOnly": false,
+      "Protected": false,
+      "Id": 0
+    },
+    {
+      "DateAdded": "2015-08-28T13:46:47.5200062-07:00",
+      "FileLocation": "C:\\Users\\Greg\\Desktop\\MatterSliceTestItems\\Chinese Dragon.stl",
+      "Name": "Chinese Dragon",
+      "PrintCount": 0,
+      "PrintItemCollectionID": 0,
+      "ReadOnly": false,
+      "Protected": false,
+      "Id": 0
+    },
+    {
+      "DateAdded": "2015-08-28T13:46:52.1092687-07:00",
+      "FileLocation": "C:\\Users\\Greg\\Desktop\\MatterSliceTestItems\\Fennec_Fox.stl",
+      "Name": "Fennec_Fox",
+      "PrintCount": 0,
+      "PrintItemCollectionID": 0,
+      "ReadOnly": false,
+      "Protected": false,
+      "Id": 0
+    }
+  ],
+  "ProjectName": "Test Project",
+  "ProjectDateCreated": "2015-08-28T15:39:03"
+}

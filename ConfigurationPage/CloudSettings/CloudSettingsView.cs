@@ -99,6 +99,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			levelingIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
 			configureNotificationSettingsButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			configureNotificationSettingsButton.Name = "Configure Notification Settings Button";
 			configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
 			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
 			configureNotificationSettingsButton.Click += new EventHandler(configureNotificationSettingsButton_Click);
