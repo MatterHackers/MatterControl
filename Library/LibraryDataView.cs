@@ -380,7 +380,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return clickThumbnail;
 		}
 
-		private void AddAllItems()
+		internal class LastScrollPosition
+		{
+			internal Vector2 scrollPosition;
+		}
+
+		private void AddAllItems(object inData = null)
 		{
 			topToBottomItemList.RemoveAllChildren();
 
@@ -407,11 +412,20 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				AddListItemToTopToBottom(queueItem);
 			}
+
+			LastScrollPosition scrollPosition = inData as LastScrollPosition;
+			if (scrollPosition != null)
+			{
+				this.ScrollRatioFromTop0To1 = scrollPosition.scrollPosition;
+			}
 		}
 
 		private void LibraryDataReloaded(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle(AddAllItems);
+			UiThread.RunOnIdle(AddAllItems, new LastScrollPosition()
+				{
+					scrollPosition = this.ScrollRatioFromTop0To1,
+				});
 		}
 	}
 }
