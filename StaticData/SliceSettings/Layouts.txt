@@ -96,7 +96,6 @@ Advanced
         infill_overlap_perimeter
       Small Parts
         infill_solid_proportion
-        infill_total_proportion
         small_protrusion_proportion
         solid_infill_below_area
     Speed

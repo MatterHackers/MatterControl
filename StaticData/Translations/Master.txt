@@ -3727,3 +3727,6 @@ Translated:If solid infill area (due to top or bottom proximity) is less than th
 English:Min
 Translated:Min
 
+English:If a part protruding (upward) from a larger part is smaller by this ratio make it solid. This applies to a depth of the number of bottom layers.
+Translated:If a part protruding (upward) from a larger part is smaller by this ratio make it solid. This applies to a depth of the number of bottom layers.
+

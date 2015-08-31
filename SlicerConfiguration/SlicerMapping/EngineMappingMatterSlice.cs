@@ -291,7 +291,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             new MapItem("wipeTowerSize", "wipe_tower_size"),
 
             new ScaledSingleNumber("infillSolidProportion","infill_solid_proportion",1), 
-            new ScaledSingleNumber("infillTotalProportion","infill_total_proportion",1),
             new ScaledSingleNumber("smallProtrusionProportion","small_protrusion_proportion",1),
             new MapItem("minInfillArea_mm2","solid_infill_below_area"),
 
