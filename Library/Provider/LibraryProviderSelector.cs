@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		int firstAddedDirectoryIndex;
 
-		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider)
+		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider, bool includeQueueLibraryProvider)
 			: base(null)
 		{
 			this.Name = "Home".Localize();
@@ -66,14 +66,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
 
-			if (false)
+			if (includeQueueLibraryProvider)
 			{
-				// This is test code for how to add these when we get to it
 				// put in the queue provider
 				libraryCreators.Add(new LibraryProviderQueueCreator());
 				AddFolderImage("queue_folder.png");
+			}
 
-				// put in the queue provider
+			if(false)
+			{
+				// put in the history provider
 				libraryCreators.Add(new LibraryProviderHistoryCreator());
 				AddFolderImage("queue_folder.png");
 			}

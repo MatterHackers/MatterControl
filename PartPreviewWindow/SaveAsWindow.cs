@@ -16,15 +16,12 @@ namespace MatterHackers.MatterControl
 	public class SaveAsWindow : SystemWindow
 	{
 		private Action<SaveAsReturnInfo> functionToCallOnSaveAs;
-		private LibraryProvider currentLibraryProvider;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
 		LibrarySelectorWidget librarySelectorWidget;
 
-		public event EventHandler<LibraryDataViewEventArgs> ChangedCurrentLibraryProvider;
-
 		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator)
-			: base(480, 450)
+			: base(480, 500)
 		{
 			Title = "MatterControl - " + "Save As".Localize();
 			AlwaysOnTopOfMain = true;
@@ -64,7 +61,7 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
-			librarySelectorWidget = new LibrarySelectorWidget();
+			librarySelectorWidget = new LibrarySelectorWidget(true);
 
 			// put in the bread crumb widget
 			FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget.SetCurrentLibraryProvider, librarySelectorWidget.CurrentLibraryProvider);
@@ -89,10 +86,10 @@ namespace MatterHackers.MatterControl
 			// put in the area to type in the new name
 			{
 				string fileNameLabel = "Design Name".Localize();
-				TextWidget textBoxHeader = new TextWidget(fileNameLabel, pointSize: 12);
-				textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				textBoxHeader.Margin = new BorderDouble(5);
-				textBoxHeader.HAnchor = HAnchor.ParentLeft;
+				TextWidget fileNameHeader = new TextWidget(fileNameLabel, pointSize: 12);
+				fileNameHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				fileNameHeader.Margin = new BorderDouble(5);
+				fileNameHeader.HAnchor = HAnchor.ParentLeft;
 
 				//Adds text box and check box to the above container
 				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize());
@@ -100,7 +97,7 @@ namespace MatterHackers.MatterControl
 				textToAddWidget.Margin = new BorderDouble(5);
 				textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
 
-				middleRowContainer.AddChild(textBoxHeader);
+				middleRowContainer.AddChild(fileNameHeader);
 				middleRowContainer.AddChild(textToAddWidget);
 			}
 
@@ -178,18 +175,13 @@ namespace MatterHackers.MatterControl
 		{
 			public string fileNameAndPath;
 			public string newName;
-			public PrintItemWrapper printItemWrapper;
+			public LibraryProvider destinationLibraryProvider;
 
 			public SaveAsReturnInfo(string newName, string fileNameAndPath, LibraryProvider destinationLibraryProvider)
 			{
+				this.destinationLibraryProvider = destinationLibraryProvider;
 				this.newName = newName;
 				this.fileNameAndPath = fileNameAndPath;
-
-				PrintItem printItem = new PrintItem();
-				printItem.Name = newName;
-				printItem.FileLocation = Path.GetFullPath(fileNameAndPath);
-
-				printItemWrapper = new PrintItemWrapper(printItem, destinationLibraryProvider);
 			}
 		}
 	}

@@ -1839,7 +1839,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (returnInfo != null)
 			{
-				printItemWrapper = returnInfo.printItemWrapper;
+				PrintItem printItem = new PrintItem();
+				printItem.Name = returnInfo.newName;
+				printItem.FileLocation = Path.GetFullPath(returnInfo.fileNameAndPath);
+				printItemWrapper = new PrintItemWrapper(printItem, returnInfo.destinationLibraryProvider);
 			}
 
 			// we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
@@ -1864,6 +1867,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
 				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
 				printItemWrapper.OnFileHasChanged();
+
+				if (returnInfo != null
+					&& returnInfo.destinationLibraryProvider != null)
+				{
+					// save this part to correct library provider
+					returnInfo.destinationLibraryProvider.AddItem(printItemWrapper);
+				}
+				else // we have already save it and the library should pick it up
+				{
+
+				}
 			}
 			catch (System.UnauthorizedAccessException)
 			{
@@ -1882,31 +1896,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
 				});
 			}
-
-			e.Result = e.Argument;
 		}
 
 		private void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			SaveAsWindow.SaveAsReturnInfo returnInfo = e.Result as SaveAsWindow.SaveAsReturnInfo;
-
-			if (returnInfo != null)
-			{
-				if (returnInfo.printItemWrapper.SourceLibraryProvider != null)
-				{
-					returnInfo.printItemWrapper.SourceLibraryProvider.AddItem(returnInfo.printItemWrapper);
-					// save this part to correct library provider
-				}
-				else // there is no library provider so save it to the queue
-				{
-					QueueData.Instance.AddItem(printItemWrapper);
-					if (!PrinterConnectionAndCommunication.Instance.PrintIsActive)
-					{
-						QueueData.Instance.SelectedIndex = QueueData.Instance.Count - 1;
-					}
-				}
-			}
-
 			if (WidgetHasBeenClosed)
 			{
 				return;

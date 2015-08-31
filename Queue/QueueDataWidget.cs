@@ -487,12 +487,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
 		{
-			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
-			{
-				// TODO: put up a library chooser and let the user put it where they want
-				LibraryProviderSQLite.Instance.AddFilesToLibrary(new string[] {queueItem.PrintItemWrapper.FileLocation });
-			}
-
 #if false
 			{
 				SaveAsWindow saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, null);
@@ -548,6 +542,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 				e.Result = e.Argument;
 			}
 #endif
+			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
+			{
+				// TODO: put up a library chooser and let the user put it where they want
+				LibraryProviderSQLite.Instance.AddFilesToLibrary(new string[] { queueItem.PrintItemWrapper.FileLocation });
+			}
 		}
 
 		private bool addToLibraryMenu_Selected()

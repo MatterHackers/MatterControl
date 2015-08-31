@@ -68,9 +68,9 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			UiThread.RunOnIdle(RebuildView);
 		}
 
-		public LibrarySelectorWidget()
+		public LibrarySelectorWidget(bool includeQueueLibraryProvider)
 		{
-			currentLibraryProvider = new LibraryProviderSelector(SetCurrentLibraryProvider);
+			currentLibraryProvider = new LibraryProviderSelector(SetCurrentLibraryProvider, includeQueueLibraryProvider);
 			currentLibraryProvider.DataReloaded += LibraryDataReloaded;
 
 			// set the display attributes
