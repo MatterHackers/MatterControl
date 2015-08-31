@@ -1145,5 +1145,26 @@
     "HelpText": "This value will be added to all of the z positions of the created gcode.",
     "DataEditType": "OFFSET",
     "ExtraSettings": "mm"
+  },
+  {
+    "SlicerConfigName": "infill_solid_proportion",
+    "PresentationName": "Min Solid Proportion of Infill",
+    "HelpText": "If solid infill area (due to top or bottom proximity) is less than this proportion of the total infill area, solidify all infill, i.e. solidify proportionately small infill areas",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "% or ratio"
+  },
+  {
+    "SlicerConfigName": "infill_total_proportion",
+    "PresentationName": "Min",
+    "HelpText": "infill_total_proportion help",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "% or ratio"
+  },
+  {
+    "SlicerConfigName": "small_protrusion_proportion",
+    "PresentationName": "Small Protrusions Ratio",
+    "HelpText": "small_protrusion_proportion help",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ExtraSettings": "% or ratio"
   }
 ]

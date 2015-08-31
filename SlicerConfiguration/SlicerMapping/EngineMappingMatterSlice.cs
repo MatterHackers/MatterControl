@@ -290,10 +290,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
             //wipeTowerSize=0 # Unlike the wipe shield this is a square of size*size in the lower left corner for wiping during extruder changing.
             new MapItem("wipeTowerSize", "wipe_tower_size"),
 
-            new MapItem("infillSolidProportion","infill_solid_proportion"),
-            new MapItem("infillTotalProportion","infill_solid_proportion"),
-            new MapItem("smallProtrusionProportion","infill_solid_proportion"),
-            new MapItem("minInfillArea_mm2","min_infill_area_mm2"),
+            new ScaledSingleNumber("infillSolidProportion","infill_solid_proportion",1), 
+            new ScaledSingleNumber("infillTotalProportion","infill_total_proportion",1),
+            new ScaledSingleNumber("smallProtrusionProportion","small_protrusion_proportion",1),
+            new MapItem("minInfillArea_mm2","solid_infill_below_area"),
 
             new VisibleButNotMappedToEngine("pause_gcode"),
             new VisibleButNotMappedToEngine("resume_gcode"),
