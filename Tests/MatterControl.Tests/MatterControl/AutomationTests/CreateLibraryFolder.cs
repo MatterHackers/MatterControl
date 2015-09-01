@@ -41,46 +41,35 @@ using MatterHackers.Agg.UI.Tests;
 namespace MatterHackers.MatterControl.UI
 {
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
-	public class CheckBoxInLibraryIsClickable
+	public class CreateLibraryFolder
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
-		public void ClickOnLibraryCheckBoxes()
+		public void CreateFolderStarsOutWithTextFiledFocusedAndEditable()
 		{
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
 					testRunner.ClickByName("Library Tab");
-					testRunner.Wait(1);
-					SystemWindow systemWindow;
-					GuiWidget rowItem = testRunner.GetWidgetByName("Local Library Row Item Collection", out systemWindow);
-					testRunner.Wait(1);
+					testRunner.ClickByName("Create Folder Button");
 
-					SearchRegion rowItemRegion = testRunner.GetRegionByName("Local Library Row Item Collection");
-
-					testRunner.ClickByName("Library Edit Button");
-					testRunner.Wait(1);
+					testRunner.Wait(.5);
+					testRunner.Type("Test Text");
+					testRunner.Wait(.5);
 
 					SystemWindow containingWindow;
-					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out containingWindow, searchRegion: rowItemRegion);
-					CheckBox checkBoxWidget = foundWidget as CheckBox;
-					resultsHarness.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
-
-					testRunner.ClickByName("Row Item Select Checkbox", searchRegion: rowItemRegion);
+					GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
+					MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
+					resultsHarness.AddTestResult(textWidgetMH != null, "Found Text Widget");
+					resultsHarness.AddTestResult(textWidgetMH.Text == "Test Text", "Had the right text");
+					containingWindow.CloseOnIdle();
 					testRunner.Wait(.5);
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == true, "currently checked");
 
-					testRunner.ClickByName("Local Library Row Item Collection");
-					testRunner.Wait(.5);
-					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
-
-					MatterControlUITests.CloseMatterControl(testRunner);
+					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
-
 			};
 
 #if !__ANDROID__
@@ -89,12 +78,10 @@ namespace MatterHackers.MatterControl.UI
 #endif
 			bool showWindow;
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
-			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 1000);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 10);
 
-			// NOTE: In the future we may want to make the "Local Library Row Item Collection" not clickable. 
-			// If that is the case fix this test to click on a child of "Local Library Row Item Collection" instead.
-			Assert.IsTrue(testHarness.AllTestsPassed); 
-			Assert.IsTrue(testHarness.TestCount == 4); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
 	}
 }

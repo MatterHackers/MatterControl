@@ -57,14 +57,16 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatterControl\AutomationTests\CheckBoxInLibraryIsClickable.cs" />
     <Compile Include="MatterControl\LibraryProviderSqliteTests.cs" />
-    <Compile Include="MatterControl\CheckBoxInLibraryIsClickable.cs" />
-    <Compile Include="MatterControl\MatterControl.UI.cs" />
+    <Compile Include="MatterControl\AutomationTests\CreateLibraryFolder.cs" />
+    <Compile Include="MatterControl\MatterControlUiFeatures.cs" />
+    <Compile Include="MatterControl\MatterControlUtilities.cs" />
     <Compile Include="MatterControl\HtmlParser.cs" />
     <Compile Include="MatterControl\LibraryProviderTests.cs" />
-    <Compile Include="MatterControl\OptionsTabTests.cs" />
+    <Compile Include="MatterControl\AutomationTests\OptionsTabTests.cs" />
     <Compile Include="MatterControl\PrinterConfigurationTests.cs" />
-    <Compile Include="MatterControl\PrintQueueTests.cs" />
+    <Compile Include="MatterControl\AutomationTests\PrintQueueTests.cs" />
     <Compile Include="MatterControl\ReleaseBuildTests.cs" />
     <Compile Include="MatterControl\SetupIniTests.cs" />
     <Compile Include="MatterControl\Slicing\SliceMappingCLassesTets.cs" />

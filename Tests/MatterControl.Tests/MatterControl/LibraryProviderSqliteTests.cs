@@ -63,7 +63,7 @@ namespace MatterControl.Tests
 		[Test, RunInApplicationDomain]
 		public void LibraryProviderSqlite_NavigationWorking()
 		{
-			MatterControlUITests.DataFolderState staticDataState = MatterControlUITests.MakeNewStaticDataForTesting();
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting();
 
 			LibraryProviderSQLite testProvider = new LibraryProviderSQLite(null, null, null, "Local Library");
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
@@ -113,7 +113,7 @@ namespace MatterControl.Tests
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
 
-			MatterControlUITests.RestoreStaticDataAfterTesting(staticDataState, true);
+			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 		}
 #endif
 

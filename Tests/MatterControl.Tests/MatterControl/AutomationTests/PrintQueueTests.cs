@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.UI
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
 					//Make sure image does not exist before we click the buy button
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.UI
 					bool imageExists2 = testRunner.ImageExists("MatterHackersStoreImage.png", 10);
 					resultsHarness.AddTestResult(imageExists2 == true, "Web page is open");
 
-					MatterControlUITests.CloseMatterControl(testRunner);
+					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.UI
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
 					//Make sure that plugin window does not exist
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.UI
 					pluginWindowExists.CloseOnIdle();
 					testRunner.Wait(.5);
 
-					MatterControlUITests.CloseMatterControl(testRunner);
+					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.UI
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
 					//Make sure that the export window does not exist
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.UI
 					exportWindow.CloseOnIdle();
 					testRunner.Wait(.5);
 
-					MatterControlUITests.CloseMatterControl(testRunner);
+					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -159,10 +159,10 @@ namespace MatterHackers.MatterControl.UI
 #endif
 			bool showWindow;
 			string testDBFolder = "MC_Three_Queue_Items";
-			MatterControlUITests.DataFolderState staticDataState = MatterControlUITests.MakeNewStaticDataForTesting(testDBFolder);
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting(testDBFolder);
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 60);
-			MatterControlUITests.RestoreStaticDataAfterTesting(staticDataState, true);
+			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.UI
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					
 					//bool exportButtonExists = testRunner.NameExists("Export Queue Button");
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.Wait(5);
 					resultsHarness.AddTestResult(exportButtonExists == false, "Export button is disabled");
 
-					MatterControlUITests.CloseMatterControl(testRunner);
+					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -196,10 +196,10 @@ namespace MatterHackers.MatterControl.UI
 #endif
 			bool showWindow;
 			string testDBFolder = "MC_Fresh_Installation";
-			MatterControlUITests.DataFolderState staticDataState = MatterControlUITests.MakeNewStaticDataForTesting(testDBFolder);
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting(testDBFolder);
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 300);
-			MatterControlUITests.RestoreStaticDataAfterTesting(staticDataState, true);
+			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 1); // make sure we ran all our tests
 		}
@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.UI
 			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
-				AutomationRunner testRunner = new AutomationRunner(MatterControlUITests.DefaultTestImages);
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 					bool partPreviewWindowExists1 = testRunner.WaitForName("Part Preview Window Thumbnail", 0);
 					resultsHarness.AddTestResult(partPreviewWindowExists1 == false, "Part Preview Window Does Not Exist");
@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.UI
 					partPreviewWindowExists.CloseOnIdle();
 					testRunner.Wait(.5);
 
-					MatterControlUITests.CloseMatterControl(testRunner);
+					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
 			};
 
@@ -237,10 +237,10 @@ namespace MatterHackers.MatterControl.UI
 #endif
 			bool showWindow;
 			string testDBFolder = "MC_Three_Queue_Items";
-			MatterControlUITests.DataFolderState staticDataState = MatterControlUITests.MakeNewStaticDataForTesting(testDBFolder);
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting(testDBFolder);
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 300);
-			MatterControlUITests.RestoreStaticDataAfterTesting(staticDataState, true);
+			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
