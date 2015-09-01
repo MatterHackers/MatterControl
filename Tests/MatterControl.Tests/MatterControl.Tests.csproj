@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MatterControl\AutomationTests\CheckBoxInLibraryIsClickable.cs" />
+    <Compile Include="MatterControl\AutomationTests\SqLiteLibraryProvider.cs" />
     <Compile Include="MatterControl\LibraryProviderSqliteTests.cs" />
     <Compile Include="MatterControl\AutomationTests\CreateLibraryFolder.cs" />
     <Compile Include="MatterControl\MatterControlUiFeatures.cs" />

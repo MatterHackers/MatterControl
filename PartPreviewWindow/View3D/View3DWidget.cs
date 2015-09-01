@@ -191,6 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					Button enterEdittingButton = textImageButtonFactory.Generate("Edit".Localize(), "icon_edit_32x32.png");
+					enterEdittingButton.Name = "3D View Edit";
 					enterEdittingButton.Margin = new BorderDouble(right: 4);
 					enterEdittingButton.Click += (sender, e) =>
 					{
@@ -285,6 +286,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(separatorTwo);
 
 					Button copyButton = textImageButtonFactory.Generate("Copy".Localize());
+					copyButton.Name = "3D View Copy";
 					doEdittingButtonsContainer.AddChild(copyButton);
 					copyButton.Click += (sender, e) =>
 					{
@@ -292,6 +294,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 
 					Button deleteButton = textImageButtonFactory.Generate("Remove".Localize());
+					deleteButton.Name = "3D View Delete";
 					doEdittingButtonsContainer.AddChild(deleteButton);
 					deleteButton.Click += (sender, e) =>
 					{

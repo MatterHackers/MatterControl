@@ -113,6 +113,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			Button saveAsButton = textImageButtonFactory.Generate("Save".Localize(), centerText: true);
+			saveAsButton.Name = "Save As Save Button";
 			saveAsButton.Visible = true;
 			saveAsButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(saveAsButton);

@@ -31,6 +31,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintLibrary.Provider;
 using NUnit.Framework;
 using System.Diagnostics;
 using System.IO;
@@ -130,6 +131,21 @@ namespace MatterHackers.MatterControl.UI
 			Datastore.Instance.Initialize();
 
 			return state;
+		}
+
+		public static LibraryProvider CurrentProvider()
+		{
+			return ApplicationController.Instance.CurrentLibraryDataView.CurrentLibraryProvider;
+		}
+
+		public static void NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
+		{
+			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, secondsToWait: 3);
+			testRunner.ClickByName(libraryRowItemName);
+			testRunner.MoveToByName(libraryRowItemName);
+			testRunner.Wait(.5);
+			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
+			testRunner.Wait(.5);
 		}
 
 		public static void RestoreStaticDataAfterTesting(DataFolderState state, bool closeDataBase)

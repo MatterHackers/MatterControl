@@ -1,0 +1,16 @@
+{
+  "ProjectFiles": [
+    {
+      "DateAdded": "2015-09-01T10:50:29.5703883-07:00",
+      "FileLocation": "C:\\Development\\MatterControl\\Tests\\TestData\\TestMeshes\\LibraryProviderData\\Box20x20x10.stl",
+      "Name": "Box20x20x10",
+      "PrintCount": 0,
+      "PrintItemCollectionID": 0,
+      "ReadOnly": false,
+      "Protected": false,
+      "Id": 0
+    }
+  ],
+  "ProjectName": "Test Project",
+  "ProjectDateCreated": "2015-09-01T10:50:44"
+}
