@@ -560,8 +560,6 @@ namespace MatterHackers.MatterControl
 
 				TerminalWindow.ShowIfLeftOpen();
 
-				//new SaveAsWindow(null, null);
-
 				if (AfterFirstDraw != null)
 				{
 					AfterFirstDraw();
