@@ -72,11 +72,17 @@ namespace MatterHackers.MatterControl.EeProm
 			// string[] lines = line.Substring(5).Split(' ');
 			string[] test = line.Split(' ');
 			string mode = "";
+			bool foundFirstM92E = false;
 			foreach (string token in test)
 			{
 				if ((token != " ") && ((token == "M92") || (mode == "M92")))
 				{
 					foundSetting = true;
+					if(mode != "M92")
+					{
+						foundFirstM92E = false;
+					}
+
 					mode = "M92";
 					if (token[0] == 'X')
 					{
@@ -90,8 +96,9 @@ namespace MatterHackers.MatterControl.EeProm
 					{
 						sz = token.Substring(1);
 					}
-					if (token[0] == 'E')
+					if (token[0] == 'E' && !foundFirstM92E)
 					{
+						foundFirstM92E = true;
 						se = token.Substring(1);
 					}
 				}
@@ -259,11 +266,17 @@ namespace MatterHackers.MatterControl.EeProm
 			get { return sz; }
 			set { if (sz.Equals(value)) return; sz = value; changed = true; }
 		}
-
+		//This is it 
 		public string SE
 		{
+
+			//String l
 			get { return se; }
-			set { if (se.Equals(value)) return; se = value; changed = true; }
+			set { if (se.Equals(value)) 
+				return; 
+				se = value; 
+				changed = true; 
+			}
 		}
 
 		public string FX
