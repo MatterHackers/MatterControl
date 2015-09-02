@@ -30,10 +30,12 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu", secondsToWait: 3));
 					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu Item", secondsToWait: 3));
 
-					testRunner.Type("Test Part");
-					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
+					testRunner.Wait(1);
 
-					testRunner.ClickByName("Save As Save Button", secondsToWait: 1);
+					testRunner.Type("Test Part");
+					resultsHarness.AddTestResult(MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection"));
+
+					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Save Button", secondsToWait: 1));
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
@@ -50,7 +52,7 @@ namespace MatterHackers.MatterControl.UI
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 450);
 			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 7); // make sure we ran all our tests
 		}
 	}
 }

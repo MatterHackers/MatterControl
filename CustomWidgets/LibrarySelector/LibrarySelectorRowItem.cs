@@ -68,6 +68,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			this.printItemCollection = collection;
 			this.ItemName = printItemCollection.Name;
 
+			this.Name = this.ItemName + " Row Item Collection";
+
 			CreateGuiElements();
 		}
 
@@ -100,15 +102,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			UiThread.RunOnIdle(libraryDataView.RebuildView);
 		}
 
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			if (mouseEvent.Clicks == 2)
-			{
-				UiThread.RunOnIdle(ChangeCollection);
-			}
-			base.OnMouseDown(mouseEvent);
-		}
-
 		private void SetDisplayAttributes()
 		{
 			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;
@@ -133,7 +126,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			openLabel.HAnchor = HAnchor.ParentCenter;
 
 			FatFlatClickWidget openButton = new FatFlatClickWidget(openLabel);
-			openButton.Name = "Open Item";
+			openButton.Cursor = Cursors.Hand;
+			openButton.Name = "Open Collection";
 			openButton.VAnchor = VAnchor.ParentBottomTop;
 			openButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			openButton.Width = 100;

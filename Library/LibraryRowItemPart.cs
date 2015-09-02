@@ -198,18 +198,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			if (mouseEvent.Clicks == 2)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					openPartView(View3DWidget.OpenMode.Viewing);
-				});
-			}
-			base.OnMouseDown(mouseEvent);
-		}
-
 		public async void OpenPartViewWindow(View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
 		{
 			if (viewingWindow == null)

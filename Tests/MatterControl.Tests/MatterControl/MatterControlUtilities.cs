@@ -138,14 +138,17 @@ namespace MatterHackers.MatterControl.UI
 			return ApplicationController.Instance.CurrentLibraryDataView.CurrentLibraryProvider;
 		}
 
-		public static void NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
+		public static bool NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
 		{
+			bool goodNavigate = true;
 			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, secondsToWait: 3);
-			testRunner.ClickByName(libraryRowItemName);
-			testRunner.MoveToByName(libraryRowItemName);
+			goodNavigate &= testRunner.ClickByName(libraryRowItemName);
+			goodNavigate &= testRunner.MoveToByName(libraryRowItemName);
 			testRunner.Wait(.5);
-			testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
+			goodNavigate &= testRunner.ClickByName("Open Collection", searchRegion: libraryRowItemRegion);
 			testRunner.Wait(.5);
+
+			return goodNavigate;
 		}
 
 		public static void RestoreStaticDataAfterTesting(DataFolderState state, bool closeDataBase)

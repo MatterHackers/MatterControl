@@ -137,6 +137,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			FatFlatClickWidget openButton = new FatFlatClickWidget(openLabel);
 			openButton.Name = "Open Collection";
+			openButton.Cursor = Cursors.Hand;
 			openButton.VAnchor = VAnchor.ParentBottomTop;
 			openButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			openButton.Width = 100;
@@ -163,15 +164,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				libraryDataView.CurrentLibraryProvider = parentProvider;
 			}
-		}
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			if (mouseEvent.Clicks == 2)
-			{
-				UiThread.RunOnIdle(ChangeCollection);
-			}
-			base.OnMouseDown(mouseEvent);
 		}
 
 		private void SetDisplayAttributes()

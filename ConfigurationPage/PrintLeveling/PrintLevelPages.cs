@@ -347,6 +347,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, InstructionsPage.ManualControlsFeedRate().x);
 			PrinterConnectionAndCommunication.Instance.ReadPosition();
 
+			container.backButton.Enabled = false;
 			container.nextButton.Enabled = false;
 
 			zPlusControl.Click += new EventHandler(zControl_Click);
@@ -360,6 +361,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingInactive()
 		{
+			container.backButton.Enabled = true;
 			container.nextButton.Enabled = true;
 		}
 	}
