@@ -3691,3 +3691,30 @@ Translated:Zoom (Ctrl + Left Mouse)
 English:Search Results
 Translated:Search Results
 
+English:The smallest allowed area of infill. Anything smaller gets solidified
+Translated:The smallest allowed area of infill. Anything smaller gets solidified
+
+English:Min Solid Proportion of Infill
+Translated:Min Solid Proportion of Infill
+
+English:Minimum Infill Area
+Translated:Minimum Infill Area
+
+English:Small Protrusions Ratio
+Translated:Small Protrusions Ratio
+
+English:Add a new Material Preset
+Translated:Add a new Material Preset
+
+English:Import an existing Material Preset
+Translated:Import an existing Material Preset
+
+English:If solid infill area (due to top or bottom proximity) is less than this proportion of the total infill area, solidify all infill, i.e. solidify proportionately small infill areas
+Translated:If solid infill area (due to top or bottom proximity) is less than this proportion of the total infill area, solidify all infill, i.e. solidify proportionately small infill areas
+
+English:If a part protruding (upward) from a larger part is smaller by this ratio make it solid. This applies to a depth of the number of bottom layers.
+Translated:If a part protruding (upward) from a larger part is smaller by this ratio make it solid. This applies to a depth of the number of bottom layers.
+
+English:If solid infill area (due to top or bottom proximity) is less than this proportion of the total infill area, solidify all infill, i.e. solidify proportionately small infill areas in top or bottom layers.
+Translated:If solid infill area (due to top or bottom proximity) is less than this proportion of the total infill area, solidify all infill, i.e. solidify proportionately small infill areas in top or bottom layers.
+
