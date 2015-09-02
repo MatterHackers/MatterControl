@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSelector : LibraryProvider
 	{
-		Action<LibraryProvider> setCurrentLibraryProvider;
 		private List<ILibraryCreator> libraryCreators = new List<ILibraryCreator>();
 
 		private ILibraryCreator PurchasedLibraryCreator { get; set; }
@@ -58,11 +57,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		int firstAddedDirectoryIndex;
 
 		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider, bool includeQueueLibraryProvider)
-			: base(null)
+			: base(null, setCurrentLibraryProvider)
 		{
 			this.Name = "Home".Localize();
-
-			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
 
 			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
 
@@ -163,7 +160,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			if(e != null && !e.IsAuthenticated)
 			{
 				// Switch to the selector
-				setCurrentLibraryProvider(this);
+				SetCurrentLibraryProvider(this);
 			}
 
 			// Refresh state
@@ -235,7 +232,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
-			LibraryProvider provider = libraryCreators[collectionIndex].CreateLibraryProvider(this, setCurrentLibraryProvider);
+			LibraryProvider provider = libraryCreators[collectionIndex].CreateLibraryProvider(this, SetCurrentLibraryProvider);
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 
@@ -250,7 +247,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (collection.Key == libraryCreator.ProviderKey)
 				{
-					return libraryCreator.CreateLibraryProvider(this, setCurrentLibraryProvider);
+					return libraryCreator.CreateLibraryProvider(this, SetCurrentLibraryProvider);
 				}
 			}
 
@@ -273,7 +270,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public LibraryProvider GetPurchasedLibrary()
 		{
-			return PurchasedLibraryCreator.CreateLibraryProvider(this, setCurrentLibraryProvider);
+			return PurchasedLibraryCreator.CreateLibraryProvider(this, SetCurrentLibraryProvider);
 		}
 	}
 }

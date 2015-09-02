@@ -44,12 +44,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public abstract class LibraryProvider : IDisposable
 	{
+		protected Action<LibraryProvider> SetCurrentLibraryProvider { get; private set; }
+
 		protected Dictionary<int, ProgressPlug> itemReportProgressHandlers = new Dictionary<int, ProgressPlug>();
 
 		private LibraryProvider parentLibraryProvider = null;
 
-		public LibraryProvider(LibraryProvider parentLibraryProvider)
+		public LibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
+			this.SetCurrentLibraryProvider = setCurrentLibraryProvider;
 			this.parentLibraryProvider = parentLibraryProvider;
 		}
 

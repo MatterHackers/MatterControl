@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
-			return new LibraryProviderHistory(null, parentLibraryProvider);
+			return new LibraryProviderHistory(null, parentLibraryProvider, setCurrentLibraryProvider);
 		}
 
 		public string ProviderKey
@@ -67,8 +67,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		private static LibraryProviderHistory instance = null;
 
-		public LibraryProviderHistory(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
-			: base(parentLibraryProvider)
+		public LibraryProviderHistory(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
+			: base(parentLibraryProvider, setCurrentLibraryProvider)
 		{
 			//PrintHistoryData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
 			this.Name = "Print History";
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderHistory(null, null);
+					instance = new LibraryProviderHistory(null, null, null);
 				}
 
 				return instance;
@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			return new LibraryProviderHistory(collection, this);
+			return new LibraryProviderHistory(collection, this, SetCurrentLibraryProvider);
 		}
 
 		public override void RemoveCollection(int collectionIndexToRemove)

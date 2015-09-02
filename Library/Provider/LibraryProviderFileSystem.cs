@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
-			return new LibraryProviderFileSystem(rootPath, Description, parentLibraryProvider);
+			return new LibraryProviderFileSystem(rootPath, Description, parentLibraryProvider, setCurrentLibraryProvider);
 		}
 	}
 
@@ -74,8 +74,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string keywordFilter = string.Empty;
 		private string rootPath;
 
-		public LibraryProviderFileSystem(string rootPath, string name, LibraryProvider parentLibraryProvider)
-			: base(parentLibraryProvider)
+		public LibraryProviderFileSystem(string rootPath, string name, LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
+			: base(parentLibraryProvider, setCurrentLibraryProvider)
 		{
 			this.Name = name;
 			this.rootPath = rootPath;
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			return new LibraryProviderFileSystem(Path.Combine(rootPath, collection.Key), collection.Name, this);
+			return new LibraryProviderFileSystem(Path.Combine(rootPath, collection.Key), collection.Name, this, SetCurrentLibraryProvider);
 		}
 
 		public override void RenameCollection(int collectionIndexToRename, string newName)

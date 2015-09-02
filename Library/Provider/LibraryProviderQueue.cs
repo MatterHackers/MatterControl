@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		public virtual LibraryProvider CreateLibraryProvider(LibraryProvider parentLibraryProvider, Action<LibraryProvider> setCurrentLibraryProvider)
 		{
-			return new LibraryProviderQueue(null, parentLibraryProvider);
+			return new LibraryProviderQueue(null, setCurrentLibraryProvider, parentLibraryProvider);
 		}
 
 		public string ProviderKey
@@ -68,8 +68,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		EventHandler unregisterEvent;
 
-		public LibraryProviderQueue(PrintItemCollection baseLibraryCollection, LibraryProvider parentLibraryProvider)
-			: base(parentLibraryProvider)
+		public LibraryProviderQueue(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider)
+			: base(parentLibraryProvider, setCurrentLibraryProvider)
 		{
 			QueueData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
 			this.Name = "Print Queue";
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				if (instance == null)
 				{
-					instance = new LibraryProviderQueue(null, null);
+					instance = new LibraryProviderQueue(null, null, null);
 				}
 
 				return instance;
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			return new LibraryProviderQueue(collection, this);
+			return new LibraryProviderQueue(collection, SetCurrentLibraryProvider, this);
 		}
 
 		public override void RemoveCollection(int collectionIndexToRemove)

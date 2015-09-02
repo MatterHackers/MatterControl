@@ -70,7 +70,7 @@ namespace MatterControl.Tests
 
 			Directory.CreateDirectory(testLibraryDirectory);
 
-			LibraryProviderFileSystem testProvider = new LibraryProviderFileSystem(testLibraryDirectory, "TestPath", null);
+			LibraryProviderFileSystem testProvider = new LibraryProviderFileSystem(testLibraryDirectory, "TestPath", null, null);
 			testProvider.DataReloaded += (sender, e) => { dataReloaded = true; };
 
 			Assert.IsTrue(testProvider.CollectionCount == 0, "Start with a new database for these tests.");

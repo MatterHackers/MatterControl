@@ -52,12 +52,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private bool ignoreNextKeywordFilter = false;
 		private string keywordFilter = string.Empty;
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
-		private Action<LibraryProvider> setCurrentLibraryProvider;
 
 		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
-			: base(parentLibraryProvider)
+			: base(parentLibraryProvider, setCurrentLibraryProvider)
 		{
-			this.setCurrentLibraryProvider = setCurrentLibraryProvider;
 			this.Name = visibleName;
 
 			if (baseLibraryCollection == null)
@@ -136,7 +134,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 					{
 						currentProvider.KeywordFilter = value;
 						currentProvider.ignoreNextKeywordFilter = true;
-						UiThread.RunOnIdle(() => setCurrentLibraryProvider(currentProvider));
+						UiThread.RunOnIdle(() => SetCurrentLibraryProvider(currentProvider));
 					}
 				}
 				else // the search only shows for the cloud library root
@@ -271,7 +269,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			return new LibraryProviderSQLite(collection, setCurrentLibraryProvider, this, collection.Name);
+			return new LibraryProviderSQLite(collection, SetCurrentLibraryProvider, this, collection.Name);
 		}
 
 		public override void RemoveCollection(int collectionIndexToRemove)
