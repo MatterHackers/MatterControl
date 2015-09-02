@@ -135,8 +135,8 @@ namespace MatterHackers.MatterControl
 #endif
 
 			string optionsLabel = LocalizedString.Get("Options").ToUpper();
-			ScrollableWidget configurationControls = new PrinterConfigurationScrollWidget();
-			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(configurationControls, optionsLabel), "Configuration Tab", textSize,
+			ScrollableWidget optionsControls = new PrinterConfigurationScrollWidget();
+			advancedControls.AddTab(new SimpleTextTabWidget(new TabPage(optionsControls, optionsLabel), "Options Tab", textSize,
 						ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
 			// Make sure we are on the right tab when we create this view

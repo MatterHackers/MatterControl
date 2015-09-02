@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 		private TabPage AboutTabPage;
 		private SimpleTextTabWidget aboutTabWidget;
 		private GuiWidget addedUpdateMark = null;
-		private TabPage configurationPage;
+		private TabPage optionsPage;
 		private TabPage HistoryTabPage;
 		private TabPage LibraryTabPage;
 		private TabPage manualControlsPage;
@@ -184,8 +184,8 @@ namespace MatterHackers.MatterControl
 				};
 			}
 
-			configurationPage = new TabPage(printerConfigurationWidget, configurationLabel);
-			this.AddTab(new SimpleTextTabWidget(configurationPage, "Configuration Tab", TabTextSize,
+			optionsPage = new TabPage(printerConfigurationWidget, configurationLabel);
+			this.AddTab(new SimpleTextTabWidget(optionsPage, "Options Tab", TabTextSize,
 				ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
 			TerminalTabPage = new TabPage(new TerminalWidget(false), LocalizedString.Get("Console").ToUpper());
@@ -301,8 +301,8 @@ namespace MatterHackers.MatterControl
 
 		private void ReloadConfigurationWidget()
 		{
-			configurationPage.RemoveAllChildren();
-			configurationPage.AddChild(new PrinterConfigurationScrollWidget());
+			optionsPage.RemoveAllChildren();
+			optionsPage.AddChild(new PrinterConfigurationScrollWidget());
 		}
 
 		private void ReloadPartPreview(object state = null)
