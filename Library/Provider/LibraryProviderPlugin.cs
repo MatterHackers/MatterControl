@@ -51,6 +51,11 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
+		public virtual bool ShouldBeShown(Action functionToCallIfStateChanges)
+		{
+			return true;
+		}
+
 		public virtual string ProviderKey
 		{
 			get { throw new NotImplementedException(); } 

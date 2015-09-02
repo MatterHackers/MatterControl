@@ -55,13 +55,28 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		List<ImageBuffer> folderImagesForChildren = new List<ImageBuffer>();
 
 		int firstAddedDirectoryIndex;
+	
+		PluginFinder<LibraryProviderPlugin> libraryProviderPlugins;
+
+		bool includeQueueLibraryProvider;
 
 		public LibraryProviderSelector(Action<LibraryProvider> setCurrentLibraryProvider, bool includeQueueLibraryProvider)
 			: base(null, setCurrentLibraryProvider)
 		{
+			this.includeQueueLibraryProvider = includeQueueLibraryProvider;
 			this.Name = "Home".Localize();
 
 			ApplicationController.Instance.CloudSyncStatusChanged.RegisterEvent(CloudSyncStatusChanged, ref unregisterEvents);
+
+			libraryProviderPlugins = new PluginFinder<LibraryProviderPlugin>();
+
+			ReloadData();
+		}
+
+		private void ReloadData()
+		{
+			libraryCreators.Clear();
+			folderImagesForChildren.Clear();
 
 			if (includeQueueLibraryProvider)
 			{
@@ -70,7 +85,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				AddFolderImage("queue_folder.png");
 			}
 
-			if(false)
+			if (false)
 			{
 				// put in the history provider
 				libraryCreators.Add(new LibraryProviderHistoryCreator());
@@ -82,16 +97,18 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			AddFolderImage("library_folder.png");
 
 			// Check for LibraryProvider factories and put them in the list too.
-			PluginFinder<LibraryProviderPlugin> libraryProviderPlugins = new PluginFinder<LibraryProviderPlugin>();
 			foreach (LibraryProviderPlugin libraryProviderPlugin in libraryProviderPlugins.Plugins)
 			{
-				// This coupling is required to navigate to the Purchased folder after redemption or purchase updates
-				libraryCreators.Add(libraryProviderPlugin);
-				folderImagesForChildren.Add(libraryProviderPlugin.GetFolderImage());
-
-				if (libraryProviderPlugin.ProviderKey == "LibraryProviderPurchasedKey")
+				if (libraryProviderPlugin.ShouldBeShown(ReloadData))
 				{
-					this.PurchasedLibraryCreator = libraryProviderPlugin;
+					// This coupling is required to navigate to the Purchased folder after redemption or purchase updates
+					libraryCreators.Add(libraryProviderPlugin);
+					folderImagesForChildren.Add(libraryProviderPlugin.GetFolderImage());
+
+					if (libraryProviderPlugin.ProviderKey == "LibraryProviderPurchasedKey")
+					{
+						this.PurchasedLibraryCreator = libraryProviderPlugin;
+					}
 				}
 			}
 
@@ -105,15 +122,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 
 			firstAddedDirectoryIndex = libraryCreators.Count;
-
-#if !__ANDROID__
-			MenuOptionFile.CurrentMenuOptionFile.AddLocalFolderToLibrary += (sender, e) =>
-			{
-				AddCollectionToLibrary(e.Data);
-			};
-#endif
-
-			this.FilterProviders();
+			OnDataReloaded(null);
 		}
 
 		private void AddFolderImage(string iconFileName)
@@ -127,10 +136,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public override ImageBuffer GetCollectionFolderImage(int collectionIndex)
 		{
 			return folderImagesForChildren[collectionIndex];
-		}
-
-		private void FilterProviders()
-		{
 		}
 
 		public override void RenameCollection(int collectionIndexToRename, string newName)
@@ -162,9 +167,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				// Switch to the selector
 				SetCurrentLibraryProvider(this);
 			}
-
-			// Refresh state
-			UiThread.RunOnIdle(FilterProviders, 1);
 		}
 
 		#region Overriden Abstract Methods
