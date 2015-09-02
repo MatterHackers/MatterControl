@@ -25,14 +25,14 @@ namespace MatterHackers.MatterControl.UI
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
-					testRunner.ClickByName("SettingsAndControls", 5);
+					testRunner.ClickByName("SettingsAndControls", secondsToWait: 5);
 					testRunner.Wait(2);
-					testRunner.ClickByName("Options Tab", 6);
+					testRunner.ClickByName("Options Tab", secondsToWait: 6);
 
 					bool terminalWindowExists1 = testRunner.WaitForName("Gcode Terminal", 0);
 					resultsHarness.AddTestResult(terminalWindowExists1 == false, "Terminal Window does not exist");
 
-					testRunner.ClickByName("Show Terminal Button", 6);
+					testRunner.ClickByName("Show Terminal Button", secondsToWait: 6);
 		
 					SystemWindow containingWindow;
 					GuiWidget terminalWindow = testRunner.GetWidgetByName("Gcode Terminal", out containingWindow, secondsToWait: 3);

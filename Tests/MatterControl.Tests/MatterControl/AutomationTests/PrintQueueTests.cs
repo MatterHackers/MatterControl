@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.UI
 					bool pluginWindowExists1 = testRunner.WaitForName("Plugin Chooser Window", 0);
 					resultsHarness.AddTestResult(pluginWindowExists1 == false, "Plugin window does not exist");
 
-					testRunner.ClickByName("Design Tool Button", 5);
+					testRunner.ClickByName("Design Tool Button", secondsToWait: 5);
 
 					//Test that the plugin window does exist after the create button is clicked
 					SystemWindow containingWindow;
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.UI
 					bool exportWindowExists1 = testRunner.WaitForName( "Export Window Queue", 0);
 					resultsHarness.AddTestResult(exportWindowExists1 == false, "Export window does not exist");
 
-					testRunner.ClickByName("Export Queue Button", 5);
+					testRunner.ClickByName("Export Queue Button", secondsToWait: 5);
 					SystemWindow containingWindow;
 					GuiWidget exportWindow = testRunner.GetWidgetByName("Export Window Queue", out containingWindow, secondsToWait: 5);
 					resultsHarness.AddTestResult(exportWindow != null, "Export window does exist");

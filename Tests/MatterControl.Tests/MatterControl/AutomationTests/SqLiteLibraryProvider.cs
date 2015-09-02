@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.UI
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-					testRunner.ClickByName("Library Tab", 5);
+					testRunner.ClickByName("Library Tab", secondsToWait: 5);
 
 					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
 
