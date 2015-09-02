@@ -382,7 +382,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		internal class LastScrollPosition
 		{
-			internal Vector2 scrollPosition;
+			internal Vector2 topLeftScrollPosition;
 		}
 
 		private void AddAllItems(object inData = null)
@@ -416,7 +416,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			LastScrollPosition scrollPosition = inData as LastScrollPosition;
 			if (scrollPosition != null)
 			{
-				this.ScrollRatioFromTop0To1 = scrollPosition.scrollPosition;
+				this.TopLeftOffset = scrollPosition.topLeftScrollPosition;
 			}
 		}
 
@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			UiThread.RunOnIdle(AddAllItems, new LastScrollPosition()
 				{
-					scrollPosition = this.ScrollRatioFromTop0To1,
+					topLeftScrollPosition = this.TopLeftOffset,
 				});
 		}
 	}
