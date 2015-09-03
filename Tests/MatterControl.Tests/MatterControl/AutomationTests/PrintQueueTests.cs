@@ -38,6 +38,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using System.IO;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.Agg.UI.Tests;
+using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -246,6 +247,43 @@ namespace MatterHackers.MatterControl.UI
 		}
 	}
 
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class AddItemToQueue
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void DoAddItemToQueueTest()
+		{
+			// Run a copy of MatterControlTest Part
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+					testRunner.Wait(5);
+
+
+					//resultsHarness.AddTestResult(QueueData.Instance.Count == 0, "Start out with nothing in the queue");
+
+					//resultsHarness.AddTestResult(testRunner.ClickByName("Queue Add Button", secondsToWait: 5));
+
+					//resultsHarness.AddTestResult(QueueData.Instance.Count == 1, "We put 1 thing in the queue");
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+#if !__ANDROID__
+			// Set the static data to point to the directory of MatterControl
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+#endif
+			bool showWindow;
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting();
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 300);
+			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 0); // make sure we ran all our tests
+		}
+	}
 }
 
 

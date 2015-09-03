@@ -162,6 +162,7 @@ namespace MatterHackers.MatterControl.PrintQueue
                     buttonPanel1.AddChild(addToQueueButton);
 					addToQueueButton.Margin = new BorderDouble(0, 0, 3, 0);
 					addToQueueButton.Click += new EventHandler(addToQueueButton_Click);
+					addToQueueButton.Name = "Queue Add Button";
 
 					// put in the creator button
 					{
