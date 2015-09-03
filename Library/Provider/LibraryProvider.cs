@@ -238,7 +238,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public LibraryProvider GetRootProvider()
 		{
 			LibraryProvider parent = this;
-			while (parent != null)
+			while (parent != null
+				&& parent.ParentLibraryProvider != null)
 			{
 				parent = parent.ParentLibraryProvider;
 			}

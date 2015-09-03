@@ -272,7 +272,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public LibraryProvider GetPurchasedLibrary()
 		{
-			return PurchasedLibraryCreator.CreateLibraryProvider(this, SetCurrentLibraryProvider);
+			((LibraryProviderPlugin)PurchasedLibraryCreator).ForceVisible();
+			LibraryProvider purchasedProvider = PurchasedLibraryCreator.CreateLibraryProvider(this, SetCurrentLibraryProvider);
+			return purchasedProvider;
 		}
 	}
 }

@@ -51,6 +51,10 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			throw new NotImplementedException();
 		}
 
+		public virtual void ForceVisible()
+		{
+		}
+
 		public virtual bool ShouldBeShown(Action functionToCallIfStateChanges)
 		{
 			return true;
