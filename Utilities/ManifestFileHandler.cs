@@ -108,6 +108,11 @@ namespace MatterHackers.MatterControl
 			{
 				savedFileName = defaultPathAndFileName;
 			}
+
+			//Modify PrintItem list for export
+			project.ProjectFiles = NewPrintItemListToExport(project.ProjectFiles); 
+
+
 			string jsonString = JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented);
 			if (!Directory.Exists(applicationDataPath + "/data/"))
 			{
@@ -137,7 +142,85 @@ namespace MatterHackers.MatterControl
 				return new List<PrintItem>();
 			}
 
+			newProject.ProjectFiles = NewPrintItemListForImport(newProject.ProjectFiles);
+
 			return newProject.ProjectFiles;
+		}
+
+		public List<PrintItem> NewPrintItemListToExport(List<PrintItem> printItemList)
+		{
+
+			List<PrintItem> newPrintItemList = new List<PrintItem>();
+
+			foreach (var printItem in printItemList)
+			{
+
+				string pathToRenameForExport = printItem.FileLocation;
+				string partName = Path.GetFileName(pathToRenameForExport);
+				string exportedFilePath = "[QueueItems]\\" + partName;
+
+				PrintItem newPrintItem = new PrintItem();
+				newPrintItem.DateAdded = printItem.DateAdded;
+				newPrintItem.Name = printItem.Name;
+				newPrintItem.PrintCount = printItem.PrintCount;
+				newPrintItem.PrintItemCollectionID = printItem.PrintItemCollectionID;
+				newPrintItem.ReadOnly = printItem.ReadOnly;
+				newPrintItem.Protected = printItem.Protected;
+				
+				if(pathToRenameForExport.Contains("C:\\"))
+				{
+
+					newPrintItem.FileLocation = exportedFilePath;
+
+				}
+				else
+				{
+
+					newPrintItem.FileLocation = printItem.FileLocation;
+
+				}
+				newPrintItemList.Add(newPrintItem);
+			}
+
+			return newPrintItemList;
+
+		}
+
+		public List<PrintItem> NewPrintItemListForImport(List<PrintItem> printItemList)
+		{
+
+			List<PrintItem> newPrintItemList = new List<PrintItem>();
+			
+			foreach (var printItem in printItemList)
+			{
+
+				string userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
+				string partName = Path.GetFileName(printItem.FileLocation);
+				string pathToRenameForImport = Path.Combine(userDataPath, "data", "QueueItems");
+
+				PrintItem newPrintItem = new PrintItem();
+				newPrintItem.DateAdded = printItem.DateAdded;
+				newPrintItem.Name = printItem.Name;
+				newPrintItem.PrintCount = printItem.PrintCount;
+				newPrintItem.PrintItemCollectionID = printItem.PrintItemCollectionID;
+				newPrintItem.ReadOnly = printItem.ReadOnly;
+				newPrintItem.Protected = printItem.Protected;
+
+				if(printItem.FileLocation.Contains("[QueueItems]"))
+				{
+					newPrintItem.FileLocation = Path.Combine(pathToRenameForImport, partName);
+					
+				}
+				else
+				{
+					newPrintItem.FileLocation = printItem.FileLocation;
+				}
+
+				newPrintItemList.Add(newPrintItem);
+			}
+
+			return newPrintItemList;
+
 		}
 	}
 }

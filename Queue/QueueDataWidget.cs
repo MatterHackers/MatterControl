@@ -248,6 +248,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			itemOperationButtons.AddChild(exportItemButton);
 
 			Button copyItemButton = editButtonFactory.Generate("Copy".Localize());
+			copyItemButton.Name = "Queue Copy Button";
 			copyItemButton.Margin = new BorderDouble(3, 0);
 			copyItemButton.Click += new EventHandler(copyButton_Click);
 			editButtonsEnableData.Add(new ButtonEnableData(false, true));

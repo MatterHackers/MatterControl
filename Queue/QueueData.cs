@@ -349,11 +349,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 				else
 				{
 					DoAddItem(item, indexToInsert);
+					copyQueueItemToQueueItemFolder(item.FileLocation);
 				}
 			}
 			else
 			{
 				DoAddItem(item, indexToInsert);
+				copyQueueItemToQueueItemFolder(item.FileLocation);
 			}
 		}
 
@@ -363,6 +365,26 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				DoAddItem(partUnderConsideration, -1);
 			}
+		}
+
+		private void copyQueueItemToQueueItemFolder(string fileNameToLoad)
+		{
+			string pathToQueueItemsFolder = Path.Combine(MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath, "data", "QueueItems");
+			string partName = Path.GetFileName(fileNameToLoad);
+			string locationToSaveTo = Path.Combine(pathToQueueItemsFolder, partName);
+
+			if (!Directory.Exists(pathToQueueItemsFolder))
+			{
+
+				Directory.CreateDirectory(pathToQueueItemsFolder);
+
+			}
+
+			if (!File.Exists(locationToSaveTo))
+			{
+				File.Copy(fileNameToLoad, locationToSaveTo);
+			}
+
 		}
 
 		private void DoAddItem(PrintItemWrapper item, int indexToInsert)

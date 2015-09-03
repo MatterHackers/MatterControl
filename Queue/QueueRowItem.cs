@@ -92,6 +92,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			this.queueDataView = queueDataView;
 			this.PrintItemWrapper = printItemWrapper;
+			this.Name = "Queue Row Item";
 			ConstructPrintQueueItem();
 		}
 
