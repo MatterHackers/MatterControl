@@ -574,7 +574,7 @@ namespace MatterHackers.MatterControl
         {
             AutomationRunner test = new AutomationRunner("C:/TestImages");
             test.Wait(2);
-            test.ClickByName("SettingsAndControls");
+			test.ClickByName("SettingsAndControls");
             test.Wait(2);
 			test.ClickImage("BackButton.png");
 

@@ -19,23 +19,26 @@ namespace MatterHackers.MatterControl.UI
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-					testRunner.ClickByName("Library Tab", secondsToWait: 5);
+					testRunner.ClickByName("Library Tab", 5);
 
 					MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection");
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Edit", secondsToWait: 3));
+					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Edit", 3));
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Copy", secondsToWait: 3));
-					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Delete", secondsToWait: 3));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu", secondsToWait: 3));
-					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu Item", secondsToWait: 3));
+					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Copy", 3));
+					resultsHarness.AddTestResult(testRunner.ClickByName("3D View Delete", 3));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu", 3));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Menu Item", 3));
 
 					testRunner.Wait(1);
 
 					testRunner.Type("Test Part");
 					resultsHarness.AddTestResult(MatterControlUtilities.NavigateToFolder(testRunner, "Local Library Row Item Collection"));
 
-					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Save Button", secondsToWait: 1));
+					resultsHarness.AddTestResult(testRunner.ClickByName("Save As Save Button", 1));
+
+					// ensure that it is now in the library folder (that the folder updated)
+					resultsHarness.AddTestResult(testRunner.WaitForName("Row Item " + "Test Part", 5));
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
@@ -49,10 +52,10 @@ namespace MatterHackers.MatterControl.UI
 			string testDBFolder = "MC_One_Queue_No_Library";
 			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting(testDBFolder);
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
-			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 450);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 45);
 			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 7); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 8); // make sure we ran all our tests
 		}
 	}
 }

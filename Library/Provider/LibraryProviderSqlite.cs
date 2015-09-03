@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private string keywordFilter = string.Empty;
 		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
 
+		private FileSystemWatcher sqliteDatabaseWatcher = new FileSystemWatcher();
+
 		public LibraryProviderSQLite(PrintItemCollection baseLibraryCollection, Action<LibraryProvider> setCurrentLibraryProvider, LibraryProvider parentLibraryProvider, string visibleName)
 			: base(parentLibraryProvider, setCurrentLibraryProvider)
 		{
@@ -65,6 +67,29 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 			this.baseLibraryCollection = baseLibraryCollection;
 			LoadLibraryItems();
+
+			sqliteDatabaseWatcher.Path = Path.GetDirectoryName(ApplicationDataStorage.Instance.DatastorePath);
+
+			sqliteDatabaseWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+				   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+			sqliteDatabaseWatcher.Changed += DatabaseFileChange;
+			sqliteDatabaseWatcher.Created += DatabaseFileChange;
+			sqliteDatabaseWatcher.Deleted += DatabaseFileChange;
+			sqliteDatabaseWatcher.Renamed += DatabaseFileChange;
+
+			// Begin watching.
+			sqliteDatabaseWatcher.EnableRaisingEvents = true;
+		}
+
+		private void DatabaseFileChange(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				if(!Datastore.Instance.WasExited())
+				{
+				LoadLibraryItems();
+				}
+			});
 		}
 
 		public static LibraryProviderSQLite Instance
@@ -144,7 +169,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 						keywordFilter = value;
 
 						LoadLibraryItems(); 
-						OnDataReloaded(null);
 					}
 				}
 			}
@@ -181,9 +205,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		public async override void AddItem(PrintItemWrapper itemToAdd)
 		{
 			await AddItemAsync(itemToAdd.Name, itemToAdd.FileLocation, fireDataReloaded: true);
-
-			LoadLibraryItems();
-			OnDataReloaded(null);
 		}
 
 		public async Task AddItemAsync(string fileName, string fileLocation, bool fireDataReloaded)
@@ -192,6 +213,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				await Task.Run(() => AddStlOrGcode(fileLocation, fileName));
 			}
+
+			LoadLibraryItems();
 		}
 
 		public async Task EnsureSamplePartsExist(IEnumerable<string> filenamesToValidate)
@@ -276,7 +299,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			childCollections[collectionIndexToRemove].Delete();
 			LoadLibraryItems();
-			OnDataReloaded(null);
 		}
 
 		public override void RemoveItem(int itemToRemoveIndex)

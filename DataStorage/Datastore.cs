@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 	public class Datastore
 	{
+		bool wasExited = false;
 		public bool ConnectionError = false;
 		public ISQLite dbSQLite;
 		private static string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
@@ -234,6 +235,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 		public void Exit()
 		{
+			wasExited = true;
 			if (this.activeSession != null)
 			{
 				this.activeSession.SessionEnd = DateTime.Now;
@@ -305,6 +307,11 @@ namespace MatterHackers.MatterControl.DataStorage
 				//    dbSQLite.CreateTable(table);
 				//}
 			}
+		}
+
+		public bool WasExited()
+		{
+			return Instance.wasExited;
 		}
 	}
 }
