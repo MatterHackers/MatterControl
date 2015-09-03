@@ -1,9 +1,9 @@
 {
   "ProjectFiles": [
     {
-      "DateAdded": "2015-08-28T13:46:47.5050053-07:00",
-      "FileLocation": "C:\\Development\\MatterControl\\Tests\\TestData\\TestDatabaseStates\\MC_Three_Queue_Items\\Library\\msdtarqp.amf",
-      "Name": "chichen-itza_pyramid",
+      "DateAdded": "2015-09-03T09:37:47.8486405-07:00",
+      "FileLocation": "[QueueItems]\\2013-01-25_Mouthpiece_v2.stl",
+      "Name": "2013-01-25_Mouthpiece_v2",
       "PrintCount": 0,
       "PrintItemCollectionID": 0,
       "ReadOnly": false,
@@ -11,9 +11,9 @@
       "Id": 0
     },
     {
-      "DateAdded": "2015-08-28T13:46:47.5200062-07:00",
-      "FileLocation": "C:\\Development\\MatterControl\\Tests\\TestData\\TestDatabaseStates\\MC_Three_Queue_Items\\Library\\msdtarqp.amf",
-      "Name": "Chinese Dragon",
+      "DateAdded": "2015-09-03T09:37:47.9036436-07:00",
+      "FileLocation": "[QueueItems]\\Batman.stl",
+      "Name": "Batman",
       "PrintCount": 0,
       "PrintItemCollectionID": 0,
       "ReadOnly": false,
@@ -21,8 +21,8 @@
       "Id": 0
     },
     {
-      "DateAdded": "2015-08-28T13:46:52.1092687-07:00",
-      "FileLocation": "C:\\Development\\MatterControl\\Tests\\TestData\\TestDatabaseStates\\MC_Three_Queue_Items\\Library\\msdtarqp.amf",
+      "DateAdded": "2015-09-03T09:37:55.7320914-07:00",
+      "FileLocation": "[QueueItems]\\Fennec_Fox.stl",
       "Name": "Fennec_Fox",
       "PrintCount": 0,
       "PrintItemCollectionID": 0,
@@ -32,5 +32,5 @@
     }
   ],
   "ProjectName": "Test Project",
-  "ProjectDateCreated": "2015-08-28T15:39:03"
+  "ProjectDateCreated": "2015-09-03T09:37:55"
 }
