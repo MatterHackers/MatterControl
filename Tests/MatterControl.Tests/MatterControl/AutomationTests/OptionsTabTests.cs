@@ -25,17 +25,17 @@ namespace MatterHackers.MatterControl.UI
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
-					testRunner.ClickByName("SettingsAndControls", secondsToWait: 5);
+					testRunner.ClickByName("SettingsAndControls", 5);
 					testRunner.Wait(2);
-					testRunner.ClickByName("Options Tab", secondsToWait: 6);
+					testRunner.ClickByName("Options Tab", 6);
 
 					bool terminalWindowExists1 = testRunner.WaitForName("Gcode Terminal", 0);
 					resultsHarness.AddTestResult(terminalWindowExists1 == false, "Terminal Window does not exist");
 
-					testRunner.ClickByName("Show Terminal Button", secondsToWait: 6);
+					testRunner.ClickByName("Show Terminal Button", 6);
 		
 					SystemWindow containingWindow;
-					GuiWidget terminalWindow = testRunner.GetWidgetByName("Gcode Terminal", out containingWindow, secondsToWait: 3);
+					GuiWidget terminalWindow = testRunner.GetWidgetByName("Gcode Terminal", out containingWindow, 3);
 					resultsHarness.AddTestResult(terminalWindow != null, "Terminal Window exists after Show Terminal button is clicked");
 					containingWindow.CloseOnIdle();
 					testRunner.Wait(.5);
@@ -72,14 +72,14 @@ namespace MatterHackers.MatterControl.UI
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
 
-					testRunner.ClickByName("SettingsAndControls", secondsToWait: 5);
-					testRunner.ClickByName("Options Tab", secondsToWait: 6);
+					testRunner.ClickByName("SettingsAndControls", 5);
+					testRunner.ClickByName("Options Tab", 6);
 
-					bool printNotificationsWindowExists1 = testRunner.WaitForName("Notification Options Window", secondsToWait: 3);
+					bool printNotificationsWindowExists1 = testRunner.WaitForName("Notification Options Window", 3);
 					resultsHarness.AddTestResult(printNotificationsWindowExists1 == false, "Print Notification Window does not exist");
 
-					testRunner.ClickByName("Configure Notification Settings Button", secondsToWait: 6);
-					bool printNotificationsWindowExists2 = testRunner.WaitForName("Notification Options Window", secondsToWait: 3);
+					testRunner.ClickByName("Configure Notification Settings Button", 6);
+					bool printNotificationsWindowExists2 = testRunner.WaitForName("Notification Options Window", 3);
 					resultsHarness.AddTestResult(printNotificationsWindowExists2 == true, "Print Notifications Window exists after Configure button is clicked");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);

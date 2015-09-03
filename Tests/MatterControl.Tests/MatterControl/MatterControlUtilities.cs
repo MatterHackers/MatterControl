@@ -46,8 +46,8 @@ namespace MatterHackers.MatterControl.UI
 
 		private static void RemoveAllFromQueue(AutomationRunner testRunner)
 		{
-			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", secondsToWait: 2));
-			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", secondsToWait: 2));
+			Assert.IsTrue(testRunner.ClickByName("Queue... Menu", 2));
+			Assert.IsTrue(testRunner.ClickByName(" Remove All Menu Item", 2));
 		}
 
 		public static string DefaultTestImages
@@ -61,8 +61,8 @@ namespace MatterHackers.MatterControl.UI
 		public static void CloseMatterControl(AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
-			Assert.IsTrue(testRunner.ClickByName("File Menu", secondsToWait: 2));
-			Assert.IsTrue(testRunner.ClickByName("Exit Menu Item", secondsToWait: 2));
+			Assert.IsTrue(testRunner.ClickByName("File Menu", 2));
+			Assert.IsTrue(testRunner.ClickByName("Exit Menu Item", 2));
 			testRunner.Wait(.2);
 			if (mcWindowLocal.Parent != null)
 			{
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.UI
 		public static bool NavigateToFolder(AutomationRunner testRunner, string libraryRowItemName)
 		{
 			bool goodNavigate = true;
-			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, secondsToWait: 3);
+			SearchRegion libraryRowItemRegion = testRunner.GetRegionByName(libraryRowItemName, 3);
 			goodNavigate &= testRunner.ClickByName(libraryRowItemName);
 			goodNavigate &= testRunner.MoveToByName(libraryRowItemName);
 			testRunner.Wait(.5);
