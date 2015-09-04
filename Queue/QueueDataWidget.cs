@@ -487,68 +487,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 			QueueData.Instance.AddItem(new PrintItemWrapper(partInfo.PrintItem), partInfo.InsertAfterIndex, QueueData.ValidateSizeOn32BitSystems.Skip);
 		}
 
+		void DoAddToSpecificLibrary(SaveAsWindow.SaveAsReturnInfo returnInfo)
+		{
+			if (returnInfo != null)
+			{
+				List<QueueRowItem> selectedItems = new List<QueueRowItem>(queueDataView.SelectedItems);
+				foreach (QueueRowItem queueItem in selectedItems)
+				{
+					PrintItemWrapper printItemWrapper = new PrintItemWrapper(queueItem.PrintItemWrapper.PrintItem, returnInfo.destinationLibraryProvider);
+					returnInfo.destinationLibraryProvider.AddItem(printItemWrapper);
+				}
+			}
+		}
+
 		private void addToLibraryButton_Click(object sender, EventArgs mouseEvent)
 		{
-#if false
-			{
-				SaveAsWindow saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, null);
-
-				SaveAsWindow.SaveAsReturnInfo returnInfo = e.Argument as SaveAsWindow.SaveAsReturnInfo;
-
-				if (returnInfo != null)
-				{
-					printItemWrapper = returnInfo.printItemWrapper;
-				}
-
-				// we sent the data to the asynch lists but we will not pull it back out (only use it as a temp holder).
-				PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DO_COPY);
-
-				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-				try
-				{
-					// push all the transforms into the meshes
-					for (int i = 0; i < asynchMeshGroups.Count; i++)
-					{
-						asynchMeshGroups[i].Transform(asynchMeshGroupTransforms[i].TotalTransform);
-
-						bool continueProcessing;
-						ReportProgressChanged((i + 1) * .4 / asynchMeshGroups.Count, "", out continueProcessing);
-					}
-
-					saveSucceded = true;
-
-					string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
-
-					MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
-					MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
-					printItemWrapper.OnFileHasChanged();
-				}
-				catch (System.UnauthorizedAccessException)
-				{
-					saveSucceded = false;
-					UiThread.RunOnIdle(() =>
-					{
-						//Do something special when unauthorized?
-						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-					});
-				}
-				catch
-				{
-					saveSucceded = false;
-					UiThread.RunOnIdle(() =>
-					{
-						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
-					});
-				}
-
-				e.Result = e.Argument;
-			}
-#endif
-			foreach (QueueRowItem queueItem in queueDataView.SelectedItems)
-			{
-				// TODO: put up a library chooser and let the user put it where they want
-				LibraryProviderSQLite.Instance.AddFilesToLibrary(new string[] { queueItem.PrintItemWrapper.FileLocation });
-			}
+			SaveAsWindow saveAsWindow = new SaveAsWindow(DoAddToSpecificLibrary, null, false, false);
 		}
 
 		private bool addToLibraryMenu_Selected()

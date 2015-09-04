@@ -352,8 +352,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			for (int i = 0; i < provider.CollectionCount; i++)
 			{
 				PrintItemCollection item = provider.GetCollectionItem(i);
-				LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
-				AddListItemToTopToBottom(queueItem);
+				if (item.Key != "LibraryProviderPurchasedKey")
+				{
+					LibrarySelectorRowItem queueItem = new LibrarySelectorRowItem(item, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
+					AddListItemToTopToBottom(queueItem);
+				}
 			}
 		}
 

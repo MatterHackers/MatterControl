@@ -3691,3 +3691,6 @@ Translated:Zoom (Ctrl + Left Mouse)
 English:Search Results
 Translated:Search Results
 
+English:Slice files prior to send
+Translated:Slice files prior to send
+

@@ -2041,7 +2041,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					providerLocator = printItemWrapper.SourceLibraryProvider.GetProviderLocator();
 				}
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator);
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator, true, true);
 				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
 			}
 			else
