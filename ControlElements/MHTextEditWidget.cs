@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (timeSinceLastTextChanged.IsRunning)
 			{
-				if (timeSinceLastTextChanged.Elapsed.Seconds > 2)
+				if (timeSinceLastTextChanged.Elapsed.TotalSeconds > 2)
 				{
 					if (actuallTextEditWidget.InternalTextEditWidget.TextHasChanged())
 					{
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (timeSinceLastTextChanged.IsRunning)
 			{
-				if (timeSinceLastTextChanged.Elapsed.Seconds > 2)
+				if (timeSinceLastTextChanged.Elapsed.TotalSeconds > 2)
 				{
 					if (actuallNumberEdit.InternalTextEditWidget.TextHasChanged())
 					{

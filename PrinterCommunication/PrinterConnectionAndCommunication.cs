@@ -1254,8 +1254,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				temperatureRequestTimer.Restart();
 			}
 
-			bool waited30SeconsdForOk = timeHaveBeenWaitingForOK.Elapsed.Seconds > 30; // waited for more than 30 seconds
-			bool noResponseFor5Seconds = timeSinceLastReadAnything.Elapsed.Seconds > 5;
+			bool waited30SeconsdForOk = timeHaveBeenWaitingForOK.Elapsed.TotalSeconds > 30; // waited for more than 30 seconds
+			bool noResponseFor5Seconds = timeSinceLastReadAnything.Elapsed.TotalSeconds > 5;
 			bool waitedToLongForOK = waited30SeconsdForOk && noResponseFor5Seconds;
 			while (LinesToWriteQueue.Count > 0 &&
 				(!timeHaveBeenWaitingForOK.IsRunning || waitedToLongForOK))

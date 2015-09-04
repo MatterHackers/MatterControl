@@ -28,11 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using NUnit.Framework;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -99,7 +102,7 @@ namespace MatterHackers.MatterControl.UI
 			internal string renamedUserDataPath;
 		}
 
-		public static DataFolderState MakeNewStaticDataForTesting(string testDBFolderName = null)
+		public static DataFolderState MakeNewStaticDataForTesting2(string testDBFolderName = null)
 		{
 			DataFolderState state = new DataFolderState();
 			state.userDataPath = MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath;
@@ -118,6 +121,14 @@ namespace MatterHackers.MatterControl.UI
 			{
 				Directory.Move(state.userDataPath, state.renamedUserDataPath);
 				state.undoDataRename = true;
+			}
+
+			Stopwatch time = Stopwatch.StartNew();
+			// Wait for up to some amount of time for the directory to be moved.
+			while (!Directory.Exists(state.renamedUserDataPath)
+				&& time.ElapsedMilliseconds < 1000)
+			{
+				Thread.Sleep(1); // make sure we are not eating all the cpu time.
 			}
 
 			if (testDBFolderName != null)
@@ -160,7 +171,18 @@ namespace MatterHackers.MatterControl.UI
 				{
 					Datastore.Instance.Exit();
 				}
-				Directory.Delete(state.userDataPath, true);
+				Stopwatch timeTryingToDelete = Stopwatch.StartNew();
+				while (Directory.Exists(state.userDataPath)
+					&& timeTryingToDelete.Elapsed.TotalSeconds < 10)
+				{
+					try
+					{
+						Directory.Delete(state.userDataPath, true);
+					}
+					catch (Exception)
+					{
+					}
+				}
 				Stopwatch time = Stopwatch.StartNew();
 				// Wait for up to some amount of time for the directory to be gone.
 				while (Directory.Exists(state.userDataPath)
@@ -168,7 +190,10 @@ namespace MatterHackers.MatterControl.UI
 				{
 					Thread.Sleep(1); // make sure we are not eating all the cpu time.
 				}
-				Directory.Move(state.renamedUserDataPath, state.userDataPath);
+				if (!Directory.Exists(state.userDataPath))
+				{
+					Directory.Move(state.renamedUserDataPath, state.userDataPath);
+				}
 			}
 		}
 
@@ -187,6 +212,25 @@ namespace MatterHackers.MatterControl.UI
 				string newFileFullName = fileName.Replace(testDataDBDirectory, matterControlAppDataFolder);
 				File.Copy(fileName, newFileFullName, true);
 			}
+		}
+
+		public static AutomationTesterHarness RunTest(Action<AutomationTesterHarness> testToRun, string testDbFolder = null, string staticDataPathOverride = null)
+		{
+			if (staticDataPathOverride == null)
+			{
+				staticDataPathOverride = Path.Combine("..", "..", "..", "..", "StaticData");
+			}
+#if !__ANDROID__
+			// Set the static data to point to the directory of MatterControl
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(staticDataPathOverride);
+#endif
+			bool showWindow;
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting2(testDbFolder);
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 60);
+			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
+
+			return testHarness;
 		}
 	}
 }
