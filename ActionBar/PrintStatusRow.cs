@@ -113,9 +113,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (activePrintPreviewImage.PrintItem != null)
+			if (activePrintPreviewImage.ItemWrapper != null)
 			{
-				activePrintPreviewImage.PrintItem.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
+				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
 			}
 			if (unregisterEvents != null)
 			{
@@ -298,17 +298,17 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void onActivePrintItemChanged(object sender, EventArgs e)
 		{
 			// first we have to remove any link to an old part (the part currently in the view)
-			if (activePrintPreviewImage.PrintItem != null)
+			if (activePrintPreviewImage.ItemWrapper != null)
 			{
-				activePrintPreviewImage.PrintItem.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
+				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
 			}
 
-			activePrintPreviewImage.PrintItem = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+			activePrintPreviewImage.ItemWrapper = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
 
 			// then hook up our new part
-			if (activePrintPreviewImage.PrintItem != null)
+			if (activePrintPreviewImage.ItemWrapper != null)
 			{
-				activePrintPreviewImage.PrintItem.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
+				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage += PrintItem_SlicingOutputMessage;
 			}
 
 			activePrintPreviewImage.Invalidate();

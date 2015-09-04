@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
 		public PartThumbnailWidget(PrintItemWrapper item, string noThumbnailFileName, string buildingThumbnailFileName, ImageSizes size)
 		{
 			ToolTipText = "Click to show in 3D View".Localize();
-			this.PrintItem = item;
+			this.ItemWrapper = item;
 
 			EnsureCorrectPartExtension();
 
@@ -162,22 +162,22 @@ namespace MatterHackers.MatterControl
 
 		private enum RenderType { NONE, ORTHOGROPHIC, PERSPECTIVE, RAY_TRACE };
 
-		public PrintItemWrapper PrintItem
+		public PrintItemWrapper ItemWrapper
 		{
 			get { return printItem; }
 			set
 			{
-				if (PrintItem != null)
+				if (ItemWrapper != null)
 				{
-					PrintItem.FileHasChanged -= item_FileHasChanged;
+					ItemWrapper.FileHasChanged -= item_FileHasChanged;
 				}
 				
 				printItem = value;
 				
 				thumbNailHasBeenCreated = false;
-				if (PrintItem != null)
+				if (ItemWrapper != null)
 				{
-					PrintItem.FileHasChanged += item_FileHasChanged;
+					ItemWrapper.FileHasChanged += item_FileHasChanged;
 				}
 			}
 		}
@@ -204,19 +204,44 @@ namespace MatterHackers.MatterControl
 				unregisterEvents(this, null);
 			}
 
-			if (PrintItem != null)
+			if (ItemWrapper != null)
 			{
-				PrintItem.FileHasChanged -= item_FileHasChanged;
+				ItemWrapper.FileHasChanged -= item_FileHasChanged;
 			}
 			base.OnClosed(e);
 		}
 
+		private void LoadOrCreateThumbnail()
+		{
+			using (TimedLock.Lock(this, "TryLoad"))
+			{
+				if (!thumbNailHasBeenCreated)
+				{
+					if (!processingThumbnail)
+					{
+						thumbNailHasBeenCreated = true;
+						processingThumbnail = true;
+						CreateThumbnail();
+						processingThumbnail = false;
+					}
+				}
+			}
+		}
+		
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			//Trigger thumbnail generation if neeeded
 			if (!thumbNailHasBeenCreated && !processingThumbnail)
 			{
-				Task.Run(() => LoadOrCreateThumbnail());
+				if (SetImageFast())
+				{
+					thumbNailHasBeenCreated = true;
+					OnDoneRendering();
+				}
+				else
+				{
+					Task.Run(() => LoadOrCreateThumbnail());
+				}
 			}
 
 			if (this.FirstWidgetUnderMouse)
@@ -409,17 +434,17 @@ namespace MatterHackers.MatterControl
 
 		private void CreateThumbnail()
 		{
-			string stlHashCode = this.PrintItem.FileHashCode.ToString();
+			string stlHashCode = this.ItemWrapper.FileHashCode.ToString();
 
 			ImageBuffer bigRender = new ImageBuffer();
-			if (!File.Exists(this.PrintItem.FileLocation))
+			if (!File.Exists(this.ItemWrapper.FileLocation))
 			{
 				return;
 			}
 
-			List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(this.PrintItem.FileLocation);
+			List<MeshGroup> loadedMeshGroups = MeshFileIo.Load(this.ItemWrapper.FileLocation);
 
-			RenderType renderType = GetRenderType(this.PrintItem.FileLocation);
+			RenderType renderType = GetRenderType(this.ItemWrapper.FileLocation);
 
 			switch (renderType)
 			{
@@ -511,9 +536,9 @@ namespace MatterHackers.MatterControl
 
 		private void OnDoneRendering()
 		{
-			if (PrintItem != null)
+			if (ItemWrapper != null)
 			{
-				string stlHashCode = this.PrintItem.FileHashCode.ToString();
+				string stlHashCode = this.ItemWrapper.FileHashCode.ToString();
 				string imageFileName = GetImageFileName(stlHashCode);
 
 				if (DoneRendering != null)
@@ -533,31 +558,6 @@ namespace MatterHackers.MatterControl
 		{
 			thumbNailHasBeenCreated = false;
 			Invalidate();
-		}
-
-		private void LoadOrCreateThumbnail()
-		{
-			using (TimedLock.Lock(this, "TryLoad"))
-			{
-				if (!thumbNailHasBeenCreated)
-				{
-					if (SetImageFast())
-					{
-						thumbNailHasBeenCreated = true;
-						OnDoneRendering();
-					}
-					else
-					{
-						if (!processingThumbnail)
-						{
-							thumbNailHasBeenCreated = true;
-							processingThumbnail = true;
-							CreateThumbnail();
-							processingThumbnail = false;
-						}
-					}
-				}
-			}
 		}
 
 		private bool MeshIsTooBigToLoad(string fileLocation)
@@ -605,7 +605,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (partPreviewWindow == null)
 			{
-				partPreviewWindow = new PartPreviewMainWindow(this.PrintItem, autoRotate);
+				partPreviewWindow = new PartPreviewMainWindow(this.ItemWrapper, autoRotate);
 				partPreviewWindow.Name = "Part Preview Window Thumbnail";
 				partPreviewWindow.Closed += (object sender, EventArgs e) =>
 				{
@@ -620,14 +620,14 @@ namespace MatterHackers.MatterControl
 
 		private bool SetImageFast()
 		{
-			if (this.PrintItem == null)
+			if (this.ItemWrapper == null)
 			{
 				this.thumbnailImage = new ImageBuffer(this.noThumbnailImage);
 				this.Invalidate();
 				return true;
 			}
 
-			if (this.PrintItem.FileLocation == QueueData.SdCardFileName)
+			if (this.ItemWrapper.FileLocation == QueueData.SdCardFileName)
 			{
 				switch (this.Size)
 				{
@@ -654,7 +654,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(this.EnsureImageUpdated);
 				return true;
 			}
-			else if (Path.GetExtension(this.PrintItem.FileLocation).ToUpper() == ".GCODE")
+			else if (Path.GetExtension(this.ItemWrapper.FileLocation).ToUpper() == ".GCODE")
 			{
 				CreateImage(this, Width, Height);
 				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
@@ -667,7 +667,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(this.EnsureImageUpdated);
 				return true;
 			}
-			else if (!File.Exists(this.PrintItem.FileLocation))
+			else if (!File.Exists(this.ItemWrapper.FileLocation))
 			{
 				CreateImage(this, Width, Height);
 				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
@@ -678,7 +678,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(this.EnsureImageUpdated);
 				return true;
 			}
-			else if (MeshIsTooBigToLoad(this.PrintItem.FileLocation))
+			else if (MeshIsTooBigToLoad(this.ItemWrapper.FileLocation))
 			{
 				CreateImage(this, Width, Height);
 				this.thumbnailImage.SetRecieveBlender(new BlenderPreMultBGRA());
@@ -691,7 +691,7 @@ namespace MatterHackers.MatterControl
 				return true;
 			}
 
-			string stlHashCode = this.PrintItem.FileHashCode.ToString();
+			string stlHashCode = this.ItemWrapper.FileHashCode.ToString();
 
 			ImageBuffer bigRender = LoadImageFromDisk(this, stlHashCode);
 			if (bigRender == null)
