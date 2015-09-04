@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.UI
 					resultsHarness.AddTestResult(imageExists == false, "Web page is not open");
 
 					//Click Buy button and test that the MatterHackers store web page is open
-					testRunner.ClickByName("Buy Materials Button", secondsToWait: 5);
+					testRunner.ClickByName("Buy Materials Button", 5);
 					bool imageExists2 = testRunner.ImageExists("MatterHackersStoreImage.png", 10);
 					resultsHarness.AddTestResult(imageExists2 == true, "Web page is open");
 
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.UI
 					bool pluginWindowExists1 = testRunner.WaitForName("Plugin Chooser Window", 0);
 					resultsHarness.AddTestResult(pluginWindowExists1 == false, "Plugin window does not exist");
 
-					testRunner.ClickByName("Design Tool Button", secondsToWait: 5);
+					testRunner.ClickByName("Design Tool Button", 5);
 
 					//Test that the plugin window does exist after the create button is clicked
 					SystemWindow containingWindow;
@@ -145,9 +145,9 @@ namespace MatterHackers.MatterControl.UI
 					bool exportWindowExists1 = testRunner.WaitForName( "Export Window Queue", 0);
 					resultsHarness.AddTestResult(exportWindowExists1 == false, "Export window does not exist");
 
-					testRunner.ClickByName("Export Queue Button", secondsToWait: 5);
+					testRunner.ClickByName("Export Queue Button", 5);
 					SystemWindow containingWindow;
-					GuiWidget exportWindow = testRunner.GetWidgetByName("Export Window Queue", out containingWindow, secondsToWait: 5);
+					GuiWidget exportWindow = testRunner.GetWidgetByName("Export Window Queue", out containingWindow, 5);
 					resultsHarness.AddTestResult(exportWindow != null, "Export window does exist");
 					exportWindow.CloseOnIdle();
 					testRunner.Wait(.5);
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.UI
 					testRunner.ClickByName("Queue Item Thumbnail");
 
 					SystemWindow containingWindow;
-					GuiWidget partPreviewWindowExists = testRunner.GetWidgetByName("Part Preview Window Thumbnail", out containingWindow, secondsToWait: 3);
+					GuiWidget partPreviewWindowExists = testRunner.GetWidgetByName("Part Preview Window Thumbnail", out containingWindow, 3);
 					resultsHarness.AddTestResult(partPreviewWindowExists != null, "Part Preview Window Exists");
 					partPreviewWindowExists.CloseOnIdle();
 					testRunner.Wait(.5);
@@ -268,8 +268,8 @@ namespace MatterHackers.MatterControl.UI
 
 					int queueCountBeforeCopyButtonIsClicked = QueueData.Instance.Count;
 					bool copyIncreasesQueueDataCount = false;
-					testRunner.ClickByName("Queue Item " + "Batman", secondsToWait: 3);
-					testRunner.ClickByName("Queue Copy Button", secondsToWait: 3);
+					testRunner.ClickByName("Queue Item " + "Batman", 3);
+					testRunner.ClickByName("Queue Copy Button", 3);
 
 					testRunner.Wait(1);
 
