@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.UI
 
 					bool batmanQueueItemCopyExists = testRunner.WaitForName("Queue Item " + "Batman" + " - copy", 2);
 
-					resultsHarness.AddTestResult(batmanQueueItemCopyExists = true);
+					resultsHarness.AddTestResult(batmanQueueItemCopyExists == true);
 					
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
@@ -335,6 +335,78 @@ namespace MatterHackers.MatterControl.UI
 			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Fresh_Installation");
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 6); // make sure we ran all our tests
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class RemoveAllMenuItemClicked
+	{
+
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void RemoveAllMenuItemClickedRemovesAll()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+					/*
+					 *Tests that when the Remove All menu item is clicked 
+					 *1. Queue Item count is set to zero
+					 *2. All queue row items that were previously in the queue are removed
+					 */
+
+					bool queueEmpty = true;
+					int queueItemCountBeforeRemoveAllClicked = QueueData.Instance.Count;
+
+					if(queueItemCountBeforeRemoveAllClicked != 0)
+					{
+						queueEmpty = false;
+					}
+
+					resultsHarness.AddTestResult(queueEmpty = true);
+
+					bool batmanPartExists1 = testRunner.WaitForName("Queue Item " + "Batman", 1);
+					bool foxPartExistst1 = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 1);
+					bool mouthpiecePartExists1 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
+
+					resultsHarness.AddTestResult(batmanPartExists1 == true);
+					resultsHarness.AddTestResult(mouthpiecePartExists1 == true);
+					resultsHarness.AddTestResult(foxPartExistst1 == true);
+
+				
+					testRunner.ClickByName("Queue... Menu", 2);
+
+
+
+					testRunner.ClickByName(" Remove All Menu Item", 2);
+
+					testRunner.Wait(2);
+
+					int queueItemCountAfterRemoveAll = QueueData.Instance.Count; 
+
+					if(queueItemCountAfterRemoveAll == 0)
+					{
+						queueEmpty = true; 
+					}
+
+					resultsHarness.AddTestResult(queueEmpty = true);
+
+					bool batmanPartExists2 = testRunner.WaitForName("Queue Item " + "Batman", 1);
+					bool foxPartExistst2 = testRunner.WaitForName("Queue Item " + "Fennec_Fox", 1);
+					bool mouthpiecePartExists2 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
+
+					resultsHarness.AddTestResult(batmanPartExists2 == false);
+					resultsHarness.AddTestResult(mouthpiecePartExists2 == false);
+					resultsHarness.AddTestResult(foxPartExistst2 == false);
+
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 8); // make sure we ran all our tests
 		}
 	}
 }
