@@ -135,7 +135,11 @@ namespace MatterHackers.MatterControl.UI
 			{
 				string fullPathToDataContents = Path.Combine("..", "..", "..", "TestData", "TestDatabaseStates", testDBFolderName);
 				CopyTestDataDBFolderToTemporaryMCAppDataDirectory(fullPathToDataContents);
-				state.undoDataRename = true;
+
+				if (Directory.Exists(state.renamedUserDataPath))
+				{
+					state.undoDataRename = true;
+				}
 				return state;
 			}
 
