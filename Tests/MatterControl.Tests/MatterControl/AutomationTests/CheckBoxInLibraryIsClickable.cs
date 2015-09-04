@@ -83,13 +83,7 @@ namespace MatterHackers.MatterControl.UI
 
 			};
 
-#if !__ANDROID__
-			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-#endif
-			bool showWindow;
-			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
-			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 1000);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			// NOTE: In the future we may want to make the "Local Library Row Item Collection" not clickable. 
 			// If that is the case fix this test to click on a child of "Local Library Row Item Collection" instead.

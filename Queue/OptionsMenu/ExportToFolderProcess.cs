@@ -104,14 +104,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 				foreach (PrintItem part in allFilesToExport)
 				{
 					PrintItemWrapper printItemWrapper = new PrintItemWrapper(part);
-					string extension = Path.GetExtension(part.FileLocation).ToUpper();
+					string extension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
 					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
 					{
 						SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
 						printItemWrapper.SlicingDone += sliceItem_Done;
 						printItemWrapper.SlicingOutputMessage += printItemWrapper_SlicingOutputMessage;
 					}
-					else if (Path.GetExtension(part.FileLocation).ToUpper() == ".GCODE")
+					else if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
 					{
 						sliceItem_Done(printItemWrapper, null);
 					}

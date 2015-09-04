@@ -358,8 +358,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				// let the queue know that the item has changed so it load the correct part
 				QueueData.Instance.SaveDefaultQueue();
 			}
-
-			printItemWrapper.OnFileHasChanged();
 		}
 
 		protected virtual void AddStlOrGcode(string loadedFileName, string displayName)

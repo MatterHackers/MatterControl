@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl
 		private MHTextEditWidget textToAddWidget;
 		LibrarySelectorWidget librarySelectorWidget;
 
-		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator)
+		public SaveAsWindow(Action<SaveAsReturnInfo> functionToCallOnSaveAs, List<ProviderLocatorNode> providerLocator, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
 			Title = "MatterControl - " + "Save As".Localize();
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
 
-			librarySelectorWidget = new LibrarySelectorWidget(true);
+			librarySelectorWidget = new LibrarySelectorWidget(showQueue);
 
 			// put in the bread crumb widget
 			FolderBreadCrumbWidget breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget.SetCurrentLibraryProvider, librarySelectorWidget.CurrentLibraryProvider);
@@ -84,6 +84,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// put in the area to type in the new name
+			if(getNewName)
 			{
 				string fileNameLabel = "Design Name".Localize();
 				TextWidget fileNameHeader = new TextWidget(fileNameLabel, pointSize: 12);
@@ -142,7 +143,10 @@ namespace MatterHackers.MatterControl
 		{
 			if (firstDraw)
 			{
-				UiThread.RunOnIdle(textToAddWidget.Focus);
+				if (textToAddWidget != null)
+				{
+					UiThread.RunOnIdle(textToAddWidget.Focus);
+				}
 				firstDraw = false;
 			}
 			base.OnDraw(graphics2D);
@@ -160,7 +164,12 @@ namespace MatterHackers.MatterControl
 
 		private void SubmitForm()
 		{
-			string newName = textToAddWidget.ActualTextEditWidget.Text;
+			string newName = "none";
+			if (textToAddWidget != null)
+			{
+				newName = textToAddWidget.ActualTextEditWidget.Text;
+			}
+
 			if (newName != "")
 			{
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");

@@ -44,16 +44,8 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-#if !__ANDROID__
-			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-#endif
-			bool showWindow;
-			string testDBFolder = "MC_Three_Queue_Items";
-			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting(testDBFolder);
-			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
-			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 45);
-			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}
@@ -86,16 +78,8 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-#if !__ANDROID__
-			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-#endif
-			bool showWindow;
-			string testDBFolder = "MC_Three_Queue_Items";
-			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting(testDBFolder);
-			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
-			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 45);
-			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
 		}

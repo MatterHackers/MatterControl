@@ -369,6 +369,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonRightPanelHolder.Name = "buttonRightPanelHolder";
 			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
 			buttonRightPanelHolder.AddChild(buttonRightPanel);
+			buttonRightPanel.VisibleChanged += (sender, e) =>
+			{
+				buttonRightPanelHolder.Visible = buttonRightPanel.Visible;
+			};
 
 			viewControls3D = new ViewControls3D(meshViewerWidget);
 
@@ -1869,7 +1873,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
 				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
-				printItemWrapper.OnFileHasChanged();
 
 				if (returnInfo != null
 					&& returnInfo.destinationLibraryProvider != null)
@@ -2038,7 +2041,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					providerLocator = printItemWrapper.SourceLibraryProvider.GetProviderLocator();
 				}
-				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator);
+				saveAsWindow = new SaveAsWindow(MergeAndSavePartsToNewMeshFile, providerLocator, true, true);
 				saveAsWindow.Closed += new EventHandler(SaveAsWindow_Closed);
 			}
 			else

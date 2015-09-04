@@ -72,13 +72,7 @@ namespace MatterHackers.MatterControl.UI
 				}
 			};
 
-#if !__ANDROID__
-			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
-#endif
-			bool showWindow;
-			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
-			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 10);
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun);
 
 			Assert.IsTrue(testHarness.AllTestsPassed);
 			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests

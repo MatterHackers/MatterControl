@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace MatterHackers.MatterControl.PrintQueue
@@ -59,10 +60,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private long writeTime = 0;
 
+		private FileSystemWatcher diskFileWatcher = new FileSystemWatcher();
+
 		public PrintItemWrapper(DataStorage.PrintItem printItem, LibraryProvider sourceLibraryProvider = null)
 		{
 			this.PrintItem = printItem;
-			this.fileType = Path.GetExtension(printItem.FileLocation).ToUpper();
+			UpdateFileTracking(FileLocation);
+
+			this.fileType = Path.GetExtension(FileLocation).ToUpper();
 
 			SourceLibraryProvider = sourceLibraryProvider;
 		}
@@ -72,7 +77,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.PrintItem = DataStorage.Datastore.Instance.dbSQLite.Table<DataStorage.PrintItem>().Where(v => v.Id == printItemId).Take(1).FirstOrDefault();
 			try
 			{
-				this.fileType = Path.GetExtension(this.PrintItem.FileLocation).ToUpper();
+				this.fileType = Path.GetExtension(this.FileLocation).ToUpper();
 			}
 			catch
 			{
@@ -187,15 +192,80 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public string FileLocation
 		{
 			get { return this.PrintItem.FileLocation; }
-			set { this.PrintItem.FileLocation = value; }
+			set
+			{
+				this.PrintItem.FileLocation = value;
+
+				UpdateFileTracking(value);
+			}
 		}
 
 		public string Name
 		{
 			get { return this.PrintItem.Name; }
+			set
+			{
+				this.PrintItem.Name = value;
+			}
 		}
 
-		public PrintItem PrintItem { get; set; }
+		Stopwatch timeSinceLastFileUpdate = new Stopwatch();
+		private void UpdateFileTracking(string value)
+		{
+			if (File.Exists(value))
+			{
+				diskFileWatcher.Path = Path.GetDirectoryName(value);
+				diskFileWatcher.Filter = Path.GetFileName(value);
+
+				diskFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
+				diskFileWatcher.Changed += SetFileChanged;
+				diskFileWatcher.Created += SetFileChanged;
+
+				// Begin watching.
+				diskFileWatcher.EnableRaisingEvents = true;
+			}
+			else
+			{
+				diskFileWatcher.EnableRaisingEvents = false;
+			}
+		}
+
+		public void ReportFileChange()
+		{
+			if (timeSinceLastFileUpdate.IsRunning)
+			{
+				if (timeSinceLastFileUpdate.Elapsed.TotalSeconds > 1)
+				{
+					timeSinceLastFileUpdate.Stop();
+					if (FileHasChanged != null)
+					{
+						FileHasChanged(this, null);
+					}
+				}
+				else
+				{
+					UiThread.RunOnIdle(ReportFileChange, .05);
+				}
+			}
+		}
+
+		private void SetFileChanged(object sender, FileSystemEventArgs e)
+		{
+			timeSinceLastFileUpdate.Restart();
+
+			UiThread.RunOnIdle(ReportFileChange, .05);
+		}
+
+		PrintItem printItem;
+		public PrintItem PrintItem 
+		{
+			get { return printItem; }
+			set
+			{
+				printItem = value;
+				UpdateFileTracking(printItem.FileLocation);
+			}
+		}
 
 		public bool SlicingHadError { get { return slicingHadError; } }
 
@@ -268,17 +338,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 
 			return gCodeFileIsComplete;
-		}
-
-		public void OnFileHasChanged()
-		{
-			// Get the hashcode so we can save it if it has changed.
-			long fileHashCode = FileHashCode;
-
-			if (FileHasChanged != null)
-			{
-				FileHasChanged(this, null);
-			}
 		}
 
 		public void OnSlicingOutputMessage(EventArgs e)
