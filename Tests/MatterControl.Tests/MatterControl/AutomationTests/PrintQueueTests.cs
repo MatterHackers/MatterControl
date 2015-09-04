@@ -39,6 +39,8 @@ using System.IO;
 using MatterHackers.MatterControl.CreatorPlugins;
 using MatterHackers.Agg.UI.Tests;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.DataStorage;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.UI
 {
@@ -102,7 +104,7 @@ namespace MatterHackers.MatterControl.UI
 
 					//Test that the plugin window does exist after the create button is clicked
 					SystemWindow containingWindow;
-					GuiWidget pluginWindowExists = testRunner.GetWidgetByName("Plugin Chooser Window", out containingWindow, 3);
+					GuiWidget pluginWindowExists = testRunner.GetWidgetByName("Plugin Chooser Window", out containingWindow, secondsToWait: 3);
 					resultsHarness.AddTestResult(pluginWindowExists != null, "Plugin Chooser Window");
 					pluginWindowExists.CloseOnIdle();
 					testRunner.Wait(.5);
@@ -248,24 +250,131 @@ namespace MatterHackers.MatterControl.UI
 	}
 
 	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
-	public class AddItemToQueue
+	public class ClickCopyButtonMakesACopyOfPrintItemInQueue
 	{
 		[Test, RequiresSTA, RunInApplicationDomain]
-		public void DoAddItemToQueueTest()
+		public void CopyButtonMakesACopyOfPartInTheQueue()
 		{
-			// Run a copy of MatterControlTest Part
+			// Run a copy of MatterControl
 			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
 			{
 				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
 				{
-					testRunner.Wait(5);
+
+					/* Tests that when the Queue Copy button is clicked:
+					 * 1. The Queue Tab Count is increased by one
+					 * 2. A Queue Row item is created and added to the queue with the correct name
+					 */ 
+
+					int queueCountBeforeCopyButtonIsClicked = QueueData.Instance.Count;
+					bool copyIncreasesQueueDataCount = false;
+					testRunner.ClickByName("Queue Item " + "Batman", 3);
+					testRunner.ClickByName("Queue Copy Button", 3);
+
+					testRunner.Wait(1);
+
+					int currentQueueCount = QueueData.Instance.Count;
+					if (currentQueueCount == queueCountBeforeCopyButtonIsClicked + 1)
+					{
+						copyIncreasesQueueDataCount = true;
+					}
+
+					resultsHarness.AddTestResult(copyIncreasesQueueDataCount == true, "Copy button clicked increases queue tab count by one");
+
+					bool batmanQueueItemCopyExists = testRunner.WaitForName("Queue Item " + "Batman" + " - copy", 2);
+
+					resultsHarness.AddTestResult(batmanQueueItemCopyExists = true);
+					
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+#if !__ANDROID__
+			// Set the static data to point to the directory of MatterControl
+			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
+#endif
+			bool showWindow;
+			string testDBFolder = "MC_Three_Queue_Items";
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting(testDBFolder);
+			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 300);
+			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 2); // make sure we ran all our tests
+		}
+	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class AddSingleItemToQueueAddsItem
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void AddSingleItemToQueue()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					/*
+					 * Tests that when the QueueData.Instance.AddItem function is called:
+					 * 1. The Queue count is increased by 1
+					 * 2. A QueueRowItem is created and added to the queue
+					 * 3. That a copy of the part is saved to AppData\MatterControl\data\QueueItems folder
+					 */
+					//TODO: Eventually modify test so that we test adding queue items via file 
 
 
-					//resultsHarness.AddTestResult(QueueData.Instance.Count == 0, "Start out with nothing in the queue");
+					bool queueDataCountEqualsZero = false;
+					bool addedPartIncreasesQueueDataCount = false;
+					bool queueItemAppDataDirectoryExists = false;
+					bool queueItemAppDataDirectoryDoesNotExists = true;
+					int currentQueueCount = QueueData.Instance.Count;
+					string pathToAddedQueueItem = Path.Combine(MatterHackers.MatterControl.DataStorage.ApplicationDataStorage.ApplicationUserDataPath, "data", "QueueItems", "Batman.stl");
+					string partToBeAdded = Path.Combine("..", "..", "..", "TestData", "TestParts", "Batman.stl");
+					
+					//Make Sure Queue Count = 0 
+					if(currentQueueCount  == 0)
+					{
+						queueDataCountEqualsZero = true;
+					}
 
-					//resultsHarness.AddTestResult(testRunner.ClickByName("Queue Add Button", ));
+					resultsHarness.AddTestResult(queueDataCountEqualsZero == true, "Queue count is zero before the test starts");
+					testRunner.Wait(3);
 
-					//resultsHarness.AddTestResult(QueueData.Instance.Count == 1, "We put 1 thing in the queue");
+					//Make sure queue item does not exist
+					bool batmanSTLExists = testRunner.WaitForName("Queue Item " + "Batman", 2);
+					resultsHarness.AddTestResult(batmanSTLExists == false);
+					
+
+					//Make sure that QueueItems directory does not exist
+					if (!File.Exists(pathToAddedQueueItem))
+					{
+						queueItemAppDataDirectoryDoesNotExists = true;
+					}
+
+					resultsHarness.AddTestResult(queueItemAppDataDirectoryDoesNotExists == true, "Path to QueueItems directory does not exist before tests");
+
+					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(partToBeAdded), partToBeAdded)));
+					
+					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item " + "Batman", 2));
+
+					int queueCountAfterAdd = QueueData.Instance.Count;
+
+					if(queueCountAfterAdd == currentQueueCount + 1)
+					{
+						addedPartIncreasesQueueDataCount = true;
+					}
+
+					resultsHarness.AddTestResult(addedPartIncreasesQueueDataCount == true);
+					testRunner.Wait(3);
+
+					if(File.Exists(pathToAddedQueueItem))
+					{
+						queueItemAppDataDirectoryExists = true;
+					}
+
+					resultsHarness.AddTestResult(queueItemAppDataDirectoryExists == true);
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
 				}
@@ -276,12 +385,13 @@ namespace MatterHackers.MatterControl.UI
 			StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData(Path.Combine("..", "..", "..", "..", "StaticData"));
 #endif
 			bool showWindow;
-			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting();
+			string testDBFolder = "MC_Fresh_Installation";
+			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting(testDBFolder);
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
 			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 300);
 			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 			Assert.IsTrue(testHarness.AllTestsPassed);
-			Assert.IsTrue(testHarness.TestCount == 0); // make sure we ran all our tests
+			Assert.IsTrue(testHarness.TestCount == 6); // make sure we ran all our tests
 		}
 	}
 }
