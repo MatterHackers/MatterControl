@@ -349,13 +349,13 @@ namespace MatterHackers.MatterControl.PrintQueue
 				else
 				{
 					DoAddItem(item, indexToInsert);
-					copyQueueItemToQueueItemFolder(item.FileLocation);
+					//copyQueueItemToQueueItemFolder(item.FileLocation);
 				}
 			}
 			else
 			{
 				DoAddItem(item, indexToInsert);
-				copyQueueItemToQueueItemFolder(item.FileLocation);
+				//copyQueueItemToQueueItemFolder(item.FileLocation);
 			}
 		}
 
@@ -384,7 +384,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				File.Copy(fileNameToLoad, locationToSaveTo);
 			}
-
 		}
 
 		private void DoAddItem(PrintItemWrapper item, int indexToInsert)
