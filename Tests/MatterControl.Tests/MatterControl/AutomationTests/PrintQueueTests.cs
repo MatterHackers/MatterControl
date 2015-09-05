@@ -409,6 +409,80 @@ namespace MatterHackers.MatterControl.UI
 			Assert.IsTrue(testHarness.TestCount == 8); // make sure we ran all our tests
 		}
 	}
+
+	[TestFixture, Category("MatterControl.UI"), RunInApplicationDomain]
+	public class QueueRowItemRemoveViewButtons
+	{
+		[Test, RequiresSTA, RunInApplicationDomain]
+		public void ClickQueueRoWItemViewAndRemove()
+		{
+			// Run a copy of MatterControl
+			Action<AutomationTesterHarness> testToRun = (AutomationTesterHarness resultsHarness) =>
+			{
+				AutomationRunner testRunner = new AutomationRunner(MatterControlUtilities.DefaultTestImages);
+				{
+
+					/*
+					 *Tests:
+					 *1. When the remove button on a queue item is clicked the queue tab count decreases by one 
+					 *2. When the remove button on a queue item is clicked the item is removed
+					 *3. When the View button on a queue item is clicked the part preview window is opened
+					 */
+
+
+					testRunner.Wait(2);
+					int currentQueueItemCount = QueueData.Instance.Count;
+					bool threeItemsInQueue = true;
+
+					if(currentQueueItemCount != 3)
+					{
+						threeItemsInQueue = false;
+					}
+
+					resultsHarness.AddTestResult(threeItemsInQueue == true);
+					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item " + "Batman", 1));
+					resultsHarness.AddTestResult(testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1));
+
+					testRunner.ClickByName("Queue Item " + "Batman", 1);
+					testRunner.ClickByName("Queue Item " + "Batman" + " Remove");
+					testRunner.Wait(2);
+
+					int queueItemCountAfterRemove = QueueData.Instance.Count;
+					bool correctItemCountAfterRemove;
+					if (queueItemCountAfterRemove == 2)
+					{
+						correctItemCountAfterRemove = true;
+					}
+					else
+					{
+						correctItemCountAfterRemove = false;
+					}
+
+					
+					resultsHarness.AddTestResult(correctItemCountAfterRemove == true);
+
+					bool batmanQueueItemExists = testRunner.WaitForName("Queue Item " + "Batman", 1);
+					resultsHarness.AddTestResult(batmanQueueItemExists == false);
+
+					bool partPreviewWindowExists1 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " Part Preview", 1);
+					resultsHarness.AddTestResult(partPreviewWindowExists1 == false);
+					testRunner.ClickByName("Queue Item " + "2013-01-25_Mouthpiece_v2", 1);
+					testRunner.Wait(2);
+					testRunner.ClickByName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " View", 1);
+
+					bool partPreviewWindowExists2 = testRunner.WaitForName("Queue Item " + "2013-01-25_Mouthpiece_v2" + " Part Preview", 2);
+					resultsHarness.AddTestResult(partPreviewWindowExists2 == true);
+
+						
+					MatterControlUtilities.CloseMatterControl(testRunner);
+				}
+			};
+
+			AutomationTesterHarness testHarness = MatterControlUtilities.RunTest(testToRun, "MC_Three_Queue_Items");
+			Assert.IsTrue(testHarness.AllTestsPassed);
+			Assert.IsTrue(testHarness.TestCount == 7); // make sure we ran all our tests
+		}
+	}
 }
 
 

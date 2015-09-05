@@ -302,6 +302,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			if (viewWindowIsOpen == false)
 			{
 				viewingWindow = new PartPreviewMainWindow(this.PrintItemWrapper, View3DWidget.AutoRotate.Enabled, openMode);
+				viewingWindow.Name = "Queue Item " + PrintItemWrapper.Name + " Part Preview";
 				this.viewWindowIsOpen = true;
 				viewingWindow.Closed += new EventHandler(PartPreviewWindow_Closed);
 			}
@@ -375,6 +376,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
 
 			TextWidget removeLabel = new TextWidget("Remove".Localize());
+			removeLabel.Name = "Queue Item " + PrintItemWrapper.Name + " Remove";
 			removeLabel.TextColor = RGBA_Bytes.White;
 			removeLabel.VAnchor = VAnchor.ParentCenter;
 			removeLabel.HAnchor = HAnchor.ParentCenter;
@@ -387,6 +389,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			removeButton.Click += onRemovePartClick;
 
 			viewButtonLabel = new TextWidget("View".Localize());
+			viewButtonLabel.Name =  "Queue Item " + PrintItemWrapper.Name + " View";
 			viewButtonLabel.TextColor = RGBA_Bytes.White;
 			viewButtonLabel.VAnchor = VAnchor.ParentCenter;
 			viewButtonLabel.HAnchor = HAnchor.ParentCenter;
