@@ -47,7 +47,45 @@ namespace MatterControl.Tests.MatterControl
     [TestFixture]
     public class LevelingTests
     {
-        [Test, Category("Leveling")]
+		[Test, Category("Leveling")]
+		public void Leveling7PointsNeverGetsTooHeigh()
+		{
+			PrintLevelingData levelingData = new PrintLevelingData();
+
+			double radius = 100;
+			levelingData.SampledPositions = new List<Vector3>();
+			levelingData.SampledPositions.Add(new Vector3(130.00, 0.00, 0));
+			levelingData.SampledPositions.Add(new Vector3(65.00, 112.58, 10));
+			levelingData.SampledPositions.Add(new Vector3(-65.00, 112.58, 0));
+			levelingData.SampledPositions.Add(new Vector3(-130.00, 0.00, 10));
+			levelingData.SampledPositions.Add(new Vector3(-65.00, -112.58, 0));
+			levelingData.SampledPositions.Add(new Vector3(65.00, -112.58, 10));
+
+			levelingData.SampledPositions.Add(new Vector3(0, 0, 0));
+
+			levelingData.SampledPositions.Add(new Vector3(0, 0, 6));
+
+			Vector2 bedCenter = Vector2.Zero;
+
+			RadialLevlingFunctions levelingFunctions7Point = new RadialLevlingFunctions(6, levelingData, bedCenter);
+			int totalPoints = 2000;
+			for (int curPoint = 0; curPoint < totalPoints; curPoint++)
+			{
+				Vector2 currentTestPoint = new Vector2(radius, 0);
+				currentTestPoint.Rotate(MathHelper.Tau / totalPoints * curPoint);
+				Vector3 destPosition = new Vector3(currentTestPoint, 0);
+				
+				Vector3 outPosition = levelingFunctions7Point.GetPositionWithZOffset(destPosition);
+				Assert.IsTrue(outPosition.z <= 10);
+				
+				string outPositionString = levelingFunctions7Point.DoApplyLeveling(GetGCodeString(destPosition), destPosition, PrinterMachineInstruction.MovementTypes.Absolute);
+				double outZ = 0;
+				Assert.IsTrue(GCodeFile.GetFirstNumberAfter("Z", outPositionString, ref outZ));
+				Assert.IsTrue(outZ <= 10);
+			}
+		}
+		
+		[Test, Category("Leveling")]
         public void Leveling7PointsCorectInterpolation()
 		{
 			PrintLevelingData levelingData = new PrintLevelingData();
