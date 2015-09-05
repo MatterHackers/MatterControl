@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			//Modify PrintItem list for export
-			project.ProjectFiles = NewPrintItemListToExport(project.ProjectFiles); 
+			//project.ProjectFiles = NewPrintItemListToExport(project.ProjectFiles); 
 
 
 			string jsonString = JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented);
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 				return new List<PrintItem>();
 			}
 
-			newProject.ProjectFiles = NewPrintItemListForImport(newProject.ProjectFiles);
+			//newProject.ProjectFiles = NewPrintItemListForImport(newProject.ProjectFiles);
 
 			return newProject.ProjectFiles;
 		}
