@@ -82,27 +82,33 @@ namespace MatterHackers.MatterControl
 
 		void client_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
 		{
-			byte[] raw = e.Result;
-			Stream stream = new MemoryStream(raw);
-			ImageBuffer unScaledImage = new ImageBuffer(10, 10, 32, new BlenderBGRA());
-			StaticData.Instance.LoadImageData(stream, unScaledImage);
-			// If the source image (the one we downloaded) is more than twice as big as our dest image.
-			while (unScaledImage.Width > Image.Width * 2)
+			try // if we get a bad result we can get a target ivocation exception. In that case just don't show anything
 			{
-				// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
-				// So we scale as many times as we need to to get the Image to be the right size.
-				// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
-				ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, scalingBlender);
-				halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
-				unScaledImage = halfImage;
-			}
-			Image.NewGraphics2D().Render(unScaledImage, 0, 0, 0, Image.Width / (double)unScaledImage.Width, Image.Height / (double)unScaledImage.Height);
-			Image.MarkImageChanged();
-			Invalidate();
+				byte[] raw = e.Result;
+				Stream stream = new MemoryStream(raw);
+				ImageBuffer unScaledImage = new ImageBuffer(10, 10, 32, new BlenderBGRA());
+				StaticData.Instance.LoadImageData(stream, unScaledImage);
+				// If the source image (the one we downloaded) is more than twice as big as our dest image.
+				while (unScaledImage.Width > Image.Width * 2)
+				{
+					// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
+					// So we scale as many times as we need to to get the Image to be the right size.
+					// If this were going to be a non-uniform scale we could do the x and y separatly to get better results.
+					ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, scalingBlender);
+					halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
+					unScaledImage = halfImage;
+				}
+				Image.NewGraphics2D().Render(unScaledImage, 0, 0, 0, Image.Width / (double)unScaledImage.Width, Image.Height / (double)unScaledImage.Height);
+				Image.MarkImageChanged();
+				Invalidate();
 
-			if (LoadComplete != null)
+				if (LoadComplete != null)
+				{
+					LoadComplete(this, null);
+				}
+			}
+			catch (Exception)
 			{
-				LoadComplete(this, null);
 			}
 		}
 	}

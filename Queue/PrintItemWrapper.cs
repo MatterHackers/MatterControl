@@ -145,38 +145,45 @@ namespace MatterHackers.MatterControl.PrintQueue
 					if (this.fileHashCode == 0 || writeTime != currentWriteTime)
 					{
 						writeTime = currentWriteTime;
-						using (FileStream fileStream = new FileStream(this.FileLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+						try
 						{
-							long sizeOfFile = fileStream.Length;
-							int sizeOfRead = 1 << 16;
-							byte[] readData = new byte[Math.Max(64, sizeOfRead * 3)];
-
-							// get a chuck from the begining
-							fileStream.Read(readData, sizeOfRead, sizeOfRead);
-
-							// the middle
-							fileStream.Seek(sizeOfFile / 2, SeekOrigin.Begin);
-							fileStream.Read(readData, sizeOfRead * 1, sizeOfRead);
-
-							// and the end
-							fileStream.Seek(Math.Max(0, sizeOfFile - sizeOfRead), SeekOrigin.Begin);
-							fileStream.Read(readData, sizeOfRead * 2, sizeOfRead);
-
-							// push the file size into the first bytes
-							byte[] fileSizeAsBytes = BitConverter.GetBytes(sizeOfFile);
-							for (int i = 0; i < fileSizeAsBytes.Length; i++)
+							using (FileStream fileStream = new FileStream(this.FileLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 							{
-								readData[i] = fileSizeAsBytes[i];
-							}
+								long sizeOfFile = fileStream.Length;
+								int sizeOfRead = 1 << 16;
+								byte[] readData = new byte[Math.Max(64, sizeOfRead * 3)];
 
-							// push the wirte time
-							byte[] writeTimeAsBytes = BitConverter.GetBytes(currentWriteTime);
-							for (int i = 0; i < writeTimeAsBytes.Length; i++)
-							{
-								readData[fileSizeAsBytes.Length + i] = fileSizeAsBytes[i];
-							}
+								// get a chuck from the begining
+								fileStream.Read(readData, sizeOfRead, sizeOfRead);
 
-							this.fileHashCode = agg_basics.ComputeHash(readData);
+								// the middle
+								fileStream.Seek(sizeOfFile / 2, SeekOrigin.Begin);
+								fileStream.Read(readData, sizeOfRead * 1, sizeOfRead);
+
+								// and the end
+								fileStream.Seek(Math.Max(0, sizeOfFile - sizeOfRead), SeekOrigin.Begin);
+								fileStream.Read(readData, sizeOfRead * 2, sizeOfRead);
+
+								// push the file size into the first bytes
+								byte[] fileSizeAsBytes = BitConverter.GetBytes(sizeOfFile);
+								for (int i = 0; i < fileSizeAsBytes.Length; i++)
+								{
+									readData[i] = fileSizeAsBytes[i];
+								}
+
+								// push the wirte time
+								byte[] writeTimeAsBytes = BitConverter.GetBytes(currentWriteTime);
+								for (int i = 0; i < writeTimeAsBytes.Length; i++)
+								{
+									readData[fileSizeAsBytes.Length + i] = fileSizeAsBytes[i];
+								}
+
+								this.fileHashCode = agg_basics.ComputeHash(readData);
+							}
+						}
+						catch(Exception)
+						{
+							this.fileHashCode = 0;
 						}
 					}
 				}
