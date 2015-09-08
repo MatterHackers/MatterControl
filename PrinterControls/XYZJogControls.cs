@@ -276,22 +276,19 @@ namespace MatterHackers.MatterControl
 
 			RadioButton hotKeyButton = hotKeyButtonFactory.GenerateRadioButton("", "hot_key_small.png");
 			hotKeyButton.Margin = new BorderDouble(5);
-			hotKeyButton.Click += (sender, e) =>
-			{
-				if (hotKeysEnabled)
-				{
-					hotKeysEnabled = false;
-					hotKeyButton.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-					hotKeyButton.Checked = false;
-				}
-				else if (!hotKeysEnabled)
-				{
-					hotKeysEnabled = true;
-					hotKeyButton.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-					hotKeyButton.Checked = true;
-				}
+            hotKeyButton.LostFocus += (sender, e) =>
+            {
+                    hotKeyButton.Checked = false;
+                    hotKeyButton.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+                    hotKeysEnabled = false;
+            };
 
-			};
+            hotKeyButton.GotFocus += (sender, e) =>
+            {
+                hotKeyButton.Checked = true;
+                hotKeyButton.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+                hotKeysEnabled = true;
+            };
 
 			hotkeyControlContainer.AddChild(hotKeyButton);
 
