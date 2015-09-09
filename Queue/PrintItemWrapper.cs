@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		Stopwatch timeSinceLastFileUpdate = new Stopwatch();
 		private void UpdateFileTracking(string value)
 		{
-			if (File.Exists(value))
+			if (Directory.Exists(Path.GetDirectoryName(value)))
 			{
 				diskFileWatcher.Path = Path.GetDirectoryName(value);
 				diskFileWatcher.Filter = Path.GetFileName(value);

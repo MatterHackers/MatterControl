@@ -1840,10 +1840,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void mergeAndSavePartsBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+		private void MergeAndSavePartsDoWork(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
-			SaveAsWindow.SaveAsReturnInfo returnInfo = e.Argument as SaveAsWindow.SaveAsReturnInfo;
-
 			if (returnInfo != null)
 			{
 				PrintItem printItem = new PrintItem();
@@ -1872,6 +1870,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				string[] metaData = { "Created By", "MatterControl", "BedPosition", "Absolute" };
 
 				MeshOutputSettings outputInfo = new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData);
+				if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".STL")
+				{
+					printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".AMF");
+				}
+
 				MeshFileIo.Save(asynchMeshGroups, printItemWrapper.FileLocation, outputInfo);
 
 				if (returnInfo != null
@@ -1904,7 +1907,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void mergeAndSavePartsBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		private void MergeAndSavePartsDoCompleted()
 		{
 			if (WidgetHasBeenClosed)
 			{
@@ -1924,7 +1927,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void MergeAndSavePartsToCurrentMeshFile(Action eventToCallAfterSave = null)
+		private async void MergeAndSavePartsToCurrentMeshFile(Action eventToCallAfterSave = null)
 		{
 			editorThatRequestedSave = true;
 			afterSaveCallback = eventToCallAfterSave;
@@ -1938,16 +1941,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
-
-				mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
-				mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
-
-				mergeAndSavePartsBackgroundWorker.RunWorkerAsync(printItemWrapper);
+				await Task.Run(() => MergeAndSavePartsDoWork(null));
+				MergeAndSavePartsDoCompleted();
 			}
 		}
 
-		private void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
+		private async void MergeAndSavePartsToNewMeshFile(SaveAsWindow.SaveAsReturnInfo returnInfo)
 		{
 			editorThatRequestedSave = true;
 			if (MeshGroups.Count > 0)
@@ -1959,12 +1958,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				processingProgressControl.PercentComplete = 0;
 				LockEditControls();
 
-				BackgroundWorker mergeAndSavePartsBackgroundWorker = new BackgroundWorker();
-
-				mergeAndSavePartsBackgroundWorker.DoWork += new DoWorkEventHandler(mergeAndSavePartsBackgroundWorker_DoWork);
-				mergeAndSavePartsBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(mergeAndSavePartsBackgroundWorker_RunWorkerCompleted);
-
-				mergeAndSavePartsBackgroundWorker.RunWorkerAsync(returnInfo);
+				await Task.Run(() => MergeAndSavePartsDoWork(returnInfo));
+				MergeAndSavePartsDoCompleted();
 			}
 		}
 

@@ -108,7 +108,9 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			string sourceFile = Path.Combine(rootPath, currentDirectoryFiles[itemIndexToRename]);
 			if (File.Exists(sourceFile))
 			{
+				string extension = Path.GetExtension(sourceFile);
 				string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), newName);
+				destFile = Path.ChangeExtension(destFile, extension);
 				File.Move(sourceFile, destFile);
 				Stopwatch time = Stopwatch.StartNew();
 				// Wait for up to some amount of time for the directory to be gone.
@@ -196,14 +198,14 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override string GetPrintItemName(int itemIndex)
 		{
-			return Path.GetFileName(currentDirectoryFiles[itemIndex]);
+			return Path.GetFileNameWithoutExtension(currentDirectoryFiles[itemIndex]);
 		}
 
 		public async override Task<PrintItemWrapper> GetPrintItemWrapperAsync(int itemIndex)
 		{
 			string fileName = currentDirectoryFiles[itemIndex];
 
-			return new PrintItemWrapper(new DataStorage.PrintItem(Path.GetFileNameWithoutExtension(fileName), fileName), this);
+			return new PrintItemWrapper(new DataStorage.PrintItem(GetPrintItemName(itemIndex), fileName), this);
 		}
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
