@@ -219,21 +219,24 @@ namespace MatterHackers.MatterControl.PrintQueue
 		Stopwatch timeSinceLastFileUpdate = new Stopwatch();
 		private void UpdateFileTracking(string value)
 		{
-			if (Directory.Exists(Path.GetDirectoryName(value)))
+			if (value != diskFileWatcher.Filter)
 			{
-				diskFileWatcher.Path = Path.GetDirectoryName(value);
-				diskFileWatcher.Filter = Path.GetFileName(value);
+				if (Directory.Exists(Path.GetDirectoryName(value)))
+				{
+					diskFileWatcher.Path = Path.GetDirectoryName(value);
+					diskFileWatcher.Filter = Path.GetFileName(value);
 
-				diskFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
-				diskFileWatcher.Changed += SetFileChanged;
-				diskFileWatcher.Created += SetFileChanged;
+					diskFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
+					diskFileWatcher.Changed += SetFileChanged;
+					diskFileWatcher.Created += SetFileChanged;
 
-				// Begin watching.
-				diskFileWatcher.EnableRaisingEvents = true;
-			}
-			else
-			{
-				diskFileWatcher.EnableRaisingEvents = false;
+					// Begin watching.
+					diskFileWatcher.EnableRaisingEvents = true;
+				}
+				else
+				{
+					diskFileWatcher.EnableRaisingEvents = false;
+				}
 			}
 		}
 

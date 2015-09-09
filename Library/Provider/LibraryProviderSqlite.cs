@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		private static LibraryProviderSQLite instance = null;
 		private bool ignoreNextKeywordFilter = false;
 		private string keywordFilter = string.Empty;
-		private List<PrintItemWrapper> printItems = new List<PrintItemWrapper>();
+		private List<PrintItem> printItems = new List<PrintItem>();
 
 		private FileSystemWatcher sqliteDatabaseWatcher = new FileSystemWatcher();
 
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 		{
 			if (index >= 0 && index < printItems.Count)
 			{
-				return printItems[index];
+				return new PrintItemWrapper(printItems[index], this);
 			}
 
 			return null;
@@ -327,8 +327,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override void RenameItem(int itemIndexToRename, string newName)
 		{
-			printItems[itemIndexToRename].PrintItem.Name = newName;
-			printItems[itemIndexToRename].PrintItem.Commit();
+			printItems[itemIndexToRename].Name = newName;
+			printItems[itemIndexToRename].Commit();
 			LoadLibraryItems();
 		}
 
@@ -447,8 +447,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			{
 				foreach (PrintItem part in partFiles)
 				{
-					PrintItemWrapper item = new PrintItemWrapper(part, this);
-					printItems.Add(item);
+					printItems.Add(part);
 				}
 			}
 
