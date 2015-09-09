@@ -235,6 +235,10 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 		public void Exit()
 		{
+			if (wasExited)
+			{
+				return;
+			}
 			wasExited = true;
 			if (this.activeSession != null)
 			{
