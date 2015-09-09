@@ -3694,3 +3694,9 @@ Translated:Search Results
 English:Slice files prior to send
 Translated:Slice files prior to send
 
+English:Oops! Please sign in to continue.
+Translated:Oops! Please sign in to continue.
+
+English:Login Required
+Translated:Login Required
+

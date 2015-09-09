@@ -102,6 +102,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			UiThread.RunOnIdle(libraryDataView.RebuildView);
 		}
 
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Clicks == 2)
+			{
+				UiThread.RunOnIdle(ChangeCollection);
+			}
+			base.OnMouseDown(mouseEvent);
+		}
+		
 		private void SetDisplayAttributes()
 		{
 			//this.VAnchor = Agg.UI.VAnchor.FitToChildren;

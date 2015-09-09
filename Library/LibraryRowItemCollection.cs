@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			openButton.VAnchor = VAnchor.ParentBottomTop;
 			openButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 			openButton.Width = 100;
-			openButton.Click += (sender, e) =>
+			openButton.Click += (sender, e) => 
 			{
 				ChangeCollection();
 			};
@@ -164,6 +164,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				libraryDataView.CurrentLibraryProvider = parentProvider;
 			}
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Clicks == 2)
+			{
+				UiThread.RunOnIdle(ChangeCollection);
+			}
+			base.OnMouseDown(mouseEvent);
 		}
 
 		private void SetDisplayAttributes()

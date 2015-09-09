@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.UI
 			}
 		}
 
-		public static AutomationTesterHarness RunTest(Action<AutomationTesterHarness> testToRun, string testDbFolder = null, string staticDataPathOverride = null)
+		public static AutomationTesterHarness RunTest(Action<AutomationTesterHarness> testToRun, string testDbFolder = null, string staticDataPathOverride = null, double maxTimeToRun = 60)
 		{
 			if (staticDataPathOverride == null)
 			{
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.UI
 			bool showWindow;
 			MatterControlUtilities.DataFolderState staticDataState = MatterControlUtilities.MakeNewStaticDataForTesting2(testDbFolder);
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(out showWindow);
-			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, 60);
+			AutomationTesterHarness testHarness = AutomationTesterHarness.ShowWindowAndExectueTests(matterControlWindow, testToRun, maxTimeToRun);
 			MatterControlUtilities.RestoreStaticDataAfterTesting(staticDataState, true);
 
 			return testHarness;

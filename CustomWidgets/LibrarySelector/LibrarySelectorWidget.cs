@@ -321,16 +321,34 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 
 			clickThumbnail.Click += (sender, e) =>
 			{
-				if (parentProvider == null)
+				if (ActiveTheme.Instance.IsTouchScreen)
 				{
-					this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+					if (parentProvider == null)
+					{
+						this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+					}
+					else
+					{
+						this.CurrentLibraryProvider = parentProvider;
+					}
 				}
 				else
 				{
-					this.CurrentLibraryProvider = parentProvider;
-				}
+					MouseEventArgs mouseEvent = e as MouseEventArgs;
 
-				UiThread.RunOnIdle(RebuildView);
+					if (mouseEvent != null
+						&& mouseEvent.Clicks == 2)
+					{
+						if (parentProvider == null)
+						{
+							this.CurrentLibraryProvider = this.CurrentLibraryProvider.GetProviderForCollection(printItemCollection);
+						}
+						else
+						{
+							this.CurrentLibraryProvider = parentProvider;
+						}
+					}
+				}
 			};
 
 			return clickThumbnail;

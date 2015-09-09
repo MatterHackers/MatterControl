@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	{
 		private List<ILibraryCreator> libraryCreators = new List<ILibraryCreator>();
 
-		private ILibraryCreator PurchasedLibraryCreator { get; set; }
+		public ILibraryCreator PurchasedLibraryCreator { get; private set; }
 
 		private event EventHandler unregisterEvents;
 
@@ -99,16 +99,16 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			// Check for LibraryProvider factories and put them in the list too.
 			foreach (LibraryProviderPlugin libraryProviderPlugin in libraryProviderPlugins.Plugins)
 			{
+				if (libraryProviderPlugin.ProviderKey == "LibraryProviderPurchasedKey")
+				{
+					this.PurchasedLibraryCreator = libraryProviderPlugin;
+				}
+
 				if (libraryProviderPlugin.ShouldBeShown(ReloadData))
 				{
 					// This coupling is required to navigate to the Purchased folder after redemption or purchase updates
 					libraryCreators.Add(libraryProviderPlugin);
 					folderImagesForChildren.Add(libraryProviderPlugin.GetFolderImage());
-
-					if (libraryProviderPlugin.ProviderKey == "LibraryProviderPurchasedKey")
-					{
-						this.PurchasedLibraryCreator = libraryProviderPlugin;
-					}
 				}
 			}
 

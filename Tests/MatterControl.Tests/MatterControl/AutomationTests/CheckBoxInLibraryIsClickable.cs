@@ -53,29 +53,26 @@ namespace MatterHackers.MatterControl.UI
 
 				// Now do the actions specific to this test. (replace this for new tests)
 				{
-					testRunner.ClickByName("Library Tab");
-					testRunner.Wait(1);
+					testRunner.ClickByName("Library Tab", 3);
 					SystemWindow systemWindow;
-					GuiWidget rowItem = testRunner.GetWidgetByName("Local Library Row Item Collection", out systemWindow);
-					testRunner.Wait(1);
+					GuiWidget rowItem = testRunner.GetWidgetByName("Local Library Row Item Collection", out systemWindow, 3);
 
-					SearchRegion rowItemRegion = testRunner.GetRegionByName("Local Library Row Item Collection");
+					SearchRegion rowItemRegion = testRunner.GetRegionByName("Local Library Row Item Collection", 3);
 
-					testRunner.ClickByName("Library Edit Button");
-					testRunner.Wait(1);
+					testRunner.ClickByName("Library Edit Button", 3);
 
 					SystemWindow containingWindow;
-					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out containingWindow, searchRegion: rowItemRegion);
+					GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out containingWindow, 3, searchRegion: rowItemRegion);
 					CheckBox checkBoxWidget = foundWidget as CheckBox;
 					resultsHarness.AddTestResult(checkBoxWidget != null, "We should have an actual checkbox");
 					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
 
-					testRunner.ClickByName("Row Item Select Checkbox", searchRegion: rowItemRegion);
-					testRunner.Wait(.5);
+					testRunner.ClickByName("Row Item Select Checkbox", 3, searchRegion: rowItemRegion);
+					testRunner.ClickByName("Library Tab");
 					resultsHarness.AddTestResult(checkBoxWidget.Checked == true, "currently checked");
 
-					testRunner.ClickByName("Local Library Row Item Collection");
-					testRunner.Wait(.5);
+					testRunner.ClickByName("Local Library Row Item Collection", 3);
+					testRunner.ClickByName("Library Tab");
 					resultsHarness.AddTestResult(checkBoxWidget.Checked == false, "currently not checked");
 
 					MatterControlUtilities.CloseMatterControl(testRunner);
