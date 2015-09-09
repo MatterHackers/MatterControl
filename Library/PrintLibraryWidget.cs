@@ -47,11 +47,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		internal bool multipleItems;
 		internal bool protectedItems;
+		internal bool collectionItems;
 
-		internal ButtonEnableData(bool multipleItems, bool protectedItems)
+		internal ButtonEnableData(bool multipleItems, bool protectedItems, bool collectionItems)
 		{
 			this.multipleItems = multipleItems;
 			this.protectedItems = protectedItems;
+			this.collectionItems = collectionItems;
 		}
 	}
 
@@ -271,13 +273,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			Button exportItemButton = editButtonFactory.Generate("Export".Localize());
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += exportButton_Click;
-			editButtonsEnableData.Add(new ButtonEnableData(false, false));
+			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
 			itemOperationButtons.AddChild(exportItemButton);
 
 			Button editItemButton = editButtonFactory.Generate("Edit".Localize());
 			editItemButton.Margin = new BorderDouble(3, 0);
 			editItemButton.Click += editButton_Click;
-			editButtonsEnableData.Add(new ButtonEnableData(false, false));
+			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
 			itemOperationButtons.AddChild(editItemButton);
 
 			// add the remove button
@@ -285,7 +287,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Button removeFromLibraryButton = editButtonFactory.Generate("Remove".Localize());
 				removeFromLibraryButton.Margin = new BorderDouble(3, 0);
 				removeFromLibraryButton.Click += deleteFromLibraryButton_Click;
-				editButtonsEnableData.Add(new ButtonEnableData(true, false));
+				editButtonsEnableData.Add(new ButtonEnableData(true, false, true));
 				itemOperationButtons.AddChild(removeFromLibraryButton);
 			}
 
@@ -293,7 +295,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Button renameFromLibraryButton = editButtonFactory.Generate("Rename".Localize());
 				renameFromLibraryButton.Margin = new BorderDouble(3, 0);
-				editButtonsEnableData.Add(new ButtonEnableData(false, false));
+				editButtonsEnableData.Add(new ButtonEnableData(false, false, true));
 				itemOperationButtons.AddChild(renameFromLibraryButton);
 
 				renameFromLibraryButton.Click += (sender, e) =>
@@ -343,7 +345,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			Button addToQueueButton = editButtonFactory.Generate("Add to Queue".Localize());
 			addToQueueButton.Margin = new BorderDouble(3, 0);
 			addToQueueButton.Click += addToQueueButton_Click;
-			editButtonsEnableData.Add(new ButtonEnableData(true, true));
+			editButtonsEnableData.Add(new ButtonEnableData(true, true, false));
 			itemOperationButtons.AddChild(addToQueueButton);
 
 			editButtonFactory.FixedWidth = oldWidth;
@@ -432,14 +434,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 					else
 					{
-						bool enabledState = enabledStateToSet;
-
 						if (!editButtonsEnableData[buttonIndex].protectedItems)
 						{
 							// so we can show for multi items lets check for protected items
 							for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
 							{
 								if (libraryDataView.SelectedItems[itemIndex].Protected)
+								{
+									enabledStateToSet = false;
+								}
+							}
+						}
+
+						if (!editButtonsEnableData[buttonIndex].collectionItems)
+						{
+							// so we can show for multi items lets check for protected items
+							for (int itemIndex = 0; itemIndex < libraryDataView.SelectedItems.Count; itemIndex++)
+							{
+								bool isColection = (libraryDataView.SelectedItems[itemIndex] as LibraryRowItemCollection) != null;
+								if (isColection)
 								{
 									enabledStateToSet = false;
 								}

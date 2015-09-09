@@ -245,20 +245,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 			exportItemButton.Name = "Export Queue Button";
 			exportItemButton.Margin = new BorderDouble(3, 0);
 			exportItemButton.Click += new EventHandler(exportButton_Click);
-			editButtonsEnableData.Add(new ButtonEnableData(false, false));
+			editButtonsEnableData.Add(new ButtonEnableData(false, false, false));
 			itemOperationButtons.AddChild(exportItemButton);
 
 			Button copyItemButton = editButtonFactory.Generate("Copy".Localize());
 			copyItemButton.Name = "Queue Copy Button";
 			copyItemButton.Margin = new BorderDouble(3, 0);
 			copyItemButton.Click += new EventHandler(copyButton_Click);
-			editButtonsEnableData.Add(new ButtonEnableData(false, true));
+			editButtonsEnableData.Add(new ButtonEnableData(false, true, false));
 			itemOperationButtons.AddChild(copyItemButton);
 
 			Button removeItemButton = editButtonFactory.Generate("Remove".Localize());
 			removeItemButton.Margin = new BorderDouble(3, 0);
 			removeItemButton.Click += new EventHandler(removeButton_Click);
-			editButtonsEnableData.Add(new ButtonEnableData(true, true));
+			editButtonsEnableData.Add(new ButtonEnableData(true, true, true));
 			itemOperationButtons.AddChild(removeItemButton);
 
 			editButtonFactory.FixedWidth = oldWidth;
