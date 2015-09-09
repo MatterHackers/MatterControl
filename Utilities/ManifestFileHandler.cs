@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private static string applicationDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-		private static string defaultPathAndFileName = applicationDataPath + "/data/default.mcp";
+		private static string defaultPathAndFileName = Path.Combine(applicationDataPath , "data", "default.mcp");
 
 		public void ExportToJson(string savedFileName = null)
 		{
@@ -110,13 +110,14 @@ namespace MatterHackers.MatterControl
 			}
 
 			//Modify PrintItem list for export
-			//project.ProjectFiles = NewPrintItemListToExport(project.ProjectFiles); 
+		    //project.ProjectFiles = NewPrintItemListToExport(project.ProjectFiles); 
 
 
 			string jsonString = JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented);
-			if (!Directory.Exists(applicationDataPath + "/data/"))
+            string pathToDataFolder = Path.Combine(applicationDataPath, "data");
+            if (!Directory.Exists(pathToDataFolder))
 			{
-				Directory.CreateDirectory(applicationDataPath + "/data/");
+                Directory.CreateDirectory(pathToDataFolder);
 			}
 
 			File.WriteAllText(savedFileName, jsonString);

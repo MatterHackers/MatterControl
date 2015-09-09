@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			}
 
-			if (!File.Exists(locationToSaveTo))
+			if (!File.Exists(locationToSaveTo) && File.Exists(fileNameToLoad))
 			{
 				File.Copy(fileNameToLoad, locationToSaveTo);
 			}
