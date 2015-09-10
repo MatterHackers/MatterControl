@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
-		private static string ThumbnailPath()
+		public static string ThumbnailPath()
 		{
 			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 			string folderToSaveThumbnailsTo = Path.Combine(applicationUserDataPath, "data", "temp", "thumbnails");

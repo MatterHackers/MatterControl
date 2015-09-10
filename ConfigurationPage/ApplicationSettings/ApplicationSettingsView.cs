@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -384,8 +385,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(interfaceOptionsDropList);
 			optionsContainer.Width = 200;
 
-			MenuItem responsizeOptionsDropDownItem = interfaceOptionsDropList.AddItem("Flat".Localize(), "orthographic");
-			MenuItem touchscreenOptionsDropDownItem = interfaceOptionsDropList.AddItem("3D".Localize(), "raytraced");
+			interfaceOptionsDropList.AddItem("Flat".Localize(), "orthographic");
+			interfaceOptionsDropList.AddItem("3D".Localize(), "raytraced");
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "orthographic", "raytraced" };
 			string currentThumbnailRenderingMode = UserSettings.Instance.get("ThumbnailRenderingMode");
@@ -398,10 +399,36 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get("ThumbnailRenderingMode");
 			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
 			{
-				string releaseCode = ((StyledDropDownList)sender).SelectedValue;
-				if (releaseCode != UserSettings.Instance.get("ThumbnailRenderingMode"))
+				string thumbnailRenderingMode = ((StyledDropDownList)sender).SelectedValue;
+				if (thumbnailRenderingMode != UserSettings.Instance.get("ThumbnailRenderingMode"))
 				{
-					UserSettings.Instance.set("ThumbnailRenderingMode", releaseCode);
+					UserSettings.Instance.set("ThumbnailRenderingMode", thumbnailRenderingMode);
+
+					// Ask if the usrer would like to rebaild all their thumbnails
+					Action<bool> removeThumbnails = (bool shouldRebuildThumbnails) =>
+					{
+						if (shouldRebuildThumbnails)
+						{
+							string directoryToRemove = PartThumbnailWidget.ThumbnailPath();
+							try
+							{
+								if (Directory.Exists(directoryToRemove))
+								{
+									Directory.Delete(directoryToRemove, true);
+								}
+							}
+							catch (Exception)
+							{
+							}
+						}
+
+						ApplicationController.Instance.ReloadAll(null, null);
+					};
+
+					UiThread.RunOnIdle(() =>
+					{
+						StyledMessageBox.ShowMessageBox(removeThumbnails, rebuildThumbnailsMessage, rebuildThumbnailsTitle, StyledMessageBox.MessageType.YES_NO, "Rebuild".Localize());
+					});
 				}
 			};
 
@@ -410,6 +437,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(optionsContainer);
 			return buttonRow;
 		}
+
+		static string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
+		static string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
 
 		private void AddHandlers()
 		{
