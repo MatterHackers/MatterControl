@@ -56,7 +56,10 @@ namespace MatterHackers.MatterControl
 				// Load the calibration file names
 				List<string> calibrationPrintFileNames = LoadCalibrationPartNamesForPrinter(this.ActivePrinter.Make, this.ActivePrinter.Model);
 
-				await LibraryProviderSQLite.Instance.EnsureSamplePartsExist(calibrationPrintFileNames);
+				using (LibraryProviderSQLite instance = new LibraryProviderSQLite(null, null, null, "Local Library"))
+				{
+					await instance.EnsureSamplePartsExist(calibrationPrintFileNames);
+				}
 
 				var queueItems = QueueData.Instance.GetItemNames();
 
@@ -70,7 +73,13 @@ namespace MatterHackers.MatterControl
 					}
 
 					// If the library item does not exist in the queue, add it
-					foreach (PrintItem libraryItem in LibraryProviderSQLite.Instance.GetLibraryItems(nameOnly))
+					IEnumerable<PrintItem> libraryItems = null;
+					using (LibraryProviderSQLite instance = new LibraryProviderSQLite(null, null, null, "Local Library"))
+					{
+						libraryItems = instance.GetLibraryItems(nameOnly);
+					}
+
+					foreach (PrintItem libraryItem in libraryItems)
 					{
 						if (libraryItem != null)
 						{

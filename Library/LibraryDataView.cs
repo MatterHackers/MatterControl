@@ -273,7 +273,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnClosed(EventArgs e)
 		{
-			currentLibraryProvider.DataReloaded -= LibraryDataReloaded;
+			if (currentLibraryProvider != null)
+			{
+				currentLibraryProvider.DataReloaded -= LibraryDataReloaded;
+				currentLibraryProvider.Dispose();
+				currentLibraryProvider = null;
+			}
 
 			if (unregisterEvents != null)
 			{

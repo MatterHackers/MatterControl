@@ -36,19 +36,20 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrintLibrary.Provider
 {
 	public class LibraryProviderSQLite : LibraryProvider
 	{
-		public bool PreloadingCalibrationFiles = false;
+		public static bool PreloadingCalibrationFiles = false;
 		protected PrintItemCollection baseLibraryCollection;
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 
-		private static LibraryProviderSQLite instance = null;
 		private bool ignoreNextKeywordFilter = false;
 		private string keywordFilter = string.Empty;
 		private List<PrintItem> printItems = new List<PrintItem>();
@@ -81,27 +82,49 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			sqliteDatabaseWatcher.EnableRaisingEvents = true;
 		}
 
-		private void DatabaseFileChange(object sender, EventArgs e)
+		public override void Dispose()
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				if(!Datastore.Instance.WasExited())
-				{
-				LoadLibraryItems();
-				}
-			});
+			sqliteDatabaseWatcher.Changed -= DatabaseFileChange;
+			sqliteDatabaseWatcher.Created -= DatabaseFileChange;
+			sqliteDatabaseWatcher.Deleted -= DatabaseFileChange;
+			sqliteDatabaseWatcher.Renamed -= DatabaseFileChange;
+
+			// Begin watching.
+			sqliteDatabaseWatcher.EnableRaisingEvents = false;
 		}
 
-		public static LibraryProviderSQLite Instance
+		Stopwatch timeSinceLastChange = new Stopwatch();
+		private async void DatabaseFileChange(object sender, EventArgs e)
 		{
-			get
+			if (timeSinceLastChange.IsRunning)
 			{
-				if (instance == null)
-				{
-					instance = new LibraryProviderSQLite(null, null, null, "Local Library");
-				}
+				// rest the time so we will wait a bit longer
+				timeSinceLastChange.Restart();
+				// we already have a pending update so we'll just wait for that one to complete
+			}
+			else
+			{
+				// start the time before we do the refresh
+				timeSinceLastChange.Restart();
 
-				return instance;
+				// run a thread to wait for the time to elapse
+				await Task.Run(() =>
+				{
+					while (timeSinceLastChange.Elapsed.TotalSeconds < .5)
+					{
+						Thread.Sleep(10);
+					}
+				});
+
+				UiThread.RunOnIdle(() =>
+				{
+					if (!Datastore.Instance.WasExited())
+					{
+						LoadLibraryItems();
+					}
+				});
+
+				timeSinceLastChange.Stop();
 			}
 		}
 
@@ -194,12 +217,17 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return result;
 		}
 
-		public override void AddCollectionToLibrary(string collectionName)
+		public async override void AddCollectionToLibrary(string collectionName)
+		{
+			await AddCollectionToLibraryAsync(collectionName);
+		}
+
+		public async Task AddCollectionToLibraryAsync(string collectionName)
 		{
 			PrintItemCollection newCollection = new PrintItemCollection(collectionName, "");
 			newCollection.ParentCollectionID = baseLibraryCollection.Id;
 			newCollection.Commit();
-			LoadLibraryItems();
+			await LoadLibraryItems();
 		}
 
 		public async override void AddItem(PrintItemWrapper itemToAdd)
@@ -295,10 +323,15 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return new LibraryProviderSQLite(collection, SetCurrentLibraryProvider, this, collection.Name);
 		}
 
-		public override void RemoveCollection(int collectionIndexToRemove)
+		public override async void RemoveCollection(int collectionIndexToRemove)
+		{
+			await RemoveCollectionAsync(collectionIndexToRemove);
+		}
+
+		public async Task RemoveCollectionAsync(int collectionIndexToRemove)
 		{
 			childCollections[collectionIndexToRemove].Delete();
-			LoadLibraryItems();
+			await LoadLibraryItems();
 		}
 
 		public override void RemoveItem(int itemToRemoveIndex)
@@ -439,26 +472,26 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			return rootLibraryCollection;
 		}
 
-		private void LoadLibraryItems()
+		private async Task LoadLibraryItems()
 		{
+			IEnumerable<PrintItem> partFiles = null;
+			IEnumerable<PrintItemCollection> collections = null;
+			await Task.Run(() =>
+			{
+				partFiles = GetLibraryItems(KeywordFilter);
+				collections = GetChildCollections();
+			});
+
 			printItems.Clear();
-			IEnumerable<PrintItem> partFiles = GetLibraryItems(KeywordFilter);
 			if (partFiles != null)
 			{
-				foreach (PrintItem part in partFiles)
-				{
-					printItems.Add(part);
-				}
+				printItems.AddRange(partFiles);
 			}
-
 			childCollections.Clear();
-			GetChildCollections();
-			IEnumerable<PrintItemCollection> collections = GetChildCollections();
 			if (collections != null)
 			{
 				childCollections.AddRange(collections);
 			}
-
 			OnDataReloaded(null);
 		}
 	}

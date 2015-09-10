@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 
 		public static void DeleteCacheData()
 		{
-			if(LibraryProviderSQLite.Instance.PreloadingCalibrationFiles)
+			if(LibraryProviderSQLite.PreloadingCalibrationFiles)
 			{
 				return;
 			}
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl
 					case ".AMF":
 					case ".GCODE":
 						// 
-						if (referencedPrintItemsFilePaths.Contains(file) || LibraryProviderSQLite.Instance.PreloadingCalibrationFiles && Path.GetDirectoryName(file).Contains("calibration-parts"))
+						if (referencedPrintItemsFilePaths.Contains(file) || LibraryProviderSQLite.PreloadingCalibrationFiles && Path.GetDirectoryName(file).Contains("calibration-parts"))
 						{
 							contentCount++;
 						}

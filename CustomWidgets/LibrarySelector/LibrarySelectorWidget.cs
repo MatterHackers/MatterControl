@@ -229,6 +229,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			{
 				unregisterEvents(this, null);
 			}
+
+			// Dispose of all children below this one.
+			while (currentLibraryProvider != null)
+			{
+				LibraryProvider parent = currentLibraryProvider.ParentLibraryProvider;
+				currentLibraryProvider.Dispose();
+				currentLibraryProvider = parent;
+			}
+
 			base.OnClosed(e);
 		}
 

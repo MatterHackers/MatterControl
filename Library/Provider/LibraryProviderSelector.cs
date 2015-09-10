@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 	public class LibraryProviderSelector : LibraryProvider
 	{
 		private List<ILibraryCreator> libraryCreators = new List<ILibraryCreator>();
+		private Dictionary<int, LibraryProvider> libraryProviders = new Dictionary<int, LibraryProvider>();
 
 		public ILibraryCreator PurchasedLibraryCreator { get; private set; }
 
@@ -179,10 +180,6 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
-		public override void Dispose()
-		{
-		}
-
 		public override int ItemCount
 		{
 			get
@@ -232,9 +229,23 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 		}
 
+		public override void Dispose()
+		{
+			foreach (KeyValuePair<int, LibraryProvider> keyValue in libraryProviders)
+			{
+				keyValue.Value.Dispose();
+			}
+		}
+
 		public override PrintItemCollection GetCollectionItem(int collectionIndex)
 		{
+			if (libraryProviders.ContainsKey(collectionIndex))
+			{
+				libraryProviders[collectionIndex].Dispose();
+				libraryProviders.Remove(collectionIndex);
+			}
 			LibraryProvider provider = libraryCreators[collectionIndex].CreateLibraryProvider(this, SetCurrentLibraryProvider);
+			libraryProviders.Add(collectionIndex, provider);
 			return new PrintItemCollection(provider.Name, provider.ProviderKey);
 		}
 

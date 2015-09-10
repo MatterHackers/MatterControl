@@ -76,7 +76,7 @@ namespace MatterControl.Tests
 			string collectionName = "Collection1";
 			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
 			Assert.IsTrue(dataReloaded == false);
-			testProvider.AddCollectionToLibrary(collectionName);
+			testProvider.AddCollectionToLibraryAsync(collectionName).Wait();
 			Assert.IsTrue(testProvider.CollectionCount == 1);
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(NamedCollectionExists(collectionName)); // assert that the record does exist in the DB
@@ -108,7 +108,7 @@ namespace MatterControl.Tests
 			// remove collection gets rid of it
 			dataReloaded = false;
 			Assert.IsTrue(dataReloaded == false);
-			testProvider.RemoveCollection(0);
+			testProvider.RemoveCollectionAsync(0).Wait();
 			Assert.IsTrue(dataReloaded == true);
 			Assert.IsTrue(testProvider.CollectionCount == 0);
 			Assert.IsTrue(!NamedCollectionExists(collectionName)); // assert that the record does not exist in the DB
