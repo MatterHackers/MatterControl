@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 using System;
 
 namespace MatterHackers.MatterControl.PrintLibrary
@@ -363,7 +364,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			folderThumbnail.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			Button clickThumbnail = new Button(0, 0, folderThumbnail);
-			clickThumbnail.Cursor = Cursors.Hand;
 
 			clickThumbnail.Click += (sender, e) =>
 			{
@@ -414,14 +414,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (provider != null && provider.ProviderKey != "ProviderSelectorKey")
 			{
 				PrintItemCollection parent = new PrintItemCollection("..", provider.ProviderKey);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, provider, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage));
+				LibraryRowItem queueItem = new LibraryRowItemCollection(parent, provider, -1, this, provider.ParentLibraryProvider, GetThumbnailWidget(provider.ParentLibraryProvider, parent, LibraryProvider.UpFolderImage), "Back".Localize());
 				AddListItemToTopToBottom(queueItem);
 			}
 
 			for (int i = 0; i < provider.CollectionCount; i++)
 			{
 				PrintItemCollection item = provider.GetCollectionItem(i);
-				LibraryRowItem queueItem = new LibraryRowItemCollection(item, provider, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)));
+				LibraryRowItem queueItem = new LibraryRowItemCollection(item, provider, i, this, null, GetThumbnailWidget(null, item, provider.GetCollectionFolderImage(i)), "Open".Localize());
 				AddListItemToTopToBottom(queueItem);
 			}
 

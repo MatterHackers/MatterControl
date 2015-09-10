@@ -317,7 +317,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			folderThumbnail.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			Button clickThumbnail = new Button(0, 0, folderThumbnail);
-			clickThumbnail.Cursor = Cursors.Hand;
 
 			clickThumbnail.Click += (sender, e) =>
 			{

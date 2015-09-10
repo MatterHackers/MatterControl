@@ -50,10 +50,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		LibraryProvider currentProvider;
 		PrintItemCollection printItemCollection;
 		public int CollectionIndex { get; private set; }
+		string openButtonText;
 
-		public LibraryRowItemCollection(PrintItemCollection collection, LibraryProvider currentProvider, int collectionIndex, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget)
+		public LibraryRowItemCollection(PrintItemCollection collection, LibraryProvider currentProvider, int collectionIndex, LibraryDataView libraryDataView, LibraryProvider parentProvider, GuiWidget thumbnailWidget, string openButtonText)
 			: base(libraryDataView, thumbnailWidget)
 		{
+			this.openButtonText = openButtonText;
 			this.currentProvider = currentProvider;
 			this.CollectionIndex = collectionIndex;
 			this.parentProvider = parentProvider;
@@ -130,7 +132,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			FlowLayoutWidget buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonFlowContainer.VAnchor = VAnchor.ParentBottomTop;
 
-			TextWidget openLabel = new TextWidget("Open".Localize());
+			TextWidget openLabel = new TextWidget(openButtonText);
 			openLabel.TextColor = RGBA_Bytes.White;
 			openLabel.VAnchor = VAnchor.ParentCenter;
 			openLabel.HAnchor = HAnchor.ParentCenter;
