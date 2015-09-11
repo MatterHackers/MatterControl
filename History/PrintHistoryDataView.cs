@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.AnchorAll();
 			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			this.AutoScroll = true;
-			this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
+			this.ScrollArea.Padding = new BorderDouble(3);
 		}
 
 		public void LoadHistoryItems(int NumItemsToLoad = 0)

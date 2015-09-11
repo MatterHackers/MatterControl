@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				this.AnchorAll();
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-				this.ScrollArea.Padding = new BorderDouble(3, 3, 5, 3);
+				this.ScrollArea.Padding = new BorderDouble(3);
 			}
 
 			ScrollArea.HAnchor = HAnchor.ParentLeftRight;
@@ -164,17 +164,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						currentTopLeftOffset = TopLeftOffset;
 					}
 					settingLocalBounds = true;
-					if (topToBottomItemList != null)
-					{
-						if (VerticalScrollBar.Visible)
-						{
-							topToBottomItemList.Width = Math.Max(0, value.Width - ScrollArea.Padding.Width - topToBottomItemList.Margin.Width - VerticalScrollBar.Width);
-						}
-						else
-						{
-							topToBottomItemList.Width = Math.Max(0, value.Width - ScrollArea.Padding.Width - topToBottomItemList.Margin.Width);
-						}
-					}
 
 					base.LocalBounds = value;
 					if (Parent != null)

@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.LibrarySelector
 			{
 				this.AnchorAll();
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-				this.ScrollArea.Padding = new BorderDouble(3, 3, 5, 3);
+				this.ScrollArea.Padding = new BorderDouble(3);
 			}
 
 			ScrollArea.HAnchor = HAnchor.ParentLeftRight;

@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.UI
 			};
 			outerContainer.AddChild(topToBottomContainer);
 
-			CheckBox toggleBox = ImageButtonFactory.CreateToggleSwitch(true);
+			CheckBox toggleBox = new CheckBox("test");
 			toggleBox.HAnchor = HAnchor.ParentLeftRight;
 			toggleBox.VAnchor = VAnchor.ParentBottomTop;
 			toggleBox.Margin = new BorderDouble(marginSize);

@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.AnchorAll();
 			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			this.AutoScroll = true;
-			this.ScrollArea.Padding = new BorderDouble(3, 3, 15, 3);
+			this.ScrollArea.Padding = new BorderDouble(3);
 		}
 
 		private bool editMode = false;
@@ -313,12 +313,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			SetDisplayAttributes();
 			AddWatermark();
-			ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			ScrollArea.HAnchor = HAnchor.ParentLeftRight;
 
 			AutoScroll = true;
 			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottomItemList.Name = "PrintQueueControl TopToBottom";
-			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			topToBottomItemList.HAnchor = HAnchor.ParentLeftRight;
 			base.AddChild(topToBottomItemList);
 
 			for (int i = 0; i < QueueData.Instance.Count; i++)
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
 			itemHolder.Name = "PrintQueueControl itemHolder";
 			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
-			itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			itemHolder.HAnchor = HAnchor.ParentLeftRight;
 			itemHolder.AddChild(childToAdd);
 			itemHolder.VAnchor = VAnchor.FitToChildren;
 			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
