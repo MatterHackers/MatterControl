@@ -368,6 +368,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch
 					{
 						Console.WriteLine("Unable to convert BaudRate to integer");
+						Debugger.Break();
 					}
 				}
 				return baudRate;
@@ -888,8 +889,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					int layerCount = loadedGCode.NumChangesInZ;
 					return layerCount;
 				}
-				catch
+				catch(Exception e)
 				{
+					Debug.Print(e.Message);
+					Debugger.Break();
 					return -1;
 				}
 			}
@@ -995,8 +998,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					}
 				}
-				catch
+				catch(Exception e2)
 				{
+					Debug.Print(e2.Message);
+					Debugger.Break();
 					Debug.WriteLine("Unable to Parse Bed Temperature: {0}".FormatWith(temp));
 				}
 			}
@@ -1112,8 +1117,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						OnFanSpeedSet(null);
 					}
 				}
-				catch
+				catch(Exception e2)
 				{
+					Debug.Print(e2.Message);
+					Debugger.Break();
 					Debug.WriteLine("Unable to Parse Fan Speed: {0}".FormatWith(fanSpeed));
 				}
 			}
@@ -1365,6 +1372,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			catch (Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 				// Let's track this issue if possible.
 				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
@@ -1584,26 +1593,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					Thread.Sleep(1);
 				}
-				catch (TimeoutException)
+				catch (TimeoutException e)
 				{
+					Debug.Print(e.Message);
+					Debugger.Break();
 				}
-				catch (IOException)
+				catch (IOException e2)
 				{
+					Debug.Print(e2.Message);
+					Debugger.Break();
 					OnConnectionFailed(null);
 				}
 				catch (InvalidOperationException ex)
 				{
+					Debug.Print(ex.Message);
+					Debugger.Break();
 					Debug.WriteLine(ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
 				}
-				catch (UnauthorizedAccessException)
+				catch (UnauthorizedAccessException e3)
 				{
+					Debug.Print(e3.Message);
+					Debugger.Break();
 					OnConnectionFailed(null);
 				}
-				catch (Exception e)
+				catch (Exception e4)
 				{
+					Debug.Print(e4.Message);
+					Debugger.Break();
 					// Let's track this issue if possible.
-					MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+					MatterControlApplication.Instance.ReportException(e4, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 				}
 			}
 		}
@@ -1756,6 +1775,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			catch(Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 				MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 			}
 		}
@@ -1940,8 +1961,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				string[] portNames = FrostedSerialPort.GetPortNames();
 				return portNames.Any(x => string.Compare(x, portName, true) == 0);
 			}
-			catch
+			catch(Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 				return false;
 			}
 		}
@@ -2200,13 +2223,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						SendLineToPrinterNow("M105");
 						SendLineToPrinterNow("M115");
 					}
-					catch (System.ArgumentOutOfRangeException)
+					catch (System.ArgumentOutOfRangeException e)
 					{
+						Debug.Print(e.Message);
+						Debugger.Break();
 						connectionFailureMessage = LocalizedString.Get("Unsupported Baud Rate");
 						OnConnectionFailed(null);
 					}
 					catch (Exception ex)
 					{
+						Debug.Print(ex.Message);
+						Debugger.Break();
 						Debug.WriteLine("An unexpected exception occurred: " + ex.Message);
 						OnConnectionFailed(null);
 					}
@@ -2942,16 +2969,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (IOException ex)
 					{
+						Debug.Print(ex.Message);
+						Debugger.Break();
 						Trace.WriteLine("Error writing to printer: " + ex.Message);
 
 						// Handle hardware disconnects by relaying the failure reason and shutting down open resources
 						AbortConnectionAttempt("Connection Lost - " + ex.Message);
 					}
-					catch (TimeoutException ex)
+					catch (TimeoutException e2)
 					{
+						Debug.Print(e2.Message);
+						Debugger.Break();
 					}
 					catch (Exception e)
 					{
+						Debug.Print(e.Message);
+						Debugger.Break();
 						// Let's track this issue if possible.
 						MatterControlApplication.Instance.ReportException(e, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
 					}

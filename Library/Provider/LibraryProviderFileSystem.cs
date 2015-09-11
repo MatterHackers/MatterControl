@@ -264,6 +264,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			catch (Exception e)
 			{
+				Debugger.Break();
 			}
 
 			// save it to the root directory
@@ -304,6 +305,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 			}
 			catch (Exception e)
 			{
+				Debugger.Break();
 			}
 
 			return outputFileName;
@@ -343,6 +345,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 				catch (Exception)
 				{
+					Debugger.Break();
 				}
 
 				try
@@ -382,6 +385,7 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 				}
 				catch (Exception)
 				{
+					Debugger.Break();
 				}
 			});
 

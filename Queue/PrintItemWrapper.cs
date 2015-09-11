@@ -79,8 +79,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				this.fileType = Path.GetExtension(this.FileLocation).ToUpper();
 			}
-			catch
+			catch(Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 				//file not found
 			}
 		}
@@ -181,8 +183,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 								this.fileHashCode = agg_basics.ComputeHash(readData);
 							}
 						}
-						catch(Exception)
+						catch(Exception e)
 						{
+							Debug.Print(e.Message);
+							Debugger.Break();
 							this.fileHashCode = 0;
 						}
 					}

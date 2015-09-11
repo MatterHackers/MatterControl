@@ -183,8 +183,10 @@ namespace MatterHackers.MatterControl.UI
 					{
 						Directory.Delete(state.userDataPath, true);
 					}
-					catch (Exception)
+					catch (Exception e)
 					{
+						Debug.Print(e.Message);
+						Debugger.Break();
 					}
 				}
 				Stopwatch time = Stopwatch.StartNew();

@@ -51,8 +51,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private RGBA_Bytes hoverColor = new RGBA_Bytes(204, 204, 204, 255);
 
-		private GuiWidget providerMessageContainer;
-		private TextWidget providerMessageWidget;
 		private RGBA_Bytes selectedColor = new RGBA_Bytes(180, 180, 180, 255);
 
 		private bool settingLocalBounds = false;
@@ -86,27 +84,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			AddChild(topToBottomItemList);
 
 			AddAllItems();
-
-			providerMessageWidget = new TextWidget("")
-			{
-				PointSize = 8,
-				HAnchor = HAnchor.ParentRight,
-				VAnchor = VAnchor.ParentBottom,
-				TextColor = ActiveTheme.Instance.SecondaryTextColor,
-				Margin = new BorderDouble(6),
-				AutoExpandBoundsToText = true,
-			};
-
-			providerMessageContainer = new GuiWidget()
-			{
-				VAnchor = VAnchor.FitToChildren,
-				HAnchor = HAnchor.ParentLeftRight,
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryBackgroundColor, 220),
-				Visible = false,
-			};
-
-			providerMessageContainer.AddChild(providerMessageWidget);
-			this.AddChildToBackground(providerMessageContainer, -1);
 		}
 
 		public delegate void HoverValueChangedEventHandler(object sender, EventArgs e);
@@ -151,8 +128,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 
 				ClearSelectedItems();
-
-				this.ProviderMessage = value.StatusMessage;
 
 				UiThread.RunOnIdle(RebuildView);
 			}
@@ -207,23 +182,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						TopLeftOffset = currentTopLeftOffset;
 					}
 					settingLocalBounds = false;
-				}
-			}
-		}
-
-		public string ProviderMessage
-		{
-			get { return providerMessageWidget.Text; }
-			set
-			{
-				if (value != "")
-				{
-					providerMessageWidget.Text = value;
-					providerMessageContainer.Visible = true;
-				}
-				else
-				{
-					providerMessageContainer.Visible = false;
 				}
 			}
 		}

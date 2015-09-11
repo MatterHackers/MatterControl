@@ -5,9 +5,9 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
@@ -66,8 +66,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				{
 					this.ActivePrinter.ComPort = FrostedSerialPort.GetPortNames().FirstOrDefault();
 				}
-				catch
+				catch(Exception e)
 				{
+					Debug.Print(e.Message);
+					Debugger.Break();
 					//No active COM ports
 				}
 			}
@@ -86,8 +88,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					{
 						this.ActivePrinter.ComPort = FrostedSerialPort.GetPortNames().FirstOrDefault();
 					}
-					catch
+					catch(Exception e)
 					{
+						Debug.Print(e.Message);
+						Debugger.Break();
 						//No active COM ports
 					}
 				}

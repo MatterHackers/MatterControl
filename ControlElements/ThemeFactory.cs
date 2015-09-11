@@ -32,6 +32,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl
 {
@@ -214,6 +215,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
+				Debugger.Break();
 				themeIndex = defaultThemeIndex;
 			}
 

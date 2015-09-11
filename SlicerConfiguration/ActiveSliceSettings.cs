@@ -685,6 +685,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch (Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 				Debug.WriteLine(string.Format("Error loading configuration: {0}", e));
 				return null;
 			}
@@ -717,6 +719,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch (Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 				Debug.WriteLine(string.Format("Error loading configuration: {0}", e));
 			}
 		}
@@ -912,6 +916,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			catch (Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 				string stackTraceNoBackslashRs = e.StackTrace.Replace("\r", "");
 				ContactFormWindow.Open("Parse Error while slicing".Localize(), e.Message + stackTraceNoBackslashRs);
 				return false;

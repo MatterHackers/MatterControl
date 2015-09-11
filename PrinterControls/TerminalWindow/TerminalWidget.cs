@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl
 {
@@ -232,6 +233,8 @@ namespace MatterHackers.MatterControl
 					}
 					catch(UnauthorizedAccessException e)
 					{
+						Debug.Print(e.Message);
+						Debugger.Break();
 						PrinterOutputCache.Instance.PrinterLines.Add("");
 						PrinterOutputCache.Instance.PrinterLines.Add(writeFaildeWaring);
 						PrinterOutputCache.Instance.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));

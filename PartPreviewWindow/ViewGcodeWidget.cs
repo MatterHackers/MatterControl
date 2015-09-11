@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -305,8 +306,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					gCodeRenderer.GCodeFileToDraw.GetFilamentUsedMm(ActiveSliceSettings.Instance.FilamentDiameter);
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 			}
 			gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
 		}

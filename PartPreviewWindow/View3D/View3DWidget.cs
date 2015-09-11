@@ -1888,8 +1888,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				}
 			}
-			catch (System.UnauthorizedAccessException)
+			catch (System.UnauthorizedAccessException e2)
 			{
+				Debug.Print(e2.Message);
+				Debugger.Break();
 				saveSucceded = false;
 				UiThread.RunOnIdle(() =>
 				{
@@ -1897,8 +1899,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
 				});
 			}
-			catch
+			catch(Exception e)
 			{
+				Debug.Print(e.Message);
+				Debugger.Break();
 				saveSucceded = false;
 				UiThread.RunOnIdle(() =>
 				{

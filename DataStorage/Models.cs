@@ -32,6 +32,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -170,6 +171,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 			catch (Exception)
 			{
+				Debugger.Break();
 				Thread.Sleep(100);
 				this.TryHandleInsert();
 			}
@@ -189,6 +191,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 			catch (Exception)
 			{
+				Debugger.Break();
 				Thread.Sleep(100);
 				this.TryHandleUpdate();
 			}

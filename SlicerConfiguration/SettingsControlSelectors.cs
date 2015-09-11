@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -251,8 +252,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					dropDownList.SelectedValue = ActivePrinterProfile.Instance.GetMaterialSetting(presetIndex).ToString();
 				}
-				catch
+				catch(Exception e)
 				{
+					Debug.Print(e.Message);
+					Debugger.Break();
 					//Unable to set selected value
 				}
 			}
@@ -262,8 +265,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					dropDownList.SelectedValue = ActivePrinterProfile.Instance.ActiveQualitySettingsID.ToString();
 				}
-				catch
+				catch(Exception e)
 				{
+					Debug.Print(e.Message);
+					Debugger.Break();
 					//Unable to set selected value
 				}
 			}
@@ -318,8 +323,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SelectedLabel = MatterSliceInfo.DisplayName;
 				}
-				catch
+				catch(Exception e)
 				{
+					Debug.Print(e.Message);
+					Debugger.Break();
 					throw new Exception("MatterSlice is not available, for some strange reason");
 				}
 			}

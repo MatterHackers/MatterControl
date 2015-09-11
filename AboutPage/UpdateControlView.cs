@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using System;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl
 {
@@ -117,6 +118,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch
 			{
+				Debugger.Break();
 				installUpdateLink.Visible = false;
 				updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
 			}

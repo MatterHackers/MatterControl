@@ -42,6 +42,7 @@ using MatterHackers.MatterControl.PrintLibrary.Provider;
 using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 
@@ -202,6 +203,7 @@ namespace MatterHackers.MatterControl
 					}
 					catch (Exception)
 					{
+						Debugger.Break();
 					}
 				}
 				else
@@ -231,6 +233,7 @@ namespace MatterHackers.MatterControl
 							}
 							catch (Exception)
 							{
+								Debugger.Break();
 							}
 						}
 						break;
@@ -249,6 +252,7 @@ namespace MatterHackers.MatterControl
 							}
 							catch (Exception)
 							{
+								Debugger.Break();
 							}
 						}
 						break;
@@ -279,6 +283,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch (Exception)
 			{
+				Debugger.Break();
 			}
 		}
 	}

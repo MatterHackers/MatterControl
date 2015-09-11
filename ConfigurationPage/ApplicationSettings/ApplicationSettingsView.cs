@@ -37,6 +37,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -419,6 +420,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 							}
 							catch (Exception)
 							{
+								Debugger.Break();
 							}
 						}
 

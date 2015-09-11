@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.PlatformAbstract;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -217,6 +218,7 @@ namespace MatterHackers.MatterControl.DataStorage
 					}
 					catch
 					{
+						Debugger.Break();
 					}
 				}
 			}
@@ -253,6 +255,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 			catch (Exception)
 			{
+				Debugger.Break();
 				// we faild to close so lets wait a bit and try again
 				Thread.Sleep(1000);
 				try
@@ -261,6 +264,7 @@ namespace MatterHackers.MatterControl.DataStorage
 				}
 				catch (Exception)
 				{
+					Debugger.Break();
 				}
 			}
 		}
